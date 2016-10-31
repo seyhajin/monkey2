@@ -1,0 +1,8 @@
+
+Restored Stream.ReadCString and Stream.WriteCString.
+
+***** v1.0.91 *****
+
+Made reflection optional. You now need to #Import "<reflection>" to activate it, and the first build of an app will be SLOW. Reflection is still 'all or nothing' for now.
+
+Fixed some race conditions with Process objects going out of scope very quickly.

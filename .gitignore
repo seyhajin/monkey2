@@ -2,6 +2,8 @@
 *.bak
 *.buildv*
 
+.DS_Store
+
 /desktop.ini
 
 /bin/*.dll
