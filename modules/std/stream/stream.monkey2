@@ -314,12 +314,12 @@ Class Stream
 		Return str
 	End
 	
-	#rem monkeydoc Reads a null terminated string from the stream.
+	#rem monkeydoc Reads a null terminated cstring from the stream.
 	
 	@return the string read.
 	
 	#end
-	Method ReadNullTerminatedString:String()
+	Method ReadCString:String()
 		Local buf:=New Stack<Byte>
 		While Not Eof
 			Local chr:=ReadByte()
@@ -451,12 +451,12 @@ Class Stream
 		WriteString( str )
 	End
 	
-	#rem monkeydoc Writes a null terminate string to the stream.
+	#rem monkeydoc Writes a null terminated cstring to the stream.
 	
 	@param str The string to write.
 	
 	#end
-	Method WriteNullTerminatedString( str:String )
+	Method WriteCString( str:String )
 		WriteString( str )
 		WriteByte( 0 )
 	End
