@@ -17,8 +17,7 @@ Alias StringStack:Stack<String>
 
 A stack is an 'array like' container that grows dynamically as necessary.
 
-It is very cheap to add values to the end of a stack, but insertion or removal of values requires higher indexed values to be 
-'shifted down'.
+It is very cheap to add values to the end of a stack, but insertion or removal of values requires higher indexed values to be 'shifted' up or down so is slower.
 
 Stacks implement the [[IContainer]] interface so can be used with [[Eachin]] loops.
 

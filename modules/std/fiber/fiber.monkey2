@@ -27,22 +27,19 @@ Function GetCurrentFiber:Int()="bbFiber::getCurrentFiber"
 
 Public
 
-#rem monkeydoc Fibers provides support for cooperative multitasking.
+#rem monkeydoc Fibers provide support for asynchronous programming.
 
 A Fiber is a lightweight 'thread of execution' that can be used to achieve a form of cooperative multitasking.
 
 A fiber can be in one of 4 states:
 
-* Running. There is only ever one fiber in the running state at a time. This is the fiber returned by [[Current]].
+* Running. There is only ever one fiber in the running state at a time. This is the fiber returned by [[Fiber.Current]].
 
-* Suspended. A fiber is in the suspended state if it has called [[Suspend]]. A suspended fiber can only be returned to the running state
-by some other fiber calling [[Resume]] on it.
+* Suspended. A fiber is in the suspended state if it has called [[Fiber.Suspend]]. A suspended fiber can only be returned to the running state by some other fiber calling [[Resume]] on it.
 
-* Paused. A fiber is in the paused state after it has called [[Resume]] on another fiber and that fiber has resumed running. A paused
-fiber will continue running when the fiber it resumed calls [[Suspend]] or exits normally. A fiber is also paused after creating a new 
-fiber, ie: creating a new fiber also implicty resumes the new fiber.
+* Paused. A fiber is in the paused state after it has called [[Resume]] on another fiber and that fiber has resumed running. A paused fiber will continue running when the fiber it resumed calls [[Suspend]] or exits normally.
 
-* Terminated. The fiber has either returned from it's entry function, or has been explicitly terminated via a call to [[Terminate]].
+* Terminated. The fiber has either returned from i's entry function, or has been explicitly terminated via a call to [[Terminate]].
 
 #end
 Struct Fiber

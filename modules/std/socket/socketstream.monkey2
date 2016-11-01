@@ -1,6 +1,11 @@
 
 Namespace std.socket
 
+#rem monkeydoc The SocketStream class.
+
+A socket stream provides a 'wrapper' around a socket that lets you read and write the socket as if it was a stream.
+
+#end
 Class SocketStream Extends std.stream.Stream
 
 	#rem monkeydoc Creates a new socketsteam from an existing socket.

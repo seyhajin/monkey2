@@ -3,13 +3,15 @@
 
 JSON (JavaScript Object Notation) is a lightweight data-interchange format.
 
-\## Reading JSON data
+To load a json object from a file, use the [[JsonObject.Load]] function.
 
-Use the [[JsonObject.Load]] function to load JSON data from a file, or [[JsonObject.Parse]] to parse JSON data from a string.
+To convert a string to a json object, use the [[JsonObject.Parse]] function.
 
-\## Writing JSON data
+To convert a json object to a string, use the [[JsonObject.ToString]] method.
 
-To save a JSON object, use the [[JsonObject.Save]] function.
+You can inspect the members of a json object using methods such as [[JsonObject.GetString]], [[JsonObject.GetNumber]] etc.
+
+You can modify the members of a json object using methods such as [[JsonObject.SetString]], [[JsonObject.SetNumber]] etc.
 
 #end
 Namespace std.json

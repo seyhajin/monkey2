@@ -3,11 +3,11 @@ Namespace std.fiber
 
 #if __TARGET__<>"emscripten"
 
-#rem monkeydoc Futures provides support for simple fiber synchronization.
+#rem monkeydoc Futures provide support for simple fiber synchronization.
 
 A future allows you to synchronize two fibers by providing a way for one fiber to signal to another that an operation has completed.
 
-The general usage pattern of future is:
+The general usage pattern of futures is:
 
 * Fiber A creates a future and passes it to fiber B.
 
@@ -15,7 +15,7 @@ The general usage pattern of future is:
 
 * Fiber B performs some operation, then calls [[Set]] on the future. This will resume Fiber A.
 
-A future can be resued - each time [[Get]] is called, the fiber will suspend until another fiber calls [[Set]].
+A future can be resued. Each time [[Get]] is called, the fiber will suspend until another fiber calls [[Set]].
 
 #end
 Class Future<T>
