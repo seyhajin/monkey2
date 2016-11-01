@@ -1,4 +1,8 @@
 
+Added Edit->Goto line AT LAST!
+
+Fixed TextView.CharRect bug returning bad width.
+
 Restored Stream.ReadCString and Stream.WriteCString.
 
 ***** v1.0.91 *****
