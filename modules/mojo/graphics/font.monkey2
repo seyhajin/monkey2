@@ -34,6 +34,13 @@ Class GlyphPage
 End
 
 #rem monkeydoc The Font class.
+
+Fonts are used when drawing text to a canvas using [[Canvas.DrawText]].
+
+To load a font, use the [[Font.Load]] function. Fonts should be in .otf, .ttf or .fon format.
+
+Once a font is loaded it can be used with a canvas via the [[Canvas.Font]] property.
+
 #end
 Class Font Extends Resource
 

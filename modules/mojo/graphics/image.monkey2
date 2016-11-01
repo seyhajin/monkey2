@@ -5,9 +5,26 @@ Using std.resource
 
 #rem monkeydoc The Image class.
 
-An image is a rectangular array of pixels that can be drawn using one of the [[Canvas.DrawImage]] methods.
+An image is a rectangular array of pixels that can be drawn to a canvas using one of the [[Canvas.DrawImage]] methods.
 
-You can load an image from a file using one of the [[Load]], [[LoadBump]] or [[LoadLight]] functions.
+Images are similar to pixmap's, except that they are optimized for rendering, and typically live in GPU memory. 
+
+To load an image from a file, use one of the [[Load]], [[LoadBump]] or [[LoadLight]] functions.
+
+To create an image from an existing pixmap, use the New( pixmap,... ) constructor.
+
+To create an image that is a 'window' into an existing image, use the New( image,rect... ) constructor. This allows you to use images as 'atlases',
+
+To create an 'empty' image, use the New( width,height ) constructor. You can then render to this image by creating a canvas with this image as its render target.
+
+Images also have several properties that affect how they are rendered, including:
+
+* Handle - the relative position of the image's centre (or 'pivot point') for rendering, where (0.0,0.0) means the top-left of the image while (1.0,1.0) means the bottom-right.
+* Scale - a fixed scale factor for the image.
+* BlendMode - controls how the image is blended with the contents of the canvas. If this is null, this property is ignored and the current canvas blendmode is used to render the image instead.
+* Color - when rendering an image to a canvas, this property is multiplied by the current canvas color and the result is multiplied by actual image pixel colors to achieve the final color to be rendered.
+* TextureFilter - controls how image texels are sampled. Set to TextureFilter.None for coolio retro style graphics, or TextureFilter.Mipmap for fullon super smoothing.
+
 
 #end
 Class Image Extends Resource

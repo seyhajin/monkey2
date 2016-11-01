@@ -530,7 +530,7 @@ Class TextView Extends ScrollableView
 		
 			Local w:=WordWidth( text,i0,eol,x0 )
 			
-			If x0+w>_wrapw	'-_charw
+			If x0+w>_wrapw
 				y0+=_charh
 				x0=0
 			Endif
@@ -539,6 +539,7 @@ Class TextView Extends ScrollableView
 
 			If index<i0+l
 				x0+=WordWidth( text,i0,index,x0 )
+				i0=index
 				Exit
 			Endif
 			
@@ -569,7 +570,7 @@ Class TextView Extends ScrollableView
 		
 			Local w:=WordWidth( text,i0,eol,x0 )
 			
-			If x0+w>_wrapw	'-_charw
+			If x0+w>_wrapw
 				If p.y<y0 Exit
 				y0+=_charh
 				x0=0

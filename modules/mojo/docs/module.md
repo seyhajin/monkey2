@@ -18,7 +18,7 @@ Once the app is running, mojo runs a simple event loop that looks like this:
 
 * Get OS events and dispatch corresponding mojo events if necessary.
 * Once there are no OS events left to process, any custom [[app.AppInstance.Idle]] handlers are called.
-* If the application has called [[app.AppInstance.RequestRender]], then the app is rendered.
+* If the application has called [[app.AppInstance.RequestRender]], the app is then rendered.
 
 The app will continue executing the event loop until [[app.AppInstance.Terminate]] is called.
 

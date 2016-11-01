@@ -76,20 +76,41 @@ Function socket_sockaddrname:Int( addr:Void Ptr,addrlen:Int,host:libc.char_t Ptr
 
 Public
 
-Enum SocketType
+#rem monkeydoc The SocketType enum.
 
+| SocketType	| Description
+|:--------------|:-----------
+| `Stream`		| Reliable stream, eg: TCP.
+| `Datagram`	| Unreliable datagram, eg: UDP.
+
+#end
+Enum SocketType
 	Stream=0
 	Datagram=1
-
 End
 
+#rem monkeydoc The SocketAddress class.
+
+A socket address encapsulates the hostname and service of a socket.
+
+Socket address objects are returned by the [[Socket.Address]] and [[Socket.PeerAddress]] properties, and indirectly returned by [[Socket.ReceiveFrom]].
+
+#end
 Class SocketAddress
 
-	#rem monkeydoc Creates a new socket address.
+	#rem monkeydoc Creates a new empty socket address.
+	
+	The new socket address can be used with [[Socket.ReceiveFrom]].
+	 
 	#end
 	Method New()
 	End
+
+	#rem monkeydoc Creates a copy of an existing socket address.
 	
+	Creates and returns a copy of `address`.
+	
+	#end
 	Method New( address:SocketAddress )
 		_addr=address._addr.Slice( 0 )
 		_addrlen=address._addrlen
@@ -179,6 +200,15 @@ Class SocketAddress
 	
 End
 
+#rem monkeydoc The Socket class.
+
+The socket class provides a thin wrapper around native Winsock and BSD sockets.
+
+Sockets support asynchronous programming through the use of fibers. To connect, send or receive asynchronously, simply run the relevant socket code on its own fiber. Control will be returned to the 'main' gui fiber will the operation is busy.
+
+Sockets are ipv4/ipv6 compatible.
+
+#end
 Class Socket
 
 	#rem Not on Windows...
