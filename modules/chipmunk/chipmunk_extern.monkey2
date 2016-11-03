@@ -11,6 +11,7 @@ Namespace chipmunk
 
 Extern
 
+
 '***** File: Chipmunk7/include/chipmunk/chipmunk.h *****
 
 Function cpMessage:Void( condition:CString, file:CString, line:Int, isError:Int, isHardError:Int, message:CString )
@@ -29,7 +30,7 @@ Alias cpHashValue:libc.uintptr_t
 Alias cpCollisionID:libc.uint32_t
 Alias cpBool:UByte
 Alias cpDataPointer:Void Ptr
-Alias cpCollisionType:libc.uintptr_t
+Alias cpCollisionType:Int'libc.uintptr_t
 Alias cpGroup:libc.uintptr_t
 Alias cpBitmask:UInt
 Alias cpTimestamp:UInt
@@ -618,18 +619,18 @@ Struct cpSpaceDebugColor
 	Field b:Float
 	Field a:Float
 End
-Alias cpSpaceDebugDrawCircleImpl:Void( cpVect, cpFloat, cpFloat, cpSpaceDebugColor, cpSpaceDebugColor, cpDataPointer )
-Alias cpSpaceDebugDrawSegmentImpl:Void( cpVect, cpVect, cpSpaceDebugColor, cpDataPointer )
-Alias cpSpaceDebugDrawFatSegmentImpl:Void( cpVect, cpVect, cpFloat, cpSpaceDebugColor, cpSpaceDebugColor, cpDataPointer )
-Alias cpSpaceDebugDrawPolygonImpl:Void( Int, cpVect Ptr, cpFloat, cpSpaceDebugColor, cpSpaceDebugColor, cpDataPointer )
-Alias cpSpaceDebugDrawDotImpl:Void( cpFloat, cpVect, cpSpaceDebugColor, cpDataPointer )
-Alias cpSpaceDebugDrawColorForShapeImpl:cpSpaceDebugColor( cpShape Ptr, cpDataPointer )
+Alias cpSpaceDebugDrawCircleImpl:Void( cpVect, cpFloat, cpFloat, cpSpaceDebugColor, cpSpaceDebugColor, Object )
+Alias cpSpaceDebugDrawSegmentImpl:Void( cpVect, cpVect, cpSpaceDebugColor, Object )
+Alias cpSpaceDebugDrawFatSegmentImpl:Void( cpVect, cpVect, cpFloat, cpSpaceDebugColor, cpSpaceDebugColor, Object )
+Alias cpSpaceDebugDrawPolygonImpl:Void( Int, cpVect Ptr, cpFloat, cpSpaceDebugColor, cpSpaceDebugColor, Object )
+Alias cpSpaceDebugDrawDotImpl:Void( cpFloat, cpVect, cpSpaceDebugColor, Object )
+Alias cpSpaceDebugDrawColorForShapeImpl:cpSpaceDebugColor( cpShape Ptr, Object )
 Enum cpSpaceDebugDrawFlags
 End
 Const CP_SPACE_DEBUG_DRAW_SHAPES:cpSpaceDebugDrawFlags
 Const CP_SPACE_DEBUG_DRAW_CONSTRAINTS:cpSpaceDebugDrawFlags
 Const CP_SPACE_DEBUG_DRAW_COLLISION_POINTS:cpSpaceDebugDrawFlags
-Struct cpSpaceDebugDrawOptions="bb_cpSpaceDebugDrawOptions"
+Class cpSpaceDebugDrawOptions="bb_cpSpaceDebugDrawOptions"
 	Field drawCircle:cpSpaceDebugDrawCircleImpl
 	Field drawSegment:cpSpaceDebugDrawSegmentImpl
 	Field drawFatSegment:cpSpaceDebugDrawFatSegmentImpl
@@ -642,7 +643,7 @@ Struct cpSpaceDebugDrawOptions="bb_cpSpaceDebugDrawOptions"
 	Field collisionPointColor:cpSpaceDebugColor
 	Field data:cpDataPointer
 End
-Function cpSpaceDebugDraw:Void( space:cpSpace Ptr, options:cpSpaceDebugDrawOptions Ptr )="bb_cpSpaceDebugDraw"
+Function cpSpaceDebugDraw:Void( space:cpSpace Ptr, options:cpSpaceDebugDrawOptions )="bb_cpSpaceDebugDraw"
 
 '***** File: Chipmunk7/include/chipmunk/chipmunk.h *****
 

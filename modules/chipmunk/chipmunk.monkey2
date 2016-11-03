@@ -1,7 +1,16 @@
 
 Namespace chipmunk
 
-#Import "chipmunk_extern"
+#Import "<libc>"
+
+#Import "Chipmunk7/include/*.h"
+
+#Import "space"
+#Import "shape"
+#Import "body"
+#Import "arbiter"
+#Import "constraint"
+#Import "types"
 
 #Import "Chipmunk7/src/chipmunk.c"
 #Import "Chipmunk7/src/cpArbiter.c"
@@ -36,3 +45,4 @@ Namespace chipmunk
 #Import "Chipmunk7/src/cpSpatialIndex.c"
 #Import "Chipmunk7/src/cpSweep1D.c"
 
+#Import "chipmunk_glue.cpp"
