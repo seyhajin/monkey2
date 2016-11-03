@@ -3,31 +3,38 @@
 #Import "<mojo>"
 #Import "<chipmunk>"
 
+#Import "chipmunkdebugger"
+
 Using std..
 Using mojo..
 Using chipmunk..
 
 Class HelloChipmunk Extends Window
 
-	Field space:cpSpace Ptr
-	Field ground:cpShape Ptr
-	Field ballBody:cpBody ptr
-	Field ballShape:cpShape Ptr
+	Field space:cpSpace
+	Field ground:cpShape
+	Field ballBody:cpBody
+	Field ballShape:cpShape
+	
+	Field debugger:=New ChipmunkDebugger
 	
 	Method New()
 	
 		ClearColor=Color.Black
-	
-		'Create an empty space.
-		space=cpSpaceNew()
-		cpSpaceSetGravity( space,cpv( 0,100 ) )
 
+		'Create a new space and set its gravity to 100
+		'		
+		space=cpSpaceNew()
+		space.Gravity=cpv( 0,100 )
+		
 		'Add a static line segment shape for the ground.
 		'We'll make it slightly tilted so the ball will roll off.
 		'We attach it to space->staticBody to tell Chipmunk it shouldn't be movable.
-		ground=cpSegmentShapeNew( cpSpaceGetStaticBody( space ),cpv( -100,15 ), cpv( 100,-15 ),0 )
-		cpShapeSetFriction( ground,1 )
-		cpSpaceAddShape( space,ground )
+		'
+		ground=cpSegmentShapeNew( space.StaticBody,cpv( -100,15 ),cpv( 100,-15 ),0 )
+		ground.Friction=1
+		ground.CollisionType=1
+		space.AddShape( ground )
 		
 		'Now let's make a ball that falls onto the line and rolls off.
 		'First we need to make a cpBody to hold the physical properties of the object.
@@ -43,17 +50,32 @@ Class HelloChipmunk Extends Window
 		
 		'The cpSpaceAdd*() functions return the thing that you are adding.
 		'It's convenient to create and add an object in one line.
-		ballBody=cpSpaceAddBody( space,cpBodyNew( mass,moment ) )
-		cpBodySetPosition( ballBody,cpv( 0,-100 ) )
+		ballBody=space.AddBody( cpBodyNew( mass,moment ) )
+		ballBody.Position=cpv( 0,-100 )
 		
 		'Now we create the collision shape for the ball.
 		'You can create multiple collision shapes that point to the same body.
 		'They will all be attached to the body and move around to follow it.
-		ballShape=cpSpaceAddShape( space,cpCircleShapeNew( ballBody,radius,cpvzero ) )
-		cpShapeSetFriction( ballShape,0.7 )
-	
+		ballShape=space.AddShape( cpCircleShapeNew( ballBody,radius,cpvzero ) )
+		ballShape.Friction=0.7
+		ballShape.CollisionType=2
+		
+		Local handler:=space.AddDefaultCollisionHandler()
+		
+		handler.beginFunc=CollBegin
 	End
+
+	Method CollBegin:cpBool( arbiter:cpArbiter,space:cpSpace,data:cpDataPointer )
 	
+		Local a:cpShape,b:cpShape
+		
+		arbiter.GetShapes( Varptr a,Varptr b )
+		
+		Print "Collision! a="+a.CollisionType+", b="+b.CollisionType
+		
+		Return true
+	End
+
 	Method OnRender( canvas:Canvas ) Override
 	
 		App.RequestRender()
@@ -61,12 +83,12 @@ Class HelloChipmunk Extends Window
 		'It is *highly* recommended to use a fixed size time step.
 		Local timeStep:=1.0/60.0
 		
-		cpSpaceStep( space,timeStep )
+		space.StepTime( timeStep )
 		
-		Local rot:=cpBodyGetRotation( ballBody )
-		Local pos:=cpBodyGetPosition( ballBody )
-		Local vel:=cpBodyGetVelocity( ballBody )
-		
+		Local rot:=ballBody.Rotation
+		Local pos:=ballBody.Position
+		Local vel:=ballBody.Velocity
+
 		Print "ball rot="+ATan2( rot.y,rot.x )+", pos.x="+pos.x+", pos.y="+pos.y+", vel.x="+vel.x+", vel.y="+vel.y
 		
 		canvas.Translate( Width/2,Height/2 )
@@ -78,6 +100,8 @@ Class HelloChipmunk Extends Window
 		
 		canvas.Color=Color.Blue
 		canvas.DrawLine( -100,15,100,-15 )
+
+		debugger.DebugDraw( canvas,space )
 	End
 	
 	Method Cleanup()	'Yeah, right!

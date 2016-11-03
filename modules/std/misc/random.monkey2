@@ -11,8 +11,8 @@ https://en.wikipedia.org/wiki/Xorshift
 
 Private
 
-Global state0:ULong=1
-Global state1:ULong=2
+Global state0:ULong=1234
+Global state1:ULong=5678
 
 Public
 

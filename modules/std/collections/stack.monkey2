@@ -615,6 +615,27 @@ Class Stack<T> Implements IContainer<T>
 		Return n
 	End
 	
+	#rem monkeydoc Removes all values int the stack that fulfill a condition.
+	
+	@param condition The condition to test.
+	
+	@return The number of values removed.
+	
+	#end	
+	Method RemoveIf:Int( condition:Bool( value:T ) )
+		Local put:=0,n:=0
+		For Local get:=0 Until _length
+			If condition( _data[get] )
+				n+=1
+				Continue
+			Endif
+			_data[put]=_data[get]
+			put+=1
+		Next
+		Resize( put )
+		Return n
+	End
+	
 	#rem monkeydoc Returns a range of elements from the stack.
 	
 	Returns a slice of the stack consisting of all elements from `index1` until `index2` or the end of the stack.

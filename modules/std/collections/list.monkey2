@@ -516,6 +516,28 @@ Class List<T> Implements IContainer<T>
 		Return n
 	End
 	
+	#rem monkeydoc Removes all values in the list that fulfill a condition.
+	
+	@param cond Condition to test.
+	
+	@return The number of values removed.
+	
+	#end
+	Method RemoveIf:Int( condition:Bool( value:T ) )
+		Local node:=_head._succ,n:=0
+		While node<>_head
+			If condition( node._value )
+				node=node._succ
+				node._pred.Remove()
+				n+=1
+			Else
+				node=node._succ
+			Endif
+		Wend
+		If n _seq+=1
+		Return n
+	End
+	
 	#rem monkeydoc Removes and returns the first value in the list.
 	
 	In debug builds, a runtime error will occur if the list is empty.
