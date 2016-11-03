@@ -33,10 +33,41 @@ End
 
 #rem monkeydoc C/C++ 'size_t' type
 #end
-Struct size_t="size_t"
-End
+Alias size_t:UInt
 
-Function sizeof<T>:Int( t:T )="(int)sizeof"
+#rem monkeydoc C/C++ 'int8_t' type
+#end
+Alias int8_t:Byte
+
+#rem monkeydoc C/C++ 'uint8_t' type
+#end
+Alias uint8_t:UByte
+
+#rem monkeydoc C/C++ 'int16_t' type
+#end
+Alias int16_t:Short
+
+#rem monkeydoc C/C++ 'uint16_t' type
+#end
+Alias uint16_t:UShort
+
+#rem monkeydoc C/C++ 'int32_t' type
+#end
+Alias int32_t:Int
+
+#rem monkeydoc C/C++ 'uint32_t' type
+#end
+Alias uint32_t:UInt
+
+#rem monkeydoc C/C++ 'intptr_t' type
+#end
+Alias intptr_t:ULong
+
+#rem monkeydoc C/C++ 'uintptr_t' type
+#end
+Alias uintptr_t:ULong
+
+Function sizeof<T>:size_t( t:T )="sizeof"
 
 '***** stdio.h *****
 

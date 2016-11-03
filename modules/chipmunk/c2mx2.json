@@ -5,7 +5,13 @@
 	
 	"clangArgs":[
 		"-Xclang",
+		"-std=gnu99",
 		"-IChipmunk7/include"
+	],
+	
+	"kludges":[
+		"cpSpaceDebugDrawOptions",
+		"cpSpaceDebugDraw"
 	],
 	
 	"header":[
@@ -17,7 +23,8 @@
 		"#Import \"<libc>\"",
 		"",
 		"#Import \"Chipmunk7/include/*.h\"",
-		"#Import \"<chipmunk/chipmunk.h>\"",
+		"",
+		"#Import \"chipmunk_extern.h\"",
 		"",
 		"Extern"
 	]

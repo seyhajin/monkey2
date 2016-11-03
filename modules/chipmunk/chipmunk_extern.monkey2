@@ -6,7 +6,8 @@ Namespace chipmunk
 #Import "<libc>"
 
 #Import "Chipmunk7/include/*.h"
-#Import "<chipmunk/chipmunk.h>"
+
+#Import "chipmunk_extern.h"
 
 Extern
 
@@ -17,9 +18,6 @@ Function cpMessage:Void( condition:CString, file:CString, line:Int, isError:Int,
 '***** File: Chipmunk7/include/chipmunk/chipmunk_types.h *****
 
 Alias cpFloat:Double
-Struct MSVC_EVIL_FLOAT_HACK
-End
-Global INFINITY_HACK:MSVC_EVIL_FLOAT_HACK
 Function cpfmax:cpFloat( a:cpFloat, b:cpFloat )
 Function cpfmin:cpFloat( a:cpFloat, b:cpFloat )
 Function cpfabs:cpFloat( f:cpFloat )
@@ -27,12 +25,12 @@ Function cpfclamp:cpFloat( f:cpFloat, min:cpFloat, max:cpFloat )
 Function cpfclamp01:cpFloat( f:cpFloat )
 Function cpflerp:cpFloat( f1:cpFloat, f2:cpFloat, t:cpFloat )
 Function cpflerpconst:cpFloat( f1:cpFloat, f2:cpFloat, d:cpFloat )
-Alias cpHashValue:Int
-Alias cpCollisionID:Int
+Alias cpHashValue:libc.uintptr_t
+Alias cpCollisionID:libc.uint32_t
 Alias cpBool:UByte
 Alias cpDataPointer:Void Ptr
-Alias cpCollisionType:Int
-Alias cpGroup:Int
+Alias cpCollisionType:libc.uintptr_t
+Alias cpGroup:libc.uintptr_t
 Alias cpBitmask:UInt
 Alias cpTimestamp:UInt
 Struct cpVect
@@ -631,7 +629,7 @@ End
 Const CP_SPACE_DEBUG_DRAW_SHAPES:cpSpaceDebugDrawFlags
 Const CP_SPACE_DEBUG_DRAW_CONSTRAINTS:cpSpaceDebugDrawFlags
 Const CP_SPACE_DEBUG_DRAW_COLLISION_POINTS:cpSpaceDebugDrawFlags
-Struct cpSpaceDebugDrawOptions
+Struct cpSpaceDebugDrawOptions="bb_cpSpaceDebugDrawOptions"
 	Field drawCircle:cpSpaceDebugDrawCircleImpl
 	Field drawSegment:cpSpaceDebugDrawSegmentImpl
 	Field drawFatSegment:cpSpaceDebugDrawFatSegmentImpl
@@ -644,7 +642,7 @@ Struct cpSpaceDebugDrawOptions
 	Field collisionPointColor:cpSpaceDebugColor
 	Field data:cpDataPointer
 End
-Function cpSpaceDebugDraw:Void( space:cpSpace Ptr, options:cpSpaceDebugDrawOptions Ptr )
+Function cpSpaceDebugDraw:Void( space:cpSpace Ptr, options:cpSpaceDebugDrawOptions Ptr )="bb_cpSpaceDebugDraw"
 
 '***** File: Chipmunk7/include/chipmunk/chipmunk.h *****
 
