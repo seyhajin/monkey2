@@ -1,4 +1,8 @@
 
+Tidied up chipmunk module.
+
+Added List.RemoveIf and Stack.RemoveIf.
+
 Added Edit->Goto line AT LAST!
 
 Fixed TextView.CharRect bug returning bad width.

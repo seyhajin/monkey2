@@ -576,7 +576,7 @@ Class BuilderInstance
 			ImportSystemFile( path.Slice( 1,-1 ) )
 		Else
 			If currentDir path=currentDir+path
-			ImportLocalFile( path )
+			ImportLocalFile( RealPath( path ) )
 		Endif
 		
 	End

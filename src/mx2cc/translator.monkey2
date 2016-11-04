@@ -409,12 +409,12 @@ Class Translator
 		Refs( func.ftype )
 	End
 	
-	Method Refs( type:Type )
+	Method Refs( type:Type,ext:Bool=False )
 	
 		Local ctype:=TCast<ClassType>( type )
 		If ctype
 			If ctype.cdecl.IsExtern Uses( ctype.transFile ) ; return
-			If ctype.IsStruct Uses( ctype ) ; Return
+			If Not ext And ctype.IsStruct Uses( ctype ) ; Return
 			If AddRef( ctype ) Return
 			_deps.refsTypes.Push( ctype )
 			Return
@@ -429,9 +429,9 @@ Class Translator
 		
 		Local ftype:=TCast<FuncType>( type )
 		If ftype
-			Refs( ftype.retType )
+			Refs( ftype.retType,ext )
 			For Local type:=Eachin ftype.argTypes
-				Refs( type )
+				Refs( type,ext )
 			Next
 			Return
 		Endif
