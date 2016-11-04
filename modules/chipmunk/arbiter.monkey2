@@ -5,45 +5,7 @@ Namespace chipmunk
 
 Extern
 
-Class cpArbiter Extends Void
-
-	Property Restitution:cpFloat() Extension="cpArbiterGetRestitution"
-	Setter( restitution:cpFloat ) Extension="cpArbiterSetRestitution"
-
-	Property Friction:cpFloat() Extension="cpArbiterGetFriction"
-	Setter( friction:cpFloat ) Extension="cpArbiterSetFriction"
-
-	Property SurfaceVelocity:cpVect() Extension="cpArbiterGetSurfaceVelocity"
-	Setter( vr:cpVect ) Extension="cpArbiterSetSurfaceVelocity"
-	
-	Property UserData:cpDataPointer() Extension="cpArbiterGetUserData"
-	Setter( userData:cpDataPointer ) Extension="cpArbiterSetUserData"
-
-	Property TotalImpulse:cpVect() Extension="cpArbiterTotalImpulse"
-
-	Property TotalKE:cpFloat() Extension="cpArbiterTotalKE"
-
-	Property Ignore:cpBool() Extension="cpArbiterIgnore"
-
-	Property IsFirstContact:cpBool() Extension="cpArbiterIsFirstContact"
-	
-	Property IsRemoval:cpBool() Extension="cpArbiterIsRemoval"
-	
-	Property Normal:cpVect( arb:cpArbiter ) Extension="cpArbiterGetNormal"
-	
-	Method GetShapes:Void( a:cpShape Ptr, b:cpShape Ptr ) Extension="cpArbiterGetShapes"
-	
-	Method GetBodies:Void( a:cpBody Ptr, b:cpBody Ptr ) Extension="cpArbiterGetBodies"
-	
-	Method GetCount:Int() Extension="cpArbiterGetCount"
-	
-	Method GetPointA:cpVect( i:Int ) Extension="cpArbiterGetPointA"
-
-	Method GetPointB:cpVect( i:Int ) Extension="cpArbiterGetPointB"
-
-	Method GetDepth:cpFloat( i:Int ) Extension="cpArbiterGetDepth"
-	
-End
+'***** File: Chipmunk7/include/chipmunk/cpArbiter.h *****
 
 Struct cpContactPointSet
 	Field count:Int
@@ -80,3 +42,45 @@ Function cpArbiterCallWildcardPostSolveA:Void( arb:cpArbiter, space:cpSpace Ptr 
 Function cpArbiterCallWildcardPostSolveB:Void( arb:cpArbiter, space:cpSpace Ptr )
 Function cpArbiterCallWildcardSeparateA:Void( arb:cpArbiter, space:cpSpace Ptr )
 Function cpArbiterCallWildcardSeparateB:Void( arb:cpArbiter, space:cpSpace Ptr )
+
+Class cpArbiter Extends Void
+
+	Property Restitution:cpFloat() Extension="cpArbiterGetRestitution"
+	Setter( restitution:cpFloat ) Extension="cpArbiterSetRestitution"
+
+	Property Friction:cpFloat() Extension="cpArbiterGetFriction"
+	Setter( friction:cpFloat ) Extension="cpArbiterSetFriction"
+
+	Property SurfaceVelocity:cpVect() Extension="cpArbiterGetSurfaceVelocity"
+	Setter( vr:cpVect ) Extension="cpArbiterSetSurfaceVelocity"
+	
+	Property UserData:cpDataPointer() Extension="cpArbiterGetUserData"
+	Setter( userData:cpDataPointer ) Extension="cpArbiterSetUserData"
+
+	Property TotalImpulse:cpVect() Extension="cpArbiterTotalImpulse"
+
+	Property TotalKE:cpFloat() Extension="cpArbiterTotalKE"
+
+	Property Ignore:cpBool() Extension="cpArbiterIgnore"
+
+	Property IsFirstContact:cpBool() Extension="cpArbiterIsFirstContact"
+	
+	Property IsRemoval:cpBool() Extension="cpArbiterIsRemoval"
+	
+	Property Normal:cpVect() Extension="cpArbiterGetNormal"
+	
+	Property Count:Int() Extension="cpArbiterGetCount"
+	
+	Method GetShapes:Void( a:cpShape Ptr, b:cpShape Ptr ) Extension="cpArbiterGetShapes"
+	
+	Method GetBodies:Void( a:cpBody Ptr, b:cpBody Ptr ) Extension="cpArbiterGetBodies"
+	
+	Method GetCount:Int() Extension="cpArbiterGetCount"
+	
+	Method GetPointA:cpVect( i:Int ) Extension="cpArbiterGetPointA"
+
+	Method GetPointB:cpVect( i:Int ) Extension="cpArbiterGetPointB"
+
+	Method GetDepth:cpFloat( i:Int ) Extension="cpArbiterGetDepth"
+	
+End
