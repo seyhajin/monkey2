@@ -87,25 +87,37 @@ class bbString{
 	bbString( const wchar_t *data,int length ):_rep( Rep::create( data,length ) ){
 	}
 
-	explicit bbString( bbInt n ){
+	explicit bbString( int n ){
 		char data[64];
-		sprintf( data,"%i",n );
+		sprintf( data,"%d",n );
 		_rep=Rep::create( data );
 	}
 	
-	explicit bbString( bbUInt n ){
+	explicit bbString( unsigned int n ){
 		char data[64];
 		sprintf( data,"%u",n );
 		_rep=Rep::create( data );
 	}
 	
-	explicit bbString( bbLong n ){
+	explicit bbString( long n ){
+		char data[64];
+		sprintf( data,"%ld",n );
+		_rep=Rep::create( data );
+	}
+	
+	explicit bbString( unsigned long n ){
+		char data[64];
+		sprintf( data,"%lu",n );
+		_rep=Rep::create( data );
+	}
+	
+	explicit bbString( long long n ){
 		char data[64];
 		sprintf( data,"%lld",n );
 		_rep=Rep::create( data );
 	}
 	
-	explicit bbString( bbULong n ){
+	explicit bbString( unsigned long long n ){
 		char data[64];
 		sprintf( data,"%llu",n );
 		_rep=Rep::create( data );
