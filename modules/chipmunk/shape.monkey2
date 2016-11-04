@@ -5,11 +5,7 @@ Namespace chipmunk
 
 Extern
 
-Class cpCircleShape Extends Void
-End
-
-Class cpSegmentShape Extends Void
-End
+'***** File: Chipmunk7/include/chipmunk/cpShape.h *****
 
 Struct cpPointQueryInfo
 	Field shape:cpShape
@@ -81,6 +77,21 @@ Function cpSegmentShapeGetB:cpVect( shape:cpShape )
 Function cpSegmentShapeGetNormal:cpVect( shape:cpShape )
 Function cpSegmentShapeGetRadius:cpFloat( shape:cpShape )
 
+'***** File: Chipmunk7/include/chipmunk/cpPolyShape.h *****
+
+Function cpPolyShapeAlloc:cpPolyShape(  )
+Function cpPolyShapeInit:cpPolyShape( poly:cpPolyShape, body:cpBody Ptr, count:Int, verts:cpVect Ptr, transform:cpTransform, radius:cpFloat )
+Function cpPolyShapeInitRaw:cpPolyShape( poly:cpPolyShape, body:cpBody Ptr, count:Int, verts:cpVect Ptr, radius:cpFloat )
+Function cpPolyShapeNew:cpShape( body:cpBody Ptr, count:Int, verts:cpVect Ptr, transform:cpTransform, radius:cpFloat )
+Function cpPolyShapeNewRaw:cpShape( body:cpBody Ptr, count:Int, verts:cpVect Ptr, radius:cpFloat )
+Function cpBoxShapeInit:cpPolyShape( poly:cpPolyShape, body:cpBody Ptr, width:cpFloat, height:cpFloat, radius:cpFloat )
+Function cpBoxShapeInit2:cpPolyShape( poly:cpPolyShape, body:cpBody Ptr, box:cpBB, radius:cpFloat )
+Function cpBoxShapeNew:cpShape( body:cpBody Ptr, width:cpFloat, height:cpFloat, radius:cpFloat )
+Function cpBoxShapeNew2:cpShape( body:cpBody Ptr, box:cpBB, radius:cpFloat )
+Function cpPolyShapeGetCount:Int( shape:cpShape )
+Function cpPolyShapeGetVert:cpVect( shape:cpShape, index:Int )
+Function cpPolyShapeGetRadius:cpFloat( shape:cpShape )
+
 Class cpShape Extends Void
 
 	Property Body:cpBody() Extension="cpShapeGetBody"
@@ -130,6 +141,14 @@ Class cpShape Extends Void
 	
 	Property SegmentB:cpVect() Extension="cpSegmentShapeGetB"
 	
+	Property PolyShapeRadius:cpFloat() Extension="cpPolyShapeGetRadius"
+	
+	Property PolyShapeCount:Int() Extension="cpPolyShapeGetCount"
+	
+	Method GetPolyShapeCount:Int() Extension="cpPolyShapeGetCount"
+	
+	Method GetPolyShapeVert:cpVect( index:Int ) Extension="cpPolyShapeGetVert"
+	
 	Method Update:cpBB( transform:cpTransform ) Extension="cpShapeUpdate"
 	
 	Method PointQuery:cpFloat( p:cpVect, out:cpPointQueryInfo Ptr ) Extension="cpShapePointQuery"
@@ -138,4 +157,13 @@ Class cpShape Extends Void
 	
 	Method sCollide:cpContactPointSet( a:cpShape, b:cpShape ) Extension="cpShapesCollide"
 	
+End
+
+Class cpCircleShape Extends Void
+End
+
+Class cpSegmentShape Extends Void
+End
+
+Class cpPolyShape Extends Void
 End

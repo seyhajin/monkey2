@@ -5,6 +5,8 @@ Namespace chipmunk
 
 Extern
 
+'***** File: Chipmunk7/include/chipmunk/cpBody.h *****
+
 Enum cpBodyType
 End
 Const CP_BODY_TYPE_DYNAMIC:cpBodyType

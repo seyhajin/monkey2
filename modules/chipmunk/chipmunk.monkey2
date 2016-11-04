@@ -5,6 +5,7 @@ Namespace chipmunk
 
 #Import "Chipmunk7/include/*.h"
 
+#Import "spatialindex"
 #Import "space"
 #Import "shape"
 #Import "body"
