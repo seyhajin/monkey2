@@ -145,13 +145,13 @@ Class Translator_CPP Extends Translator
 
 		EmitBr()
 		For Local vvar:=Eachin fdecl.globals
-			Refs( vvar.type )
+			Refs( vvar.type,True )
 			Emit( "extern "+VarProto( vvar )+";" )
 		Next
 		
 		EmitBr()
 		For Local func:=Eachin fdecl.functions
-			Refs( func.ftype )
+			Refs( func.ftype,True )
 			Emit( "extern "+FuncProto( func,True )+";" )
 		Next
 		
@@ -489,7 +489,7 @@ Class Translator_CPP Extends Translator
 			hasCtor=True
 			If Not func.ftype.argTypes hasDefaultCtor=True
 			
-			Refs( func.ftype )
+			Refs( func.ftype,True )
 			Emit( FuncProto( func,true )+";" )
 
 		Next
@@ -507,7 +507,7 @@ Class Translator_CPP Extends Translator
 			
 			If func.fdecl.ident="<=>" hasCmp=True
 			
-			Refs( func.ftype )
+			Refs( func.ftype,True )
 			Emit( FuncProto( func,True )+";" )
 
 		Next
