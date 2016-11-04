@@ -84,17 +84,28 @@ Class List<T> Implements IContainer<T>
 			_value=value
 		End
 		
-		#rem monkeydoc Inserts the node before another node.
+		#rem monkeydoc Removes this node.
 		
 		Warning! No error checking is performed!
+		
+		This method should not be used while iterating over the list containing this node.
+		
+		#end
+		Method Remove()
+			If _succ._pred<>Self Or _pred._succ<>Self Return
+			_succ._pred=_pred
+			_pred._succ=_succ
+		End
+		
+		#rem monkeydoc Inserts the node before another node.
+		
+		If the node is already in a list, it is removed before insertion.
 		
 		This method should not be used while iterating over the list containing this node or `node`.
 		
 		#end
 		Method InsertBefore( node:Node )
-			'remove
-			_succ._pred=_pred
-			_pred._succ=_succ
+			Remove()
 			'insert
 			_succ=node
 			_pred=node._pred
@@ -104,34 +115,18 @@ Class List<T> Implements IContainer<T>
 		
 		#rem monkeydoc Inserts the node after another node.
 		
-		Warning! No error checking is performed! 
+		If the node is already in a list, it is removed before insertion.
 		
 		This method should not be used while iterating over the list containing this node or `node`.
 		
 		#end
 		Method InsertAfter( node:Node )
-			'remove
-			_succ._pred=_pred
-			_pred._succ=_succ
+			Remove()
 			'insert
 			_pred=node
 			_succ=node._succ
 			_succ._pred=Self
 			node._succ=Self
-		End
-		
-		#rem monkeydoc Removes this node.
-		
-		Warning! No error checking is performed!
-		
-		This method should not be used while iterating over the list containing this node.
-		
-		#end
-		Method Remove()
-			_succ._pred=_pred
-			_pred._succ=_succ
-			_succ=Self
-			_pred=Self
 		End
 		
 	End
