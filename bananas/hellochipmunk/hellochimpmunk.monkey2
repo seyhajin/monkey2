@@ -62,45 +62,34 @@ Class HelloChipmunk Extends Window
 		
 		Local handler:=space.AddDefaultCollisionHandler()
 		
-		handler.beginFunc=CollBegin
-	End
+		'Add collision handler...
+		handler.beginFunc=Lambda:cpBool( arbiter:cpArbiter,space:cpSpace,data:cpDataPointer )
 
-	Method CollBegin:cpBool( arbiter:cpArbiter,space:cpSpace,data:cpDataPointer )
-	
-		Local a:cpShape,b:cpShape
-		
-		arbiter.GetShapes( Varptr a,Varptr b )
-		
-		Print "Collision! a="+a.CollisionType+", b="+b.CollisionType
-		
-		Return true
+			Local a:cpShape,b:cpShape
+			
+			arbiter.GetShapes( Varptr a,Varptr b )
+			
+			Print "Collision! a="+a.CollisionType+", b="+b.CollisionType
+			
+			Return True
+		End
 	End
 
 	Method OnRender( canvas:Canvas ) Override
 	
 		App.RequestRender()
 	
-		'It is *highly* recommended to use a fixed size time step.
-		Local timeStep:=1.0/60.0
+		Const timeStep:=1.0/60.0
 		
 		space.StepTime( timeStep )
 		
-		Local rot:=ballBody.Rotation
-		Local pos:=ballBody.Position
-		Local vel:=ballBody.Velocity
-
-		Print "ball rot="+ATan2( rot.y,rot.x )+", pos.x="+pos.x+", pos.y="+pos.y+", vel.x="+vel.x+", vel.y="+vel.y
+'		Local rot:=ballBody.Rotation
+'		Local pos:=ballBody.Position
+'		Local vel:=ballBody.Velocity
+'		Print "ball rot="+ATan2( rot.y,rot.x )+", pos.x="+pos.x+", pos.y="+pos.y+", vel.x="+vel.x+", vel.y="+vel.y
 		
 		canvas.Translate( Width/2,Height/2 )
 		
-		canvas.DrawCircle( pos.x,pos.y,10 )
-		
-		canvas.Color=Color.Black
-		canvas.DrawLine( pos.x,pos.y,pos.x+rot.x*10,pos.y+rot.y*10 )
-		
-		canvas.Color=Color.Blue
-		canvas.DrawLine( -100,15,100,-15 )
-
 		debugger.DebugDraw( canvas,space )
 	End
 	
