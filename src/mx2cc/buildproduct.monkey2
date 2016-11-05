@@ -507,6 +507,8 @@ Class GccBuildProduct Extends BuildProduct
 			If ExtractExt( outputFile ).ToLower()<>".js" And ExtractExt( outputFile ).ToLower()<>".html" outputFile+=".html"
 			
 			cmd+=" --preload-file ~q"+assetsDir+"@/assets~q"
+			
+			If opts.wasm cmd+=" -s BINARYEN=1"
 		End
 		
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."
@@ -560,12 +562,13 @@ Class GccBuildProduct Extends BuildProduct
 	Method Run() Override
 	
 		Local run:=""
-		If opts.target="emscripten"
+		Select opts.target
+		Case "emscripten"
 			Local mserver:=GetEnv( "MX2_MSERVER" )
 			run=mserver+" ~q"+outputFile+"~q"
-		Else
+		Default
 			run="~q"+outputFile+"~q"
-		Endif
+		End
 		
 		If opts.verbose>=0 Print "Running "+outputFile
 		Exec( run )
