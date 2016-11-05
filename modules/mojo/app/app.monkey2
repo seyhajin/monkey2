@@ -674,10 +674,18 @@ Class AppInstance
 			
 			_window=Window.WindowForID( kevent->windowID )
 			If Not _window Return
+
+			Local key:=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			
-			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
+#If __TARGET__="macos"
+			If key=Key.Q And (Keyboard.Modifiers & Modifier.Menu)
+				If kevent->repeat_ Return
+				SendWindowEvent( EventType.WindowClose )
+				Return
+			Endif
+#Endif
+			_key=key
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
-'			_modifiers=Keyboard.Modifiers
 			_keyChar=Keyboard.KeyName( _key )
 			
 			If kevent->repeat_
@@ -697,7 +705,6 @@ Class AppInstance
 			
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
-'			_modifiers=Keyboard.Modifiers
 			_keyChar=Keyboard.KeyName( _key )
 			
 			SendKeyEvent( EventType.KeyUp )

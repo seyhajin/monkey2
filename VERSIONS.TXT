@@ -1,4 +1,8 @@
 
+Fixed macos drop file.
+
+Added cmd-q causes closewindow event for macos.
+
 Tidied up chipmunk module.
 
 Added List.RemoveIf and Stack.RemoveIf.
