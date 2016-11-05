@@ -11,15 +11,17 @@
 	<script>
 	
 	function openDocsPage( page ){
-	
+
 		if( page.indexOf( '#' )!=-1 ){
 			
-			var url='../modules/'+page.replace( ':','/docs/__MANPAGES__/' ).replace( /\#/g,'.md.html#' );
+			var url='../../../'+page.replace( ':','/docs/__MANPAGES__/' ).replace( /\#/g,'.md.html#' );
 				
 		}else{
 			
-			var url='../modules/'+page.replace( ':','/docs/__PAGES__/' ).replace( /\./g,'-' )+'.html';
+			var url='../../../'+page.replace( ':','/docs/__PAGES__/' ).replace( /\./g,'-' )+'.html';
 		}
+
+		alert( 'page='+page+', url='+url );
 			
 		document.location.href=url;
 		
