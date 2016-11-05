@@ -171,6 +171,8 @@ Class Action
 	
 		If Not _hotKey Return
 		
+		If _hotKeyMods & Modifier.Ignore Return
+		
 		If Not _hotKeys
 			
 			_hotKeys=New Map<Key,Stack<Action>>

@@ -170,6 +170,7 @@ Enum Modifier
 	RightGui=		$0800
 	NumLock=		$1000
 	CapsLock=		$2000
+	Ignore=			$4000
 	
 	Shift=			LeftShift|RightShift
 	Control=		LeftControl|RightControl
