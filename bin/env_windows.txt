@@ -39,26 +39,28 @@ MX2_CPP_OPTS_WINDOWS_DEBUG=
 MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG ' -fvtable-gc -fdata-sections -ffunction-sections
 
 
-'***** EMSCRIPTEN *****
+'***** EMSCRIPTEN/WASM *****
 
-'Forbuild emscripten apps, you'll need to download and install emscripten.
+'To build emscripten apps, you'll need to download and install emscripten.
 '
-'To run emscripten apps, you'll need MonkeyXFree86c in your devtools directory.
+'To build wasm apps, you'll to install/build emscripten 'icoming' branch.
+'
+'To run emscripten/wasm apps, you'll need MonkeyXFree86c in your devtools directory.
 
 MX2_MSERVER="${MX2_HOME}\devtools\mserver-v86c\mserver_winnt.exe"
 
 'Linker options
-MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1 '-s BINARYEN=1
+MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_LD_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 'C Compiler options
-MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1 '-s BINARYEN=1
+MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 'C++ Compiler options
-MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1 '-s BINARYEN=1
+MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3
 

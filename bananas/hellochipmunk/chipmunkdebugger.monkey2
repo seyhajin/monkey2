@@ -33,6 +33,10 @@ Class ChipmunkDebugger
 		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b,fillColor.a )
 		
 		_canvas.DrawCircle( pos.x,pos.y,radius )
+		
+		_canvas.Color=Color.Black
+		
+		_canvas.DrawLine( pos.x,pos.y,pos.x+Cos( angle )*radius,pos.y+Sin( angle )*radius )
 	End
 	
 	Method DrawSegment( a:cpVect,b:cpVect,color:cpSpaceDebugColor,data:cpDataPointer )

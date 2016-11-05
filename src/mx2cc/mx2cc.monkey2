@@ -21,7 +21,7 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"' monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makedocs chipmunk"'makemods"' monkey libc miniz stb-image stb-image-write stb-vorbis std"
 
 'Const TestArgs:="mx2cc makeapp -apptype=console src/mx2cc/test.monkey2"
 
@@ -78,7 +78,7 @@ Function Main()
 		Print "  -build       - parse, semant, translate and build"
 		Print "  -run         - the works! The default."
 		Print "  -apptype=    - app type to make, one of : gui, console. Defaults to gui."
-		print "  -target=     - build target, one of: windows, macos, linux, emscripten, android, ios, desktop. Desktop is alias for current host. Defaults to desktop."
+		print "  -target=     - build target, one of: windows, macos, linux, emscripten, wasm, android, ios, desktop. Desktop is an alias for current host. Defaults to desktop."
 		Print "  -config=     - build config, one of: debug, release. Defaults to debug."
 		Print ""
 		Print "Sources:"
@@ -380,10 +380,10 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 			End
 		Case "-target"
 			Select val
-			Case "desktop","windows","macos","linux","raspbian","emscripten","android","ios"
+			Case "desktop","windows","macos","linux","raspbian","emscripten","wasm","android","ios"
 				opts.target=val
 			Default
-				Fail( "Invalid value for 'target' option: '"+val+"' - must be 'desktop', 'raspbian', 'emscripten', 'android' or 'ios'" )
+				Fail( "Invalid value for 'target' option: '"+val+"' - must be 'desktop', 'raspbian', 'emscripten', 'wasm', 'android' or 'ios'" )
 			End
 		Case "-config"
 			Select val
