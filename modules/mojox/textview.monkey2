@@ -894,15 +894,24 @@ Class TextView Extends ScrollableView
 			ReplaceText( "" )
 				
 		Case Key.Tab
+		
+			Local cmin:=Min( _cursor,_anchor )
+			Local cmax:=Max( _cursor,_anchor )
 			
-			Local min:=_doc.FindLine( Min( _cursor,_anchor ) )
-			Local max:=_doc.FindLine( Max( _cursor,_anchor ) )
+			Local min:=_doc.FindLine( cmin )
+			Local max:=_doc.FindLine( cmax )
 				
 			If min=max
 				ReplaceText( "~t" )
 			Else
+				'select all lines...
+				cmin=_doc.StartOfLine( min )
+				If _doc.StartOfLine( max )<>cmax 
+					max+=1
+					cmax=_doc.StartOfLine( max )
+				Endif
+				SelectText( cmin,cmax )
 				
-				'block tab/untab
 				Local lines:=New StringStack
 					
 				For Local i:=min Until max
@@ -936,7 +945,6 @@ Class TextView Extends ScrollableView
 				Endif
 					
 				If go
-					SelectText( _doc.StartOfLine( min ),_doc.StartOfLine( max ) )
 					ReplaceText( lines.Join( "" ) )
 					SelectText( _doc.StartOfLine( min ),_doc.StartOfLine( max ) )
 					Return False					
@@ -1043,29 +1051,39 @@ Class TextView Extends ScrollableView
 			UpdateCursor()
 			Return True
 		Case Key.Left
+		
 			If _anchor<>_cursor And Not (modifiers & Modifier.Shift)
 				_cursor=Min( _anchor,_cursor )
 			Endif
-			Local term:=New Int[1]
-			Local start:=FindWord( _cursor,term )
-			_cursor=Max( start-1,0 )
+			
 			Local text:=Text
+			Local term:=New Int[1]
+			_cursor=FindWord( _cursor,term )
+			
 			While _cursor And text[_cursor-1]<=32 And text[_cursor-1]<>10
 				_cursor-=1
 			Wend
+			
+			_cursor=FindWord( Max( _cursor-1,0 ),term )
 			UpdateCursor()
 			Return True
+
 		Case Key.Right
+		
 			If _anchor<>_cursor And Not (modifiers & Modifier.Shift)
 				_cursor=Max( _anchor,_cursor )
 			Endif
-			Local term:=New Int[1]
-			Local start:=FindWord( _cursor,term )
-			_cursor=term[0]
+		
+			'next word...	
 			Local text:=Text
+			Local term:=New Int[1]
+			FindWord( _cursor,term )
+			_cursor=term[0]
+			
 			While _cursor<text.Length And text[_cursor]<=32 And text[_cursor]<>10
 				_cursor+=1
 			Wend
+			
 			UpdateCursor()
 			Return True
 		End
