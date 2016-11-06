@@ -41,7 +41,7 @@ Class MarkdownConvertor
 				
 			Else If line.StartsWith( "---" )
 			
-				Emit( "<hr>" )
+				Emit( "<hr class="+_cls+">" )
 				
 			Else If line.StartsWith( "<" )
 			
@@ -50,7 +50,7 @@ Class MarkdownConvertor
 			Else If line
 			
 				If _lineNum>1 And _lines[_lineNum-2]=""
-					Emit( "<p>"+Escape( line ) )
+					Emit( "<p class="+_cls+">"+Escape( line ) )
 				Else
 					Emit( Escape( line ) )
 				Endif
@@ -80,6 +80,8 @@ Class MarkdownConvertor
 	End
 
 	Private
+	
+	Field _cls:="~qmx2docs~q"
 	
 	Field _src:String
 	Field _lines:String[]
@@ -373,7 +375,7 @@ Class MarkdownConvertor
 			i+=1
 		Wend
 				
-		Emit( "<h"+i+">" )
+		Emit( "<h"+i+" cls="+_cls+">" )
 		Emit( Escape( line.Slice( i ).TrimStart() ) )
 		Emit( "</h"+i+">" )
 	End
@@ -421,9 +423,9 @@ Class MarkdownConvertor
 			aligns.Push( "center" )
 		Wend
 				
-		Emit( "<table>" )
+		Emit( "<table class="+_cls+">" )
 
-		Emit( "<tr>" )
+		Emit( "<tr class="+_cls+">" )
 		For Local i:=0 Until heads.Length
 			Emit( "<th style=~qtext-align:"+aligns[i]+"~q>"+heads[i]+"</th>" )
 		Next
@@ -436,11 +438,11 @@ Class MarkdownConvertor
 				Exit
 			Endif
 					
-			Emit( "<tr>" )
+			Emit( "<tr class="+_cls+">" )
 			Local i0:=1,col:=0
 			While i0<row.Length And col<heads.Length
 				Local i1:=Find( row,"|",i0 )
-				Emit( "<td style=~qtext-align:"+aligns[col]+"~q>"+Escape( row.Slice( i0,i1 ).TrimStart() )+"</td>" )
+				Emit( "<td class="+_cls+" style=~qtext-align:"+aligns[col]+"~q>"+Escape( row.Slice( i0,i1 ).TrimStart() )+"</td>" )
 				i0=i1+1
 				col+=1
 			Wend
@@ -462,7 +464,7 @@ Class MarkdownConvertor
 		
 		Repeat
 		
-			Emit( "<li>"+Escape( line.Slice( 1 ) )+"</li>" )
+			Emit( "<li class="+_cls+">"+Escape( line.Slice( 1 ) )+"</li>" )
 			
 			If AtEnd Exit
 		
@@ -483,7 +485,7 @@ Class MarkdownConvertor
 	
 	Method EmitCode( line:String )
 	
-		Emit( "<pre><code>\" )
+		Emit( "<pre class="+_cls+"><code class="+_cls+">\" )
 	
 		While Not AtEnd
 		
