@@ -1,9 +1,9 @@
 
-#import "<std>"
-#import "<mojo>"
-#import "<mojox>"
+#Import "<std>"
+#Import "<mojo>"
+#Import "<mojox>"
 
-#import "assets/mainwindow.monkey2@/"
+#Import "assets/mainwindow.monkey2@/"
 
 Using std..
 Using mojo..

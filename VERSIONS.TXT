@@ -1,4 +1,8 @@
 
+Fixed previous word.
+
+Block tab/untab selects all lines.
+
 Fixed macos drop file.
 
 Added cmd-q causes closewindow event for macos.
