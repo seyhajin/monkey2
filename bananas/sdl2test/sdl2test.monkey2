@@ -22,6 +22,9 @@ Class SdlWindow
 		
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_ES )
 		
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,2 )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 )
+		
 		sdlWindow=SDL_CreateWindow( "SDL2 OpenGL Window",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_OPENGL )
 		
 		sdlGLContext=SDL_GL_CreateContext( sdlWindow )
