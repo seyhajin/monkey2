@@ -668,6 +668,13 @@ Class AppInstance
 	
 		Select event->type
 		
+#If __TARGET__="macos"
+
+		Case SDL_QUIT
+		
+			If _activeWindow _activeWindow.SendWindowEvent( New WindowEvent( EventType.WindowClose,_activeWindow ) )
+#Endif		
+		
 		Case SDL_KEYDOWN
 		
 			Local kevent:=Cast<SDL_KeyboardEvent Ptr>( event )
@@ -675,16 +682,7 @@ Class AppInstance
 			_window=Window.WindowForID( kevent->windowID )
 			If Not _window Return
 
-			Local key:=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
-			
-#If __TARGET__="macos"
-			If key=Key.Q And (Keyboard.Modifiers & Modifier.Menu)
-				If kevent->repeat_ Return
-				SendWindowEvent( EventType.WindowClose )
-				Return
-			Endif
-#Endif
-			_key=key
+			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
 			_keyChar=Keyboard.KeyName( _key )
 			
