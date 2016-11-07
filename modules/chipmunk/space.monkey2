@@ -64,7 +64,7 @@ Alias cpSpaceBBQueryFunc:Void( cpShape, Void Ptr )
 Alias cpSpaceShapeQueryFunc:Void( cpShape, cpContactPointSet Ptr, Void Ptr )
 Alias cpSpaceBodyIteratorFunc:Void( cpBody, Void Ptr )
 Alias cpSpaceShapeIteratorFunc:Void( cpShape, Void Ptr )
-Alias cpSpaceConstraintIteratorFunc:Void( cpConstraint Ptr, Void Ptr )
+Alias cpSpaceConstraintIteratorFunc:Void( cpConstraint, Void Ptr )
 
 Function cpSpaceAlloc:cpSpace(  )
 Function cpSpaceInit:cpSpace( space:cpSpace )
@@ -97,13 +97,13 @@ Function cpSpaceAddCollisionHandler:cpCollisionHandler( space:cpSpace, a:cpColli
 Function cpSpaceAddWildcardHandler:cpCollisionHandler( space:cpSpace, type:cpCollisionType )="bb_cpSpaceAddWildcardHandler"
 Function cpSpaceAddShape:cpShape( space:cpSpace, shape:cpShape )
 Function cpSpaceAddBody:cpBody( space:cpSpace, body:cpBody )
-Function cpSpaceAddConstraint:cpConstraint Ptr( space:cpSpace, constraint:cpConstraint Ptr )
+Function cpSpaceAddConstraint:cpConstraint( space:cpSpace, constraint:cpConstraint )
 Function cpSpaceRemoveShape:Void( space:cpSpace, shape:cpShape )
 Function cpSpaceRemoveBody:Void( space:cpSpace, body:cpBody )
-Function cpSpaceRemoveConstraint:Void( space:cpSpace, constraint:cpConstraint Ptr )
+Function cpSpaceRemoveConstraint:Void( space:cpSpace, constraint:cpConstraint )
 Function cpSpaceContainsShape:cpBool( space:cpSpace, shape:cpShape )
 Function cpSpaceContainsBody:cpBool( space:cpSpace, body:cpBody )
-Function cpSpaceContainsConstraint:cpBool( space:cpSpace, constraint:cpConstraint Ptr )
+Function cpSpaceContainsConstraint:cpBool( space:cpSpace, constraint:cpConstraint )
 Function cpSpaceAddPostStepCallback:cpBool( space:cpSpace, func:cpPostStepFunc, key:Void Ptr, data:Void Ptr )
 Function cpSpacePointQuery:Void( space:cpSpace, point:cpVect, maxDistance:cpFloat, filter:cpShapeFilter, func:cpSpacePointQueryFunc, data:Void Ptr )
 Function cpSpacePointQueryNearest:cpShape( space:cpSpace, point:cpVect, maxDistance:cpFloat, filter:cpShapeFilter, out:cpPointQueryInfo Ptr )
@@ -162,9 +162,13 @@ Class cpSpace Extends Void
 	
 	Method AddBody:cpBody( body:cpBody ) Extension="cpSpaceAddBody"
 
+	Method AddConstraint:cpConstraint( constraint:cpConstraint ) Extension="cpSpaceAddConstraint"
+	
 	Method RemoveShape( shape:cpShape ) Extension="cpSpaceRemoveShape"
 	
 	Method RemoveBody( body:cpBody ) Extension="cpSpaceRemoveBody"
+
+	Method RemoveConstraint( constraint:cpConstraint ) Extension="cpSpaceRemoveConstraint"
 
 	Method AddDefaultCollisionHandler:cpCollisionHandler() Extension="bb_cpSpaceAddDefaultCollisionHandler"
 	
