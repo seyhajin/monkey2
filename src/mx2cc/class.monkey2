@@ -273,14 +273,13 @@ Class ClassType Extends Type
 				If func.ftype.argTypes Continue
 				hasDefaultCtor=True
 			Next
-		Else
+		Else If Not cdecl.IsExtension
 			If superType And Not superType.hasDefaultCtor
 				Try
 					Throw New SemantEx( "Super class '"+superType.Name+"' has no default constructor" )
 				Catch ex:SemantEx
 				End
 			Endif
-			
 			hasDefaultCtor=True
 		Endif
 		

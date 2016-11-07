@@ -313,6 +313,8 @@ Class AppInstance
 		Return _mouseLocation
 	End
 	
+	#rem monkeydoc @hidden
+	#end
 	Property ModalView:View()
 	
 		Return _modalView
@@ -335,8 +337,11 @@ Class AppInstance
 		Return std.time.Millisecs()
 	End
 	
-#If __TARGET__<>"emscripten"
-
+	#rem monkeydoc Puts the app to sleep.
+	
+	Note: Use of this method is not recommended, as the app will be unresponsive while sleeping!
+	
+	#end
 	Method Sleep( seconds:Double )
 	
 		Local timeout:=Now()+seconds
@@ -354,8 +359,6 @@ Class AppInstance
 		Forever
 	
 	End
-
-#endif
 	
 #If __DESKTOP_TARGET__
 	
@@ -431,7 +434,7 @@ Class AppInstance
 		_requestRender=True
 	End
 
-	#rem @hidden
+	#rem monkeydoc @hidden
 	#end
 	Method MainLoop()
 	
@@ -446,14 +449,14 @@ Class AppInstance
 		UpdateWindows()
 	End
 	
-	#rem @hiddden
+	#rem monkeydoc @hidden
 	#end
 	Method IsActive:Bool( view:View )
 	
 		Return view And view.Active And (Not _modalView Or view.IsChildOf( _modalView ))
 	End
 	
-	#rem @hiddden
+	#rem monkeydoc @hidden
 	#end
 	Method ActiveViewAtMouseLocation:View()
 	
@@ -465,7 +468,7 @@ Class AppInstance
 		Return Null
 	End
 
-	#rem @hidden
+	#rem monkeydoc @hidden
 	#end	
 	Method UpdateWindows()
 	
