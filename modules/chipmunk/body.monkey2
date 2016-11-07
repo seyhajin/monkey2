@@ -17,8 +17,8 @@ Alias cpBodyVelocityFunc:Void( cpBody, cpVect, cpFloat, cpFloat )
 Alias cpBodyPositionFunc:Void( cpBody, cpFloat )
 
 Alias cpBodyShapeIteratorFunc:Void( cpBody, cpShape, Void Ptr )
-Alias cpBodyConstraintIteratorFunc:Void( cpBody, cpConstraint Ptr, Void Ptr )
-Alias cpBodyArbiterIteratorFunc:Void( cpBody, cpArbiter Ptr, Void Ptr )
+Alias cpBodyConstraintIteratorFunc:Void( cpBody, cpConstraint, Void Ptr )
+Alias cpBodyArbiterIteratorFunc:Void( cpBody, cpArbiter, Void Ptr )
 
 Function cpBodyAlloc:cpBody(  )
 Function cpBodyInit:cpBody( body:cpBody, mass:cpFloat, moment:cpFloat )
