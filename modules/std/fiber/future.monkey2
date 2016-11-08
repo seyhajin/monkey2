@@ -15,7 +15,7 @@ The general usage pattern of futures is:
 
 * Fiber B performs some operation, then calls [[Set]] on the future. This will resume Fiber A.
 
-A future can be resued. Each time [[Get]] is called, the fiber will suspend until another fiber calls [[Set]].
+A future can only be set once.
 
 #end
 Class Future<T>
@@ -29,14 +29,20 @@ Class Future<T>
 	#rem monkeydoc Sets the future's value.
 	#end	
 	Method Set( value:T )
+		DebugAssert( Not _ready,"Future has already be set" )
 		_value=value
-		_fiber.Resume()
+		_ready=True
+		If _waiting _fiber.Resume()
 	End
 	
 	#rem monkeydoc Gets the future's value.
 	#end
 	Method Get:T()
-		Fiber.Suspend()
+		If Not _ready
+			_waiting=True
+			Fiber.Suspend()
+			_waiting=false
+		Endif
 		Return _value
 	End
 
@@ -44,6 +50,8 @@ Class Future<T>
 		
 	Field _fiber:Fiber
 	Field _value:T
+	Field _ready:Bool
+	Field _waiting:Bool
 	
 End
 
