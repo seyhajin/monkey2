@@ -10,7 +10,7 @@ Class AliasDecl Extends Decl
 	
 		Local types:=New Type[genArgs.Length]
 		For Local i:=0 Until types.Length
-			types[i]=New GenArgType( i,genArgs[i],Null,Null )
+			types[i]=New GenArgType( i,genArgs[i] )',Null,Null )
 		Next
 		
 		Return New AliasType( Self,scope,types,Null )

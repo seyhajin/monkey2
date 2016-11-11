@@ -216,7 +216,7 @@ Class PrimType Extends Type
 	End
 	
 	Method ToString:String() Override
-		Return ctype.cdecl.ident'.Slice( 1 )	'slice off '@' prefix
+		Return ctype.Name'cdecl.ident'.Slice( 1 )	'slice off '@' prefix
 	End
 	
 	Property Name:String() Override
@@ -595,8 +595,6 @@ Class FuncType Extends Type
 '		If type.Equals( BoolType ) Return MAX_DISTANCE			'NO func->bool yet!
 		If type.Equals( VariantType ) Return MAX_DISTANCE
 		
-'		If type.Dealias Return MAX_DISTANCE
-		
 		Return -1
 	End
 	
@@ -604,9 +602,12 @@ Class FuncType Extends Type
 	
 		If Not IsGeneric Return Super.InferType( type,infered )
 		
+'		Local flist:=TCast<FuncListType>( type )
+'		If flist Return flist.FindInfered( Self,infered )
+		
 		Local ftype:=TCast<FuncType>( type )
 		If Not ftype Or argTypes.Length<>ftype.argTypes.Length Return Null
-		
+				
 		Local retType:=Self.retType.InferType( ftype.retType,infered )
 		If Not retType Return Null
 		
@@ -622,6 +623,7 @@ Class FuncType Extends Type
 	
 End
 
+#rem
 Class GenArgType Extends Type
 
 	Field index:int
@@ -687,6 +689,8 @@ Class GenArgType Extends Type
 	
 	Method InferType:Type( type:Type,infered:Type[] ) Override
 	
+		If TCast<FuncListType>( type ) Return Null
+	
 		If types
 		
 			Local ctype:=TCast<ClassType>( type )
@@ -711,6 +715,61 @@ Class GenArgType Extends Type
 			Next
 			
 		Endif
+	
+		If Not infered[index]
+			infered[index]=type
+			Return type
+		Endif
+		
+		If infered[index].Equals( type ) Return type
+		
+		infered[index]=Type.BadType
+		
+		Return Null
+	End
+	
+End
+#end
+
+Class GenArgType Extends Type
+
+	Field index:int
+	Field ident:String
+	
+	Method New( index:Int,ident:String )
+		Self.index=index
+		Self.ident=ident
+		
+		flags|=TYPE_GENERIC
+	End
+	
+	Method ToString:String() Override
+	
+		Return ident+"?"
+	End
+	
+	Property Name:String() Override
+	
+		Return ident+"?"
+	End
+	
+	Property TypeId:String() Override
+	
+		SemantError( "GenArgType.TypeId()" )
+		Return ""
+	End
+	
+	Method Equals:Bool( type:Type ) Override
+	
+		If type=Self Return True
+		
+		Local gtype:=TCast<GenArgType>( type )
+		Return gtype And index=gtype.index And ident=gtype.ident
+	End
+	
+	Method InferType:Type( type:Type,infered:Type[] ) Override
+	
+		If TCast<FuncListType>( type ) Return Null
 	
 		If Not infered[index]
 			infered[index]=type

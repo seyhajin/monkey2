@@ -11,7 +11,7 @@ Class ClassDecl Extends Decl
 	
 		Local types:=New Type[genArgs.Length]
 		For Local i:=0 Until types.Length
-			types[i]=New GenArgType( i,genArgs[i],Null,Null )
+			types[i]=New GenArgType( i,genArgs[i] )',Null,Null )
 		Next
 		
 		Return New ClassType( Self,scope,types,Null )
@@ -431,8 +431,6 @@ Class ClassType Extends Type
 		If Not IsGeneric Throw New SemantEx( "Class '"+ToString()+"' is not generic" )
 
 		If types.Length<>Self.types.Length Throw New SemantEx( "Wrong number of generic type parameters" )
-
-'		If AnyTypeGeneric( types ) Return Self
 
 		If Not instances instances=New Stack<ClassType>
 	

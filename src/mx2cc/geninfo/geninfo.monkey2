@@ -68,6 +68,15 @@ Class ParseInfoGenerator
 		
 		Return MakeNode( decl )
 	End
+
+	Method GenNode:JsonObject( decl:FileDecl )
+	
+		local node:=MakeNode( decl )
+		
+		If decl.imports node.SetValue( "imports",GenNode( decl.imports ) )
+		
+		Return node
+	End
 	
 	Method GenNode:JsonObject( decl:ClassDecl )
 	

@@ -3,7 +3,7 @@ Namespace mx2.overload
 
 Private
 
-Const debug:=False
+Const debug:=False'True
 
 Function dprint( txt:String )
 	Global tab:=""
@@ -12,79 +12,53 @@ Function dprint( txt:String )
 	If txt.EndsWith( "{" ) tab+="  "
 End
 
-Function IsCandidate:Bool( func:FuncValue,ret:Type,args:Type[],infered:Type[] )
+Function GenCandidate:FuncValue( func:FuncValue,ret:Type,args:Type[] )
 
 	Local ftype:=func.ftype
 	Local retType:=ftype.retType
 	Local argTypes:=ftype.argTypes
 	
-	If args.Length>argTypes.Length Return False
+	If args.Length>argTypes.Length Return Null
+	
+	Local infered:Type[]
+	If func.IsGeneric infered=New Type[func.types.Length]
 	
 	If ret
 		If retType.IsGeneric
 			retType=retType.InferType( ret,infered )
-			If Not retType Return False
+			If Not retType Return Null
 		Endif
-'		If Not retType.ExtendsType( ret ) Return False
-		If Not retType.Equals( ret ) Return False
-	#rem
-		If retType.IsGeneric
-			If Not retType.inferType( ret,infered ) return false
-		Else
-'			If Not retType.ExtendsType( ret ) Return False
-			If Not retType.Equals( ret ) Return False
-		Endif
-	#end
+		If Not retType.Equals( ret ) Return Null
 	Endif
 	
 	For Local i:=0 Until argTypes.Length
 	
 		If i>=args.Length Or Not args[i]
-		
 			Local pdecl:=func.pdecls[i]
-			
-			If Not pdecl.init Return False
-			
+			If Not pdecl.init Return Null
 			Continue
 		Endif
-			
-		If argTypes[i].IsGeneric
 		
-			Local arg:=args[i]
-			
-			Local flist:=TCast<FuncListType>( arg )
-			If flist
-			
-				Local ftype:=TCast<FuncType>( argTypes[i] )
-				If Not ftype Return False
-				
-				Local func:=flist.FindOverload( Null,ftype.argTypes )
-				If Not func Return False
-				
-				arg=func.ftype
-			Endif
-			
-			If Not argTypes[i].InferType( arg,infered ) Return False
-			
-		Else
+		Local argType:=argTypes[i]
 		
-			If args[i].DistanceToType( argTypes[i] )<0 Return False
-
+		If argType.IsGeneric
+			argType=argType.InferType( args[i],infered )
+			If Not argType Return Null
 		Endif
-
+		
+		If args[i].DistanceToType( argType )<0 Return Null
 	Next
+	
+	If Not func.IsGeneric Return func
 	
 	For Local i:=0 Until infered.Length
-
-		If Not infered[i] Or infered[i]=Type.BadType Return False
+		If Not infered[i] Or infered[i]=Type.BadType Return Null
 	Next
 	
-	Return True
+	Return func.TryGenInstance( infered )
 End
 
 Function CanInfer:Bool( func:FuncValue,args:Type[] )
-
-	If Not func.IsGeneric SemantError( "overload.CanInfer()" )
 
 	Local ftype:=func.ftype
 	Local argTypes:=ftype.argTypes
@@ -103,12 +77,12 @@ Function CanInfer:Bool( func:FuncValue,args:Type[] )
 End
 
 'return true if func is better than func2
+'
 Function IsBetter:Bool( func:FuncValue,func2:FuncValue,args:Type[] )
 
-	Local better:=False,exact:=True
+	Local better:=False,same:=True
 
 	For Local i:=0 Until args.Length
-	
 		If Not args[i] Continue
 	
 		Local dist1:=args[i].DistanceToType( func.ftype.argTypes[i] )
@@ -120,68 +94,61 @@ Function IsBetter:Bool( func:FuncValue,func2:FuncValue,args:Type[] )
 		
 		If dist1<dist2 better=True
 		
-		If dist1 exact=False
+		If dist1 same=False
 	Next
 	
 	If better Return True
-
-	'if exact match, prefer non-generic over generic		
-	'
-	If exact And Not func.instanceOf And func2.instanceOf Return True
 	
-	'If exact match, not better.
-	'
-	If exact Return False
+	If Not same Return False
 	
-	'compare 2 generic func instances!
+	'always prefer non-generic over generic
+	'
+	If Not func.instanceOf And func2.instanceOf Return True
+	
+	'compare 2 generic func instances
 	'		
 	If func.instanceOf And func2.instanceOf
-	
 		If CanInfer( func2.instanceOf,func.instanceOf.ftype.argTypes ) 
-		
 			If Not CanInfer( func.instanceOf,func2.instanceOf.ftype.argTypes ) 
-			
 				Return True
-
 			Endif
-			
 		Endif
-		
 	Endif
 
 	Return False
 End
 
-Function Linearize( types:Type[],func:FuncValue,funcs:Stack<FuncValue>,j:Int=0 )
+Function FindCandidates( func:FuncValue,candidates:Stack<FuncValue>,ret:Type,args:Type[],j:Int=0 )
 
-	For Local i:=j Until types.Length
+	For Local i:=j Until args.Length
 	
-		Local type:=types[i]
-	
-		Local flist:=TCast<FuncListType>( type )
+		Local flist:=TCast<FuncListType>( args[i] )
 		If Not flist Continue
 		
-		types=types.Slice( 0 )
+		args=args.Slice( 0 )
 		
 		For Local func2:=Eachin flist.funcs
-		
-			types[i]=func2.ftype
-			
-			Linearize( types,func,funcs,i+1 )
+			args[i]=func2.ftype
+			FindCandidates( func,candidates,ret,args,i+1 )
 		Next
 		
 		Return
-		
 	Next
 	
-	Local func2:=func.TryGenInstance( types )
-
-	If func2 funcs.Push( func2 )
+	func=GenCandidate( func,ret,args )
+	If Not func Or candidates.Contains( func ) Return
+	
+	candidates.Push( func )
 End
 
 Public
-
+	
 Function FindOverload:FuncValue( funcs:Stack<FuncValue>,ret:Type,args:Type[] )
+
+	If ret DebugAssert( Not ret.IsGeneric )
+	For Local arg:=Eachin args
+		If arg DebugAssert( Not arg.IsGeneric )
+	Next
 
 	If debug
 		dprint( "{" )
@@ -193,20 +160,9 @@ Function FindOverload:FuncValue( funcs:Stack<FuncValue>,ret:Type,args:Type[] )
 	Local candidates:=New Stack<FuncValue>
 	
 	For Local func:=Eachin funcs
-	
-		If Not func.IsGeneric
-		
-			If IsCandidate( func,ret,args,Null ) candidates.Push( func )
-			
-			Continue
-		Endif
-		
-		Local infered:=New Type[func.types.Length]
-		
-		If IsCandidate( func,ret,args,infered ) Linearize( infered,func,candidates )
-		
+		FindCandidates( func,candidates,ret,args )
 	Next
-	
+
 	If debug dprint( "Candidates:"+Join( candidates.ToArray() ) )
 	
 	Local best:FuncValue
@@ -242,4 +198,3 @@ Function FindOverload:FuncValue( funcs:Stack<FuncValue>,ret:Type,args:Type[] )
 	
 	Return best
 End
-

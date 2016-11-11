@@ -29,6 +29,10 @@ Function F1( p:Int(Int) )
 	Print "F1(Int(Int))"
 End
 
+Function F1<R,A>( f:R(A) )
+	Print "F1<R,A>(R(A))"
+End
+
 Function P()
 End
 
@@ -37,6 +41,10 @@ Function P2:Int()
 End
 
 Function P3:Int( i:Int )
+	Return Null
+End
+
+Function P4:Int( x:Float )
 	Return Null
 End
 
@@ -49,6 +57,6 @@ Function Main()
 	F1( P )			'F1(Void())
 	F1( P2 )		'F1<T>(T())
 	F1( P3 )		'F1(Int(Int))
+	F1( P4 )		'F1<R,A>(R(A))
 	
 End
- 

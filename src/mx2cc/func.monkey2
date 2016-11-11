@@ -15,7 +15,7 @@ Class FuncDecl Extends Decl
 	
 		Local types:=New Type[genArgs.Length]
 		For Local i:=0 Until types.Length
-			types[i]=New GenArgType( i,genArgs[i],Null,Null )
+			types[i]=New GenArgType( i,genArgs[i] )',Null,Null )
 		Next
 		
 		Return New FuncValue( Self,scope,types,Null )
@@ -112,9 +112,7 @@ Class FuncValue Extends Value
 	End
 	
 	Property IsGeneric:Bool()
-		If Not ftype SemantError( "FuncValue.IsGeneric()" )
-		
-		Return ftype.IsGeneric Or (types And Not instanceOf)
+		Return types And Not instanceOf
 	End
 	
 	Property IsCtor:Bool()
@@ -339,7 +337,6 @@ Class FuncValue Extends Value
 	End
 	
 	Method GenInstance:Value( types:Type[] ) Override
-	
 		If AnyTypeGeneric( types ) SemantError( "FuncValue.GenInstance()" )
 		
 		If Not IsGeneric Return Super.GenInstance( types )
@@ -457,8 +454,7 @@ Class FuncValue Extends Value
 	End
 	
 	Method TryGenInstance:FuncValue( types:Type[] )
-	
-'		If AnyTypeGeneric( types ) Print "TryGenInstance:"+fdecl.ident+"<"+Join( types )+">"
+		If AnyTypeGeneric( types ) SemantError( "FuncValue.GenInstance()" )
 
 		If types.Length<>Self.types.Length Return Null
 		
@@ -532,11 +528,16 @@ Class FuncListValue Extends Value
 	End
 	
 	Method ToString:String() Override
+	
+		Return flistType.ToString()
 
 		Local args:=Join( flistType.types )
 		If args args="<"+args+">"
 		
-		Return flistType.flist.ident+args+"(...)"
+'		Return flistType.flist.ident+args+"(...)"
+		
+		Local funcs:=Join( flistType.funcs.ToArray() )
+		Return flistType.flist.ident+args+"["+funcs+"]"
 	End
 	
 	Method GenInstance:Value( types:Type[] ) Override
@@ -569,18 +570,17 @@ Class FuncListValue Extends Value
 	End
 	
 	Method UpCast:Value( type:Type ) Override
+		DebugAssert( Not type.IsGeneric )
 	
 		If type.Equals( Type.VariantType ) Return New UpCastValue( Type.VariantType,ToRValue() )
 	
 		Local ftype:=TCast<FuncType>( type )
 		If Not ftype Throw New UpCastEx( Self,type )
 		
-		Local func:=flistType.FindOverload( ftype.retType,ftype.argTypes )
-		If Not func Throw New OverloadEx( Self,ftype.argTypes )
+		Local match:=flistType.FindFunc( ftype )
+		If Not match Throw New UpCastEx( Self,type )
 		
-		If Not func.ftype.Equals( ftype ) Throw New UpCastEx( Self,type )
-		
-		Return func.ToValue( instance )
+		Return match.ToValue( instance )
 	End
 	
 End
@@ -612,9 +612,20 @@ Class FuncListType Extends Type
 	End
 	
 	Method ToString:String() Override
+
 		Local str:=""
 		If types str="<"+Join( types )+">"
-		Return flist.ident+str+"(...)"
+		
+		If funcs.Length=1 Return flist.ident+str+":"+funcs[0].ftype.ToString()
+		
+		Local ftypes:=New Type[funcs.Length]
+		For Local i:=0 Until ftypes.Length
+			ftypes[i]=funcs[i].ftype
+		Next
+
+		Return flist.ident+str+"["+Join( ftypes )+"]" 
+	
+'		Return flist.ident+str+"(...)"
 	End
 	
 	Property Name:String() Override
@@ -630,22 +641,31 @@ Class FuncListType Extends Type
 		SemantError( "FuncListType.ToValue()" )
 		Return Null
 	End
-	
+
 	Method DistanceToType:Int( type:Type ) Override
-	
-		If type.Equals( Type.VariantType ) Return funcs.Length=1 ? MAX_DISTANCE Else -1
+		DebugAssert( Not type.IsGeneric )
 
 		Local ftype:=TCast<FuncType>( type )
 		If Not ftype Return -1
 		
-		Local func:=FindOverload( ftype.retType,ftype.argTypes )
-		If func Return func.ftype.DistanceToType( ftype )
-		
-		Return -1
+		Local match:=FindFunc( ftype )
+		Return match ? 0 Else -1
 	End
 	
+	Method FindFunc:FuncValue( ftype:FuncType )
+
+		Local match:FuncValue
+		
+		For Local func:=Eachin funcs
+			If Not func.ftype.Equals( ftype ) Continue
+			If match Return Null
+			match=func
+		Next
+		
+		Return match
+	End
+
 	Method FindOverload:FuncValue( ret:Type,args:Type[] )
-	
 		Return overload.FindOverload( funcs,ret,args )
 	End
 	

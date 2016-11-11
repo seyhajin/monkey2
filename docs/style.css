@@ -76,7 +76,7 @@ fieldset{
 
 legend{
 	float: left;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 400;
 	padding: 16px 0;
 }
@@ -159,7 +159,7 @@ button.wp-switch-editor{
 	border-color: #456 !important;
 	border-radius: 6px 6px 0 0 !important;
 	box-shadow: none !important;
-	margin-bottom: 1px;
+	margin-bottom: 1px !important;
 }
 
 button.wp-switch-editor:hover{
@@ -172,17 +172,39 @@ div.mce-panel{
 
 div.mce-toolbar-grp{
 	background: #abc !important;
+	border: none !important;
 }
 
-/* Hack for crayon */
-div#cboxLoadedContent{
-	color: #123 !important;
+div.mce-statusbar{
+	border: none !important;
+}
+
+#crayon-te-table{
+	padding:0px !important;
+}
+
+/* Hacks for crayon */
+#colorbox{
+	width:720px !important;
+}
+
+#cboxWrapper{
+	width:100% !important;
+}
+
+#cboxContent{
+	width:100% !important;
+}
+
+#cboxLoadedContent{
+	color: #eee !important;
 	background: #abc !important;
-	font-size: 14px !important;
+	font-size: 16px !important;
+	width:100% !important;
 }
 
 #crayon-te-bar-content{
-	font-size: 14px !important;
+	font-size: 16px !important;
 }
 
 .crayon-setting{
@@ -227,7 +249,6 @@ hr{
 /* ***** table ***** */
 
 table{
-	table-layout: fixed;
 	border-spacing: 0;
 	width: 100%;
 	margin: 16px 0;
@@ -261,6 +282,14 @@ th{
 	font-weight: 500;
 }
 
+th.mx2docs:first-child{
+	width: 200px;
+}
+
+td.mx2docs:first-child{
+	width: 200px;
+}
+
 th.modman{
 	padding: 0 8px;
 }
@@ -285,33 +314,33 @@ h6{
 }
 
 h1{
-	font-size: 40px;
-	margin: 38px 0 28px;
+	font-size: 26px;
+	margin: 26px 0 26px;
 }
 
 h2{
-	font-size: 40px;
-	margin: 34px 0 24px;
+	font-size: 24px;
+	margin: 24px 0 24px;
 }
 
 h3{
-	font-size: 28px;
-	margin: 40px 0 22px;
+	font-size: 22px;
+	margin: 22px 0 22px;
 }
 
 h4{
-	font-size: 24px;
-	margin: 30px 0 20px;
+	font-size: 20px;
+	margin: 20px 0 20px;
 }
 
 h5{
-	font-size: 20px;
-	margin: 28px 0 18px;
+	font-size: 18px;
+	margin: 18px 0 18px;
 }
 
 h6{
 	font-size: 16px;
-	margin: 26px 0 16px;
+	margin: 16px 0 16px;
 }
 
 /* ***** wordpress css ***** */
@@ -366,6 +395,7 @@ span.header_text{
 	font-size: 16px;
 	color: #123;
 	margin-left: 8px;
+	margin-right: 68px;
 }
 
 /* parent: page_header */
@@ -379,7 +409,7 @@ a.header_button{
 	border: 1px solid #456;
 	border-radius: 3px;
 	padding: 4px 7px;
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 400;
 	color: #fcfcfc;
 	cursor: pointer;
