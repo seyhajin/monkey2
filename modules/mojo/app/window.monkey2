@@ -11,6 +11,8 @@ Namespace mojo.app
 | Hidden		| Window is initally hidden.
 | Resizable		| Window is resizable.
 | Fullscreen	| Window is a fullscreen window.
+| Maximized     | Window is maximized.
+| Minimized     | Window is minimized.
 
 #end
 Enum WindowFlags
@@ -21,6 +23,8 @@ Enum WindowFlags
 	Borderless=16
 	Fullscreen=32
 	HighDPI=64
+	Maximized=128
+	Minimized=256
 	Center=CenterX|CenterY
 End
 
@@ -386,6 +390,8 @@ Class Window Extends View
 		If flags & WindowFlags.Borderless sdlFlags|=SDL_WINDOW_BORDERLESS
 		If flags & WindowFlags.Fullscreen _fullscreen=True ; sdlFlags|=SDL_WINDOW_FULLSCREEN
 		If flags & WindowFlags.HighDPI sdlFlags|=SDL_WINDOW_ALLOW_HIGHDPI
+		If flags & WindowFlags.Maximized sdlFlags|=SDL_WINDOW_MAXIMIZED
+		If flags & WindowFlags.Minimized sdlFlags|=SDL_WINDOW_MINIMIZED
 		
 		_flags=flags
 		
