@@ -36,6 +36,7 @@ struct _SDL_Joystick
 
     int naxes;                  /* Number of axis controls on the joystick */
     Sint16 *axes;               /* Current axis states */
+    Sint16 *axes_zero;          /* Zero point on the axis (-32768 for triggers) */
 
     int nhats;                  /* Number of hats on the joystick */
     Uint8 *hats;                /* Current hat states */
@@ -66,10 +67,10 @@ struct _SDL_Joystick
 extern int SDL_SYS_JoystickInit(void);
 
 /* Function to return the number of joystick devices plugged in right now */
-extern int SDL_SYS_NumJoysticks();
+extern int SDL_SYS_NumJoysticks(void);
 
 /* Function to cause any queued joystick insertions to be processed */
-extern void SDL_SYS_JoystickDetect();
+extern void SDL_SYS_JoystickDetect(void);
 
 /* Function to get the device-dependent name of a joystick */
 extern const char *SDL_SYS_JoystickNameForDeviceIndex(int device_index);
