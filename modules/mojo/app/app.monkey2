@@ -943,6 +943,30 @@ Class AppInstance
 				
 			UpdateWindows()
 			
+		Case SDL_WINDOWEVENT_MAXIMIZED
+		
+			SendWindowEvent( EventType.WindowMaximized )
+			
+			SendWindowEvent( EventType.WindowResized )
+				
+			UpdateWindows()
+			
+		Case SDL_WINDOWEVENT_MINIMIZED
+		
+			SendWindowEvent( EventType.WindowMinimized )
+			
+			SendWindowEvent( EventType.WindowResized )
+				
+			UpdateWindows()
+			
+		Case SDL_WINDOWEVENT_RESTORED
+		
+			SendWindowEvent( EventType.WindowRestored )
+			
+			SendWindowEvent( EventType.WindowResized )
+				
+			UpdateWindows()
+			
 		Case SDL_WINDOWEVENT_EXPOSED
 		
 			RequestRender()
@@ -992,6 +1016,33 @@ Class AppInstance
 			
 				Return 0
 				
+			Case SDL_WINDOWEVENT_MAXIMIZED
+			
+				SendWindowEvent( EventType.WindowResized )
+				
+				SendWindowEvent( EventType.WindowMaximized )
+				
+				UpdateWindows()
+			
+				Return 0
+				
+			Case SDL_WINDOWEVENT_MINIMIZED
+			
+				SendWindowEvent( EventType.WindowResized )
+				
+				SendWindowEvent( EventType.WindowMinimized )
+				
+				UpdateWindows()
+			
+			Case SDL_WINDOWEVENT_RESTORED
+			
+				SendWindowEvent( EventType.WindowResized )
+				
+				SendWindowEvent( EventType.WindowRestored )
+				
+				UpdateWindows()
+			
+				Return 0
 			End
 
 #if __TARGET__="ios"

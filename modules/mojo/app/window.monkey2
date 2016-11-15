@@ -88,9 +88,12 @@ Class Window Extends View
 		_swapInterval=swapInterval
 	End
 	
-	#rem monkeydoc @hidden.
+	#rem monkeydoc Window fullscreen state.
 	#end
 	Property Fullscreen:Bool()
+	
+		return _flags & WindowFlags.Fullscreen
+	
 	
 		Return _fullscreen
 	
@@ -111,7 +114,26 @@ Class Window Extends View
 		Endif
 	
 	End
+
+	#rem monkeydoc Window maximized state.
+	#end	
+	Property Maximized:Bool()
 	
+		Return _maximized
+	End
+	
+	#rem monkeydoc Window minimized state.
+	#end	
+	Property Minimized:Bool()
+	
+		Return _minimized
+	End
+
+	#rem monkeydoc Window content view.
+	
+	During layout, the window's content view is resized to fill the window.
+	
+	#end	
 	Property ContentView:View()
 	
 		Return _contentView
@@ -125,12 +147,39 @@ Class Window Extends View
 		If _contentView AddChildView( _contentView )
 		
 	End
+
+	#rem monkeydoc Maximize the window.
+	#end	
+	Method Maximize()
+		SDL_RestoreWindow( _sdlWindow )
+		SDL_MaximizeWindow( _sdlWindow )
+	End
 	
+	#rem monkeydoc Minimize the window.
+	#end	
+	Method Minimize()
+		SDL_MinimizeWindow( _sdlWindow )
+	End
+	
+	#rem monkeydoc Restore the window.
+	#end	
+	Method Restore()
+		SDL_RestoreWindow( _sdlWindow )
+	End
+	
+	#rem monkeydoc @hidden
+	#End
 	Method UpdateWindow( render:Bool )
 	
 		LayoutWindow()
 		
-		If render RenderWindow()
+		If render 
+			If _maxfudge
+				_maxfudge-=1
+				App.RequestRender()
+			Endif
+			RenderWindow()
+		Endif
 	End
 	
 	'***** INTERNAL *****
@@ -181,6 +230,15 @@ Class Window Extends View
 	Method SendWindowEvent( event:WindowEvent )
 	
 		Select event.Type
+		Case EventType.WindowMaximized
+			_maximized=True
+			_minimized=False
+		Case EventType.WindowMinimized
+			_maximized=False
+			_minimized=True
+		Case EventType.WindowRestored
+			_maximized=False
+			_minimized=False
 		Case EventType.WindowMoved,EventType.WindowResized
 			_frame=GetFrame()
 			Frame=_frame
@@ -241,7 +299,10 @@ Class Window Extends View
 	Field _sdlGLContext:SDL_GLContext
 	
 	Field _flags:WindowFlags
-	Field _fullscreen:=False
+	Field _fullscreen:Bool
+	Field _maximized:Bool
+	Field _minimized:Bool
+	Field _maxfudge:Int
 	Field _swapInterval:=1
 	
 	Field _canvas:Canvas
@@ -361,7 +422,6 @@ Class Window Extends View
 			SDL_GL_SwapWindow( _sdlWindow )
 		Endif
 #Endif
-		
 		Local bounds:=New Recti( 0,0,Frame.Size )
 		
 		_canvas.Resize( bounds.Size )
@@ -382,26 +442,45 @@ Class Window Extends View
 	
 		Local x:=(flags & WindowFlags.CenterX) ? SDL_WINDOWPOS_CENTERED Else rect.X
 		Local y:=(flags & WindowFlags.CenterY) ? SDL_WINDOWPOS_CENTERED Else rect.Y
+		Local w:=rect.Width,h:=rect.Height
 		
 		Local sdlFlags:SDL_WindowFlags=SDL_WINDOW_OPENGL
 		
+		If flags & WindowFlags.Fullscreen
+		
+			 sdlFlags|=SDL_WINDOW_FULLSCREEN
+			_fullscreen=True
+			
+		Else If flags & WindowFlags.Maximized
+
+			sdlFlags|=SDL_WINDOW_MAXIMIZED
+			_maximized=True
+			_maxfudge=2
+		
+		Else If flags & WindowFlags.Minimized
+		
+			sdlFlags|=SDL_WINDOW_MINIMIZED
+			_minimized=True
+			
+		Endif
+		
 		If flags & WindowFlags.Hidden sdlFlags|=SDL_WINDOW_HIDDEN
+		
 		If flags & WindowFlags.Resizable sdlFlags|=SDL_WINDOW_RESIZABLE
+		
 		If flags & WindowFlags.Borderless sdlFlags|=SDL_WINDOW_BORDERLESS
-		If flags & WindowFlags.Fullscreen _fullscreen=True ; sdlFlags|=SDL_WINDOW_FULLSCREEN
+		
 		If flags & WindowFlags.HighDPI sdlFlags|=SDL_WINDOW_ALLOW_HIGHDPI
-		If flags & WindowFlags.Maximized sdlFlags|=SDL_WINDOW_MAXIMIZED
-		If flags & WindowFlags.Minimized sdlFlags|=SDL_WINDOW_MINIMIZED
 		
 		_flags=flags
 		
 		'Create Window
-		_sdlWindow=SDL_CreateWindow( title,x,y,rect.Width,rect.Height,sdlFlags )
+		_sdlWindow=SDL_CreateWindow( title,x,y,w,h,sdlFlags )
 		If Not _sdlWindow
 			Print "SDL_GetError="+String.FromCString( SDL_GetError() )
 			Assert( _sdlWindow,"FATAL ERROR: SDL_CreateWindow failed" )
 		Endif
-
+		
 		'Create GL context
 		_sdlGLContext=SDL_GL_CreateContext( _sdlWindow )
 		If Not _sdlGLContext

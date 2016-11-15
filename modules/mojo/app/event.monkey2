@@ -47,6 +47,9 @@ Enum EventType
 	WindowResized,
 	WindowGainedFocus,
 	WindowLostFocus,
+	WindowMaximized,
+	WindowMinimized,
+	WindowRestored
 	
 	Eaten=$40000000
 End
