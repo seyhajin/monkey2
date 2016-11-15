@@ -17,7 +17,7 @@ Namespace sdl2
 
 #Import "SDL/src/audio/disk/SDL_diskaudio.c"
 #Import "SDL/src/audio/dummy/SDL_dummyaudio.c"
-#Import "SDL/src/audio/coreaudio/SDL_coreaudio.c"
+#Import "SDL/src/audio/coreaudio/SDL_coreaudio.m"
 #Import "SDL/src/audio/SDL_audio.c"
 #Import "SDL/src/audio/SDL_audiocvt.c"
 #Import "SDL/src/audio/SDL_audiodev.c"
