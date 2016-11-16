@@ -93,13 +93,6 @@ Class Window Extends View
 	Property Fullscreen:Bool()
 	
 		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_FULLSCREEN
-	
-	Setter( fullscreen:Bool )
-	
-		If fullscreen=Fullscreen Return
-
-		SDL_SetWindowFullscreen( _sdlWindow,fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP Else 0 )
-	
 	End
 
 	#rem monkeydoc Window maximized state.
@@ -133,6 +126,31 @@ Class Window Extends View
 		
 		If _contentView AddChildView( _contentView )
 		
+	End
+
+	#rem monkeydoc @hidden
+	#end	
+	Method BeginFullscreen()
+		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN_DESKTOP )
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method BeginFullscreen( width:Int,height:Int,hertz:Int )
+		Local mode:SDL_DisplayMode
+		mode.w=Width
+		mode.h=Height
+		mode.refresh_rate=hertz
+		Local closest:SDL_DisplayMode
+		SDL_GetClosestDisplayMode( 0,Varptr mode,Varptr closest )
+		SDL_SetWindowDisplayMode( _sdlWindow,Varptr closest )
+		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN )
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method EndFullscreen()
+		SDL_SetWindowFullscreen( _sdlWindow,0 )
 	End
 
 	#rem monkeydoc Maximize the window.

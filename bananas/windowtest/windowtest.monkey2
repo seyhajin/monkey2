@@ -20,21 +20,9 @@ Class MyWindow Extends Window
 		If event.Type=EventType.KeyDown
 			Select event.Key
 			Case Key.Up
-				If Maximized
-					Fullscreen=True
-				Else If Minimized
-					Restore()
-				Else
-					Maximize()
-				Endif
+				If Minimized Restore() Else Maximize()
 			Case Key.Down
-				If Fullscreen
-					Fullscreen=False
-				Else If Maximized
-					Restore()
-				Else
-					Minimize()
-				Endif
+				If Maximized Restore() Else Minimize()
 			End
 		Endif
 	End
@@ -43,16 +31,14 @@ Class MyWindow Extends Window
 	
 		Select event.Type
 		Case EventType.WindowMaximized
-			Print "Maximized!"
+			Print "Maximized"
 		Case EventType.WindowMinimized
-			Print "Minimized!"
+			Print "Minimized"
 		Case EventType.WindowRestored
-			Print "Restored!"
+			Print "Restored"
 		Case EventType.WindowResized
-			Print "Resized!"
+			Print "Resized"
 		End
-		
-		Print Int( Maximized )+","+Int( Minimized )
 		
 		Super.OnWindowEvent( event )
 	End
