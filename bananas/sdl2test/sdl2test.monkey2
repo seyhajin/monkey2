@@ -74,6 +74,18 @@ Class SdlWindow
 		glClearColor( 1,1,0,1 )
 		
 		glClear( GL_COLOR_BUFFER_BIT )
+		
+		glEnable( GL_SCISSOR_TEST )
+		
+		For Local y:=0 Until 256
+		
+			glScissor( 0,y,640,1 )
+			glClearColor( y/256.0,0,0,1 )
+			glClear( GL_COLOR_BUFFER_BIT )
+		
+		Next
+		
+		glDisable( GL_SCISSOR_TEST )
 	End
 	
 End
