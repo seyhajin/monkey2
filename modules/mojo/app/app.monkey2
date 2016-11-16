@@ -862,11 +862,21 @@ Class AppInstance
 			
 				SendWindowEvent( EventType.WindowClose )
 			
-			Case SDL_WINDOWEVENT_MOVED
+			Case SDL_WINDOWEVENT_MAXIMIZED
+				
+				SendWindowEvent( EventType.WindowMaximized )
+				
+			Case SDL_WINDOWEVENT_MINIMIZED
 			
-			Case SDL_WINDOWEVENT_RESIZED
+				SendWindowEvent( EventType.WindowMinimized )
+				
+			Case SDL_WINDOWEVENT_RESTORED
 			
-			Case SDL_WINDOWEVENT_SIZE_CHANGED
+				SendWindowEvent( EventType.WindowRestored )
+				
+			Case SDL_WINDOWEVENT_EXPOSED
+			
+				RequestRender()
 			
 			Case SDL_WINDOWEVENT_FOCUS_GAINED
 			
@@ -885,7 +895,6 @@ Class AppInstance
 				Print "SDL_WINDOWEVENT_FOCUS_LOST"
 			
 				Local active:=_active
-'				_activeWindow=Null		'Not a great idea!
 				_active=False
 			
 				If _mouseView And Not _captureMouse	'should probably do this anyway?
@@ -924,6 +933,16 @@ Class AppInstance
 			
 			event->Dispatch()
 
+		Case SDL_DROPFILE
+		
+			Local devent:=Cast<SDL_DropEvent Ptr>( event )
+			
+			Local path:=String.FromCString( devent->file ).Replace( "\","/" )
+			
+			SDL_free( devent->file )
+			
+			FileDropped( path )
+
 		Case SDL_RENDER_TARGETS_RESET
 		
 			Print "SDL_RENDER_TARGETS_RESET"
@@ -935,42 +954,6 @@ Class AppInstance
 			Print "SDL_RENDER_DEVICE_RESET"
 		
 			mojo.graphics.glutil.glGraphicsSeq+=1
-
-		Case SDL_WINDOWEVENT_MOVED
-			
-			SendWindowEvent( EventType.WindowMoved )
-					
-		Case SDL_WINDOWEVENT_RESIZED
-		
-			SendWindowEvent( EventType.WindowResized )
-				
-			UpdateWindows()
-			
-		Case SDL_WINDOWEVENT_MAXIMIZED
-			
-			SendWindowEvent( EventType.WindowMaximized )
-			
-		Case SDL_WINDOWEVENT_MINIMIZED
-		
-			SendWindowEvent( EventType.WindowMinimized )
-			
-		Case SDL_WINDOWEVENT_RESTORED
-		
-			SendWindowEvent( EventType.WindowRestored )
-			
-		Case SDL_WINDOWEVENT_EXPOSED
-		
-			RequestRender()
-
-		Case SDL_DROPFILE
-		
-			Local devent:=Cast<SDL_DropEvent Ptr>( event )
-			
-			Local path:=String.FromCString( devent->file ).Replace( "\","/" )
-			
-			SDL_free( devent->file )
-			
-			FileDropped( path )
 
 		End
 			
@@ -1010,24 +993,7 @@ Class AppInstance
 				UpdateWindows()
 			
 				Return 0
-				
-			Case SDL_WINDOWEVENT_MAXIMIZED
-				
-				SendWindowEvent( EventType.WindowMaximized )
-				
-				Return 0
-				
-			Case SDL_WINDOWEVENT_MINIMIZED
-			
-				SendWindowEvent( EventType.WindowMinimized )
-				
-				Return 0
-				
-			Case SDL_WINDOWEVENT_RESTORED
-			
-				SendWindowEvent( EventType.WindowRestored )
-				
-				Return 0
+
 			End
 
 #if __TARGET__="ios"
