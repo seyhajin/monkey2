@@ -71,6 +71,13 @@ Class AppInstance
 	
 	#end	
 	Field MouseEventFilter:Void( event:MouseEvent )
+	
+	#rem monkeydoc Raw SDL_Event filter.
+	
+	The filter is called for all SDL events before mojo processes them.
+	
+	#end
+	Field SdlEventFilter:Void( event:SDL_Event Ptr )
 
 	#rem monkeydoc Create a new app instance.
 	#end
@@ -569,8 +576,6 @@ Class AppInstance
 	Field _modalView:View
 	Field _modalStack:=New Stack<View>
 	
-	Field _polling:Bool
-	
 	Method UpdateFPS()
 	
 		_fpsFrames+=1
@@ -587,23 +592,17 @@ Class AppInstance
 	
 	Method UpdateEvents()
 	
-		Local event:SDL_Event
-
-		_polling=True
-		
 		Mouse.Update()
 		
 		Keyboard.Update()
 		
+		Local event:SDL_Event
+
 		While SDL_PollEvent( Varptr event )
 		
-			Keyboard.SendEvent( Varptr event )
-			
 			DispatchEvent( Varptr event )
 			
 		Wend
-		
-		_polling=False
 		
 		Local idle:=Idle
 		Idle=Null
@@ -668,6 +667,10 @@ Class AppInstance
 	End
 	
 	Method DispatchEvent( event:SDL_Event Ptr )
+	
+		SdlEventFilter( event )
+	
+		Keyboard.SendEvent( event )
 	
 		Select event->type
 		
@@ -944,28 +947,16 @@ Class AppInstance
 			UpdateWindows()
 			
 		Case SDL_WINDOWEVENT_MAXIMIZED
-		
-			SendWindowEvent( EventType.WindowMaximized )
 			
-			SendWindowEvent( EventType.WindowResized )
-				
-			UpdateWindows()
+			SendWindowEvent( EventType.WindowMaximized )
 			
 		Case SDL_WINDOWEVENT_MINIMIZED
 		
 			SendWindowEvent( EventType.WindowMinimized )
 			
-			SendWindowEvent( EventType.WindowResized )
-				
-			UpdateWindows()
-			
 		Case SDL_WINDOWEVENT_RESTORED
 		
 			SendWindowEvent( EventType.WindowRestored )
-			
-			SendWindowEvent( EventType.WindowResized )
-				
-			UpdateWindows()
 			
 		Case SDL_WINDOWEVENT_EXPOSED
 		
@@ -1004,12 +995,16 @@ Class AppInstance
 			
 			Case SDL_WINDOWEVENT_MOVED
 			
+				SdlEventFilter( event )
+	
 				SendWindowEvent( EventType.WindowMoved )
 			
 				Return 0
 					
 			Case SDL_WINDOWEVENT_RESIZED
 			
+				SdlEventFilter( event )
+	
 				SendWindowEvent( EventType.WindowResized )
 				
 				UpdateWindows()
@@ -1017,31 +1012,21 @@ Class AppInstance
 				Return 0
 				
 			Case SDL_WINDOWEVENT_MAXIMIZED
-			
-				SendWindowEvent( EventType.WindowResized )
 				
 				SendWindowEvent( EventType.WindowMaximized )
 				
-				UpdateWindows()
-			
 				Return 0
 				
 			Case SDL_WINDOWEVENT_MINIMIZED
 			
-				SendWindowEvent( EventType.WindowResized )
-				
 				SendWindowEvent( EventType.WindowMinimized )
 				
-				UpdateWindows()
-			
+				Return 0
+				
 			Case SDL_WINDOWEVENT_RESTORED
 			
-				SendWindowEvent( EventType.WindowResized )
-				
 				SendWindowEvent( EventType.WindowRestored )
 				
-				UpdateWindows()
-			
 				Return 0
 			End
 

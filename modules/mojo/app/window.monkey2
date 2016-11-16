@@ -177,13 +177,7 @@ Class Window Extends View
 	
 		LayoutWindow()
 		
-		If render 
-			If _maxfudge
-				_maxfudge-=1
-				App.RequestRender()
-			Endif
-			RenderWindow()
-		Endif
+		If render RenderWindow()
 	End
 	
 	'***** INTERNAL *****
@@ -267,17 +261,22 @@ Class Window Extends View
 		
 			App.Terminate()
 			
-		Case EventType.WindowMoved
-		
 		Case EventType.WindowResized
 		
 			App.RequestRender()
 			
 		Case EventType.WindowGainedFocus
 		
-			'Need to do this for KDE on linux...
-			App.RequestRender()
+			App.RequestRender()		'Need to do this for KDE on linux...
 		
+		Case EventType.WindowMoved
+		
+		Case EventType.WindowMaximized
+		
+		Case EventType.WindowMinimized
+		
+		Case EventType.WindowRestored
+			
 		Case EventType.WindowLostFocus
 		
 		End
@@ -406,6 +405,11 @@ Class Window Extends View
 	#end
 	Method RenderWindow()
 	
+		If _maxfudge
+			_maxfudge-=1
+			App.RequestRender()
+		Endif
+
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
 
 		SDL_GL_SetSwapInterval( _swapInterval )
