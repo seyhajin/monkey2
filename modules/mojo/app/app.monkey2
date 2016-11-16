@@ -103,57 +103,43 @@ Class AppInstance
 		
 		Audio.Init()
 		
-		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 )
-		
-#If __TARGET__="windows" Or __TARGET__="macos" Or __TARGET__="emscripten"
+		'Set GL attributes
+		'
+		Local gl_profile:Int,gl_major:Int=2,gl_minor:Int=0
 
-		_captureMouse=True
-#Endif
-
-#if __MOBILE_TARGET__
-
-		_touchMouse=True
-
-    	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_ES )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,2 )
-		
-#Else If __TARGET__="emscripten"
-
-		
-#Else If __TARGET__="raspbian"
-
-
-#Else If __DESKTOP_TARGET__
-
-#if __TARGET__="windows"
-		
-		Local gl_profile:Int
-
-		Select GetConfig( "GL_context_profile","es" )
+		Select GetConfig( "GL_context_profile","" )
 		Case "core"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_CORE
 		Case "compatibility"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_COMPATIBILITY
-		Default
+		Case "es"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
+		Default
+#If __TARGET__="macos"
+			gl_profile=SDL_GL_CONTEXT_PROFILE_COMPATIBILITY	'no gles20 on macos...
+#Else
+			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
+#Endif		
 		End
 
-		Local gl_major:=Int( GetConfig( "GL_context_major_version",2 ) )
-		Local gl_minor:=Int( GetConfig( "GL_context_minor_version",0 ) )
-		
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,gl_major )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,gl_minor )
-		
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE,8 )
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,8 )
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8 )
-#Endif
-
-		SDL_GL_SetAttribute( SDL_GL_SHARE_WITH_CURRENT_CONTEXT,1 )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,Int( GetConfig( "GL_context_major_version",gl_major ) ) )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,Int( GetConfig( "GL_context_major_version",gl_minor ) ) )
 		
 		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "GL_depth_buffer_enabled",0 ) ) )
 		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetConfig( "GL_stencil_buffer_enabled",0 ) ) )
+		
+		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 )
+
+		SDL_GL_SetAttribute( SDL_GL_RED_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,8 )
+		
+#If __DESKTOP_TARGET__
+
+		'WIP multiple windows...
+		
+		SDL_GL_SetAttribute( SDL_GL_SHARE_WITH_CURRENT_CONTEXT,1 )
 		
 		'create dummy window/context
 		Local _sdlWindow:=SDL_CreateWindow( "<dummy>",0,0,0,0,SDL_WINDOW_HIDDEN|SDL_WINDOW_OPENGL )
@@ -163,8 +149,16 @@ Class AppInstance
 		Assert( _sdlGLContext,"FATAL ERROR: SDL_GL_CreateContext failed" )
 		
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
-
+#Endif	
+		
+#If __TARGET__="windows" Or __TARGET__="macos" Or __TARGET__="emscripten"
+		_captureMouse=True	'breaks on linux...
 #Endif
+
+#if __MOBILE_TARGET__
+		_touchMouse=True
+#Endif
+
 		_defaultFont=_res.OpenFont( "DejaVuSans",16 )
 		
 		_theme=New Theme
