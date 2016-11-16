@@ -144,7 +144,10 @@ Class AppInstance
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,gl_major )
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,gl_minor )
-
+		
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE,8 )
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,8 )
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8 )
 #Endif
 
 		SDL_GL_SetAttribute( SDL_GL_SHARE_WITH_CURRENT_CONTEXT,1 )
