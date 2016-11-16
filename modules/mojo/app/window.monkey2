@@ -92,26 +92,13 @@ Class Window Extends View
 	#end
 	Property Fullscreen:Bool()
 	
-		return _flags & WindowFlags.Fullscreen
-	
-	
-		Return _fullscreen
+		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_FULLSCREEN
 	
 	Setter( fullscreen:Bool )
 	
-		If fullscreen=_fullscreen Return
-	
-		_fullscreen=fullscreen
+		If fullscreen=Fullscreen Return
 
-		If _fullscreen
-			Local mode:SDL_DisplayMode
-			mode.w=Width
-			mode.h=Height
-			SDL_SetWindowDisplayMode( _sdlWindow,Varptr mode )
-			SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN )
-		Else
-			SDL_SetWindowFullscreen( _sdlWindow,0 )
-		Endif
+		SDL_SetWindowFullscreen( _sdlWindow,fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP Else 0 )
 	
 	End
 
@@ -119,14 +106,14 @@ Class Window Extends View
 	#end	
 	Property Maximized:Bool()
 	
-		Return _maximized
+		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_MAXIMIZED
 	End
 	
 	#rem monkeydoc Window minimized state.
 	#end	
 	Property Minimized:Bool()
 	
-		Return _minimized
+		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_MINIMIZED
 	End
 
 	#rem monkeydoc Window content view.
@@ -151,7 +138,6 @@ Class Window Extends View
 	#rem monkeydoc Maximize the window.
 	#end	
 	Method Maximize()
-		SDL_RestoreWindow( _sdlWindow )
 		SDL_MaximizeWindow( _sdlWindow )
 	End
 	
@@ -231,14 +217,8 @@ Class Window Extends View
 	
 		Select event.Type
 		Case EventType.WindowMaximized
-			_maximized=True
-			_minimized=False
 		Case EventType.WindowMinimized
-			_maximized=False
-			_minimized=True
 		Case EventType.WindowRestored
-			_maximized=False
-			_minimized=False
 		Case EventType.WindowMoved,EventType.WindowResized
 			_frame=GetFrame()
 			Frame=_frame
@@ -299,9 +279,6 @@ Class Window Extends View
 	Field _sdlGLContext:SDL_GLContext
 	
 	Field _flags:WindowFlags
-	Field _fullscreen:Bool
-	Field _maximized:Bool
-	Field _minimized:Bool
 	Field _maxfudge:Int
 	Field _swapInterval:=1
 	
@@ -449,18 +426,15 @@ Class Window Extends View
 		If flags & WindowFlags.Fullscreen
 		
 			 sdlFlags|=SDL_WINDOW_FULLSCREEN
-			_fullscreen=True
 			
 		Else If flags & WindowFlags.Maximized
 
 			sdlFlags|=SDL_WINDOW_MAXIMIZED
-			_maximized=True
 			_maxfudge=2
 		
 		Else If flags & WindowFlags.Minimized
 		
 			sdlFlags|=SDL_WINDOW_MINIMIZED
-			_minimized=True
 			
 		Endif
 		
