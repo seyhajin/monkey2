@@ -90,8 +90,8 @@ End
 Function glCompile:Int( type:Int,source:String )
 
 	source="
-	#if GL_ES
-	#if GL_FRAGMENT_PRECISION_HIGH
+	#ifdef GL_ES
+	#ifdef GL_FRAGMENT_PRECISION_HIGH
 	precision highp float;
 	#else
 	precision mediump float;
