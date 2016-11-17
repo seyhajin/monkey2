@@ -339,7 +339,7 @@ Class Deque<T> Implements IContainer<T>
 	Method Get:T( index:Int )
 		DebugAssert( index>=0 And  index<Length,"Deque index out of range" )
 		
-		Return _data[ index Mod Capacity ]
+		Return _data[ (index+_head) Mod Capacity ]
 	End
 	
 	#rem monkedoc Sets the value of a deque element.
@@ -350,7 +350,7 @@ Class Deque<T> Implements IContainer<T>
 	Method Set( index:Int,value:T )
 		DebugAssert( index>=0 And index<Length,"Deque index out of range" )
 		
-		_data[ index Mod Capacity ]=value
+		_data[ (index+_head) Mod Capacity ]=value
 	End
 	
 	#rem monkedoc Gets the value of a deque element.
@@ -361,7 +361,7 @@ Class Deque<T> Implements IContainer<T>
 	Operator[]:T( index:Int )
 		DebugAssert( index>=0 And index<Length,"Deque index out of range" )
 		
-		Return _data[ index Mod Capacity ]
+		Return _data[ (index+_head) Mod Capacity ]
 	End
 	
 	#rem monkedoc Sets the value of a deque element.
@@ -372,7 +372,7 @@ Class Deque<T> Implements IContainer<T>
 	Operator[]=( index:Int,value:T )
 		DebugAssert( index>=0 And index<Length,"Deque index out of range" )
 		
-		_data[ index Mod Capacity ]=value
+		_data[ (index+_head) Mod Capacity ]=value
 	End
 	
 End
