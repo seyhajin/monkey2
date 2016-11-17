@@ -18,7 +18,7 @@ Namespace sdl2
 
 #Import "SDL/src/audio/dummy/SDL_dummyaudio.c"
 
-#Import "SDL/src/audio/coreaudio/SDL_coreaudio.c"		'***** IOS *****
+#Import "SDL/src/audio/coreaudio/SDL_coreaudio.m"		'***** IOS *****
 
 #Import "SDL/src/atomic/SDL_atomic.c"
 #Import "SDL/src/atomic/SDL_spinlock.c"

@@ -30,12 +30,16 @@
    #include "TargetConditionals.h"
 #endif
 
+// ***** Mark was here! Ignore CGTypes for now, doubles all the way *****
+
+/*
 // Use CGTypes by default on iOS and Mac.
 // Also enables usage of doubles on 64 bit.
 // Performance is usually very comparable when the CPU cache is well utilised.
 #if (TARGET_OS_IPHONE || TARGET_OS_MAC) && (!defined CP_USE_CGTYPES)
 	#define CP_USE_CGTYPES 1
 #endif
+*/
 
 #if CP_USE_CGTYPES
 	#if TARGET_OS_IPHONE
