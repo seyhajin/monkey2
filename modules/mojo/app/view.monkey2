@@ -374,7 +374,7 @@ Class View
 	Method FindViewAtWindowPoint:View( point:Vec2i )
 	
 		If Not _visible Return Null
-	
+		
 		If Not _rbounds.Contains( point ) Return Null
 		
 		For Local i:=0 Until _children.Length
@@ -693,15 +693,15 @@ Class View
 			_matrix=_matrix.Scale( sc,sc )
 			
 		End
-
+		
 		_matrix=_matrix.Translate( -_bounds.min.x,-_bounds.min.y )
 		
 		If _parent _rmatrix=_parent._rmatrix * _matrix Else _rmatrix=_matrix
 		
-'		_rmatrix.t.x=Round( _rmatrix.t.x )
-'		_rmatrix.t.y=Round( _rmatrix.t.y )
+		_bounds-=_rstyle.Margin
 		
 		_rclip=TransformRecti( _rect,_rmatrix )
+		
 		_rbounds=TransformRecti( _bounds,_rmatrix )
 		
 		If _parent
