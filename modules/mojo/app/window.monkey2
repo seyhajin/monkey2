@@ -263,22 +263,11 @@ Class Window Extends View
 			
 		Case EventType.WindowResized
 		
-			App.RequestRender()
+			App.RequestRender()		'Should maybe do this regardless?
 			
 		Case EventType.WindowGainedFocus
 		
-			App.RequestRender()		'Need to do this for KDE on linux...
-		
-		Case EventType.WindowMoved
-		
-		Case EventType.WindowMaximized
-		
-		Case EventType.WindowMinimized
-		
-		Case EventType.WindowRestored
-			
-		Case EventType.WindowLostFocus
-		
+			App.RequestRender()		'Need to do this for KDE on linux?
 		End
 		
 	End

@@ -871,10 +871,6 @@ Class AppInstance
 			
 				SendWindowEvent( EventType.WindowRestored )
 				
-			Case SDL_WINDOWEVENT_EXPOSED
-			
-				RequestRender()
-			
 			Case SDL_WINDOWEVENT_FOCUS_GAINED
 			
 				Print "SDL_WINDOWEVENT_FOCUS_GAINED"
@@ -894,7 +890,7 @@ Class AppInstance
 				Local active:=_active
 				_active=False
 			
-				If _mouseView And Not _captureMouse	'should probably do this anyway?
+				If _mouseView And Not _captureMouse
 					SendMouseEvent( EventType.MouseUp,_mouseView )
 					_mouseView=Null
 				Endif
