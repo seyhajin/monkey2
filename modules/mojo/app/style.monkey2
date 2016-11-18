@@ -237,6 +237,8 @@ Class Style
 	#rem monkeydoc @hidden 
 	#end
 	Method Render( canvas:Canvas,bounds:Recti )
+	
+		bounds-=_margin
 
 		Local border:=Border
 		Local bdcolor:=BorderColor

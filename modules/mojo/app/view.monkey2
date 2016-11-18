@@ -509,9 +509,11 @@ Class View
 	Method SendMouseEvent( event:MouseEvent )
 	
 		If _acceptsMouseEvents
-
-			OnMouseEvent( event.TransformToView( Self ) )
+		
+			event=event.TransformToView( Self )
 			
+			OnMouseEvent( event )
+		
 			If event.Eaten Return
 		Endif
 		
@@ -698,11 +700,9 @@ Class View
 		
 		If _parent _rmatrix=_parent._rmatrix * _matrix Else _rmatrix=_matrix
 		
-		_bounds-=_rstyle.Margin
-		
 		_rclip=TransformRecti( _rect,_rmatrix )
 		
-		_rbounds=TransformRecti( _bounds,_rmatrix )
+		_rbounds=TransformRecti( _bounds-_rstyle.Margin,_rmatrix )
 		
 		If _parent
 			_rclip&=_parent._rclip
