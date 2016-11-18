@@ -1142,7 +1142,7 @@ Class Translator_CPP Extends Translator
 		
 			Emit( "bbDBFrame db_f{~q"+func.Name+":"+func.ftype.retType.Name+"("+func.ParamNames+")~q,~q"+func.pnode.srcfile.path+"~q};" )
 			
-			If func.IsMethod
+			If func.IsCtor Or func.IsMethod
 				
 				Select func.cscope.ctype.cdecl.kind
 				Case "struct"
