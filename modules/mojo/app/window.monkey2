@@ -222,6 +222,13 @@ Class Window Extends View
 	
 		Return _windowsByID[id]
 	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method SendTouchEvent( event:TouchEvent )
+	
+		OnTouchEvent( event )
+	End
 
 	#rem monkeydoc @hidden
 	#end
@@ -247,6 +254,15 @@ Class Window Extends View
 	Method OnThemeChanged() override
 	
 		_clearColor=App.Theme.GetColor( "windowClearColor" )
+	End
+	
+	#rem monkeydoc Touch event handler.
+	
+	Called when the user touches the window on a touch compatible device.
+	
+	#end
+	Method OnTouchEvent( event:TouchEvent ) Virtual
+	
 	End
 	
 	#rem monkeydoc Window event handler.

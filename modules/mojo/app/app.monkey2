@@ -101,6 +101,8 @@ Class AppInstance
 		
 		Mouse.Init()
 		
+		Touch.Init()
+		
 		Audio.Init()
 		
 		'Set GL attributes
@@ -569,6 +571,9 @@ Class AppInstance
 	Field _mouseLocation:Vec2i
 	Field _mouseWheel:Vec2i
 	Field _mouseClicks:Int=0
+	Field _finger:Int
+	Field _fingerPressure:Float
+	Field _fingerCoords:Vec2f
 	
 	Field _modalView:View
 	Field _modalStack:=New Stack<View>
@@ -589,9 +594,11 @@ Class AppInstance
 	
 	Method UpdateEvents()
 	
+		Keyboard.Update()
+		
 		Mouse.Update()
 		
-		Keyboard.Update()
+		Touch.Update()
 		
 		Local event:SDL_Event
 
@@ -656,6 +663,18 @@ Class AppInstance
 		
 	End
 	
+	Method SendTouchEvent( type:EventType )
+	
+		Local window:=_activeWindow
+		If Not window Return
+
+		Local p:=New Vec2i( _fingerCoords.x * window.Frame.Width,_fingerCoords.y * window.Frame.Height )
+
+		Local location:=window.TransformWindowPointToView( p )
+		
+		window.SendTouchEvent( New TouchEvent( type,_activeWindow,location,_finger,_fingerPressure ) )
+	End
+	
 	Method SendWindowEvent( type:EventType )
 	
 		Local event:=New WindowEvent( type,_window )
@@ -668,6 +687,10 @@ Class AppInstance
 		SdlEventFilter( event )
 	
 		Keyboard.SendEvent( event )
+		
+'		Mouse.SendEvent( event )
+		
+		Touch.SendEvent( event )
 	
 		Select event->type
 		
@@ -845,7 +868,37 @@ Class AppInstance
 				SendMouseEvent( EventType.MouseWheel,_hoverView )
 			
 			Endif
-
+			
+		Case SDL_FINGERDOWN
+		
+			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			_finger=tevent->fingerId
+			_fingerPressure=tevent->pressure
+			_fingerCoords=New Vec2f( tevent->x,tevent->y )
+			
+			SendTouchEvent( EventType.TouchDown )
+		
+		Case SDL_FINGERUP
+		
+			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			_finger=tevent->fingerId
+			_fingerPressure=tevent->pressure
+			_fingerCoords=New Vec2f( tevent->x,tevent->y )
+			
+			SendTouchEvent( EventType.TouchUp )
+		
+		Case SDL_FINGERMOTION
+		
+			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			_finger=tevent->fingerId
+			_fingerPressure=tevent->pressure
+			_fingerCoords=New Vec2f( tevent->x,tevent->y )
+			
+			SendTouchEvent( EventType.TouchMove )
+		
 		Case SDL_WINDOWEVENT
 		
 			Local wevent:=Cast<SDL_WindowEvent Ptr>( event )
