@@ -79,7 +79,7 @@ A raw key represents the physical location of a key on US keyboards. For example
 | F10
 | F11
 | F12
-| PrintScreem
+| PrintScreen
 | ScrollLock
 | Pause
 | Insert
