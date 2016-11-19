@@ -21,12 +21,12 @@ Class TouchDevice Extends InputDevice
 	
 	Method FingerPressed:Bool( finger:Int )
 		DebugAssert( finger>=0 And finger<10,"Finger index out of range" )
-		Return _fingers[finger].pressed
+		Return _fingers[finger].pressed=_frame
 	End
 	
 	Method FingerReleased:Bool( finger:Int )
 		DebugAssert( finger>=0 And finger<10,"Finger index out of range" )
-		Return _fingers[finger].released
+		Return _fingers[finger].released=_frame
 	End
 	
 	Method FingerPressure:Float( finger:Int )
@@ -59,9 +59,7 @@ Class TouchDevice Extends InputDevice
 	#rem monkeydoc @hidden
 	#end
 	Method Update()
-		For Local i:=0 Until 10
-			_fingers[i].pressed=False
-		Next
+		_frame+=1
 	End
 	
 	#rem monkeydoc @hidden
@@ -97,7 +95,7 @@ Class TouchDevice Extends InputDevice
 			If id=-1 Return
 			
 			_fingers[id].down=True
-			_fingers[id].pressed=True
+			_fingers[id].pressed=_frame
 			_fingers[id].pressure=tevent->pressure
 			_fingers[id].location=EventLocation( tevent )
 		
@@ -114,7 +112,7 @@ Class TouchDevice Extends InputDevice
 			If id=-1 Return
 			
 			_fingers[id].down=False
-			_fingers[id].released=False
+			_fingers[id].released=_frame
 			_fingers[id].pressure=0
 			_fingers[id].location=EventLocation( tevent )
 			
@@ -142,12 +140,13 @@ Class TouchDevice Extends InputDevice
 	Struct FingerState
 		Field id:Int
 		Field down:Bool
-		Field pressed:Bool
-		Field released:Bool
+		Field pressed:Int
+		Field released:Int
 		Field pressure:Float
 		Field location:Vec2i
 	End
-	
+
+	Field _frame:Int=1	
 	Field _fingers:=New FingerState[10]
 	
 	Method New()

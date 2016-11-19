@@ -90,7 +90,7 @@ Class KeyboardDevice Extends InputDevice
 
 		Local scode:=ScanCode( key )
 
-		Return _down[scode]
+		Return _keys[scode].down
 	End
 	
 	#rem monkeydoc Checks if a key was pressed.
@@ -106,7 +106,7 @@ Class KeyboardDevice Extends InputDevice
 	
 		Local scode:=ScanCode( key )
 		
-		Return _pressed[scode]
+		Return _keys[scode].pressed=_frame
 	End
 
 	#rem monkeydoc Checks if a key was released.
@@ -122,7 +122,7 @@ Class KeyboardDevice Extends InputDevice
 	
 		Local scode:=ScanCode( key )
 		
-		Return _released[scode]
+		Return _keys[scode].released=_frame
 	End
 	
 	#rem monkeydoc @hidden
@@ -208,16 +208,8 @@ Class KeyboardDevice Extends InputDevice
 	#rem monkeydoc @hidden
 	#end
 	Method Update()
-	
-		For Local key:=Eachin _pressedKeys
-			_pressed[key]=False
-		Next
-		_pressedKeys.Clear()
-		
-		For Local key:=Eachin _releasedKeys
-			_released[key]=False
-		Next
-		_releasedKeys.Clear()
+		_frame+=1
+		FlushChars()
 	End
 	
 	#rem monkeydoc @hidden
@@ -232,24 +224,9 @@ Class KeyboardDevice Extends InputDevice
 			
 			Local scode:=kevent->keysym.scancode
 			
-			If Not _down[scode]
-			
-				_down[scode]=True
-				_pressed[scode]=True
-				_pressedKeys.Push( scode )
-					
-				Select kevent->keysym.sym
-				Case $400000e0 _modifiers|=Modifier.LeftControl
-				Case $400000e1 _modifiers|=Modifier.LeftShift
-				Case $400000e2 _modifiers|=Modifier.LeftAlt
-				Case $400000e3 _modifiers|=Modifier.LeftGui
-				Case $400000e4 _modifiers|=Modifier.RightControl
-				Case $400000e5 _modifiers|=Modifier.RightShift
-				Case $400000e6 _modifiers|=Modifier.RightAlt
-				Case $400000e7 _modifiers|=Modifier.RightGui
-				End
-			
-			Endif
+			_keys[scode].down=True
+			_keys[scode].pressed=_frame
+			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			
 			Local char:=KeyToChar( _scan2key[scode] )
 			If char PushChar( char )
@@ -260,52 +237,44 @@ Class KeyboardDevice Extends InputDevice
 			
 			Local scode:=kevent->keysym.scancode
 			
-			If Not _down[scode] Return
-			
-			_down[scode]=False
-			_released[scode]=True
-			_releasedKeys.Push( scode )
-	
-			Select kevent->keysym.sym
-			Case $400000e0 _modifiers&=~Modifier.LeftControl
-			Case $400000e1 _modifiers&=~Modifier.LeftShift
-			Case $400000e2 _modifiers&=~Modifier.LeftAlt
-			Case $400000e3 _modifiers&=~Modifier.LeftGui
-			Case $400000e4 _modifiers&=~Modifier.RightControl
-			Case $400000e5 _modifiers&=~Modifier.RightShift
-			Case $400000e6 _modifiers&=~Modifier.RightAlt
-			Case $400000e7 _modifiers&=~Modifier.RightGui
-			End
+			_keys[scode].down=False
+			_keys[scode].released=_frame
+			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
 			Local char:=tevent->text[0]
 			If char PushChar( char )
+			
 		End
 
 	End
 
 	Private
 	
+	Struct KeyState
+		Field down:Bool
+		Field pressed:Int
+		Field released:Int
+	End
+
 	Const CHAR_QUEUE_SIZE:=32
 	Const CHAR_QUEUE_MASK:=31
-	
+
+	Field _frame:Int=1
+	Field _keys:=New KeyState[512]
 	Field _modifiers:Modifier
-	Field _down:=New Bool[512]
-	Field _pressed:=New Bool[512]
-	Field _released:=New Bool[512]
-	Field _pressedKeys:=New IntStack
-	Field _releasedKeys:=New IntStack
+	Field _charQueue:=New Int[CHAR_QUEUE_SIZE]
+	Field _charPut:Int
+	Field _charGet:Int
+
 	Field _names:=New String[512]
 	Field _raw2scan:=New Int[512]	'no translate
 	Field _scan2raw:=New Key[512]	'no translate
 	Field _key2scan:=New Int[512]	'translate
 	Field _scan2key:=New Int[512]	'translate
-	Field _charQueue:=New Int[CHAR_QUEUE_SIZE]
-	Field _charPut:Int
-	Field _charGet:Int
-	
+
 	Method New()
 	End
 
