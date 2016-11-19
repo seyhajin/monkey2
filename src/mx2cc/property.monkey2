@@ -68,7 +68,12 @@ Class PropertyList Extends FuncList
 	
 		If Not instance Throw New SemantEx( "Property '"+pdecl.ident+"' cannot be accessed without an instance" )
 		
-		If Not instance.type.ExtendsType( cscope.ctype )
+		Local selfType:=cscope.ctype
+		If pdecl.IsExtension selfType=selfType.superType
+		
+		If Not instance.type.ExtendsType( selfType )
+'			Print instance.type.ToString()
+'			Print cscope.ctype.ToString()
 			Throw New SemantEx( "Property '"+pdecl.ident+"' cannot be accessed from an instance of a different class" )
 		Endif
 		
