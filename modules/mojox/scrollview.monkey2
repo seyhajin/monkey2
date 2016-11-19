@@ -253,13 +253,14 @@ Class ScrollView Extends DockingView
 		Select event.Type
 		Case EventType.MouseWheel
 		
-			Scroll-=New Vec2i( 0,_content.RenderStyle.Font.Height*event.Wheel.Y )
+			Local scroll:=_scroll
 			
-		Default
-			Return
+			Local delta:=New Vec2i( 0,_content.RenderStyle.Font.Height*event.Wheel.Y )
+			
+			Scroll-=delta
+			
+			If scroll<>_scroll event.Eat()
 		End
-		
-		event.Eat()
 	End
 	
 	Method ContentViewContainer:View( contentView:View ) Override
