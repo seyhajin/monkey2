@@ -380,7 +380,7 @@ Class Canvas
 	Method DrawPoint( x:Float,y:Float )
 		If _pointSize<=1
 			AddDrawOp( _shader,_material,_blendMode,_textureFilter,1,1 )
-			AddVertex( x+.5,y+.5,0,0 )
+			AddPointVertex( x,y,0,0 )
 			Return
 		Endif
 		
@@ -419,8 +419,8 @@ Class Canvas
 
 		If _lineWidth<=1
 			AddDrawOp( _shader,_material,_blendMode,_textureFilter,2,1 )
-			AddVertex( x0+.5,y0+.5,0,0 )
-			AddVertex( x1+.5,y1+.5,1,1 )
+			AddPointVertex( x0,y0,0,0 )
+			AddPointVertex( x1,y1,1,1 )
 			Return
 		Endif
 		
@@ -1343,6 +1343,17 @@ Class Canvas
 		_vp->texCoord1.x=_tanvec.x
 		_vp->texCoord1.y=_tanvec.y
 		_vp->color=color
+		_vp+=1
+	End
+	
+	Method AddPointVertex( tx:Float,ty:Float,s0:Float,t0:Float )
+		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x + .5
+		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y + .5
+		_vp->texCoord0.x=s0
+		_vp->texCoord0.y=t0
+		_vp->texCoord1.x=_tanvec.x
+		_vp->texCoord1.y=_tanvec.y
+		_vp->color=_pmcolor
 		_vp+=1
 	End
 	
