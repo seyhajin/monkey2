@@ -87,35 +87,51 @@ Class TouchDevice Extends InputDevice
 		
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
-			Local id:=tevent->fingerId
-			If id>=0 And id<10
-				_fingers[id].down=True
-				_fingers[id].pressed=True
-				_fingers[id].pressure=tevent->pressure
-				_fingers[id].location=EventLocation( tevent )
-			Endif
+			Local id:=-1
+			For Local i:=0 Until 10
+				If _fingers[i].down Continue
+				_fingers[i].id=tevent->fingerId
+				id=i
+				Exit
+			Next
+			If id=-1 Return
+			
+			_fingers[id].down=True
+			_fingers[id].pressed=True
+			_fingers[id].pressure=tevent->pressure
+			_fingers[id].location=EventLocation( tevent )
 		
 		Case SDL_FINGERUP
 		
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
-			Local id:=tevent->fingerId
-			If id>=0 And id<10
-				_fingers[id].down=False
-				_fingers[id].released=False
-				_fingers[id].pressure=0
-				_fingers[id].location=EventLocation( tevent )
-			Endif
+			Local id:=-1
+			For Local i:=0 Until 10
+				If Not _fingers[i].down Or _fingers[i].id<>tevent->fingerId Continue
+				id=i
+				Exit
+			Next
+			If id=-1 Return
+			
+			_fingers[id].down=False
+			_fingers[id].released=False
+			_fingers[id].pressure=0
+			_fingers[id].location=EventLocation( tevent )
 			
 		Case SDL_FINGERMOTION
 		
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
-			Local id:=tevent->fingerId
-			If id>=0 And id<10
-				_fingers[id].pressure=tevent->pressure
-				_fingers[id].location=EventLocation( tevent )
-			Endif
+			Local id:=-1
+			For Local i:=0 Until 10
+				If Not _fingers[i].down Or _fingers[i].id<>tevent->fingerId Continue
+				id=i
+				Exit
+			Next
+			If id=-1 Return
+			
+			_fingers[id].pressure=tevent->pressure
+			_fingers[id].location=EventLocation( tevent )
 		
 		End
 
@@ -124,10 +140,11 @@ Class TouchDevice Extends InputDevice
 	Private
 	
 	Struct FingerState
+		Field id:Int
 		Field down:Bool
 		Field pressed:Bool
 		Field released:Bool
-		Field pressure:FLoat
+		Field pressure:Float
 		Field location:Vec2i
 	End
 	
