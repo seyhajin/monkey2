@@ -39,24 +39,18 @@ Class Type Extends SNode
 		_alias=Self
 	End
 	
-	Property Dealias:Type()
-		Return _alias
-	End
-	
 	Property IsGeneric:Bool()
 		Return flags & TYPE_GENERIC
 	End
 	
 	'Not nice - should fix comparison ops
 	Operator=:Bool( type:Type )
-		If Not Self Return Object(type)=Null
-		If Not type Return Object(_alias)=Null
+		If Not Self Or Not type Throw New SemantEx( "Type.Operator=()" )
 		Return Object(type._alias)=_alias
 	End
 	
 	Operator<>:Bool( type:Type )
-		If Not Self Return Object(type)<>Null
-		If Not type Return Object(_alias)<>Null
+		If Not Self Or Not type Throw New SemantEx( "Type.Operator<>()" )
 		Return Object(type._alias)<>_alias
 	End
 	

@@ -31,16 +31,18 @@ End
 
 Function BalancePrimTypes:Type( lhs:PrimType,rhs:PrimType )
 
+	If Not lhs And Not rhs
+		Throw New SemantEx( "Types must be primitive" )
+	Endif
+	
+	If Not lhs lhs=rhs Else If Not rhs rhs=lhs
+
 	If lhs=Type.VariantType Or rhs=Type.VariantType Return Type.VariantType
 
 	If lhs=Type.StringType Or rhs=Type.StringType Return Type.StringType
 	
 	If lhs=Type.BoolType Or rhs=Type.BoolType Return Type.BoolType
 	
-	If Not lhs Or Not rhs
-		Throw New SemantEx( "Types must be primitive" )
-	Endif
-
 	Return BalanceNumericTypes( lhs,rhs )
 End
 
