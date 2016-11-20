@@ -880,7 +880,7 @@ Class TextView Extends ScrollableView
 		
 	End
 	
-	Method OnKeyDown:Bool( key:Key,modifiers:Modifier )
+	Method OnKeyDown:Bool( key:Key,modifiers:Modifier ) Virtual
 	
 		Select key
 		Case Key.Backspace
@@ -980,6 +980,7 @@ Class TextView Extends ScrollableView
 				_cursor-=1
 			Endif
 			UpdateCursor()
+			Return True
 				
 		Case Key.Right
 		
@@ -989,42 +990,45 @@ Class TextView Extends ScrollableView
 				_cursor+=1
 			Endif
 			UpdateCursor()
+			Return True
 				
 		Case Key.Home
 			
 			_cursor=_doc.StartOfLine( CursorLine )
 			UpdateCursor()
+			Return True
 				
 		Case Key.KeyEnd
 			
 			_cursor=_doc.EndOfLine( CursorLine )
 			UpdateCursor()
+			Return True
 
 		Case Key.Up
 			
 			MoveLine( -1 )
+			Return True
 			
 		Case Key.Down
 			
 			MoveLine( 1 )
+			Return True
 				
 		Case Key.PageUp
 			
 			Local n:=VisibleRect.Height/_charh-1		'shouldn't really use cliprect here...
 			MoveLine( -n )
+			Return True
 				
 		Case Key.PageDown
 			
 			Local n:=VisibleRect.Height/_charh-1
 			MoveLine( n )
-			
-		Default
-		
-			Return False
+			Return True
 		
 		End
 		
-		Return True
+		Return False
 	End
 	
 	Method OnControlKeyDown:Bool( key:Key,modifiers:Modifier ) Virtual
