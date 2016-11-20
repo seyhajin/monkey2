@@ -28,6 +28,14 @@ Struct Vec3<T>
 		Self.x=v.x;Self.y=v.y;Self.z=z
 	End
 	
+	Method To<C>:Vec3<C>()
+		Return New Vec3<C>( x,y,z )
+	End
+	
+	Method To:String()
+		Return "Vec3("+x+","+y+","+z+")"
+	End
+	
 	Property X:T()
 		Return x
 	Setter( x:T )
@@ -82,12 +90,24 @@ Struct Vec3<T>
 		Return New Vec3( x-s,y-s,z-s )
 	End
 	
+	Property Pitch:Double()
+		return -ATan2( y,Sqrt( x*x+z*z ) )
+	End
+
+	Property Yaw:Double()
+		return -ATan2( x,z )
+	End
+	
 	Property Length:Double()
 		Return Sqrt( x*x+y*y+z*z )
 	End
-
+	
 	Method Dot:Double( v:Vec3 )
 		Return x*v.x+y*v.y+z*v.z
+	End
+
+	Method Cross:Vec3( v:Vec3 )
+		Return New Vec3( y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x )
 	End
 	
 	Method Normalize:Vec3()
@@ -96,10 +116,6 @@ Struct Vec3<T>
 	
 	Method Blend:Vec3( v:Vec3,alpha:Double )
 		Return New Vec3( (v.x-x)*alpha+x,(v.y-y)*alpha+y,(v.z-z)*alpha+z )
-	End
-	
-	Method ToString:String()
-		Return "Vec3("+x+","+y+","+z+")"
 	End
 
 End
