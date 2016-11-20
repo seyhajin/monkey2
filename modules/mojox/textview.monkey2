@@ -1045,9 +1045,11 @@ Class TextView Extends ScrollableView
 		Case Key.Home
 			_cursor=0
 			UpdateCursor()
+			Return True
 		Case Key.KeyEnd
 			_cursor=_doc.TextLength
 			UpdateCursor()
+			Return True
 		Case Key.Left
 			If _anchor<>_cursor And Not (modifiers & Modifier.Shift)
 				_cursor=Min( _anchor,_cursor )
@@ -1063,6 +1065,7 @@ Class TextView Extends ScrollableView
 			
 			_cursor=FindWord( Max( _cursor-1,0 ),term )
 			UpdateCursor()
+			Return True
 		Case Key.Right
 			If _anchor<>_cursor And Not (modifiers & Modifier.Shift)
 				_cursor=Max( _anchor,_cursor )
@@ -1079,11 +1082,10 @@ Class TextView Extends ScrollableView
 			Wend
 			
 			UpdateCursor()
-		Default
-			Return false
+			Return True
 		End
 		
-		Return True
+		Return False
 	End
 	
 	Method OnKeyEvent( event:KeyEvent ) Override
