@@ -126,7 +126,7 @@ Class AppInstance
 
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,Int( GetConfig( "GL_context_major_version",gl_major ) ) )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,Int( GetConfig( "GL_context_major_version",gl_minor ) ) )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,Int( GetConfig( "GL_context_minor_version",gl_minor ) ) )
 		
 		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "GL_depth_buffer_enabled",0 ) ) )
 		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetConfig( "GL_stencil_buffer_enabled",0 ) ) )
