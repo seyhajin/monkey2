@@ -1092,6 +1092,22 @@ Class TextView Extends ScrollableView
 		Return False
 	End
 	
+	Method OnKeyChar( text:String ) Virtual
+
+		If _undos.Length
+			
+			Local undo:=_undos.Top
+			If Not undo.text And _cursor=undo.cursor
+				ReplaceText( _anchor,_cursor,text )
+				undo.cursor=_cursor
+				Return
+			Endif
+				
+		Endif
+		
+		ReplaceText( text )
+	End
+	
 	Method OnKeyEvent( event:KeyEvent ) Override
 	
 		If _readOnly
@@ -1177,19 +1193,8 @@ Class TextView Extends ScrollableView
 			
 		Case EventType.KeyChar
 		
-			If _undos.Length
-			
-				Local undo:=_undos.Top
-				If Not undo.text And _cursor=undo.cursor
-					ReplaceText( _anchor,_cursor,event.Text )
-					undo.cursor=_cursor
-					Return
-				Endif
-				
-			Endif
+			OnKeyChar( event.Text )
 		
-			ReplaceText( event.Text )
-			
 		End
 	End
 	
