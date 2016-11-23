@@ -75,7 +75,11 @@ Public
 	
 		select event.Type
 			Case EventType.KeyDown 
-				If ( event.Key=Key.Enter And event.Modifiers & Modifier.Alt	) Fullscreen=Not Fullscreen	
+
+				If ( event.Key=Key.Enter And event.Modifiers & Modifier.Alt	) 
+					If Fullscreen EndFullscreen() Else BeginFullscreen()
+				Endif
+
 				If ( event.Key=Key.Escape )	App.Terminate()		
 		End
 	
@@ -185,6 +189,7 @@ Public
 		canvas.Alpha=1.0
 		canvas.TextureFilteringEnabled=True
 		canvas.LineWidth=2.0
+		canvas.LineSmoothing=True
 		
 		'Process
 		For Local t:int=0 To NumParticles-1
