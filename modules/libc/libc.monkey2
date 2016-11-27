@@ -59,6 +59,14 @@ Alias int32_t:Int
 #end
 Alias uint32_t:UInt
 
+#rem monkeydoc C/C++ 'int64_t' type
+#end
+Alias int64_t:Long
+
+#rem monkeydoc C/C++ 'uint64_t' type
+#end
+Alias uint64_t:ULong
+
 #rem monkeydoc C/C++ 'intptr_t' type
 #end
 Alias intptr_t:ULong
