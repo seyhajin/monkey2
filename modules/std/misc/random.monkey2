@@ -1,18 +1,14 @@
 
 Namespace std.random
 
-#rem
-
-Random number generator is based on the xorshift128plus:
-
-https://en.wikipedia.org/wiki/Xorshift
-
-#end
-
 Private
 
 Global state0:ULong=1234
-Global state1:ULong=5678
+Global state1:ULong=~1234|1
+
+Function rotl:ULong( x:ULong,k:Int )
+	Return (x Shl k) | (x Shr (64-k))
+End
 
 Public
 
@@ -22,8 +18,8 @@ Public
 
 #end
 Function SeedRnd( seed:ULong )
-	state0=seed
-	state1=seed
+	state0=seed*2|1
+	state1=~state0|1
 	RndULong()
 	RndULong()
 End
@@ -32,19 +28,18 @@ End
 
 This is the core function used by all other functions in the random namespace that generate random numbers.
 
+The algorithm currently used is 'xoroshiro128+'.
+
 @return A random unsigned long value.
 
 #end
 Function RndULong:ULong()
-	Local s1:=state0
-	Local s0:=state1
-	state0=s0
-	s1~=s1 Shl 23
-	s1~=s1 Shr 17
+	Local s0:=state0
+	Local s1:=state1
 	s1~=s0
-	s1~=s0 Shr 26
-	state1=s1
-	Return s1+s0
+	state0=rotl( s0,55 ) ~ s1 ~ (s1 Shl 14)
+	state1=rotl( s1,36 )
+	return state0+state1
 End
 
 #rem monkeydoc Generates a random double value.
@@ -61,7 +56,9 @@ When used with two parameters, returns a random double value in the range `min` 
 
 #end
 Function Rnd:Double()
-	Return Double( RndULong() & ULong( $1fffffffffffff ) ) / Double( $20000000000000 )
+	Local x:=RndULong(),y:ULong=$3ff
+	Local t:ULong=(y Shl 52) | (x Shr 12)
+	Return (Cast<Double Ptr>( Varptr t ))[0]-1
 End
 
 Function Rnd:Double( max:Double )
