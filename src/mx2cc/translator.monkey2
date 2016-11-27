@@ -205,21 +205,17 @@ Class Translator
 			Emit( "void gcMark(){" )
 
 			For Local vvar:=Eachin _gcframe.vars.Values
-				Uses( vvar.type )
-				If IsGCPtrType( vvar.type )
-					Emit( "bbGCMark("+VarName( vvar )+");" )
-				Else
-					Emit( "bbGCMark("+VarName( vvar )+");" )
-				Endif
+
+				Marks( vvar.type )
+
+				Emit( "bbGCMark("+VarName( vvar )+");" )
 			Next
 			
 			For Local tmp:=Eachin _gcframe.tmps
-				Uses( tmp.type )
-				If IsGCPtrType( tmp.type )
-					Emit( "bbGCMark("+tmp.ident+");" )
-				Else
-					Emit( "bbGCMark("+tmp.ident+");" )
-				Endif
+			
+				Marks( tmp.type )
+				
+				Emit( "bbGCMark("+tmp.ident+");" )
 			Next
 			
 			Emit( "}" )
@@ -282,18 +278,24 @@ Class Translator
 
 	Class Deps
 		Field depsPos:Int
-		Field usesFiles:=New StringMap<FileDecl>
-		Field usesTypes:=New StringMap<ClassType>
+		
+		Field incs:=New Map<FileDecl,Bool>
+		Field usesFiles:=New Map<FileDecl,Bool>
+		
+		Field uses:=New Map<SNode,Bool>
 		Field refs:=New Map<SNode,Bool>
+		
 		Field refsVars:=New Stack<VarValue>
 		Field refsFuncs:=New Stack<FuncValue>
 		Field refsTypes:=New Stack<Type>
-		Field incs:=New StringMap<FileDecl>
 	End
 	
 	Field _deps:Deps
 	
 	Method BeginDeps()
+	
+		_deps=New Deps
+	
 		_deps.depsPos=InsertPos
 	End
 	
@@ -302,10 +304,7 @@ Class Translator
 		BeginInsert( _deps.depsPos )
 	
 		EmitBr()
-		Emit( "// ***** External *****" )
-
-		EmitBr()
-		For Local fdecl:=Eachin _deps.usesFiles.Values
+		For Local fdecl:=Eachin _deps.usesFiles.Keys
 			EmitInclude( fdecl,baseDir )
 		Next
 		
@@ -351,7 +350,6 @@ Class Translator
 		
 		EmitBr()	
 		For Local vvar:=Eachin _deps.refsVars
-		
 			If Not Included( vvar.transFile ) Emit( "extern "+VarProto( vvar )+";" )
 		Next
 		_deps.refsVars.Clear()
@@ -363,20 +361,22 @@ Class Translator
 		_deps.refsFuncs.Clear()
 		
 		EndInsert()
+		
+		_deps=Null
 	End
 	
 	Method Included:Bool( fdecl:FileDecl )
 	
-		Return _deps.incs.Contains( fdecl.ident )
+		Return _deps.incs[fdecl]
 	End
 	
 	Method EmitInclude( fdecl:FileDecl,baseDir:String )
 	
-		If _deps.incs.Contains( fdecl.ident ) Return
+		If _deps.incs[fdecl] Return
 
 		Emit( "#include ~q"+MakeIncludePath( fdecl.hfile,baseDir )+"~q" )
 		
-		_deps.incs[fdecl.ident]=fdecl
+		_deps.incs[fdecl]=True
 	End
 	
 	Method AddRef:Bool( node:SNode )
@@ -384,7 +384,7 @@ Class Translator
 		_deps.refs[node]=True
 		Return False
 	End
-	
+
 	Method Refs( vvar:VarValue )
 	
 		If vvar.vdecl.IsExtern Uses( vvar.transFile ) ; Return
@@ -409,12 +409,11 @@ Class Translator
 		Refs( func.ftype )
 	End
 	
-	Method Refs( type:Type,ext:Bool=False )
+	Method Refs( type:Type )
 	
 		Local ctype:=TCast<ClassType>( type )
 		If ctype
-			If ctype.cdecl.IsExtern Uses( ctype.transFile ) ; return
-			If Not ext And ctype.IsStruct Uses( ctype ) ; Return
+			If ctype.cdecl.IsExtern Uses( ctype.transFile ) ; Return
 			If AddRef( ctype ) Return
 			_deps.refsTypes.Push( ctype )
 			Return
@@ -429,9 +428,9 @@ Class Translator
 		
 		Local ftype:=TCast<FuncType>( type )
 		If ftype
-			Refs( ftype.retType,ext )
+			Refs( ftype.retType )
 			For Local type:=Eachin ftype.argTypes
-				Refs( type,ext )
+				Refs( type )
 			Next
 			Return
 		Endif
@@ -453,27 +452,115 @@ Class Translator
 	Method Uses( type:Type )
 
 		Local ctype:=TCast<ClassType>( type )
-		If ctype 
-			Uses( ctype )
+		If ctype
+			_deps.uses[ctype]=True 
+			Uses( ctype.transFile )
+			Return
+		Endif
+
+		Refs( type )
+	End
+	
+	Method Uses( fdecl:FileDecl )
+		_deps.usesFiles[fdecl]=True
+	End
+	
+	Method UsesRefInfo( type:Type )
+	
+		Local ctype:=TCast<ClassType>( type )
+		If ctype
+			Uses( ctype.transFile )
+			Return
+		Endif
+		
+		Local etype:=TCast<EnumType>( type )
+		If etype
+			Uses( etype.transFile )
+			Return
+		Endif
+	
+		Local ftype:=TCast<FuncType>( type )
+		If ftype
+			UsesRefInfo( ftype.retType )
+			For Local type:=Eachin ftype.argTypes
+				UsesRefInfo( type )
+			Next
 			Return
 		Endif
 		
 		Local atype:=TCast<ArrayType>( type )
 		If atype
-			Uses( atype.elemType )
+			UsesRefInfo( atype.elemType )
+			Return
+		Endif
+		
+		Local ptype:=TCast<PointerType>( type )
+		If ptype
+			UsesRefInfo( ptype.elemType )
+			Return
+		Endif
+		
+		Uses( type )
+	End
+	
+	Method UsesRefInfo( vvar:VarValue )
+	
+		UsesRefInfo( vvar.type )
+	
+		Uses( vvar.transFile )
+		
+	End
+	
+	Method UsesRefInfo( func:FuncValue )
+	
+		UsesRefInfo( func.type )
+		
+		Uses( func.transFile )
+	End
+	
+	Method Marks( type:Type )
+	
+		Local ctype:=TCast<ClassType>( type )
+		If ctype 
+			Uses( ctype )
+			Return
+		Endif
+
+		Local ftype:=TCast<FuncType>( type )
+		If ftype
+			Marks( ftype.retType )
+			For Local type:=Eachin ftype.argTypes
+				Marks( type )
+			Next
+			Return
+		Endif
+
+		Local atype:=TCast<ArrayType>( type )
+		If atype
+			Marks( atype.elemType )
 			Return
 		Endif
 		
 		Refs( type )
 	End
+			
+	Method Decls( type:Type )
 	
-	Method Uses( ctype:ClassType )
-		_deps.usesTypes[ ClassName( ctype ) ]=ctype
-		Uses( ctype.transFile )
+		Local ctype:=TCast<ClassType>( type )
+		If ctype And ctype.IsStruct Uses( ctype ) ; Return
+		
+		Refs( type )
 	End
 	
-	Method Uses( fdecl:FileDecl )
-		_deps.usesFiles[ fdecl.ident ]=fdecl
+	Method Decls( vvar:VarValue )
+		Decls( vvar.type )
+	End
+	
+	Method Decls( func:FuncValue )
+		Decls( func.ftype.retType )
+		For Local type:=Eachin func.ftype.argTypes
+			Decls( type )
+		Next
 	End
 	
 End

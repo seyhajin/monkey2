@@ -43,8 +43,6 @@ Class AliasType Extends ProxyType
 
 	Method OnSemant:SNode() Override
 	
-'		If IsGeneric Return Self
-		
 		Local tscope:=scope
 		If types
 			tscope=New Scope( tscope )

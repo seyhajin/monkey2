@@ -74,16 +74,25 @@ Class VarValue Extends Value
 	Method OnSemant:SNode() Override
 	
 		Scope.semanting.Push( scope )
-	
+		
 		If vdecl.type
+		
 			type=vdecl.type.SemantType( scope )
+			
 			If vdecl.init init=vdecl.init.SemantRValue( scope,type )
+			
 		Else If vdecl.init
+		
 			init=vdecl.init.SemantRValue( scope )
+			
 			If TCast<VoidType>( init.type ) Throw New SemantEx( "Variables cannot have 'Void' type" )
+			
 			type=init.type
+			
 		Else 
+
 			SemantError( "VarValue.OnSemant()" )
+
 		Endif
 		
 		If Not type.IsGeneric And Not vdecl.IsExtern And Not Cast<Block>( scope )

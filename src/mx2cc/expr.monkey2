@@ -79,27 +79,17 @@ Class Expr Extends PNode
 		Return Null
 	End
 	
-	Method SemantType:Type( scope:Scope,generic:Bool=False )
+	Method SemantType:Type( scope:Scope,canBeGeneric:Bool=False )
 
 		Try
 			semanting.Push( Self )
 
 			Local type:=OnSemantType( scope )
-
+			
 			Local ctype:=TCast<ClassType>( type )
-			
-			If generic
-				
-				If Not ctype Or Not ctype.types 'Or ctype.instanceOf
-'					Throw New SemantEx( "Type '"+type.Name+"' must be a generic class type" )
-				Endif
-			
-			Else
-			
-				If ctype And ctype.types And Not ctype.instanceOf
-'					Throw New SemantEx( "Generic class type '"+ctype.Name+"' is missing type arguments" )
-				Endif
-
+			If Not canBeGeneric And ctype And ctype.types And Not ctype.instanceOf
+				DebugStop()
+				Print "!!!!!"
 			Endif
 			
 			semanting.Pop()
@@ -318,6 +308,8 @@ Class NewObjectExpr Extends Expr
 		Local ctype:=TCast<ClassType>( type )
 		If Not ctype Throw New SemantEx( "Type '"+type.Name+"' is not a class type" )
 		
+		If ctype.IsGeneric Return New LiteralValue( ctype,"" )
+		
 		'hmmm...
 '		ctype.SemantMembers()
 		
@@ -385,7 +377,9 @@ Class NewArrayExpr Extends Expr
 		Local atype:=TCast<ArrayType>( type.SemantType( scope ) )
 		If Not atype SemantError( "NewArrayExpr.OnSemant()" )
 		
-		If atype.elemType.IsGeneric Throw New SemantEx( "Array element type '"+atype.elemType.Name+"' is generic" )
+		If atype.IsGeneric Return New LiteralValue( atype,"" )
+		
+'		If atype.elemType.IsGeneric Throw New SemantEx( "Array element type '"+atype.elemType.Name+"' is generic" )
 		
 		Local sizes:Value[],inits:Value[]
 		If Self.inits
