@@ -45,9 +45,13 @@ namespace detail{
 
 bbString bbTypeName( const char *type );
 
-template<class X,class Y> int bbCompare( X x,Y y ){
-	if( y>x ) return -1;
-	return x>y;
+template<class T> bool operator<( const T &x,const T &y ){
+	return memcmp( &x,&y,sizeof(T) );
+}
+
+template<class X,class Y> int bbCompare( const X &x,const Y &y ){
+	if( x<y ) return -1;
+	return y<x;
 }
 
 #endif
