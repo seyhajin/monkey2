@@ -466,6 +466,8 @@ class bbString{
 	
 	static bbString fromChar( int chr );
 	
+	static bbString fromChars( bbArray<int> chrs );
+	
 	static bbString fromCString( const void *data ){ return bbString( data ); }
 	
 	static bbString fromCString( const void *data,int size ){ return bbString( data,size ); }
