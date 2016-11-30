@@ -88,8 +88,7 @@ Class Expr Extends PNode
 			
 			Local ctype:=TCast<ClassType>( type )
 			If Not canBeGeneric And ctype And ctype.types And Not ctype.instanceOf
-				DebugStop()
-				Print "!!!!!"
+				Throw New SemantEx( "Illegal use of generic class '"+ctype.ToString()+"'" )
 			Endif
 			
 			semanting.Pop()
@@ -187,12 +186,20 @@ Class MemberExpr Extends Expr
 	Method OnSemant:Value( scope:Scope ) Override
 	
 		Local value:=expr.SemantRValue( scope )
+		Local tv:=Cast<TypeValue>( value )
+	
+		If tv	
+			Local ctype:=TCast<ClassType>( tv.ttype )
+			If ctype And ctype.types And Not ctype.instanceOf
+				throw New SemantEx( "Illegal use of generic class '"+ctype.ToString()+"'" )
+			Endif
+		Endif
 		
 		Local tvalue:=value.FindValue( ident )
 		If tvalue Return tvalue
 		
-		Local tv:=Cast<TypeValue>( value )
 		If tv Throw New SemantEx( "Type '"+tv.ttype.Name+"' has no member named '"+ident+"'" )
+		
 		Throw New SemantEx( "Value of type '"+value.type.Name+"' has no member named '"+ident+"'" )
 	End
 	

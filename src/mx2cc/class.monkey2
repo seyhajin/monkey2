@@ -143,11 +143,17 @@ Class ClassType Extends Type
 					
 					extendsVoid=True
 					
+				Else If TCast<GenArgType>( type )	'eg: class Blah<T> Extends T
+				
+					superType=Null
+				
 				Else
 				
 					superType=TCast<ClassType>( type )
 					
-					If Not superType Or superType.cdecl.kind<>cdecl.kind Throw New SemantEx( "Type '"+type.ToString()+"' is not a valid super class type" )
+					If Not superType Throw New SemantEx( "Type '"+type.ToString()+"' is not a valid super class type" )
+					
+					If superType.cdecl.kind<>cdecl.kind Throw New SemantEx( "'"+cdecl.kind.Capitalize()+"' cannot extend '"+superType.cdecl.kind.Capitalize()+"'" )
 					
 					If superType.state=SNODE_SEMANTING Throw New SemantEx( "Cyclic inheritance error for '"+ToString()+"'",cdecl )
 					
@@ -178,12 +184,12 @@ Class ClassType Extends Type
 			
 				Try
 					Local type:=iface.SemantType( scope )
+					
+					If TCast<GenArgType>( type ) Continue
 
 					Local ifaceType:=TCast<ClassType>( type )
 					
 					If Not ifaceType Or (ifaceType.cdecl.kind<>"interface" And ifaceType.cdecl.kind<>"protocol" ) Throw New SemantEx( "Type '"+type.ToString()+"' is not a valid interface type" )
-					
-					If cdecl.kind="interface" And ifaceType.cdecl.kind="protocol" Throw New SemantEx( "Interfaces cannot extends protocols" )
 					
 					If ifaceType.state=SNODE_SEMANTING Throw New SemantEx( "Cyclic inheritance error",cdecl )
 					

@@ -1829,7 +1829,22 @@ Class Translator_CPP Extends Translator
 		Case "shl" op="<<"
 		Case "shr" op=">>"
 		End
+
+		Local lhs:=Trans( value.lhs )
+		Local rhs:=Trans( value.rhs )
 		
+		Local etype:=TCast<EnumType>( value.type )
+		If etype
+'			Refs( etype )
+			Return EnumName( etype )+"(int("+lhs+")"+op+"int("+rhs+"))"
+		Endif
+		
+'		Uses( value.type )
+'		Uses( value.lhs.type )
+'		Uses( value.rhs.type )
+		
+		Return "("+lhs+op+rhs+")"
+#rem		
 '		If TCast<PointerType>( value.lhs.type ) Uses( value.lhs.type )
 '		If TCast<PointerType>( value.rhs.type ) Uses( value.rhs.type )
 		
@@ -1845,6 +1860,7 @@ Class Translator_CPP Extends Translator
 		If etype t=EnumName( etype )+"("+t+")"
 		
 		Return t
+#end
 	End
 	
 	Method Trans:String( value:IfThenElseValue )
@@ -1894,6 +1910,8 @@ Class Translator_CPP Extends Translator
 		Local targs:=""
 		
 		For Local arg:=Eachin args
+		
+			Decls( arg.type )
 		
 			Local t:=Trans( arg )
 			
