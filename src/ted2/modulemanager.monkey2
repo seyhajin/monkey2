@@ -174,7 +174,7 @@ Class ModuleManager Extends Dialog
 			
 			Case FileType.None
 			
-				If DeleteDir( dst,True )
+				If Not DeleteDir( dst,True )
 					Alert( "Failed to delete module dir '"+dst+"'" )
 					Return False
 				Endif
