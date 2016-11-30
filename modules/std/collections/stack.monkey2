@@ -21,9 +21,6 @@ It is very cheap to add values to the end of a stack, but insertion or removal o
 
 Stacks implement the [[IContainer]] interface so can be used with [[Eachin]] loops.
 
-Note that you should NOT modify a stack while iterating through it with an eachin loop. Doing so while cause a 'concurrent stack
-modification' runtime error in debug mode. Please see [[IContainer]] for more information.
-
 #end
 Class Stack<T> Implements IContainer<T>
 
@@ -35,20 +32,14 @@ Class Stack<T> Implements IContainer<T>
 
 		Field _stack:Stack
 		Field _index:Int
-		Field _seq:Int
-		
-		Method AssertSeq()
-			DebugAssert( _seq=_stack._seq,"Concurrent list modification" )
-		End
 		
 		Method AssertCurrent()
-			DebugAssert( Not AtEnd,"Invalid list iterator" )
+			DebugAssert( _index<_stack._length,"Invalid stack iterator" )
 		End
 		
 		Method New( stack:Stack,index:Int )
 			_stack=stack
 			_index=index
-			_seq=stack._seq
 		End
 		
 		Public
@@ -56,8 +47,7 @@ Class Stack<T> Implements IContainer<T>
 		#rem monkeydoc Checks if the iterator has reached the end of the stack.
 		#end
 		Property AtEnd:Bool()
-			AssertSeq()
-			Return _index=_stack._length
+			Return _index>=_stack._length
 		End
 		
 		#rem monkeydoc The value currently pointed to by the iterator.
@@ -81,14 +71,12 @@ Class Stack<T> Implements IContainer<T>
 		
 		After calling this method, the iterator will point to the value after the removed value.
 		
-		Therefore, if you are manually iterating through a stack you should not call [[Bump]] after calling this method or you
-		will end up skipping a value.
+		Therefore, if you are manually iterating through a stack you should not call [[Bump]] after calling this method or you will end up skipping a value.
 		
 		#end
 		Method Erase()
-			AssertSeq()
+			AssertCurrent()
 			_stack.Erase( _index )
-			_seq=_stack._seq
 		End
 		
 		#rem monkeydoc Safely inserts a value before the value pointed to by the iterator.
@@ -97,9 +85,8 @@ Class Stack<T> Implements IContainer<T>
 		
 		#end
 		Method Insert( value:T )
-			AssertSeq()
+			DebugAssert( _index<=_stack._length,"Invalid stack iterator" )
 			_stack.Insert( _index,value )
-			_seq=_stack._seq
 		End
 	End
 	
@@ -111,20 +98,14 @@ Class Stack<T> Implements IContainer<T>
 
 		Field _stack:Stack
 		Field _index:Int
-		Field _seq:Int
-		
-		Method AssertSeq()
-			DebugAssert( _seq=_stack._seq,"Concurrent list modification" )
-		End
 		
 		Method AssertCurrent()
-			DebugAssert( Not AtEnd,"Invalid list iterator" )
+			DebugAssert( _index>=0,"Invalid stack iterator" )
 		End
 		
 		Method New( stack:Stack,index:Int )
 			_stack=stack
 			_index=index
-			_seq=stack._seq
 		End
 		
 		Public
@@ -132,7 +113,6 @@ Class Stack<T> Implements IContainer<T>
 		#rem monkeydoc Checks if the iterator has reached the end of the stack.
 		#end
 		Property AtEnd:Bool()
-			AssertSeq()
 			Return _index=-1
 		End
 		
@@ -163,9 +143,8 @@ Class Stack<T> Implements IContainer<T>
 		#end
 		Method Erase()
 			AssertCurrent()
+			_stack.Erase( _index )
 			_index-=1
-			_stack.Erase( _index+1 )
-			_seq=_stack._seq
 		End
 		
 		#rem monkeydoc Safely inserts a value before the value pointed to by the iterator.
@@ -174,10 +153,9 @@ Class Stack<T> Implements IContainer<T>
 		
 		#end
 		Method Insert( value:T )
-			AssertSeq()
+			DebugAssert( _index<_stack._length,"Invalid stack iterator" )
 			_index+=1
 			_stack.Insert( _index,value )
-			_seq=_stack._seq
 		End
 	End
 	
@@ -185,7 +163,6 @@ Class Stack<T> Implements IContainer<T>
 
 	Field _data:T[]
 	Field _length:Int
-	Field _seq:Int	
 	
 	Public
 	
@@ -198,6 +175,8 @@ Class Stack<T> Implements IContainer<T>
 	New( values:T[] ) creates a stack with the contents of an array.
 	
 	New( values:List<T> ) creates a stack with the contents of a list.
+	
+	New( values:Deque<T> ) create a stack with the contents of a deque.
 	
 	New( values:Stack<T> ) create a stack with the contents of another stack.
 	
@@ -219,14 +198,20 @@ Class Stack<T> Implements IContainer<T>
 		AddAll( values )
 	End
 	
-	Method New( values:Stack<T> )
+	Method New( values:List<T> )
+		AddAll( values )
+	End
+	
+	Method New( values:Deque<T> )
 		_length=values.Length
 		_data=New T[_length]
 		values.Data.CopyTo( _data,0,0,_length )
 	End
 	
-	Method New( values:List<T> )
-		AddAll( values )
+	Method New( values:Stack<T> )
+		_length=values.Length
+		_data=New T[_length]
+		values.Data.CopyTo( _data,0,0,_length )
 	End
 	
 	#rem monkeydoc Checks if the stack is empty.
@@ -323,7 +308,6 @@ Class Stack<T> Implements IContainer<T>
 		
 		Reserve( length )
 		_length=length
-		_seq+=1
 	End
 	
 	#rem monkeydoc Reserves stack storage capacity.
@@ -409,7 +393,6 @@ Class Stack<T> Implements IContainer<T>
 		_data.CopyTo( _data,index,index+1,_length-index )
 		_data[index]=value
 		_length+=1
-		_seq+=1
 	End
 	
 	#rem monkeydoc Gets the value of a stack element.
@@ -479,7 +462,6 @@ Class Stack<T> Implements IContainer<T>
 		Reserve( _length+1 )
 		_data[_length]=value
 		_length+=1
-		_seq+=1
 	End
 	
 	#rem monkeydoc Adds the values in an array or container to the end of the stack.
@@ -783,7 +765,6 @@ Class Stack<T> Implements IContainer<T>
 		DebugAssert( _length,"Stack is empty" )
 		
 		_length-=1
-		_seq+=1
 		Local value:=_data[_length]
 		_data[_length]=Null
 		Return value
