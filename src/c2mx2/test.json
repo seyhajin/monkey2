@@ -1,0 +1,19 @@
+{
+	"clangArgs":[
+		"-Xclang",
+		"-std=c++11",
+		"-I."
+	],
+	
+	"inputFile":"test.h",
+	
+	"outputDir":"test_api",
+	
+	"outputFile":"test",
+	
+	"header":[
+		"",
+		"Extern",
+		""
+	]
+}
