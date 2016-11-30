@@ -11,6 +11,8 @@ Namespace mojo.app
 | Hidden		| Window is initally hidden.
 | Resizable		| Window is resizable.
 | Fullscreen	| Window is a fullscreen window.
+| Maximized     | Window is maximized.
+| Minimized     | Window is minimized.
 
 #end
 Enum WindowFlags
@@ -21,6 +23,8 @@ Enum WindowFlags
 	Borderless=16
 	Fullscreen=32
 	HighDPI=64
+	Maximized=128
+	Minimized=256
 	Center=CenterX|CenterY
 End
 
@@ -84,30 +88,32 @@ Class Window Extends View
 		_swapInterval=swapInterval
 	End
 	
-	#rem monkeydoc @hidden.
+	#rem monkeydoc Window fullscreen state.
 	#end
 	Property Fullscreen:Bool()
 	
-		Return _fullscreen
-	
-	Setter( fullscreen:Bool )
-	
-		If fullscreen=_fullscreen Return
-	
-		_fullscreen=fullscreen
+		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_FULLSCREEN
+	End
 
-		If _fullscreen
-			Local mode:SDL_DisplayMode
-			mode.w=Width
-			mode.h=Height
-			SDL_SetWindowDisplayMode( _sdlWindow,Varptr mode )
-			SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN )
-		Else
-			SDL_SetWindowFullscreen( _sdlWindow,0 )
-		Endif
+	#rem monkeydoc Window maximized state.
+	#end	
+	Property Maximized:Bool()
 	
+		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_MAXIMIZED
 	End
 	
+	#rem monkeydoc Window minimized state.
+	#end	
+	Property Minimized:Bool()
+	
+		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_MINIMIZED
+	End
+
+	#rem monkeydoc Window content view.
+	
+	During layout, the window's content view is resized to fill the window.
+	
+	#end	
 	Property ContentView:View()
 	
 		Return _contentView
@@ -121,7 +127,52 @@ Class Window Extends View
 		If _contentView AddChildView( _contentView )
 		
 	End
+
+	#rem monkeydoc @hidden
+	#end	
+	Method BeginFullscreen()
+		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN_DESKTOP )
+	End
 	
+	#rem monkeydoc @hidden
+	#end
+	Method BeginFullscreen( width:Int,height:Int,hertz:Int )
+		Local mode:SDL_DisplayMode
+		mode.w=Width
+		mode.h=Height
+		mode.refresh_rate=hertz
+		Local closest:SDL_DisplayMode
+		SDL_GetClosestDisplayMode( 0,Varptr mode,Varptr closest )
+		SDL_SetWindowDisplayMode( _sdlWindow,Varptr closest )
+		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN )
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method EndFullscreen()
+		SDL_SetWindowFullscreen( _sdlWindow,0 )
+	End
+
+	#rem monkeydoc Maximize the window.
+	#end	
+	Method Maximize()
+		SDL_MaximizeWindow( _sdlWindow )
+	End
+	
+	#rem monkeydoc Minimize the window.
+	#end	
+	Method Minimize()
+		SDL_MinimizeWindow( _sdlWindow )
+	End
+	
+	#rem monkeydoc Restore the window.
+	#end	
+	Method Restore()
+		SDL_RestoreWindow( _sdlWindow )
+	End
+	
+	#rem monkeydoc @hidden
+	#End
 	Method UpdateWindow( render:Bool )
 	
 		LayoutWindow()
@@ -171,12 +222,22 @@ Class Window Extends View
 	
 		Return _windowsByID[id]
 	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method SendTouchEvent( event:TouchEvent )
+	
+		OnTouchEvent( event )
+	End
 
 	#rem monkeydoc @hidden
 	#end
 	Method SendWindowEvent( event:WindowEvent )
 	
 		Select event.Type
+		Case EventType.WindowMaximized
+		Case EventType.WindowMinimized
+		Case EventType.WindowRestored
 		Case EventType.WindowMoved,EventType.WindowResized
 			_frame=GetFrame()
 			Frame=_frame
@@ -195,6 +256,15 @@ Class Window Extends View
 		_clearColor=App.Theme.GetColor( "windowClearColor" )
 	End
 	
+	#rem monkeydoc Touch event handler.
+	
+	Called when the user touches the window on a touch compatible device.
+	
+	#end
+	Method OnTouchEvent( event:TouchEvent ) Virtual
+	
+	End
+	
 	#rem monkeydoc Window event handler.
 	
 	Called when the window is sent a window event.
@@ -207,19 +277,13 @@ Class Window Extends View
 		
 			App.Terminate()
 			
-		Case EventType.WindowMoved
-		
 		Case EventType.WindowResized
 		
-			App.RequestRender()
+			App.RequestRender()		'Should maybe do this regardless?
 			
 		Case EventType.WindowGainedFocus
 		
-			'Need to do this for KDE on linux...
-			App.RequestRender()
-		
-		Case EventType.WindowLostFocus
-		
+			App.RequestRender()		'Need to do this for KDE on linux?
 		End
 		
 	End
@@ -237,7 +301,7 @@ Class Window Extends View
 	Field _sdlGLContext:SDL_GLContext
 	
 	Field _flags:WindowFlags
-	Field _fullscreen:=False
+	Field _maxfudge:Int
 	Field _swapInterval:=1
 	
 	Field _canvas:Canvas
@@ -346,6 +410,11 @@ Class Window Extends View
 	#end
 	Method RenderWindow()
 	
+		If _maxfudge
+			_maxfudge-=1
+			App.RequestRender()
+		Endif
+
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
 
 		SDL_GL_SetSwapInterval( _swapInterval )
@@ -357,7 +426,6 @@ Class Window Extends View
 			SDL_GL_SwapWindow( _sdlWindow )
 		Endif
 #Endif
-		
 		Local bounds:=New Recti( 0,0,Frame.Size )
 		
 		_canvas.Resize( bounds.Size )
@@ -378,24 +446,42 @@ Class Window Extends View
 	
 		Local x:=(flags & WindowFlags.CenterX) ? SDL_WINDOWPOS_CENTERED Else rect.X
 		Local y:=(flags & WindowFlags.CenterY) ? SDL_WINDOWPOS_CENTERED Else rect.Y
+		Local w:=rect.Width,h:=rect.Height
 		
 		Local sdlFlags:SDL_WindowFlags=SDL_WINDOW_OPENGL
 		
+		If flags & WindowFlags.Fullscreen
+		
+			 sdlFlags|=SDL_WINDOW_FULLSCREEN
+			
+		Else If flags & WindowFlags.Maximized
+
+			sdlFlags|=SDL_WINDOW_MAXIMIZED
+			_maxfudge=2
+		
+		Else If flags & WindowFlags.Minimized
+		
+			sdlFlags|=SDL_WINDOW_MINIMIZED
+			
+		Endif
+		
 		If flags & WindowFlags.Hidden sdlFlags|=SDL_WINDOW_HIDDEN
+		
 		If flags & WindowFlags.Resizable sdlFlags|=SDL_WINDOW_RESIZABLE
+		
 		If flags & WindowFlags.Borderless sdlFlags|=SDL_WINDOW_BORDERLESS
-		If flags & WindowFlags.Fullscreen _fullscreen=True ; sdlFlags|=SDL_WINDOW_FULLSCREEN
+		
 		If flags & WindowFlags.HighDPI sdlFlags|=SDL_WINDOW_ALLOW_HIGHDPI
 		
 		_flags=flags
 		
 		'Create Window
-		_sdlWindow=SDL_CreateWindow( title,x,y,rect.Width,rect.Height,sdlFlags )
+		_sdlWindow=SDL_CreateWindow( title,x,y,w,h,sdlFlags )
 		If Not _sdlWindow
 			Print "SDL_GetError="+String.FromCString( SDL_GetError() )
 			Assert( _sdlWindow,"FATAL ERROR: SDL_CreateWindow failed" )
 		Endif
-
+		
 		'Create GL context
 		_sdlGLContext=SDL_GL_CreateContext( _sdlWindow )
 		If Not _sdlGLContext

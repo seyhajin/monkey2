@@ -37,6 +37,10 @@ __MANPAGES__/
 /modules/linq
 /modules/spine
 /modules/pyro-framework
+/modules/pyro-gui
+/modules/pyro-scenegraph
+/modules/bullet
+/modules/gles30
 
 /modules/module-manager/backups
 
@@ -45,3 +49,4 @@ Monkey2 (Macos).app
 Monkey2 (Linux)
 
 /src/c2mx2/LLVM
+/src/mx23d

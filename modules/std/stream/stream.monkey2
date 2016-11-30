@@ -329,6 +329,26 @@ Class Stream
 		Return String.FromCString( buf.Data.Data,buf.Length )
 	End
 	
+	#rem monkeydoc Reads a line of text from the stream.
+	
+	Bytes are read from the stream until a newline character (ascii code 10) or null character (ascii code 0) is read, or end of file is detected.
+		
+	The bytes read are returned in the form of a string, excluding any terminating newline or null character.
+		
+	Carriage return characters (ascii code 13) are silently ignored.
+	
+	#end
+	Method ReadLine:String()
+		Local buf:=New Stack<Byte>
+		While Not Eof
+			Local chr:=ReadByte()
+			If Not chr Or chr=10 exit
+			If chr=13 Continue
+			buf.Push( chr )
+		Wend
+		Return String.FromCString( buf.Data.Data,buf.Length )
+	End
+	
 	#rem monkeydoc Writes a byte to the stream.
 	
 	@param data The byte to write.
@@ -459,6 +479,16 @@ Class Stream
 	Method WriteCString( str:String )
 		WriteString( str )
 		WriteByte( 0 )
+	End
+	
+	#rem monkeydoc Writes a line of text to the stream.
+	
+	Writes the characters in `str` followed by the line terminating sequence "~r~n".
+	
+	#end
+	Method WriteLine( str:String )
+		WriteString( str )
+		WriteString( "~r~n" )
 	End
 	
 	#rem monkeydoc Opens a stream

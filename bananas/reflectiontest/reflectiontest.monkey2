@@ -4,6 +4,7 @@ Namespace test
 'Must import this to use reflection!
 '
 #Import "<reflection>"
+#Import "<std>"
 
 'A test global...
 '

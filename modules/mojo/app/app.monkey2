@@ -71,6 +71,13 @@ Class AppInstance
 	
 	#end	
 	Field MouseEventFilter:Void( event:MouseEvent )
+	
+	#rem monkeydoc Raw SDL_Event filter.
+	
+	The filter is called for all SDL events before mojo processes them.
+	
+	#end
+	Field SdlEventFilter:Void( event:SDL_Event Ptr )
 
 	#rem monkeydoc Create a new app instance.
 	#end
@@ -94,56 +101,47 @@ Class AppInstance
 		
 		Mouse.Init()
 		
+		Touch.Init()
+		
 		Audio.Init()
 		
-		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 )
-		
-#If __TARGET__="windows" Or __TARGET__="macos" Or __TARGET__="emscripten"
+		'Set GL attributes
+		'
+		Local gl_profile:Int,gl_major:Int=2,gl_minor:Int=0
 
-		_captureMouse=True
-#Endif
-
-#if __MOBILE_TARGET__
-
-		_touchMouse=True
-
-    	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_ES )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,2 )
-		
-#Else If __TARGET__="emscripten"
-
-		
-#Else If __TARGET__="raspbian"
-
-
-#Else If __DESKTOP_TARGET__
-
-#if __TARGET__="windows"
-		
-		Local gl_profile:Int
-
-		Select GetConfig( "GL_context_profile","es" )
+		Select GetConfig( "GL_context_profile","" )
 		Case "core"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_CORE
 		Case "compatibility"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_COMPATIBILITY
-		Default
+		Case "es"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
+		Default
+#If __TARGET__="macos"
+			gl_profile=SDL_GL_CONTEXT_PROFILE_COMPATIBILITY	'no gles20 on macos...
+#Else
+			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
+#Endif		
 		End
 
-		Local gl_major:=Int( GetConfig( "GL_context_major_version",2 ) )
-		Local gl_minor:=Int( GetConfig( "GL_context_minor_version",0 ) )
-		
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,gl_major )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,gl_minor )
-
-#Endif
-
-		SDL_GL_SetAttribute( SDL_GL_SHARE_WITH_CURRENT_CONTEXT,1 )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,Int( GetConfig( "GL_context_major_version",gl_major ) ) )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,Int( GetConfig( "GL_context_minor_version",gl_minor ) ) )
 		
 		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "GL_depth_buffer_enabled",0 ) ) )
 		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetConfig( "GL_stencil_buffer_enabled",0 ) ) )
+		
+		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 )
+
+		SDL_GL_SetAttribute( SDL_GL_RED_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,8 )
+		
+#If __DESKTOP_TARGET__
+
+		'WIP multiple windows...
+		
+		SDL_GL_SetAttribute( SDL_GL_SHARE_WITH_CURRENT_CONTEXT,1 )
 		
 		'create dummy window/context
 		Local _sdlWindow:=SDL_CreateWindow( "<dummy>",0,0,0,0,SDL_WINDOW_HIDDEN|SDL_WINDOW_OPENGL )
@@ -153,8 +151,16 @@ Class AppInstance
 		Assert( _sdlGLContext,"FATAL ERROR: SDL_GL_CreateContext failed" )
 		
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
-
+#Endif	
+		
+#If __TARGET__="windows" Or __TARGET__="macos" Or __TARGET__="emscripten"
+		_captureMouse=True	'breaks on linux...
 #Endif
+
+#if __MOBILE_TARGET__
+		_touchMouse=True
+#Endif
+
 		_defaultFont=_res.OpenFont( "DejaVuSans",16 )
 		
 		_theme=New Theme
@@ -472,6 +478,8 @@ Class AppInstance
 	#end	
 	Method UpdateWindows()
 	
+		If _frozen Return
+	
 		Local render:=_requestRender
 		_requestRender=False
 		
@@ -546,6 +554,8 @@ Class AppInstance
 
 	Field _active:Bool
 	Field _activeWindow:Window
+
+	Field _frozen:Bool
 	
 	Field _keyView:View
 	Field _hoverView:View
@@ -565,11 +575,12 @@ Class AppInstance
 	Field _mouseLocation:Vec2i
 	Field _mouseWheel:Vec2i
 	Field _mouseClicks:Int=0
+	Field _finger:Int
+	Field _fingerPressure:Float
+	Field _fingerCoords:Vec2f
 	
 	Field _modalView:View
 	Field _modalStack:=New Stack<View>
-	
-	Field _polling:Bool
 	
 	Method UpdateFPS()
 	
@@ -587,23 +598,19 @@ Class AppInstance
 	
 	Method UpdateEvents()
 	
-		Local event:SDL_Event
-
-		_polling=True
+		Keyboard.Update()
 		
 		Mouse.Update()
 		
-		Keyboard.Update()
+		Touch.Update()
 		
+		Local event:SDL_Event
+
 		While SDL_PollEvent( Varptr event )
 		
-			Keyboard.SendEvent( Varptr event )
-			
 			DispatchEvent( Varptr event )
 			
 		Wend
-		
-		_polling=False
 		
 		Local idle:=Idle
 		Idle=Null
@@ -660,6 +667,18 @@ Class AppInstance
 		
 	End
 	
+	Method SendTouchEvent( type:EventType )
+	
+		Local window:=_activeWindow
+		If Not window Return
+
+		Local p:=New Vec2i( _fingerCoords.x * window.Frame.Width,_fingerCoords.y * window.Frame.Height )
+
+		Local location:=window.TransformWindowPointToView( p )
+		
+		window.SendTouchEvent( New TouchEvent( type,_activeWindow,location,_finger,_fingerPressure ) )
+	End
+	
 	Method SendWindowEvent( type:EventType )
 	
 		Local event:=New WindowEvent( type,_window )
@@ -668,6 +687,14 @@ Class AppInstance
 	End
 	
 	Method DispatchEvent( event:SDL_Event Ptr )
+	
+		SdlEventFilter( event )
+	
+		Keyboard.SendEvent( event )
+		
+'		Mouse.SendEvent( event )
+		
+		Touch.SendEvent( event )
 	
 		Select event->type
 		
@@ -687,6 +714,7 @@ Class AppInstance
 
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
+			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			_keyChar=Keyboard.KeyName( _key )
 			
 			If kevent->repeat_
@@ -694,8 +722,6 @@ Class AppInstance
 			Else
 				SendKeyEvent( EventType.KeyDown )
 			Endif
-
-			_modifiers=Keyboard.Modifiers
 			
 		Case SDL_KEYUP
 
@@ -706,11 +732,10 @@ Class AppInstance
 			
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
+			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			_keyChar=Keyboard.KeyName( _key )
 			
 			SendKeyEvent( EventType.KeyUp )
-
-			_modifiers=Keyboard.Modifiers
 
 		Case SDL_TEXTINPUT
 		
@@ -845,7 +870,37 @@ Class AppInstance
 				SendMouseEvent( EventType.MouseWheel,_hoverView )
 			
 			Endif
-
+			
+		Case SDL_FINGERDOWN
+		
+			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			_finger=tevent->fingerId
+			_fingerPressure=tevent->pressure
+			_fingerCoords=New Vec2f( tevent->x,tevent->y )
+			
+			SendTouchEvent( EventType.TouchDown )
+		
+		Case SDL_FINGERUP
+		
+			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			_finger=tevent->fingerId
+			_fingerPressure=tevent->pressure
+			_fingerCoords=New Vec2f( tevent->x,tevent->y )
+			
+			SendTouchEvent( EventType.TouchUp )
+		
+		Case SDL_FINGERMOTION
+		
+			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			_finger=tevent->fingerId
+			_fingerPressure=tevent->pressure
+			_fingerCoords=New Vec2f( tevent->x,tevent->y )
+			
+			SendTouchEvent( EventType.TouchMove )
+		
 		Case SDL_WINDOWEVENT
 		
 			Local wevent:=Cast<SDL_WindowEvent Ptr>( event )
@@ -859,12 +914,18 @@ Class AppInstance
 			
 				SendWindowEvent( EventType.WindowClose )
 			
-			Case SDL_WINDOWEVENT_MOVED
+			Case SDL_WINDOWEVENT_MAXIMIZED
+				
+				SendWindowEvent( EventType.WindowMaximized )
+				
+			Case SDL_WINDOWEVENT_MINIMIZED
 			
-			Case SDL_WINDOWEVENT_RESIZED
+				SendWindowEvent( EventType.WindowMinimized )
+				
+			Case SDL_WINDOWEVENT_RESTORED
 			
-			Case SDL_WINDOWEVENT_SIZE_CHANGED
-			
+				SendWindowEvent( EventType.WindowRestored )
+				
 			Case SDL_WINDOWEVENT_FOCUS_GAINED
 			
 				Print "SDL_WINDOWEVENT_FOCUS_GAINED"
@@ -882,10 +943,9 @@ Class AppInstance
 				Print "SDL_WINDOWEVENT_FOCUS_LOST"
 			
 				Local active:=_active
-'				_activeWindow=Null		'Not a great idea!
 				_active=False
 			
-				If _mouseView And Not _captureMouse	'should probably do this anyway?
+				If _mouseView And Not _captureMouse
 					SendMouseEvent( EventType.MouseUp,_mouseView )
 					_mouseView=Null
 				Endif
@@ -921,6 +981,16 @@ Class AppInstance
 			
 			event->Dispatch()
 
+		Case SDL_DROPFILE
+		
+			Local devent:=Cast<SDL_DropEvent Ptr>( event )
+			
+			Local path:=String.FromCString( devent->file ).Replace( "\","/" )
+			
+			SDL_free( devent->file )
+			
+			FileDropped( path )
+
 		Case SDL_RENDER_TARGETS_RESET
 		
 			Print "SDL_RENDER_TARGETS_RESET"
@@ -933,30 +1003,40 @@ Class AppInstance
 		
 			mojo.graphics.glutil.glGraphicsSeq+=1
 
-		Case SDL_WINDOWEVENT_MOVED
-			
-			SendWindowEvent( EventType.WindowMoved )
-					
-		Case SDL_WINDOWEVENT_RESIZED
-		
-			SendWindowEvent( EventType.WindowResized )
-				
-			UpdateWindows()
-			
-		Case SDL_WINDOWEVENT_EXPOSED
-		
+#if __TARGET__="ios"
+
+		Case SDL_APP_TERMINATING
+			'Terminate the app.
+			'Shut everything down before returning from this function.
+
+		Case SDL_APP_LOWMEMORY
+			'You will get this when your app is paused and iOS wants more memory.
+			'Release as much memory as possible.		
+
+		Case SDL_APP_WILLENTERBACKGROUND
+			'Prepare your app to go into the background. Stop loops, etc.
+			'This gets called when the user hits the home button, or gets a call.
+			Print "SDL_APP_WILLENTERBACKGROUND"
+			_frozen=True
+
+		Case SDL_APP_DIDENTERBACKGROUND
+			'This will get called if the user accepted whatever sent your app to the background.
+			'If the user got a phone call and canceled it, you'll instead get an SDL_APP_DIDENTERFOREGROUND event and restart your loops.
+			'When you get this, you have 5 seconds to save all your state or the app will be terminated.
+			'Your app is NOT active at this point.
+
+		Case SDL_APP_WILLENTERFOREGROUND
+			'This call happens when your app is coming back to the foreground.
+			'Restore all your state here.
+
+		Case SDL_APP_DIDENTERFOREGROUND
+			'Restart your loops here.
+			'Your app is interactive and getting CPU again.
+			Print "SDL_APP_DIDENTERFOREGROUND"
 			RequestRender()
-
-		Case SDL_DROPFILE
-		
-			Local devent:=Cast<SDL_DropEvent Ptr>( event )
-			
-			Local path:=String.FromCString( devent->file ).Replace( "\","/" )
-			
-			SDL_free( devent->file )
-			
-			FileDropped( path )
-
+			_frozen=False
+#Endif
+     
 		End
 			
 	End
@@ -980,51 +1060,24 @@ Class AppInstance
 			
 			Case SDL_WINDOWEVENT_MOVED
 			
+				SdlEventFilter( event )
+	
 				SendWindowEvent( EventType.WindowMoved )
 			
 				Return 0
 					
 			Case SDL_WINDOWEVENT_RESIZED
 			
+				SdlEventFilter( event )
+	
 				SendWindowEvent( EventType.WindowResized )
 				
 				UpdateWindows()
 			
 				Return 0
-				
+
 			End
 
-#if __TARGET__="ios"
-
-		Case SDL_APP_TERMINATING
-			'Terminate the app.
-			'Shut everything down before returning from this function.		
-			return 0
-		Case SDL_APP_LOWMEMORY
-			'You will get this when your app is paused and iOS wants more memory.
-			'Release as much memory as possible.		
-	        return 0
-		Case SDL_APP_WILLENTERBACKGROUND
-			'Prepare your app to go into the background. Stop loops, etc.
-			'This gets called when the user hits the home button, or gets a call.
-	        return 0
-		Case SDL_APP_DIDENTERBACKGROUND
-			'This will get called if the user accepted whatever sent your app to the background.
-			'If the user got a phone call and canceled it, you'll instead get an SDL_APP_DIDENTERFOREGROUND event and restart your loops.
-			'When you get this, you have 5 seconds to save all your state or the app will be terminated.
-			'Your app is NOT active at this point.
-	        return 0
-		Case SDL_APP_WILLENTERFOREGROUND
-			'This call happens when your app is coming back to the foreground.
-			'Restore all your state here.
-	        return 0
-		Case SDL_APP_DIDENTERFOREGROUND
-			'Restart your loops here.
-			'Your app is interactive and getting CPU again.
-	        return 0
-
-#Endif
-	        
 		End
 		
 		Return 1

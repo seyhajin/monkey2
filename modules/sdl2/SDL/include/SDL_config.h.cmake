@@ -81,6 +81,8 @@
 #cmakedefine HAVE_PTHREAD_NP_H 1
 #cmakedefine HAVE_LIBUDEV_H 1
 #cmakedefine HAVE_DBUS_DBUS_H 1
+#cmakedefine HAVE_IBUS_IBUS_H 1
+#cmakedefine HAVE_FCITX_FRONTEND_H 1
 
 /* C library functions */
 #cmakedefine HAVE_MALLOC 1
@@ -250,7 +252,6 @@
 #cmakedefine SDL_HAPTIC_XINPUT @SDL_HAPTIC_XINPUT@
 
 /* Enable various shared object loading systems */
-#cmakedefine SDL_LOADSO_HAIKU @SDL_LOADSO_HAIKU@
 #cmakedefine SDL_LOADSO_DLOPEN @SDL_LOADSO_DLOPEN@
 #cmakedefine SDL_LOADSO_DUMMY @SDL_LOADSO_DUMMY@
 #cmakedefine SDL_LOADSO_LDG @SDL_LOADSO_LDG@

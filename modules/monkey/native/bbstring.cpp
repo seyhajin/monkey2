@@ -249,3 +249,6 @@ bbString bbString::join( bbArray<bbString> bits )const{
 	return rep;
 }
 
+bbString bbString::fromChars( bbArray<int> chrs ){ 
+	return Rep::create( chrs.data(),chrs.length() ); 
+}

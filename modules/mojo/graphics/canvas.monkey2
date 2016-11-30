@@ -59,8 +59,9 @@ Class Canvas
 		AmbientLight=Color.Black
 		BlendMode=BlendMode.Alpha
 		TextureFilter=graphics.TextureFilter.Mipmap
-		PointSize=1
-		LineWidth=1
+		PointSize=0
+		LineWidth=0
+		LineSmoothing=False
 		
 		ClearMatrix()
 	End
@@ -214,6 +215,17 @@ Class Canvas
 	Setter( lineWidth:Float )
 	
 		_lineWidth=lineWidth
+	End
+	
+	#rem monkeydoc Smoothing enabled for DrawLine.
+	#end	
+	Property LineSmoothing:Bool()
+	
+		Return _lineSmoothing
+	
+	Setter( smoothing:Bool )
+	
+		_lineSmoothing=smoothing
 	End
 	
 	#rem monkeydoc The current font for use with DrawText.
@@ -378,9 +390,10 @@ Class Canvas
 	
 	#end
 	Method DrawPoint( x:Float,y:Float )
-		If _pointSize<=1
+	
+		If _pointSize<=0
 			AddDrawOp( _shader,_material,_blendMode,_textureFilter,1,1 )
-			AddVertex( x+.5,y+.5,0,0 )
+			AddPointVertex( x,y,0,0 )
 			Return
 		Endif
 		
@@ -417,23 +430,28 @@ Class Canvas
 	#end
 	Method DrawLine( x0:Float,y0:Float,x1:Float,y1:Float )
 
-		If _lineWidth<=1
+		If _lineWidth<=0
 			AddDrawOp( _shader,_material,_blendMode,_textureFilter,2,1 )
-			AddVertex( x0+.5,y0+.5,0,0 )
-			AddVertex( x1+.5,y1+.5,1,1 )
+			AddPointVertex( x0,y0,0,0 )
+			AddPointVertex( x1,y1,1,1 )
 			Return
 		Endif
+		
+'		x0+=.5
+'		y0+=.5
+'		x1+=.5
+'		y1+=.5
 		
 		Local dx:=y0-y1,dy:=x1-x0
 		Local sc:=0.5/Sqrt( dx*dx+dy*dy )*_lineWidth
 		dx*=sc;dy*=sc
 		
-		If _blendMode=BlendMode.Opaque
+		If Not _lineSmoothing
 			AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,1 )
-			AddVertex( x0-dx,y0-dy,0,0 )
-			AddVertex( x0+dx,y0+dy,0,0 )
-			AddVertex( x1+dx,y1+dy,0,0 )
-			AddVertex( x1-dx,y1-dy,0,0 )
+			AddPointVertex( x0-dx,y0-dy,0,0 )
+			AddPointVertex( x0+dx,y0+dy,0,0 )
+			AddPointVertex( x1+dx,y1+dy,0,0 )
+			AddPointVertex( x1-dx,y1-dy,0,0 )
 			Return
 		End
 		
@@ -441,17 +459,17 @@ Class Canvas
 		
 		AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,2 )
 
-		AddVertex( x0,y0,0,0 )
-		AddVertex( x1,y1,0,0 )
+		AddPointVertex( x0,y0,0,0 )
+		AddPointVertex( x1,y1,0,0 )
 		_pmcolor=0
-		AddVertex( x1-dx,y1-dy,0,0 )
-		AddVertex( x0-dx,y0-dy,0,0 )
+		AddPointVertex( x1-dx,y1-dy,0,0 )
+		AddPointVertex( x0-dx,y0-dy,0,0 )
 
-		AddVertex( x0+dx,y0+dy,0,0 )
-		AddVertex( x1+dx,y1+dy,0,0 )
+		AddPointVertex( x0+dx,y0+dy,0,0 )
+		AddPointVertex( x1+dx,y1+dy,0,0 )
 		_pmcolor=pmcolor
-		AddVertex( x1,y1,0,0 )
-		AddVertex( x0,y0,0,0 )
+		AddPointVertex( x1,y1,0,0 )
+		AddPointVertex( x0,y0,0,0 )
 	End
 	
 	Method DrawLine( v0:Vec2f,v1:Vec2f )
@@ -567,7 +585,8 @@ Class Canvas
 
 	#end
 	Method DrawOval( x:Float,y:Float,width:Float,height:Float )
-		Local xr:=width/2.0,yr:=height/2.0
+	
+		Local xr:=width/2,yr:=height/2
 		
 		Local dx_x:=xr*_matrix.i.x
 		Local dx_y:=xr*_matrix.i.y
@@ -583,10 +602,10 @@ Class Canvas
 		AddDrawOp( _shader,_material,_blendMode,_textureFilter,n,1 )
 		
 		For Local i:=0 Until n
-			Local th:=i*Pi*2/n
+			Local th:=(i+.5)*Pi*2/n
 			Local px:=x0+Cos( th ) * xr
 			Local py:=y0+Sin( th ) * yr
-			AddVertex( px,py,0,0 )
+			AddPointVertex( px,py,0,0 )
 		Next
 	End
 	
@@ -1222,6 +1241,7 @@ Class Canvas
 	Field _pmcolor:UInt=~0
 	Field _pointSize:Float=1
 	Field _lineWidth:Float=1
+	Field _lineSmoothing:Bool
 	Field _matrix:=New AffineMat3f
 	Field _tanvec:Vec2f=New Vec2f( 1,0 )
 	Field _matrixStack:=New Stack<AffineMat3f>
@@ -1343,6 +1363,17 @@ Class Canvas
 		_vp->texCoord1.x=_tanvec.x
 		_vp->texCoord1.y=_tanvec.y
 		_vp->color=color
+		_vp+=1
+	End
+	
+	Method AddPointVertex( tx:Float,ty:Float,s0:Float,t0:Float )
+		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x + .5
+		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y + .5
+		_vp->texCoord0.x=s0
+		_vp->texCoord0.y=t0
+		_vp->texCoord1.x=_tanvec.x
+		_vp->texCoord1.y=_tanvec.y
+		_vp->color=_pmcolor
 		_vp+=1
 	End
 	

@@ -89,7 +89,7 @@ Class AssignStmtExpr Extends StmtExpr
 			Endif
 		Endif
 		
-		If not rhs rhs=Self.rhs.Semant( block )
+		If Not rhs rhs=Self.rhs.Semant( block )
 		
 		If op<>"=" And lhs.IsLValue
 		

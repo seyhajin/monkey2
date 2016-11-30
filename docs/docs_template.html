@@ -39,6 +39,8 @@
 			var url='../modules/'+page.replace( ':','/docs/__PAGES__/' ).replace( /\./g,'-' )+'.html';
 		}
 		
+		//alert( 'page='+page+', url='+url );
+			
 		var docs=document.getElementById( 'docs-iframe' );
 		
 		docs.contentWindow.location=url;

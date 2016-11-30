@@ -150,11 +150,10 @@ Class Style
 	#rem monkeydoc Total style bounds.
 	#end
 	Property Bounds:Recti()
-		Local bounds:=Padding
-		Local skin:=Skin
-		If skin bounds+=Skin.Bounds
-		bounds+=Border
-		bounds+=Margin
+		Local bounds:=_padding
+		If _skin bounds+=_skin.Bounds
+		bounds+=_border
+		bounds+=_margin
 		Return bounds
 	End
 
@@ -235,12 +234,12 @@ Class Style
 		canvas.Color=color
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc @hidden 
 	#end
 	Method Render( canvas:Canvas,bounds:Recti )
+	
+		bounds-=_margin
 
-		bounds-=Margin
-		
 		Local border:=Border
 		Local bdcolor:=BorderColor
 		

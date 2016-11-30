@@ -880,7 +880,7 @@ Class TextView Extends ScrollableView
 		
 	End
 	
-	Method OnKeyDown:Bool( key:Key,modifiers:Modifier=Null )
+	Method OnKeyDown:Bool( key:Key,modifiers:Modifier ) Virtual
 	
 		Select key
 		Case Key.Backspace
@@ -947,7 +947,6 @@ Class TextView Extends ScrollableView
 				If go
 					ReplaceText( lines.Join( "" ) )
 					SelectText( _doc.StartOfLine( min ),_doc.StartOfLine( max ) )
-					Return False					
 				Endif
 					
 			Endif
@@ -981,6 +980,7 @@ Class TextView Extends ScrollableView
 				_cursor-=1
 			Endif
 			UpdateCursor()
+			Return True
 				
 		Case Key.Right
 		
@@ -990,44 +990,48 @@ Class TextView Extends ScrollableView
 				_cursor+=1
 			Endif
 			UpdateCursor()
+			Return True
 				
 		Case Key.Home
 			
 			_cursor=_doc.StartOfLine( CursorLine )
 			UpdateCursor()
+			Return True
 				
 		Case Key.KeyEnd
 			
 			_cursor=_doc.EndOfLine( CursorLine )
 			UpdateCursor()
+			Return True
 
 		Case Key.Up
 			
 			MoveLine( -1 )
+			Return True
 			
 		Case Key.Down
 			
 			MoveLine( 1 )
+			Return True
 				
 		Case Key.PageUp
 			
 			Local n:=VisibleRect.Height/_charh-1		'shouldn't really use cliprect here...
 			MoveLine( -n )
+			Return True
 				
 		Case Key.PageDown
 			
 			Local n:=VisibleRect.Height/_charh-1
 			MoveLine( n )
+			Return True
 		
-		Default
-
-			Return False
 		End
 		
-		Return True
+		Return False
 	End
 	
-	Method OnControlKeyDown:bool( key:Key,modifiers:Modifier=Null ) Virtual
+	Method OnControlKeyDown:Bool( key:Key,modifiers:Modifier ) Virtual
 
 		Select key
 		Case Key.A
@@ -1051,7 +1055,6 @@ Class TextView Extends ScrollableView
 			UpdateCursor()
 			Return True
 		Case Key.Left
-		
 			If _anchor<>_cursor And Not (modifiers & Modifier.Shift)
 				_cursor=Min( _anchor,_cursor )
 			Endif
@@ -1067,9 +1070,7 @@ Class TextView Extends ScrollableView
 			_cursor=FindWord( Max( _cursor-1,0 ),term )
 			UpdateCursor()
 			Return True
-
 		Case Key.Right
-		
 			If _anchor<>_cursor And Not (modifiers & Modifier.Shift)
 				_cursor=Max( _anchor,_cursor )
 			Endif
@@ -1089,6 +1090,22 @@ Class TextView Extends ScrollableView
 		End
 		
 		Return False
+	End
+	
+	Method OnKeyChar( text:String ) Virtual
+
+		If _undos.Length
+			
+			Local undo:=_undos.Top
+			If Not undo.text And _cursor=undo.cursor
+				ReplaceText( _anchor,_cursor,text )
+				undo.cursor=_cursor
+				Return
+			Endif
+				
+		Endif
+		
+		ReplaceText( text )
 	End
 	
 	Method OnKeyEvent( event:KeyEvent ) Override
@@ -1113,65 +1130,71 @@ Class TextView Extends ScrollableView
 		
 		Case EventType.KeyDown,EventType.KeyRepeat
 		
+			Local key:=event.Key
+			Local modifiers:=event.Modifiers
+			
+			'map keypad nav keys...
+			If Not (modifiers & Modifier.NumLock)
+				Select key
+				Case Key.Keypad1 key=Key.KeyEnd
+				Case Key.Keypad2 key=Key.Down
+				Case Key.Keypad3 key=Key.PageDown
+				Case Key.Keypad4 key=Key.Left
+				Case Key.Keypad6 key=Key.Right
+				Case Key.Keypad7 key=Key.Home
+				Case Key.Keypad8 key=Key.Up
+				Case Key.Keypad9 key=Key.PageUp
+				Case Key.Keypad0 key=Key.Insert
+				End
+			Endif
+			
+			Local r:=False
+			
 			If _macosMode
 			
-				If event.Modifiers & Modifier.Gui
+				If modifiers & Modifier.Gui
 				
-					Select event.Key
-					Case Key.Home,Key.KeyEnd
-					Default
-						If Not OnControlKeyDown( event.Key,event.Modifiers ) Return
+					Select key
+					Case Key.A,Key.X,Key.C,Key.V,Key.Z,Key.Y,Key.Left,Key.Right
+						r=OnControlKeyDown( key,modifiers )
 					End
-					
-				Else If event.Modifiers & Modifier.Control
 				
-					Select event.Key
+				Else If modifiers & Modifier.Control
+				
+					Select key
 					Case Key.A
-						OnKeyDown( Key.Home )
+						r=OnKeyDown( Key.Home,modifiers )
 					Case Key.E
-						OnKeyDown( Key.KeyEnd )
+						r=OnKeyDown( Key.KeyEnd,modifiers )
 					End
 					
 				Else
-
-					Select event.Key
-					Case Key.Home
-						OnControlKeyDown( Key.Home )
-					Case Key.KeyEnd
-						OnControlKeyDown( Key.KeyEnd )
+				
+					Select key
+					Case Key.Home,Key.KeyEnd
+						r=OnControlKeyDown( key,modifiers )
 					Default
-						If Not OnKeyDown( event.Key,event.Modifiers ) Return
+						r=OnKeyDown( key,modifiers )
 					End
-
+				
 				Endif
-			
+				
 			Else
 			
-				If event.Modifiers & Modifier.Control
-					If Not OnControlKeyDown( event.Key,event.Modifiers ) Return
+				If modifiers & Modifier.Control
+					r=OnControlKeyDown( key,modifiers )
 				Else
-					If Not OnKeyDown( event.Key,event.Modifiers ) Return
+					r=OnKeyDown( key,modifiers )
 				Endif
 			
 			Endif
 			
-			If Not (event.Modifiers & Modifier.Shift) _anchor=_cursor
+			If r And Not (modifiers & Modifier.Shift) _anchor=_cursor
 			
 		Case EventType.KeyChar
 		
-			If _undos.Length
-			
-				Local undo:=_undos.Top
-				If Not undo.text And _cursor=undo.cursor
-					ReplaceText( _anchor,_cursor,event.Text )
-					undo.cursor=_cursor
-					Return
-				Endif
-				
-			Endif
+			OnKeyChar( event.Text )
 		
-			ReplaceText( event.Text )
-			
 		End
 	End
 	
@@ -1208,27 +1231,6 @@ Class TextView Extends ScrollableView
 		
 			Return
 			
-		#rem			
-		Case EventType.MouseClick
-		
-			_cursor=CharAtPoint( event.Location )
-			
-			If Not (event.Modifiers & Modifier.Shift) _anchor=_cursor
-			
-			_dragging=True
-			
-			MakeKeyView()
-			
-			UpdateCursor()
-			
-		Case EventType.MouseDoubleClick
-		
-			Local term:=New Int[1]
-			Local start:=FindWord( CharAtPoint( event.Location ),term )
-			
-			SelectText( start,term[0] )
-		#end
-		
 		Case EventType.MouseUp
 		
 			_dragging=False

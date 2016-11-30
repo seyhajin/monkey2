@@ -21,9 +21,12 @@ Class SdlWindow
 		libc.atexit( SDL_Quit )
 		
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_ES )
-		
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,2 )
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 )
+		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 )
+		SDL_GL_SetAttribute( SDL_GL_RED_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,8 )
 		
 		sdlWindow=SDL_CreateWindow( "SDL2 OpenGL Window",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_OPENGL )
 		
@@ -71,6 +74,18 @@ Class SdlWindow
 		glClearColor( 1,1,0,1 )
 		
 		glClear( GL_COLOR_BUFFER_BIT )
+		
+		glEnable( GL_SCISSOR_TEST )
+		
+		For Local y:=0 Until 256
+		
+			glScissor( 0,y,640,1 )
+			glClearColor( y/256.0,0,0,1 )
+			glClear( GL_COLOR_BUFFER_BIT )
+		
+		Next
+		
+		glDisable( GL_SCISSOR_TEST )
 	End
 	
 End

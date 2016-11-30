@@ -134,6 +134,13 @@ Struct Vec2<T>
 		Return x*v.x+y*v.y
 	End
 	
+	#rem monkeydoc Computes the distance from this vector to another.
+	#end
+	Method Distance:Double( v:Vec2 )
+		Local d:=v-Self
+		Return Sqrt( d.Dot( d ) )
+	End
+	
 	#rem monkeydoc Normalizes the vector and returns the result.
 	#end
 	Method Normalize:Vec2()

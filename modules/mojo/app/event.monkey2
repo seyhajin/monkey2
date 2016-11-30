@@ -42,11 +42,18 @@ Enum EventType
 	MouseEnter,
 	MouseLeave,
 
+	TouchDown,
+	TouchUp,
+	TouchMove,
+	
 	WindowClose,
 	WindowMoved,
 	WindowResized,
 	WindowGainedFocus,
 	WindowLostFocus,
+	WindowMaximized,
+	WindowMinimized,
+	WindowRestored
 	
 	Eaten=$40000000
 End
@@ -190,10 +197,12 @@ Class MouseEvent Extends Event
 		Return _clicks
 	End
 	
+	#rem monkeydoc Transforms mouse event to different view.
+	#end
 	Method TransformToView:MouseEvent( view:View )
-		If view=View Return self
+		If view=_view Return self
 		Local location:=view.TransformPointFromView( _location,_view )
-		Return New MouseEvent( Type,View,location,_button,_wheel,_modifiers,_clicks )
+		Return New MouseEvent( _type,view,location,_button,_wheel,_modifiers,_clicks )
 	End
 	
 	Private
@@ -203,6 +212,52 @@ Class MouseEvent Extends Event
 	Field _wheel:Vec2i
 	Field _modifiers:Modifier
 	Field _clicks:Int
+End
+
+#rem monkeydoc The TouchEvent class.
+#end
+Class TouchEvent Extends Event
+
+	#rem monkeydoc Creates a new touch event.
+	#end
+	Method New( type:EventType,view:View,location:Vec2i,finger:int,pressure:Float )
+		Super.New( type,view )
+		_location=location
+		_finger=finger
+		_pressure=pressure
+	End
+	
+	#rem monkeydoc Finger location in view.
+	#end
+	Property Location:Vec2i()
+		Return _location
+	End
+	
+	#rem monkeydoc Finger index (0-9).
+	#end
+	Property Finger:Int()
+		Return _finger
+	End
+	
+	#rem monkeydoc Finger pressure (0-1).
+	#end
+	Property Pressure:Float()
+		Return _pressure
+	End
+	
+	#rem monkeydoc Transforms touch event to different view.
+	#end
+	Method TransformToView:TouchEvent( view:View )
+		If view=_view return Self
+		Local location:=view.TransformPointFromView( _location,_view )
+		Return New TouchEvent( _type,view,location,_finger,_pressure )
+	End
+	
+	Private
+	
+	Field _location:Vec2i
+	Field _finger:Int
+	field _pressure:Float
 End
 
 #rem monkeydoc The WindowEvent class.

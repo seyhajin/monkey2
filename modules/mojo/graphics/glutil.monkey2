@@ -89,9 +89,15 @@ End
 #end
 Function glCompile:Int( type:Int,source:String )
 
-#If __TARGET__="windows" Or Not __DESKTOP_TARGET__
-	source="precision mediump float;~n"+source
-#Endif
+	source="
+	#ifdef GL_ES
+	#ifdef GL_FRAGMENT_PRECISION_HIGH
+	precision highp float;
+	#else
+	precision mediump float;
+	#endif
+	#endif
+	"+source
 	
 	Local shader:=glCreateShader( type )
 	glShaderSourceEx( shader,source )

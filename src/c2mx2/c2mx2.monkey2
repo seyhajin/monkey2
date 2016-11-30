@@ -161,7 +161,7 @@ Function TypeSpelling:String( type:CXType )
 	If Keywords.Contains( id ) id+="_"
 	
 	Select id
-	Case "size_t","int8_t","uint8_t","int16_t","uint16_t","int32_t","uint32_t","intptr_t","uintptr_t"
+	Case "size_t","int8_t","uint8_t","int16_t","uint16_t","int32_t","uint32_t","int64_t","uint64_t","intptr_t","uintptr_t"
 		Return "libc."+id
 	End
 	

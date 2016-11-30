@@ -31,33 +31,25 @@ Class Type Extends SNode
 	Global CStringClass:ClassType
 	Global TypeInfoClass:ClassType
 	
-	Field _alias:Type
-	
 	Field flags:Int
-	
-	Method New()
-		_alias=Self
-	End
-	
-	Property Dealias:Type()
-		Return _alias
-	End
 	
 	Property IsGeneric:Bool()
 		Return flags & TYPE_GENERIC
 	End
 	
+	Property Dealias:Type() Virtual
+		Return Self
+	End
+	
 	'Not nice - should fix comparison ops
 	Operator=:Bool( type:Type )
-		If Not Self Return Object(type)=Null
-		If Not type Return Object(_alias)=Null
-		Return Object(type._alias)=_alias
+		If Not Self Or Not type Throw New SemantEx( "Type.Operator=()" )
+		Return Object(Dealias)=type.Dealias
 	End
 	
 	Operator<>:Bool( type:Type )
-		If Not Self Return Object(type)<>Null
-		If Not type Return Object(_alias)<>Null
-		Return Object(type._alias)<>_alias
+		If Not Self Or Not type Throw New SemantEx( "Type.Operator<>()" )
+		Return Object(Dealias)<>type.Dealias
 	End
 	
 	Operator<=>:Int( type:Type )
@@ -133,6 +125,15 @@ End
 
 Class ProxyType Extends Type
 
+	Field _alias:Type
+	
+	Method New()
+	End
+	
+	Property Dealias:Type() Override
+		Return _alias.Dealias
+	End
+	
 	Property Name:String() Override
 		Return _alias.Name
 	End
@@ -196,13 +197,13 @@ Class ProxyType Extends Type
 End
 
 Function TCast<T>:T( type:Type )
-	If type Return Cast<T>( type._alias )
+	If type Return Cast<T>( type.Dealias )
 	Return Null
 End
 
 Function TCast<T>:T( node:SNode )
 	Local type:=Cast<Type>( node )
-	If type Return Cast<T>( type._alias )
+	If type Return Cast<T>( type.Dealias )
 	Return Null
 End
 
@@ -485,8 +486,6 @@ Class PointerType Extends Type
 		If type.Equals( Self ) Return 0
 		If type.Equals( BoolType ) Return MAX_DISTANCE
 		If type.Equals( VariantType ) Return MAX_DISTANCE
-		
-'		If type.Dealias=BoolType Return MAX_DISTANCE
 		
 		Local ptype:=TCast<PointerType>( type )
 		If Not ptype Return -1

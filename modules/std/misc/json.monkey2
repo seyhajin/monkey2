@@ -314,7 +314,10 @@ Class JsonString Extends JsonValue
 	End
 	
 	Method ToJson:String() Override
-		Return "~q"+_data.Replace( "~q","\~q" )+"~q"
+		Local data:=_data
+		data=data.Replace( "\","\\" )
+		data=data.Replace( "~q","\~q" )
+		Return "~q"+data+"~q"
 	End
 
 	Private

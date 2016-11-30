@@ -29,9 +29,6 @@
 
 int
 RPI_GLES_LoadLibrary(_THIS, const char *path) {
-
-	bcm_host_init();
-	
     return SDL_EGL_LoadLibrary(_this, path, EGL_DEFAULT_DISPLAY);
 }
 

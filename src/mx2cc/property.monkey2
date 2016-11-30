@@ -68,14 +68,14 @@ Class PropertyList Extends FuncList
 	
 		If Not instance Throw New SemantEx( "Property '"+pdecl.ident+"' cannot be accessed without an instance" )
 		
-		If Not instance.type.ExtendsType( cscope.ctype )
+		Local selfType:=cscope.ctype
+		If pdecl.IsExtension selfType=selfType.superType
+		
+		If Not instance.type.ExtendsType( selfType )
 			Throw New SemantEx( "Property '"+pdecl.ident+"' cannot be accessed from an instance of a different class" )
 		Endif
 		
 		Return New PropertyValue( Self,instance )
-	
-		'If instance Return New PropertyValue( Self,instance )
-		'Return Null
 	End
 	
 End
@@ -105,13 +105,6 @@ Class PropertyValue Extends Value
 		Return plist.getFunc.ToValue( instance ).Invoke( Null )
 	End
 	
-	#rem
-	Method UpCast:Value( type:Type ) Override
-	
-		Return ToRValue().UpCast( type )
-	End
-	#end
-	
 	Method Assign:Stmt( pnode:PNode,op:String,rvalue:Value,block:Block ) Override
 	
 		Local inst:=instance
@@ -136,10 +129,6 @@ Class PropertyValue Extends Value
 				Local rtype:=BalanceAssignTypes( op,value.type,rvalue.type )
 				rvalue=New BinaryopValue( value.type,op2,value,rvalue.UpCast( rtype ) )
 				
-				'ValidateAssignOp( op,value.type )
-				'Local rtype:=value.type
-				'If op2="shl" Or op2="shr" rtype=Type.IntType
-				'rvalue=New BinaryopValue( value.type,op2,value,rvalue.UpCast( rtype ) )
 			Endif
 		
 		Endif
@@ -166,4 +155,3 @@ Class PropertyValue Extends Value
 	End
 	
 End
-

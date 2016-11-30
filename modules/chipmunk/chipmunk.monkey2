@@ -25,7 +25,7 @@ Namespace chipmunk
 #Import "Chipmunk7/src/cpGearJoint.c"
 #Import "Chipmunk7/src/cpGrooveJoint.c"
 #Import "Chipmunk7/src/cpHashSet.c"
-#Import "Chipmunk7/src/cpHastySpace.c"
+'#Import "Chipmunk7/src/cpHastySpace.c"	'causing problems on ios.
 #Import "Chipmunk7/src/cpMarch.c"
 #Import "Chipmunk7/src/cpPinJoint.c"
 #Import "Chipmunk7/src/cpPivotJoint.c"

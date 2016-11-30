@@ -297,7 +297,7 @@ Class LiteralValue Extends Value
 	End
 	
 	Property HasSideEffects:Bool() Override
-		Return type.Dealias=Type.StringType
+		Return type=Type.StringType
 	End
 	
 	Method RemoveSideEffects:Value( block:Block ) Override

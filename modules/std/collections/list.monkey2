@@ -23,9 +23,6 @@ This connection between elements is achieved using separate Node objects (there 
 
 Lists implements the [[IContainer]] interface so can be used with [[Eachin]] loops.
 
-Note that you should NOT modify a list while iterating through it with an eachin loop. Doing so while cause a 'concurrent list
-modification' runtime error in debug mode. Please see [[IContainer]] for more information.
-
 #end
 Class List<T> Implements IContainer<T>
 
@@ -139,14 +136,9 @@ Class List<T> Implements IContainer<T>
 	
 		Field _list:List
 		Field _node:Node
-		Field _seq:Int
-		
-		Method AssertSeq()
-			DebugAssert( _seq=_list._seq,"Concurrent list modification" )
-		End
 		
 		Method AssertCurrent()
-			DebugAssert( Not AtEnd,"Invalid list iterator" )
+			DebugAssert( _node<>_list._head,"Invalid list iterator" )
 		End
 		
 		Public
@@ -156,13 +148,11 @@ Class List<T> Implements IContainer<T>
 		Method New( list:List,node:Node )
 			_list=list
 			_node=node
-			_seq=list._seq
 		End
 
 		#rem monkeydoc Checks whether the iterator has reached the end of the list.
 		#end
 		Property AtEnd:Bool()
-			AssertSeq()
 			Return _node=_list._head
 		End
 		
@@ -196,8 +186,6 @@ Class List<T> Implements IContainer<T>
 			AssertCurrent()
 			_node=_node._succ
 			_node._pred.Remove()
-			_list._seq+=1
-			_seq=_list._seq
 		End
 		
 		#rem monkeydoc Safely insert a value before the iterator.
@@ -206,10 +194,7 @@ Class List<T> Implements IContainer<T>
 		
 		#end
 		Method Insert( value:T )
-			AssertSeq()
 			_node=New Node( value,_node )
-			_list._seq+=1
-			_seq=_list._seq
 		End
 	End
 	
@@ -221,14 +206,9 @@ Class List<T> Implements IContainer<T>
 	
 		Field _list:List
 		Field _node:Node
-		Field _seq:Int
-		
-		Method AssertSeq()
-			DebugAssert( _seq=_list._seq,"Concurrent list modification" )
-		End
 		
 		Method AssertCurrent()
-			DebugAssert( Not AtEnd,"Invalid list iterator" )
+			DebugAssert( _node<>_list._head,"Invalid list iterator" )
 		End
 		
 		Public
@@ -238,13 +218,11 @@ Class List<T> Implements IContainer<T>
 		Method New( list:List,node:Node )
 			_list=list
 			_node=node
-			_seq=list._seq
 		End
 
 		#rem monkeydoc Checks whether the iterator has reached the end of the list.
 		#end
 		Property AtEnd:Bool()
-			AssertSeq()
 			Return _node=_list._head
 		End
 		
@@ -278,8 +256,6 @@ Class List<T> Implements IContainer<T>
 			AssertCurrent()
 			_node=_node._pred
 			_node._succ.Remove()
-			_list._seq+=1
-			_seq=_list._seq
 		End
 		
 		#rem monkeydoc Safely insert a value before the iterator.
@@ -288,18 +264,13 @@ Class List<T> Implements IContainer<T>
 		
 		#end
 		Method Insert( value:T )
-			AssertSeq()
 			_node=New Node( value,_node._succ )
-			_list._seq+=1
-			_seq=_list._seq
 		End
 	End
 	
 	Private
 	
-'	Field _head:=New Node	'FIXME, causes internal compiler error...
 	Field _head:Node
-	Field _seq:Int
 	
 	Public
 	
@@ -430,7 +401,6 @@ Class List<T> Implements IContainer<T>
 	Method Clear()
 		_head._succ=_head
 		_head._pred=_head
-		_seq+=1
 	End
 	
 	#rem monkeydoc Adds a value to the start of the list.
@@ -442,7 +412,6 @@ Class List<T> Implements IContainer<T>
 	#end
 	Method AddFirst:Node( value:T )
 		Local node:=New Node( value,_head._succ )
-		_seq+=1
 		Return node
 	End
 	
@@ -455,7 +424,6 @@ Class List<T> Implements IContainer<T>
 	#end
 	Method AddLast:Node( value:T )
 		Local node:=New Node( value,_head )
-		_seq+=1
 		Return node
 	End
 	
@@ -470,7 +438,6 @@ Class List<T> Implements IContainer<T>
 		Local node:=FindNode( value )
 		If Not node Return False
 		node.Remove()
-		_seq+=1
 		Return True
 	End
 	
@@ -485,7 +452,6 @@ Class List<T> Implements IContainer<T>
 		Local node:=FindLastNode( value )
 		If Not node Return False
 		node.Remove()
-		_seq+=1
 		Return True
 	End
 	
@@ -507,7 +473,6 @@ Class List<T> Implements IContainer<T>
 				node=node._succ
 			Endif
 		Wend
-		If n _seq+=1
 		Return n
 	End
 	
@@ -529,7 +494,6 @@ Class List<T> Implements IContainer<T>
 				node=node._succ
 			Endif
 		Wend
-		If n _seq+=1
 		Return n
 	End
 	
@@ -545,7 +509,6 @@ Class List<T> Implements IContainer<T>
 		
 		Local value:=_head._succ._value
 		_head._succ.Remove()
-		_seq+=1
 		Return value
 	End
 	
@@ -561,7 +524,6 @@ Class List<T> Implements IContainer<T>
 		
 		Local value:=_head._pred._value
 		_head._pred.Remove()
-		_seq+=1
 		Return value
 	End
 	

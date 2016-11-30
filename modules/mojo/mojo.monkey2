@@ -39,6 +39,7 @@ Namespace mojo
 #Import "input/device"
 #Import "input/keyboard"
 #Import "input/mouse"
+#Import "input/touch"
 #Import "input/joystick"
 #Import "input/keycodes"
 

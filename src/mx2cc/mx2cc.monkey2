@@ -21,7 +21,7 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makedocs chipmunk"'makemods"' monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makedocs"
 
 'Const TestArgs:="mx2cc makeapp -apptype=console src/mx2cc/test.monkey2"
 

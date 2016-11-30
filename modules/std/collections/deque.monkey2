@@ -34,20 +34,14 @@ Class Deque<T> Implements IContainer<T>
 		
 		Field _deque:Deque
 		Field _index:Int
-		Field _seq:Int
-		
-		Method AssertSeq()
-			DebugAssert( _seq=_deque._seq,"Concurrent list modification" )
-		End
 		
 		Method AssertCurrent()
-			DebugAssert( Not AtEnd,"Invalid list iterator" )
+			DebugAssert( _index<>_deque._tail,"Invalid deque iterator" )
 		End
 		
 		Method New( deque:Deque,index:Int )
 			_deque=deque
 			_index=index
-			_seq=deque._seq
 		End
 		
 		Public
@@ -55,7 +49,6 @@ Class Deque<T> Implements IContainer<T>
 		#rem monkeydoc Checks if the iterator has reached the end of the deque.
 		#end
 		Property AtEnd:Bool()
-			AssertSeq()
 			Return _index=_deque._tail
 		End
 		
@@ -96,7 +89,6 @@ Class Deque<T> Implements IContainer<T>
 	Field _data:T[]
 	Field _head:Int
 	Field _tail:Int
-	Field _seq:Int	
 	
 	Method Normalize( capacity:Int )
 	
@@ -115,7 +107,6 @@ Class Deque<T> Implements IContainer<T>
 		_data=data
 		_tail=length
 		_head=0
-		_seq+=1
 	End
 	
 	Public
@@ -252,7 +243,6 @@ Class Deque<T> Implements IContainer<T>
 		Endif
 		_head=0
 		_tail=0
-		_seq+=1
 	End
 	
 	#rem monkeydoc Adds a value at the start of the deque.
@@ -263,7 +253,6 @@ Class Deque<T> Implements IContainer<T>
 		_head-=1
 		If _head=-1 _head=Capacity-1
 		_data[_head]=value
-		_seq+=1
 	End
 	
 	#rem monkeydoc Adds a value at the end of the deque.
@@ -274,7 +263,6 @@ Class Deque<T> Implements IContainer<T>
 		_data[_tail]=value
 		_tail+=1
 		If _tail=Capacity _tail=0
-		_seq+=1
 	End
 	
 	#rem monkeydoc Removes and returns the first value in a deque.
@@ -289,7 +277,6 @@ Class Deque<T> Implements IContainer<T>
 		_data[_head]=Null
 		_head+=1
 		If _head=Capacity _head=0
-		_seq+=1
 		Return value
 	End
 	
@@ -305,7 +292,6 @@ Class Deque<T> Implements IContainer<T>
 		If _tail=-1 _tail=Capacity-1
 		Local value:=_data[_tail]
 		_data[_tail]=Null
-		_seq+=1
 		Return value
 	End
 	
@@ -339,7 +325,7 @@ Class Deque<T> Implements IContainer<T>
 	Method Get:T( index:Int )
 		DebugAssert( index>=0 And  index<Length,"Deque index out of range" )
 		
-		Return _data[ index Mod Capacity ]
+		Return _data[ (index+_head) Mod Capacity ]
 	End
 	
 	#rem monkedoc Sets the value of a deque element.
@@ -350,7 +336,7 @@ Class Deque<T> Implements IContainer<T>
 	Method Set( index:Int,value:T )
 		DebugAssert( index>=0 And index<Length,"Deque index out of range" )
 		
-		_data[ index Mod Capacity ]=value
+		_data[ (index+_head) Mod Capacity ]=value
 	End
 	
 	#rem monkedoc Gets the value of a deque element.
@@ -361,7 +347,7 @@ Class Deque<T> Implements IContainer<T>
 	Operator[]:T( index:Int )
 		DebugAssert( index>=0 And index<Length,"Deque index out of range" )
 		
-		Return _data[ index Mod Capacity ]
+		Return _data[ (index+_head) Mod Capacity ]
 	End
 	
 	#rem monkedoc Sets the value of a deque element.
@@ -372,7 +358,7 @@ Class Deque<T> Implements IContainer<T>
 	Operator[]=( index:Int,value:T )
 		DebugAssert( index>=0 And index<Length,"Deque index out of range" )
 		
-		_data[ index Mod Capacity ]=value
+		_data[ (index+_head) Mod Capacity ]=value
 	End
 	
 End

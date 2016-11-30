@@ -7,13 +7,11 @@ IContainer does not actually declare any members, but a class that implements IC
 
 `Method All:IteratorType()` - Gets an iterator to all values in the container.
 
-...where 'IteratorType' is a class or struct type that implements the following properties and methods:
+...where `IteratorType` is a class or struct type that implements the following properties and methods:
 
 `Property Current:ValueType()` - The current value pointed to by the iterator.
 
 `Property AtEnd:bool()` - true if iterator is at end of container.
-
-`Method Erase()` - Erases the value pointed to by the iterator.
 
 `Method Bump()` - Bumps the iterator so it points to the next value in the container.
 
@@ -31,6 +29,7 @@ Next
 
 ...to this...
 
+
 ```
 Local iterator:=container.All()
 
@@ -44,9 +43,15 @@ While Not iterator.AtEnd
 Wend
 ```
 
-Containers should not be modified while eachin is being used to loop through the values in the container as this can put the container into
-an inconsistent state. If you need to do this, you should manually iterate through the container and use the iterator 'Erase' method to erase
-values in a controlled way. For example:
+Iterators may also provide methods for inserting and removing items...
+
+Containers should not be modified while eachin is being used to loop through the values in the container as this can put the container into an inconsistent state. If you need to do this, you should use these optional iterator methods instead of modifying the container:
+
+`Method Erase:Void()` - Erase the iterator from the container.
+
+`Method Insert:Void( value:ValueType )` - Insert a value before the iterator.
+
+For example:
 
 ```
 Local iterator:=container.All()
@@ -72,8 +77,7 @@ Wend
 
 Note that if you erase a value, you should NOT bump the iterator - erase implicitly does this for you.
 
-Finally, IContainer is not a 'real' interface because Monkey2 does not yet support generic interface methods. This feature is planned for a 
-future version of monkey2.
+Finally, IContainer is not a 'real' interface because Monkey2 does not yet support generic interface methods. This feature is planned for a future version of monkey2.
 
 #end
 Interface IContainer<T>
@@ -82,16 +86,24 @@ Interface IContainer<T>
 	
 	'Method All:IIterator<T>()
 
-	'Method Find:IIterator<T>( value:T ) Default...
-
 	
-	'For sequences...
+	'Sequence methods
 	
 	'Method Add( value:T )
 	
-	'Method AddAll( value:T[] ) Default...
+	'Method AddAll( value:T[] )
 	
-	'Method AddAll<C>( values:C ) Where C Implements IContainer<T> Default...
+	'Method AddAll<C>( values:C )
+	
+	'Method Contains:Bool( value:T )
+	
+	'Method Remove:Bool( value:T )
+	
+	'Method RemoveLast:Bool( value:T )
+	
+	'Method RemoveEach:Int( value:T )
+	
+	'Method RemoveIf:Int( condition:Bool( value:T ) )
 	
 End
 
@@ -106,7 +118,7 @@ Interface IIterator<T>
 	'Method Bump()
 	
 	
-	'For sequences...
+	'Sequence methods
 	
 	'Method Erase()
 	

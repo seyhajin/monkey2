@@ -39,7 +39,7 @@ End
 
 Function MungArg:String( type:Type )
 
-	If type.Dealias=Type.VoidType Return "v"
+	If type=Type.VoidType Return "v"
 	
 	Local ptype:=TCast<PrimType>( type )
 	If ptype

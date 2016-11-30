@@ -344,17 +344,25 @@ Struct @String ="bbString"
 
 	#rem monkeydoc Creates a string containing a single character.
 	
-	@param chr The character.
+	@param char The character.
 	
 	#end
-	Function FromChar:String( chr:Int )="bbString::fromChar"
+	Function FromChar:String( char:Int )="bbString::fromChar"
+	
+
+	#rem monkeydoc Creates a string containing characters in an array.
+	
+	@param chars The array.
+	
+	#end
+	Function FromChars:String( chars:Int[] )="bbString::fromChars"
 	
 	
 	#rem monkeydoc Creates a string from a CString.
 	
 	If `bufSize` is specified, the CString may contain null characters which will be included in the string.
 	
-	If `bufsize` is not specified, the CString must be correctly null terminated or Bad Things Will Happen.
+	If `bufSize` is not specified, the CString must be correctly null terminated or Bad Things Will Happen.
 	
 	@param buf The memory buffer containing the CString.
 	
@@ -370,7 +378,7 @@ Struct @String ="bbString"
 	
 	If `bufSize` is specified, the WString may contain null characters which will be included in the string.
 	
-	If `bufsize` is not specified, the WString must be correctly null terminated or Bad Things Will Happen.
+	If `bufSize` is not specified, the WString must be correctly null terminated or Bad Things Will Happen.
 	
 	@param buf The memory buffer containing the WString.
 	

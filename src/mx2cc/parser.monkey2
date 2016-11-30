@@ -1168,6 +1168,11 @@ Class Parser
 			Local op:=Parse()
 			Local rhs:=ParseExpr()
 			Return New AssignStmtExpr( op,expr,rhs,srcpos,EndPos )
+		Case "shl","shr","mod"	'Note: Can't overload && || in C++? News to me...
+			Local op:=Parse()
+			Parse( "=" )
+			Local rhs:=ParseExpr()
+			Return New AssignStmtExpr( op+"=",expr,rhs,srcpos,EndPos )
 		End
 		
 		'Ok, ugly, but look for Blah.New() here...

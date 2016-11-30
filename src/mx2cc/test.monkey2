@@ -2,28 +2,26 @@
 Namespace test
 
 #Import "<std>"
-#Import "<mojo>"
 
 Using std..
-Using mojo..
 
-Function Test( v:Vec2f )
+Struct Test<T>
+
+	Const A:=New Test( 10 )
+	Const B:=New Test[ 100 ]
+	
+	Field t:T
+	
+	Method New( t:T )
+		Self.t=t
+	End
 End
 
-Enum E
-	X,Y,Z
-End
 
 Function Main()
 
-	Local e:=E.Z
+	Print Test<Int>.A.t
+	Print Test<Int>.B.Length
 	
-'	Local v:=Variant( e )
-	
-'	Print v.Type
-	
-'	Print Int( Cast<E>( v ) )
-	
-	Local v2:=Variant( New Vec2( 1,1 ) )
 
 End
