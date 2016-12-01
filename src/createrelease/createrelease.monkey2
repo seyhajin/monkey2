@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.01"
+Const MX2CC_VERSION:="1.1.02"
 
 Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
 
@@ -84,6 +84,8 @@ Function CopyRelease()
 	CopyFiles( "bananas" )
 	CopyFiles( "products" )
 	CopyFiles( "src" )
+	DeleteDir( "src/c2mx2",True )
+	DeleteDir( "src/mx23d",True )
 	CreateDir( output+"/devtools" )
 	
 	Copy( "hello-world.monkey2" )
