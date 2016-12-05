@@ -78,15 +78,15 @@ Function CopyRelease()
 
 	DeleteDir( output,True )
 	CreateDir( output )
+	
+	CreateDir( output+"/devtools" )
+	
 	CopyFiles( "bin" )
 	CopyFiles( "docs" )
 	CopyFiles( "modules" )
 	CopyFiles( "bananas" )
 	CopyFiles( "products" )
 	CopyFiles( "src" )
-	DeleteDir( "src/c2mx2",True )
-	DeleteDir( "src/mx23d",True )
-	CreateDir( output+"/devtools" )
 	
 	Copy( "hello-world.monkey2" )
 	Copy( "LICENSE.TXT" )
@@ -95,12 +95,17 @@ Function CopyRelease()
 	
 #if __TARGET__="windows"
 	Copy( "Monkey2 (Windows).exe" )
-#else if __TARGET__="macos"
+#Else if __TARGET__="macos"
 	CopyFiles( "Monkey2 (Macos).app" )
-#else if __TARGET__="linux"
+#Else if __TARGET__="linux"
 	Copy( "Monkey2 (Linux)" )
-#endif
+#Endif
 
+	DeleteDir( output+"/src/c2mx2",True )
+	DeleteDir( output+"/src/mx23d",True )
+	DeleteDir( output+"/modules/bullet",True )
+	DeleteDir( output+"/modules/gles30",True )
+	
 End
 
 Function MakeInno()
