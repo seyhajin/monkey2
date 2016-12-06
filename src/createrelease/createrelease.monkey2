@@ -103,6 +103,7 @@ Function CopyRelease()
 
 	DeleteDir( output+"/src/c2mx2",True )
 	DeleteDir( output+"/src/mx23d",True )
+	DeleteDir( output+"/modules/linq",True )
 	DeleteDir( output+"/modules/bullet",True )
 	DeleteDir( output+"/modules/gles30",True )
 	
