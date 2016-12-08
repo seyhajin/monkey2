@@ -188,9 +188,9 @@ Class Action
 				Local actions:=_hotKeys[event.Key]
 				If Not actions Return
 
-				Local mods:=event.Modifiers
+				Local mods:=event.Modifiers & (Modifier.Shift|Modifier.Alt|Modifier.Control|Modifier.Gui)
 				mods|=Cast<Modifier>( (Int(mods) & $541) Shl 1 | (Int(mods) & $a82) Shr 1 )
-
+				
 				For Local action:=Eachin actions
 					If event.Key<>action._hotKey Continue
 					If mods<>action._hotKeyMods Continue
