@@ -190,7 +190,7 @@ template<class T,int D> bbString bbDBType( bbArray<T,D> *p ){
 
 template<class T,int D> bbString bbDBValue( bbArray<T,D> *p ){
 	char buf[64];
-	sprintf( buf,"@%p",p->_rep );
+	sprintf( buf,"@%p",*(void**)(&p->_rep) );
 	return buf;
 }
 
