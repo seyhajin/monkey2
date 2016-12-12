@@ -56,14 +56,12 @@ Global MODULES_DIR:String
 Function MakeIncludePath:String( path:String,baseDir:String )
 	
 	If MODULES_DIR
-		If baseDir And baseDir.StartsWith( MODULES_DIR ) Return MakeRelativePath( path,baseDir )
-	
+'		If baseDir And baseDir.StartsWith( MODULES_DIR ) Return MakeRelativePath( path,baseDir )
 		 If path.StartsWith( MODULES_DIR ) Return path.Slice( MODULES_DIR.Length )
 	Endif
 
 	If APP_DIR
-		If baseDir And baseDir.StartsWith( APP_DIR ) Return MakeRelativePath( path,baseDir )
-		
+'		If baseDir And baseDir.StartsWith( APP_DIR ) Return MakeRelativePath( path,baseDir )
 	 	If path.StartsWith( APP_DIR ) Return path.Slice( APP_DIR.Length )
 	Endif
 	
