@@ -1,4 +1,6 @@
 
+'Note: ZipFile is VERY WIP!
+'
 #Import "<std>"
 
 #Import "blah.zip@/"
