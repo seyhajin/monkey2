@@ -81,7 +81,7 @@ namespace theoraplayer
 				fclose(file);
 				throw TheoraplayerException("MemoryDataSource doesn't support files larger than 4GB!");
 			}
-			if (this->size < UINT_MAX)
+			if (1)	//this->size < UINT_MAX)
 			{
 				this->data = new unsigned char[(unsigned int)this->size];
 				fread(this->data, 1, (size_t)this->size, file);
