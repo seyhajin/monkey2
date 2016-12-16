@@ -80,6 +80,15 @@ namespace theoraplayer
 
 	void FileDataSource::seek(int64_t byte_index)
 	{
+
+		if (this->filePtr == NULL) 
+		{
+			this->_openFile();
+		}
+		
+		fseek( this->filePtr,byte_index,SEEK_SET );
+		
+		/*
 		if (this->filePtr == NULL) 
 		{
 			this->_openFile();
@@ -93,6 +102,7 @@ namespace theoraplayer
 		fpos_t fpos = byte_index;
 #endif
 		fsetpos(this->filePtr, &fpos);
+		*/
 	}
 
 	int64_t FileDataSource::getSize()
@@ -110,6 +120,13 @@ namespace theoraplayer
 		{
 			return 0LL;
 		}
+		return ftell( this->filePtr );
+		
+		/*
+		if (this->filePtr == NULL)
+		{
+			return 0LL;
+		}
 #ifdef __linux
 //_LINUX
 		fpos_t pos;
@@ -120,5 +137,6 @@ namespace theoraplayer
 		fgetpos(this->filePtr, &pos);
 		return (int64_t)pos;
 #endif
+		*/
 	}
 }

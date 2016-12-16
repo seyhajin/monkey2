@@ -34,11 +34,17 @@ Namespace theoraplayer
 
 Extern
 
+Enum OutputMode="theoraplayer::OutputMode"
+End
+
 Class VideoManager Extends Void="theoraplayer::Manager" 
 
 	Method setAudioInterfaceFactory( audioFactory:AudioInterfaceFactory )
+	Method getAudioInterfaceFactory:AudioInterfaceFactory()
 
 	Method createVideoClip:VideoClip( filename:CString ) Extension="bb_theoraplayer_createVideoClip"
+	Method createVideoClip:VideoClip( data:Void Ptr,length:Int ) Extension="bb_theoraplayer_createVideoClip"
+	Method destroyVideoClip( clip:VideoClip )
  
  	Method update( time_increase:Float )
  	
@@ -49,34 +55,71 @@ End
 Class VideoClip Extends Void="theoraplayer::VideoClip"
 
 	Method getWidth:Int()
-	
 	Method getHeight:Int()
+	
+	Method hasAlphaChannel:Bool()
+	
+	Method getSubFrameX:Int()
+	Method getSubFrameY:Int()
+	Method getSubFrameWidth:Int()
+	Method getSubFrameHeight:Int()
 	
 	Method getStride:Int()
 	
-	Method updateTimerToNextFrame:Float()
+	Method getTimePosition:Float()
+	
+	Method getDuration:Float()
+	
+	Method getFps:Float()
+	
+	Method getFramesCount:Int()
 
-	Method fetchNextFrame:VideoFrame()
+	Method getAudioGain:Float()
+	Method setAudioGain( gain:Float )
+
+	Method getPlaybackSpeed:Float()
+	Method setPlaybackSpeed( speed:Float )
+
+	Method getOutputMode:OutputMode()
+	Method setOutputMode( mode:OutputMode )
 	
-	Method popFrame()
-	
+	Method isAutoRestart:Bool()
+	Method setAutoRestart( value:Bool )
+
+	Method getPriority:Float()
+	Method setPriority( priority:Float )
+
+	Method getPriorityIndex:Int()
+
+	Method getPrecachedFramesCount:Int()
+	Method setPrecachedFramesCount( count:Int )
 	Method getReadyFramesCount:Int()
-	
+	Method getDisplayedFramesCount:Int()
+	Method getDroppedFramesCount:Int()
+
+	Method isDone:Bool()
+	Method isPaused:Bool()
+
+	Method updateTimerToNextFrame:Float()
+	Method fetchNextFrame:VideoFrame()
+	Method popFrame()
+
 	Method play()
-	
+	Method pause()
+	Method stop()
+	Method restart()
+
+	Method seek( time:Float )
+	Method seekToFrame( frame:Int )
+	Method waitForCache:Float( desiredCacheFactor:Float=0.5,maxWaitTime:Float=1.0 )
+
 End
 
 Class VideoFrame Extends Void="theoraplayer::VideoFrame" 
 
-	Method getFrameNumber:Int()
-	
 	Method getBuffer:UByte Ptr()
-	
-	Method getWidth:Int()
-	
-	Method getHeight:Int()
+	Method getFrameNumber:Int()
 
-	Method getStride:Int()
 End
 
 Class AudioInterfaceFactory Extends Void="theoraplayer::AudioInterfaceFactory"

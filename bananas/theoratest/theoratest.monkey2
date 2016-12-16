@@ -16,11 +16,15 @@ Class MyWindow Extends Window
 	
 	Field vidman:VideoManager
 	
+	Field data:DataBuffer
+	
 	Field vidclip:VideoClip
 	
 	Field image:Image
 	
 	Field time:Double
+	
+	Field gain:float=1
 
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
@@ -32,7 +36,11 @@ Class MyWindow Extends Window
 		
 		vidman.setAudioInterfaceFactory( audiofactory )
 		
-		vidclip=vidman.createVideoClip( AssetsDir()+"konqi.ogv" )
+		data=DataBuffer.Load( "asset::konqi.ogv" )
+		
+		vidclip=vidman.createVideoClip( data.Data,data.Length )
+'		vidclip=vidman.createVideoClip( AssetsDir()+"konqi.ogv" )
+		If Not vidclip Print "Can't load vidclip!"
 		
 		image=New Image( vidclip.getWidth(),vidclip.getHeight(),PixelFormat.RGB24,TextureFlags.Dynamic )
 		
@@ -54,7 +62,7 @@ Class MyWindow Extends Window
 		
 		vidman.update( elapsed )
 	
-'		vidclip.updateTimerToNextFrame()
+'		vidclip.updateTimerToNextFrame()	'play full speed...
 		
 		Local frame:=vidclip.fetchNextFrame()
 		
@@ -68,9 +76,21 @@ Class MyWindow Extends Window
 		
 		Endif
 		
+		If Keyboard.KeyPressed( Key.Up )
+			gain=Min( gain+.125,1.0 )
+			vidclip.setAudioGain( gain )
+		Else If Keyboard.KeyPressed( Key.Down )
+			gain=Max( gain-.125,0.0 )
+			vidclip.setAudioGain( gain )
+		Endif
+		
 		canvas.BlendMode=BlendMode.Opaque
 		
 		canvas.DrawRect( 0,0,Width,Height,image )
+		
+		canvas.DrawText( "Time position="+vidclip.getTimePosition()+", duration="+vidclip.getDuration(),0,0 )
+		
+		canvas.DrawText( "Audio gain="+vidclip.getAudioGain(),0,16 )
 	End
 	
 End

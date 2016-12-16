@@ -190,6 +190,8 @@ void OpenAL_AudioInterface::seek(float time)
 
 OpenAL_AudioInterfaceFactory::OpenAL_AudioInterfaceFactory()
 {
+	return;
+	
 	// openal init is here used only to simplify samples for this plugin
 	// if you want to use this interface in your own program, you'll
 	// probably want to remove the openal init/destory lines
@@ -217,6 +219,8 @@ OpenAL_AudioInterfaceFactory::OpenAL_AudioInterfaceFactory()
 
 OpenAL_AudioInterfaceFactory::~OpenAL_AudioInterfaceFactory()
 {
+	return;
+	
 	if (gDevice != NULL)
 	{
 		alcMakeContextCurrent(NULL);
