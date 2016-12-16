@@ -89,10 +89,18 @@ Class Window Extends View
 	End
 	
 	#rem monkeydoc Window fullscreen state.
+	
+	Note: The setter for this property deprecated! Please use BeginFullscreen/EndFullscreen instead.
+	
 	#end
 	Property Fullscreen:Bool()
 	
 		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_FULLSCREEN
+		
+	Setter( fullscreen:Bool )
+		If fullscreen=Fullscreen Return
+	
+		If fullscreen BeginFullscreen() Else EndFullscreen()
 	End
 
 	#rem monkeydoc Window maximized state.

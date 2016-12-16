@@ -72,6 +72,15 @@ Class Image Extends Resource
 		AddDependancy( texture )
 	End
 
+	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=Null,shader:Shader=Null )
+	
+		Local texture:=New Texture( width,height,format,textureFlags )
+		
+		Init( texture,texture.Rect,shader )
+		
+		AddDependancy( texture )
+	End
+
 	Method New( image:Image )
 	
 		Init( image._textures[0],image._rect,image._shader )

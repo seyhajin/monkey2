@@ -9,10 +9,19 @@ Alias Boxf:Box<Float>
 #end
 Struct Box<T>
 
+	Const FullBounds:=New Box( -1000000,-1000000,-1000000,1000000,1000000,1000000 )
+
+	Const EmptyBounds:=New Box( 1000000,1000000,1000000,-1000000,-1000000,-1000000 )
+	
 	Field min:Vec3<T>
 	Field max:Vec3<T>
 	
 	Method New()
+	End
+	
+	Method New( min:T,max:T )
+		Self.min=New Vec3<T>( min )
+		Self.max=New Vec3<T>( max )
 	End
 	
 	Method New( min:Vec3<T>,max:Vec3<T> )
@@ -25,8 +34,20 @@ Struct Box<T>
 		max.x=x1;max.y=y1;max.z=z1
 	End
 	
+	Operator To:String()
+		Return "Box("+min+","+max+")"
+	End
+	
+	Operator To<C>:Box<C>()
+		Return New Box<C>( min,max )
+	End
+	
 	Property Empty:Bool()
 		Return max.x<=min.x Or max.y<=min.y Or max.z<=min.z
+	End
+	
+	Property Center:Vec3<T>()
+		Return (min+max)/2
 	End
 	
 	Property Size:Vec3<T>()
