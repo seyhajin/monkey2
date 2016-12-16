@@ -22,12 +22,6 @@ Struct Mat3<T>
 	End
 	
 	Method New( q:Quat<T> )
-		Local xx:=q.v.x*q.v.x , yy:=q.v.y*q.v.y , zz:=q.v.z*q.v.z
-		Local xy:=q.v.x*q.v.y , xz:=q.v.x*q.v.z , yz:=q.v.y*q.v.z
-		Local wx:=q.w*q.v.x   , wy:=q.w*q.v.y   , wz:=q.w*q.v.z
-		i.x=1-2*(yy+zz) ; i.y=  2*(xy-wz) ; i.z=  2*(xz+wy)
-		j.x=  2*(xy+wz) ; j.y=1-2*(xx+zz) ; j.z=  2*(yz-wx)
-		k.x=  2*(xz-wy) ; k.y=  2*(yz+wx) ; k.z=1-2*(xx+yy)
 	End
 	
 	Method New( ix:Float,jy:Float,kz:Float )
@@ -40,39 +34,16 @@ Struct Mat3<T>
 		k.x=kx; k.y=ky; k.z=kz
 	End
 	
-	Method To<C>:Mat3<C>()
+	Operator To<C>:Mat3<C>()
 		Return New Mat3<C>( i,j,k )
 	End
 	
-	Method To:String()
+	Operator To:String()
 		Return "Mat3("+i+","+j+","+k+")"
 	End
 	
-	Method To:Quat<T>()
-		Return New Quat<T>( Self )
-	End
-	
-	Property Determinant:Double()
-		return i.x*(j.y*k.z-j.z*k.y )-i.y*(j.x*k.z-j.z*k.x )+i.z*(j.x*k.y-j.y*k.x )
-	End
-	
-	Property Cofactor:Mat3()
-		Return New Mat3(
-			 (j.y*k.z-j.z*k.y),-(j.x*k.z-j.z*k.x), (j.x*k.y-j.y*k.x),
-			-(i.y*k.z-i.z*k.y), (i.x*k.z-i.z*k.x),-(i.x*k.y-i.y*k.x),
-			 (i.y*j.z-i.z*j.y),-(i.x*j.z-i.z*j.x), (i.x*j.y-i.y*j.x) )
-	End
-	
-	Property Pitch:Double()
-		Return k.Pitch
-	End
-	
-	Property Yaw:Double()
-		Return k.Yaw
-	End
-	
-	Property Roll:Double()
-		Return ATan2( i.y,j.y )
+	Property Determinant:T()
+		Return i.x*(j.y*k.z-j.z*k.y )-i.y*(j.x*k.z-j.z*k.x )+i.z*(j.x*k.y-j.y*k.x )
 	End
 	
 	Operator~:Mat3()
@@ -102,12 +73,83 @@ Struct Mat3<T>
 		Return New Vec3<T>( i.x*v.x+j.x*v.y+k.x*v.z,i.y*v.x+j.y*v.y+k.y*v.z,i.z*v.x+j.z*v.y+k.z*v.z )
 	End
 	
+	Method GetCofactor:Mat3()
+		Return New Mat3(
+			 (j.y*k.z-j.z*k.y),-(j.x*k.z-j.z*k.x), (j.x*k.y-j.y*k.x),
+			-(i.y*k.z-i.z*k.y), (i.x*k.z-i.z*k.x),-(i.x*k.y-i.y*k.x),
+			 (i.y*j.z-i.z*j.y),-(i.x*j.z-i.z*j.x), (i.x*j.y-i.y*j.x) )
+	End
+	
+	Method GetPitch:Double()
+		Return k.Pitch
+	End
+	
+	Method GetYaw:Double()
+		Return k.Yaw
+	End
+	
+	Method GetRoll:Double()
+		Return ATan2( i.y,j.y )
+	End
+	
+	Method GetRotation:Vec3<T>()
+		Return New Vec3<T>( GetPitch(),GetYaw(),GetRoll() )
+	End
+	
+	Method GetQuat:Quat<T>()
+		Local r:Quat<T>
+		Local m:=Orthogonalize()
+		Local t:=m.i.x+m.j.y+m.k.z
+		If t>EPSILON
+			t=Sqrt( t+1 )*2
+			r.v.x=(m.k.y-m.j.z)/t
+			r.v.y=(m.i.z-m.k.x)/t
+			r.v.z=(m.j.x-m.i.y)/t
+			r.w=t/4
+		Else If m.i.x>m.j.y And m.i.x>m.k.z
+			t=Sqrt( m.i.x-m.j.y-m.k.z+1 )*2
+			r.v.x=t/4
+			r.v.y=(m.j.x+m.i.y)/t
+			r.v.z=(m.i.z+m.k.x)/t
+			r.w=(m.k.y-m.j.z)/t
+		Else If m.j.y>m.k.z
+			t=Sqrt( m.j.y-m.k.z-m.i.x+1 )*2
+			r.v.x=(m.j.x+m.i.y)/t
+			r.v.y=t/4
+			r.v.z=(m.k.y+m.j.z)/t
+			r.w=(m.i.z-m.k.x)/t
+		Else
+			t=Sqrt( m.k.z-m.j.y-m.i.x+1 )*2
+			r.v.x=(m.i.z+m.k.x)/t
+			r.v.y=(m.k.y+m.j.z)/t
+			r.v.z=t/4
+			r.w=(m.j.x-m.i.y)/t
+		Endif
+		Return r
+	End
+	
+	Method GetScaling:Vec3<T>()
+		Return New Vec3<T>( i.Length,j.Length,k.Length )
+	End
+	
 	Method Rotate:Mat3( rv:Vec3<T> )
-		Return Self * RotationMatrix( rv )
+		Return Self * Rotation( rv )
+	End
+	
+	Method Rotate:Mat3( rx:Double,ry:Double,rz:Double )
+		Return Self * Rotation( rx,ry,rz )
 	End
 	
 	Method Scale:Mat3( rv:Vec3<T> )
-		Return Self * ScalingMatrix( rv )
+		Return Self * Scaling( rv )
+	End
+
+	Method Scale:Mat3( sx:T,sy:T,sz:T )
+		Return Self * Scaling( sx,sy,sz )
+	End
+	
+	Method Scale:Mat3( t:T )
+		Return Self * Scaling( t )
 	End
 
 	Method Orthogonalize:Mat3()
@@ -115,27 +157,65 @@ Struct Mat3<T>
 		Return New Mat3( j.Cross( k ).Normalize(),k.Cross( i ).Normalize(),k )
 	End
 	
-	Function YawMatrix:Mat3( an:Double )
+	#rem monkeydoc Creates a yaw (y axis) rotation matrix.
+	#end
+	Function Yaw:Mat3( an:Double )
 		Local sin:=Sin(an),cos:=Cos(an)
 		Return New Mat3( cos,0,sin, 0,1,0, -sin,0,cos )
 	End
 	
-	Function PitchMatrix:Mat3( an:Double )
+	#rem monkeydoc Creates a pitch (x axis) rotation matrix.
+	#end
+	Function Pitch:Mat3( an:Double )
 		Local sin:=Sin(an),cos:=Cos(an)
 		return New Mat3( 1,0,0, 0,cos,sin, 0,-sin,cos )
 	End
 	
-	Function RollMatrix:Mat3( an:Double )
+	#rem monkeydoc Creates a roll (z axis) rotation matrix.
+	#end
+	Function Roll:Mat3( an:Double )
 		Local sin:=Sin(an),cos:=Cos(an)
 		Return New Mat3( cos,sin,0, -sin,cos,0, 0,0,1 )
 	End
 	
-	Function RotationMatrix:Mat3( rv:Vec3<T> )
-		Return YawMatrix( rv.y ) * PitchMatrix( rv.x ) * RollMatrix( rv.z )
+	#rem monkeydoc Creates a rotation matrix from a quaternion.
+	#end
+	Function Rotation:Mat3( quat:Quat<T> )
+		Local xx:=quat.v.x*quat.v.x , yy:=quat.v.y*quat.v.y , zz:=quat.v.z*quat.v.z
+		Local xy:=quat.v.x*quat.v.y , xz:=quat.v.x*quat.v.z , yz:=quat.v.y*quat.v.z
+		Local wx:=quat.w*quat.v.x   , wy:=quat.w*quat.v.y   , wz:=quat.w*quat.v.z
+		Local r:Mat3
+		r.i.x=1-2*(yy+zz) ; r.i.y=  2*(xy-wz) ; r.i.z=  2*(xz+wy)
+		r.j.x=  2*(xy+wz) ; r.j.y=1-2*(xx+zz) ; r.j.z=  2*(yz-wx)
+		r.k.x=  2*(xz-wy) ; r.k.y=  2*(yz+wx) ; r.k.z=1-2*(xx+yy)
+		Return r
 	End
 	
-	Function ScalingMatrix:Mat3( sv:Vec3<T> )
+	#rem monkeydoc Creates a rotation matrix from euler angles.
+	
+	Order of rotation is Yaw * Pitch * Roll.
+	
+	#end
+	Function Rotation:Mat3( rv:Vec3<Double> )
+		Return Yaw( rv.y ) * Pitch( rv.x ) * Roll( rv.z )
+	End
+	
+	Function Rotation:Mat3( rx:Double,ry:Double,rz:Double )
+		Return Yaw( ry ) * Pitch( rx ) * Roll( rz )
+	End
+
+	#rem monkeydoc Creates a scaling matrix.
+	#end
+	Function Scaling:Mat3( sv:Vec3<T> )
 		Return New Mat3( sv.x,sv.y,sv.z )
 	End
 
+	Function Scaling:Mat3( sx:T,sy:T,sz:T )
+		Return New Mat3( sx,sy,sz )
+	End
+	
+	Function Scaling:Mat3( t:T )
+		Return New Mat3( t,t,t )
+	End
+	
 End

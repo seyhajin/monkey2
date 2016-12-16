@@ -57,6 +57,26 @@ Struct Vec4<T>
 		Self.w=w
 	End
 	
+	Property XY:Vec2<T>()
+		Return New Vec2<T>( x,y )
+	Setter( xy:Vec2<T> )
+		x=xy.x;y=xy.y
+	End
+	
+	Property XYZ:Vec3<T>()
+		Return New Vec3<T>( x,y,z )
+	Setter( xyz:Vec3<T> )
+		x=xyz.x;y=xyz.y;z=xyz.z
+	End
+	
+	Operator To:String()
+		Return "Vec4("+x+","+y+","+z+","+w+")"
+	End
+	
+	Operator To<C>:Vec4<C>()
+		Return New Vec4<C>( x,y,z,w )
+	End
+	
 	Operator-:Vec4()
 		Return New Vec4( -x,-y,-z,-w )
 	End

@@ -54,6 +54,12 @@ Struct Vec3<T>
 		Self.z=z
 	End
 	
+	Property XY:Vec2<T>()
+		Return New Vec2<T>( x,y )
+	Setter( xy:Vec2<T> )
+		x=xy.x;y=xy.y
+	End
+	
 	Operator-:Vec3()
 		Return New Vec3( -x,-y,-z )
 	End

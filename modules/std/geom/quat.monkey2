@@ -28,46 +28,12 @@ Class Quat<T>
 		v.x=vx ; v.y=vy ; v.z=vz ; Self.w=w
 	End
 	
-	Method New( m:Mat3<T> )
-		m=m.Orthogonalize()
-		Local t:=m.i.x+m.j.y+m.k.z
-		If t>EPSILON
-			t=Sqrt( t+1 )*2
-			v.x=(m.k.y-m.j.z)/t
-			v.y=(m.i.z-m.k.x)/t
-			v.z=(m.j.x-m.i.y)/t
-			w=t/4
-		Else If m.i.x>m.j.y And m.i.x>m.k.z
-			t=Sqrt( m.i.x-m.j.y-m.k.z+1 )*2
-			v.x=t/4
-			v.y=(m.j.x+m.i.y)/t
-			v.z=(m.i.z+m.k.x)/t
-			w=(m.k.y-m.j.z)/t
-		Else If m.j.y>m.k.z
-			t=Sqrt( m.j.y-m.k.z-m.i.x+1 )*2
-			v.x=(m.j.x+m.i.y)/t
-			v.y=t/4
-			v.z=(m.k.y+m.j.z)/t
-			w=(m.i.z-m.k.x)/t
-		Else
-			t=Sqrt( m.k.z-m.j.y-m.i.x+1 )*2
-			v.x=(m.i.z+m.k.x)/t
-			v.y=(m.k.y+m.j.z)/t
-			v.z=t/4
-			w=(m.j.x-m.i.y)/t
-		Endif
-	End
-	
 	Operator To<C>:Quat<C>()
 		Return New Quat<C>( v,w )
 	End
 	
 	Method To:String()
 		Return "Quat("+v+","+w+")"
-	End
-	
-	Operator To:Mat3<T>()
-		Return New Mat3<T>( Self )
 	End
 	
 	Property Length:Double()
@@ -85,26 +51,14 @@ Class Quat<T>
 		Local yz:=v.y*v.z , wx:=w*v.x
 		Local xy:=v.x*v.y , wz:=w*v.z
 		Local xx:=v.x*v.x , zz:=v.z*v.z
-		return New Vec3<T>( 2*(xy+wz),1-2*(xx+zz),2*(yz-wx) )
+		Return New Vec3<T>( 2*(xy+wz),1-2*(xx+zz),2*(yz-wx) )
 	End
 	
 	Property K:Vec3<T>()
 		Local xz:=v.x*v.z , wy:=w*v.y
 		Local yz:=v.y*v.z , wx:=w*v.x
 		Local xx:=v.x*v.x , yy:=v.y*v.y
-		return New Vec3<T>( 2*(xz-wy),2*(yz+wx),1-2*(xx+yy) )
-	End
-	
-	Property Yaw:Double()
-		Return K.Yaw
-	End
-	
-	Property Pitch:Double()
-		Return K.Pitch
-	End
-	
-	Property Roll:Double()
-		Return ATan2( I.y,J.y )
+		Return New Vec3<T>( 2*(xz-wy),2*(yz+wx),1-2*(xx+yy) )
 	End
 	
 	Operator-:Quat()
@@ -135,6 +89,18 @@ Class Quat<T>
 		Return New Quat( v/t,w/t )
 	End
 	
+	Method GetYaw:Double()
+		Return K.Yaw
+	End
+	
+	Method GetPitch:Double()
+		Return K.Pitch
+	End
+	
+	Method GetRoll:Double()
+		Return ATan2( I.y,J.y )
+	End
+	
 	Method Dot:Double( q:Quat )
 		Return v.x*q.v.x + v.y*q.v.y + v.z*q.v.z + w*q.w
 	End
@@ -161,10 +127,24 @@ Class Quat<T>
 		Return Self*b + t*a
 	End
 	
-'	Function RotationQuat:Quat( rv:Vec3<T> )
-'	End
+	Function Pitch:Quat( r:Double )
+		Return New Quat( Sin( r/2 ),0,0,Cos( r/2 ) )
+	End
+
+	Function Yaw:Quat( r:Double )
+		Return New Quat( 0,Sin( r/2 ),0,Cos( r/2 ) )
+	End
+
+	Function Roll:Quat( r:Double )
+		Return New Quat( 0,0,Sin( r/2 ),Cos( r/2 ) )
+	End
+
+	Function Rotation:Quat( rv:Vec3<Double> )
+		Return Yaw( rv.y ) * Pitch( rv.x ) * Roll( rv.z )
+	End
 	
-'	Function AxisAngleQuat:Quat( axis:Vec3<T>,angle:Double )
-'	End
+	Function Rotation:Quat( rx:Double,ry:Double,rz:Double )
+		Return Yaw( ry ) * Pitch( rx ) * Roll( rz )
+	End
 
 End

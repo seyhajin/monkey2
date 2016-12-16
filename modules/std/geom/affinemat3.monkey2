@@ -144,8 +144,6 @@ Struct AffineMat3<T>
 		Return New AffineMat3( sv.x,0,0,sv.y,0,0 )
 	End
 
-	#rem monkeydoc @hidden
-	#end
 	Function Ortho:AffineMat3( left:T,right:T,bottom:T,top:T )
 
 		Local w:=right-left,h:=top-bottom
