@@ -3,7 +3,7 @@
 
 #include "theoraplayer.h"
 #include "Manager.h"
-#include "memorydatasource.h"
+#include "MemoryDataSource.h"
 
 theoraplayer::Manager *bb_theoraplayer_getManager(){
 
