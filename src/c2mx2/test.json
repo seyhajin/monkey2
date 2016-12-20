@@ -7,13 +7,6 @@
 	
 	"inputFile":"test.h",
 	
-	"outputDir":"test_api",
-	
-	"outputFile":"test",
-	
-	"header":[
-		"",
-		"Extern",
-		""
-	]
+	"outputFile":"test_extern"
+
 }
