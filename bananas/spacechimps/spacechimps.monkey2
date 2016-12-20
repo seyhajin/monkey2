@@ -75,7 +75,10 @@ Class MyWindow Extends Window
 		Select event.Type
 		Case EventType.KeyDown
 			Select event.Key
-
+			Case Key.Enter
+				If event.Modifiers & Modifier.Alt
+					If Fullscreen EndFullscreen() Else BeginFullscreen()
+				Endif
 			Case Key.S
 			
 				SwapInterval=1-SwapInterval
