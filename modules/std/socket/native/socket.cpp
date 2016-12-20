@@ -430,7 +430,7 @@ namespace bbSocket{
 		
 		if( name=="TCP_NODELAY" ){
 			setsockopt( socket,IPPROTO_TCP,TCP_NODELAY,ip,sz );
-		}else if( name="SO_REUSEADDR" ){
+		}else if( name=="SO_REUSEADDR" ){
 			setsockopt( socket,SOL_SOCKET,SO_REUSEADDR,ip,sz );
 		}else if( name=="SO_SNDTIMEO" ){
 			setsockopt( socket,SOL_SOCKET,SO_SNDTIMEO,ip,sz );
@@ -448,7 +448,7 @@ namespace bbSocket{
 		
 		if( name=="TCP_NODELAY" ){
 			getsockopt( socket,IPPROTO_TCP,TCP_NODELAY,ip,(socklen_t*)&sz );
-		}else if( name="SO_REUSEADDR" ){
+		}else if( name=="SO_REUSEADDR" ){
 			getsockopt( socket,SOL_SOCKET,SO_REUSEADDR,ip,(socklen_t*)&sz );
 		}else if( name=="SO_SNDTIMEO" ){
 			getsockopt( socket,SOL_SOCKET,SO_SNDTIMEO,ip,(socklen_t*)&sz );
