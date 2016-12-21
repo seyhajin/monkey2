@@ -690,7 +690,7 @@ Class BuilderInstance
 		Endif
 		
 		Local qpath:="~q"+path+"~q"
-
+		
 		Select ext
 		Case ".framework"
 			
@@ -700,7 +700,6 @@ Class BuilderInstance
 			Endif
 			
 		Default
-		
 			Select GetFileType( path )
 			Case FileType.Directory
 			
@@ -709,8 +708,8 @@ Class BuilderInstance
 				
 			Case FileType.None
 			
-				New BuildEx( "File "+qpath+" not found" )
-				Return
+'				New BuildEx( "File "+qpath+" not found" )
+'				Return
 				
 			End
 		End

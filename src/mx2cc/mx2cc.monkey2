@@ -21,9 +21,9 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makedocs"
-
-'Const TestArgs:="mx2cc makeapp -apptype=console src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makemods -target=android"
+ 
+'Const TestArgs:="mx2cc makeapp -apptype=console -target=android src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '

@@ -1,27 +1,32 @@
-
-Namespace test
+Namespace myapp
 
 #Import "<std>"
+#Import "<mojo>"
 
 Using std..
+Using mojo..
 
-Struct Test<T>
+Class MyWindow Extends Window
 
-	Const A:=New Test( 10 )
-	Const B:=New Test[ 100 ]
-	
-	Field t:T
-	
-	Method New( t:T )
-		Self.t=t
+	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=Null )
+
+		Super.New( title,width,height,flags )
 	End
-End
 
+	Method OnRender( canvas:Canvas ) Override
+	
+		RequestRender()
+	
+		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
+	End
+	
+End
 
 Function Main()
 
-	Print Test<Int>.A.t
-	Print Test<Int>.B.Length
+	New AppInstance
 	
-
+	New MyWindow
+	
+	App.Run()
 End

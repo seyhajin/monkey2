@@ -1,45 +1,46 @@
 
-#import "<libc>"
+#Import "<libc>"
 
 #if __TARGET__="windows"
 
-	#import "openal-soft/bin/OpenAL32.dll"
-	#import "openal-soft/lib/OpenAL32.lib"
+	#Import "openal-soft/bin/OpenAL32.dll"
+	#Import "openal-soft/lib/OpenAL32.lib"
 		
-	#import "openal-soft/include/*.h"
-	#import "<AL/al.h>"
-	#import "<AL/alc.h>"
+	#Import "openal-soft/include/*.h"
+	#Import "<AL/al.h>"
+	#Import "<AL/alc.h>"
 	
 #else if __TARGET__="macos"
 	
-	#import "<OpenAL.framework>"
+	#Import "<OpenAL.framework>"
 		
-	#import "<OpenAL/al.h>"
-	#import "<OpenAL/alc.h>"
+	#Import "<OpenAL/al.h>"
+	#Import "<OpenAL/alc.h>"
 		
 #else if __TARGET__="linux" or __TARGET__="raspbian"
 	
-	#import "<libopenal.a>"
-	#import "<AL/al.h>"
-	#import "<AL/alc.h>"
+	#Import "<libopenal.a>"
 	
-#else if __TARGET__="emscripten"
+	#Import "<AL/al.h>"
+	#Import "<AL/alc.h>"
+	
+#Else if __TARGET__="emscripten"
 
-	#import "<AL/al.h>"
-	#import "<AL/alc.h>"
+	#Import "<AL/al.h>"
+	#Import "<AL/alc.h>"
 
-#else if __TARGET__="android"
+#Else if __TARGET__="android"
+	
+	#Import "openal-soft/jniLibs/$(TARGET_ARCH_ABI)/libopenal.so"
 
-	#Import "openal-soft/jniLibs/armeabi-v7a/libopenal.so"
-
-	#import "openal-soft/include/*.h"
-	#import "<AL/al.h>"
-	#import "<AL/alc.h>"
+	#Import "openal-soft/include/*.h"
+	#Import "<AL/al.h>"
+	#Import "<AL/alc.h>"
 	
 #else if __TARGET__="ios"
 
-	#import "<OpenAL/al.h>"
-	#import "<OpenAL/alc.h>"
+	#Import "<OpenAL/al.h>"
+	#Import "<OpenAL/alc.h>"
 
 #endif
 		
