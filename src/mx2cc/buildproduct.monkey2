@@ -304,7 +304,6 @@ Class GccBuildProduct Extends BuildProduct
 			CXX_CMD="g++"+suffix
 			LD_CMD= "g++"+suffix
 			AS_CMD= "as"
-			If opts.target="ios" AS_CMD+=" -arch armv7"
 		End
 		
 	End
@@ -334,6 +333,14 @@ Class GccBuildProduct Extends BuildProduct
 		
 			cmd=AS_CMD+AS_OPTS
 			
+			If opts.target="ios"
+				If src.Contains( "_arm64_" )
+					cmd+=" -arch arm64"
+				Else
+					cmd+=" -arch armv7"
+				Endif
+			Endif
+			
 			isasm=True
 		End
 			
@@ -355,7 +362,21 @@ Class GccBuildProduct Extends BuildProduct
 					
 				If opts.verbose>0 Print "Scanning "+src
 				
-				Exec( cmd+" -MM ~q"+src+"~q >~q"+deps+"~q" ) 
+				Local tmp:=cmd
+				
+				'A bit dodgy - rip out -arch's from ios
+				If opts.target="ios"
+					Repeat
+						Local i0:=tmp.Find( " -arch "  )
+						If i0=-1 Exit
+						Local i1:=tmp.Find( " ",i0+7 )
+						If i1=-1 Exit
+						tmp=tmp.Slice( 0,i0+1 )+tmp.Slice( i1+1 )
+					Forever
+					tmp+=" -arch armv7"
+				Endif					
+				
+				Exec( tmp+" -MM ~q"+src+"~q >~q"+deps+"~q" ) 
 			Endif
 					
 			Local srcs:=LoadString( deps ).Split( " \" )
@@ -423,21 +444,38 @@ Class GccBuildProduct Extends BuildProduct
 		
 		DeleteFile( output )
 		
-		Local args:=""
-
-		For Local i:=0 Until objs.Length
+		If opts.target="ios"
+		
+			Local args:=""
+	
+			For Local i:=0 Until objs.Length
+				args+=" ~q"+objs.Get( i )+"~q"
+			Next
 			
-			args+=" ~q"+objs.Get( i )+"~q"
-			
-			If args.Length<1000 And i<objs.Length-1 Continue
-
-			Local cmd:=AR_CMD+" q ~q"+output+"~q"+args
+			Local cmd:="libtool -o ~q"+output+"~q"+args
 
 			Exec( cmd )
+		
+		Else
+		
+			Local args:=""
+	
+			For Local i:=0 Until objs.Length
+				
+				args+=" ~q"+objs.Get( i )+"~q"
 			
-			args=""
+				If args.Length<1000 And i<objs.Length-1 Continue
+				
+				Local cmd:=AR_CMD+" q ~q"+output+"~q"+args
+
+				Exec( cmd )
+				
+				args=""
 			
-		Next
+			Next
+		
+		Endif
+		
 	End
 	
 	Method BuildApp( objs:StringStack ) Virtual

@@ -140,7 +140,7 @@ Namespace theoraplayer
 #Import "native/theoraplayer/src/YUV/libyuv/src/scale.cc"
 #Import "native/theoraplayer/src/YUV/libyuv/src/scale_any.cc"
 #Import "native/theoraplayer/src/YUV/libyuv/src/scale_argb.cc"
-#Import "native/theoraplayer/src/YUV/libyuv/src/scale_argb_neon.cc"
+'#Import "native/theoraplayer/src/YUV/libyuv/src/scale_argb_neon.cc"	'problem on ios arm64...
 #Import "native/theoraplayer/src/YUV/libyuv/src/scale_common.cc"
 #Import "native/theoraplayer/src/YUV/libyuv/src/scale_gcc.cc"
 #Import "native/theoraplayer/src/YUV/libyuv/src/scale_mips.cc"
