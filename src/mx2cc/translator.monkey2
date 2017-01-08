@@ -302,14 +302,33 @@ Class Translator
 	Method EndDeps( baseDir:String )
 	
 		BeginInsert( _deps.depsPos )
-	
-		EmitBr()
+
+		'sort usesfiles		
+		Local usesFiles:=New Stack<FileDecl>
 		For Local fdecl:=Eachin _deps.usesFiles.Keys
+			usesFiles.Push( fdecl )
+		Next
+		usesFiles.Sort( Lambda:Int( x:FileDecl,y:FileDecl )
+			Return x.hfile<=>y.hfile
+		End )
+		
+		'Emit includes	
+		EmitBr()
+		For Local fdecl:=Eachin usesFiles
 			EmitInclude( fdecl,baseDir )
 		Next
+		_deps.usesFiles.Clear()
 		
+		'sort refsTypes
+		Local refsTypes:=New Stack<Type>( _deps.refsTypes )
+		refsTypes.Sort( Lambda:Int( x:Type,y:Type )
+			Return x.Name<=>y.Name
+		End )
+		_deps.refsTypes.Clear()
+		
+		'Emit refsTypes
 		EmitBr()
-		For Local type:=Eachin _deps.refsTypes
+		For Local type:=Eachin refsTypes
 		
 			Local ctype:=TCast<ClassType>( type )
 			If ctype
@@ -317,7 +336,7 @@ Class Translator
 				If Included( ctype.transFile ) Continue
 				
 				Local cname:=ClassName( ctype )
-				Emit( "struct "+ClassName( ctype )+";" )
+				Emit( "struct "+cname+";" )
 				
 				If GenTypeInfo( ctype ) 
 					Emit( "#ifdef BB_REFLECTION" )
@@ -346,19 +365,32 @@ Class Translator
 			Endif
 
 		Next
-		_deps.refsTypes.Clear()
+
+		'sort refsVars		
+		Local refsVars:=New Stack<VarValue>( _deps.refsVars )
+		refsVars.Sort( Lambda:Int( x:VarValue,y:VarValue )
+			Return x.Name<=>y.Name
+		End )
+		_deps.refsVars.Clear()
 		
+		'emit refsVars
 		EmitBr()	
-		For Local vvar:=Eachin _deps.refsVars
+		For Local vvar:=Eachin refsVars
 			If Not Included( vvar.transFile ) Emit( "extern "+VarProto( vvar )+";" )
 		Next
-		_deps.refsVars.Clear()
-	
+		
+		'sort refsFuncs
+		Local refsFuncs:=New Stack<FuncValue>( _deps.refsFuncs )
+		refsFuncs.Sort( Lambda:Int( x:FuncValue,y:FuncValue )
+			Return x.Name<=>y.Name
+		End )
+		_deps.refsFuncs.Clear()
+		
+		'emit refsFuncs
 		EmitBr()
-		For Local func:=Eachin _deps.refsFuncs
+		For Local func:=Eachin refsFuncs
 			If Not Included( func.transFile ) Emit( "extern "+FuncProto( func )+";" )
 		Next
-		_deps.refsFuncs.Clear()
 		
 		EndInsert()
 		

@@ -331,17 +331,21 @@ Class Translator_CPP Extends Translator
 		
 		EmitClassProto( ctype )
 		
-		Local uses:=_deps.uses
+		Local uses:=New Stack<ClassType>
+		For Local node:=Eachin _deps.uses.Keys
+			Local ctype:=Cast<ClassType>( node )
+			uses.Push( ctype )
+		Next
+		uses.Sort( Lambda:Int( x:ClassType,y:ClassType )
+			Return x.Name<=>y.Name
+		End )
 		
 		EndDeps( ExtractDir( fdecl.hfile ) )
 		
 		
 		emitted[ClassName( ctype )]=True
-		
 	
-		For Local node:=Eachin uses.Keys
-		
-			Local ctype2:=TCast<ClassType>( node )
+		For Local ctype2:=Eachin uses
 		
 			If ctype2.cdecl.IsExtern Or ctype2.transFile<>fdecl Or emitted[ClassName( ctype2 )] Continue
 			
