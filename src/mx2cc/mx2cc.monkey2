@@ -21,7 +21,7 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods -target=android"
+Const TestArgs:="mx2cc makemods -target=ios std"' std"
  
 'Const TestArgs:="mx2cc makeapp -apptype=console -target=android src/mx2cc/test.monkey2"
 

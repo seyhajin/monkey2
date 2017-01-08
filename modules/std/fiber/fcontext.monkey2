@@ -44,6 +44,10 @@ Namespace std.fiber
 	#import "native/asm/jump_arm_aapcs_macho_gas.S"
 	#import "native/asm/ontop_arm_aapcs_macho_gas.S"
 
+	#import "native/asm/make_arm64_aapcs_macho_gas.S"
+	#import "native/asm/jump_arm64_aapcs_macho_gas.S"
+	#import "native/asm/ontop_arm64_aapcs_macho_gas.S"
+
 #Endif
 
 Extern Private
