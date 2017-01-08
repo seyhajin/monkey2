@@ -692,7 +692,7 @@ Class AppInstance
 	
 		Keyboard.SendEvent( event )
 		
-'		Mouse.SendEvent( event )
+		Mouse.SendEvent( event )
 		
 		Touch.SendEvent( event )
 	
