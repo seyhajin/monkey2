@@ -102,9 +102,11 @@ Class KeyboardDevice Extends InputDevice
 	@param key Key to check.
 	
 	#end
-	Method KeyPressed:Bool( key:Key )
+	Method KeyPressed:Bool( key:Key,repeating:Bool=False )
 	
 		Local scode:=ScanCode( key )
+		
+		If repeating Return _keys[scode].rpressed=_frame
 		
 		Return _keys[scode].pressed=_frame
 	End
@@ -127,9 +129,9 @@ Class KeyboardDevice Extends InputDevice
 	
 	#rem monkeydoc @hidden
 	#end
-	Method KeyHit:Bool( key:Key )
+	Method KeyHit:Bool( key:Key,repeating:Bool=False )
 
-		Return KeyPressed( key )
+		Return KeyPressed( key,repeating )
 	End
 	
 	#rem monkeydoc Peeks at the next character in the character queue.
@@ -225,7 +227,13 @@ Class KeyboardDevice Extends InputDevice
 			Local scode:=kevent->keysym.scancode
 			
 			_keys[scode].down=True
-			_keys[scode].pressed=_frame
+			If kevent->repeat_
+				_keys[scode].rpressed=_frame
+			Else
+				_keys[scode].pressed=_frame
+				_keys[scode].rpressed=_frame
+			Endif
+			
 			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			
 			Local char:=KeyToChar( _scan2key[scode] )
@@ -255,7 +263,8 @@ Class KeyboardDevice Extends InputDevice
 	
 	Struct KeyState
 		Field down:Bool
-		Field pressed:Int
+		Field pressed:Int	'frame of last keydown received
+		Field rpressed:Int	'frame of last keydown+repeat received
 		Field released:Int
 	End
 
