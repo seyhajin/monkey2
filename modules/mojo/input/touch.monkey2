@@ -85,6 +85,8 @@ Class TouchDevice Extends InputDevice
 		
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
+			Print "SDL_FINGERDOWN, id="+tevent->fingerId
+		
 			Local id:=-1
 			For Local i:=0 Until 10
 				If _fingers[i].down Continue
@@ -100,9 +102,11 @@ Class TouchDevice Extends InputDevice
 			_fingers[id].location=EventLocation( tevent )
 		
 		Case SDL_FINGERUP
-		
+
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
+			Print "SDL_FINGERUP, id="+tevent->fingerId
+		
 			Local id:=-1
 			For Local i:=0 Until 10
 				If Not _fingers[i].down Or _fingers[i].id<>tevent->fingerId Continue
@@ -117,8 +121,10 @@ Class TouchDevice Extends InputDevice
 			_fingers[id].location=EventLocation( tevent )
 			
 		Case SDL_FINGERMOTION
-		
+
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
+			
+			Print "SDL_FINGERMOTION, id="+tevent->fingerId
 			
 			Local id:=-1
 			For Local i:=0 Until 10
@@ -138,7 +144,7 @@ Class TouchDevice Extends InputDevice
 	Private
 	
 	Struct FingerState
-		Field id:Int
+		Field id:Long
 		Field down:Bool
 		Field pressed:Int
 		Field released:Int
