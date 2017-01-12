@@ -19,7 +19,7 @@ Function LoadAudioData_OGG:AudioData( path:String )
 	Case 1 
 		format=AudioFormat.Mono16
 	Case 2 
-		format=AudioFormat.Mono16
+		format=AudioFormat.Stereo16
 	Default
 		libc.free( samples )
 		Return Null
