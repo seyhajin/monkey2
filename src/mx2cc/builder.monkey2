@@ -529,7 +529,7 @@ Class BuilderInstance
 		Type.StringType=New PrimType( TCast<ClassType>( types.nodes["@string"] ) )
 		Type.VariantType=New PrimType( TCast<ClassType>( types.nodes["@variant"] ) )
 		
-		Type.ArrayClass=TCast<ClassType>( types.nodes["@Array"] )
+		Type.ArrayClass=TCast<ClassType>( types.nodes["@array"] )
 		Type.ObjectClass=TCast<ClassType>( types.nodes["@object"] )
 		Type.ThrowableClass=TCast<ClassType>( types.nodes["@throwable"] )
 
