@@ -11,8 +11,8 @@ Class DocsMaker
 	
 		_nav=New JsonBuffer
 	
-		_md=New MarkdownBuffer( "",Lambda:String( link:String )
-			Return ResolveLink( link,_linkScope )
+		_md=New MarkdownBuffer( "",Lambda:String( link:String,name:String )
+			Return ResolveLink( link,name,_linkScope )
 		End )
 	End
 	
@@ -24,13 +24,9 @@ Class DocsMaker
 		DeleteDir( module.baseDir+"docs/__MANPAGES__",True )
 		CreateDir( module.baseDir+"docs/__MANPAGES__" )
 		
-		Local pages:=ManPage.MakeManPages( path,module,Lambda:String( link:String )
-			Return ResolveLink( link,_linkScope )
+		Local pages:=ManPage.MakeManPages( path,module,Lambda:String( link:String,name:String )
+			Return ResolveLink( link,name,_linkScope )
 		End )
-		
-'		Local pages:=ManPage.MakeManPages( path,module.baseDir,Lambda:String( link:String )
-'			Return ResolveLink( link,_linkScope )
-'		End )
 		
 		For Local it:=Eachin pages
 		
@@ -202,55 +198,67 @@ Class DocsMaker
 		Return "<a href=~qjavascript:void('"+slug+"')~q onclick=~qopenDocsPage('"+slug+"')~q>"+text+"</a>"
 	End
 
-	Method ResolveLink:String( path:String,scope:Scope )
+	Method FixKeyword:String( ident:String )
+	
+		If KeyWords.Contains( ident.ToLower() ) Return "@"+ident.ToLower()
+		
+		Return ident
+	End
+	
+	Method ResolveLink:String( path:String,name:String,scope:Scope )
+	
+		Print "Find link:"+path
 	
 		Local i0:=0
-		
 		Local tpath:=""
 		
 		Repeat
 		
 			Local i1:=path.Find( ".",i0 )
+			
 			If i1=-1
 			
 				If Not scope Return ""
 
 				Local id:=path.Slice( i0 )
 				
-				Local node:=scope.FindNode( id )
+				Local node:=scope.FindNode( FixKeyword( id ) )
 				If Not node
 					Return path
 				Endif
 				
 				tpath+=id
 				
+				If Not name name=tpath
+				
 				Local vvar:=Cast<VarValue>( node )
-				If vvar Return MakeLink( tpath,vvar.vdecl,vvar.scope )
+				If vvar Return MakeLink( name,vvar.vdecl,vvar.scope )
 				
 				Local flist:=Cast<FuncList>( node )
-				If flist Return MakeLink( tpath,flist.funcs[0].fdecl,flist.funcs[0].scope )
+				If flist Return MakeLink( name,flist.funcs[0].fdecl,flist.funcs[0].scope )
 				
 				Local etype:=TCast<EnumType>( node )
-				If etype Return MakeLink( tpath,etype.edecl,etype.scope.outer )
+				If etype Return MakeLink( name,etype.edecl,etype.scope.outer )
 				
 				Local ntype:=TCast<NamespaceType>( node )
-				If ntype Return MakeLink( tpath,ntype.scope )
+				If ntype Return MakeLink( name,ntype.scope )
 				
 				Local ctype:=TCast<ClassType>( node )
-				If ctype Return MakeLink( tpath,ctype.cdecl,ctype.scope.outer )
+				If ctype Return MakeLink( name,ctype.cdecl,ctype.scope.outer )
 				
-				Return ""
+				Print "Can't resolve link:"+path+", name="+name+", id="+id
+				Return name ? name Else path
 			Endif
 			
 			Local id:=path.Slice( i0,i1 )
 			i0=i1+1
-			
+
 			Local type:Type
 			If scope
 				Try
-					type=scope.FindType( id )
+					type=scope.FindType( FixKeyword( id ) )
 				Catch ex:SemantEx
-					Print "Exception!"
+					Print "ResolveLink exception!"
 				End
 			Else If Not tpath
 				For Local fscope:=Eachin _module.fileScopes
@@ -261,6 +269,7 @@ Class DocsMaker
 			Endif
 
 			If Not type 
+				Print "Can't resolve link:"+path+", id="+id
 				Return path
 			Endif
 			
@@ -281,7 +290,8 @@ Class DocsMaker
 			Local etype:=TCast<EnumType>( type )
 			If etype
 				'stop at Enum!
-				Return MakeLink( tpath+"."+path.Slice( i0 ),etype.edecl,etype.scope.outer )
+				If Not name name=tpath+"."+path.Slice( i0 )
+				Return MakeLink( name,etype.edecl,etype.scope.outer )
 			Endif
 			
 			Return ""
