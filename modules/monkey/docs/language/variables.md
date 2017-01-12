@@ -1,5 +1,5 @@
 
-### Variables and Consts
+### Variables
 
 #### Local variables
 

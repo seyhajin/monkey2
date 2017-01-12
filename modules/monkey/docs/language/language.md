@@ -10,6 +10,9 @@ Note: This documentation is currently WIP.
 @import modules.md
 @import namespaces.md
 @import types.md
+@import arrays.md
+@import strings.md
+@import variants.md
 @import variables.md
 @import functions.md
 @import expressions.md
