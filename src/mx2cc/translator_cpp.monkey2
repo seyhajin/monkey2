@@ -653,6 +653,8 @@ Class Translator_CPP Extends Translator
 				Emit( ClassName( ctype.superType )+"::dbEmit();" )
 			End
 			
+			Emit( "puts( ~q["+ctype.Name+"]~q);" )
+			
 			For Local vvar:=Eachin ctype.fields
 				Emit( "bbDBEmit(~q"+vvar.vdecl.ident+"~q,&"+VarName( vvar )+");" )
 			Next
