@@ -73,6 +73,8 @@ Class ParseInfoGenerator
 	
 		local node:=MakeNode( decl )
 		
+		node.SetString( "namespace",decl.nmspace )
+		
 		If decl.imports node.SetValue( "imports",GenNode( decl.imports ) )
 		
 		Return node
