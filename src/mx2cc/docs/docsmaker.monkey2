@@ -207,7 +207,7 @@ Class DocsMaker
 	
 	Method ResolveLink:String( path:String,name:String,scope:Scope )
 	
-		Print "Find link:"+path
+'		Print "Find link:"+path
 	
 		Local i0:=0
 		Local tpath:=""
