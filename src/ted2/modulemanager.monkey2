@@ -202,10 +202,10 @@ Class ModuleManager Extends Dialog
 			Local dst:=downloadDir+zip
 
 #if __HOSTOS__="macos"
-			Local cmd:="curl -o ~q"+dst+"~q ~q"+src+"~q"
-#else
+			Local cmd:="curl -o ~q"+dst+"~q -data-binary ~q"+src+"~q"
+#Else
 			Local cmd:="wget -O ~q"+dst+"~q ~q"+src+"~q"
-#endif
+#Endif
 			_progress.Text="Downloading "+zip+"..."
 			
 			If Not _console.Run( cmd ) Return False
