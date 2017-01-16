@@ -178,7 +178,7 @@ Class FileBrowser Extends TreeView
 			child.Text=f
 			child._path=fpath
 			
-			Local icon:=_fileTypeIcons[ExtractExt( f ).ToLower()]
+			Local icon:=GetFileTypeIcon( fpath )
 			
 			If i<dirs.Length
 				If Not icon icon=_dirIcon
@@ -230,6 +230,17 @@ Class FileBrowser Extends TreeView
 		
 		Return _fileTypeIcons
 	End
+	
+	Protected
+	
+	Method GetFileTypeIcon:Image( path:String ) Virtual
+	
+		Local ext:=ExtractExt( path )
+		If Not ext Return Null
+		
+		Return GetFileTypeIcons()[ ext.ToLower() ]
+	End
+	
 	
 	Private
 	
