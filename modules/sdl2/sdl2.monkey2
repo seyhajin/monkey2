@@ -1,10 +1,18 @@
 
 Namespace sdl2
 
+#Import "<jni>"
 #Import "<libc>"
 #Import "<gles20>"
 
 #Import "SDL/include/*.h"
+
+#If __TARGET__="android"
+
+#Import "SDL/src/core/android/SDL_android.h"
+
+#Endif
+
 #Import "<SDL.h>"
 
 #Import "makefile.monkey2"
@@ -12,6 +20,14 @@ Namespace sdl2
 Using libc
 
 Extern
+
+#If __TARGET__="android"
+
+Function Android_JNI_GetEnv:jni.JNIEnv()
+Function Android_JNI_GetActivityClass:jni.jclass()
+Function Android_JNI_SetActivityTitle( title:CString )
+
+#Endif
 
 Struct SDL_Surface
 End
