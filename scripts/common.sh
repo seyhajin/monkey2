@@ -31,12 +31,12 @@ then
 	launcher_new="../src/launcher/launcher.buildv1.1.02/raspbian_release/launcher"
 else
 	mx2cc="../bin/mx2cc_macos"
-	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.02/macos_release/mx2cc"
+	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.03/macos_release/mx2cc"
 	
 	ted2="../bin/ted2_macos.app"
-	ted2_new="../src/ted2/ted2.buildv1.1.02/macos_release/ted2.app"
-	ted2go_new="../src/ted2go/ted2.buildv1.1.02/macos_release/ted2.app"
+	ted2_new="../src/ted2/ted2.buildv1.1.03/macos_release/ted2.app"
+	ted2go_new="../src/ted2go/ted2.buildv1.1.03/macos_release/ted2.app"
 	
 	launcher="../Monkey2 (Macos).app"
-	launcher_new="../src/launcher/launcher.buildv1.1.02/macos_release/launcher.app"
+	launcher_new="../src/launcher/launcher.buildv1.1.03/macos_release/launcher.app"
 fi
