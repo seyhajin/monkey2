@@ -3,27 +3,65 @@ Namespace jni
 
 #If __TARGET__="android"
 
-#Import "<mojo>"
-
 #Import "native/jni_glue.cpp"
 #Import "native/jni_glue.h"
 
 Extern
 
-Class jobject Extends Void
+Struct _jclass
 End
 
-Class jclass Extends jobject
+Alias jclass:_jclass Ptr
+
+Struct _jobject
 End
 
-Class jfieldID Extends Void
+Alias jobject:_jobject Ptr
+
+Struct _jstring
 End
 
-Class jmethodID Extends Void
+Alias jstring:_jstring Ptr
+
+Struct _jfieldID
 End
 
-Function FindClass:jclass( name:CString )="bbJNI::FindClass"
+Alias jfieldID:_jfieldID Ptr
 
-Function GetMethodID( clazz:jclass,name:CString,sig:CString )="bbJNI::GetMethodID"
+Struct _jmethodID
+End
+
+Alias jmethodID:_jmethodID Ptr
+
+Class JNIEnv Extends Void
+
+	Method FindClass:jclass( name:CString )
+
+	'fields...
+	'
+	Method GetFieldID:jfieldID( clazz:jclass,name:CString,sig:CString )
+	
+	Method GetObjectField:jobject( obj:jobject,fieldID:jfieldID )
+	
+	'static fields...
+	
+	Method GetStaticFieldID:jfieldID( clazz:jclass,name:CString,sig:CString )
+	
+	Method GetStaticObjectField:jobject( clazz:jclass,fieldID:jfieldID )
+	
+	'methods...
+	'
+	Method GetMethodID:jmethodID( clazz:jclass,name:CString,sig:CString )
+
+	Method CallVoidMethod:Void( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallVoidMethod"
+	
+	'static methods...
+	'
+	Method GetStaticMethodID:jmethodID( clazz:jclass,name:CString,sig:CString )
+	
+	Method CallStaticVoidMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticVoidMethod"
+	
+	
+End
 
 #End

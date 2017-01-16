@@ -1,10 +1,10 @@
 
 #include <jni.h>
 
+#include <bbmonkey.h>
+
 namespace bbJNI{
 
-	jclass FindClass( const char *name );
-	
-	jmethodID GetMethodID( jclass clazz,const char *name,const char *sig );
-	
+	void CallVoidMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args );
+
 }
