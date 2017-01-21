@@ -17,7 +17,13 @@ namespace bbJNI{
 			
 			bbTypeInfo *type=arg.getType();
 			
-			if( type==bbGetType<bbInt>() ){
+			if( type==bbGetType<bbBool>() ){
+			
+				bbBool val=arg.get<bbBool>();
+				
+				jarg->z=val;
+				
+			}else if( type==bbGetType<bbInt>() ){
 			
 				bbInt val=arg.get<bbInt>();
 				
@@ -55,6 +61,37 @@ namespace bbJNI{
 		env->CallVoidMethodA( obj,methodID,jargs );
 		
 		delete[] jargs;
+	}
+
+	bbBool CallBooleanMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbBool r=env->CallBooleanMethodA( obj,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
+	void CallStaticVoidMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		env->CallStaticVoidMethodA( clazz,methodID,jargs );
+		
+		delete[] jargs;
+	}
+
+	bbBool CallStaticBooleanMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbBool r=env->CallStaticBooleanMethodA( clazz,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
 	}
 
 }
