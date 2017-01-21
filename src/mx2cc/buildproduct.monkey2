@@ -17,6 +17,7 @@ Class BuildProduct
 	Field OBJ_FILES:=New StringStack
 	Field LD_SYSLIBS:=New StringStack
 	Field ASSET_FILES:=New StringStack
+	Field JAVA_FILES:=New StringStack
 	Field DLL_FILES:=New StringStack
 	
 	Method New( module:Module,opts:BuildOpts )
@@ -763,13 +764,19 @@ Class AndroidBuildProduct Extends BuildProduct
 		If opts.productType="app"
 		
 			buf.Push( "LOCAL_STATIC_LIBRARIES := \" )
-			For Local imp:=Eachin imports	'Builder.modules.Backwards()
+			For Local imp:=Eachin imports
 				If imp=module Continue
+				
+				If imp.name="sdl2" Or imp.name="admob" Continue
 				
 				buf.Push( "mx2_"+imp.name+" \" )
 			Next
 			buf.Push( "" )
 			
+			'This keeps the JNI functions in sdl2 and admob alive: ugly, ugly stuff but that's the joys of modern coding for ya...
+			'
+			buf.Push( "LOCAL_WHOLE_STATIC_LIBRARIES := mx2_sdl2 mx2_admob" )
+
 			buf.Push( "LOCAL_SHARED_LIBRARIES := \" )
 			For Local dll:=Eachin DLL_FILES
 				buf.Push( StripDir( dll )+" \" )
@@ -783,11 +790,6 @@ Class AndroidBuildProduct Extends BuildProduct
 			Next
 			
 			buf.Push( "LOCAL_LDLIBS += -llog -landroid" )
-
-			'This keeps the JNI functions in sdl2 alive, or it gets optimized out of the build as its unused...alas, probably keeps
-			'entire static lib alive...
-			'
-			buf.Push( "LOCAL_WHOLE_STATIC_LIBRARIES := mx2_sdl2" )
 
 			buf.Push( "include $(BUILD_SHARED_LIBRARY)" )
 		Else
@@ -806,11 +808,32 @@ Class AndroidBuildProduct Extends BuildProduct
 		
 		ChangeDir( cd )
 		
-		If opts.productType="app" And opts.assets And opts.dlls
+		If opts.productType="app" And opts.product
 		
-			CopyDir( module.outputDir+"libs",opts.dlls )
-
-			CopyAssets( opts.assets )
+			For Local jfile:=Eachin JAVA_FILES
+			
+				Local src:=LoadString( jfile )
+				If Not src Continue
+				
+				Local i0:=src.Find( "package " )
+				If i0=-1 Continue
+				
+				Local i1:=src.Find( ";",i0+8 )
+				If i1=-1 Continue
+				
+				Local pkg:=src.Slice( i0+8,i1 ).Trim()
+				If Not pkg Continue
+				
+				Local dstDir:=opts.product+"app/src/main/java/"+pkg.Replace( ".","/" )
+				
+				CreateDir( dstDir,True )
+				
+				CopyFile( jfile,dstDir+"/"+StripDir( jfile ) )
+			Next
+		
+			CopyAssets( opts.product+"app/src/main/assets/" )
+		
+			CopyDir( module.outputDir+"libs",opts.product+"app/src/main/jniLibs" )
 		
 		Endif
 		

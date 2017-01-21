@@ -17,10 +17,6 @@ Class BuildOpts
 	
 	Field product:String
 
-	Field assets:String
-
-	Field dlls:String
-
 	Field appType:String
 	
 	Field verbose:Int
@@ -730,6 +726,11 @@ Class BuilderInstance
 '			If modules.Length=1
 '				SRC_FILES.Push( path )
 '			Endif
+
+		Case ".java"
+		
+'			If parsingModule=mainModule product.JAVA_FILES.Push( path )
+			product.JAVA_FILES.Push( path )
 			
 		Case ".o"
 		
