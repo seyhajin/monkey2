@@ -29,16 +29,6 @@ public class Monkey2Activity extends SDLActivity {
         return mSingleton;
     }
 
-    static public boolean isMainThread() {
-
-        return Looper.getMainLooper().equals(Looper.myLooper());
-    }
-
-    static public void runOnMainThread(Runnable r) {
-
-        mSingleton.runOnUiThread(r);
-    }
-
     static public ViewGroup layout() {
 
         return mSingleton.mLayout;
