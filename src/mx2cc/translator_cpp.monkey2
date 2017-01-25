@@ -1677,7 +1677,7 @@ Class Translator_CPP Extends Translator
 	Method TransInvokeMember:String( instance:Value,member:FuncValue,args:Value[] )
 
 		Uses( instance.type )
-	
+		
 		If member.IsExtension
 			
 			Local tinst:=Trans( instance )
@@ -1698,6 +1698,8 @@ Class Translator_CPP Extends Translator
 	
 	Method Trans:String( value:InvokeValue )
 	
+		Decls( value.type )
+		
 		Local mfunc:=Cast<MemberFuncValue>( value.value )
 		
 		If mfunc Return TransInvokeMember( mfunc.instance,mfunc.member,value.args )
