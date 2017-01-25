@@ -35,6 +35,14 @@ Alias jmethodID:_jmethodID Ptr
 
 Class JNIEnv Extends Void
 
+	'utils
+	'
+	Method JStringToString:String( jstr:jstring ) Extension="bbJNI::JStringToString"
+	
+	Method StringToJString:jstring( str:String ) Extension="bbJNI::StringToJString"
+		
+	'classes
+	'
 	Method FindClass:jclass( name:CString )
 
 	'fields...
@@ -64,7 +72,21 @@ Class JNIEnv Extends Void
 	Method CallStaticVoidMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticVoidMethod"
 	
 	Method CallStaticBooleanMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
-	
+
+	'ctors...
+	'
+	Method AllocObject:jobject( clazz:jclass )
+		
+	Method NewObject:jobject( clazz:jclass,methodID:jmethodID )
+		
+	'refs...
+	'
+	Method NewGlobalRef:jobject( obj:jobject )
+		
+	Method DeleteGlobalRef( obj:jobject )
+		
+	Method IsSameObject:Bool( obj1:jobject,obj2:jobject )
+		
 End
 
 #End
