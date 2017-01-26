@@ -86,6 +86,11 @@ class bbString{
 	
 	bbString( const wchar_t *data,int length ):_rep( Rep::create( data,length ) ){
 	}
+	
+#if __OBJC__
+	bbString( NSString *str ):_rep( Rep::create( str.UTF8String ) ){
+	}
+#endif
 
 	explicit bbString( int n ){
 		char data[64];
@@ -464,6 +469,12 @@ class bbString{
 
 	void toWString( void *buf,int size )const;
 	
+#if __OBJC__	
+	NSString *ToNSString()const{
+		return [NSString stringWithUTF8String:c_str()];
+	}
+#endif
+	
 	static bbString fromChar( int chr );
 	
 	static bbString fromChars( bbArray<int> chrs );
@@ -534,3 +545,4 @@ inline bbString BB_T( const char *p ){
 }
 
 #endif
+
