@@ -1318,8 +1318,17 @@ Class Translator_CPP Extends Translator
 		Local lhs:=Trans( stmt.lhs )
 		Local rhs:=Trans( stmt.rhs )
 		
-		Uses( stmt.lhs.type )
-
+		Local type:=stmt.lhs.type
+		
+		Uses( type )
+		
+		Local ctype:=TCast<ClassType>( type )
+		If ctype And ctype.IsStruct
+			For Local vvar:=Eachin ctype.fields
+				If IsGCType( vvar.type ) Marks( vvar.type )
+			Next
+		Endif
+		
 		Emit( lhs+op+rhs+";" )
 	End
 

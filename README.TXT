@@ -1,7 +1,9 @@
 
 ***** Welcome to Monkey2! *****
 
-W A R N I N G ! The master branch is super-volatile, and the develop branch is event worse! Grabbing the most recently tagged version is recommended if you just want to give monkey2 a try.
+The master branch is effectively the 'release candidates' branch, so should be relatively stable. All development work is now done on the develop branch.
+
+Grabbing the most recently tagged version is recommended if you just want to give monkey2 a try.
 
 
 ***** Building monkey2 on Windows *****
