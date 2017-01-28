@@ -42,6 +42,11 @@
 	
 #endif
 
+struct bbGCRetained{
+	bbGCRetained *succ;
+	bbGCNode *node;
+};
+
 namespace bbGC{
 
 	int markedBit;
@@ -64,6 +69,9 @@ namespace bbGC{
 	size_t markedBytes;
 	size_t unmarkedBytes;
 	size_t allocedBytes;
+	
+	bbGCRetained *retained;
+	bbGCRetained *retained_free;
 	
 	void init(){
 		static bool done;
@@ -137,6 +145,14 @@ namespace bbGC{
 		}
 	}
 	
+	void markRetained(){
+	
+		for( bbGCRetained *r=retained;r;r=r->succ ){
+			if( r->node ) r->node->gcMark();
+				r=r->succ;
+		}
+	}
+	
 	void markFibers(){
 	
 		bbGCFiber *fiber=fibers;
@@ -186,6 +202,8 @@ namespace bbGC{
 	
 //		puts( "bbGC::sweep()" );fflush( stdout );
 	
+		markRetained();
+		
 		markFibers();
 	
 		markQueued();
@@ -262,5 +280,31 @@ namespace bbGC{
 		reclaim();
 		
 //		printf( "GCCollect: in use=%i\n",(int)unmarkedBytes );fflush( stdout );
+	}
+	
+	void retain( bbGCNode *node ){
+		bbGCRetained *r=retained_free;
+		if( !r ){
+			//should alloc buf-worth...
+			r=new bbGCRetained;
+		}
+		r->node=node;
+		r->succ=retained;
+		retained=r;
+	}
+	
+	void release( bbGCNode *node ){
+		bbGCRetained **p=&retained;
+		while( bbGCRetained *r=*p ){
+			if( r->node==node ){
+				*p=r->succ;
+				r->succ=retained_free;
+				retained_free=r;
+				return;
+			}
+			p=&r->succ;
+			r=r->succ;
+		}
+		printf( "Wanting! bbGC::release() node not found!\n" );
 	}
 }

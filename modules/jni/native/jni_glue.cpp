@@ -3,6 +3,30 @@
 
 namespace bbJNI{
 
+	bbString JStringToString( JNIEnv *env,jstring jstr ){
+	
+		const char *cstr=env->GetStringUTFChars( jstr,0 );
+		
+		bbString str=bbString::fromCString( cstr );
+		
+		env->ReleaseStringUTFChars( jstr,cstr );
+		
+		return str;
+	}
+	
+	jstring StringToJString( JNIEnv *env,bbString str ){
+	
+		int n=str.utf8Length()+1;
+		
+		char *buf=new char[n];
+		
+		str.toCString( buf,n );
+		
+		jstring jstr=env->NewStringUTF( buf );
+		
+		return jstr;
+	}
+
 	jvalue *makeArgs( JNIEnv *env,bbArray<bbVariant> args ){
 	
 		jvalue *jargs=new jvalue[args.length()];

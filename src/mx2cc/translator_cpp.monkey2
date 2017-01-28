@@ -1318,8 +1318,17 @@ Class Translator_CPP Extends Translator
 		Local lhs:=Trans( stmt.lhs )
 		Local rhs:=Trans( stmt.rhs )
 		
-		Uses( stmt.lhs.type )
-
+		Local type:=stmt.lhs.type
+		
+		Uses( type )
+		
+		Local ctype:=TCast<ClassType>( type )
+		If ctype And ctype.IsStruct
+			For Local vvar:=Eachin ctype.fields
+				If IsGCType( vvar.type ) Marks( vvar.type )
+			Next
+		Endif
+		
 		Emit( lhs+op+rhs+";" )
 	End
 
@@ -1677,7 +1686,7 @@ Class Translator_CPP Extends Translator
 	Method TransInvokeMember:String( instance:Value,member:FuncValue,args:Value[] )
 
 		Uses( instance.type )
-	
+		
 		If member.IsExtension
 			
 			Local tinst:=Trans( instance )
@@ -1698,6 +1707,8 @@ Class Translator_CPP Extends Translator
 	
 	Method Trans:String( value:InvokeValue )
 	
+		Decls( value.type )
+		
 		Local mfunc:=Cast<MemberFuncValue>( value.value )
 		
 		If mfunc Return TransInvokeMember( mfunc.instance,mfunc.member,value.args )

@@ -12,5 +12,9 @@ namespace bbJNI{
 	void CallStaticVoidMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args );
 	
 	bbBool CallStaticBooleanMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args );
+	
+	bbString JStringToString( JNIEnv *env,jstring jstr );
+	
+	jstring StringToJString( JNIEnv *env,bbString str );
 
 }
