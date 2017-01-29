@@ -310,9 +310,6 @@ Class AppInstance
 	End
 	
 	#rem monkeydoc Mouse location relative to the active window.
-	
-	@see [[ActiveWindow]], [[MouseX]], [[MouseY]]
-	
 	#end	
 	Property MouseLocation:Vec2i()
 
