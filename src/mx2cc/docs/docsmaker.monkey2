@@ -259,7 +259,7 @@ Class DocsMaker
 				Local ctype:=TCast<ClassType>( node )
 				If ctype Return MakeLink( name,ctype.cdecl,ctype.scope.outer )
 				
-				Print "Can't resolve link:"+path+", name="+name+", id="+id
+				Print "Can't resolve link:"+path+", id="+id
 				Return name
 			Endif
 			
@@ -271,7 +271,6 @@ Class DocsMaker
 				Try
 					type=scope.FindType( FixKeyword( id ) )
 				Catch ex:SemantEx
-					Print "ResolveLink exception!"
 				End
 			Else If Not tpath
 				For Local fscope:=Eachin _module.fileScopes
@@ -282,12 +281,27 @@ Class DocsMaker
 				If Not type type=Builder.monkeyNamespace.FindType( FixKeyword( id ) )
 			Endif
 
-			If Not type 
-				Print "Can't resolve link:"+path+", id="+id
-				Return path
-			Endif
-			
 			tpath+=id+"."
+			
+			If Not type 
+				If scope
+					Try
+						Local node:=scope.FindNode( FixKeyword( id ) )
+						
+						Local vvar:=Cast<VarValue>( node )
+						If vvar
+							Local ctype:=TCast<ClassType>( vvar.type )
+							If ctype
+								scope=ctype.scope
+								Continue
+							Endif
+						Endif
+					Catch ex:SemantEx
+					End
+				Endif
+				Print "Can't resolve link:"+path+", id="+id
+				Return name
+			Endif
 			
 			Local ntype:=TCast<NamespaceType>( type )
 			If ntype
@@ -308,11 +322,11 @@ Class DocsMaker
 				Return MakeLink( name,etype.edecl,etype.scope.outer )
 			Endif
 			
-			Return ""
+			Return name
 			
 		Forever
-			
-		Return ""
+		
+		Return name
 	End
 	
 	Method DeclIdent:String( decl:Decl,gen:Bool=False )
