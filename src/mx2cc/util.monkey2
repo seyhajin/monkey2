@@ -79,10 +79,10 @@ Function MungPath:String( path:String )
 	Return id
 End
 
-Function GetEnv:String( name:String )
+Function GetEnv:String( name:String,defaultValue:String="" )
 	Local p:=getenv( name )
 	If p Return String.FromCString( p )
-	Return ""
+	Return defaultValue
 End
 
 Function SetEnv( name:String,value:String )

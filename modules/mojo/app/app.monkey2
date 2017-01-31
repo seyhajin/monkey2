@@ -310,9 +310,6 @@ Class AppInstance
 	End
 	
 	#rem monkeydoc Mouse location relative to the active window.
-	
-	@see [[ActiveWindow]], [[MouseX]], [[MouseY]]
-	
 	#end	
 	Property MouseLocation:Vec2i()
 
@@ -692,7 +689,7 @@ Class AppInstance
 	
 		Keyboard.SendEvent( event )
 		
-'		Mouse.SendEvent( event )
+		Mouse.SendEvent( event )
 		
 		Touch.SendEvent( event )
 	

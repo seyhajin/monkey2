@@ -73,6 +73,9 @@ MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 'PATH=D:\devtools\Android\sdk\ndk-bundle;${PATH}
 
+'Uncomment below to build for ALL android architectures (slow). Defaults to armeabi-v7a.
+MX2_ANDROID_APP_ABI=armeabi-v7a x86
+'MX2_ANDROID_APP_ABI=all
 
 '***** RASPBIAN *****
 

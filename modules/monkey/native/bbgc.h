@@ -143,6 +143,10 @@ struct bbGCTmp{
 };
 
 namespace bbGC{
+
+	void retain( bbGCNode *p );
+	
+	void release( bbGCNode *p );
 	
 	inline void insert( bbGCNode *p,bbGCNode *succ ){
 		p->succ=succ;

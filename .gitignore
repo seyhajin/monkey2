@@ -29,6 +29,7 @@ __MANPAGES__/
 /modules/module-manager/downloads/*.zip
 
 /src/Ted2GO
+
 /modules/cmark
 /modules/lua
 /modules/wdw-game2d
@@ -41,6 +42,8 @@ __MANPAGES__/
 /modules/pyro-scenegraph
 /modules/bullet
 /modules/gles30
+/modules/timelinefx
+/modules/admob
 
 /modules/module-manager/backups
 

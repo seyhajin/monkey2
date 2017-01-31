@@ -1,29 +1,19 @@
 
 package ${PACKAGE_NAME};
 
-import org.libsdl.app.SDLActivity;
+import android.os.Bundle;
 
-import android.os.*;
-import android.util.*;
-import android.content.res.Configuration;
+import com.monkey2.lib.Monkey2Activity;
 
-import java.io.*;
-import java.nio.*;
-import java.net.*;
-import java.util.*;
-import java.text.*;
-import java.lang.reflect.*;
-
-/*
- * A sample wrapper class that just calls SDLActivity
- */
-public class ${ACTIVITY_NAME} extends SDLActivity {
+public class ${ACTIVITY_NAME} extends Monkey2Activity{
 
     protected void onCreate(Bundle savedInstanceState){
+
         super.onCreate( savedInstanceState );
     }
 
     protected void onDestroy(){
+
         super.onDestroy();
     }
 }

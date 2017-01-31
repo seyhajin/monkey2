@@ -23,7 +23,9 @@ Global StartDir:String
 
 Const TestArgs:="mx2cc makedocs"
 
-'Const TestArgs:="mx2cc makeapp -apptype=console src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makemods -target=ios std"' std"
+ 
+'Const TestArgs:="mx2cc makeapp -target=desktop src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '
@@ -367,10 +369,6 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		Select opt
 		Case "-product"
 			opts.product=path
-		Case "-assets"
-			opts.assets=path
-		Case "-dlls"
-			opts.dlls=path
 		Case "-apptype"
 			Select val
 			Case "gui","console"

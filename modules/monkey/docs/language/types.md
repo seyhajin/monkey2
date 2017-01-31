@@ -28,9 +28,9 @@ The following compound types are supported by monkey2:
 
 | Type						| Description
 |:--------------------------|:-----------
-| _Type_ `[]`				| Array type
+| _Type_ `[` [,...] `]`				| Array type
 | _Type_ `Ptr`				| Pointer type
-| _Type_ `(` _Types_ `)`		| Function type
+| _Type_ `(` _Types_ `)`	| Function type
 
 
 #### Implicit type conversions

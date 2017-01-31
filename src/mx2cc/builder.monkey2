@@ -17,10 +17,6 @@ Class BuildOpts
 	
 	Field product:String
 
-	Field assets:String
-
-	Field dlls:String
-
 	Field appType:String
 	
 	Field verbose:Int
@@ -529,7 +525,7 @@ Class BuilderInstance
 		Type.StringType=New PrimType( TCast<ClassType>( types.nodes["@string"] ) )
 		Type.VariantType=New PrimType( TCast<ClassType>( types.nodes["@variant"] ) )
 		
-		Type.ArrayClass=TCast<ClassType>( types.nodes["@Array"] )
+		Type.ArrayClass=TCast<ClassType>( types.nodes["@array"] )
 		Type.ObjectClass=TCast<ClassType>( types.nodes["@object"] )
 		Type.ThrowableClass=TCast<ClassType>( types.nodes["@throwable"] )
 
@@ -690,7 +686,7 @@ Class BuilderInstance
 		Endif
 		
 		Local qpath:="~q"+path+"~q"
-
+		
 		Select ext
 		Case ".framework"
 			
@@ -700,7 +696,6 @@ Class BuilderInstance
 			Endif
 			
 		Default
-		
 			Select GetFileType( path )
 			Case FileType.Directory
 			
@@ -709,8 +704,8 @@ Class BuilderInstance
 				
 			Case FileType.None
 			
-				New BuildEx( "File "+qpath+" not found" )
-				Return
+'				New BuildEx( "File "+qpath+" not found" )
+'				Return
 				
 			End
 		End
@@ -731,6 +726,11 @@ Class BuilderInstance
 '			If modules.Length=1
 '				SRC_FILES.Push( path )
 '			Endif
+
+		Case ".java"
+		
+'			If parsingModule=mainModule product.JAVA_FILES.Push( path )
+			product.JAVA_FILES.Push( path )
 			
 		Case ".o"
 		

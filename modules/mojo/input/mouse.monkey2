@@ -60,6 +60,24 @@ Class MouseDevice Extends InputDevice
 		Return _location
 	End
 	
+	#rem monkeydoc The mouse wheel delta x value since the last app update.
+	#end
+	Property WheelX:Int()
+		Return Wheel.x
+	End
+	
+	#rem monkeydoc The mouse wheel delta y value since the last app update.
+	#end
+	Property WheelY:Int()
+		Return Wheel.y
+	End
+	
+	#rem monkeydoc The mouse wheel delta value since the last app update.
+	#end
+	Property Wheel:Vec2i()
+		Return _wheel
+	End
+	
 	#rem monkeydoc Checks the current up/down state of a mouse button.
 	
 	Returns true if `button` is currently held down.
@@ -118,27 +136,46 @@ Class MouseDevice Extends InputDevice
 		UpdateButton( MouseButton.Left,mask & 1 )
 		UpdateButton( MouseButton.Middle,mask & 2 )
 		UpdateButton( MouseButton.Right,mask & 4)
+		
+		_wheel=Null
 	End
 	
 	#rem monkeydoc @hidden
 	#end
-	Method UpdateButton( button:MouseButton,down:Bool )
-		_pressed[button]=False
-		_released[button]=False
-		If down=_down[button] Return
-		If down _pressed[button]=True Else _released[button]=True
-		_down[button]=down
+	Method SendEvent( event:SDL_Event Ptr )
+	
+		Select event->type
+		
+		Case SDL_MOUSEWHEEL
+		
+			Local mevent:=Cast<SDL_MouseWheelEvent Ptr>( event )
+			
+			Local window:=Window.WindowForID( mevent->windowID )
+			If Not window Return
+			
+			_wheel+=New Vec2i( mevent->x,mevent->y )
+		
+		End
 	End
 	
 	Private
 
 	Field _init:Bool	
 	Field _location:Vec2i
+	Field _wheel:Vec2i
 	Field _down:=New Bool[4]
 	Field _pressed:=New Bool[4]
 	Field _released:=New Bool[4]
 	
 	Method New()
+	End
+	
+	Method UpdateButton( button:MouseButton,down:Bool )
+		_pressed[button]=False
+		_released[button]=False
+		If down=_down[button] Return
+		If down _pressed[button]=True Else _released[button]=True
+		_down[button]=down
 	End
 	
 End

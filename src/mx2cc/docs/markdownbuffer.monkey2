@@ -38,7 +38,7 @@ End
 
 Class MarkdownBuffer
 
-	Alias LinkResolver:String( link:String )
+	Alias LinkResolver:String( link:String,name:String )
 
 	Alias TagHandler:Bool( tag:String,arg:String )
 	
@@ -257,15 +257,17 @@ Class MarkdownBuffer
 			Local i1:=line.Find( "]]",i0+2 )
 			If i1=-1 Return line
 			
-			Local path:=line.Slice( i0+2,i1 )
-			Local link:=path
+			Local link:=line.Slice( i0+2,i1 ),name:=""
+			Local i:=link.Find( "|" )
+			If i<>-1
+				name=link.Slice( i+1 )
+				link=link.Slice( 0,i )
+			Endif
 			
-			If _linkResolver<>Null
-				link=_linkResolver( path )
-				If Not link
-					Print "Makedocs error: Can't resolve link '"+path+"'"
-					link=path
-				Endif
+			If _linkResolver<>Null 
+				link=_linkResolver( link,name )
+			Else If name
+				link=name
 			Endif
 			
 			line=line.Slice( 0,i0 )+link+line.Slice( i1+2 )

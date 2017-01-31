@@ -498,6 +498,12 @@ Class Parser
 			Else
 				type=ParseFuncType( New IdentExpr( "void",SrcPos,SrcPos ) )
 			Endif
+
+			If kind="lambda"
+				For Local p:=Eachin type.params
+					If p.init Error( "Lambda function parameters cannot have default values" )
+				Next
+			Endif
 			
 			If Not (flags & DECL_EXTERN)
 				For Local param:=Eachin type.params
@@ -598,7 +604,11 @@ Class Parser
 				If Not (flags & DECL_SETTER) Error( "Getter must appear after setter" )
 			Default
 				Parse( "end" )
-				CParse( kind )
+				If flags & (DECL_GETTER|DECL_SETTER)
+					CParse( "property" )
+				Else
+					CParse( kind )
+				Endif
 				If kind<>"lambda" ParseEol()
 			End
 			

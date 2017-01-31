@@ -331,17 +331,21 @@ Class Translator_CPP Extends Translator
 		
 		EmitClassProto( ctype )
 		
-		Local uses:=_deps.uses
+		Local uses:=New Stack<ClassType>
+		For Local node:=Eachin _deps.uses.Keys
+			Local ctype:=Cast<ClassType>( node )
+			uses.Push( ctype )
+		Next
+		uses.Sort( Lambda:Int( x:ClassType,y:ClassType )
+			Return x.Name<=>y.Name
+		End )
 		
 		EndDeps( ExtractDir( fdecl.hfile ) )
 		
 		
 		emitted[ClassName( ctype )]=True
-		
 	
-		For Local node:=Eachin uses.Keys
-		
-			Local ctype2:=TCast<ClassType>( node )
+		For Local ctype2:=Eachin uses
 		
 			If ctype2.cdecl.IsExtern Or ctype2.transFile<>fdecl Or emitted[ClassName( ctype2 )] Continue
 			
@@ -648,6 +652,8 @@ Class Translator_CPP Extends Translator
 			If ctype.superType And Not ctype.superType.cdecl.IsExtern	'And ctype.superType<>Type.ObjectClass
 				Emit( ClassName( ctype.superType )+"::dbEmit();" )
 			End
+			
+			Emit( "puts( ~q["+ctype.Name+"]~q);" )
 			
 			For Local vvar:=Eachin ctype.fields
 				Emit( "bbDBEmit(~q"+vvar.vdecl.ident+"~q,&"+VarName( vvar )+");" )
@@ -1296,6 +1302,19 @@ Class Translator_CPP Extends Translator
 
 	End
 	
+	Method AssignsTo( type:Type )
+		
+		Uses( type )
+
+		Local ctype:=TCast<ClassType>( type )
+		If ctype And ctype.IsStruct
+			For Local vvar:=Eachin ctype.fields
+				AssignsTo( vvar.type )
+			Next
+		Endif
+		
+	End
+	
 	Method EmitStmt( stmt:AssignStmt )
 	
 		Local op:=stmt.op
@@ -1309,11 +1328,11 @@ Class Translator_CPP Extends Translator
 			If vvar And vvar.vdecl.kind="param" FindGCTmp( vvar )
 		End
 		
+		AssignsTo( stmt.lhs.type )
+		
 		Local lhs:=Trans( stmt.lhs )
 		Local rhs:=Trans( stmt.rhs )
 		
-		Uses( stmt.lhs.type )
-
 		Emit( lhs+op+rhs+";" )
 	End
 
@@ -1671,7 +1690,7 @@ Class Translator_CPP Extends Translator
 	Method TransInvokeMember:String( instance:Value,member:FuncValue,args:Value[] )
 
 		Uses( instance.type )
-	
+		
 		If member.IsExtension
 			
 			Local tinst:=Trans( instance )
@@ -1692,6 +1711,8 @@ Class Translator_CPP Extends Translator
 	
 	Method Trans:String( value:InvokeValue )
 	
+		Decls( value.type )
+		
 		Local mfunc:=Cast<MemberFuncValue>( value.value )
 		
 		If mfunc Return TransInvokeMember( mfunc.instance,mfunc.member,value.args )
