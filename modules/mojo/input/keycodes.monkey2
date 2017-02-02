@@ -130,6 +130,8 @@ Enum Key
 	
 	LeftControl=185+167,LeftShift,LeftAlt,LeftGui,RightControl,RightShift,RightAlt,RightGui
 	
+	Max
+	
 	Raw=$10000
 	
 End
