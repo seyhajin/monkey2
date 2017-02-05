@@ -51,7 +51,13 @@ Class KeyboardDevice Extends InputDevice
 	
 	#end	
 	Method KeyName:String( key:Key )
-		If key & key.Raw key=TranslateKey( key )
+		If key & key.Raw 
+			key&=~Key.Raw
+			If key<=Key.None Or key>=Key.Max Return "?????"
+			key=TranslateKey( key )
+		Else
+			If key<=Key.None Or key>=Key.Max Return "?????"
+		Endif
 		Return _names[key]
 	End
 	
@@ -64,17 +70,20 @@ Class KeyboardDevice Extends InputDevice
 	#end
 	Method TranslateKey:Key( key:Key )
 		If key & Key.Raw
+			key&=~Key.Raw
+			If key<=Key.None Or key>=Key.Max Return Null
 #If __TARGET__="emscripten"
-			Return key & ~Key.Raw
+			Return key
 #Else
-			Local keyCode:=SDL_GetKeyFromScancode( Cast<SDL_Scancode>( _raw2scan[ key & ~Key.Raw ] ) )
+			Local keyCode:=SDL_GetKeyFromScancode( Cast<SDL_Scancode>( _raw2scan[key] ) )
 			Return KeyCodeToKey( keyCode )
 #Endif
 		Else
+			If key<=Key.None Or key>=Key.Max Return Null
 			Local scanCode:=_key2scan[key]
 			Return _scan2raw[scanCode]
 		Endif
-		Return Key.None
+		Return Null
 	End
 	
 	#rem monkeydoc Checks the current up/down state of a key.
@@ -162,7 +171,12 @@ Class KeyboardDevice Extends InputDevice
 	#rem monkeydoc @hidden
 	#end
 	Method ScanCode:Int( key:Key )
-		If key & Key.Raw Return _raw2scan[ key & ~Key.Raw ]
+		If key & Key.Raw 
+			key&=~Key.Raw
+			If key<=0 Or key>=Key.Max Return 0
+			Return _raw2scan[ key & ~Key.Raw ]
+		Endif
+		If key<=0 Or key>=Key.Max Return 0
 		Return _key2scan[ key ]
 	End
 	
@@ -170,12 +184,14 @@ Class KeyboardDevice Extends InputDevice
 	#end
 	Method KeyCodeToKey:Key( keyCode:Int )
 		If (keyCode & $40000000) keyCode=(keyCode & ~$40000000)+$80
+		If keyCode<=0 Or keyCode>=Int( Key.Max ) Return Null
 		Return Cast<Key>( keyCode )
 	End
 	
 	#rem monkeydoc @hidden
 	#end
 	Method ScanCodeToRawKey:Key( scanCode:Int )
+		If scanCode<=0 Or scanCode>=512 Return null
 		Return _scan2raw[ scanCode ]
 	End
 	

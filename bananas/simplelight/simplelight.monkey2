@@ -22,6 +22,7 @@ Class MyWindow Extends Window
 	Field _logo:Image
 	
 	Method New()
+		Super.New( "Test Window",640,480,WindowFlags.Resizable )
 	
 		ClearColor=Color.Black
 	

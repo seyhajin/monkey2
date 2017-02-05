@@ -12,7 +12,9 @@ Class DocsMaker
 		_nav=New JsonBuffer
 	
 		_md=New MarkdownBuffer( "",Lambda:String( link:String,name:String )
+		
 			Return ResolveLink( link,name,_linkScope )
+			
 		End )
 	End
 	
@@ -25,13 +27,17 @@ Class DocsMaker
 		CreateDir( module.baseDir+"docs/__MANPAGES__" )
 		
 		Local pages:=ManPage.MakeManPages( path,module,Lambda:String( link:String,name:String )
+		
 			Return ResolveLink( link,name,_linkScope )
+			
 		End )
 		
 		For Local it:=Eachin pages
 		
 			Local path:=it.Key		'source path
 			Local page:=it.Value	'ManPage
+			
+			Print "Making manual page:"+path
 			
 			Local dir:=ExtractDir( path ),cd:=".."
 			While dir<>module.baseDir+"docs/" And Not IsRootDir( dir )
@@ -66,6 +72,8 @@ Class DocsMaker
 		Local md:=stringio.LoadString( mdocs )
 		If Not md Return ""
 		
+		Print "Making module docs:"+mdocs
+		
 		_md.Emit( md )
 		
 		Local docs:=_md.Flush()
@@ -95,7 +103,7 @@ Class DocsMaker
 		Local nmspaceDocs:=New StringMap<String>
 		
 		For Local fscope:=Eachin _module.fileScopes
-		
+			
 			Local nmspace:=Cast<NamespaceScope>( fscope.outer )
 			If Not nmspace Continue
 			
@@ -112,6 +120,9 @@ Class DocsMaker
 		BeginNode( _module.name,page )
 		
 		For Local nmspace:=Eachin nmspaces.Values
+
+			Print "Making namespace docs:"+nmspace.Name
+		
 			EmitNamespace( nmspace,nmspaceDocs[nmspace.Name] )
 		Next
 		
@@ -206,8 +217,12 @@ Class DocsMaker
 	End
 	
 	Method ResolveLink:String( path:String,name:String,scope:Scope )
+		
+		If Not name name=path
+		
+		If path.StartsWith( "http:" ) Or path.StartsWith( "https:" ) Return "<a href='"+path+"'>"+name+"</a>"
 	
-'		Print "Find link:"+path
+'		Print "ResolveLink( path="+path+", name="+name+" )"
 	
 		Local i0:=0
 		Local tpath:=""
@@ -218,14 +233,12 @@ Class DocsMaker
 			
 			If i1=-1
 			
-				If Not scope Return ""
+				If Not scope Return name
 
 				Local id:=path.Slice( i0 )
 				
 				Local node:=scope.FindNode( FixKeyword( id ) )
-				If Not node
-					Return path
-				Endif
+				If Not node Return name
 				
 				tpath+=id
 				
@@ -246,8 +259,8 @@ Class DocsMaker
 				Local ctype:=TCast<ClassType>( node )
 				If ctype Return MakeLink( name,ctype.cdecl,ctype.scope.outer )
 				
-				Print "Can't resolve link:"+path+", name="+name+", id="+id
-				Return name ? name Else path
+				Print "Can't resolve link:"+path+", id="+id
+				Return name
 			Endif
 			
 			Local id:=path.Slice( i0,i1 )
@@ -258,7 +271,6 @@ Class DocsMaker
 				Try
 					type=scope.FindType( FixKeyword( id ) )
 				Catch ex:SemantEx
-					Print "ResolveLink exception!"
 				End
 			Else If Not tpath
 				For Local fscope:=Eachin _module.fileScopes
@@ -266,14 +278,30 @@ Class DocsMaker
 					type=fscope.nmspace.ntype
 					Exit
 				Next
+				If Not type type=Builder.monkeyNamespace.FindType( FixKeyword( id ) )
 			Endif
 
-			If Not type 
-				Print "Can't resolve link:"+path+", id="+id
-				Return path
-			Endif
-			
 			tpath+=id+"."
+			
+			If Not type 
+				If scope
+					Try
+						Local node:=scope.FindNode( FixKeyword( id ) )
+						
+						Local vvar:=Cast<VarValue>( node )
+						If vvar
+							Local ctype:=TCast<ClassType>( vvar.type )
+							If ctype
+								scope=ctype.scope
+								Continue
+							Endif
+						Endif
+					Catch ex:SemantEx
+					End
+				Endif
+				Print "Can't resolve link:"+path+", id="+id
+				Return name
+			Endif
 			
 			Local ntype:=TCast<NamespaceType>( type )
 			If ntype
@@ -294,11 +322,11 @@ Class DocsMaker
 				Return MakeLink( name,etype.edecl,etype.scope.outer )
 			Endif
 			
-			Return ""
+			Return name
 			
 		Forever
-			
-		Return ""
+		
+		Return name
 	End
 	
 	Method DeclIdent:String( decl:Decl,gen:Bool=False )
@@ -508,7 +536,9 @@ Class DocsMaker
 	End
 	
 	Method DocsHidden:Bool( decl:Decl,access:Int )
+		
 		If access And (decl.flags & access) Return DocsHidden( decl )
+		
 		Return True
 	End
 	
@@ -788,7 +818,7 @@ Class DocsMaker
 			If Not vvar Or vvar.transFile.module<>_module Continue
 			
 			Local decl:=vvar.vdecl
-			If decl.kind<>kind Or DocsHidden( decl,DECL_PUBLIC ) Continue
+			If decl.kind<>kind Or DocsHidden( decl ) Continue
 		
 			_linkScope=vvar.scope
 
@@ -817,7 +847,7 @@ Class DocsMaker
 			If Not atype Continue
 			
 			Local decl:=atype.adecl
-			If decl.kind<>kind Or DocsHidden( decl,DECL_PUBLIC ) Continue
+			If decl.kind<>kind Or DocsHidden( decl ) Continue
 		
 			_linkScope=atype.scope
 		
@@ -846,7 +876,7 @@ Class DocsMaker
 			If Not etype Continue
 			
 			Local decl:=etype.edecl
-			If decl.kind<>kind Or DocsHidden( decl,DECL_PUBLIC ) Continue
+			If decl.kind<>kind Or DocsHidden( decl ) Continue
 			
 			_linkScope=etype.scope.outer
 
@@ -875,7 +905,7 @@ Class DocsMaker
 			If Not ctype Or ctype.transFile.module<>_module Continue
 			
 			Local decl:=ctype.cdecl
-			If decl.kind<>kind Or DocsHidden( decl,DECL_PUBLIC ) Continue
+			If decl.kind<>kind Or DocsHidden( decl ) Continue
 			
 			_linkScope=ctype.scope	'.outer
 			
@@ -957,7 +987,7 @@ Class DocsMaker
 			If Not plist Continue
 			
 			Local decl:=plist.pdecl
-			If decl.kind<>kind Or DocsHidden( decl,DECL_PUBLIC ) Continue
+			If decl.kind<>kind Or DocsHidden( decl ) Continue
 
 			Local func:=plist.getFunc
 			If Not func 
@@ -999,8 +1029,7 @@ Class DocsMaker
 				If (func.IsMethod Or func.IsCtor) And func.scope<>scope Continue
 				
 				Local decl:=func.fdecl
-				
-				If DocsHidden( decl,DECL_PUBLIC ) Continue
+				If DocsHidden( decl ) Continue
 				
 				If kind="constructor"
 					If decl.ident<>"new" Continue

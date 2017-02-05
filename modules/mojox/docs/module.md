@@ -3,8 +3,8 @@
 
 The mojox module provides a simple but highly customizable gui system, built on top of mojo. Mojox also uses 'auto-layout' as much as possible, so you don't generally have to provide location/size of widgets, and can easily change fonts, skins etc without having to manually 're-layout' your gui.
 
-Much of the core functionality of mojox is actually implemented in the mojo module by the [[mojo.app.AppInstance]] 
-and [[mojo.app.View]] classes. The View class is the base class of all 'widgets' in mojo/mojox (including the mojo Window class), and mojox really just provides a set of useful view subclasses provide buttons, text views, dialogs etc.
+Much of the core functionality of mojox is actually implemented in the mojo module by the [[mojo.app.AppInstance|AppInstance]] 
+and [[mojo.app.View|View]] classes. The View class is the base class of all 'widgets' in mojo/mojox (including the mojo Window class), and mojox really just provides a set of useful view subclasses that provide buttons, text views, dialogs etc.
 
 Views are stored in a simple 'tree' structure, where each view has an optional parent, and 0 or more children.
 
@@ -35,6 +35,6 @@ Here is a relatively crappy diagram that may or may not help!
 
 Gui layout is a 2 step process:
 
-* First, all views are measured by calling their [[View.OnMeasure]] method. This step occurs in 'bottom up' order so any view's whose size is dependant on a child view's size can be sure the child has been measured first. A view's OnMeasure method should return it's preferred size - that is, the size it would like to be. Once a view has been measured, you can use the [[View.LayoutSize]] property to retrieve a view's preferred layout size. Note that this is not the value returned by the view's OnMeasure method, but an adjusted size that takes the view's style into account.
+* First, all views are measured by calling their [[mojo.app.View.OnMeasure|OnMeasure]] method. This step occurs in 'bottom up' order so any view's whose size is dependant on a child view's size can be sure the child has been measured first. A view's OnMeasure method should return it's preferred size - that is, the size it would like to be. Once a view has been measured, you can use the [[mojo.app.View.LayoutSize|LayoutSize]] property to retrieve a view's preferred layout size. Note that this is not the value returned by the view's OnMeasure method, but an adjusted size that takes the view's style into account.
 
-* Once measuring is complete, layout is then performed by calling the [[View.OnLayout]] method for all views in 'top down' order. View's that are responsible for handling the layout of child views should set the [[View.Frame]] property of any child views they 'own' during OnLayout. A view may by further positioned and size within it's frame depending on its [[View.Layout]] property. For example, if a view's layout is "fill", the view is resized to completely fill its frame; if layout is "float", the view retains its measured size but is positioned within its frame according to its [[View.Gravity]].
+* Once measuring is complete, layout is then performed by calling the [[mojo.app.View.OnLayout|OnLayout]] method for all views in 'top down' order. View's that are responsible for handling the layout of child views should set the [[mojo.app.View.Frame|Frame]] property of any child views they 'own' during OnLayout. A view may by further positioned and size within it's frame depending on its [[mojo.app.View.Layout]] property. For example, if a view's layout is "fill", the view is resized to completely fill its frame; if layout is "float", the view retains its measured size but is positioned within its frame according to its [[mojo.app.View.Gravity|Gravity]] property.

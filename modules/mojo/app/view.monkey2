@@ -5,11 +5,11 @@ Namespace mojo.app
 #end
 Class View
 
-	#rem monkeydoc Invoked when a view becomes visble and active.
+	#rem monkeydoc Invoked when a view becomes visible and active.
 	#end
 	Field Activated:Void()
 
-	#rem monkeydoc Invoked when a view is no longer visble or active.
+	#rem monkeydoc Invoked when a view is no longer visible or active.
 	#end
 	Field Deactivated:Void()
 

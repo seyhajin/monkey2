@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.02"
+Const MX2CC_VERSION:="1.1.03"
 
 Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
 
@@ -103,6 +103,8 @@ Function CopyRelease()
 
 	DeleteDir( output+"/src/c2mx2",True )
 	DeleteDir( output+"/src/mx23d",True )
+	
+	DeleteDir( output+"/modules/admob",True )
 	DeleteDir( output+"/modules/linq",True )
 	DeleteDir( output+"/modules/bullet",True )
 	DeleteDir( output+"/modules/gles30",True )
