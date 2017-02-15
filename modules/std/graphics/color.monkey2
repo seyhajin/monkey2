@@ -186,10 +186,16 @@ Namespace std.graphics
 		Self.a=a
 	End
 	
-	#rem monkeydoc Converts the color to printable string.
+	#rem monkeydoc Converts the color to a printable string.
 	#end
 	Operator To:String()
 		Return "Color("+r+","+g+","+b+","+a+")"
+	End
+	
+	#rem monkeydoc Converts the color to float 4 vector.
+	#end
+	Operator To:geom.Vec4f()
+		Return New Vec4f( r,g,b,a )
 	End
 	
 	#rem monkeydoc The Red color component.

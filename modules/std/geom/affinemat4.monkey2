@@ -115,6 +115,10 @@ Struct AffineMat4<T>
 		Return Self * Scaling( sv )
 	End
 	
+	Method Scale:AffineMat4f( scaling:T )
+		Return Self * Scaling( scaling )
+	End
+	
 	#rem monkeydoc Creates a translation matrix.
 	#end
 	Function Translation:AffineMat4( tv:Vec3<T> )

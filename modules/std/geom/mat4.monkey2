@@ -38,6 +38,14 @@ Struct Mat4<T>
 		i.XYZ=m.m.i ; j.XYZ=m.m.j ; k.XYZ=m.m.k ; t.XYZ=m.t ; t.w=1
 	End
 	
+	Operator To<C>:Mat4<C>()
+		Return New Mat4<C>( i,j,k,t )
+	End
+	
+	Operator To:String()
+		Return "Mat4("+i+","+j+","+k+","+t+")"
+	End
+	
 	Operator*:Mat4( m:Mat4 )
 		Local r:Mat4
 		

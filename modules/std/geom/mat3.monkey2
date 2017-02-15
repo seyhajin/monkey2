@@ -17,21 +17,24 @@ Struct Mat3<T>
 		i.x=1;j.y=1;k.z=1
 	End
 	
-	Method New( i:Vec3<T>,j:Vec3<T>,k:Vec3<T> )
-		Self.i=i; Self.j=j; Self.k=k
-	End
-	
-	Method New( q:Quat<T> )
-	End
-	
 	Method New( ix:Float,jy:Float,kz:Float )
 		i.x=ix; j.y=jy; k.z=kz
+	End
+	
+	Method New( i:Vec3<T>,j:Vec3<T>,k:Vec3<T> )
+		Self.i=i; Self.j=j; Self.k=k
 	End
 	
 	Method New( ix:T,iy:T,iz:T,jx:T,jy:T,jz:T,kx:T,ky:T,kz:T )
 		i.x=ix; i.y=iy; i.z=iz
 		j.x=jx; j.y=jy; j.z=jz
 		k.x=kx; k.y=ky; k.z=kz
+	End
+	
+	Method New( m:Mat4<T> )
+		i.x=m.i.x ; i.y=m.i.y ; i.z=m.i.z
+		j.x=m.j.x ; j.y=m.j.y ; j.z=m.j.z
+		k.x=m.k.x ; k.y=m.k.y ; k.z=m.k.z
 	End
 	
 	Operator To<C>:Mat3<C>()
@@ -65,9 +68,9 @@ Struct Mat3<T>
 			i.x*m.k.x+j.x*m.k.y+k.x*m.k.z, i.y*m.k.x+j.y*m.k.y+k.y*m.k.z, i.z*m.k.x+j.z*m.k.y+k.z*m.k.z )
 	End
 	
-	Operator*:Mat3( q:Quat<T> )
-		Return Self * New Mat3( q )
-	End
+'	Operator*:Mat3( q:Quat<T> )
+'		Return Self * New Mat3( q )
+'	End
 	
 	Operator*:Vec3<T>( v:Vec3<T> )
 		Return New Vec3<T>( i.x*v.x+j.x*v.y+k.x*v.z,i.y*v.x+j.y*v.y+k.y*v.z,i.z*v.x+j.z*v.y+k.z*v.z )
