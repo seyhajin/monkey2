@@ -76,7 +76,7 @@ Struct Mat3<T>
 		Return New Vec3<T>( i.x*v.x+j.x*v.y+k.x*v.z,i.y*v.x+j.y*v.y+k.y*v.z,i.z*v.x+j.z*v.y+k.z*v.z )
 	End
 	
-	Method GetCofactor:Mat3()
+	Method Cofactor:Mat3()
 		Return New Mat3(
 			 (j.y*k.z-j.z*k.y),-(j.x*k.z-j.z*k.x), (j.x*k.y-j.y*k.x),
 			-(i.y*k.z-i.z*k.y), (i.x*k.z-i.z*k.x),-(i.x*k.y-i.y*k.x),

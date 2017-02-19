@@ -19,6 +19,11 @@ Struct Box<T>
 	Method New()
 	End
 	
+	Method New( p:Vec3<T> )
+		Self.min=p
+		Self.max=p
+	End
+	
 	Method New( min:T,max:T )
 		Self.min=New Vec3<T>( min )
 		Self.max=New Vec3<T>( max )
