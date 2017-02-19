@@ -76,6 +76,7 @@ Class ParseInfoGenerator
 		node.SetString( "namespace",decl.nmspace )
 		
 		If decl.imports node.SetValue( "imports",GenNode( decl.imports ) )
+		If decl.usings node.SetValue( "usings",GenNode( decl.usings ) )
 		
 		Return node
 	End
