@@ -290,6 +290,12 @@ Class Stack<T> Implements IContainer<T>
 		Return _data.Length
 	End
 	
+	#rem monkeydoc Compacts the stack
+	#end
+	Method Compact()
+		If _length<>_data.Length _data=_data.Slice( 0,_length )
+	End
+	
 	#rem monkeydoc Resizes the stack.
 	
 	If `length` is greater than the current stack length, any extra elements are initialized to null.
