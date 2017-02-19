@@ -1,5 +1,3 @@
-
-Namespace test
-
-Class Socket
+Class Widgets
+	Field checkBox:CheckButton
 End

@@ -1569,9 +1569,11 @@ Class Translator_CPP Extends Translator
 	
 		Local src:="("+Trans( value.value )+")"
 	
+		Uses( value.type )			'uses dst type
+			
 		If value.type.Equals( value.value.type ) Return src
-	
-		Uses( value.type )
+
+		Uses( value.value.type )	'...and src type
 		
 		If IsCValueType( value.type ) Return TransType( value.type )+src
 
