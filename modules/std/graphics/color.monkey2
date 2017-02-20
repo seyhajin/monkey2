@@ -186,6 +186,13 @@ Namespace std.graphics
 		Self.a=a
 	End
 	
+	Method New( v:geom.Vec4f )
+		Self.r=v.x
+		Self.g=v.y
+		Self.b=v.z
+		Self.a=v.w
+	End
+	
 	#rem monkeydoc Converts the color to a printable string.
 	#end
 	Operator To:String()
