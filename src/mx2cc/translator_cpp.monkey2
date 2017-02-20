@@ -326,7 +326,6 @@ Class Translator_CPP Extends Translator
 		EmitBr()	
 		Emit( "// Class "+ctype.Name )
 		
-		
 		BeginDeps()
 		
 		EmitClassProto( ctype )
@@ -461,7 +460,13 @@ Class Translator_CPP Extends Translator
 					Emit( proto+"{};" )
 					needsInit=True
 				Else
-					Emit( proto+"="+Trans( vvar.init )+";" )
+					Local lit:=Cast<LiteralValue>( vvar.init )
+					If Not lit Or lit.value
+'						AssignsTo( vvar.type )
+						Emit( proto+"="+Trans( vvar.init )+";" )
+					Else
+						Emit( proto+"{};" )
+					Endif
 				Endif
 			Else
 				Emit( proto+"{};" )
@@ -1612,12 +1617,13 @@ Class Translator_CPP Extends Translator
 
 		Local etype:=TCast<EnumType>( type )
 		If etype Return EnumName( etype )+"(0)"
-
+		
 		If IsCValueType( type )
 			Uses( type )
 			Return TransType( type )+"{}"
 		Endif
-		
+
+'		Uses( type )		
 		Return "(("+TransType( type )+")0)"
 	End
 
