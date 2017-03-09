@@ -25,7 +25,7 @@ Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods -target=ios std"' std"
  
-Const TestArgs:="mx2cc makeapp -target=desktop src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '

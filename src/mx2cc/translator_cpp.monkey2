@@ -426,10 +426,15 @@ Class Translator_CPP Extends Translator
 				If Not flist Or it.Key="new" Continue
 				
 				For Local func:=Eachin flist.funcs
+				
+					If func.IsGeneric Continue
+					
 					If Not func.IsMethod Or func.scope<>ctype.superType.scope Continue
+					
 					Local sym:=FuncName( func )
 					If done[sym] Continue
 					done[sym]=True
+					
 					Emit( "using "+superName+"::"+sym+";" )
 				Next
 			Next

@@ -331,6 +331,7 @@ Class ClassType Extends Type
 					If Not flist2 Continue
 						
 					For Local func2:=Eachin flist2.funcs
+						
 						If Not flist.FindFunc( func2.ftype )
 							flist.PushFunc( func2 )
 						Endif
