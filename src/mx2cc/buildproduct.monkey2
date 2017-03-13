@@ -582,7 +582,20 @@ Class GccBuildProduct Extends BuildProduct
 		
 		lnkFiles+=" "+LD_SYSLIBS.Join( " " )
 		
-		If opts.target="windows"
+#If __TARGET__="windows"
+
+		lnkFiles=lnkFiles.Replace( " -Wl,"," " )
+		Local tmp:=AllocTmpFile( "lnkFiles" )
+		SaveString( lnkFiles,tmp )
+		cmd+=" @"+tmp
+		
+'		If opts.target="windows" cmd+=" -Wl,@"+tmp Else cmd+=" @"+tmp
+#Else
+		cmd+=lnkFiles
+#Endif
+
+#rem
+		If opts.target="windows" Or opts.target="emscripten"
 			lnkFiles=lnkFiles.Replace( " -Wl,"," " )
 			Local tmp:=AllocTmpFile( "lnkFiles" )
 			SaveString( lnkFiles,tmp )
@@ -590,6 +603,7 @@ Class GccBuildProduct Extends BuildProduct
 		Else
 			cmd+=lnkFiles
 		Endif
+#end
 
 		CopyAssets( assetsDir )
 		
@@ -763,19 +777,27 @@ Class AndroidBuildProduct Extends BuildProduct
 		
 		If opts.productType="app"
 		
+			Local whole_libs:=""
+		
 			buf.Push( "LOCAL_STATIC_LIBRARIES := \" )
 			For Local imp:=Eachin imports
 				If imp=module Continue
 				
-				If imp.name="sdl2" Or imp.name="admob" Continue
+				If imp.name="sdl2" Or imp.name="admob" 
+					whole_libs+=" mx2_"+imp.name
+					Continue
+				Endif
 				
 				buf.Push( "mx2_"+imp.name+" \" )
 			Next
 			buf.Push( "" )
 			
-			'This keeps the JNI functions in sdl2 and admob alive: ugly, ugly stuff but that's the joys of modern coding for ya...
-			'
-			buf.Push( "LOCAL_WHOLE_STATIC_LIBRARIES := mx2_sdl2 mx2_admob" )
+			If whole_libs
+				'
+				'This keeps the JNI functions in sdl2 and admob alive: ugly, ugly stuff but that's the joys of modern coding for ya...
+				'
+				buf.Push( "LOCAL_WHOLE_STATIC_LIBRARIES :="+whole_libs )
+			Endif
 
 			buf.Push( "LOCAL_SHARED_LIBRARIES := \" )
 			For Local dll:=Eachin DLL_FILES
