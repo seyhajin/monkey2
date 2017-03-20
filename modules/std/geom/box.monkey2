@@ -59,6 +59,18 @@ Struct Box<T>
 		Return max-min
 	End
 	
+	Property Width:T()
+		Return max.x-min.x
+	End
+	
+	Property Height:T()
+		Return max.y-min.y
+	End
+	
+	Property Depth:T()
+		Return max.z-min.z
+	End
+	
 	Operator+:Box( v:Vec3<T> )
 		Return New Box( min+v,max+v )
 	End
