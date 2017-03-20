@@ -724,7 +724,7 @@ Class Canvas
 					Local j:=indices[i]
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+j*verticesPitch )
 					Local tp:=Cast<Float Ptr>( Cast<UByte Ptr>( texCoords )+j*texCoordsPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+j*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+j*colorsPitch )
 					AddVertex( vp[0],vp[1],tp[0],tp[1],cp[0] )
 				Next
 			Else If texCoords
@@ -738,7 +738,7 @@ Class Canvas
 				For Local i:=0 Until n
 					Local j:=indices[i]
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+j*verticesPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+j*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+j*colorsPitch )
 					AddVertex( vp[0],vp[1],0,0,cp[0] )
 				Next
 			Else
@@ -753,7 +753,7 @@ Class Canvas
 				For Local i:=0 Until n
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+i*verticesPitch )
 					Local tp:=Cast<Float Ptr>( Cast<UByte Ptr>( texCoords )+i*texCoordsPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+i*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+i*colorsPitch )
 					AddVertex( vp[0],vp[1],tp[0],tp[1],cp[0] )
 				Next
 			Else If texCoords
@@ -765,7 +765,7 @@ Class Canvas
 			Else If colors
 				For Local i:=0 Until n
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+i*verticesPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+i*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+i*colorsPitch )
 					AddVertex( vp[0],vp[1],0,0,cp[0] )
 				Next
 			Else
