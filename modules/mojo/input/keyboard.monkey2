@@ -40,7 +40,7 @@ Class KeyboardDevice Extends InputDevice
 	#rem monkeydoc The current state of the modifier keys.
 	#end
 	Property Modifiers:Modifier()
-		Return _modifiers
+		Return Cast<Modifier>( Int( SDL_GetModState() ) )
 	End
 
 	#rem monkeydoc Gets the name of a key.
@@ -250,8 +250,6 @@ Class KeyboardDevice Extends InputDevice
 				_keys[scode].rpressed=_frame
 			Endif
 			
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
-			
 			Local char:=KeyToChar( _scan2key[scode] )
 			If char PushChar( char )
 
@@ -263,7 +261,6 @@ Class KeyboardDevice Extends InputDevice
 			
 			_keys[scode].down=False
 			_keys[scode].released=_frame
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			
 		Case SDL_TEXTINPUT
 		
@@ -289,7 +286,6 @@ Class KeyboardDevice Extends InputDevice
 
 	Field _frame:Int=1
 	Field _keys:=New KeyState[512]
-	Field _modifiers:Modifier
 	Field _charQueue:=New Int[CHAR_QUEUE_SIZE]
 	Field _charPut:Int
 	Field _charGet:Int
@@ -302,7 +298,7 @@ Class KeyboardDevice Extends InputDevice
 
 	Method New()
 	End
-
+	
 	Function KeyToChar:Int( key:Int )
 		Select key
 		Case Key.Backspace,Key.Tab,Key.Enter,Key.Escape,Key.KeyDelete

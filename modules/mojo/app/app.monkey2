@@ -711,8 +711,8 @@ Class AppInstance
 
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			_keyChar=Keyboard.KeyName( _key )
+			_modifiers=Keyboard.Modifiers
 			
 			If kevent->repeat_
 				SendKeyEvent( EventType.KeyRepeat )
@@ -729,11 +729,11 @@ Class AppInstance
 			
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			_keyChar=Keyboard.KeyName( _key )
+			_modifiers=Keyboard.Modifiers
 			
 			SendKeyEvent( EventType.KeyUp )
-
+			
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
