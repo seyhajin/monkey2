@@ -103,36 +103,63 @@ bbString bbRequesters::RequestFile( bbString title,bbString filter,bbBool save,b
 
 	if( filter.length() ){
 	
-		allowOthers=false;
-	
 		nsfilter=[NSMutableArray arrayWithCapacity:10];
 		
-		int i0=0;
-		while( i0<filter.length() ){
+		allowOthers=false;
 		
-			int i1=filter.find( ":",i0 )+1;
-			if( !i1 ) break;
+		if( filter.find( ":" )!=-1 ){
+
+			int i0=0;
+			while( i0<filter.length() ){
 			
-			int i2=filter.find( ";",i1 );
-			if( i2==-1 ) i2=filter.length();
-			
-			while( i1<i2 ){
-			
-				int i3=filter.find( ",",i1 );
-				if( i3==-1 ) i3=i2;
+				int i1=filter.find( ":",i0 );
+				if( i1==-1 ) break;
+				i1+=1;
 				
-				bbString ext=filter.slice( i1,i3 );
+				int i2=filter.find( ";",i1 );
+				if( i2==-1 ) i2=filter.length();
+				
+				while( i1<i2 ){
+				
+					int i3=filter.find( ",",i1 );
+					if( i3==-1 ) i3=i2;
+					
+					bbString ext=filter.slice( i1,i3 );
+					if( ext==BB_T("*") ){
+						allowOthers=true;
+					}else{
+						[nsfilter addObject:ConvString( ext )];
+					}
+					i1=i3+1;
+				}
+				i0=i2+1;
+			}
+			
+		}else{
+		
+			int i0=0;
+			while( i0<filter.length() ){
+			
+				int i1=filter.find( ",",i0 );
+				if( i1==-1 ) i1=filter.length();
+				
+				bbString ext=filter.slice( i0,i1 );
 				if( ext==BB_T("*") ){
 					allowOthers=true;
 				}else{
 					[nsfilter addObject:ConvString( ext )];
 				}
-				i1=i3+1;
+				
+				i0=i1+1;
 			}
-			i0=i2+1;
 		}
 	}
 
+	if( ![nsfilter count] ){
+		nsfilter=0;
+		allowOthers=true;
+	}
+	
 	NSString *nsdir=0;
 	NSString *nsfile=0;
 	NSString *nstitle=0;
@@ -215,3 +242,4 @@ void bbRequesters::OpenUrl( bbString url ){
 		CFRelease( cfurl );
 	}
 }
+
