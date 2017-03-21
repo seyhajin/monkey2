@@ -40,7 +40,8 @@ Class KeyboardDevice Extends InputDevice
 	#rem monkeydoc The current state of the modifier keys.
 	#end
 	Property Modifiers:Modifier()
-		Return Cast<Modifier>( Int( SDL_GetModState() ) )
+		Return _modifiers
+'		Return Cast<Modifier>( Int( SDL_GetModState() ) )
 	End
 
 	#rem monkeydoc Gets the name of a key.
@@ -252,6 +253,9 @@ Class KeyboardDevice Extends InputDevice
 			
 			Local char:=KeyToChar( _scan2key[scode] )
 			If char PushChar( char )
+			
+			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
+			_modifiers|=KeyToModifier( key )
 
 		Case SDL_KEYUP
 		
@@ -262,6 +266,9 @@ Class KeyboardDevice Extends InputDevice
 			_keys[scode].down=False
 			_keys[scode].released=_frame
 			
+			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
+			_modifiers&=~KeyToModifier( key )
+
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
@@ -289,6 +296,7 @@ Class KeyboardDevice Extends InputDevice
 	Field _charQueue:=New Int[CHAR_QUEUE_SIZE]
 	Field _charPut:Int
 	Field _charGet:Int
+	Field _modifiers:Modifier
 
 	Field _names:=New String[512]
 	Field _raw2scan:=New Int[512]	'no translate
@@ -297,6 +305,21 @@ Class KeyboardDevice Extends InputDevice
 	Field _scan2key:=New Int[512]	'translate
 
 	Method New()
+	End
+	
+	Function KeyToModifier:Modifier( key:Int )
+		Select key
+		Case Key.LeftShift Return Modifier.LeftShift
+		Case Key.RightShift Return Modifier.RightShift
+		Case Key.LeftControl Return Modifier.LeftControl
+		Case Key.RightControl Return Modifier.RightControl
+		Case Key.LeftAlt Return Modifier.LeftAlt
+		Case Key.RightAlt Return Modifier.RightAlt
+		Case Key.LeftGui Return Modifier.LeftGui
+		Case Key.RightGui Return Modifier.RightGui
+		Case Key.CapsLock Return Modifier.CapsLock
+		End
+		Return Null
 	End
 	
 	Function KeyToChar:Int( key:Int )
