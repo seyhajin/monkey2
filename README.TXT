@@ -10,11 +10,11 @@ Grabbing the most recently tagged version is recommended if you just want to giv
 
 1) Install the mingw-64 compiler. There is a self-extracting archive of mingw-64 that has been tested with monkey2 here:
 
-http://monkey2.monkey-x.com/mak/get-file?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe
+http://monkey2.monkey-x.com/mak/get-file/?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe
 
 If you install this to the monkey2 'devtools' directory, the following steps should 'just work'.
 
-The general release of mingw-64 is available here: 
+The public release of mingw-64 is available here: 
 
 https://sourceforge.net/projects/mingw-w64/
 
