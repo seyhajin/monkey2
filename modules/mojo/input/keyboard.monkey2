@@ -317,7 +317,7 @@ Class KeyboardDevice Extends InputDevice
 		Case Key.RightAlt Return Modifier.RightAlt
 		Case Key.LeftGui Return Modifier.LeftGui
 		Case Key.RightGui Return Modifier.RightGui
-		Case Key.CapsLock Return Modifier.CapsLock
+'		Case Key.CapsLock Return Modifier.CapsLock		'Doesn't really work - here or in SDL...Also, need to find Key.NumLock, not in sdl headers...
 		End
 		Return Null
 	End
