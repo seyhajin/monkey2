@@ -21,6 +21,41 @@ Enum MouseButton
 	Right=3
 End
 
+#rem monkeydoc Mouse system cursors.
+
+| MouseCursor	| Description
+|:--------------|:------------
+| Arrow			| Arrow.
+| IBeam			| I-Beam.
+| Wait			| Wait.
+| CrossHair		| Crosshair.
+| WaitArrow		| Small wait cursor (or Wait if not available).
+| SizeNWSE		| Double arrow pointing north-west and south-east.
+| SizeNESW		| Double arrow pointing north-east and south-west.
+| SizeWE		| Double arrow pointing west and east.
+| SizeNS		| Double arrow pointing north and south.
+| SizeALL		| Four pointed arrow pointing north, south, east, and west.
+| No			| Slashed circle or crossbones.
+| Hand			| Hand.
+
+#end
+Enum MouseCursor
+	Arrow=0
+	IBeam=1
+	Wait=2
+	CrossHair=3
+	WaitArrow=4
+	SizeNWSE=5
+	SizeNESW=6
+	SizeWE=7
+	SizeNS=8
+	SizeALL=9
+	No=10
+	Hand=11
+	'
+	Max=12
+End
+
 #rem monkeydoc The MouseDevice class.
 
 To access the mouse device, use the global [[Mouse]] constant.
@@ -30,6 +65,20 @@ The mouse device should only used after a new [[app.AppInstance]] is created.
 #end
 Class MouseDevice Extends InputDevice
 
+	#rem monkeydoc The mouse cursor, see [[MouseCursor]] enumeration for details.
+	
+	#end
+	Property Cursor:MouseCursor()
+	
+		Return _cursor
+		
+	Setter( cursor:MouseCursor )
+	
+		_cursor = cursor
+		
+		SDL_SetCursor( _cursors[_cursor] )
+	End
+	
 	#rem monkeydoc Pointer visiblity state.
 	#end
 	Property PointerVisible:Bool()
@@ -124,6 +173,17 @@ Class MouseDevice Extends InputDevice
 	#rem monkeydoc @hidden
 	#end
 	Method Init()
+	
+		_cursors=New SDL_Cursor Ptr[ MouseCursor.Max ]
+		
+		For Local i:=0 Until _cursors.Length
+		
+			_cursors[i]=SDL_CreateSystemCursor( Cast<SDL_SystemCursor>( i ) )
+		Next
+		
+		_cursor=MouseCursor.Arrow
+		
+		SDL_SetCursor( _cursors[_cursor] )
 	End
 	
 	#rem monkeydoc @hidden
@@ -166,6 +226,8 @@ Class MouseDevice Extends InputDevice
 	Field _down:=New Bool[4]
 	Field _pressed:=New Bool[4]
 	Field _released:=New Bool[4]
+	Field _cursors:=New SDL_Cursor Ptr[ MouseCursor.Max ]
+	Field _cursor:MouseCursor
 	
 	Method New()
 	End
