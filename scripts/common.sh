@@ -9,14 +9,14 @@ launcher_new=""
 if [ "$OSTYPE" = "linux-gnu" ]
 then
 	mx2cc="../bin/mx2cc_linux"
-	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.03/linux_release/mx2cc"
+	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.04/linux_release/mx2cc"
 	
 	ted2="../bin/ted2_linux"
-	ted2_new="../src/ted2/ted2.buildv1.1.03/linux_release"
-	ted2go_new="../src/ted2go/ted2.buildv1.1.03/linux_release"
+	ted2_new="../src/ted2/ted2.buildv1.1.04/linux_release"
+	ted2go_new="../src/ted2go/ted2.buildv1.1.04/linux_release"
 	
 	launcher="../Monkey2 (Linux)"
-	launcher_new="../src/launcher/launcher.buildv1.1.03/linux_release/launcher"
+	launcher_new="../src/launcher/launcher.buildv1.1.04/linux_release/launcher"
 	
 elif [ "$OSTYPE" = "linux-gnueabihf" ]
 then
