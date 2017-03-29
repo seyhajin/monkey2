@@ -1,0 +1,89 @@
+{
+	"extends":"default",
+	
+	"styles":{
+	
+		"GutterView":{
+			"extends":"TextView",
+			"textColor":"text-disabled"
+		},
+		
+		"DebugToolBar":{
+			"extends":"ToolBar",
+			"border":[ 4 ],
+			"borderColor":"content",
+			"icons":"debug_icons.png"
+		},
+		
+		"HelpTextField":{
+			"extends":"TextField",
+			"skinColor":"panel"
+		},
+
+		"Hint":{
+			"border":[ 1 ],
+			"borderColor":"clear",
+			"backgroundColor":"panel"
+		},
+
+		"ToolBarExt":{
+			"extends":"ToolBar",
+			"padding":[ 0 ],
+			"margin":[ 0 ],
+			"backgroundColor":"content",
+			"border":[ 0,0,0,1 ],
+			"borderColor":"clear"
+		},
+
+		"MainToolBar":{
+			"extends":"ToolBarExt"
+		},
+
+		"EditorToolBar":{
+			"extends":"ToolBarExt"
+		},
+
+		"SourceToolBar":{
+			"extends":"ToolBarExt"
+		},
+
+		"ToolButton":{
+			"extends":"Button",
+			"padding":[ 2,0 ],
+			"margin":[ 3,0 ]
+		},
+
+		"TabViewArrowPrev":{
+			"extends":"Button",
+			"padding":[ 4,1 ],
+			"margin":[ 2,0,1,0 ]
+		},
+
+		"TabViewArrowNext":{
+			"extends":"Button",
+			"padding":[ 4,1 ],
+			"margin":[ 1,0,2,0 ]
+		},
+
+		"StatusBar":{
+			"extends":"DockingView",
+			"padding":[ 0 ],
+			"backgroundColor":"content",
+			"border":[ 0,1,0,0 ]
+		},
+		"StatusBarText":{
+			"extends":"Label"
+		},
+		"StatusBarLineInfo":{
+			"extends":"Label",
+			"margin":[ 30,0,0,0 ]
+		},
+		"StatusBarIns":{
+			"extends":"Label"
+		},
+		"StatusBarProgress":{
+			"extends":"ProgressBar",
+			"margin":[ 6,0 ]
+		}
+	}
+}
