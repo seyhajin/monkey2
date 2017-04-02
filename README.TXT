@@ -22,7 +22,7 @@ When installing, you should select 'i686' for 'architecture', 'posix' for 'threa
 
 2) Open a command prompt and change to the 'monkey2\scripts' directory.
 
-3) Enter 'rebuildall' and hit return. Wait...
+3) Enter 'rebuildall2go' and hit return. Wait...
 
 4) If all went well, you should end up with a 'Monkey2 (Windows)' exe in the monkey2 directory.
 
@@ -35,7 +35,7 @@ When installing, you should select 'i686' for 'architecture', 'posix' for 'threa
 
 2) Open a shell and change to the 'monkey2/scripts' directory.
 
-3) Enter './rebuildall.sh' and hit return. Wait...
+3) Enter './rebuildall2go.sh' and hit return. Wait...
 
 4) If all went well, you should end up with a 'Monkey2 (...)' app in the monkey2 directory.
 
