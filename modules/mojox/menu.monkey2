@@ -156,22 +156,8 @@ Class Menu Extends DockingView
 	#rem monkeydoc Opens the menu.
 	#end
 	Method Open()
-		
+	
 		Open( App.MouseLocation,App.ActiveWindow,Null )
-	End
-
-	#rem monkeydoc @hidden
-	#end	
-	Method Open( view:View )
-	
-		Open( view.MouseLocation,view )
-	End
-	
-	#rem monkeydoc @hidden
-	#end	
-	Method Open( location:Vec2i,view:View )
-	
-		Open( location,view,view )
 	End
 	
 	#rem monkeydoc @hidden
@@ -232,9 +218,9 @@ Class Menu Extends DockingView
 	Global _open:=New Stack<Menu>
 	
 	Global _filter:Void( MouseEvent )
-
+	
 	Function CloseAll()
-
+		
 		_open[0].Close()
 	End
 	
@@ -244,31 +230,28 @@ Class Menu Extends DockingView
 		
 		Local view:=event.View
 			
+		For Local menu:=Eachin _open
+		
+			If view.IsChildOf( menu ) Return
+			
+		Next
+		
 		If _open[0]._owner
 		
-			If view<>_open[0]._owner
+			If view<>_open[0]._owner And view.IsChildOf( _open[0]._owner ) Return
 			
-				For Local menu:=Eachin _open
-					If view.IsChildOf( menu ) Return
-				Next
-			
-				If view.IsChildOf( _open[0]._owner ) Return
-			Endif
-						
 			If event.Type=EventType.MouseDown 
 				CloseAll()
 			Else
-				event.Eat()
+'				event.Eat()
 			Endif
 		
 		Else
-
-			For Local menu:=Eachin _open
-				If view.IsChildOf( menu ) Return
-			Next
 			
 			If event.Type=EventType.MouseDown
 				CloseAll()
+			Else
+'				event.Eat()
 			Endif
 		
 		Endif
