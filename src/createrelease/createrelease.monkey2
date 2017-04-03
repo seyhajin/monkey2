@@ -26,6 +26,10 @@ Function CopyFiles( dir:String )
 	CreateDir( output+"/"+dir )
 	
 	For Local file:=Eachin LoadDir( dir )
+		
+		If file=".gitignore" continue
+		
+		If file.Contains( "_raspbian" ) Continue
 
 #if __TARGET__="windows"
 		If file.Contains( "_macos" ) Continue
