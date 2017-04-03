@@ -406,7 +406,19 @@ Class AppInstance
 	#rem monkeydoc @hidden
 	#end
 	Method BeginModal( view:View )
-	
+		
+	#rem
+		If _mouseView
+			SendMouseEvent( EventType.MouseUp,_mouseView )
+			_mouseView=Null
+		Endif
+		
+		If _hoverView
+			SendMouseEvent( EventType.MouseLeave,_hoverView )
+			_hoverView=Null
+		Endif
+	#end
+		
 		_modalStack.Push( _modalView )
 		
 		_modalView=view
@@ -470,7 +482,7 @@ Class AppInstance
 		
 		Return Null
 	End
-
+	
 	#rem monkeydoc @hidden
 	#end	
 	Method UpdateWindows()
@@ -485,7 +497,7 @@ Class AppInstance
 		For Local window:=Eachin Window.VisibleWindows()
 			window.UpdateWindow( render )
 		End
-
+		
 		If _mouseView And Not IsActive( _mouseView )
 			SendMouseEvent( EventType.MouseUp,_mouseView )
 			_mouseView=Null
