@@ -406,19 +406,7 @@ Class AppInstance
 	#rem monkeydoc @hidden
 	#end
 	Method BeginModal( view:View )
-		
-	#rem
-		If _mouseView
-			SendMouseEvent( EventType.MouseUp,_mouseView )
-			_mouseView=Null
-		Endif
-		
-		If _hoverView
-			SendMouseEvent( EventType.MouseLeave,_hoverView )
-			_hoverView=Null
-		Endif
-	#end
-		
+	
 		_modalStack.Push( _modalView )
 		
 		_modalView=view
@@ -478,6 +466,7 @@ Class AppInstance
 		If Not _window Return Null
 		
 		Local view:=_window.FindViewAtWindowPoint( _mouseLocation )
+		
 		If IsActive( view ) Return view
 		
 		Return Null
