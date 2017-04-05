@@ -13,5 +13,7 @@ Have fun!
 
 @import language/language.md
 
+@import sdks.md
+
 @import mx2cc.md
 
