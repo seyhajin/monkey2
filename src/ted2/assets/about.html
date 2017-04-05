@@ -6,7 +6,7 @@
 body{
 	background: transparent;
 	color: #eee;
-	font-size: 18px;
+	font-size: 16px;
 	margin: 8px;
 	padding: 0px;
 	line-height:20px;
@@ -14,13 +14,13 @@ body{
 
 h1{
 	color: #fc0;
-	font-size: 28px;
+	font-size: 20px;
 	text-align: center;
 }
 
 h2{
 	color: #fc0;
-	font-size: 24px;
+	font-size: 18px;
 	text-align: center;
 }
 
@@ -51,76 +51,6 @@ a:hover{
 <p>Please post any bug reports or feature requests to the monkey2 github repository: <a href="https://github.com/blitz-research/monkey2">https://github.com/blitz-research/monkey2</a>.
 
 <p>For monkey2 discussion and programming help, feel free to drop by the monkey2 forums: <a href="http://monkey2.monkey-x.com/forums">http://monkey2.monkey-x.com/forums</a>.
-
-<p>Monkey2 is a crowd funded project. If you like what you see, please consider contributing to development either via paypal donation or by becoming a Patreon supporter.
-
-<h2>Building Desktop apps</h2>
-
-<p>If you are reading this in Ted2 on a Windows machine, you should theoretically be able to build desktop apps with no extra hassle.
-
-<p>On Macos, it's a little bit trickier but not much. First, you will need to install xcode from the App Store. Once that's done, go into a shell and enter 'xcode-select --install' to install the 'xcode command line tools'. Note that if you are already using Blitzmax or Monkey1 on a Mac, you may not have to do anything.
-
-<p>On Linux, you will need the standard set of development tools and libs such as g++, mesa-gl, a ton of X stuff etc. Sorry I can't be more specific here, but past attempts to produce a definitive list of 'what you need to code in linux' have proved fruitless - it changes from distro to distro and version to version.
-
-<p>Once you're ready to go, try clicking on the 'hello-world.monkey2' file in the 'Files' browser to the right, and then selecting 'Build and Run' from the 'Build' menu.
-
-<p>This will bring up a little 'Build Settings' dialog. Just click OK to use the defaults and build and run the app. If everything is working properly, a simple 'Hello World' window should appear.
-
-<p>Note that the build settings dialog will only appear automatically the first time you build an app for each target. After that, you can manually
-activate it by selecting 'Build Settings' from the 'Build' menu - not that it does a lot right now!
-
-<p>There are a few more examples in the 'bananas' directory on the right - more coming!
-
-<h2>Building Emscripten apps</h2>
-
-<p>To build emscripten apps, you will first need to install emscripten: 
-
-<p><a href="http://kripken.github.io/emscripten-site">http://kripken.github.io/emscripten-site</a>.
-
-<p>(On MacOS, you may also need to modify your bin/env_macos.txt file to let monkey2 know where emscripten has been installed).
-
-<p>Once emscripten is installed, you will then need to 'rebuild modules' for the emscripten target. This involves selecting 'Rebuild modules' from the 'Build' menu in Ted2, and then selecting 'Emscripten'. This will take a while, as monkey2 needs to rebuild ALL source code used behind the scenes.
-
-<p>Once done, you should be able to build emscripten apps. However, to also actually run them you will need to install the 'mserver' package:
-
-<p><a href="http://www.monkey-x.com/mak/devtools/mserver-v86c.zip">http://www.monkey-x.com/mak/devtools/mserver-v86c.zip</a>.
-
-<p>(On Macos and Linux, you may also need to change file permissions to 'execute').
-
-<p>This needs to be unzipped into your monkey2 'devtools' directory. MServer is actually a mini 'http' server, and is necessary because emscripten apps can't be run directly from the filesystem - they must always be run from a server.
-
-<p>Now, select the 'Emscripten' target from the 'Build Targets' menu and you should be able to build and run emscripten apps.
-
-
-<h2>Building Android apps</h2>
-
-<p>To build android apps, you will first need to install Android Studio:
-
-<p><a href="https://developer.android.com/studio/index.html">https://developer.android.com/studio/index.html</a>.
-
-<p>Once installed, make sure everything's working properly and that you can build and deploy android apps from inside Android studio. The best way to do this is by building and deploying one of the simple 'template' apps in android studio.
-
-<p>Next, install the Android NDK (native development kit) via the SDK Manager->SDK Tools section.
-
-<p>Once android studio and the NDK are installed, you will then need to rebuild modules for android. Once this is done, you should (finally!) be able to build android apps.
-
-<p>Android apps are produced in the form of android studio projects, and can be found in the '.products' directory next to your monkey2 source file.
-
-<p>Note that monkey2 only currently builds for 'armv7' hardware.
-
-
-<h2>Building iOS apps</h2>
-
-<p>Monkey2 iOS apps cannot currently be run on the simulator, so the first thing you will need is a real iOS device plus the necessary 'code signing skills' to be able to actually deploy to it.
-
-<p>Apart from that, all you need to build for iOS is the latest version of xcode. Once you have xcode installed, you will to 'rebuild modules' for iOS after which you should be able to build iOS apps.
-
-<p>iOS apps are produced in the form of xcode projects, and can be found in the '.products' directory next to your monkey2 source file.
-
-<p>Note that monkey2 only currently builds for 'armv7' hardware.
-
-
-<h2>That's all Folks!</h2>
 
 <p>Monkey2 is a crowd funded project. If you like what you see, please consider contributing to development either via paypal donation or by becoming a Patreon supporter.
 
