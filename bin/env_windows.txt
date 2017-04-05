@@ -9,17 +9,15 @@ MX2_WHOLE_ARCHIVE=0
 
 '***** WINDOWS DESKTOP TARGET *****
 
-'Need this to override installed mingws.
-'
-GCC_EXEC_PREFIX=
-
-'Add MinGW build tools to path...
-'
-'MinGW build tools can be found at https://monkey2.monkey-x.com/monkey2-files. Extract into your devtools folder.
+'Note: Requires MinGW compilers+build tools, see: https://monkey2.monkey-x.com/monkey2-files.
 '
 '(Note: TDM GCC not recommended, as it uses SJLJ exceptions which are very slow)
 '
 PATH=${MX2_HOME}\devtools\i686-6.2.0-posix-dwarf-rt_v5-rev1\mingw32\bin;${PATH}
+
+'Need this to override installed mingw.
+'
+GCC_EXEC_PREFIX=
 
 'Linker options
 MX2_LD_OPTS_WINDOWS=-static -m32
@@ -39,15 +37,7 @@ MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG '-fvtable-gc -fdata-sections -ffunctio
 
 '***** EMSCRIPTEN/WASM *****
 
-'Add emscripten build tools to path...
-'
-'Pre-built Emscripten build tools can be found at https://monkey2.monkey-x.com/monkey2-files. Extract into your devtools folder.
-'
-'Or you can build emscripten yourself: https://github.com/juj/emsdk/blob/master/README.md
-'
-PATH=${MX2_HOME}\devtools\emscripten-1.37.9\emscripten\tag-1.37.9;${PATH}
-
-PATH=${MX2_HOME}\devtools\emscripten-1.37.9\python\2.7.5.3_64bit;${PATH}
+'Note: Requires Emscripten SDK, see: https://github.com/juj/emsdk/blob/master/README.md
 
 'Add mserver_winnt emscripten mini-server/launcher.
 '
@@ -71,9 +61,11 @@ MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 '***** ANDROID *****
 
+'Note: Requires Android Studio + Android NDK, see: https://developer.android.com/studio/index.html
+
 'This is where *my* ndk-bundle is located - yours is probably somewhere else!
 '
-'For android builds, you need to either set this correctly or make sure 'ndk-build' is in your system PATH.
+'For android builds, you need to either set this correctly or make sure 'ndk-build' is available from the command line.
 '
 'PATH=D:\devtools\Android\sdk\ndk-bundle;${PATH}
 
@@ -85,6 +77,7 @@ MX2_ANDROID_APP_ABI=armeabi-v7a x86
 'Controls APP_PLATFORM in Application.mk for NDK
 '
 MX2_ANDROID_APP_PLATFORM=10
+
 
 '***** RASPBIAN *****
 
