@@ -23,7 +23,7 @@ Const Keyboard:=New KeyboardDevice
 
 #rem monkeydoc The KeyboardDevice class.
 
-All method that take a `key` parameter can also be used with 'raw' keys.
+All methods that take a `key` parameter can also be used with 'raw' keys.
 
 A raw key represents the physical location of a key on US keyboards. For example, `Key.Q|Key.Raw` indicates the key at the top left of the
 'qwerty' keys regardless of the current keyboard layout.
@@ -41,7 +41,6 @@ Class KeyboardDevice Extends InputDevice
 	#end
 	Property Modifiers:Modifier()
 		Return _modifiers
-'		Return Cast<Modifier>( Int( SDL_GetModState() ) )
 	End
 
 	#rem monkeydoc Gets the name of a key.
@@ -140,7 +139,6 @@ Class KeyboardDevice Extends InputDevice
 	#rem monkeydoc @hidden
 	#end
 	Method KeyHit:Bool( key:Key,repeating:Bool=False )
-
 		Return KeyPressed( key,repeating )
 	End
 	
@@ -222,6 +220,7 @@ Class KeyboardDevice Extends InputDevice
 			
 			p=p+1
 		Wend
+
 	End
 	
 	#rem monkeydoc @hidden
@@ -240,7 +239,9 @@ Class KeyboardDevice Extends InputDevice
 		Case SDL_KEYDOWN
 		
 			Local kevent:=Cast<SDL_KeyboardEvent Ptr>( event )
-			
+
+			'Update key matrix
+			'
 			Local scode:=kevent->keysym.scancode
 			
 			_keys[scode].down=True
@@ -251,24 +252,45 @@ Class KeyboardDevice Extends InputDevice
 				_keys[scode].rpressed=_frame
 			Endif
 			
+			'Update modifiers
+			'
+			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
+
+			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
+			
+			Select key
+			Case Key.CapsLock,Key.KeypadNumLock
+				_modifiers~=KeyToModifier( key )
+			Default
+				_modifiers|=KeyToModifier( key )
+			End
+			
+			'Update charqueue
+			'			
 			Local char:=KeyToChar( _scan2key[scode] )
 			If char PushChar( char )
-			
-			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
-			_modifiers|=KeyToModifier( key )
 
 		Case SDL_KEYUP
 		
 			Local kevent:=Cast<SDL_KeyboardEvent Ptr>( event )
 			
+			'Update modifiers
+			'
+			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
+			
+			Select key
+			Case Key.CapsLock,Key.KeypadNumLock
+			Default
+				_modifiers&=~KeyToModifier( key )
+			End
+
+			'Update key matrix
+			'
 			Local scode:=kevent->keysym.scancode
 			
 			_keys[scode].down=False
 			_keys[scode].released=_frame
 			
-			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
-			_modifiers&=~KeyToModifier( key )
-
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
@@ -317,7 +339,8 @@ Class KeyboardDevice Extends InputDevice
 		Case Key.RightAlt Return Modifier.RightAlt
 		Case Key.LeftGui Return Modifier.LeftGui
 		Case Key.RightGui Return Modifier.RightGui
-'		Case Key.CapsLock Return Modifier.CapsLock		'Doesn't really work - here or in SDL...Also, need to find Key.NumLock, not in sdl headers...
+		Case Key.CapsLock Return Modifier.CapsLock
+		Case Key.KeypadNumLock Return Modifier.NumLock
 		End
 		Return Null
 	End
