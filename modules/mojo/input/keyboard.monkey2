@@ -274,6 +274,13 @@ Class KeyboardDevice Extends InputDevice
 		
 			Local kevent:=Cast<SDL_KeyboardEvent Ptr>( event )
 			
+			'Update key matrix
+			'
+			Local scode:=kevent->keysym.scancode
+			
+			_keys[scode].down=False
+			_keys[scode].released=_frame
+			
 			'Update modifiers
 			'
 			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
@@ -284,13 +291,6 @@ Class KeyboardDevice Extends InputDevice
 				_modifiers&=~KeyToModifier( key )
 			End
 
-			'Update key matrix
-			'
-			Local scode:=kevent->keysym.scancode
-			
-			_keys[scode].down=False
-			_keys[scode].released=_frame
-			
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
