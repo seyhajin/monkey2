@@ -383,6 +383,33 @@ Class Pixmap Extends Resource
 		End
 	End
 	
+	#rem monkeydoc @hidden Halves the pixmap for mipmapping
+	
+	Mipmap must be even width and height.
+	
+	FIXME: Handle funky sizes.
+	
+	#end
+	Method MipHalve:Pixmap()
+		
+		DebugAssert( Width&1=0 And Height&1=0 )
+		
+		Local dst:=New Pixmap( Width/2,Height/2,Format )
+		
+		For Local y:=0 Until dst.Height
+			For Local x:=0 Until dst.Width
+				Local c0:=GetPixel( x*2,y*2 )
+				Local c1:=GetPixel( x*2+1,y*2 )
+				Local c2:=GetPixel( x*2+1,y*2+1 )
+				Local c3:=GetPixel( x*2,y*2+1 )
+				Local cm:=(c0+c1+c2+c3)*.25
+				dst.SetPixel( x,y,cm )
+			Next
+		Next
+		
+		Return dst
+	End
+	
 	#rem monkeydoc Flips the pixmap on the Y axis.
 	#end
 	Method FlipY()
