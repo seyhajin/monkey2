@@ -179,7 +179,8 @@ Class Channel
 		If _flags & ChannelFlags.AutoDiscard _tmpChannels.Push( Self )
 		
 		_active+=1
-		Print "Active channels="+_active
+		
+'		Print "Active channels="+_active
 	End
 	
 	Property Flags:ChannelFlags()
