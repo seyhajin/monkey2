@@ -158,6 +158,8 @@ Class Label Extends View
 			x1=x0
 		Next
 		
+		_textRect.Right=x1
+		
 		#rem
 		For Local view:=Eachin _views.Backwards()
 			Local x0:=Max( x1-view.LayoutSize.x,_textRect.Right )
