@@ -10,3 +10,6 @@
 * SDL_dynapi_procs.h - commented out references to direct3d.
 
 * SDL_rpiopengles.c - Added call to bcm_host_init();
+
+* SDL_egl.c - Add SDL_ANGLE_FORCE_OPENGL env var for windows/angle.
+

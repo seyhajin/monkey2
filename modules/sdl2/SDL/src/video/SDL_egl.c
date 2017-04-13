@@ -267,7 +267,55 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
     LOAD_FUNC(eglQueryString);
     
 #if !defined(__WINRT__)
-    _this->egl_data->egl_display = _this->egl_data->eglGetDisplay(native_display);
+
+	int force_gl=0;
+	
+	EGLint angleType=0;
+	
+	#if SDL_VIDEO_DRIVER_WINDOWS
+	
+	const char *p=SDL_getenv( "SDL_ANGLE_RENDERER" );
+	if( p ){
+		if( !strcmp( p,"OPENGL" ) ){
+			angleType=EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE;
+//		}else if( !strcmp( p,"VULKAN" ) ){
+//			angleType=EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
+		}else if( !strcmp( p,"D3D11" ) ){
+			angleType=EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE;
+		}else if( !strcmp( p,"D3D9" ) ){
+			angleType=EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE;
+		}
+	}
+	
+	#endif
+	
+	if( angleType ){
+	
+		PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT=
+		(PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress( "eglGetPlatformDisplayEXT" );
+		
+	    if( eglGetPlatformDisplayEXT ){
+    
+    		EGLint displayAttribs[]={
+    			EGL_PLATFORM_ANGLE_TYPE_ANGLE,				angleType,
+				EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,	EGL_DONT_CARE,
+				EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE, EGL_DONT_CARE,
+//				EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,		EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
+
+				EGL_NONE,EGL_NONE
+			};
+		
+			_this->egl_data->egl_display = eglGetPlatformDisplayEXT( EGL_PLATFORM_ANGLE_ANGLE,native_display,displayAttribs );
+			
+		}else{
+		
+		    _this->egl_data->egl_display = _this->egl_data->eglGetDisplay(native_display);
+		}
+	}else{
+
+	    _this->egl_data->egl_display = _this->egl_data->eglGetDisplay(native_display);
+	}
+    
     if (!_this->egl_data->egl_display) {
         return SDL_SetError("Could not get EGL display");
     }
@@ -275,6 +323,7 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
     if (_this->egl_data->eglInitialize(_this->egl_data->egl_display, NULL, NULL) != EGL_TRUE) {
         return SDL_SetError("Could not initialize EGL");
     }
+
 #endif
 
     _this->gl_config.driver_loaded = 1;
@@ -608,7 +657,7 @@ SDL_EGL_CreateSurface(_THIS, NativeWindowType nw)
         ANativeWindow_setBuffersGeometry(nw, 0, 0, format);
     }
 #endif    
-    
+
     return _this->egl_data->eglCreateWindowSurface(
             _this->egl_data->egl_display,
             _this->egl_data->egl_config,
