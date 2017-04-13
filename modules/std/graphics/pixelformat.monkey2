@@ -15,7 +15,19 @@ Namespace std.graphics
 #end
 Enum PixelFormat
 
-	Unknown,I8,A8,IA16,RGB24,RGBA32
+	Unknown
+	I8
+	A8
+	IA16
+	RGB24
+	RGBA32
+
+	RGBA16F
+	RGBA32F
+	
+	Depth16
+	Depth24
+	Depth32F
 
 End
 
@@ -29,6 +41,11 @@ Function PixelFormatDepth:Int( format:PixelFormat )
 	Case PixelFormat.IA16 Return 2
 	Case PixelFormat.RGB24 Return 3
 	Case PixelFormat.RGBA32 Return 4
+	Case PixelFormat.RGBA16F Return 8
+	Case PixelFormat.RGBA32F Return 16
+	Case PixelFormat.Depth16 Return 2
+	Case PixelFormat.Depth24 Return 4
+	Case PixelFormat.Depth32F Return 4
 	End
 	
 	Return 0
