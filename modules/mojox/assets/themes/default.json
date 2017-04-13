@@ -193,7 +193,7 @@
 			"backgroundColor":"content",
 			"border":[ 8,8,7,7 ]
 		},
-
+		
 		"TabView":{
 		},
 		
@@ -240,7 +240,10 @@
 				}
 			}
 		},
-		
+
+		"GridView":{
+		},
+
 		"TableView":{
 			"extends":"DockingView"
 		},

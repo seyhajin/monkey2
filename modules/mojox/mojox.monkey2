@@ -25,6 +25,8 @@ Namespace mojox
 
 #Import "textview"
 
+#Import "gridview"
+
 #Import "tableview"
 
 #Import "textfield"
