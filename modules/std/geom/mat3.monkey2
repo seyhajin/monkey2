@@ -31,12 +31,6 @@ Struct Mat3<T>
 		k.x=kx; k.y=ky; k.z=kz
 	End
 	
-	Method New( m:Mat4<T> )
-		i.x=m.i.x ; i.y=m.i.y ; i.z=m.i.z
-		j.x=m.j.x ; j.y=m.j.y ; j.z=m.j.z
-		k.x=m.k.x ; k.y=m.k.y ; k.z=m.k.z
-	End
-	
 	Operator To<C>:Mat3<C>()
 		Return New Mat3<C>( i,j,k )
 	End
@@ -220,5 +214,5 @@ Struct Mat3<T>
 	Function Scaling:Mat3( t:T )
 		Return New Mat3( t,t,t )
 	End
-	
+
 End

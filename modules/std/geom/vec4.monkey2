@@ -32,6 +32,14 @@ Struct Vec4<T>
 	Method New( v:Vec2<T>,z:T,w:T )
 		x=v.x;y=v.y;Self.z=z;Self.w=w
 	End
+
+	Method To<C>:Vec4<C>()
+		Return New Vec4<C>( x,y,z )
+	End
+		
+	Method To:Vec3<T>()
+		Return New Vec3<T>( x,y,z )
+	End
 	
 	Property X:T()
 		Return x

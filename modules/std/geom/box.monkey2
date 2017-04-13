@@ -130,8 +130,8 @@ Struct Box<T>
 	Operator|:Box( p:Vec3<T> )
 		Return New Box(
 			Min( min.x,p.x ),
-			Min( min.x,p.y ),
-			Min( min.x,p.z ),
+			Min( min.y,p.y ),
+			Min( min.z,p.z ),
 			Max( max.x,p.x ),
 			Max( max.y,p.y ),
 			Max( max.z,p.z ) )
@@ -139,8 +139,8 @@ Struct Box<T>
 	
 	Operator|=( p:Vec3<T> )
 		min.x=Min( min.x,p.x )
-		min.y=Min( min.x,p.y )
-		min.z=Min( min.x,p.z )
+		min.y=Min( min.y,p.y )
+		min.z=Min( min.z,p.z )
 		max.x=Max( max.x,p.x )
 		max.y=Max( max.y,p.y )
 		max.z=Max( max.z,p.z )
