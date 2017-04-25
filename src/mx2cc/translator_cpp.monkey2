@@ -291,9 +291,10 @@ Class Translator_CPP Extends Translator
 		Emit( "done=true;")
 		
 		'initalize globals
+		'
 		Local gc:=False
 		For Local vvar:=Eachin fdecl.globals
-			If vvar.init Emit( Trans( vvar )+"="+Trans( vvar.init )+";" )
+			If vvar.init Emit( TransRef( vvar )+"="+Trans( vvar.init )+";" )
 			If IsGCType( vvar.type ) gc=True
 		Next
 		
@@ -621,7 +622,7 @@ Class Translator_CPP Extends Translator
 			
 				If Not vvar.init Or Not vvar.init.HasSideEffects Continue
 
-				Emit( Trans( vvar )+"="+Trans( vvar.init )+";" )
+				Emit( TransRef( vvar )+"="+Trans( vvar.init )+";" )
 			Next
 			
 			EndGCFrame()
@@ -1333,14 +1334,14 @@ Class Translator_CPP Extends Translator
 		Case "mod=" op="%="
 		Case "shl=" op="<<="
 		Case "shr=" op=">>="
-		Case "="
-			Local vvar:=Cast<VarValue>( stmt.lhs )
-			If vvar And vvar.vdecl.kind="param" FindGCTmp( vvar )
+'		Case "="
+'			Local vvar:=Cast<VarValue>( stmt.lhs )
+'			If vvar And vvar.vdecl.kind="param" FindGCTmp( vvar )
 		End
 		
 		AssignsTo( stmt.lhs.type )
 		
-		Local lhs:=Trans( stmt.lhs )
+		Local lhs:=TransRef( stmt.lhs )
 		Local rhs:=Trans( stmt.rhs )
 		
 		Emit( lhs+op+rhs+";" )
@@ -1542,11 +1543,11 @@ Class Translator_CPP Extends Translator
 		Local arrayIndexValue:=Cast<ArrayIndexValue>( value )
 		If arrayIndexValue Return Trans( arrayIndexValue )
 		
-		Local stringIndexValue:=Cast<StringIndexValue>( value )
-		If stringIndexValue Return Trans( stringIndexValue )
-		
 		Local pointerIndexValue:=Cast<PointerIndexValue>( value )
 		If pointerIndexValue Return Trans( pointerIndexValue )
+		
+		Local stringIndexValue:=Cast<StringIndexValue>( value )
+		If stringIndexValue Return Trans( stringIndexValue )
 		
 		Local unaryopValue:=Cast<UnaryopValue>( value )
 		If unaryopValue Return Trans( unaryopValue )
@@ -1795,10 +1796,18 @@ Class Translator_CPP Extends Translator
 	Method Trans:String( value:ArrayIndexValue )
 	
 		Uses( value.type )
+		
+		Local val:=Trans( value.value )
 
-		If value.args.Length=1 Return Trans( value.value )+"["+TransArgs( value.args )+"]"
-
-		Return Trans( value.value )+".at("+TransArgs( value.args )+")"
+		If value.args.Length=1 
+			val+="["+TransArgs( value.args )+"]"
+		Else
+			val+=".at("+TransArgs( value.args )+")"
+		Endif
+		
+		If IsGCPtrType( value.type ) val+=".get()"
+			
+		Return val
 	End
 	
 	Method Trans:String( value:PointerIndexValue )
@@ -1869,32 +1878,11 @@ Class Translator_CPP Extends Translator
 		
 		Local etype:=TCast<EnumType>( value.type )
 		If etype
-'			Refs( etype )
 			Return EnumName( etype )+"(int("+lhs+")"+op+"int("+rhs+"))"
 		Endif
 		
-'		Uses( value.type )
-'		Uses( value.lhs.type )
-'		Uses( value.rhs.type )
-		
 		Return "("+lhs+op+rhs+")"
-#rem		
-'		If TCast<PointerType>( value.lhs.type ) Uses( value.lhs.type )
-'		If TCast<PointerType>( value.rhs.type ) Uses( value.rhs.type )
-		
-		Local etype:=TCast<EnumType>( value.type )
 
-		Local lhs:=Trans( value.lhs )
-		Local rhs:=Trans( value.rhs )
-		
-		If etype lhs="int("+lhs+")" ; rhs="int("+rhs+")"
-		
-		Local t:="("+lhs+op+rhs+")"
-		
-		If etype t=EnumName( etype )+"("+t+")"
-		
-		Return t
-#end
 	End
 	
 	Method Trans:String( value:IfThenElseValue )
@@ -1903,20 +1891,22 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method Trans:String( value:PointerValue )
-
-		Return "&"+Trans( value.value )
+		
+		Return "(&"+Trans( value.value )+")"
 	End
 	
 	Method Trans:String( value:VarValue )
-	
-		Refs( value )
-	
+		
+		RefsVar( value )
+		
 		Local vdecl:=value.vdecl
 		
 		If (vdecl.kind="local" Or vdecl.kind="param") And IsGCType( value.type )
 			Return FindGCTmp( value )
 		Endif
-
+		
+		If vdecl.kind<>"capture" And IsGCPtrType( value.type ) Return VarName( value )+".get()"
+		
 		Return VarName( value )
 	End
 	
@@ -1932,13 +1922,76 @@ Class Translator_CPP Extends Translator
 		Return "bbGetType<"+TransType( value.ttype )+">()"
 	End
 	
+	'***** Refs, ie: LHS of assignment etc *****
+	
+	Method TransRef:String( value:Value )
+
+		Local arrayIndexValue:=Cast<ArrayIndexValue>( value )
+		If arrayIndexValue Return TransRef( arrayIndexValue )
+		
+		Local pointerIndexValue:=Cast<PointerIndexValue>( value )
+		If pointerIndexValue Return TransRef( pointerIndexValue )
+		
+		Local varValue:=Cast<VarValue>( value )
+		If varValue Return TransRef( varValue )
+		
+		Local memberVarValue:=Cast<MemberVarValue>( value )
+		If memberVarValue Return TransRef( memberVarValue )
+		
+		DebugStop()
+		Throw New TransEx( "Translator_CPP.TransRef() Unrecognized ref value type:"+value.ToString() )
+	End
+	
+	Method TransRef:String( value:ArrayIndexValue )
+		
+		If value.args.Length=1 Return Trans( value.value )+"["+TransArgs( value.args )+"]"
+
+		Return Trans( value.value )+".at("+TransArgs( value.args )+")"
+	End
+	
+	Method TransRef:String( value:PointerIndexValue )
+		
+		Return Trans( value.value )+"["+Trans( value.index )+"]"
+	End
+
+	Method TransRef:String( value:VarValue )
+		
+		RefsVar( value )
+	
+		Local vdecl:=value.vdecl
+		
+		If (vdecl.kind="local" Or vdecl.kind="param") And IsGCType( value.type )
+			Return FindGCTmp( value )
+		Endif
+		
+		Return VarName( value )
+	End
+	
+	Method TransRef:String( value:MemberVarValue )
+		
+		Local instance:=value.instance
+		Local member:=value.member
+		
+		Uses( instance.type )
+		
+		Local supr:=Cast<SuperValue>( instance )
+		If supr Return ClassName( supr.ctype )+"::"+TransRef( member )
+		
+		Local tinst:=Trans( instance )
+		Local tmember:=TransRef( member )
+		
+		If IsCValueType( instance.type ) Return tinst+"."+tmember
+		
+		Return tinst+"->"+tmember
+	End
+
 	'***** Args *****
 	
 	Method IsVolatile:Bool( arg:Value )
 	
 		Return IsGCType( arg.type ) And arg.HasSideEffects
 	End
-		
+	
 	Method TransArgs:String( args:Value[] )
 	
 		Local targs:=""

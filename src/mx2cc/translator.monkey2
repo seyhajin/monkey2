@@ -416,8 +416,8 @@ Class Translator
 		_deps.refs[node]=True
 		Return False
 	End
-
-	Method Refs( vvar:VarValue )
+	
+	Method RefsVar( vvar:VarValue )
 	
 		If vvar.vdecl.IsExtern Uses( vvar.transFile ) ; Return
 		
