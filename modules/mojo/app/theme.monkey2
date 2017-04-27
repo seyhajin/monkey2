@@ -262,7 +262,8 @@ Class Theme
 		Local res:=_res
 		
 		_res=New ResourceManager
-		
+
+		_defaultStyle=New Style		
 		_defaultStyle=LoadStyle( _jdefault )
 		
 		For Local it:=Eachin _jcolors
