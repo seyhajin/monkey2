@@ -1,26 +1,38 @@
 
 Namespace std.requesters
 
+#If __TARGET__="windows"
+
+	#Import "<libole32.a>"
+	#Import "<libComdlg32.a>"
+	
+	#Import "native/requesters_windows.cpp"
+	#Import "native/requesters.h"
+
+#Elseif __TARGET__="macos"
+
+	#Import "native/requesters_macos.mm"
+	#Import "native/requesters.h"
+
+#Elseif __TARGET__="linux"
+
+	#Import "native/requesters_linux.cpp"
+	#Import "native/requesters.h"
+
+#Elseif __TARGET__="android"
+
+	#Import "<sdl2>"
+	#Import "<jni>"
+	#Import "native/Monkey2Requesters.java"
+
+#Elseif __TARGET__="ios"
+
+	#Import "native/requesters_ios.mm"
+	#Import "native/requesters.h"
+
+#Endif
+
 #If __DESKTOP_TARGET__
-
-#Import "native/requesters.h"
-
-#If __TARGET__="macos"
-
-	#Import "native/requesters.mm"
-
-#Else
-
-	#Import "native/requesters.cpp"
-	
-	#if __TARGET__="windows"
-
-		#Import "<libole32.a>"
-		#Import "<libComdlg32.a>"
-
-	#endif
-	
-#endif
 
 Extern
 
@@ -82,38 +94,27 @@ The behavior of OpenURL is highly target dependent, but in general it should at 
 #end
 Function OpenUrl( url:String )="bbRequesters::OpenUrl"
 
-#else
+Public
 
-#rem
+#Elseif __TARGET__="android"
 
-#rem monkeydoc @hidden
-#end
-Function Notify:Void( title:String,text:String,serious:Bool=False )
-End
-
-#rem monkeydoc @hidden
-#end
-Function Confirm:Bool( title:String,text:String,serious:Bool=False )
-	Return False
-End
-
-#rem monkeydoc @hidden
-#end
-Function RequestFile:String( title:String,filter:String="",save:Bool=False,file:String="" )
-	Return ""
-End
-
-#rem monkeydoc @hidden
-#end
-Function RequestDir:String( title:String,dir:String="" )
-	Return ""
-End
-
-#rem monkeydoc @hidden
-#end
 Function OpenUrl( url:String )
+	
+	Local env:=sdl2.Android_JNI_GetEnv()	
+	
+	Local cls:=env.FindClass( "com/monkey2/lib/Monkey2Requesters" )
+	
+	Local mth:=env.GetStaticMethodID( cls,"openUrl","(Ljava/lang/String;)V" )
+	
+	env.CallStaticVoidMethod( cls,mth,New Variant[]( url ) )
 End
 
-#end
+#Elseif __TARGET__="ios"
+
+Extern
+
+Function OpenUrl( url:String )="bbRequesters::OpenUrl"
+	
+Public
 
 #Endif
