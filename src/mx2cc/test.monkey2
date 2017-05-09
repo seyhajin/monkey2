@@ -1,28 +1,13 @@
 
-#Import "<std>"
-
-Using std..
-
-Struct btVec3
-	
-End
-
-Struct Vec3<T> Extension
-	
-	Operator To:btVec3()
-		Return New btVec3
-	End
-
-End
-
-Function Test( v:btVec3 )
-End
+Alias Test:Test
 
 Function Main()
 	
-	Print "Hello World!"
-
-	Local t:=New Vec3f
-	Test( t )
+	Local x:=10
 	
+'	Select x
+'	End
+	
+	Print "Bye!"
+
 End

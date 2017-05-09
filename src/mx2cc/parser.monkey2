@@ -1050,6 +1050,8 @@ Class Parser
 			cases.Push( New CaseExpr( exprs.ToArray(),stmts ) )
 		Wend
 		
+		If cases.Empty ErrorNx( "Select statement must have at least one case" )
+		
 		If CParse( "default" )
 		
 			CParseEol()
