@@ -369,7 +369,7 @@ Class BuilderInstance
 				Endif
 			Endif
 			
-			'Ugly stuff for generic instances
+			'Ugly stuff for generic instances - needs more FIXING!
 			'
 			Local transFiles:=New StringMap<FileDecl>
 			

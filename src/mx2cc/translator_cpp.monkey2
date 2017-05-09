@@ -3,6 +3,7 @@ Namespace mx2
 
 Class Translator_CPP Extends Translator
 
+	Field _module:Module
 	Field _lambdaId:Int
 	Field _gctmps:=0
 	
@@ -13,14 +14,19 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method TranslateModule:Bool( module:Module )
-	
-		For Local fdecl:=Eachin module.fileDecls
 		
+		_module=module
+		
+		For Local fdecl:=Eachin _module.fileDecls
+			
 			If Builder.opts.verbose>0 Print "Translating "+fdecl.path
 		
 			Try
+			
 				TranslateFile( fdecl )
+				
 			Catch ex:TransEx
+
 				Return False
 			End
 
@@ -30,6 +36,8 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method TranslateTypeInfo( module:Module )
+		
+		_module=module
 	
 		Reset()
 	
@@ -41,7 +49,7 @@ Class Translator_CPP Extends Translator
 		
 		BeginDeps()
 		
-		For Local fdecl:=Eachin module.fileDecls
+		For Local fdecl:=Eachin _module.fileDecls
 		
 			EmitTypeInfo( fdecl )
 	
@@ -55,13 +63,13 @@ Class Translator_CPP Extends Translator
 		
 		Next
 		
-		EndDeps( ExtractDir( module.rfile ) )
+		EndDeps( ExtractDir( _module.rfile ) )
 		
 		Emit( "#else" )
 		
 		BeginDeps()
 
-		For Local fdecl:=Eachin module.fileDecls
+		For Local fdecl:=Eachin _module.fileDecls
 		
 			For Local ctype:=Eachin fdecl.classes
 			
@@ -83,16 +91,16 @@ Class Translator_CPP Extends Translator
 		
 		Next
 		
-		EndDeps( ExtractDir( module.rfile ) )
+		EndDeps( ExtractDir( _module.rfile ) )
 		
 		Emit( "#endif" )
 		
 		Local src:=_buf.Join( "~n" )
 		
-		CSaveString( src,module.rfile )
+		CSaveString( src,_module.rfile )
 	End
 	
-	Method TranslateFile( fdecl:FileDecl ) 'Override
+	Method TranslateFile( fdecl:FileDecl )
 	
 		Reset()
 	
@@ -156,7 +164,6 @@ Class Translator_CPP Extends Translator
 
 		EndDeps( ExtractDir( fdecl.hfile ) )
 		
-		
 		'Ouch, have to emit classes in dependancy order!
 		'
 		Local emitted:=New StringMap<Bool>
@@ -197,6 +204,13 @@ Class Translator_CPP Extends Translator
 		For Local ctype:=Eachin fdecl.classes
 			EmitClassMembers( ctype )
 		Next
+
+		If fdecl=_module.fileDecls[0] And Not _module.main
+			EmitBr()
+			Emit( "void mx2_"+_module.ident+"_main(){" )
+			EmitMain()
+			Emit( "}" )
+		Endif
 		
 		EmitGlobalInits( fdecl )
 		
@@ -284,11 +298,13 @@ Class Translator_CPP Extends Translator
 	
 		EmitBr()
 		Emit( "void mx2_"+fdecl.ident+"_init_f(){" )
+		
 		BeginGCFrame()
 		
-		Emit( "static bool done;" )
-		Emit( "if(done) return;" )
-		Emit( "done=true;")
+		'This now done in module main...
+		'Emit( "static bool done;" )
+		'Emit( "if(done) return;" )
+		'Emit( "done=true;")
 		
 		'initalize globals
 		'
@@ -315,8 +331,8 @@ Class Translator_CPP Extends Translator
 			Emit( "}mx2_"+fdecl.ident+"_roots;" )
 		Endif
 		
-		EmitBr()
-		Emit( "bbInit mx2_"+fdecl.ident+"_init(~q"+fdecl.ident+"~q,&mx2_"+fdecl.ident+"_init_f);" )
+'		EmitBr()
+'		Emit( "bbInit mx2_"+fdecl.ident+"_init(~q"+fdecl.ident+"~q,&mx2_"+fdecl.ident+"_init_f);" )
 	
 	End
 	
@@ -494,7 +510,7 @@ Class Translator_CPP Extends Translator
 		
 		Endif
 		
-		If debug
+		If _debug
 		
 			If cdecl.kind="class"
 				Emit( "void dbEmit();" )
@@ -564,7 +580,7 @@ Class Translator_CPP Extends Translator
 			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
 		Endif
 		
-		If debug
+		If _debug
 			Local tname:=cname
 			If Not ctype.IsStruct tname+="*"
 			Emit( "bbString bbDBType("+tname+"*);" )
@@ -655,7 +671,7 @@ Class Translator_CPP Extends Translator
 			
 		Endif
 		
-		If debug And cdecl.kind="class"
+		If _debug And cdecl.kind="class"
 			EmitBr()
 			
 			Emit( "void "+cname+"::dbEmit(){" )
@@ -673,7 +689,7 @@ Class Translator_CPP Extends Translator
 			Emit( "}" )
 		Endif
 		
-		If debug And cdecl.kind="struct"
+		If _debug And cdecl.kind="struct"
 			EmitBr()
 			
 			Emit( "void "+cname+"::dbEmit("+cname+"*p){" )
@@ -712,7 +728,7 @@ Class Translator_CPP Extends Translator
 			EmitFunc( func )
 		Next
 		
-		If debug
+		If _debug
 			Local tname:=cname
 			If Not ctype.IsStruct tname+="*"
 			
@@ -1030,28 +1046,16 @@ Class Translator_CPP Extends Translator
 		Endif
 		
 		If init Emit( "init();" )
-		
+			
 		'is it 'main'?
-		Local module:=func.scope.FindFile().fdecl.module
-		
-		If func=module.main
-		
-			Emit( "static bool done;" )
-			Emit( "if(done) return;" )
-			Emit( "done=true;" )
+		'Local module:=func.scope.FindFile().fdecl.module
+		'If func=module.main
 			
-			For Local dep:=Eachin module.moduleDeps.Keys
-			
-				Local mod2:=Builder.modulesMap[dep]
-				
-				If mod2.main
-					Emit( "void mx2_"+mod2.ident+"_main();mx2_"+mod2.ident+"_main();" )
-				Endif
-			Next
-			
+		If func=_module.main
+			EmitMain()
 		Endif
 		
-		If debug And func.IsMethod
+		If _debug And func.IsMethod
 		
 			If Not func.IsVirtual And Not func.IsExtension
 				'			
@@ -1066,6 +1070,29 @@ Class Translator_CPP Extends Translator
 		EmitBlock( func )
 		
 		Emit( "}" )
+	End
+	
+	Method EmitMain()
+		
+		Emit( "static bool done;" )
+		Emit( "if(done) return;" )
+		Emit( "done=true;" )
+		
+		If _module.ident<>"monkey" Emit( "void mx2_monkey_main();mx2_monkey_main();" )
+
+		'init dependent modules...
+		For Local dep:=Eachin _module.moduleDeps.Keys
+			Local mod2:=Builder.modulesMap[dep]
+			Local id:="mx2_"+mod2.ident+"_main();"
+			Emit( "void "+id+id )
+		Next
+		
+		'init module files...
+		For Local fdecl:=Eachin _module.fileDecls.Backwards()
+			Local id:="mx2_"+fdecl.ident+"_init_f();"
+			Emit( "void "+id+id )
+		Next
+		
 	End
 	
 	Method EmitLambda:String( func:FuncValue )
@@ -1128,7 +1155,7 @@ Class Translator_CPP Extends Translator
 	Method BeginBlock()
 
 		BeginGCFrame()
-		If debug Emit( "bbDBBlock db_blk;" )
+		If _debug Emit( "bbDBBlock db_blk;" )
 
 	End
 	
@@ -1159,7 +1186,7 @@ Class Translator_CPP Extends Translator
 	
 		BeginGCFrame( func )
 		
-		If debug 
+		If _debug 
 		
 			Emit( "bbDBFrame db_f{~q"+func.Name+":"+func.ftype.retType.Name+"("+func.ParamNames+")~q,~q"+func.pnode.srcfile.path+"~q};" )
 			
@@ -1190,7 +1217,7 @@ Class Translator_CPP Extends Translator
 	'***** Stmt *****
 	
 	Method DebugInfo:String( stmt:Stmt )
-		If debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
+		If _debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
 		Return ""
 	End
 	
@@ -1309,7 +1336,7 @@ Class Translator_CPP Extends Translator
 			
 		Endif
 		
-		If debug And vdecl.kind="local" Emit( "bbDBLocal(~q"+vvar.vdecl.ident+"~q,&"+tvar+");" )
+		If _debug And vdecl.kind="local" Emit( "bbDBLocal(~q"+vvar.vdecl.ident+"~q,&"+tvar+");" )
 
 	End
 	
@@ -1405,7 +1432,7 @@ Class Translator_CPP Extends Translator
 	
 	Method EmitStmt( stmt:WhileStmt )
 	
-		If debug
+		If _debug
 			Emit( "{" )
 			Emit( "bbDBLoop db_loop;" )
 		Endif
@@ -1416,12 +1443,12 @@ Class Translator_CPP Extends Translator
 		
 		Emit( "}" )
 		
-		If debug Emit( "}" )
+		If _debug Emit( "}" )
 	End
 	
 	Method EmitStmt( stmt:RepeatStmt )
 	
-		If debug
+		If _debug
 			Emit( "{" )
 			Emit( "bbDBLoop db_loop;" )
 		Endif
@@ -1433,14 +1460,14 @@ Class Translator_CPP Extends Translator
 		
 		If stmt.cond Emit( "}while(!("+Trans( stmt.cond )+"));" ) Else Emit( "}" )
 		
-		If debug Emit( "}" )
+		If _debug Emit( "}" )
 	End
 	
 	Method EmitStmt( stmt:ForStmt )
 	
 		Emit( "{" )
 		BeginGCFrame()
-		If debug Emit( "bbDBLoop db_loop;" )
+		If _debug Emit( "bbDBLoop db_loop;" )
 	
 		EmitStmts( stmt.iblock )
 		

@@ -1,13 +1,10 @@
 
-Alias Test:Test
+Const RTA:Float = 180.0/Pi
+Const ATR:Float = Pi/180.0
 
 Function Main()
 	
-	Local x:=10
-	
-'	Select x
-'	End
-	
-	Print "Bye!"
+	Print RTA
+	Print ATR
 
 End
