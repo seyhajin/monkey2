@@ -98,6 +98,17 @@ namespace bbJNI{
 		return r;
 	}
 
+	jobject CallObjectMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		jobject r=env->CallObjectMethodA( obj,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
 	void CallStaticVoidMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );
@@ -118,5 +129,27 @@ namespace bbJNI{
 		return r;
 	}
 
+	jobject CallStaticObjectMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		jobject r=env->CallStaticObjectMethodA( clazz,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+	
+	jobject NewObject( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+
+		jvalue *jargs=makeArgs( env,args );
+		
+		jobject r=env->NewObjectA( clazz,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+	
 }
 

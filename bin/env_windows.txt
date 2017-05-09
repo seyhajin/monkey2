@@ -24,15 +24,16 @@ MX2_LD_OPTS_WINDOWS=-static -m32
 MX2_LD_OPTS_WINDOWS_DEBUG=
 MX2_LD_OPTS_WINDOWS_RELEASE=-s -O3 '-Wl,--gc-sections 
 
-'C Compiler options
+'C Compiler options. Note: -D_WIN32_WINNT=0x0601 means headers for Windows 7, ie: Windows 7 is min SDK!
+'
 MX2_CC_OPTS_WINDOWS=-std=gnu99 -m32
 MX2_CC_OPTS_WINDOWS_DEBUG=
-MX2_CC_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG '-fdata-sections -ffunction-sections
+MX2_CC_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG -D_WIN32_WINNT=0x0603 '-fdata-sections -ffunction-sections
 
 'C++ Compiler options
-MX2_CPP_OPTS_WINDOWS=-std=c++11 -m32
+MX2_CPP_OPTS_WINDOWS=-std=c++14 -m32
 MX2_CPP_OPTS_WINDOWS_DEBUG=
-MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG '-fvtable-gc -fdata-sections -ffunction-sections
+MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG -D_WIN32_WINNT=0x0603 '-fvtable-gc -fdata-sections -ffunction-sections
 
 
 '***** EMSCRIPTEN/WASM *****
@@ -54,7 +55,7 @@ MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 'C++ Compiler options
-MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_CPP_OPTS_EMSCRIPTEN=-std=c++14 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3
 
@@ -94,6 +95,6 @@ MX2_CC_OPTS_RASPBIAN_DEBUG=
 MX2_CC_OPTS_RASPBIAN_RELEASE=-O3 -DNDEBUG ' -fdata-sections -ffunction-sections
 
 'C++ Compiler options
-MX2_CPP_OPTS_RASPBIAN=-std=c++11
+MX2_CPP_OPTS_RASPBIAN=-std=c++14
 MX2_CPP_OPTS_RASPBIAN_DEBUG=
 MX2_CPP_OPTS_RASPBIAN_RELEASE=-O3 -DNDEBUG ' -fvtable-gc -fdata-sections -ffunction-sections

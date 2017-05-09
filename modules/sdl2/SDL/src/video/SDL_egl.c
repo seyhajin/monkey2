@@ -287,8 +287,6 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
 		}
 	}
 	
-	#endif
-	
 	if( angleType ){
 	
 		PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT=
@@ -315,6 +313,11 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
 
 	    _this->egl_data->egl_display = _this->egl_data->eglGetDisplay(native_display);
 	}
+	#else
+	
+    _this->egl_data->egl_display = _this->egl_data->eglGetDisplay(native_display);
+    
+	#endif
     
     if (!_this->egl_data->egl_display) {
         return SDL_SetError("Could not get EGL display");
