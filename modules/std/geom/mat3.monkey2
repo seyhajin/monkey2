@@ -137,6 +137,10 @@ Struct Mat3<T>
 		Return Self * Rotation( rx,ry,rz )
 	End
 	
+	Method Rotate:Mat3( quat:Quat<T> )
+		Return Self * Rotation( quat )
+	End
+	
 	Method Scale:Mat3( rv:Vec3<T> )
 		Return Self * Scaling( rv )
 	End
@@ -154,34 +158,42 @@ Struct Mat3<T>
 		Return New Mat3( j.Cross( k ).Normalize(),k.Cross( i ).Normalize(),k )
 	End
 	
-	#rem monkeydoc Creates a yaw (y axis) rotation matrix.
+	#rem monkeydoc Creates a rotation matrix from euler angles.
 	#end
 	Function Yaw:Mat3( an:Double )
 		Local sin:=Sin(an),cos:=Cos(an)
 		Return New Mat3( cos,0,sin, 0,1,0, -sin,0,cos )
 	End
 	
-	#rem monkeydoc Creates a pitch (x axis) rotation matrix.
+	#rem monkeydoc Creates a rotation matrix from euler angles.
 	#end
 	Function Pitch:Mat3( an:Double )
 		Local sin:=Sin(an),cos:=Cos(an)
 		return New Mat3( 1,0,0, 0,cos,sin, 0,-sin,cos )
 	End
 	
-	#rem monkeydoc Creates a roll (z axis) rotation matrix.
+	#rem monkeydoc Creates a rotation matrix from euler angles.
 	#end
 	Function Roll:Mat3( an:Double )
 		Local sin:=Sin(an),cos:=Cos(an)
 		Return New Mat3( cos,sin,0, -sin,cos,0, 0,0,1 )
 	End
 	
-	#rem monkeydoc Creates a rotation matrix from a quaternion.
+	#rem monkeydoc Creates a rotation matrix from euler angles or a quaternion.
 	#end
+	Function Rotation:Mat3( rv:Vec3<Double> )
+		Return Yaw( rv.y ) * Pitch( rv.x ) * Roll( rv.z )
+	End
+	
+	Function Rotation:Mat3( rx:Double,ry:Double,rz:Double )
+		Return Yaw( ry ) * Pitch( rx ) * Roll( rz )
+	End
+
 	Function Rotation:Mat3( quat:Quat<T> )
+		Local r:Mat3
 		Local xx:=quat.v.x*quat.v.x , yy:=quat.v.y*quat.v.y , zz:=quat.v.z*quat.v.z
 		Local xy:=quat.v.x*quat.v.y , xz:=quat.v.x*quat.v.z , yz:=quat.v.y*quat.v.z
 		Local wx:=quat.w*quat.v.x   , wy:=quat.w*quat.v.y   , wz:=quat.w*quat.v.z
-		Local r:Mat3
 		r.i.x=1-2*(yy+zz) ; r.i.y=  2*(xy-wz) ; r.i.z=  2*(xz+wy)
 		r.j.x=  2*(xy+wz) ; r.j.y=1-2*(xx+zz) ; r.j.z=  2*(yz-wx)
 		r.k.x=  2*(xz-wy) ; r.k.y=  2*(yz+wx) ; r.k.z=1-2*(xx+yy)
@@ -193,14 +205,6 @@ Struct Mat3<T>
 	Order of rotation is Yaw * Pitch * Roll.
 	
 	#end
-	Function Rotation:Mat3( rv:Vec3<Double> )
-		Return Yaw( rv.y ) * Pitch( rv.x ) * Roll( rv.z )
-	End
-	
-	Function Rotation:Mat3( rx:Double,ry:Double,rz:Double )
-		Return Yaw( ry ) * Pitch( rx ) * Roll( rz )
-	End
-
 	#rem monkeydoc Creates a scaling matrix.
 	#end
 	Function Scaling:Mat3( sv:Vec3<T> )

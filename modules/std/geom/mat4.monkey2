@@ -196,7 +196,7 @@ Struct Mat4<T>
 		Return r
 	End
 
-	#rem monkeydoc Creates a rotation matrix.
+	#rem monkeydoc Creates a rotation matrix for euler angles or a quaternion.
 	#end
 	Function Rotation:Mat4( rv:Vec3<Double> )
 		Return Rotation( rv.x,rv.y,rv.z )
@@ -204,6 +204,10 @@ Struct Mat4<T>
 	
 	Function Rotation:Mat4( rx:Double,ry:Double,rz:Double )
 		Return New Mat4( Mat3<T>.Rotation( rx,ry,rz ) )
+	End
+	
+	Function Rotation:Mat4( quat:Quat<T> )
+		Return New Mat4( Mat3<T>.Rotation( quat ) )
 	End
 	
 	#rem monkeydoc Creates a scaling matrix.
