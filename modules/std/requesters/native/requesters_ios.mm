@@ -1,9 +1,9 @@
 
-#include "requesters_ios.h"
+#include "requesters.h"
 
 #import <UIKit/UIKit.h>
 
-void bbRequesters::openUrl( bbString url ){
+void bbRequesters::OpenUrl( bbString url ){
 
 	NSURL *nsurl=[NSURL URLWithString:url.ToNSString()];
 	
