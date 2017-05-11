@@ -23,16 +23,14 @@ Const Keyboard:=New KeyboardDevice
 
 #rem monkeydoc The KeyboardDevice class.
 
-All methods that take a `key` parameter can also be used with 'raw' keys.
-
-A raw key represents the physical location of a key on US keyboards. For example, `Key.Q|Key.Raw` indicates the key at the top left of the
-'qwerty' keys regardless of the current keyboard layout.
-
-Please see the [[Key]] enum for more information on raw keys.
-
 To access the keyboard device, use the global [[Keyboard]] constant.
 
 The keyboard device should only used after a new [[app.AppInstance]] is created.
+
+All methods that take a `key` parameter can also be combined with 'raw' keys.
+
+A raw key represents the physical location of a key on US keyboards. For example, `Key.Q|Key.Raw` indicates the key at the top left of the
+QWERTY keys, as this is where the 'Q' key is on US keyboards.
 
 #end
 Class KeyboardDevice Extends InputDevice
@@ -45,25 +43,22 @@ Class KeyboardDevice Extends InputDevice
 
 	#rem monkeydoc Gets the name of a key.
 	
-	If `key` is a raw key, returns the name 'printed' on that key.
+	If `key` is a raw key, returns the name 'printed' on the key, eg: KeyName( Key.W|Key.Raw ) will always return the name of key at the top left of the QWERTY keys.
 	
-	if `key` is a virtual key
+	if `key` is a virtual key, returns the name of the key, eg: KeyName( Key.W ) will always return "W".
 	
 	#end	
 	Method KeyName:String( key:Key )
-		If key & key.Raw 
-			key&=~Key.Raw
-			If key<=Key.None Or key>=Key.Max Return "?????"
-			key=TranslateKey( key )
-		Else
-			If key<=Key.None Or key>=Key.Max Return "?????"
+		If key & key.Raw
+			key=TranslateKey( key&~Key.Raw ) & ~Key.Raw
 		Endif
+		If key<=Key.None Or key>=Key.Max Return "?????"
 		Return _names[key]
 	End
 	
 	#rem monkeydoc Translates a key to/from a raw key.
 	
-	If `key` is a raw key, returns the corresponding virual key.
+	If `key` is a raw key, returns the corresponding virtual key.
 	
 	If `key` is a virtual key, returns the corresponding raw key.
 	
