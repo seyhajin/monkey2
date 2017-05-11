@@ -24,7 +24,7 @@ MX2_CC_OPTS_MACOS_DEBUG=
 MX2_CC_OPTS_MACOS_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
-MX2_CPP_OPTS_MACOS=-std=c++11 -mmacosx-version-min=10.9 -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+MX2_CPP_OPTS_MACOS=-std=c++14 -mmacosx-version-min=10.9 -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
 MX2_CPP_OPTS_MACOS_DEBUG=
 MX2_CPP_OPTS_MACOS_RELEASE=-O3 -DNDEBUG
 
@@ -58,7 +58,7 @@ MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
-MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_CPP_OPTS_EMSCRIPTEN=-std=c++14 -s USE_SDL=2 -s TOTAL_MEMORY=67108864 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
@@ -84,6 +84,6 @@ MX2_CC_OPTS_IOS_DEBUG=
 MX2_CC_OPTS_IOS_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
-MX2_CPP_OPTS_IOS=-std=c++11 -arch armv7 -arch arm64 -miphoneos-version-min=${MX2_DEPLOYMENT_TARGET}  -isysroot ${MX2_SDKROOT} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+MX2_CPP_OPTS_IOS=-std=c++14 -arch armv7 -arch arm64 -miphoneos-version-min=${MX2_DEPLOYMENT_TARGET} -isysroot ${MX2_SDKROOT} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
 MX2_CPP_OPTS_IOS_DEBUG=-O0 -g
 MX2_CPP_OPTS_IOS_RELEASE=-O3 -DNDEBUG
