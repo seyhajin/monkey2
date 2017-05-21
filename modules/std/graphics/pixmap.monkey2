@@ -163,8 +163,8 @@ Class Pixmap Extends Resource
 			p[1]=color.g * 255
 			p[2]=color.b * 255
 			p[3]=color.a * 255
-		Default
-			Assert( False )
+'		Default
+'			Assert( False )
 		End
 	End
 
@@ -198,8 +198,8 @@ Class Pixmap Extends Resource
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,1 )
 		Case Format.RGBA32
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,p[3]/255.0 )
-		Default
-			Assert( False )
+'		Default
+'			Assert( False )
 		End
 		Return Color.None
 	End
