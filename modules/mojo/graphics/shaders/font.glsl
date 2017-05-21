@@ -1,43 +1,43 @@
 
 //@renderpasses 0,1,2
 
-varying vec2 texCoord0;
-varying vec4 color;
+varying vec2 v_TexCoord0;
+varying vec4 v_Color;
 
 //@vertex
 
-attribute vec4 mx2_Vertex;
-attribute vec2 mx2_TexCoord0;
-attribute vec4 mx2_Color;
+attribute vec4 a_Position;
+attribute vec2 a_TexCoord0;
+attribute vec4 a_Color;
 
-uniform mat4 mx2_ModelViewProjectionMatrix;
+uniform mat4 r_ModelViewProjectionMatrix;
 
-uniform vec4 mx2_ImageColor;
+uniform vec4 m_ImageColor;
 
 void main(){
 
-	texCoord0=mx2_TexCoord0;
+	v_TexCoord0=a_TexCoord0;
 
-	color=mx2_ImageColor * mx2_Color;
+	v_Color=m_ImageColor * a_Color;
 	
-	gl_Position=mx2_ModelViewProjectionMatrix * mx2_Vertex;
+	gl_Position=r_ModelViewProjectionMatrix * a_Position;
 }
 
 //@fragment
 
-uniform sampler2D mx2_ImageTexture0;
+uniform sampler2D m_ImageTexture0;
 
 void main(){
 
-	float alpha=texture2D( mx2_ImageTexture0,texCoord0 ).a;
+	float alpha=texture2D( m_ImageTexture0,v_TexCoord0 ).a;
 
 #if MX2_RENDERPASS==0
 
-	gl_FragColor=vec4( alpha ) * color;
+	gl_FragColor=vec4( alpha ) * v_Color;
 
 #else
 
-	gl_FragColor=vec4( 0.0,0.0,0.0,alpha * color.a );
+	gl_FragColor=vec4( 0.0,0.0,0.0,alpha * v_Color.a );
 	
 #endif
 

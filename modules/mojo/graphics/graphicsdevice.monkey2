@@ -15,10 +15,10 @@ Blend modes are used with the [[Canvas.BlendMode]] property.
 #end
 Enum BlendMode
 	None=0
-	Opaque
-	Alpha
-	Additive
-	Multiply
+	Opaque=1
+	Alpha=2
+	Additive=3
+	Multiply=4
 End
 
 #rem monkeydoc @hidden Color mask values.
@@ -39,6 +39,23 @@ Enum ColorMask
 	Blue=4
 	Alpha=8
 	All=15
+End
+
+Enum DepthFunc
+	Never=0
+	Less=1
+	Equal=2
+	LessEqual=3
+	Greater=4
+	NotEqual=5
+	GreaterEqual=6
+	Always=7
+End
+
+Enum CullMode
+	None=0
+	Back=1
+	Front=2
 End
 
 #rem monkeydoc @hidden
@@ -71,17 +88,17 @@ Class GraphicsDevice
 	
 	'***** PUBLIC *****
 	
-	Property RenderTarget:Texture()
+	Property RenderTarget:RenderTarget()
 
 		Return _rtarget
 	
-	Setter( renderTarget:Texture )
+	Setter( renderTarget:RenderTarget )
 
 		FlushTarget()
 	
 		_rtarget=renderTarget
 		
-		_rtargetSize=_rtarget ? _rtarget.Rect.Size Else _deviceSize
+		_rtargetSize=_rtarget ? _rtarget.Size Else _deviceSize
 		
 		_dirty|=Dirty.RenderTarget|Dirty.Viewport|Dirty.Scissor
 	End
@@ -123,6 +140,28 @@ Class GraphicsDevice
 		_dirty|=Dirty.ColorMask
 	End
 	
+	Property DepthMask:Bool()
+		
+		Return _depthMask
+	
+	Setter( depthMask:Bool )
+		
+		_depthMask=depthMask
+		
+		_dirty|=Dirty.DepthMask
+	End
+	
+	Property DepthFunc:DepthFunc()
+		
+		Return _depthFunc
+	
+	Setter( depthFunc:DepthFunc )
+		
+		_depthFunc=depthFunc
+		
+		_dirty2|=Dirty.DepthFunc
+	End
+	
 	Property BlendMode:BlendMode()
 	
 		Return _blendMode
@@ -134,17 +173,17 @@ Class GraphicsDevice
 		_dirty2|=Dirty.BlendMode
 	End
 	
-	Property TextureFilter:TextureFilter()
-	
-		return _textureFilter
-	
-	Setter( filter:TextureFilter )
-	
-		_textureFilter=filter
+	Property CullMode:CullMode()
 		
-		_dirty2|=Dirty.TextureFilter
-	End
+		Return _cullMode
 	
+	Setter( cullMode:CullMode )
+		
+		_cullMode=cullMode
+		
+		_dirty2|=Dirty.CullMode
+	End
+
 	Property VertexBuffer:VertexBuffer()
 	
 		Return _vertexBuffer
@@ -189,14 +228,14 @@ Class GraphicsDevice
 		_dirty2|=Dirty.Shader
 	End
 	
-	Method SetUniformBlock( id:Int,ublock:UniformBlock )
+	Method BindUniformBlock( ublock:UniformBlock )
 	
-		_ublocks[id]=ublock
+		_ublocks[ublock.Name]=ublock
 	End
 	
-	Method GetUniformBlock:UniformBlock( id:Int )
+	Method GetUniformBlock:UniformBlock( block:Int )
 	
-		Return _ublocks[id]
+		Return _ublocks[block]
 	End
 	
 	Method CopyPixmap:Pixmap( rect:Recti )
@@ -212,24 +251,44 @@ Class GraphicsDevice
 		Return pixmap
 	End
 
-	Method Clear( color:Color )
+	Method Clear( color:Color,depth:Float=1 )',clearColor:Bool=True,clearDepth:Bool=True )
+		
+		glCheck()
 	
 		Validate()
 		
-		glClearColor( color.r,color.g,color.b,color.a )
+		glCheck()
 		
 		If Not _scissorTest glEnable( GL_SCISSOR_TEST )
 		
-		glClear( GL_COLOR_BUFFER_BIT )
+		Local mask:GLbitfield
+		
+		If _colorMask
+			glClearColor( color.r,color.g,color.b,color.a )
+			mask|=GL_COLOR_BUFFER_BIT
+		Endif
+		
+		If _depthMask
+			glClearDepthf( depth )
+			mask|=GL_DEPTH_BUFFER_BIT
+		Endif
+		
+		glClear( mask )
 		
 		If Not _scissorTest glDisable( GL_SCISSOR_TEST )
 		
 		_modified=true
+
+		glCheck()
 	End
 	
 	Method Render( order:Int,count:Int,offset:Int=0 )
+		
+		glCheck()
 	
 		Validate2()
+		
+		glCheck()
 	
 		Local n:=order*count
 	
@@ -244,44 +303,76 @@ Class GraphicsDevice
 		End
 		
 		_modified=true
+
+		glCheck()
 	End
-	
+
 	Method RenderIndexed( order:Int,count:Int,offset:Int=0 )
-	
+		
+		glCheck()
+		
 		Validate2()
-
+		
+		glCheck()
+		
 		Local n:=order*count
+		
+		Local gltype:GLenum,pitch:Int
+		
+		Select _indexBuffer.Format
+		Case IndexFormat.UINT16
+'			For Local i:=0 Until n
+'				If Cast<UShort Ptr>( _indexBuffer.Data )[i]>=_vertexBuffer.Length DebugStop()
+'			Next
+			gltype=GL_UNSIGNED_SHORT
+			pitch=2
+		Case IndexFormat.UINT32
+'			For Local i:=0 Until n
+'				If Cast<UInt Ptr>( _indexBuffer.Data )[i]>=_vertexBuffer.Length DebugStop()
+'			Next
+			gltype=GL_UNSIGNED_INT
+			pitch=4
+		Default 
+			RuntimeError( "Invalid index format" )
+		End
 
-		Local p:=Cast<UShort Ptr>( offset*2 )
+		Local p:=Cast<UByte Ptr>( offset * pitch )
 		
 		Select order
-		Case 1 glDrawElements( GL_POINTS,n,GL_UNSIGNED_SHORT,p )
-		Case 2 glDrawElements( GL_LINES,n,GL_UNSIGNED_SHORT,p )
-		Case 3 glDrawElements( GL_TRIANGLES,n,GL_UNSIGNED_SHORT,p )
+		Case 1 glDrawElements( GL_POINTS,n,gltype,p )
+		Case 2 glDrawElements( GL_LINES,n,gltype,p )
+		Case 3 glDrawElements( GL_TRIANGLES,n,gltype,p )
 		Default
 			For Local i:=0 Until count
-				glDrawElements( GL_TRIANGLE_FAN,order,GL_UNSIGNED_SHORT,p+i*order )
+				glDrawElements( GL_TRIANGLE_FAN,order,gltype,p+i*order*pitch )
 			Next
 		End
+
+		_modified=True
 		
-		_modified=true
+		glCheck()
 	End
 	
 	Private
 	
 	Enum Dirty
 		'
+		'stuff that affects Clear()
 		RenderTarget=		$0001
 		Viewport=			$0002
 		Scissor=			$0004
 		ColorMask=			$0008
+		DepthMask=			$0010
 		'
-		BlendMode=			$0010
-		VertexBuffer=		$0020
-		IndexBuffer=		$0040
-		Shader=				$0080
-		TextureFilter=		$0100
-		All=				$01ff
+		'stuff that affects Render()
+		DepthFunc=			$0100
+		BlendMode=			$0200
+		CullMode=			$0400
+		VertexBuffer=		$0800
+		IndexBuffer=		$1000
+		Shader=				$2000
+		'
+		All=				$ffff
 		'
 	End
 	
@@ -289,32 +380,37 @@ Class GraphicsDevice
 	Field _dirty2:Dirty
 	Field _modified:Bool
 	
-	Field _rtarget:Texture
+	Field _rtarget:RenderTarget
 	Field _rtargetSize:Vec2i
 	Field _deviceSize:Vec2i
 	Field _viewport:Recti
 	Field _scissor:Recti
 	Field _scissorTest:Bool
 	Field _colorMask:ColorMask
+	Field _depthMask:Bool
+	Field _depthFunc:DepthFunc
 	Field _blendMode:BlendMode
-	Field _textureFilter:TextureFilter
+	Field _cullMode:CullMode
 	Field _vertexBuffer:VertexBuffer
 	Field _indexBuffer:IndexBuffer
 	Field _ublocks:=New UniformBlock[4]
 	Field _shader:Shader
 	Field _rpass:Int
 	
-	Global _seq:Int
+	Global _glSeq:Int
 	Global _current:GraphicsDevice
 	Global _defaultFbo:GLint
 	
 	Method Init()
+		_depthFunc=DepthFunc.Less
+		_blendMode=BlendMode.Alpha
+		_cullMode=CullMode.Back
 		_colorMask=ColorMask.All
+		_depthMask=True
 	End
 	
-	Function InitGLState()
-		glDisable( GL_CULL_FACE )
-		glDisable( GL_DEPTH_TEST )
+	Function InitGL()
+		InitGLexts()
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
 	End
 	
@@ -323,38 +419,42 @@ Class GraphicsDevice
 		_modified=False
 		If _rtarget
 			Validate()
-			_rtarget.Modified( _viewport & _scissor )
+'			_rtarget.Modified( _viewport & _scissor )
 		Endif
 	End
 	
 	Method Validate()
 
-		If _seq<>glGraphicsSeq
-			_seq=glGraphicsSeq
+		If _glSeq<>glGraphicsSeq
+			_glSeq=glGraphicsSeq
 			_current=Null
-			InitGLState()
+			InitGL()
 		Endif
 		
-		If _current=Self 
-			If Not _dirty Return
-		Else
+		If _current<>Self
 			If _current _current.FlushTarget()
 			_current=Self
 			_dirty=Dirty.All
+			_dirty2=Dirty.All
+		Else
+			If Not _dirty Return
 		Endif
 		
 		If _dirty & Dirty.RenderTarget
-		
+			
 			If _rtarget
-				glBindFramebuffer( GL_FRAMEBUFFER,_rtarget.GLFramebuffer )
+				_rtarget.Bind()
 			Else
 				glBindFramebuffer( GL_FRAMEBUFFER,_defaultFbo )
+				Local bufs:GLenum=GL_BACK
+				glDrawBuffers( 1,Varptr bufs )
+'				glReadBuffer( GL_BACK )
 			Endif
 
 		Endif
 	
 		If _dirty & Dirty.Viewport
-		
+			
 			If _rtarget
 				glViewport( _viewport.X,_viewport.Y,_viewport.Width,_viewport.Height )
 			Else
@@ -368,6 +468,7 @@ Class GraphicsDevice
 			Local scissor:=_scissor & _viewport
 			
 			_scissorTest=scissor<>_viewport
+			
 			If _scissorTest glEnable( GL_SCISSOR_TEST ) Else glDisable( GL_SCISSOR_TEST )
 			
 			If _rtarget
@@ -389,56 +490,105 @@ Class GraphicsDevice
 		
 		Endif
 		
+		If _dirty & Dirty.DepthMask
+			
+			glDepthMask( _depthMask )
+			
+		Endif
+		
 		_dirty=Null
 	End
 	
 	Method Validate2()
-	
+		
 		Validate()
 		
+		If _dirty2 & Dirty.DepthFunc
+			
+			If _depthFunc=DepthFunc.Always
+				glDisable( GL_DEPTH_TEST )
+			Else
+				glEnable( GL_DEPTH_TEST )
+				Select _depthFunc
+				Case DepthFunc.Never
+					glDepthFunc( GL_NEVER )
+				Case DepthFunc.Less
+					glDepthFunc( GL_LESS )
+				Case DepthFunc.Equal
+					glDepthFunc( GL_EQUAL )
+				Case DepthFunc.LessEqual
+					glDepthFunc( GL_LEQUAL )
+				Case DepthFunc.Greater
+					glDepthFunc( GL_GREATER )
+				Case DepthFunc.NotEqual
+					glDepthFunc( GL_NOTEQUAL )
+				Case DepthFunc.GreaterEqual
+					glDepthFunc( GL_GEQUAL )
+				Default
+					RuntimeError( "Invalid DepthFunc" )
+				End
+			Endif
+		
+		Endif
+		
 		If _dirty2 & Dirty.BlendMode
-
-			Select _blendMode
-			Case BlendMode.Opaque
+			
+			If _blendMode=BlendMode.Opaque
 				glDisable( GL_BLEND )
-			Case BlendMode.Alpha
+			Else
 				glEnable( GL_BLEND )
-				glBlendFunc( GL_ONE,GL_ONE_MINUS_SRC_ALPHA )
-			Case BlendMode.Additive
-				glEnable( GL_BLEND )
-				glBlendFunc( GL_ONE,GL_ONE )
-			Case BlendMode.Multiply
-				glEnable( GL_BLEND )
-				glBlendFunc( GL_DST_COLOR,GL_ONE_MINUS_SRC_ALPHA )
-			Default
-				glDisable( GL_BLEND )
-			End
+				Select _blendMode
+				Case BlendMode.Alpha
+					glBlendFunc( GL_ONE,GL_ONE_MINUS_SRC_ALPHA )
+				Case BlendMode.Additive
+					glBlendFunc( GL_ONE,GL_ONE )
+				Case BlendMode.Multiply
+					glBlendFunc( GL_DST_COLOR,GL_ONE_MINUS_SRC_ALPHA )
+				Default
+					RuntimeError( "Invalid BlendMode" )
+				End
+			Endif
 
+		Endif
+		
+		If _dirty2 & Dirty.CullMode
+			
+			If _cullMode=CullMode.None
+				glDisable( GL_CULL_FACE )
+			Else
+				glEnable( GL_CULL_FACE )
+				Select _cullMode
+				Case CullMode.Back
+					glCullFace( GL_FRONT )
+				Case CullMode.Front
+					glCullFace( GL_BACK )
+				Default
+					RuntimeError( "Invalid CullMode" )
+				End
+			Endif
+		
 		Endif
 		
 		If _dirty2 & Dirty.VertexBuffer
 		
 			 _vertexBuffer.Bind()
-			
 		Endif
 
 		If _dirty2 & Dirty.IndexBuffer
 		
 			If _indexBuffer _indexBuffer.Bind()
-			
 		Endif
 		
 		If _dirty2 & Dirty.Shader
 		
 			_shader.Bind( _rpass )
-
 		Endif
 		
 		_vertexBuffer.Validate()
 		
 		If _indexBuffer _indexBuffer.Validate()
 
-		_shader.ValidateUniforms( _rpass,_ublocks,_textureFilter )
+		_shader.ValidateUniforms( _rpass,_ublocks )
 		
 		_dirty2=Null
 	End

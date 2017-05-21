@@ -23,11 +23,16 @@ Images also have several properties that affect how they are rendered, including
 * Scale - a fixed scale factor for the image.
 * BlendMode - controls how the image is blended with the contents of the canvas. If this is null, this property is ignored and the current canvas blendmode is used to render the image instead.
 * Color - when rendering an image to a canvas, this property is multiplied by the current canvas color and the result is multiplied by actual image pixel colors to achieve the final color to be rendered.
-* TextureFilter - controls how image texels are sampled. Set to TextureFilter.None for coolio retro style graphics, or TextureFilter.Mipmap for fullon super smoothing.
-
 
 #end
 Class Image Extends Resource
+
+	#rem Default texture flags
+	
+	Default texture flags to use when TextureFlags.UseDefaults is specified as a parameter.
+	
+	#end
+	Global DefaultTextureFlags:TextureFlags=TextureFlags.Filter|TextureFlags.Mipmap
 
 	#rem monkeydoc Creates a new Image.
 	
@@ -54,29 +59,35 @@ Class Image Extends Resource
 	@param width,height Image size.
 	
 	#end	
-	Method New( pixmap:Pixmap,textureFlags:TextureFlags=Null,shader:Shader=Null )
+	Method New( pixmap:Pixmap,textureFlags:TextureFlags=TextureFlags.UseDefault,shader:Shader=Null )
+	
+		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
 	
 		Local texture:=New Texture( pixmap,textureFlags )
 		
-		Init( texture,texture.Rect,shader )
+		Init( texture,shader )
 		
 		AddDependancy( texture )
 	End
 
-	Method New( width:Int,height:Int,textureFlags:TextureFlags=Null,shader:Shader=Null )
+	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.UseDefault,shader:Shader=Null )
+	
+		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
 	
 		Local texture:=New Texture( width,height,PixelFormat.RGBA32,textureFlags )
 		
-		Init( texture,texture.Rect,shader )
+		Init( texture,shader )
 		
 		AddDependancy( texture )
 	End
 
-	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=Null,shader:Shader=Null )
+	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=TextureFlags.UseDefault,shader:Shader=Null )
+	
+		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
 	
 		Local texture:=New Texture( width,height,format,textureFlags )
 		
-		Init( texture,texture.Rect,shader )
+		Init( texture,shader )
 		
 		AddDependancy( texture )
 	End
@@ -92,7 +103,6 @@ Class Image Extends Resource
 		Next
 		
 		BlendMode=image.BlendMode
-		TextureFilter=image.TextureFilter
 		LightDepth=image.LightDepth
 		Handle=image.Handle
 		Scale=image.Scale
@@ -110,7 +120,6 @@ Class Image Extends Resource
 		Next
 		
 		BlendMode=image.BlendMode
-		TextureFilter=image.TextureFilter
 		LightDepth=image.LightDepth
 		Handle=image.Handle
 		Scale=image.Scale
@@ -126,7 +135,7 @@ Class Image Extends Resource
 	#end
 	Method New( texture:Texture,shader:Shader=Null )
 
-		Init( texture,texture.Rect,shader )
+		Init( texture,shader )
 	End
 	
 	#rem monkeydoc @hidden
@@ -209,24 +218,6 @@ Class Image Extends Resource
 		_blendMode=blendMode
 	End
 	
-	#rem monkeydoc The image texture filter.
-	
-	The texture flags used to draw the image.
-	
-	If set to TextureFilter.None, the canvas texture filter is used instead.
-	
-	Defaults to TextureFilter.None
-	
-	#end	
-	Property TextureFilter:TextureFilter()
-	
-		Return _textureFilter
-		
-	Setter( filter:TextureFilter )
-	
-		_textureFilter=filter
-	End
-	
 	#rem monkeydoc The image color.
 	
 	The color used to draw the image.
@@ -244,7 +235,7 @@ Class Image Extends Resource
 	
 		_color=color
 		
-		_material.SetVector( "mx2_ImageColor",_color )
+		_material.SetVec4f( "ImageColor",_color )
 	End
 
 	#rem monkeydoc The image light depth.
@@ -257,7 +248,7 @@ Class Image Extends Resource
 	
 		_lightDepth=depth
 		
-		_material.SetScalar( "mx2_LightDepth",_lightDepth )
+		_material.SetFloat( "LightDepth",_lightDepth )
 	End
 
 	#rem monkeydoc Shadow caster attached to image.
@@ -338,7 +329,7 @@ Class Image Extends Resource
 	
 		_textures[index]=texture
 		
-		_material.SetTexture( "mx2_ImageTexture"+index,texture )
+		_material.SetTexture( "ImageTexture"+index,texture )
 	End
 	
 	#rem monkeydoc @hidden gets an image texture.
@@ -350,14 +341,16 @@ Class Image Extends Resource
 	
 	#rem monkeydoc Loads an image from file.
 	#end
-	Function Load:Image( path:String,shader:Shader=Null )
+	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.UseDefault )
+		
+		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
 	
 		Local pixmap:=Pixmap.Load( path,Null,True )
 		If Not pixmap Return Null
 
 		If Not shader shader=mojo.graphics.Shader.GetShader( "sprite" )
 		
-		Local image:=New Image( pixmap,Null,shader )
+		Local image:=New Image( pixmap,textureFlags,shader )
 			
 		image.OnDiscarded+=Lambda()
 			pixmap.Discard()
@@ -388,7 +381,7 @@ Class Image Extends Resource
 		
 		If Not shader shader=graphics.Shader.GetShader( "bump" )
 		
-		Local image:=New Image( texture0,texture0.Rect,shader )
+		Local image:=New Image( texture0,shader )
 		image.SetTexture( 1,texture1 )
 		
 		image.OnDiscarded+=Lambda()
@@ -478,7 +471,6 @@ Class Image Extends Resource
 
 	Field _textures:=New Texture[4]
 	Field _blendMode:BlendMode
-	Field _textureFilter:TextureFilter
 	Field _color:Color
 	Field _lightDepth:Float
 	Field _shadowCaster:ShadowCaster
@@ -492,20 +484,24 @@ Class Image Extends Resource
 	Field _bounds:Rectf
 	Field _radius:Float
 	
+	Method Init( texture:Texture,shader:Shader )
+		
+		Init( texture,New Recti( New Vec2i(0),texture.Size ),shader )
+	End
+	
 	Method Init( texture:Texture,rect:Recti,shader:Shader )
 	
 		If Not shader shader=Shader.GetShader( "sprite" )
 	
 		_rect=rect
 		_shader=shader
-		_material=New UniformBlock
+		_material=New UniformBlock( 2 )
 		
 		AddDependancy( _material )
 		
 		SetTexture( 0,texture )
 		
 		BlendMode=BlendMode.None
-		TextureFilter=TextureFilter.None
 		Color=Color.White
 		LightDepth=100
 		Handle=New Vec2f( 0 )

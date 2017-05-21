@@ -5,189 +5,244 @@ Namespace mojo.graphics
 #end
 Class UniformBlock Extends Resource
 
-	#rem monkeydoc Sets a scalar uniform.
-	#end
-	Method SetScalar( uniform:String,scalar:Float )
-		Local id:=GetUniformId( uniform )
-		_scalars[id]=scalar
-		_seq=_gseq
-		_gseq+=1
+	Method New( name:Int )
+		_name=name
 	End
 	
-	#rem monkeydoc Gets a scalar uniform.
-	#end
-	Method GetScalar:Float( uniform:String )
-		Local id:=GetUniformId( uniform )
-		Return _scalars[id]
-	End
-
-	Method GetScalar:Float( id:Int )
-		Return _scalars[id]
+	Property Name:Int()
+		Return _name
 	End
 	
-	#rem monkeydoc Sets a vector uniform.
-	#end
-	Method SetVector( uniform:String,color:Color )
-		Local id:=GetUniformId( uniform )
-		_vectors[id]=New Vec4f( color.r,color.g,color.b,color.a )
-		_seq=_gseq
-		_gseq+=1
-	End
-
-	Method SetVector( uniform:String,vector:Vec2f )
-		Local id:=GetUniformId( uniform )
-		_vectors[id]=New Vec4f( vector.x,vector.y,0,0 )
-		_seq=_gseq
-		_gseq+=1
-	End
-
-	Method SetVector( uniform:String,vector:Vec3f )
-		Local id:=GetUniformId( uniform )
-		_vectors[id]=New Vec4f( vector.x,vector.y,vector.z,0 )
-		_seq=_gseq
-		_gseq+=1
-	End
-	
-	Method SetVector( uniform:String,vector:Vec4f )
-		Local id:=GetUniformId( uniform )
-		_vectors[id]=vector
-		_seq=_gseq
-		_gseq+=1
-	End
-	
-	#rem monkeydoc Gets a vector uniform.
-	#end
-	Method GetVector:Vec4f( uniform:String )
-		Local id:=GetUniformId( uniform )
-		Return _vectors[id]
-	End
-	
-	Method GetVector:Vec4f( id:Int )
-		Return _vectors[id]
-	End
-	
-	#rem monkeydoc @hidden
-	#end	
-	Method GetVector4fv:Float Ptr( id:Int )
-		Return Varptr _vectors[id].x
-	End
-	
-	#rem monkeydoc Sets a matrix uniform.
-	#end
-	Method SetMatrix( uniform:String,matrix:Mat4f )
-		Local id:=GetUniformId( uniform )
-		_matrices[id]=matrix
-		_seq=_gseq
-		_gseq+=1
-	End
-	
-	#rem monkeydoc Gets a matrix uniform.
-	#end
-	Method GetMatrix:Mat4f( uniform:String )
-		Local id:=GetUniformId( uniform )
-		Return _matrices[id]
-	End
-	
-	Method GetMatrix:Mat4f( id:Int )
-		Return _matrices[id]
-	End
-
-	#rem monkeydoc @hidden
-	#end	
-	Method GetMatrix4fv:Float Ptr( id:Int )
-		Return Varptr _matrices[id].i.x
-	End
-
-	#rem monkeydoc Set a texture uniform.
-	#end	
-	Method SetTexture( uniform:String,texture:Texture )
-		Local id:=GetUniformId( uniform )
-		If texture texture.Retain()
-		If _textures[id] _textures[id].Release()
-		_textures[id]=texture
-		_seq=_gseq
-		_gseq+=1
-	End
-
-	#rem monkeydoc Gets a texture uniform.
-	#end	
-	Method GetTexture:Texture( uniform:String )
-		Local id:=GetUniformId( uniform )
-		Return _textures[id]
-	End
-	
-	Method GetTexture:Texture( id:Int )
-		Return _textures[id]
-	End
-
-	#rem monkeydoc Gets the id of a uniform name.
-	#end	
-	Function GetUniformId:Int( uniform:String )
-		Init()
-		Local id:=_uniformIds[uniform]
+	Function GetUniformId:Int( name:String,block:Int )
+		Local ids:=_ids[block]
+		If Not ids
+			ids=New StringMap<Int>
+			_ids[block]=ids
+		Endif
+		Local id:=ids[name]
 		If Not id
-			id=_uniformIds.Count()+1
-			_uniformIds[uniform]=id
+			id=ids.Count()+1
+			ids[name]=id
 		Endif
 		Return id
 	End
+	
+	Method GetUniformId:Int( name:String )
+		Return GetUniformId( name,_name )
+	End
+	
+	Method GetUniformId:Int( name:String,type:Type )
+		Local id:=GetUniformId( name,_name )
+		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+		Return id
+	End
 
+	'***** Float *****
+	'	
+	Method SetFloat( uniform:String,value:Float )
+		SetFloatData( uniform,value,Type.Scalar )
+	End
+	
+	Method GetFloat:Float( uniform:String )
+		Return GetFloatData<Float>( uniform,Type.Scalar )
+	End
+	
+	Method GetFloat:Float( id:Int )
+		Return GetFloatPtr( id,Type.Scalar )[0]
+	End
+	
+	'***** Vec2f *****
+	'
+	Method SetVec2f( uniform:String,value:Vec2f )
+		SetFloatData( uniform,value,Type.Vec2f )
+	End
+	
+	method GetVec2f:Vec2f( uniform:String )
+		Return GetFloatData<Vec2f>( uniform,Type.Vec2f )
+	End
+	
+	Method GetVec2fv:Float Ptr( id:Int )
+		Return GetFloatPtr( id,Type.Vec2f )
+	End
+	
+	'***** Vec3f *****
+	'
+	Method SetVec3f( uniform:String,value:Vec3f )
+		SetFloatData( uniform,value,Type.Vec3f )
+	End
+
+	Method GetVec3f:Vec3f( uniform:String )
+		Return GetFloatData<Vec3f>( uniform,Type.Vec3f )
+	End
+	
+	Method GetVec3fv:Float Ptr( id:Int )
+		Return GetFloatPtr( id,Type.Vec3f )
+	End
+
+	'***** Vec4f *****
+	'	
+	Method SetVec4f( uniform:String,value:Vec4f )
+		SetFloatData( uniform,value,Type.Vec4f )
+	End
+
+	Method GetVec4f:Vec4f( uniform:String )
+		Return GetFloatData<Vec4f>( uniform,Type.Vec4f )
+	End
+	
+	Method GetVec4fv:Float Ptr( id:Int )
+		Return GetFloatPtr( id,Type.Vec4f )
+	End
+	
+	'***** Mat3f *****
+	'
+	Method SetMat3f( uniform:String,value:Mat3f )
+		SetFloatData( uniform,value,Type.Mat3f )
+	End
+
+	Method GetMat3f:Mat3f( uniform:String )
+		Return GetFloatData<Mat3f>( uniform,Type.Mat3f )
+	End
+	
+	Method GetMat3fv:Float Ptr( id:Int )
+		Return GetFloatPtr( id,Type.Mat3f )
+	End
+	
+	'***** Mat4f *****
+	'
+	Method SetMat4f( uniform:String,value:Mat4f )
+		SetFloatData( uniform,value,Type.Mat4f )
+	End
+
+	Method SetMat4f( uniform:String,value:AffineMat4f )
+		SetFloatData( uniform,New Mat4f( value ),Type.Mat4f )
+	End
+
+	Method GetMat4f:Mat4f( uniform:String )
+		Return GetFloatData<Mat4f>( uniform,Type.Mat4f )
+	End
+	
+	Method GetMat4fv:Float Ptr( id:Int )
+		Return GetFloatPtr( id,Type.Mat4f )
+	End
+	
+	'***** Mat4f array *****
+	'
+	Method SetMat4fArray( uniform:String,value:Mat4f[] )
+		Local id:=GetUniformId( uniform )
+		_uniforms[id].mat4fArray=value
+		_uniforms[id].type=Type.Mat4fArray
+		_seq=_gseq
+		_gseq+=1
+	End
+	
+	Method GetMat4fArray:Mat4f[]( uniform:String )
+		Local id:=GetUniformId( uniform )
+		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalid uniform type" )
+		Return _uniforms[id].mat4fArray
+	End
+
+	Method GetMat4fArrayv:Float Ptr( id:Int )
+		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalid uniform type" )
+		Return Varptr _uniforms[id].mat4fArray[0].i.x
+	End
+	
+	'***** Texture *****
+	'
+	Method SetTexture( uniform:String,value:Texture )
+		Local id:=GetUniformId( uniform )
+		_uniforms[id].texture=value
+		_uniforms[id].type=Type.Texture
+		_seq=_gseq
+		_gseq+=1
+	End
+
+	Method GetTexture:Texture( uniform:String )
+		Local id:=GetUniformId( uniform )
+		DebugAssert( _uniforms[id].type=Type.Texture,"Invalid uniform type" )
+		Return _uniforms[id].texture
+	End
+	
+	Method GetTexture:Texture( id:Int )
+		DebugAssert( _uniforms[id].type=Type.Texture,"Invalid uniform type" )
+		Return _uniforms[id].texture
+	End
+	
 	#rem monkeydoc @hidden
 	#end	
 	Property Seq:Int()
 		Return _seq
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
-	Function BindUniformsToBlockId( uniforms:String[],index:Int )
-		For Local uniform:=Eachin uniforms
-			_blockIds[ GetUniformId( uniform ) ]=index
-		Next
-	End
-	
-	#rem monkeydoc @hidden
-	#end	
-	Function GetUniformBlockId:Int( uniform:String )
-		Return _blockIds[ GetUniformId( uniform ) ]
-	End
-	
-	Protected
-	
-	Method OnDiscard() Override
-	
-		For Local t:=Eachin _textures
-			If t t.Release()
-		Next
-	End
-	
 	Private
 	
+	Field _name:Int
+	
 	Field _seq:Int
+	
 	Global _gseq:Int
-
-	Field _scalars:=New Float[MaxUniforms]
-	Field _vectors:=New Vec4f[MaxUniforms]
-	Field _matrices:=New Mat4f[MaxUniforms]
-	Field _textures:=New Texture[MaxUniforms]
+	Global _ids:=New StringMap<Int>[8]
 	
-	Global _uniformIds:=New StringMap<Int>
-	Global _blockIds:=New Int[MaxUniforms]
-
-	Const MaxUniforms:=32
-
-	Function Init()
-		Global inited:=False
-		If inited Return	
-		inited=True
-	
-		UniformBlock.BindUniformsToBlockId( New String[]( "mx2_ViewportSize","mx2_ViewportOrigin","mx2_ViewportClip" ),0 )
-		UniformBlock.BindUniformsToBlockId( New String[]( "mx2_AmbientLight" ),0 )
-		UniformBlock.BindUniformsToBlockId( New String[]( "mx2_ModelViewProjectionMatrix" ),0 )
-		UniformBlock.BindUniformsToBlockId( New String[]( "mx2_GBuffer0","GBuffer1","GBufferScale" ),0 )
-
-		UniformBlock.BindUniformsToBlockId( New String[]( "mx2_ImageTexture0","mx2_ImageTexture1" ),1 )
-		UniformBlock.BindUniformsToBlockId( New String[]( "mx2_ImageColor","mx2_LightDepth" ),1 )
+	Enum Type
+		None=0
+		Scalar=1
+		Vec2f=2
+		Vec3f=3
+		Vec4f=4
+		Mat3f=5
+		Mat4f=6
+		Texture=7
+		Mat4fArray=8
 	End
+	
+	Struct Uniform
+		Field type:Type
 
+		Field mat4fArray:Mat4f[]
+		Field texture:Texture
+		
+		'yuck...		
+		Field fdata0:Mat4f
+		Field fdata1:Mat4f
+		Field fdata2:Mat4f
+		Field fdata3:Mat4f
+		Field fdata4:Mat4f
+		Field fdata5:Mat4f
+		Field fdata6:Mat4f
+		Field fdata7:Mat4f
+		
+		Method SetFloatData<T>( t:T,type:Type )
+			Cast<T Ptr>(Varptr fdata0.i.x)[0]=t
+			Self.type=type
+		End
+		
+		Method GetFloatData<T>:T()
+			Return Cast<T Ptr>(Varptr fdata0.i.x)[0]
+		End
+		
+		Method GetFloatPtr:Float Ptr()
+			Return Cast<Float Ptr>(Varptr fdata0.i.x)
+		End
+		
+	End
+	
+	Field _uniforms:=New Uniform[32]
+	
+	Method SetFloatData<T>( uniform:String,data:T,type:Type )
+		Local id:=GetUniformId( uniform )
+		_uniforms[id].SetFloatData( data,type )
+		_seq=_gseq
+		_gseq+=1
+	End
+	
+	Method GetFloatData<T>:T( uniform:String,type:Type )
+		Local id:=GetUniformId( uniform )
+		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+		Return _uniforms[id].GetFloatData<T>()
+	End
+	
+	Method GetFloatPtr:Float Ptr( id:Int,type:Type )
+		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+		Return _uniforms[id].GetFloatPtr()
+	End
+	
 End

@@ -1,49 +1,55 @@
 
 //@renderpasses 0,1,2
 
-varying vec2 texCoord0;
-varying mat2 tanMatrix;
-varying vec4 color;
+varying vec2 v_TexCoord0;
+varying mat2 v_TanMatrix;
+varying vec4 v_Color;
 
 //@vertex
 
-attribute vec4 mx2_Vertex;
-attribute vec2 mx2_TexCoord0;
-attribute vec2 mx2_TexCoord1;
-attribute vec4 mx2_Color;
+attribute vec4 a_Position;
+attribute vec2 a_TexCoord0;
+attribute vec2 a_TexCoord1;
+attribute vec4 a_Color;
 
-uniform mat4 mx2_ModelViewProjectionMatrix;
+uniform mat4 r_ModelViewProjectionMatrix;
 
-uniform vec4 mx2_AmbientLight;
+uniform vec4 r_AmbientLight;
 
-uniform vec4 mx2_ImageColor;
+uniform vec4 m_ImageColor;
 
 void main(){
 
-	texCoord0=mx2_TexCoord0;
+	v_TexCoord0=a_TexCoord0;
 
 #if MX2_RENDERPASS==2
-	tanMatrix=mat2( mx2_TexCoord1.x,mx2_TexCoord1.y,-mx2_TexCoord1.y,mx2_TexCoord1.x );
+
+	v_TanMatrix=mat2( a_TexCoord1.x,a_TexCoord1.y,-a_TexCoord1.y,a_TexCoord1.x );
+	
 #endif
 
 #if MX2_RENDERPASS==0
-	color=mx2_AmbientLight * mx2_ImageColor * mx2_Color;
+
+	v_Color=r_AmbientLight * m_ImageColor * a_Color;
+	
 #else
-	color=mx2_ImageColor * mx2_Color;
+
+	v_Color=m_ImageColor * a_Color;
+	
 #endif
 	
-	gl_Position=mx2_ModelViewProjectionMatrix * mx2_Vertex;
+	gl_Position=r_ModelViewProjectionMatrix * a_Position;
 }
 
 //@fragment
 
-uniform sampler2D mx2_ImageTexture0;
+uniform sampler2D m_ImageTexture0;
 
-uniform sampler2D mx2_ImageTexture1;
+uniform sampler2D m_ImageTexture1;
 
 void main(){
 
-	vec4 diffuse=texture2D( mx2_ImageTexture0,texCoord0 ) * color;
+	vec4 diffuse=texture2D( m_ImageTexture0,v_TexCoord0 ) * v_Color;
 
 #if MX2_RENDERPASS==0		//ambient
 
@@ -55,9 +61,9 @@ void main(){
 	
 #elif MX2_RENDERPASS==2		//normal
 
-	vec3 normal=texture2D( mx2_ImageTexture1,texCoord0 ).xyz;
+	vec3 normal=texture2D( m_ImageTexture1,v_TexCoord0 ).xyz;
 	
-	normal.xy=tanMatrix * (normal.xy * 2.0 - 1.0) * 0.5 + 0.5;
+	normal.xy=v_TanMatrix * (normal.xy * 2.0 - 1.0) * 0.5 + 0.5;
 
 	gl_FragColor=vec4( normal*diffuse.a,diffuse.a );
 

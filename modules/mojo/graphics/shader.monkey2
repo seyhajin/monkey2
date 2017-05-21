@@ -3,7 +3,14 @@ Namespace mojo.graphics
 
 #Import "shaders/@/shaders"
 
-Private
+Const A_POSITION:=0
+Const A_TEXCOORD0:=1
+Const A_TEXCOORD1:=2
+Const A_COLOR:=3
+Const A_NORMAL:=4
+Const A_TANGENT:=5
+Const A_WEIGHTS:=6
+Const A_BONES:=7
 
 Class GLUniform
 
@@ -12,8 +19,8 @@ Class GLUniform
 	Field texunit:Int
 	Field size:Int
 	Field type:Int
+	Field block:Int
 	Field uniformId:Int
-	Field blockId:Int
 
 	Method New( name:String,location:Int,texunit:Int,size:Int,type:Int )
 		Self.name=name
@@ -22,8 +29,15 @@ Class GLUniform
 		Self.size=size
 		Self.type=type
 		
-		Self.uniformId=UniformBlock.GetUniformId( name )
-		Self.blockId=UniformBlock.GetUniformBlockId( name )
+		If name.StartsWith( "r_" )
+			name=name.Slice( 2 )
+			block=1
+		Else If name.StartsWith( "m_" )
+			name=name.Slice( 2 )
+			block=2
+		Endif
+		
+		uniformId=UniformBlock.GetUniformId( name,block )
 	End
 	
 End
@@ -62,11 +76,11 @@ Class GLProgram
 			
 			Local uniform:=New GLUniform( name,location,texunit,size,type )
 			
-			uniforms[uniform.blockId].Push( uniform )
+			uniforms[uniform.block].Push( uniform )
 			
 			Select type
-			Case GL_SAMPLER_2D
-				textures[uniform.blockId].Push( uniform )
+			Case GL_SAMPLER_2D,GL_SAMPLER_CUBE
+				textures[uniform.block].Push( uniform )
 				texunit+=1
 			End
 			
@@ -84,7 +98,7 @@ Class GLProgram
 		Return _glprogram
 	End
 
-	Method ValidateUniforms( ublocks:UniformBlock[],textureFilter:TextureFilter )
+	Method ValidateUniforms( ublocks:UniformBlock[] )',textureFilter:TextureFilter )
 
 		For Local i:=0 Until 4
 
@@ -99,28 +113,31 @@ Class GLProgram
 				Select u.type
 				Case GL_FLOAT
 				
-					glUniform1f( u.location,ublock.GetScalar( u.uniformId ) )
+					glUniform1f( u.location,ublock.GetFloat( u.uniformId ) )
 					
 				Case GL_FLOAT_VEC2
 				
-					glUniform2fv( u.location,1,ublock.GetVector4fv( u.uniformId ) )
+					glUniform2fv( u.location,1,ublock.GetVec2fv( u.uniformId ) )
 					
 				Case GL_FLOAT_VEC3
 				
-					glUniform3fv( u.location,1,ublock.GetVector4fv( u.uniformId ) )
+					glUniform3fv( u.location,1,ublock.GetVec3fv( u.uniformId ) )
 					
 				Case GL_FLOAT_VEC4
 				
-					glUniform4fv( u.location,1,ublock.GetVector4fv( u.uniformId ) )
+					glUniform4fv( u.location,1,ublock.GetVec4fv( u.uniformId ) )
+					
+				Case GL_FLOAT_MAT3
+				
+					glUniformMatrix3fv( u.location,1,False,ublock.GetMat3fv( u.uniformId ) )
 					
 				Case GL_FLOAT_MAT4
 				
-					glUniformMatrix4fv( u.location,1,False,ublock.GetMatrix4fv( u.uniformId ) )
+					glUniformMatrix4fv( u.location,1,False,ublock.GetMat4fv( u.uniformId ) )
 					
-				Case GL_SAMPLER_2D
+				Case GL_SAMPLER_2D,GL_SAMPLER_CUBE
 				
 					glUniform1i( u.location,u.texunit )
-				
 				End
 			
 			Next
@@ -132,14 +149,14 @@ Class GLProgram
 			If Not _textures[i] Continue
 			
 			For Local u:=Eachin _textures[i]
-
+				
 				Local tex:=ublocks[i].GetTexture( u.uniformId )
 				If tex
-					tex.Bind( u.texunit,textureFilter )
+					tex.Bind( u.texunit )',textureFilter )
 				Else
 					Print( "Can't bind shader texture uniform '"+u.name+"' - no texture!" )
 				Endif
-			
+				
 			Next
 		
 		Next
@@ -147,7 +164,7 @@ Class GLProgram
 		glActiveTexture( GL_TEXTURE0 )
 	
 	End
-
+	
 End
 
 Public
@@ -160,13 +177,9 @@ Class Shader
 	#end
 	Method New( name:String,source:String )
 	
-		Assert( Not _shaders.Contains( name ),"Shader with name '"+name+"' already exists" )
-		
 		_name=name
 	
 		_source=source
-		
-		_shaders[name]=Self
 		
 		EnumPasses()
 	End
@@ -215,27 +228,36 @@ Class Shader
 	
 	#rem monkeydoc @hidden
 	#end
-	Method ValidateUniforms( renderPass:Int,ublocks:UniformBlock[],textureFilter:TextureFilter )
+	Method ValidateUniforms( renderPass:Int,ublocks:UniformBlock[] )',textureFilter:TextureFilter )
 	
-		_programs[renderPass].ValidateUniforms( ublocks,textureFilter )
+		_programs[renderPass].ValidateUniforms( ublocks )',textureFilter )
 	End
 
 	#rem monkeydoc Gets a shader with a given name.
 	#end	
 	Function GetShader:Shader( name:String )
-	
-		Local shader:=_shaders[name]
-		If shader Return shader
 		
-		Local source:=LoadString( "asset::shaders/"+name+".glsl" )
-		If Not source Return Null
+		If _cache.Contains( name ) Return _cache[name]
 		
-		Return New Shader( name,source )
+		local source:=LoadString( "asset::shaders/"+name+".glsl" )
+		
+		Local shader:=source ? New Shader( name,source ) Else Null
+		
+		_cache[name]=shader
+		
+		Return shader
 	End
-
+	
+	#rem monkeydoc Gets a shader with a given name.
+	#end	
+	Function Open:Shader( name:String )
+		
+		Return GetShader( name )
+	End
+	
 	Private
 	
-	Global _shaders:=New StringMap<Shader>
+	Global _cache:=New StringMap<Shader>
 
 	Field _name:String	
 	Field _source:String
@@ -270,7 +292,7 @@ Class Shader
 	End
 	
 	Method Rebuild()
-	
+		
 		'Get renderpasses
 		'
 		Local tag:="//@renderpasses"
@@ -325,10 +347,14 @@ Class Shader
 			glDeleteShader( vshader )
 			glDeleteShader( fshader )
 				
-			glBindAttribLocation( glprogram,0,"mx2_Vertex" )
-			glBindAttribLocation( glprogram,1,"mx2_TexCoord0" )
-			glBindAttribLocation( glprogram,2,"mx2_TexCoord1" )
-			glBindAttribLocation( glprogram,3,"mx2_Color" )
+			glBindAttribLocation( glprogram,A_POSITION,"a_Position" )
+			glBindAttribLocation( glprogram,A_TEXCOORD0,"a_TexCoord0" )
+			glBindAttribLocation( glprogram,A_TEXCOORD1,"a_TexCoord1" )
+			glBindAttribLocation( glprogram,A_COLOR,"a_Color" )
+			glBindAttribLocation( glprogram,A_NORMAL,"a_Normal" )
+			glBindAttribLocation( glprogram,A_TANGENT,"a_Tangent" )
+			glBindAttribLocation( glprogram,A_WEIGHTS,"a_Weights" )
+			glBindAttribLocation( glprogram,A_BONES,"a_Bones" )
 			
 			glLink( glprogram )
 			
@@ -336,7 +362,8 @@ Class Shader
 			
 			_programs[rpass]=program
 		Next
-
+		
+		glCheck()
 	End
 
 End
