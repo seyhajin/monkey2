@@ -321,9 +321,11 @@ Class FuncValue Extends Value
 			
 		Else If IsMethod
 		
-			If Not instance Throw New SemantEx( "Method '"+ToString()+"' cannot be accessed without an instance" )
+			If Not selfValue Throw New SemantEx( "Self has no type" )
 			
-			If Not instance.type.ExtendsType( selfValue.type )'cscope.ctype )
+			If Not instance Throw New SemantEx( "Method '"+ToString()+"' cannot be accessed without an instance" )
+				
+			If Not instance.type.ExtendsType( selfValue.type )
 				Throw New SemantEx( "Method '"+ToString()+"' cannot be accessed from an instance of a different class" )
 			Endif
 			
