@@ -1,7 +1,7 @@
 
 Namespace mojo.graphics.glexts
 
-#If __TARGET__="windows" Or __TARGET__="emscripten"
+#If __TARGET__="windows" Or __MOBILE_TARGET__ or __WEB_TARGET__
 
 #Import "glexts.cpp"
 #Import "glexts.h"
@@ -29,7 +29,7 @@ Const GL_COLOR_ATTACHMENT13:Int=$8CED
 Const GL_COLOR_ATTACHMENT14:Int=$8CEE
 Const GL_COLOR_ATTACHMENT15:Int=$8CEF
 
-#If __TARGET__="windows" Or __TARGET__="emscripten"
+#If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
 
 Extern
 
@@ -42,7 +42,7 @@ Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
 
 Function InitGLexts()="bbGLexts::init"
 
-#Elseif __TARGET__="macos" or __TARGET__="linux"
+#Elseif __TARGET__="macos" Or __TARGET__="linux"
 
 Const GL_draw_buffers:Bool=True
 Const GL_texture_float:Bool=True
@@ -66,6 +66,9 @@ Const GL_texture_half_float:bool=False
 Const GL_depth_texture:bool=False
 
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )
+
+	If n=1 And (bufs[0]=GL_COLOR_ATTACHMENT0 Or bufs[0]=GL_BACK) Return
+	
 	RuntimeError( "glDrawBuffers unsupported" )
 End
 

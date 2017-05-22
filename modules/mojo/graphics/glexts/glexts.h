@@ -1,6 +1,12 @@
 
+#ifndef BB_GL_EXTS
+#define BB_GL_EXTS
+
+#if __APPLE__
+#include <OpenGLES/ES2/gl.h>
+#else
 #include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#endif
 
 namespace bbGLexts{
 
@@ -13,3 +19,5 @@ namespace bbGLexts{
 
 	void init();
 }
+
+#endif

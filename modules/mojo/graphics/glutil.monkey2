@@ -98,7 +98,7 @@ End
 #end
 Function glCompile:Int( type:Int,source:String )
 	
-#If __TARGET__="windows" Or __TARGET__="emscripten"
+#If __TARGET__="windows" Or __MOBILE_TARGET__ or __WEB_TARGET__
 	Const prefix:="
 #extension GL_EXT_draw_buffers : require	
 #ifdef GL_ES
