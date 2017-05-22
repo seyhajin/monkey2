@@ -76,6 +76,8 @@ Class RenderTarget Extends Resource
 		
 		If _glSeq=glGraphicsSeq Return _glFramebuffer
 		
+		glCheck()
+		
 		glGenFramebuffers( 1,Varptr _glFramebuffer )
 		
 		glPushFramebuffer( GL_FRAMEBUFFER,_glFramebuffer )
@@ -97,6 +99,8 @@ Class RenderTarget Extends Resource
 		_glSeq=glGraphicsSeq
 
 		glPopFramebuffer()
+		
+		glCheck()
 		
 		Return _glFramebuffer
 	End

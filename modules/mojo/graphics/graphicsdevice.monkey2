@@ -412,6 +412,8 @@ Class GraphicsDevice
 	End
 	
 	Function InitGL()
+	
+		glCheck()
 		
 		InitGLexts()
 		
@@ -419,6 +421,8 @@ Class GraphicsDevice
 		
 		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
 		If GL_read_buffer glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
+		
+		glCheck()
 	End
 	
 	Method FlushTarget()
@@ -431,13 +435,13 @@ Class GraphicsDevice
 	End
 	
 	Method Validate()
-
+		
 		If _glSeq<>glGraphicsSeq
 			_glSeq=glGraphicsSeq
 			_current=Null
 			InitGL()
 		Endif
-		
+
 		If _current<>Self
 			If _current _current.FlushTarget()
 			_current=Self
@@ -456,7 +460,7 @@ Class GraphicsDevice
 
 				If GL_draw_buffer glDrawBuffer( _defaultDrawBuf )
 				If GL_read_buffer glReadBuffer( _defaultReadBuf )
-
+				
 			Endif
 
 		Endif
