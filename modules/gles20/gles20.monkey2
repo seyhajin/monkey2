@@ -97,6 +97,12 @@ Alias GLclampf:Float
 Alias GLintptr:Long
 Alias GLsizeiptr:Long
 
+#If __TARGET__="windows" or __MOBILE_TARGET__ or __WEB_TARGET__
+Const GL_ES_VERSION_2_0:=1
+#Else
+Const GL_ES_VERSION_2_0:=0
+#Endif
+
 Extern
 
 Struct GLchar="char"
@@ -106,7 +112,6 @@ Struct GLcchar="const char"
 End
 
 '${CONSTS}
-Const GL_ES_VERSION_2_0:Int
 Const GL_DEPTH_BUFFER_BIT:Int
 Const GL_STENCIL_BUFFER_BIT:Int
 Const GL_COLOR_BUFFER_BIT:Int

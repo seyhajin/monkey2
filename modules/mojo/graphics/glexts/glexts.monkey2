@@ -8,9 +8,15 @@ Namespace mojo.graphics.glexts
 
 #Endif
 
+Const GL_DRAW_BUFFER:=$0c01
+
+Const GL_READ_BUFFER:=$0c01
+
 Const GL_HALF_FLOAT:Int=$8D61
 
 Const GL_MAX_COLOR_ATTACHMENTS:=$8CDF
+
+'Const GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:=$8CD9
 
 'Const GL_COLOR_ATTACHMENT0:Int=$8cE0
 Const GL_COLOR_ATTACHMENT1:Int=$8CE1
@@ -31,6 +37,9 @@ Const GL_COLOR_ATTACHMENT15:Int=$8CEF
 
 #If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
 
+Const GL_draw_buffer:Bool=False
+Const GL_read_buffer:Bool=False
+
 Extern
 
 Const GL_draw_buffers:Bool="bbGLexts::GL_draw_buffers"
@@ -41,9 +50,21 @@ Const GL_depth_texture:bool="bbGLexts::GL_depth_texture"
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
 
 Function InitGLexts()="bbGLexts::init"
+	
+Public
+	
+Function glDrawBuffer( mode:GLenum )
+	RuntimeError( "glDrawBuffer unsupported" )
+End
+
+Function glReadBuffer( mode:GLenum )
+	RuntimeError( "glReadBuffer unsupported" )
+End
 
 #Elseif __TARGET__="macos" Or __TARGET__="linux"
 
+Const GL_draw_buffer:Bool=True
+Const GL_read_buffer:Bool=True
 Const GL_draw_buffers:Bool=True
 Const GL_texture_float:Bool=True
 Const GL_texture_half_float:bool=True
@@ -51,6 +72,8 @@ Const GL_depth_texture:bool=True
 
 Extern
 
+Function glDrawBuffer( mode:GLenum )
+Function glReadBuffer( mode:GLenum )
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )
 	
 Public
@@ -73,3 +96,4 @@ Function InitGLexts()
 End
 
 #Endif
+

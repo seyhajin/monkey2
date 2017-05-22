@@ -400,6 +400,8 @@ Class GraphicsDevice
 	Global _glSeq:Int
 	Global _current:GraphicsDevice
 	Global _defaultFbo:GLint
+	Global _defaultDrawBuf:GLint
+	Global _defaultReadBuf:GLint
 	
 	Method Init()
 		_depthFunc=DepthFunc.Less
@@ -410,8 +412,13 @@ Class GraphicsDevice
 	End
 	
 	Function InitGL()
+		
 		InitGLexts()
+		
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
+		
+		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
+		If GL_read_buffer glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
 	End
 	
 	Method FlushTarget()
@@ -447,9 +454,8 @@ Class GraphicsDevice
 			Else
 				glBindFramebuffer( GL_FRAMEBUFFER,_defaultFbo )
 
-'				upsets macos...				
-'				Local bufs:GLenum=GL_BACK
-'				glDrawBuffers( 1,Varptr bufs )
+				If GL_draw_buffer glDrawBuffer( _defaultDrawBuf )
+				If GL_read_buffer glReadBuffer( _defaultReadBuf )
 
 			Endif
 
