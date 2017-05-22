@@ -117,11 +117,11 @@ Class AppInstance
 		Case "es"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
 		Default
-#If __TARGET__="macos"
+#If __TARGET__="macos" Or __TARGET__="linux"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_COMPATIBILITY	'no gles20 on macos...
 #Else
 			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
-#Endif		
+#Endif
 		End
 
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
