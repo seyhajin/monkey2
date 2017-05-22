@@ -74,8 +74,8 @@ Enum TextureFlags
 	Cubemap=		$0020
 	
 	Skybox=			Filter|Mipmap|Cubemap
-	
-	UseDefault=		$ffff
+	ColorTarget=	Filter|Dynamic
+	DepthTarget=	Dynamic
 End
 
 Enum TextureFilter
@@ -87,10 +87,8 @@ End
 #end
 Class Texture Extends Resource
 	
-	Method New( pixmap:Pixmap,flags:TextureFlags=TextureFlags.UseDefault )
+	Method New( pixmap:Pixmap,flags:TextureFlags )
 
-		If flags=TextureFlags.UseDefault flags=TextureFlags.Filter|TextureFlags.Mipmap
-			
 		_managed=pixmap
 		_size=New Vec2i( pixmap.Width,pixmap.Height )
 		_format=pixmap.Format
@@ -122,10 +120,8 @@ Class Texture Extends Resource
 		Endif
 	End
 	
-	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags=TextureFlags.UseDefault )
+	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
 
-		If flags=TextureFlags.UseDefault flags=TextureFlags.Filter|TextureFlags.Dynamic
-		
 		_managed=Null
 		_size=New Vec2i( width,height )
 		_format=format

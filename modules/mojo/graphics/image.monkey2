@@ -27,13 +27,6 @@ Images also have several properties that affect how they are rendered, including
 #end
 Class Image Extends Resource
 
-	#rem Default texture flags
-	
-	Default texture flags to use when TextureFlags.UseDefaults is specified as a parameter.
-	
-	#end
-	Global DefaultTextureFlags:TextureFlags=TextureFlags.Filter|TextureFlags.Mipmap
-
 	#rem monkeydoc Creates a new Image.
 	
 	New( pixmap,... ) Creates an image from an existing pixmap.
@@ -59,9 +52,7 @@ Class Image Extends Resource
 	@param width,height Image size.
 	
 	#end	
-	Method New( pixmap:Pixmap,textureFlags:TextureFlags=TextureFlags.UseDefault,shader:Shader=Null )
-	
-		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
+	Method New( pixmap:Pixmap,textureFlags:TextureFlags=TextureFlags.Filter|TextureFlags.Mipmap,shader:Shader=Null )
 	
 		Local texture:=New Texture( pixmap,textureFlags )
 		
@@ -70,22 +61,9 @@ Class Image Extends Resource
 		AddDependancy( texture )
 	End
 
-	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.UseDefault,shader:Shader=Null )
+	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.Filter|TextureFlags.Mipmap,shader:Shader=Null )
 	
-		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
-	
-		Local texture:=New Texture( width,height,PixelFormat.RGBA32,textureFlags )
-		
-		Init( texture,shader )
-		
-		AddDependancy( texture )
-	End
-
-	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=TextureFlags.UseDefault,shader:Shader=Null )
-	
-		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
-	
-		Local texture:=New Texture( width,height,format,textureFlags )
+		Local texture:=New Texture( width,height,PixelFormat.RGBA8,textureFlags )
 		
 		Init( texture,shader )
 		
@@ -332,7 +310,7 @@ Class Image Extends Resource
 		_material.SetTexture( "ImageTexture"+index,texture )
 	End
 	
-	#rem monkeydoc @hidden gets an image texture.
+	#rem monkeydoc @hidden gets an image's texture.
 	#end	
 	Method GetTexture:Texture( index:Int )
 	
@@ -341,10 +319,8 @@ Class Image Extends Resource
 	
 	#rem monkeydoc Loads an image from file.
 	#end
-	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.UseDefault )
+	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=Null )
 		
-		If textureFlags=TextureFlags.UseDefault textureFlags=DefaultTextureFlags
-	
 		Local pixmap:=Pixmap.Load( path,Null,True )
 		If Not pixmap Return Null
 
