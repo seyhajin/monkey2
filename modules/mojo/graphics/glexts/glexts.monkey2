@@ -38,8 +38,25 @@ Const GL_texture_float:Bool="bbGLexts::GL_texture_float"
 Const GL_texture_half_float:bool="bbGLexts::GL_texture_half_float"
 Const GL_depth_texture:bool="bbGLexts::GL_depth_texture"
 
-Function InitGLexts()="bbGLexts::init"
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
+
+Function InitGLexts()="bbGLexts::init"
+
+#Elseif __TARGET__="macos"
+
+Const GL_draw_buffers:Bool=True
+Const GL_texture_float:Bool=True
+Const GL_texture_half_float:bool=True
+Const GL_depth_texture:bool=True
+
+Extern
+
+Function glDrawBuffers( n:Int,bufs:GLenum Ptr )
+	
+Public
+
+Function InitGLexts()
+End
 
 #Else
 
@@ -48,11 +65,11 @@ Const GL_texture_float:Bool=False
 Const GL_texture_half_float:bool=False
 Const GL_depth_texture:bool=False
 
-Function InitGLexts()
-End
-
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )
 	RuntimeError( "glDrawBuffers unsupported" )
+End
+
+Function InitGLexts()
 End
 
 #Endif

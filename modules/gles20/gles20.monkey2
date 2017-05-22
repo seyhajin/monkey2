@@ -82,9 +82,9 @@ typedef khronos_ssize_t  GLsizeiptr;
 
 'Not quite right, but less annoying...
 Alias GLvoid:Void
-Alias GLenum:Int
+Alias GLenum:UInt
 Alias GLboolean:Bool
-Alias GLbitfield:Int
+Alias GLbitfield:UInt
 Alias GLshort:Short
 Alias GLint:Int
 Alias GLsizei:Int
@@ -94,8 +94,8 @@ Alias GLuint:UInt
 Alias GLfloat:Float
 Alias GLfixed:Int
 Alias GLclampf:Float
-Alias GLintptr:Int
-Alias GLsizeiptr:Int
+Alias GLintptr:Long
+Alias GLsizeiptr:Long
 
 Extern
 

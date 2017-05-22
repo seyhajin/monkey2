@@ -97,8 +97,9 @@ End
 #rem monkeydoc @hidden
 #end
 Function glCompile:Int( type:Int,source:String )
-
-	source="
+	
+	#If __TARGET__="windows" Or __TARGET__="emscripten"
+	Const prefix:="
 	#extension GL_EXT_draw_buffers : require	
 	#ifdef GL_ES
 	#ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -107,7 +108,13 @@ Function glCompile:Int( type:Int,source:String )
 	precision mediump float;
 	#endif
 	#endif
-	"+source
+	"
+	#Else
+	Const prefix:="
+	"
+	#Endif
+
+	source=prefix+source
 	
 	Local shader:=glCreateShader( type )
 	glShaderSourceEx( shader,source )

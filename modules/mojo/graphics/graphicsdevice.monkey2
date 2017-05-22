@@ -425,12 +425,16 @@ Class GraphicsDevice
 	
 	Method Validate()
 
+		glCheck()
+				
 		If _glSeq<>glGraphicsSeq
 			_glSeq=glGraphicsSeq
 			_current=Null
 			InitGL()
 		Endif
 		
+		glCheck()
+				
 		If _current<>Self
 			If _current _current.FlushTarget()
 			_current=Self
@@ -440,19 +444,25 @@ Class GraphicsDevice
 			If Not _dirty Return
 		Endif
 		
+		glCheck()
+				
 		If _dirty & Dirty.RenderTarget
 			
 			If _rtarget
 				_rtarget.Bind()
 			Else
 				glBindFramebuffer( GL_FRAMEBUFFER,_defaultFbo )
-				Local bufs:GLenum=GL_BACK
-				glDrawBuffers( 1,Varptr bufs )
-'				glReadBuffer( GL_BACK )
+
+'				upsets macos...				
+'				Local bufs:GLenum=GL_BACK
+'				glDrawBuffers( 1,Varptr bufs )
+
 			Endif
 
 		Endif
 	
+		glCheck()
+				
 		If _dirty & Dirty.Viewport
 			
 			If _rtarget
@@ -463,6 +473,8 @@ Class GraphicsDevice
 			
 		Endif
 		
+		glCheck()
+				
 		If _dirty & Dirty.Scissor
 		
 			Local scissor:=_scissor & _viewport
@@ -479,6 +491,8 @@ Class GraphicsDevice
 		
 		Endif
 		
+		glCheck()
+				
 		If _dirty & Dirty.ColorMask
 			
 			Local r:=Bool( _colorMask & ColorMask.Red )
@@ -490,6 +504,8 @@ Class GraphicsDevice
 		
 		Endif
 		
+		glCheck()
+				
 		If _dirty & Dirty.DepthMask
 			
 			glDepthMask( _depthMask )
