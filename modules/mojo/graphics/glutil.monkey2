@@ -98,18 +98,6 @@ End
 #end
 Function glCompile:Int( type:Int,source:String )
 	
-#If __TARGET__="windows" Or __MOBILE_TARGET__ or __WEB_TARGET__
-	Const prefix:="
-#extension GL_EXT_draw_buffers : require	
-#ifdef GL_ES
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
-precision mediump float;
-#endif
-#endif
-"
-#Else if __TARGET__="linux"
 	Const prefix:="
 #ifdef GL_ES
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -119,12 +107,11 @@ precision mediump float;
 #endif
 #endif
 "
-#Else
-	Const prefix:="
-"
-#Endif
-
 	source=prefix+source
+	
+	#If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
+		If glexts.GL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
+	#endif
 	
 	Local shader:=glCreateShader( type )
 	glShaderSourceEx( shader,source )

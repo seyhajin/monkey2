@@ -5,6 +5,8 @@ Class RenderTarget Extends Resource
 	
 	Method New( colorTextures:Texture[],depthTexture:Texture )
 		
+		Assert( colorTextures.Length<2 Or glexts.GL_draw_buffers,"Multiple render targets not supported" )
+		
 		_colorTextures=colorTextures.Slice( 0 )
 		
 		_depthTexture=depthTexture
@@ -27,9 +29,9 @@ Class RenderTarget Extends Resource
 		
 		glBindFramebuffer( GL_FRAMEBUFFER,ValidateGLFramebuffer() )
 		
-		glDrawBuffers( _drawBufs.Length,_drawBufs.Data )
-		
-'		glReadBuffer( GL_NONE )
+		If glexts.GL_draw_buffers 
+			glDrawBuffers( _drawBufs.Length,_drawBufs.Data )
+		Endif
 	End
 	
 	Private
@@ -54,7 +56,7 @@ Class RenderTarget Extends Resource
 			
 			Local texture:=_colorTextures[i]
 			
-			glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,GL_TEXTURE_2D,texture.ValidateGLTexture(),0 )
+			If texture glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,GL_TEXTURE_2D,texture.ValidateGLTexture(),0 )
 			
 		Next
 		
