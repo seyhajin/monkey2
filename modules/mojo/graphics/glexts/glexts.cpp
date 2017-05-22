@@ -13,7 +13,7 @@ namespace bbGLexts{
 	bool GL_texture_half_float;
 	bool GL_depth_texture;
 
-	void(*glDrawBuffers)( int n,const GLint *bufs );
+	void(*glDrawBuffers)( int n,const GLenum *bufs );
 	
 	void init(){
 	
@@ -26,11 +26,11 @@ namespace bbGLexts{
 		
 		if( GL_draw_buffers=strstr( buf," GL_EXT_draw_buffers " ) ){
 			
-			glDrawBuffers=(void(*)(int,const GLint*)) eglGetProcAddress( "glDrawBuffersEXT" );
+			glDrawBuffers=(void(*)(int,const GLenum*)) eglGetProcAddress( "glDrawBuffersEXT" );
 			
 		}else if( GL_draw_buffers=strstr( buf," WEBGL_draw_buffers " ) ){
 		
-			glDrawBuffers=(void(*)(int,const GLint*)) eglGetProcAddress( "glDrawBuffersWEBGL" );
+			glDrawBuffers=(void(*)(int,const GLenum*)) eglGetProcAddress( "glDrawBuffersWEBGL" );
 		}
 		
 		GL_texture_float=strstr( buf,"_texture_float" );

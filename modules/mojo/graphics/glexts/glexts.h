@@ -9,7 +9,7 @@ namespace bbGLexts{
 	extern bool GL_texture_half_float;
 	extern bool GL_depth_texture;
 
-	extern void(*glDrawBuffers)( int n,const GLint *bufs );
+	extern void(*glDrawBuffers)( int n,const GLenum *bufs );
 
 	void init();
 }
