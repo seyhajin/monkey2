@@ -109,9 +109,9 @@ precision mediump float;
 #endif
 #endif
 "
-		If glexts.GL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
-
 		source=prefix+source
+		
+		If glexts.GL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
 	#endif
 	
 	Local shader:=glCreateShader( type )
