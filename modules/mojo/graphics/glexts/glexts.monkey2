@@ -42,7 +42,7 @@ Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
 
 Function InitGLexts()="bbGLexts::init"
 
-#Elseif __TARGET__="macos"
+#Elseif __TARGET__="macos" or __TARGET__="linux"
 
 Const GL_draw_buffers:Bool=True
 Const GL_texture_float:Bool=True

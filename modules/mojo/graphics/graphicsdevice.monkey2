@@ -425,16 +425,12 @@ Class GraphicsDevice
 	
 	Method Validate()
 
-		glCheck()
-				
 		If _glSeq<>glGraphicsSeq
 			_glSeq=glGraphicsSeq
 			_current=Null
 			InitGL()
 		Endif
 		
-		glCheck()
-				
 		If _current<>Self
 			If _current _current.FlushTarget()
 			_current=Self
@@ -444,8 +440,6 @@ Class GraphicsDevice
 			If Not _dirty Return
 		Endif
 		
-		glCheck()
-				
 		If _dirty & Dirty.RenderTarget
 			
 			If _rtarget
@@ -461,8 +455,6 @@ Class GraphicsDevice
 
 		Endif
 	
-		glCheck()
-				
 		If _dirty & Dirty.Viewport
 			
 			If _rtarget
@@ -473,8 +465,6 @@ Class GraphicsDevice
 			
 		Endif
 		
-		glCheck()
-				
 		If _dirty & Dirty.Scissor
 		
 			Local scissor:=_scissor & _viewport
@@ -491,8 +481,6 @@ Class GraphicsDevice
 		
 		Endif
 		
-		glCheck()
-				
 		If _dirty & Dirty.ColorMask
 			
 			Local r:=Bool( _colorMask & ColorMask.Red )
@@ -504,8 +492,6 @@ Class GraphicsDevice
 		
 		Endif
 		
-		glCheck()
-				
 		If _dirty & Dirty.DepthMask
 			
 			glDepthMask( _depthMask )

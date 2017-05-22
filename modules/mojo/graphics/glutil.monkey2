@@ -98,21 +98,31 @@ End
 #end
 Function glCompile:Int( type:Int,source:String )
 	
-	#If __TARGET__="windows" Or __TARGET__="emscripten"
+#If __TARGET__="windows" Or __TARGET__="emscripten"
 	Const prefix:="
-	#extension GL_EXT_draw_buffers : require	
-	#ifdef GL_ES
-	#ifdef GL_FRAGMENT_PRECISION_HIGH
-	precision highp float;
-	#else
-	precision mediump float;
-	#endif
-	#endif
-	"
-	#Else
+#extension GL_EXT_draw_buffers : require	
+#ifdef GL_ES
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#endif
+"
+#Else if __TARGET__="linux"
 	Const prefix:="
-	"
-	#Endif
+#ifdef GL_ES
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#endif
+"
+#Else
+	Const prefix:="
+"
+#Endif
 
 	source=prefix+source
 	
