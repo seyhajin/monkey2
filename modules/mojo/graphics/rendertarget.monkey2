@@ -5,8 +5,6 @@ Class RenderTarget Extends Resource
 	
 	Method New( colorTextures:Texture[],depthTexture:Texture )
 		
-		Assert( colorTextures.Length<2 Or glexts.GL_draw_buffers,"Multiple render targets not supported" )
-		
 		_colorTextures=colorTextures.Slice( 0 )
 		
 		_depthTexture=depthTexture

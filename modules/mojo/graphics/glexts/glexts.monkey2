@@ -1,7 +1,7 @@
 
 Namespace mojo.graphics.glexts
 
-#If __TARGET__="windows" Or __WEB_TARGET__
+#If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
 
 #Import "glexts.cpp"
 #Import "glexts.h"
@@ -29,7 +29,7 @@ Const GL_COLOR_ATTACHMENT13:Int=$8CED
 Const GL_COLOR_ATTACHMENT14:Int=$8CEE
 Const GL_COLOR_ATTACHMENT15:Int=$8CEF
 
-#If __TARGET__="windows" Or __WEB_TARGET__
+#If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
 
 Extern
 

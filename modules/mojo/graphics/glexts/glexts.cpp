@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void* SDL_GL_GetProcAddress( const char *proc );
-int SDL_GL_ExtensionSupported( const char *extension );
+extern "C" void* SDL_GL_GetProcAddress( const char *proc );
+extern "C" int SDL_GL_ExtensionSupported( const char *extension );
 
 namespace bbGLexts{
 
@@ -19,11 +19,11 @@ namespace bbGLexts{
 	
 	void init(){
 	
-		if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_EXT_draw_buffer" ) ){
+		if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_EXT_draw_buffers" ) ){
 			
 			glDrawBuffers=(void(*)(int,const GLenum*)) SDL_GL_GetProcAddress( "glDrawBuffersEXT" );
 			
-		}else if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_WEBGL_draw_buffer" ) ){
+		}else if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_WEBGL_draw_buffers" ) ){
 		
 			glDrawBuffers=(void(*)(int,const GLenum*)) SDL_GL_GetProcAddress( "glDrawBuffersWEBGL" );
 		}
