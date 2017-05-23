@@ -59,44 +59,6 @@ Function SaveString:Bool( str:String,path:String,fixeols:Bool=False )
 	Return ok
 End
 
-#rem monkeydoc @deprecated Use [[ULongToString]] instead.
-#end
-Function Hex:String( value:ULong )
-
-	Local str:=""
-	
-	While value
-		Local nyb:=value & $f
-		If nyb<10 str=String.FromChar( nyb+48 )+str Else str=String.FromChar( nyb+55 )+str
-		value=value Shr 4
-	Wend
-	
-	Return str ? str Else "0"
-End
-
-#rem monkeydoc @deprecated Use [[StringToULong]] instead.
-#end
-Function FromHex:ULong( hex:String )
-
-	Local value:ULong
-	
-	For Local i:=0 Until hex.Length
-		Local ch:=hex[i]
-		If ch>=48 And ch<58
-			value=value Shl 4 | (ch-48)
-		Else If ch>=65 And ch<71
-			value=value Shl 4 | (ch-55)
-		Else If ch>=97 And ch<103
-			value=value Shl 4 | (ch-87)
-		Else
-			Exit
-		Endif
-	Next
-	
-	Return value
-
-End
-
 #rem monkeydoc Converts an unsigned long value to a string.
 
 @param value Value to convert.
@@ -152,4 +114,28 @@ Function StringToULong:ULong( str:String,base:UInt )
 	Next
 	
 	Return value
+End
+
+#rem monkeydoc Converts a ulong value to a binary string.
+#end
+Function Bin:String( value:ULong )
+	Return ULongToString( value,2 )
+End
+
+#rem monkeydoc Converts a binary string to a ulong value.
+#end
+Function ParseBin:ULong( str:String )
+	Return StringToULong( str,2 )
+End
+
+#rem monkeydoc Converts a ulong value to a hexadecimal string.
+#end
+Function Hex:String( value:ULong )
+	Return ULongToString( value,16 )
+End
+
+#rem monkeydoc Converts a hexadecimal string to a ulong value.
+#end
+Function ParseHex:ULong( str:String )
+	Return StringToULong( str,16 )
 End
