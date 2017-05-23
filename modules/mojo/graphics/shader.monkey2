@@ -293,6 +293,8 @@ Class Shader
 	
 	Method Rebuild()
 		
+		glCheck()
+		
 		'Get renderpasses
 		'
 		Local tag:="//@renderpasses"

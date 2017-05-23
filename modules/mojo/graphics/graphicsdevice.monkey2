@@ -79,6 +79,8 @@ Class GraphicsDevice
 		_deviceSize=size
 	
 		If Not _rtarget _rtargetSize=size
+		
+		_dirty|=Dirty.Viewport|Dirty.Scissor
 	End
 	
 	Property RenderTargetSize:Vec2i()
@@ -435,7 +437,7 @@ Class GraphicsDevice
 	End
 	
 	Method Validate()
-		
+
 		If _glSeq<>glGraphicsSeq
 			_glSeq=glGraphicsSeq
 			_current=Null
@@ -468,10 +470,10 @@ Class GraphicsDevice
 		If _dirty & Dirty.Viewport
 			
 			If _rtarget
-				glViewport( _viewport.X,_viewport.Y,_viewport.Width,_viewport.Height )
+				glViewport( _viewport.X,_viewport.Y,Max( _viewport.Width,0 ),Max( _viewport.Height,0 ) )
 			Else
-				glViewport( _viewport.X,_rtargetSize.y-_viewport.Bottom,_viewport.Width,_viewport.Height )
-			Endif
+				glViewport( _viewport.X,_deviceSize.y-_viewport.Bottom,Max( _viewport.Width,0 ),Max( _viewport.Height,0 ) )
+			End
 			
 		Endif
 		
