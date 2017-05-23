@@ -10,8 +10,8 @@ Namespace spacechimps
 Using std..
 Using mojo..
 
-Const VirtualWidth:=320
-Const VirtualHeight:=240
+Const VirtualWidth:=320'640
+Const VirtualHeight:=240'480
 
 Class MyWindow Extends Window
 
@@ -23,41 +23,33 @@ Class MyWindow Extends Window
 	Field rot:Float
 	Field filter:Bool=True
 
-	Method New( title:String,width:Int,height:Int )
+	Method New( title:String,width:Int,height:Int,flags:WindowFlags )
 	
 		'Call super class constructor - this just passes the arguments 'up' to the Window class constructor.
 		'
-		Super.New( title,width,height )
+		Super.New( title,width,height,flags )
 		
-'		Style.Border=New Recti( -16,-16,16,16 )
-'		Style.BorderColor=Color.Yellow
-
-'		Layout="fill"		
+'		Layout="fill"
+		'if you use letterbox layout, don't forget to implement the OnMeasure() method (see below).
+		'
 		Layout="letterbox"
 
-		'Letterbox color
+		'Window clear color - this is effectively Letterbox color.
 		'		
 		ClearColor=New Color( .03,.03,.03 )
 		
-		'Black 'coz we're in space!
-		'
-		Style.BackgroundColor=Color.Black
-
-		'Load laser sound effecy
+		'Load laser sound effect
 		'		
 		laser=Sound.Load( "asset::bang.wav" )
 		
-		If Not laser Print "Couldn't load laser"
-		
-		'Load and setup our image...
+		'Load spaceship image.
 		'
-		'Note: Scaling image here is faster than scaling in DrawImage.
+		'Note: scaling image here is faster than scaling via Canvas matrix.
 		'
 		image=Image.Load( "asset::spaceship_32.png" )
+		image.Scale=New Vec2f( 2 )
 		image.Handle=New Vec2f( .5 )
 
-'		image.TextureFilter=TextureFilter.Mipmap
-		
 		'Set initial image pos
 		'
 		pos=New Vec2f( VirtualWidth/2,VirtualHeight/2 )
@@ -66,7 +58,7 @@ Class MyWindow Extends Window
 		'
 '		timer=New Timer( 60,OnUpdate )
 
-		'Vwait always recommended...
+		'Enable vsync.
 		'	
 		SwapInterval=1
 	End
@@ -80,20 +72,22 @@ Class MyWindow Extends Window
 					If Fullscreen EndFullscreen() Else BeginFullscreen()
 				Endif
 			Case Key.S
-			
+				'toggle vsync
+				'
 				SwapInterval=1-SwapInterval
-				
-'#If __TARGET__<>"emscripten"
 			Case Key.T
+				'toggle timer
+				'
 				If timer
 					timer.Cancel()
 					timer=Null
-					App.RequestRender()
+					RequestRender()
 				Else
 					timer=New Timer( 60,OnUpdate )
 				Endif
-'#Endif
 			Case Key.F
+				'toggle texture filtering
+				'
 				filter=Not filter
 			End
 		End
@@ -102,9 +96,6 @@ Class MyWindow Extends Window
 	Method OnWindowEvent( event:WindowEvent ) Override
 	
 		Select event.Type
-		Case EventType.WindowMoved
-		Case EventType.WindowResized
-			App.RequestRender()
 		Case EventType.WindowGainedFocus
 			If timer timer.Suspended=False
 		Case EventType.WindowLostFocus
@@ -116,7 +107,7 @@ Class MyWindow Extends Window
 	
 	Method OnUpdate()
 	
-		App.RequestRender()
+		RequestRender()
 		
 		'rotate
 		'
@@ -175,7 +166,9 @@ Class MyWindow Extends Window
 		
 		'Turn off texture filtering for a 'pixel art' look
 		'
-		canvas.TextureFilter=filter ? TextureFilter.Mipmap Else TextureFilter.Nearest
+		canvas.TextureFilteringEnabled=filter
+		
+		canvas.Clear( Color.Black )
 
 		canvas.DrawText( "FPS="+App.FPS,Width/2,0,.5,0 )
 		canvas.DrawText( "Arrow keys to fly",Width/2,16,.5,0 )
@@ -187,8 +180,6 @@ Class MyWindow Extends Window
 		'
 		Local x:=pos.x,y:=pos.y,r:=rot-Pi/2
 		
-'		If Not filter x=Round( x ) ; y=Round( y )
-		
 		canvas.DrawImage( image,x,y,r )
 
 		'Draw wrap around(s)
@@ -198,11 +189,6 @@ Class MyWindow Extends Window
 		
 		If y-image.Radius<0 canvas.DrawImage( image,x,y+Height,r )
 		If y+image.Radius>Height canvas.DrawImage( image,x,y-Height,r )
-		
-		If Mouse.ButtonDown( MouseButton.Left )
-			canvas.Color=Color.Green
-			canvas.DrawCircle( Mouse.X,Mouse.Y,16 )
-		Endif
 	End
 	
 	Method OnMeasure:Vec2i() Override
@@ -217,7 +203,7 @@ Function Main()
 
 	New AppInstance
 	
-	New MyWindow( "Chimps in Space!",640,480 )
+	New MyWindow( "Chimps in Space!",640,480,WindowFlags.Resizable )
 	
 	App.Run()
 End
