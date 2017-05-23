@@ -18,10 +18,11 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Select format
 	Case PixelFormat.A8 Return GL_ALPHA
 	Case PixelFormat.I8 Return GL_LUMINANCE
-	Case PixelFormat.IA16 Return GL_LUMINANCE_ALPHA
-	Case PixelFormat.RGB24 Return GL_RGB
-	Case PixelFormat.RGBA32 Return GL_RGBA
-	Case PixelFormat.RGBA16F Return GL_RGB
+	Case PixelFormat.IA8 Return GL_LUMINANCE_ALPHA
+	Case PixelFormat.RGB8 Return GL_RGB
+	Case PixelFormat.RGBA8 Return GL_RGBA
+	Case PixelFormat.RGBA16F Return GL_RGBA
+	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
@@ -32,10 +33,11 @@ Function glFormat:GLenum( format:PixelFormat )
 	Select format
 	Case PixelFormat.A8 Return GL_ALPHA
 	Case PixelFormat.I8 Return GL_LUMINANCE
-	Case PixelFormat.IA16 Return GL_LUMINANCE_ALPHA
-	Case PixelFormat.RGB24 Return GL_RGB
-	Case PixelFormat.RGBA32 Return GL_RGBA
-	Case PixelFormat.RGBA16F Return GL_RGB
+	Case PixelFormat.IA8 Return GL_LUMINANCE_ALPHA
+	Case PixelFormat.RGB8 Return GL_RGB
+	Case PixelFormat.RGBA8 Return GL_RGBA
+	Case PixelFormat.RGBA16F Return GL_RGBA
+	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
@@ -46,10 +48,11 @@ Function glType:GLenum( format:PixelFormat )
 	Select format
 	Case PixelFormat.A8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.I8 Return GL_UNSIGNED_BYTE
-	Case PixelFormat.IA16 Return GL_UNSIGNED_BYTE
-	Case PixelFormat.RGB24 Return GL_UNSIGNED_BYTE
-	Case PixelFormat.RGBA32 Return GL_UNSIGNED_BYTE
+	Case PixelFormat.IA8 Return GL_UNSIGNED_BYTE
+	Case PixelFormat.RGB8 Return GL_UNSIGNED_BYTE
+	Case PixelFormat.RGBA8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
+	Case PixelFormat.RGBA32F Return GL_FLOAT
 	Case PixelFormat.Depth32F Return GL_UNSIGNED_INT
 	End
 	RuntimeError( "Invalid PixelFormat" )
