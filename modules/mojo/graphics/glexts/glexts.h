@@ -8,6 +8,10 @@
 #include <GLES2/gl2.h>
 #endif
 
+#if __EMSCRIPTEN__
+extern "C" void glDrawBuffers( int n,const GLenum *bufs );
+#endif
+
 namespace bbGLexts{
 
 	extern bool GL_draw_buffers;

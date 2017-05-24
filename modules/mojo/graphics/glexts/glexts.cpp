@@ -10,7 +10,7 @@ extern "C" int SDL_GL_ExtensionSupported( const char *extension );
 
 namespace bbGLexts{
 
-	bool GL_draw_buffers;
+	bool GL_draw_buffers=true;
 	bool GL_texture_float;
 	bool GL_texture_half_float;
 	bool GL_depth_texture;
@@ -19,14 +19,25 @@ namespace bbGLexts{
 	
 	void init(){
 	
+	#if __EMSCRIPTEN__
+	
+		if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_WEBGL_draw_buffers" ) ){
+
+			// Don't actually call this, will crash emscripten...extension is 'just there'!
+			//
+			// glDrawBuffers=(void(*)(int,const GLenum*)) SDL_GL_GetProcAddress( "glDrawBuffersWEBGL" );
+			
+			glDrawBuffers=::glDrawBuffers;
+		}
+		
+	#else
+	
 		if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_EXT_draw_buffers" ) ){
 			
 			glDrawBuffers=(void(*)(int,const GLenum*)) SDL_GL_GetProcAddress( "glDrawBuffersEXT" );
-			
-		}else if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_WEBGL_draw_buffers" ) ){
-		
-			glDrawBuffers=(void(*)(int,const GLenum*)) SDL_GL_GetProcAddress( "glDrawBuffersWEBGL" );
 		}
+		
+	#endif
 
 		GL_texture_float=SDL_GL_ExtensionSupported( "GL_OES_texture_float" );
 		
