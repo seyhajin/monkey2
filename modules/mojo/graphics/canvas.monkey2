@@ -64,6 +64,7 @@ Class Canvas
 		PointSize=0
 		LineWidth=0
 		LineSmoothing=False
+		TextureFilteringEnabled=true
 		
 		ClearMatrix()
 	End
@@ -173,10 +174,19 @@ Class Canvas
 	#end	
 	Property TextureFilteringEnabled:Bool()
 		
-		Return True
+		Return Not _device.RetroMode
 		
 	Setter( enabled:Bool )
-	
+		DebugAssert( Not _lighting,"Canvas.TextureFilteringEnabled property cannot be modified while lighting" )
+		If _lighting Return
+		
+		Local rmode:=Not enabled
+		
+		If rmode=_device.RetroMode Return
+		
+		Flush()
+
+		_device.RetroMode=rmode
 	End	
 	
 	#rem monkeydoc The current point size for use with DrawPoint.
@@ -1243,6 +1253,7 @@ Class Canvas
 	Field _scissor:Recti
 	Field _ambientLight:Color
 	
+	Field _retroMode:Bool
 	Field _blendMode:BlendMode
 	Field _font:Font
 	Field _alpha:Float
@@ -1464,7 +1475,6 @@ Class Canvas
 			_uniforms.SetVec2f( "ViewportClip",_rviewportClip )
 			
 			_device.Viewport=_rviewport
-		
 		Endif
 		
 		If _dirty & Dirty.Scissor

@@ -66,7 +66,7 @@ void main(){
 	
 	float ndotl=max( dot( normal,lvec ),0.0 );
 	
-	vec4 tcolor=texture2D( m_ImageTexture0,texCoord0 ) * v_Color;
+	vec4 tcolor=texture2D( m_ImageTexture0,v_TexCoord0 ) * v_Color;
 
 	vec4 diffuse=texture2D( r_GBuffer0,v_GBufferCoords ) * tcolor * ndotl;
 	

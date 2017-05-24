@@ -16,9 +16,24 @@ Class RenderTarget Extends Resource
 		Next
 	End
 	
+	Property NumColorTextures:Int()
+		Return _colorTextures.Length
+	End
+	
+	Property HasDepthTexture:Bool()
+		Return _depthTexture
+	End
+	
 	Property Size:Vec2i()
-		
 		Return _colorTextures ? _colorTextures[0].Size Else _depthTexture.Size
+	End
+	
+	Method GetColorTexture:Texture( index:Int )
+		Return index>=0 And index<_colorTextures.Length ? _colorTextures[index] Else Null
+	End
+	
+	Method GetDepthTexture:Texture()
+		Return _depthTexture
 	End
 	
 	'***** INTERNAL *****

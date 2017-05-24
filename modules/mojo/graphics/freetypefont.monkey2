@@ -141,7 +141,7 @@ Class FreeTypeFont Extends Font
 			tx+=gw+1
 		Next
 		
-		gpage.image=New Image( pixmap,Null,_shader )
+		gpage.image=New Image( pixmap,TextureFlags.Filter|TextureFlags.Mipmap,_shader )
 		gpage.glyphs=glyphs
 		
 		pixmap.Discard()

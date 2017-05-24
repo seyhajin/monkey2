@@ -13,6 +13,20 @@ Global glGraphicsSeq:Int=1
 
 #rem monkeydoc @hidden
 #end
+Global glRetroMode:Bool=False
+
+#rem monkeydoc @hidden
+#end
+Global glRetroSeq:Int=1
+
+#rem monkeydoc @hidden
+#end
+Function glInvalidateGraphics()
+	glGraphicsSeq+=1
+End
+
+#rem monkeydoc @hidden
+#end
 Function glCheck()
 	Local err:=glGetError()
 	If err=GL_NO_ERROR Return

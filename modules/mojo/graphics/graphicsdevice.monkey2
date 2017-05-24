@@ -186,6 +186,17 @@ Class GraphicsDevice
 		_dirty2|=Dirty.CullMode
 	End
 
+	Property RetroMode:Bool()
+		
+		Return _retroMode
+	
+	Setter( retroMode:Bool )
+		
+		_retroMode=retroMode
+		
+		_dirty2|=Dirty.RetroMode
+	End
+	
 	Property VertexBuffer:VertexBuffer()
 	
 		Return _vertexBuffer
@@ -255,11 +266,7 @@ Class GraphicsDevice
 
 	Method Clear( color:Color,depth:Float=1 )',clearColor:Bool=True,clearDepth:Bool=True )
 		
-		glCheck()
-	
 		Validate()
-		
-		glCheck()
 		
 		If Not _scissorTest glEnable( GL_SCISSOR_TEST )
 		
@@ -286,11 +293,7 @@ Class GraphicsDevice
 	
 	Method Render( order:Int,count:Int,offset:Int=0 )
 		
-		glCheck()
-	
 		Validate2()
-		
-		glCheck()
 	
 		Local n:=order*count
 	
@@ -311,11 +314,7 @@ Class GraphicsDevice
 
 	Method RenderIndexed( order:Int,count:Int,offset:Int=0 )
 		
-		glCheck()
-		
 		Validate2()
-		
-		glCheck()
 		
 		Local n:=order*count
 		
@@ -370,11 +369,12 @@ Class GraphicsDevice
 		DepthFunc=			$0100
 		BlendMode=			$0200
 		CullMode=			$0400
-		VertexBuffer=		$0800
-		IndexBuffer=		$1000
-		Shader=				$2000
+		RetroMode=			$0800
+		VertexBuffer=		$1000
+		IndexBuffer=		$2000
+		Shader=				$4000
 		'
-		All=				$ffff
+		All=				$7fff
 		'
 	End
 	
@@ -393,6 +393,7 @@ Class GraphicsDevice
 	Field _depthFunc:DepthFunc
 	Field _blendMode:BlendMode
 	Field _cullMode:CullMode
+	Field _retroMode:Bool
 	Field _vertexBuffer:VertexBuffer
 	Field _indexBuffer:IndexBuffer
 	Field _ublocks:=New UniformBlock[4]
@@ -414,29 +415,31 @@ Class GraphicsDevice
 	End
 	
 	Function InitGL()
-	
+
 		glCheck()
-		
+			
 		InitGLexts()
 		
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
 		
 		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
 		If GL_read_buffer glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
-		
+			
 		glCheck()
 	End
 	
 	Method FlushTarget()
 		If Not _modified Return
 		_modified=False
-		If _rtarget
+		If _rtarget And _rtarget.NumColorTextures
 			Validate()
-'			_rtarget.Modified( _viewport & _scissor )
+			_rtarget.GetColorTexture(0).Modified( _viewport & _scissor )
 		Endif
 	End
 	
 	Method Validate()
+
+		glCheck()
 
 		If _glSeq<>glGraphicsSeq
 			_glSeq=glGraphicsSeq
@@ -486,11 +489,11 @@ Class GraphicsDevice
 			If _scissorTest glEnable( GL_SCISSOR_TEST ) Else glDisable( GL_SCISSOR_TEST )
 			
 			If _rtarget
-				glScissor( scissor.X,scissor.Y,scissor.Width,scissor.Height )
+				glScissor( scissor.X,scissor.Y,Max( scissor.Width,0 ),Max( scissor.Height,0 ) )
 			Else
-				glScissor( scissor.X,_rtargetSize.y-scissor.Bottom,scissor.Width,scissor.Height )
+				glScissor( scissor.X,_rtargetSize.y-scissor.Bottom,Max( scissor.Width,0 ),Max( scissor.Height,0 ) )
 			Endif
-		
+			
 		Endif
 		
 		If _dirty & Dirty.ColorMask
@@ -510,12 +513,16 @@ Class GraphicsDevice
 			
 		Endif
 		
+		glCheck()
+		
 		_dirty=Null
 	End
 	
 	Method Validate2()
 		
 		Validate()
+		
+		glCheck()
 		
 		If _dirty2 & Dirty.DepthFunc
 			
@@ -583,6 +590,15 @@ Class GraphicsDevice
 		
 		Endif
 		
+		If _dirty2 & Dirty.RetroMode
+			
+			If _retroMode<>glRetroMode
+				glRetroMode=_retroMode
+				glRetroSeq+=1
+			Endif
+		
+		Endif
+		
 		If _dirty2 & Dirty.VertexBuffer
 		
 			 _vertexBuffer.Bind()
@@ -603,6 +619,8 @@ Class GraphicsDevice
 		If _indexBuffer _indexBuffer.Validate()
 
 		_shader.ValidateUniforms( _rpass,_ublocks )
+		
+		glCheck()
 		
 		_dirty2=Null
 	End

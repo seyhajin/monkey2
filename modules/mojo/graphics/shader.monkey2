@@ -48,6 +48,7 @@ Class GLProgram
 	Field _uniforms:=New GLUniform[4][]
 	Field _textures:=New GLUniform[4][]
 	Field _ublockSeqs:=New Int[4]
+	Field _glRetroSeq:Int
 
 	Method New( glprogram:GLuint )
 
@@ -98,7 +99,16 @@ Class GLProgram
 		Return _glprogram
 	End
 
-	Method ValidateUniforms( ublocks:UniformBlock[] )',textureFilter:TextureFilter )
+	Method ValidateUniforms( ublocks:UniformBlock[] )
+		
+		#rem
+		If _glRetroSeq<>glRetroSeq
+			For Local i:=0 Until _ublockSeqs.Length
+				_ublockSeqs[i]=0
+			Next
+			_glRetroSeq=glRetroSeq
+		Endif
+		#end
 
 		For Local i:=0 Until 4
 
@@ -151,12 +161,12 @@ Class GLProgram
 			For Local u:=Eachin _textures[i]
 				
 				Local tex:=ublocks[i].GetTexture( u.uniformId )
-				If tex
-					tex.Bind( u.texunit )',textureFilter )
-				Else
+				If Not tex
 					Print( "Can't bind shader texture uniform '"+u.name+"' - no texture!" )
+					Continue
 				Endif
 				
+				tex.Bind( u.texunit )
 			Next
 		
 		Next
@@ -218,8 +228,8 @@ Class Shader
 	#end
 	Method Bind( renderPass:Int )
 	
-		If _seq<>glGraphicsSeq
-			_seq=glGraphicsSeq
+		If _glSeq<>glGraphicsSeq
+			_glSeq=glGraphicsSeq
 			Rebuild()
 		Endif
 	
@@ -264,7 +274,7 @@ Class Shader
 	Field _rpasses:Int[]
 	Field _rpassMask:Int
 	Field _programs:=New GLProgram[8]
-	Field _seq:Int
+	Field _glSeq:Int
 	
 	Method EnumPasses()
 

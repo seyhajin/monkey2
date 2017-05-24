@@ -3,13 +3,13 @@
 
 //@vertex
 
-attribute vec4 mx2_Vertex;
+uniform mat4 r_ModelViewProjectionMatrix;
 
-uniform mat4 mx2_ModelViewProjectionMatrix;
+attribute vec4 a_Position;
 
 void main(){
 
-	gl_Position=mx2_ModelViewProjectionMatrix * mx2_Vertex;
+	gl_Position=r_ModelViewProjectionMatrix * a_Position;
 }
 
 //@fragment

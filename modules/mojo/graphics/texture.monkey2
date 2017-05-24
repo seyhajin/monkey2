@@ -69,21 +69,18 @@ Public
 
 #end
 Enum TextureFlags
-	WrapS=			$0001			'wrap works, but hidden for now...
+	None=			$0000
+	WrapS=			$0001
 	WrapT=			$0002
 	Filter=			$0004
 	Mipmap=			$0008
-	Dynamic=		$0010
-	Cubemap=		$0020
 	
+	Dynamic=		$00100
+	Cubemap=		$00200
+
 	Skybox=			Filter|Mipmap|Cubemap
 	ColorTarget=	Filter|Dynamic
 	DepthTarget=	Dynamic
-End
-
-Enum TextureFilter
-	Filter=			$0001
-	Mipmap=			$0002
 End
 
 #rem monkeydoc @hidden
@@ -179,6 +176,14 @@ Class Texture Extends Resource
 	Property Flags:TextureFlags()
 		
 		Return _flags
+	
+	Setter( flags:TextureFlags )
+		
+		Local mask:=TextureFlags.WrapS|TextureFlags.WrapT|TextureFlags.Filter|TextureFlags.Mipmap
+		
+		_flags=(_flags & ~mask) | (Flags & mask)
+		
+		_dirty|=Dirty.TexParams
 	End
 	
 	Method PastePixmap( pixmap:Pixmap,x:Int,y:Int )
@@ -304,7 +309,14 @@ Class Texture Extends Resource
 	#end
 	Method ValidateGLTexture:GLuint()
 		
-		If _glSeq=glGraphicsSeq And Not _dirty Or _discarded Return _glTexture
+		If _discarded Return 0
+		
+		If _retroMode<>glRetroMode
+			_dirty|=Dirty.TexParams
+			_retroMode=glRetroMode
+		Endif
+		
+		If _glSeq=glGraphicsSeq And Not _dirty Return _glTexture
 		
 		glCheck()
 		
@@ -330,7 +342,10 @@ Class Texture Extends Resource
 				glTexParameteri( _glTarget,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE )
 			Endif
 			
-			If _flags & TextureFlags.Mipmap
+			If _retroMode
+				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
+				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
+			Else If _flags & TextureFlags.Mipmap
 				If _flags & TextureFlags.Filter
 					glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
 					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR )
@@ -384,12 +399,14 @@ Class Texture Extends Resource
 			If _flags & TextureFlags.Mipmap glGenerateMipmap( _glTarget )
 				
 			glCheck()
-		
+
 		End
 		
 		_dirty=Null
 		
 		glPopTexture()
+		
+		glCheck()
 
 		Return _glTexture
 	End
@@ -429,6 +446,7 @@ Class Texture Extends Resource
 	Field _flags:TextureFlags
 	Field _managed:Pixmap
 	Field _discarded:Bool
+	Field _retroMode:Bool
 	
 	Field _dirty:Dirty
 	

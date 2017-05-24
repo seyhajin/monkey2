@@ -52,7 +52,9 @@ Class Image Extends Resource
 	@param width,height Image size.
 	
 	#end	
-	Method New( pixmap:Pixmap,textureFlags:TextureFlags=TextureFlags.Filter|TextureFlags.Mipmap,shader:Shader=Null )
+	Method New( pixmap:Pixmap,textureFlags:TextureFlags=Null,shader:Shader=Null )
+		
+		textureFlags=MakeTextureFlags( textureFlags )
 	
 		Local texture:=New Texture( pixmap,textureFlags )
 		
@@ -61,9 +63,16 @@ Class Image Extends Resource
 		AddDependancy( texture )
 	End
 
-	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.Filter|TextureFlags.Mipmap,shader:Shader=Null )
+	Method New( width:Int,height:Int,textureFlags:TextureFlags=null,shader:Shader=Null )
+		
+		Self.New( width,height,PixelFormat.RGBA8,textureFlags,shader )
+	End
+
+	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=Null,shader:Shader=Null )
+		
+		textureFlags=MakeTextureFlags( textureFlags )
 	
-		Local texture:=New Texture( width,height,PixelFormat.RGBA8,textureFlags )
+		Local texture:=New Texture( width,height,format,textureFlags )
 		
 		Init( texture,shader )
 		
@@ -133,7 +142,7 @@ Class Image Extends Resource
 	
 		SetTexture( 0,texture )
 	End
-
+	
 	#rem monkeydoc The image's texture rect.
 	
 	Describes the rect the image occupies within its primary texture.
@@ -319,14 +328,14 @@ Class Image Extends Resource
 	
 	#rem monkeydoc Loads an image from file.
 	#end
-	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=Null )
+	Function Load:Image( path:String,shader:Shader=Null )
 		
 		Local pixmap:=Pixmap.Load( path,Null,True )
 		If Not pixmap Return Null
 
 		If Not shader shader=mojo.graphics.Shader.GetShader( "sprite" )
 		
-		Local image:=New Image( pixmap,textureFlags,shader )
+		Local image:=New Image( pixmap,Null,shader )
 			
 		image.OnDiscarded+=Lambda()
 			pixmap.Discard()
@@ -508,6 +517,15 @@ Class Image Extends Resource
 		_texCoords.min.y=Float(_rect.min.y)/_textures[0].Height
 		_texCoords.max.x=Float(_rect.max.x)/_textures[0].Width
 		_texCoords.max.y=Float(_rect.max.y)/_textures[0].Height
+	End
+	
+	Method MakeTextureFlags:TextureFlags( textureFlags:TextureFlags )
+		
+		textureFlags|=TextureFlags.Filter
+		
+		If Not (textureFlags & TextureFlags.Dynamic) textureFlags|=textureFlags.Mipmap
+		
+		Return textureFlags
 	End
 	
 End
