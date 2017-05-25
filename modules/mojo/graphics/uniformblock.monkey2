@@ -9,6 +9,13 @@ Class UniformBlock Extends Resource
 		_name=name
 	End
 	
+	Method New( uniforms:UniformBlock )
+		_name=uniforms._name
+		For Local i:=0 Until _uniforms.Length
+			_uniforms[i]=uniforms._uniforms[i]
+		Next
+	End
+	
 	Property Name:Int()
 		Return _name
 	End
@@ -124,7 +131,7 @@ Class UniformBlock Extends Resource
 	Method GetMat4fv:Float Ptr( id:Int )
 		Return GetFloatPtr( id,Type.Mat4f )
 	End
-	
+
 	'***** Mat4f array *****
 	'
 	Method SetMat4fArray( uniform:String,value:Mat4f[] )
@@ -175,10 +182,6 @@ Class UniformBlock Extends Resource
 	
 	Private
 	
-	Field _name:Int
-	
-	Field _seq:Int
-	
 	Global _gseq:Int
 	Global _ids:=New StringMap<Int>[8]
 	
@@ -225,7 +228,9 @@ Class UniformBlock Extends Resource
 		
 	End
 	
-	Field _uniforms:=New Uniform[32]
+	Field _name:Int
+	Field _seq:Int
+	Field _uniforms:=New Uniform[64]
 	
 	Method SetFloatData<T>( uniform:String,data:T,type:Type )
 		Local id:=GetUniformId( uniform )

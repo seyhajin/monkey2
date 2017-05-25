@@ -47,11 +47,7 @@ Const GL_texture_float:Bool="bbGLexts::GL_texture_float"
 Const GL_texture_half_float:bool="bbGLexts::GL_texture_half_float"
 Const GL_depth_texture:bool="bbGLexts::GL_depth_texture"
 
-#If __WEB_TARGET__
-Function glDrawBuffers( n:Int,bufs:GLenum Ptr )
-#Else
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
-#Endif
 
 Function InitGLexts()="bbGLexts::init"
 	

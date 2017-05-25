@@ -63,17 +63,17 @@ Class RenderTarget Extends Resource
 	End
 	
 	Method Bind()
-		
+	
 		glBindFramebuffer( GL_FRAMEBUFFER,ValidateGLFramebuffer() )
-		
+
 		If glexts.GL_draw_buffers 
 			glDrawBuffers( _drawBufs.Length,_drawBufs.Data )
 		Endif
-		
-		#If __TARGET__="macos" Or __TARGET__="linux"
-		glReadBuffer( GL_NONE )
-		#endif
-		
+
+		If glexts.GL_read_buffer
+			glReadBuffer( GL_NONE )
+		Endif
+
 		CheckStatus()
 	End
 	
