@@ -11,13 +11,13 @@ The following symbols may be used in preprocessor expressions:
 
 | Symbol			| Type		| Meaning
 |:------------------|:----------|--------
-|__TARGET__			| String	| The current build target. One of: "windows", "macos", "linux", "android", "ios", "emscripten"
-|__CONFIG__			| String	| The current build config. One of: "release", "debug"
-|__DESKTOP_TARGET__	| Bool		| True if the current build target is windows, macos or linux.
-|__MOBILE_TARGET__	| Bool		| True if the current build target is android or ios.
-|__WEB_TARGET__		| Bool		| True if the current build target is emscripten.
-|__DEBUG__			| Bool		| True if the current build config is debug.
-|__RELEASE__		| Bool		| True if the current build config is release.
+| \_\_TARGET\_\_			| String	| The current build target. One of: "windows", "macos", "linux", "android", "ios", "emscripten"
+| \_\_CONFIG\_\_			| String	| The current build config. One of: "release", "debug"
+| \_\_DESKTOP\_TARGET\_\_	| Bool		| True if the current build target is windows, macos or linux.
+| \_\_MOBILE\_TARGET\_\_	| Bool		| True if the current build target is android or ios.
+| \_\_WEB\_TARGET\_\_		| Bool		| True if the current build target is emscripten.
+| \_\_DEBUG\_\_			| Bool		| True if the current build config is debug.
+| \_\_RELEASE\_\_		| Bool		| True if the current build config is release.
 
 For example, to include code in debug builds only, use something like:
 
