@@ -14,7 +14,10 @@ Note: This documentation is currently WIP.
 @import strings.md
 @import variants.md
 @import variables.md
+@import pointers.md
 @import functions.md
+@import loop-statements.md
+@import conditional-statements.md
 @import expressions.md
 @import user-types.md
 @import preprocessor.md
