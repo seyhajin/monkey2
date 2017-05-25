@@ -23,16 +23,14 @@ Const Keyboard:=New KeyboardDevice
 
 #rem monkeydoc The KeyboardDevice class.
 
-All method that take a `key` parameter can also be used with 'raw' keys.
-
-A raw key represents the physical location of a key on US keyboards. For example, `Key.Q|Key.Raw` indicates the key at the top left of the
-'qwerty' keys regardless of the current keyboard layout.
-
-Please see the [[Key]] enum for more information on raw keys.
-
 To access the keyboard device, use the global [[Keyboard]] constant.
 
 The keyboard device should only used after a new [[app.AppInstance]] is created.
+
+All methods that take a `key` parameter can also be combined with 'raw' keys.
+
+A raw key represents the physical location of a key on US keyboards. For example, `Key.Q|Key.Raw` indicates the key at the top left of the
+QWERTY keys, as this is where the 'Q' key is on US keyboards.
 
 #end
 Class KeyboardDevice Extends InputDevice
@@ -45,25 +43,22 @@ Class KeyboardDevice Extends InputDevice
 
 	#rem monkeydoc Gets the name of a key.
 	
-	If `key` is a raw key, returns the name 'printed' on that key.
+	If `key` is a raw key, returns the name 'printed' on the key, eg: KeyName( Key.W|Key.Raw ) will always return the name of key at the top left of the QWERTY keys.
 	
-	if `key` is a virtual key
+	if `key` is a virtual key, returns the name of the key, eg: KeyName( Key.W ) will always return "W".
 	
 	#end	
 	Method KeyName:String( key:Key )
-		If key & key.Raw 
-			key&=~Key.Raw
-			If key<=Key.None Or key>=Key.Max Return "?????"
-			key=TranslateKey( key )
-		Else
-			If key<=Key.None Or key>=Key.Max Return "?????"
+		If key & key.Raw
+			key=TranslateKey( key&~Key.Raw ) & ~Key.Raw
 		Endif
+		If key<=Key.None Or key>=Key.Max Return "?????"
 		Return _names[key]
 	End
 	
 	#rem monkeydoc Translates a key to/from a raw key.
 	
-	If `key` is a raw key, returns the corresponding virual key.
+	If `key` is a raw key, returns the corresponding virtual key.
 	
 	If `key` is a virtual key, returns the corresponding raw key.
 	
@@ -139,7 +134,6 @@ Class KeyboardDevice Extends InputDevice
 	#rem monkeydoc @hidden
 	#end
 	Method KeyHit:Bool( key:Key,repeating:Bool=False )
-
 		Return KeyPressed( key,repeating )
 	End
 	
@@ -221,6 +215,7 @@ Class KeyboardDevice Extends InputDevice
 			
 			p=p+1
 		Wend
+
 	End
 	
 	#rem monkeydoc @hidden
@@ -239,7 +234,9 @@ Class KeyboardDevice Extends InputDevice
 		Case SDL_KEYDOWN
 		
 			Local kevent:=Cast<SDL_KeyboardEvent Ptr>( event )
-			
+
+			'Update key matrix
+			'
 			Local scode:=kevent->keysym.scancode
 			
 			_keys[scode].down=True
@@ -250,8 +247,21 @@ Class KeyboardDevice Extends InputDevice
 				_keys[scode].rpressed=_frame
 			Endif
 			
+			'Update modifiers
+			'
+			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
+
 			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			
+			Select key
+			Case Key.CapsLock,Key.KeypadNumLock
+				_modifiers~=KeyToModifier( key )
+			Default
+				_modifiers|=KeyToModifier( key )
+			End
+			
+			'Update charqueue
+			'			
 			Local char:=KeyToChar( _scan2key[scode] )
 			If char PushChar( char )
 
@@ -259,12 +269,23 @@ Class KeyboardDevice Extends InputDevice
 		
 			Local kevent:=Cast<SDL_KeyboardEvent Ptr>( event )
 			
+			'Update key matrix
+			'
 			Local scode:=kevent->keysym.scancode
 			
 			_keys[scode].down=False
 			_keys[scode].released=_frame
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			
+			'Update modifiers
+			'
+			Local key:=KeyCodeToKey( Int( kevent->keysym.sym ) )
+			
+			Select key
+			Case Key.CapsLock,Key.KeypadNumLock
+			Default
+				_modifiers&=~KeyToModifier( key )
+			End
+
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
@@ -289,10 +310,10 @@ Class KeyboardDevice Extends InputDevice
 
 	Field _frame:Int=1
 	Field _keys:=New KeyState[512]
-	Field _modifiers:Modifier
 	Field _charQueue:=New Int[CHAR_QUEUE_SIZE]
 	Field _charPut:Int
 	Field _charGet:Int
+	Field _modifiers:Modifier
 
 	Field _names:=New String[512]
 	Field _raw2scan:=New Int[512]	'no translate
@@ -302,7 +323,23 @@ Class KeyboardDevice Extends InputDevice
 
 	Method New()
 	End
-
+	
+	Function KeyToModifier:Modifier( key:Int )
+		Select key
+		Case Key.LeftShift Return Modifier.LeftShift
+		Case Key.RightShift Return Modifier.RightShift
+		Case Key.LeftControl Return Modifier.LeftControl
+		Case Key.RightControl Return Modifier.RightControl
+		Case Key.LeftAlt Return Modifier.LeftAlt
+		Case Key.RightAlt Return Modifier.RightAlt
+		Case Key.LeftGui Return Modifier.LeftGui
+		Case Key.RightGui Return Modifier.RightGui
+		Case Key.CapsLock Return Modifier.CapsLock
+		Case Key.KeypadNumLock Return Modifier.NumLock
+		End
+		Return Null
+	End
+	
 	Function KeyToChar:Int( key:Int )
 		Select key
 		Case Key.Backspace,Key.Tab,Key.Enter,Key.Escape,Key.KeyDelete

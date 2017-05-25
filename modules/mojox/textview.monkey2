@@ -782,6 +782,115 @@ Class TextView Extends ScrollableView
 		If text ReplaceText( text )
 	End
 	
+	Struct Word
+		
+		Field index:Int
+		Field length:Int
+		field rect:Recti
+		
+		Method New( index:Int,length:Int,rect:Recti )
+			Self.index=index
+			Self.length=length
+			Self.rect=rect
+		End
+		
+		Property Index:Int()
+			Return index
+		End
+		
+		Property Length:Int()
+			Return length
+		End
+		
+		Property Rect:Recti()
+			Return rect
+		End
+		
+	End
+	
+	Class WordIterator
+		
+		Method New( view:TextView )
+			Init( view,0,view.Text.Length )
+		End
+		
+		Property AtEnd:Bool()
+			Return _i0>=_eol
+		End
+		
+		Property Current:Word()
+			Return New Word( _i0,_l,_r )
+		End
+					
+		Method Bump()
+			_x0+=_w
+			_i0+=_l
+			
+			If _i0>=_eol _w=0 ; _l=0 ; Return
+			
+			_w=_view.WordWidth( _view.Text,_i0,_eol,_x0 )
+			_l=_view.WordLength( _view.Text,_i0,_eol )
+			
+			If _x0+_w>_view._wrapw
+				_y0+=_view._charh
+				_x0=0
+			Endif
+			
+			_r=New Recti( _x0,_y0,_x0+_w,_y0+_h )
+		End
+		
+		Function ForLine:WordIterator( view:TextView,line:Int )
+			Local i0:=view._doc.StartOfLine( line )
+			Local eol:=view._doc.EndOfLine( line )
+			Return New WordIterator( view,i0,eol )
+		End
+		
+		Private
+		
+		Field _view:TextView
+		Field _line:Int
+		
+		Field _i0:Int
+		Field _eol:Int
+		Field _x0:Int
+		Field _y0:Int
+		Field _w:Int
+		Field _h:Int
+		Field _l:Int
+		Field _r:Recti
+		
+		Method New( view:TextView,i0:Int,eol:Int )
+			
+			Init( view,i0,eol )
+		End
+		
+		Method Init( view:TextView,i0:Int,eol:Int )
+			
+			_view=view
+			
+			_i0=i0
+			_eol=eol
+			
+			_x0=0
+			_y0=_view.CharRect( i0 ).Top
+			_h=_view._charh
+			
+			If _i0>=_eol Return
+
+			_w=_view.WordWidth( _view.Text,_i0,_eol,_x0 )
+			_l=_view.WordLength( _view.Text,_i0,_eol )
+
+			_r=New Recti( _x0,_y0,_x0+_w,_y0+_h )
+		End
+		
+	End
+	
+	#rem monkeydoc @hidden
+	#End
+	Method Words:WordIterator()
+		Return New WordIterator( Self )
+	End
+	
 	Protected
 	
 	Method OnThemeChanged() Override
@@ -874,7 +983,47 @@ Class TextView Extends ScrollableView
 		
 		For Local line:=firstLine Until lastLine
 		
-			RenderLine( canvas,line )
+			OnRenderLine( canvas,line )
+			
+		Next
+		
+	End
+	
+	Method OnRenderLine( canvas:Canvas,line:Int ) Virtual
+		
+		Local text:=_doc.Text
+		Local colors:=_doc.Colors
+		
+		For local word:=Eachin WordIterator.ForLine( Self,line )
+			
+			If text[word.Index]<=32 Continue
+			
+			Local i0:=word.Index
+
+			Local i1:=i0+word.Length
+			
+			Local x0:=word.Rect.Left,y0:=word.Rect.Top
+			
+			While i0<i1
+			
+				Local start:=i0
+				Local color:=colors[start]
+				i0+=1
+			
+				While i0<i1 And colors[i0]=color
+					i0+=1
+				Wend
+				
+				If color<0 Or color>=_textColors.Length color=0
+
+				canvas.Color=_textColors[color]
+				
+				Local str:=text.Slice( start,i0 )
+				
+				canvas.DrawText( str,x0,y0 )
+				
+				x0+=_font.TextWidth( str )
+			Wend
 			
 		Next
 		
@@ -1513,59 +1662,6 @@ Class TextView Extends ScrollableView
 		Next
 			
 		UpdateCursor()
-	End
-	
-	Method RenderLine( canvas:Canvas,line:Int )
-	
-		Local text:=_doc.Text
-		Local colors:=_doc.Colors
-		
-		Local i0:=_doc.StartOfLine( line )
-		Local eol:=_doc.EndOfLine( line )
-		
-		Local x0:=0,y0:=_lines[line].rect.Top
-		
-		While i0<eol
-		
-			Local w:=WordWidth( text,i0,eol,x0 )
-			Local l:=WordLength( text,i0,eol )
-				
-			If x0+w>_wrapw	'-_charw
-				y0+=_charh
-				x0=0
-			Endif
-			
-			If text[i0]<=32
-				x0+=w
-				i0+=l
-				Continue
-			Endif
-			
-			Local i1:=i0+l
-			
-			While i0<i1
-			
-				Local start:=i0
-				Local color:=colors[start]
-				i0+=1
-			
-				While i0<i1 And colors[i0]=color
-					i0+=1
-				Wend
-				
-				If color<0 Or color>=_textColors.Length color=0
-
-				canvas.Color=_textColors[color]
-				
-				Local str:=text.Slice( start,i0 )
-				
-				canvas.DrawText( str,x0,y0 )
-				
-				x0+=_font.TextWidth( str )
-			Wend
-			
-		Wend
-		
 	End
 	
 	Method LinesModified( first:Int,removed:Int,inserted:Int )

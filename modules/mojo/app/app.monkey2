@@ -117,11 +117,11 @@ Class AppInstance
 		Case "es"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
 		Default
-#If __TARGET__="macos"
+#If __TARGET__="macos" Or __TARGET__="linux"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_COMPATIBILITY	'no gles20 on macos...
 #Else
 			gl_profile=SDL_GL_CONTEXT_PROFILE_ES
-#Endif		
+#Endif
 		End
 
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
@@ -466,11 +466,12 @@ Class AppInstance
 		If Not _window Return Null
 		
 		Local view:=_window.FindViewAtWindowPoint( _mouseLocation )
+		
 		If IsActive( view ) Return view
 		
 		Return Null
 	End
-
+	
 	#rem monkeydoc @hidden
 	#end	
 	Method UpdateWindows()
@@ -485,7 +486,7 @@ Class AppInstance
 		For Local window:=Eachin Window.VisibleWindows()
 			window.UpdateWindow( render )
 		End
-
+		
 		If _mouseView And Not IsActive( _mouseView )
 			SendMouseEvent( EventType.MouseUp,_mouseView )
 			_mouseView=Null
@@ -711,8 +712,8 @@ Class AppInstance
 
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			_keyChar=Keyboard.KeyName( _key )
+			_modifiers=Keyboard.Modifiers
 			
 			If kevent->repeat_
 				SendKeyEvent( EventType.KeyRepeat )
@@ -729,11 +730,11 @@ Class AppInstance
 			
 			_key=Keyboard.KeyCodeToKey( Int( kevent->keysym.sym ) )
 			_rawKey=Keyboard.ScanCodeToRawKey( Int( kevent->keysym.scancode ) )
-			_modifiers=Cast<Modifier>( kevent->keysym.mod_ )
 			_keyChar=Keyboard.KeyName( _key )
+			_modifiers=Keyboard.Modifiers
 			
 			SendKeyEvent( EventType.KeyUp )
-
+			
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )

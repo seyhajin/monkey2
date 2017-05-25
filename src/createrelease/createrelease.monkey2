@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.03"
+Const MX2CC_VERSION:="1.1.04"
 
 Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
 
@@ -26,6 +26,10 @@ Function CopyFiles( dir:String )
 	CreateDir( output+"/"+dir )
 	
 	For Local file:=Eachin LoadDir( dir )
+		
+		If file=".gitignore" continue
+		
+		If file.Contains( "_raspbian" ) Continue
 
 #if __TARGET__="windows"
 		If file.Contains( "_macos" ) Continue
@@ -36,7 +40,7 @@ Function CopyFiles( dir:String )
 #elseif __TARGET__="linux"
 		If file.Contains( "_windows" ) Continue
 		If file.Contains( "_macos" ) Continue
-#endif
+#Endif
 			
 		Local src:=dir+"/"+file
 		
@@ -190,6 +194,5 @@ Function Main()
 #endif
 
 	Print "~nFinished!!!!!"
-
 	
 End

@@ -3,7 +3,7 @@ Namespace mojo.graphics.glutil
 
 Private
 
-Global tmpi:Int
+Global bindings:=New IntStack
 
 Public
 
@@ -13,101 +13,135 @@ Global glGraphicsSeq:Int=1
 
 #rem monkeydoc @hidden
 #end
+Global glRetroMode:Bool=False
+
+#rem monkeydoc @hidden
+#end
+Global glRetroSeq:Int=1
+
+#rem monkeydoc @hidden
+#end
+Function glInvalidateGraphics()
+	glGraphicsSeq+=1
+End
+
+#rem monkeydoc @hidden
+#end
 Function glCheck()
 	Local err:=glGetError()
 	If err=GL_NO_ERROR Return
-	Assert( False,"GL ERROR! err="+err )
+	RuntimeError( "GL ERROR! err="+err )
 End
 
 #rem monkeydoc @hidden
 #end
-Function glFormat:GLenum( format:PixelFormat )
-	Select format
-	Case PixelFormat.A8 Return GL_ALPHA
-	Case PixelFormat.I8 Return GL_LUMINANCE
-	Case PixelFormat.IA16 Return GL_LUMINANCE_ALPHA
-	Case PixelFormat.RGB24 Return GL_RGB
-	Case PixelFormat.RGBA32 Return GL_RGBA
-	End
-	Assert( False,"Invalidate PixelFormat" )
-	Return GL_RGBA
+Function glPushTexture:Void( target:GLenum,texture:GLuint )
+
+	Assert( target=GL_TEXTURE_2D Or target=GL_TEXTURE_CUBE_MAP )
+	
+	Local binding:Int
+	glGetIntegerv( target=GL_TEXTURE_2D ? GL_TEXTURE_BINDING_2D Else GL_TEXTURE_BINDING_CUBE_MAP,Varptr binding )
+
+	bindings.Push( binding )
+	bindings.Push( target )
+	
+	glBindTexture( target,texture )
 End
 
 #rem monkeydoc @hidden
 #end
-Function glPushTexture2d:Void( tex:Int )
-	glGetIntegerv( GL_TEXTURE_BINDING_2D,Varptr tmpi )
-	glBindTexture( GL_TEXTURE_2D,tex )
+Function glPopTexture:Void()
+	
+	Local target:=bindings.Pop()
+	Assert( target=GL_TEXTURE_2D Or target=GL_TEXTURE_CUBE_MAP )
+	
+	glBindTexture( target,bindings.Pop() )
 End
 
 #rem monkeydoc @hidden
 #end
-Function glPopTexture2d:Void()
-	glBindTexture( GL_TEXTURE_2D,tmpi )
+Function glPushBuffer( target:GLenum,buf:GLuint )
+	
+	Assert( target=GL_ARRAY_BUFFER Or target=GL_ELEMENT_ARRAY_BUFFER )
+	
+	Local binding:Int
+	glGetIntegerv( target=GL_ARRAY_BUFFER ? GL_ARRAY_BUFFER_BINDING Else GL_ELEMENT_ARRAY_BUFFER_BINDING,Varptr binding )
+	
+	bindings.Push( binding )
+	bindings.Push( target )
+	
+	glBindBuffer( target,buf )
 End
 
 #rem monkeydoc @hidden
 #end
-Function glPushArrayBuffer( buf:Int )
-	glGetIntegerv( GL_ARRAY_BUFFER_BINDING,Varptr tmpi )
-	glBindBuffer( GL_ARRAY_BUFFER,buf )
+Function glPopBuffer()
+	
+	Local target:=bindings.Pop()
+	Assert( target=GL_ARRAY_BUFFER Or target=GL_ELEMENT_ARRAY_BUFFER )
+	
+	glBindBuffer( target,bindings.Pop() )
 End
 
 #rem monkeydoc @hidden
 #end
-Function glPopArrayBuffer()
-	glBindBuffer( GL_ARRAY_BUFFER,tmpi )
-End
-
-#rem monkeydoc @hidden
-#end
-Function glPushElementArrayBuffer( buf:Int )
-	glGetIntegerv( GL_ELEMENT_ARRAY_BUFFER_BINDING,Varptr tmpi )
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,buf )
-End
-
-#rem monkeydoc @hidden
-#end
-Function glPopElementArrayBuffer()
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,tmpi )
-End
-
-#rem monkeydoc @hidden
-#end
-Function glPushFramebuffer:Void( framebuf:Int )
-	glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr tmpi )
-	glBindFramebuffer( GL_FRAMEBUFFER,framebuf )
+Function glPushFramebuffer:Void( target:GLenum,framebuf:GLuint )
+	
+	Assert( target=GL_FRAMEBUFFER )
+	
+	Local binding:Int
+	glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr binding )
+	
+	bindings.Push( framebuf )
+	bindings.Push( target )
+	
+	glBindFramebuffer( target,framebuf )
 End
 
 #rem monkeydoc @hidden
 #end
 Function glPopFramebuffer:Void()
-	glBindFramebuffer( GL_FRAMEBUFFER,tmpi )
+	
+	Local target:=bindings.Pop()
+	Assert( target=GL_FRAMEBUFFER )
+	
+	glBindFramebuffer( target,bindings.Pop() )
 End
 
 #rem monkeydoc @hidden
 #end
 Function glCompile:Int( type:Int,source:String )
+	
+	#If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
 
-	source="
-	#ifdef GL_ES
-	#ifdef GL_FRAGMENT_PRECISION_HIGH
-	precision highp float;
-	#else
-	precision mediump float;
+		Const prefix:="
+#ifdef GL_ES
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#endif
+"
+		source=prefix+source
+		
+		If glexts.GL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
 	#endif
-	#endif
-	"+source
 	
 	Local shader:=glCreateShader( type )
 	glShaderSourceEx( shader,source )
 	glCompileShader( shader )
-	glGetShaderiv( shader,GL_COMPILE_STATUS,Varptr tmpi )
-	If Not tmpi
+	
+	Local status:Int
+	glGetShaderiv( shader,GL_COMPILE_STATUS,Varptr status )
+	If Not status
+		
 		Local lines:=source.Split( "~n" )
+		
 		For Local i:=0 Until lines.Length
 			Print (i+1)+":~t"+lines[i]
 		Next
+		
 		RuntimeError( "Failed to compile fragment shader:"+glGetShaderInfoLogEx( shader ) )
 	Endif
 	Return shader
@@ -117,6 +151,10 @@ End
 #end
 Function glLink:Void( program:Int )
 	glLinkProgram( program )
-	glGetProgramiv( program,GL_LINK_STATUS,Varptr tmpi )
-	If Not tmpi RuntimeError( "Failed to link program:"+glGetProgramInfoLogEx( program ) )
+
+	Local status:Int
+	glGetProgramiv( program,GL_LINK_STATUS,Varptr status )
+	If Not status
+		RuntimeError( "Failed to link program:"+glGetProgramInfoLogEx( program ) )
+	Endif
 End

@@ -1,10 +1,16 @@
 
 Namespace std.audio
 
+#rem monkeydoc The AudioData class.
+#end
 Class AudioData
 
+	#rem monkeydoc Invoked when audio data is discarded.
+	#end
 	Field OnDiscarded:Void()
 
+	#rem monkeydoc Creates a new AudioData object
+	#end
 	Method New( length:Int,format:AudioFormat,hertz:Int )
 	
 		Local data:=libc.malloc( BytesPerSample( format )*length )
@@ -26,31 +32,47 @@ Class AudioData
 		_data=Cast<UByte Ptr>( data )
 	End
 	
+	#rem monkeydoc The length, in samples, of the audio.
+	#end
 	Property Length:Int()
-	
 		Return _length
 	End
 	
+	#rem monkeydoc The format of the audio.
+	#end
 	Property Format:AudioFormat()
-		
 		Return _format
 	End
 	
+	#rem monkeydoc The playback rate of the audio.
+	#end
 	Property Hertz:Int()
-	
 		Return _hertz
 	End
-	
+
+	#rem monkeydoc The duration, in seconds, of the audio.
+	#end
+	Property Duration:Double()
+		Return Double(_length)/Double(_hertz)
+	End
+
+	#rem monkeydoc The actual audio data.
+	#end	
 	Property Data:UByte Ptr()
-	
 		Return _data
 	End
-	
+
+	#rem monkeydoc The size, in bytes of the audio data.
+	#end	
 	Property Size:Int()
-	
 		Return BytesPerSample( _format ) * _length
 	End
 	
+	#rem monkeydoc Gets a sample at a given sample index.
+	
+	@index must be in the range [0,Length).
+	
+	#end
 	Method GetSample:Float( index:Int,channel:Int=0 )
 		DebugAssert( index>=0 And index<_length )
 		Select _format
@@ -66,10 +88,19 @@ Class AudioData
 		Return 0
 	End
 	
+	#rem monkeydoc @hidden Sets a sample at a given sample index.
+
+	@index must be in the range [0,Length).
+	
+	#end
 	Method SetSample( index:Int,channel:Int=0,sample:Float )
 		DebugAssert( index>=0 And index<_length )
+		
+		RuntimeError( "TODO!" )
 	End
 	
+	#rem monkeydoc Discards the audio data object.
+	#end
 	Method Discard()
 		If _discarded Return
 		_discarded=True
@@ -79,6 +110,8 @@ Class AudioData
 		_data=Null
 	End
 	
+	#rem monkey Loads audio data from a file.
+	#end
 	Function Load:AudioData( path:String )
 	
 		Select ExtractExt( path ).ToLower()

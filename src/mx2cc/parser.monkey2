@@ -344,6 +344,8 @@ Class Parser
 			
 			If CParse( "extends" )
 			
+				If decl.kind="struct" Error( "Structs cannot use 'Extends'" )
+			
 				If flags & DECL_EXTENSION Error( "Extension classes cannot use 'Extends'" )
 				
 				If decl.kind="interface" Or decl.kind="protocol"
@@ -1047,6 +1049,8 @@ Class Parser
 			
 			cases.Push( New CaseExpr( exprs.ToArray(),stmts ) )
 		Wend
+		
+		If cases.Empty ErrorNx( "Select statement must have at least one case" )
 		
 		If CParse( "default" )
 		

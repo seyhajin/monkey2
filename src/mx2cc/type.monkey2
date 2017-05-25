@@ -143,7 +143,7 @@ Class ProxyType Extends Type
 	End
 	
 	Method ToString:String() Override
-		Return _alias.ToString()
+		Return _alias ? _alias.ToString() Else "<unknown>"
 	End
 	
 	Method ToValue:Value( instance:Value ) Override

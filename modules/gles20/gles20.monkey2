@@ -82,9 +82,9 @@ typedef khronos_ssize_t  GLsizeiptr;
 
 'Not quite right, but less annoying...
 Alias GLvoid:Void
-Alias GLenum:Int
+Alias GLenum:UInt
 Alias GLboolean:Bool
-Alias GLbitfield:Int
+Alias GLbitfield:UInt
 Alias GLshort:Short
 Alias GLint:Int
 Alias GLsizei:Int
@@ -94,8 +94,14 @@ Alias GLuint:UInt
 Alias GLfloat:Float
 Alias GLfixed:Int
 Alias GLclampf:Float
-Alias GLintptr:Int
-Alias GLsizeiptr:Int
+Alias GLintptr:Long
+Alias GLsizeiptr:Long
+
+#If __TARGET__="windows" or __MOBILE_TARGET__ or __WEB_TARGET__
+Const GL_ES_VERSION_2_0:=1
+#Else
+Const GL_ES_VERSION_2_0:=0
+#Endif
 
 Extern
 
@@ -106,7 +112,6 @@ Struct GLcchar="const char"
 End
 
 '${CONSTS}
-Const GL_ES_VERSION_2_0:Int
 Const GL_DEPTH_BUFFER_BIT:Int
 Const GL_STENCIL_BUFFER_BIT:Int
 Const GL_COLOR_BUFFER_BIT:Int
@@ -485,7 +490,7 @@ Function glGetShaderiv:Void(shader_:GLuint,pname_:GLenum,params_:GLint Ptr)
 Function glGetShaderInfoLog:Void(shader_:GLuint,bufsize_:GLsizei,length_:GLsizei Ptr,infolog_:GLchar Ptr )
 Function glGetShaderPrecisionFormat:Void(shadertype_:GLenum,precisiontype_:GLenum,range_:GLint Ptr,precision_:GLint Ptr)
 Function glGetShaderSource:Void(shader_:GLuint,bufsize_:GLsizei,length_:GLsizei Ptr,source_:CString)
-Function glGetString:GLubyte Ptr(name_:GLenum)
+Function glGetString:CString(name_:GLenum)
 Function glGetTexParameterfv:Void(target_:GLenum,pname_:GLenum,params_:GLfloat Ptr)
 Function glGetTexParameteriv:Void(target_:GLenum,pname_:GLenum,params_:GLint Ptr)
 Function glGetUniformfv:Void(program_:GLuint,location_:GLint,params_:GLfloat Ptr)

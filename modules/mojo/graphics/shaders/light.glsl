@@ -1,58 +1,58 @@
 
 //@renderpasses 4,5
 
-varying vec2 texCoord0;
-varying vec2 lightPos;
-varying vec4 color;
+varying vec2 v_TexCoord0;
+varying vec2 v_LightPos;
+varying vec4 v_Color;
 
-varying vec2 gbufferCoords;
-varying vec2 fragPos;
+varying vec2 v_GBufferCoords;
+varying vec2 v_FragPos;
 
 //@vertex
 
-attribute vec4 mx2_Vertex;
-attribute vec2 mx2_TexCoord0;
-attribute vec2 mx2_TexCoord1;
-attribute vec4 mx2_Color;
+attribute vec4 a_Position;
+attribute vec2 a_TexCoord0;
+attribute vec2 a_TexCoord1;
+attribute vec4 a_Color;
 
-uniform mat4 mx2_ModelViewProjectionMatrix;
+uniform mat4 r_ModelViewProjectionMatrix;
 
-uniform vec2 mx2_ViewportOrigin;
-uniform vec2 mx2_ViewportSize;
-uniform vec2 mx2_ViewportClip;
+uniform vec2 r_ViewportOrigin;
+uniform vec2 r_ViewportSize;
+uniform vec2 r_ViewportClip;
 
-uniform vec2 mx2_GBufferScale;
+uniform vec2 r_GBufferScale;
 
-uniform vec4 mx2_ImageColor;
+uniform vec4 m_ImageColor;
 
 void main(){
 
-	texCoord0=mx2_TexCoord0;
-	lightPos=mx2_TexCoord1;
-	color=mx2_ImageColor * mx2_Color;
+	v_TexCoord0=a_TexCoord0;
+	v_LightPos=a_TexCoord1;
+	v_Color=m_ImageColor * a_Color;
 
-	gl_Position=mx2_ModelViewProjectionMatrix * mx2_Vertex;
+	gl_Position=r_ModelViewProjectionMatrix * a_Position;
 	
-	vec2 vpcoords=(gl_Position.xy * 0.5 + 0.5) * mx2_ViewportSize;
+	vec2 vpcoords=(gl_Position.xy * 0.5 + 0.5) * r_ViewportSize;
 	
-	gbufferCoords=(vpcoords + mx2_ViewportOrigin) * mx2_GBufferScale;
+	v_GBufferCoords=(vpcoords + r_ViewportOrigin) * r_GBufferScale;
 
-	fragPos=vpcoords;
-	fragPos.y=mx2_ViewportSize.y-fragPos.y;
-	fragPos-=mx2_ViewportClip;
+	v_FragPos=vpcoords;
+	v_FragPos.y=r_ViewportSize.y-v_FragPos.y;
+	v_FragPos-=r_ViewportClip;
 }
 
 //@fragment
 
-uniform sampler2D mx2_ImageTexture0;			//image texture
-uniform float mx2_LightDepth;
+uniform sampler2D m_ImageTexture0;			//image texture
+uniform float m_LightDepth;
 
-uniform sampler2D mx2_GBuffer0;					//gbuffer diffuse
-uniform sampler2D mx2_GBuffer1;					//gbuffer normal
+uniform sampler2D r_GBuffer0;					//gbuffer diffuse
+uniform sampler2D r_GBuffer1;					//gbuffer normal
 
 void main(){
 
-	vec3 normal=texture2D( mx2_GBuffer1,gbufferCoords ).xyz;
+	vec3 normal=texture2D( r_GBuffer1,v_GBufferCoords ).xyz;
 	
 	float gloss=normal.z;
 	
@@ -62,13 +62,13 @@ void main(){
 	
 	//diffuse...
 	//	
-	vec3 lvec=normalize( vec3( lightPos-fragPos,mx2_LightDepth ) );
+	vec3 lvec=normalize( vec3( v_LightPos-v_FragPos,m_LightDepth ) );
 	
 	float ndotl=max( dot( normal,lvec ),0.0 );
 	
-	vec4 tcolor=texture2D( mx2_ImageTexture0,texCoord0 ) * color;
+	vec4 tcolor=texture2D( m_ImageTexture0,v_TexCoord0 ) * v_Color;
 
-	vec4 diffuse=texture2D( mx2_GBuffer0,gbufferCoords ) * tcolor * ndotl;
+	vec4 diffuse=texture2D( r_GBuffer0,v_GBufferCoords ) * tcolor * ndotl;
 	
 	//specular...
 	//
@@ -80,7 +80,7 @@ void main(){
 	
 #if MX2_RENDERPASS==5
 
-	float shadow=texture2D( mx2_GBuffer0,gbufferCoords ).a;
+	float shadow=texture2D( r_GBuffer0,v_GBufferCoords ).a;
 	diffuse*=shadow;
 	specular*=shadow;
 

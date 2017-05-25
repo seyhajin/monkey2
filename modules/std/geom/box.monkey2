@@ -19,6 +19,11 @@ Struct Box<T>
 	Method New()
 	End
 	
+	Method New( p:Vec3<T> )
+		Self.min=p
+		Self.max=p
+	End
+	
 	Method New( min:T,max:T )
 		Self.min=New Vec3<T>( min )
 		Self.max=New Vec3<T>( max )
@@ -52,6 +57,18 @@ Struct Box<T>
 	
 	Property Size:Vec3<T>()
 		Return max-min
+	End
+	
+	Property Width:T()
+		Return max.x-min.x
+	End
+	
+	Property Height:T()
+		Return max.y-min.y
+	End
+	
+	Property Depth:T()
+		Return max.z-min.z
 	End
 	
 	Operator+:Box( v:Vec3<T> )
@@ -113,8 +130,8 @@ Struct Box<T>
 	Operator|:Box( p:Vec3<T> )
 		Return New Box(
 			Min( min.x,p.x ),
-			Min( min.x,p.y ),
-			Min( min.x,p.z ),
+			Min( min.y,p.y ),
+			Min( min.z,p.z ),
 			Max( max.x,p.x ),
 			Max( max.y,p.y ),
 			Max( max.z,p.z ) )
@@ -122,8 +139,8 @@ Struct Box<T>
 	
 	Operator|=( p:Vec3<T> )
 		min.x=Min( min.x,p.x )
-		min.y=Min( min.x,p.y )
-		min.z=Min( min.x,p.z )
+		min.y=Min( min.y,p.y )
+		min.z=Min( min.z,p.z )
 		max.x=Max( max.x,p.x )
 		max.y=Max( max.y,p.y )
 		max.z=Max( max.z,p.z )

@@ -52,10 +52,10 @@ End
 
 Class Translator
 
-	Field debug:Bool
+	Field _debug:Bool
 	
 	Method New()
-		Self.debug=Builder.opts.config="debug"
+		_debug=Builder.opts.config="debug"
 	End
 	
 	Method Reset() Virtual
@@ -344,7 +344,7 @@ Class Translator
 					Emit( "#endif" )
 				Endif
 				
-				If debug And Not ctype.cdecl.IsExtern
+				If _debug And Not ctype.cdecl.IsExtern
 					Local tname:=cname
 					If Not ctype.IsStruct tname+="*"
 					Emit( "bbString bbDBType("+tname+"*);" )
@@ -416,8 +416,8 @@ Class Translator
 		_deps.refs[node]=True
 		Return False
 	End
-
-	Method Refs( vvar:VarValue )
+	
+	Method RefsVar( vvar:VarValue )
 	
 		If vvar.vdecl.IsExtern Uses( vvar.transFile ) ; Return
 		

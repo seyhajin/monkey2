@@ -105,6 +105,10 @@ Struct AffineMat4<T>
 		Return Self * Rotation( rv )
 	End
 	
+	Method Rotate:AffineMat4( quat:Quat<T> )
+		Return Self * Rotation( quat )
+	End
+	
 	#rem monkeydoc Applies a scaling transformation to the matrix and returns the result.
 	#end
 	Method Scale:AffineMat4( sx:T,sy:T,sz:T )
@@ -113,6 +117,10 @@ Struct AffineMat4<T>
 	
 	Method Scale:AffineMat4( sv:Vec3<T> )
 		Return Self * Scaling( sv )
+	End
+	
+	Method Scale:AffineMat4f( scaling:T )
+		Return Self * Scaling( scaling )
 	End
 	
 	#rem monkeydoc Creates a translation matrix.
@@ -125,13 +133,7 @@ Struct AffineMat4<T>
 		Return New AffineMat4( New Vec3<T>( tx,ty,tz ) )
 	End
 
-	#rem monkeydoc Creates a rotation matrix from a quaternion.
-	#end
-	Function Rotation:AffineMat4( quat:Quat<T> )
-		Return New AffineMat4( Mat3<T>.Rotation( quat ) )
-	End
-	
-	#rem monkeydoc Creates a rotation matrix from euler angles.
+	#rem monkeydoc Creates a rotation matrix from euler angles or a quaternion.
 	
 	Order of rotation is Yaw * Pitch * Roll.
 	
@@ -142,6 +144,10 @@ Struct AffineMat4<T>
 	
 	Function Rotation:AffineMat4( rx:Double,ry:Double,rz:Double )
 		Return New AffineMat4( Mat3<T>.Rotation( rx,ry,rz ) )
+	End
+	
+	Function Rotation:AffineMat4( quat:Quat<T> )
+		Return New AffineMat4( Mat3<T>.Rotation( quat ) )
 	End
 	
 	#rem monkeydoc Creates a scaling matrix.

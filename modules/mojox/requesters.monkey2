@@ -29,7 +29,7 @@ This function must not be called from the main fiber.
 
 #end
 Function RequestOkay:Bool( message:String="Are you sure you want to do this?",title:String="Okay?" )
-	Assert( Fiber.Current<>Fiber.Main,"RequestOkay cannot be used from the main fiber" )
+	Assert( Fiber.Current()<>Fiber.Main(),"RequestOkay cannot be used from the main fiber" )
 
 	Return TextDialog.Run( title,message,New String[]( "Okay","Cancel" ),0,1 )=0
 End
@@ -43,7 +43,7 @@ This function must not be called from the main fiber.
 
 #end
 Function RequestString:String( message:String="Enter a string:",title:String="String requester" )
-	Assert( Fiber.Current<>Fiber.Main,"RequestString cannot be used from the main fiber" )
+	Assert( Fiber.Current()<>Fiber.Main(),"RequestString cannot be used from the main fiber" )
 
 	Local future:=New Future<String>
 	
@@ -87,8 +87,7 @@ Function RequestString:String( message:String="Enter a string:",title:String="St
 End
 
 Function RequestInt:Long( message:String="Enter an integer:",title:String="Integer requester",init:Long=0,canceled:Long=0,min:Long=-1000000,max:Long=1000000 )
-
-	Assert( Fiber.Current<>Fiber.Main,"RequestInt cannot be used from the main fiber" )
+	Assert( Fiber.Current()<>Fiber.Main(),"RequestInt cannot be used from the main fiber" )
 
 	Local future:=New Future<Long>
 	

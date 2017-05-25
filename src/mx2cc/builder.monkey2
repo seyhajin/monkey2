@@ -104,16 +104,25 @@ Class BuilderInstance
 		Select opts.target
 		Case "windows","macos","linux","raspbian"
 			ppsyms["__DESKTOP_TARGET__"]="true"
+			ppsyms["__MOBILE_TARGET__"]="false"
 			ppsyms["__WEB_TARGET__"]="false"
-			ppsyms["__MOBILE_TARGET__"]="false"
-		Case "emscripten"
-			ppsyms["__DESKTOP_TARGET__"]="false"
-			ppsyms["__WEB_TARGET__"]="true"
-			ppsyms["__MOBILE_TARGET__"]="false"
 		Case "android","ios"
 			ppsyms["__DESKTOP_TARGET__"]="false"
-			ppsyms["__WEB_TARGET__"]="false"
 			ppsyms["__MOBILE_TARGET__"]="true"
+			ppsyms["__WEB_TARGET__"]="false"
+		Case "emscripten"
+			ppsyms["__DESKTOP_TARGET__"]="false"
+			ppsyms["__MOBILE_TARGET__"]="false"
+			ppsyms["__WEB_TARGET__"]="true"
+		End
+		
+		Select opts.config
+		Case "debug"
+			ppsyms["__DEBUG__"]="true"
+			ppsyms["__RELEASE__"]="false"
+		Case "release"
+			ppsyms["__DEBUG__"]="false"
+			ppsyms["__RELEASE__"]="true"
 		End
 
 		profileName=opts.target+"_"+opts.config
@@ -369,7 +378,7 @@ Class BuilderInstance
 				Endif
 			Endif
 			
-			'Ugly stuff for generic instances
+			'Ugly stuff for generic instances - needs more FIXING!
 			'
 			Local transFiles:=New StringMap<FileDecl>
 			

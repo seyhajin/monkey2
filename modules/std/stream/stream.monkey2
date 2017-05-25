@@ -166,7 +166,7 @@ Class Stream
 		Return data
 	End
 	
-	#rem monkeydoc Reads data from the filestream and throws it away.
+	#rem monkeydoc Reads data from the stream and throws it away.
 
 	@param count The number of bytes to skip.
 	
@@ -174,8 +174,17 @@ Class Stream
 	
 	#end
 	Method Skip:Int( count:Int )
-		Local tmp:=libc.malloc( count )
-		Local n:=Read( tmp,count )
+
+		If count<=0 Return 0
+		
+		Local tmp:=libc.malloc( 4096 ),n:=0
+		
+		While n<count
+			Local t:=Read( tmp,Min( count-n,4096 ) )
+			If t<=0 Exit
+			n+=t
+		Wend
+		
 		libc.free( tmp )
 		Return n
 	End

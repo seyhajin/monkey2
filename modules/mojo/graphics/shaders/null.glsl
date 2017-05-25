@@ -1,20 +1,20 @@
 
 //@renderpasses 0
 
-varying vec4 color;
+varying vec4 v_Color;
 
 //@vertex
 
-attribute vec4 mx2_Vertex;
-attribute vec4 mx2_Color;
+attribute vec4 a_Position;
+attribute vec4 a_Color;
 
-uniform mat4 mx2_ModelViewProjectionMatrix;
+uniform mat4 r_ModelViewProjectionMatrix;
 
 void main(){
 
-	color=mx2_Color;
+	v_Color=a_Color;
 	
-	gl_Position=mx2_ModelViewProjectionMatrix * mx2_Vertex;
+	gl_Position=r_ModelViewProjectionMatrix * a_Position;
 	
 	gl_PointSize=1.0;
 }
@@ -23,5 +23,5 @@ void main(){
 
 void main(){
 
-	gl_FragColor=color;
+	gl_FragColor=v_Color;
 }

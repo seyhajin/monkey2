@@ -9,6 +9,10 @@ Using mojo..
 
 #Import "assets/spaceship.png"
 
+'A dynamic image has its contents updated frequently so doesn't need to be managed in case of graphics device resets.
+'
+Const Dynamic:=False'True
+
 Class MyWindow Extends mojo.app.Window
 
 	Field image:Image
@@ -17,12 +21,13 @@ Class MyWindow Extends mojo.app.Window
 
 	Method New()
 	
-		image=New Image( 256,256,TextureFlags.Dynamic )
+		image=New Image( 256,256,PixelFormat.RGBA8,Dynamic ? TextureFlags.Dynamic Else Null )
 		
 		image.Handle=New Vec2f( .5,.5 )
 		
 		icanvas=New Canvas( image )
 		
+		If Not Dynamic RenderImage()
 	End
 	
 	Method RenderImage()
@@ -50,7 +55,7 @@ Class MyWindow Extends mojo.app.Window
 	
 		App.RequestRender()
 		
-		RenderImage()
+		If Dynamic RenderImage()
 
 		Global rot:=0.0
 		rot+=.001

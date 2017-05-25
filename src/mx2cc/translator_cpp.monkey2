@@ -3,6 +3,7 @@ Namespace mx2
 
 Class Translator_CPP Extends Translator
 
+	Field _module:Module
 	Field _lambdaId:Int
 	Field _gctmps:=0
 	
@@ -13,14 +14,19 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method TranslateModule:Bool( module:Module )
-	
-		For Local fdecl:=Eachin module.fileDecls
 		
+		_module=module
+		
+		For Local fdecl:=Eachin _module.fileDecls
+			
 			If Builder.opts.verbose>0 Print "Translating "+fdecl.path
 		
 			Try
+			
 				TranslateFile( fdecl )
+				
 			Catch ex:TransEx
+
 				Return False
 			End
 
@@ -30,6 +36,8 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method TranslateTypeInfo( module:Module )
+		
+		_module=module
 	
 		Reset()
 	
@@ -41,7 +49,7 @@ Class Translator_CPP Extends Translator
 		
 		BeginDeps()
 		
-		For Local fdecl:=Eachin module.fileDecls
+		For Local fdecl:=Eachin _module.fileDecls
 		
 			EmitTypeInfo( fdecl )
 	
@@ -55,13 +63,13 @@ Class Translator_CPP Extends Translator
 		
 		Next
 		
-		EndDeps( ExtractDir( module.rfile ) )
+		EndDeps( ExtractDir( _module.rfile ) )
 		
 		Emit( "#else" )
 		
 		BeginDeps()
 
-		For Local fdecl:=Eachin module.fileDecls
+		For Local fdecl:=Eachin _module.fileDecls
 		
 			For Local ctype:=Eachin fdecl.classes
 			
@@ -83,16 +91,16 @@ Class Translator_CPP Extends Translator
 		
 		Next
 		
-		EndDeps( ExtractDir( module.rfile ) )
+		EndDeps( ExtractDir( _module.rfile ) )
 		
 		Emit( "#endif" )
 		
 		Local src:=_buf.Join( "~n" )
 		
-		CSaveString( src,module.rfile )
+		CSaveString( src,_module.rfile )
 	End
 	
-	Method TranslateFile( fdecl:FileDecl ) 'Override
+	Method TranslateFile( fdecl:FileDecl )
 	
 		Reset()
 	
@@ -156,7 +164,6 @@ Class Translator_CPP Extends Translator
 
 		EndDeps( ExtractDir( fdecl.hfile ) )
 		
-		
 		'Ouch, have to emit classes in dependancy order!
 		'
 		Local emitted:=New StringMap<Bool>
@@ -197,6 +204,13 @@ Class Translator_CPP Extends Translator
 		For Local ctype:=Eachin fdecl.classes
 			EmitClassMembers( ctype )
 		Next
+
+		If fdecl=_module.fileDecls[0] And Not _module.main
+			EmitBr()
+			Emit( "void mx2_"+_module.ident+"_main(){" )
+			EmitMain()
+			Emit( "}" )
+		Endif
 		
 		EmitGlobalInits( fdecl )
 		
@@ -284,16 +298,19 @@ Class Translator_CPP Extends Translator
 	
 		EmitBr()
 		Emit( "void mx2_"+fdecl.ident+"_init_f(){" )
+		
 		BeginGCFrame()
 		
-		Emit( "static bool done;" )
-		Emit( "if(done) return;" )
-		Emit( "done=true;")
+		'This now done in module main...
+		'Emit( "static bool done;" )
+		'Emit( "if(done) return;" )
+		'Emit( "done=true;")
 		
 		'initalize globals
+		'
 		Local gc:=False
 		For Local vvar:=Eachin fdecl.globals
-			If vvar.init Emit( Trans( vvar )+"="+Trans( vvar.init )+";" )
+			If vvar.init Emit( TransRef( vvar )+"="+Trans( vvar.init )+";" )
 			If IsGCType( vvar.type ) gc=True
 		Next
 		
@@ -314,8 +331,8 @@ Class Translator_CPP Extends Translator
 			Emit( "}mx2_"+fdecl.ident+"_roots;" )
 		Endif
 		
-		EmitBr()
-		Emit( "bbInit mx2_"+fdecl.ident+"_init(~q"+fdecl.ident+"~q,&mx2_"+fdecl.ident+"_init_f);" )
+'		EmitBr()
+'		Emit( "bbInit mx2_"+fdecl.ident+"_init(~q"+fdecl.ident+"~q,&mx2_"+fdecl.ident+"_init_f);" )
 	
 	End
 	
@@ -325,7 +342,6 @@ Class Translator_CPP Extends Translator
 	
 		EmitBr()	
 		Emit( "// Class "+ctype.Name )
-		
 		
 		BeginDeps()
 		
@@ -427,10 +443,15 @@ Class Translator_CPP Extends Translator
 				If Not flist Or it.Key="new" Continue
 				
 				For Local func:=Eachin flist.funcs
+				
+					If func.IsGeneric Continue
+					
 					If Not func.IsMethod Or func.scope<>ctype.superType.scope Continue
+					
 					Local sym:=FuncName( func )
 					If done[sym] Continue
 					done[sym]=True
+					
 					Emit( "using "+superName+"::"+sym+";" )
 				Next
 			Next
@@ -461,7 +482,13 @@ Class Translator_CPP Extends Translator
 					Emit( proto+"{};" )
 					needsInit=True
 				Else
-					Emit( proto+"="+Trans( vvar.init )+";" )
+					Local lit:=Cast<LiteralValue>( vvar.init )
+					If Not lit Or lit.value
+'						AssignsTo( vvar.type )
+						Emit( proto+"="+Trans( vvar.init )+";" )
+					Else
+						Emit( proto+"{};" )
+					Endif
 				Endif
 			Else
 				Emit( proto+"{};" )
@@ -483,7 +510,7 @@ Class Translator_CPP Extends Translator
 		
 		Endif
 		
-		If debug
+		If _debug
 		
 			If cdecl.kind="class"
 				Emit( "void dbEmit();" )
@@ -553,7 +580,7 @@ Class Translator_CPP Extends Translator
 			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
 		Endif
 		
-		If debug
+		If _debug
 			Local tname:=cname
 			If Not ctype.IsStruct tname+="*"
 			Emit( "bbString bbDBType("+tname+"*);" )
@@ -611,7 +638,7 @@ Class Translator_CPP Extends Translator
 			
 				If Not vvar.init Or Not vvar.init.HasSideEffects Continue
 
-				Emit( Trans( vvar )+"="+Trans( vvar.init )+";" )
+				Emit( TransRef( vvar )+"="+Trans( vvar.init )+";" )
 			Next
 			
 			EndGCFrame()
@@ -644,7 +671,7 @@ Class Translator_CPP Extends Translator
 			
 		Endif
 		
-		If debug And cdecl.kind="class"
+		If _debug And cdecl.kind="class"
 			EmitBr()
 			
 			Emit( "void "+cname+"::dbEmit(){" )
@@ -662,7 +689,7 @@ Class Translator_CPP Extends Translator
 			Emit( "}" )
 		Endif
 		
-		If debug And cdecl.kind="struct"
+		If _debug And cdecl.kind="struct"
 			EmitBr()
 			
 			Emit( "void "+cname+"::dbEmit("+cname+"*p){" )
@@ -701,7 +728,7 @@ Class Translator_CPP Extends Translator
 			EmitFunc( func )
 		Next
 		
-		If debug
+		If _debug
 			Local tname:=cname
 			If Not ctype.IsStruct tname+="*"
 			
@@ -1019,28 +1046,16 @@ Class Translator_CPP Extends Translator
 		Endif
 		
 		If init Emit( "init();" )
-		
+			
 		'is it 'main'?
-		Local module:=func.scope.FindFile().fdecl.module
-		
-		If func=module.main
-		
-			Emit( "static bool done;" )
-			Emit( "if(done) return;" )
-			Emit( "done=true;" )
+		'Local module:=func.scope.FindFile().fdecl.module
+		'If func=module.main
 			
-			For Local dep:=Eachin module.moduleDeps.Keys
-			
-				Local mod2:=Builder.modulesMap[dep]
-				
-				If mod2.main
-					Emit( "void mx2_"+mod2.ident+"_main();mx2_"+mod2.ident+"_main();" )
-				Endif
-			Next
-			
+		If func=_module.main
+			EmitMain()
 		Endif
 		
-		If debug And func.IsMethod
+		If _debug And func.IsMethod
 		
 			If Not func.IsVirtual And Not func.IsExtension
 				'			
@@ -1055,6 +1070,29 @@ Class Translator_CPP Extends Translator
 		EmitBlock( func )
 		
 		Emit( "}" )
+	End
+	
+	Method EmitMain()
+		
+		Emit( "static bool done;" )
+		Emit( "if(done) return;" )
+		Emit( "done=true;" )
+		
+		If _module.ident<>"monkey" Emit( "void mx2_monkey_main();mx2_monkey_main();" )
+
+		'init dependent modules...
+		For Local dep:=Eachin _module.moduleDeps.Keys
+			Local mod2:=Builder.modulesMap[dep]
+			Local id:="mx2_"+mod2.ident+"_main();"
+			Emit( "void "+id+id )
+		Next
+		
+		'init module files...
+		For Local fdecl:=Eachin _module.fileDecls.Backwards()
+			Local id:="mx2_"+fdecl.ident+"_init_f();"
+			Emit( "void "+id+id )
+		Next
+		
 	End
 	
 	Method EmitLambda:String( func:FuncValue )
@@ -1117,7 +1155,7 @@ Class Translator_CPP Extends Translator
 	Method BeginBlock()
 
 		BeginGCFrame()
-		If debug Emit( "bbDBBlock db_blk;" )
+		If _debug Emit( "bbDBBlock db_blk;" )
 
 	End
 	
@@ -1148,7 +1186,7 @@ Class Translator_CPP Extends Translator
 	
 		BeginGCFrame( func )
 		
-		If debug 
+		If _debug 
 		
 			Emit( "bbDBFrame db_f{~q"+func.Name+":"+func.ftype.retType.Name+"("+func.ParamNames+")~q,~q"+func.pnode.srcfile.path+"~q};" )
 			
@@ -1179,7 +1217,7 @@ Class Translator_CPP Extends Translator
 	'***** Stmt *****
 	
 	Method DebugInfo:String( stmt:Stmt )
-		If debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
+		If _debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
 		Return ""
 	End
 	
@@ -1298,7 +1336,7 @@ Class Translator_CPP Extends Translator
 			
 		Endif
 		
-		If debug And vdecl.kind="local" Emit( "bbDBLocal(~q"+vvar.vdecl.ident+"~q,&"+tvar+");" )
+		If _debug And vdecl.kind="local" Emit( "bbDBLocal(~q"+vvar.vdecl.ident+"~q,&"+tvar+");" )
 
 	End
 	
@@ -1323,14 +1361,14 @@ Class Translator_CPP Extends Translator
 		Case "mod=" op="%="
 		Case "shl=" op="<<="
 		Case "shr=" op=">>="
-		Case "="
-			Local vvar:=Cast<VarValue>( stmt.lhs )
-			If vvar And vvar.vdecl.kind="param" FindGCTmp( vvar )
+'		Case "="
+'			Local vvar:=Cast<VarValue>( stmt.lhs )
+'			If vvar And vvar.vdecl.kind="param" FindGCTmp( vvar )
 		End
 		
 		AssignsTo( stmt.lhs.type )
 		
-		Local lhs:=Trans( stmt.lhs )
+		Local lhs:=TransRef( stmt.lhs )
 		Local rhs:=Trans( stmt.rhs )
 		
 		Emit( lhs+op+rhs+";" )
@@ -1394,7 +1432,7 @@ Class Translator_CPP Extends Translator
 	
 	Method EmitStmt( stmt:WhileStmt )
 	
-		If debug
+		If _debug
 			Emit( "{" )
 			Emit( "bbDBLoop db_loop;" )
 		Endif
@@ -1405,12 +1443,12 @@ Class Translator_CPP Extends Translator
 		
 		Emit( "}" )
 		
-		If debug Emit( "}" )
+		If _debug Emit( "}" )
 	End
 	
 	Method EmitStmt( stmt:RepeatStmt )
 	
-		If debug
+		If _debug
 			Emit( "{" )
 			Emit( "bbDBLoop db_loop;" )
 		Endif
@@ -1422,14 +1460,14 @@ Class Translator_CPP Extends Translator
 		
 		If stmt.cond Emit( "}while(!("+Trans( stmt.cond )+"));" ) Else Emit( "}" )
 		
-		If debug Emit( "}" )
+		If _debug Emit( "}" )
 	End
 	
 	Method EmitStmt( stmt:ForStmt )
 	
 		Emit( "{" )
 		BeginGCFrame()
-		If debug Emit( "bbDBLoop db_loop;" )
+		If _debug Emit( "bbDBLoop db_loop;" )
 	
 		EmitStmts( stmt.iblock )
 		
@@ -1532,11 +1570,11 @@ Class Translator_CPP Extends Translator
 		Local arrayIndexValue:=Cast<ArrayIndexValue>( value )
 		If arrayIndexValue Return Trans( arrayIndexValue )
 		
-		Local stringIndexValue:=Cast<StringIndexValue>( value )
-		If stringIndexValue Return Trans( stringIndexValue )
-		
 		Local pointerIndexValue:=Cast<PointerIndexValue>( value )
 		If pointerIndexValue Return Trans( pointerIndexValue )
+		
+		Local stringIndexValue:=Cast<StringIndexValue>( value )
+		If stringIndexValue Return Trans( stringIndexValue )
 		
 		Local unaryopValue:=Cast<UnaryopValue>( value )
 		If unaryopValue Return Trans( unaryopValue )
@@ -1569,9 +1607,11 @@ Class Translator_CPP Extends Translator
 	
 		Local src:="("+Trans( value.value )+")"
 	
+		Uses( value.type )			'uses dst type
+			
 		If value.type.Equals( value.value.type ) Return src
-	
-		Uses( value.type )
+
+		Uses( value.value.type )	'...and src type
 		
 		If IsCValueType( value.type ) Return TransType( value.type )+src
 
@@ -1610,12 +1650,13 @@ Class Translator_CPP Extends Translator
 
 		Local etype:=TCast<EnumType>( type )
 		If etype Return EnumName( etype )+"(0)"
-
+		
 		If IsCValueType( type )
 			Uses( type )
 			Return TransType( type )+"{}"
 		Endif
-		
+
+'		Uses( type )		
 		Return "(("+TransType( type )+")0)"
 	End
 
@@ -1782,10 +1823,18 @@ Class Translator_CPP Extends Translator
 	Method Trans:String( value:ArrayIndexValue )
 	
 		Uses( value.type )
+		
+		Local val:=Trans( value.value )
 
-		If value.args.Length=1 Return Trans( value.value )+"["+TransArgs( value.args )+"]"
-
-		Return Trans( value.value )+".at("+TransArgs( value.args )+")"
+		If value.args.Length=1 
+			val+="["+TransArgs( value.args )+"]"
+		Else
+			val+=".at("+TransArgs( value.args )+")"
+		Endif
+		
+		If IsGCPtrType( value.type ) val+=".get()"
+			
+		Return val
 	End
 	
 	Method Trans:String( value:PointerIndexValue )
@@ -1856,32 +1905,11 @@ Class Translator_CPP Extends Translator
 		
 		Local etype:=TCast<EnumType>( value.type )
 		If etype
-'			Refs( etype )
 			Return EnumName( etype )+"(int("+lhs+")"+op+"int("+rhs+"))"
 		Endif
 		
-'		Uses( value.type )
-'		Uses( value.lhs.type )
-'		Uses( value.rhs.type )
-		
 		Return "("+lhs+op+rhs+")"
-#rem		
-'		If TCast<PointerType>( value.lhs.type ) Uses( value.lhs.type )
-'		If TCast<PointerType>( value.rhs.type ) Uses( value.rhs.type )
-		
-		Local etype:=TCast<EnumType>( value.type )
 
-		Local lhs:=Trans( value.lhs )
-		Local rhs:=Trans( value.rhs )
-		
-		If etype lhs="int("+lhs+")" ; rhs="int("+rhs+")"
-		
-		Local t:="("+lhs+op+rhs+")"
-		
-		If etype t=EnumName( etype )+"("+t+")"
-		
-		Return t
-#end
 	End
 	
 	Method Trans:String( value:IfThenElseValue )
@@ -1890,20 +1918,22 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method Trans:String( value:PointerValue )
-
-		Return "&"+Trans( value.value )
+		
+		Return "(&"+Trans( value.value )+")"
 	End
 	
 	Method Trans:String( value:VarValue )
-	
-		Refs( value )
-	
+		
+		RefsVar( value )
+		
 		Local vdecl:=value.vdecl
 		
 		If (vdecl.kind="local" Or vdecl.kind="param") And IsGCType( value.type )
 			Return FindGCTmp( value )
 		Endif
-
+		
+		If vdecl.kind<>"capture" And IsGCPtrType( value.type ) Return VarName( value )+".get()"
+		
 		Return VarName( value )
 	End
 	
@@ -1919,13 +1949,76 @@ Class Translator_CPP Extends Translator
 		Return "bbGetType<"+TransType( value.ttype )+">()"
 	End
 	
+	'***** Refs, ie: LHS of assignment etc *****
+	
+	Method TransRef:String( value:Value )
+
+		Local arrayIndexValue:=Cast<ArrayIndexValue>( value )
+		If arrayIndexValue Return TransRef( arrayIndexValue )
+		
+		Local pointerIndexValue:=Cast<PointerIndexValue>( value )
+		If pointerIndexValue Return TransRef( pointerIndexValue )
+		
+		Local varValue:=Cast<VarValue>( value )
+		If varValue Return TransRef( varValue )
+		
+		Local memberVarValue:=Cast<MemberVarValue>( value )
+		If memberVarValue Return TransRef( memberVarValue )
+		
+		DebugStop()
+		Throw New TransEx( "Translator_CPP.TransRef() Unrecognized ref value type:"+value.ToString() )
+	End
+	
+	Method TransRef:String( value:ArrayIndexValue )
+		
+		If value.args.Length=1 Return Trans( value.value )+"["+TransArgs( value.args )+"]"
+
+		Return Trans( value.value )+".at("+TransArgs( value.args )+")"
+	End
+	
+	Method TransRef:String( value:PointerIndexValue )
+		
+		Return Trans( value.value )+"["+Trans( value.index )+"]"
+	End
+
+	Method TransRef:String( value:VarValue )
+		
+		RefsVar( value )
+	
+		Local vdecl:=value.vdecl
+		
+		If (vdecl.kind="local" Or vdecl.kind="param") And IsGCType( value.type )
+			Return FindGCTmp( value )
+		Endif
+		
+		Return VarName( value )
+	End
+	
+	Method TransRef:String( value:MemberVarValue )
+		
+		Local instance:=value.instance
+		Local member:=value.member
+		
+		Uses( instance.type )
+		
+		Local supr:=Cast<SuperValue>( instance )
+		If supr Return ClassName( supr.ctype )+"::"+TransRef( member )
+		
+		Local tinst:=Trans( instance )
+		Local tmember:=TransRef( member )
+		
+		If IsCValueType( instance.type ) Return tinst+"."+tmember
+		
+		Return tinst+"->"+tmember
+	End
+
 	'***** Args *****
 	
 	Method IsVolatile:Bool( arg:Value )
 	
 		Return IsGCType( arg.type ) And arg.HasSideEffects
 	End
-		
+	
 	Method TransArgs:String( args:Value[] )
 	
 		Local targs:=""

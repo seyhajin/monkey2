@@ -260,12 +260,14 @@ template<class T> struct bbGCVar{
 	operator T*()const{
 		return _ptr;
 	}
+	
+	T **operator&(){
+		return &_ptr;
+	}
 };
 
 template<class T> void bbGCMark( T const& ){
 }
-//inline void bbGCMark(...){
-//}
 
 template<class T> void bbGCMark( const bbGCVar<T> &v ){
 	bbGCMark( v._ptr );

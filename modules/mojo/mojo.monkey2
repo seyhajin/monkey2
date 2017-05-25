@@ -22,19 +22,25 @@ Namespace mojo
 
 #Import "app/sdl_rwstream.monkey2"
 
+'core graphics stuff
+#Import "graphics/glexts/glexts"
+#Import "graphics/glutil"
+#Import "graphics/graphicsdevice"
+#Import "graphics/uniformblock"
+#Import "graphics/rendertarget"
+#Import "graphics/vertexbuffer"
+#Import "graphics/indexbuffer"
+#Import "graphics/vertex2f"
+#Import "graphics/vertex3f"
+#Import "graphics/texture"
+#Import "graphics/shader"
+
+'2d graphics stuff
 #Import "graphics/canvas"
 #Import "graphics/font"
 #Import "graphics/freetypefont"
-#Import "graphics/glutil"
-#Import "graphics/graphicsdevice"
 #Import "graphics/image"
-#Import "graphics/indexbuffer"
-#Import "graphics/shader"
 #Import "graphics/shadowcaster"
-#Import "graphics/texture"
-#Import "graphics/uniformblock"
-#Import "graphics/vertex"
-#Import "graphics/vertexbuffer"
 
 #Import "input/device"
 #Import "input/keyboard"

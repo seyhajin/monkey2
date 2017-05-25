@@ -38,6 +38,57 @@ Struct Mat4<T>
 		i.XYZ=m.m.i ; j.XYZ=m.m.j ; k.XYZ=m.m.k ; t.XYZ=m.t ; t.w=1
 	End
 	
+	Operator To<C>:Mat4<C>()
+		Return New Mat4<C>( i,j,k,t )
+	End
+	
+	Operator To:Mat3<T>()
+		Return New Mat3<T>( Cast<Vec3<T>>( i ),Cast<Vec3<T>>( j ),Cast<Vec3<T>>( k ) )
+	End
+	
+	Operator To:AffineMat4<T>()
+		Return New AffineMat4<T>( Cast<Mat3<T>>( Self ),Cast<Vec3<T>>( t ) )
+	End
+		
+	Operator To:String()
+		Return "Mat4("+i+","+j+","+k+","+t+")"
+	End
+	
+	Operator~:Mat4()
+		Return New Mat4(
+			New Vec4<T>( i.x,j.x,k.x,t.x ),
+			New Vec4<T>( i.y,j.y,k.y,t.y ),
+			New Vec4<T>( i.z,j.z,k.z,t.z ),
+			New Vec4<T>( i.w,j.w,k.w,t.w ) )
+	End
+	
+	Operator-:Mat4()
+		Local ii:=New Vec4<T>(
+			 j.y * k.z * t.w - j.y * k.w * t.z - k.y * j.z * t.w + k.y * j.w * t.z + t.y * j.z * k.w - t.y * j.w * k.z,
+			-i.y * k.z * t.w + i.y * k.w * t.z + k.y * i.z * t.w - k.y * i.w * t.z - t.y * i.z * k.w + t.y * i.w * k.z,
+			 i.y * j.z * t.w - i.y * j.w * t.z - j.y * i.z * t.w + j.y * i.w * t.z + t.y * i.z * j.w - t.y * i.w * j.z,
+			-i.y * j.z * k.w + i.y * j.w * k.z + j.y * i.z * k.w - j.y * i.w * k.z - k.y * i.z * j.w + k.y * i.w * j.z )
+		Local jj:=New Vec4<T>(
+			-j.x * k.z * t.w + j.x * k.w * t.z + k.x * j.z * t.w - k.x * j.w * t.z - t.x * j.z * k.w + t.x * j.w * k.z,
+			 i.x * k.z * t.w - i.x * k.w * t.z - k.x * i.z * t.w + k.x * i.w * t.z + t.x * i.z * k.w - t.x * i.w * k.z,
+			-i.x * j.z * t.w + i.x * j.w * t.z + j.x * i.z * t.w - j.x * i.w * t.z - t.x * i.z * j.w + t.x * i.w * j.z,
+			 i.x * j.z * k.w - i.x * j.w * k.z - j.x * i.z * k.w + j.x * i.w * k.z + k.x * i.z * j.w - k.x * i.w * j.z )
+		Local kk:=New Vec4<T>(
+			 j.x * k.y * t.w - j.x * k.w * t.y - k.x * j.y * t.w + k.x * j.w * t.y + t.x * j.y * k.w - t.x * j.w * k.y,
+			-i.x * k.y * t.w + i.x * k.w * t.y + k.x * i.y * t.w - k.x * i.w * t.y - t.x * i.y * k.w + t.x * i.w * k.y,
+			 i.x * j.y * t.w - i.x * j.w * t.y - j.x * i.y * t.w + j.x * i.w * t.y + t.x * i.y * j.w - t.x * i.w * j.y,
+			-i.x * j.y * k.w + i.x * j.w * k.y + j.x * i.y * k.w - j.x * i.w * k.y - k.x * i.y * j.w + k.x * i.w * j.y )
+		Local tt:=New Vec4<T>(
+			-j.x * k.y * t.z + j.x * k.z * t.y + k.x * j.y * t.z - k.x * j.z * t.y - t.x * j.y * k.z + t.x * j.z * k.y,
+			 i.x * k.y * t.z - i.x * k.z * t.y - k.x * i.y * t.z + k.x * i.z * t.y + t.x * i.y * k.z - t.x * i.z * k.y,
+			-i.x * j.y * t.z + i.x * j.z * t.y + j.x * i.y * t.z - j.x * i.z * t.y - t.x * i.y * j.z + t.x * i.z * j.y,
+			 i.x * j.y * k.z - i.x * j.z * k.y - j.x * i.y * k.z + j.x * i.z * k.y + k.x * i.y * j.z - k.x * i.z * j.y )
+			
+		Local c:T=1/(i.x*ii.x + i.y * jj.x + i.z * kk.x + i.w * tt.x)
+		
+		Return New Mat4( ii*c,jj*c,kk*c,tt*c )
+	End
+	
 	Operator*:Mat4( m:Mat4 )
 		Local r:Mat4
 		
@@ -118,6 +169,21 @@ Struct Mat4<T>
 		Return r
 	End
 	
+	Operator*:Vec4<T>( v:Vec4<T> )
+		Return New Vec4<T>( 
+			i.x*v.x+j.x*v.y+k.x*v.z+t.x*v.w,
+		 	i.y*v.x+j.y*v.y+k.y*v.z+t.y*v.w,
+		 	i.z*v.x+j.z*v.y+k.z*v.z+t.z*v.w,
+		 	i.w*v.x+j.w*v.y+k.w*v.z+t.w*v.w )
+	End
+	
+	Operator*:Vec3<T>( v:Vec3<T> )
+		Return New Vec3<T>(
+			i.x*v.x+j.x*v.y+k.x*v.z+t.x,
+		 	i.y*v.x+j.y*v.y+k.y*v.z+t.y,
+		 	i.z*v.x+j.z*v.y+k.z*v.z+t.z ) / (i.w*v.x+j.w*v.y+k.w*v.z+t.w)
+	End
+	
 	#rem monkeydoc Creates a translation matrix.
 	#end
 	Function Translation:Mat4( tv:Vec3<T> )
@@ -130,7 +196,7 @@ Struct Mat4<T>
 		Return r
 	End
 
-	#rem monkeydoc Creates a rotation matrix.
+	#rem monkeydoc Creates a rotation matrix for euler angles or a quaternion.
 	#end
 	Function Rotation:Mat4( rv:Vec3<Double> )
 		Return Rotation( rv.x,rv.y,rv.z )
@@ -138,6 +204,10 @@ Struct Mat4<T>
 	
 	Function Rotation:Mat4( rx:Double,ry:Double,rz:Double )
 		Return New Mat4( Mat3<T>.Rotation( rx,ry,rz ) )
+	End
+	
+	Function Rotation:Mat4( quat:Quat<T> )
+		Return New Mat4( Mat3<T>.Rotation( quat ) )
 	End
 	
 	#rem monkeydoc Creates a scaling matrix.
@@ -156,7 +226,7 @@ Struct Mat4<T>
 
 	#rem monkeydoc Creates an orthographic projection matrix.
 	#End	
-	Function Ortho:Mat4( left:Double,right:Double,bottom:Double,top:Double,near:Double,far:Double )
+	Function Ortho:Mat4( left:T,right:T,bottom:T,top:T,near:T,far:T )
 
 		Local w:=right-left,h:=top-bottom,d:=far-near,r:Mat4
 
@@ -171,7 +241,7 @@ Struct Mat4<T>
 		Return r
 	End
 	
-	Function Frustum:Mat4( left:Double,right:Double,bottom:Double,top:Double,near:Double,far:Double )
+	Function Frustum:Mat4( left:T,right:T,bottom:T,top:T,near:T,far:T )
 	
 		Local w:=right-left,h:=top-bottom,d:=far-near,near2:=near*2,r:Mat4
 
@@ -184,6 +254,15 @@ Struct Mat4<T>
 		r.t.z=-(far*near2)/d
 		
 		Return r
+	End
+	
+	Function Perspective:Mat4( fovy:Double,aspect:T,znear:T,zfar:T )
+		
+		Local h:T=Tan(fovy * Pi / 360.0) * znear
+
+		Local w:T=h * aspect
+		
+		Return Frustum( -w,w,-h,h,znear,zfar )
 	End
 	
 End

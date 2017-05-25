@@ -252,7 +252,8 @@ Class Theme
 		_fonts.Clear()
 		_colors.Clear()
 		_styles.Clear()
-		_defaultStyle=Null
+		_defaultStyle=New Style
+		_defaultStyle.Font=App.DefaultFont
 	End
 	
 	Method Reload()
@@ -262,7 +263,7 @@ Class Theme
 		Local res:=_res
 		
 		_res=New ResourceManager
-		
+
 		_defaultStyle=LoadStyle( _jdefault )
 		
 		For Local it:=Eachin _jcolors

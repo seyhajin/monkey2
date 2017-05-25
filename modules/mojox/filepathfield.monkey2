@@ -1,5 +1,5 @@
 
-#if __TARGET__<>"emscripten"
+#if __DESKTOP_TARGET__
 
 Namespace mojox
 

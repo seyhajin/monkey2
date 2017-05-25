@@ -430,7 +430,7 @@ Class DataBuffer Extends std.resource.Resource
 	Method PokeString( offset:Int,value:String )
 		DebugAssert( offset>=0 And offset<=_length )
 		
-		Local count:=value.Length
+		Local count:=value.CStringLength
 		If offset+count>_length count=_length-offset
 		value.ToCString( _data+offset,count )
 	End

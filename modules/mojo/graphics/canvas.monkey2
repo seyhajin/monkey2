@@ -19,17 +19,20 @@ Drawing does not occur immediately. Drawing commands are 'buffered' to reduce th
 
 #end
 Class Canvas
-
-	#rem monkeydoc Creates a canvas that renders to an image.
-	#end
-	Method New( renderTarget:Image )
-		Init( renderTarget,New GraphicsDevice )
-		
-		Local texture:=renderTarget.Texture
-		
-		BeginRender( New Recti( 0,0,texture.Rect.Size ),AffineMat3f.Translation( texture.Rect.Origin ) )
-	End
 	
+	#rem monkeydoc Creates a canvas that renders to an image
+	#end
+	Method New( image:Image )
+		
+		Local rtarget:=New RenderTarget( New Texture[]( image.Texture ),Null )
+		
+		image.OnDiscarded+=rtarget.Discard
+		
+		Init( rtarget,New GraphicsDevice )
+		
+		BeginRender( New Recti( 0,0,image.Rect.Size ),AffineMat3f.Translation( image.Rect.Origin ) )
+	End
+
 	#rem monkeydoc @hidden Creates a canvas that renders to the backbuffer.
 	#end	
 	Method New( width:Int,height:Int )
@@ -58,10 +61,10 @@ Class Canvas
 		Scissor=New Recti( 0,0,bounds.Size )
 		AmbientLight=Color.Black
 		BlendMode=BlendMode.Alpha
-		TextureFilter=graphics.TextureFilter.Mipmap
 		PointSize=0
 		LineWidth=0
 		LineSmoothing=False
+		TextureFilteringEnabled=true
 		
 		ClearMatrix()
 	End
@@ -78,16 +81,9 @@ Class Canvas
 		_rmatrix=_rmatrixStack.Pop()
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
-	Property Device:GraphicsDevice()
-	
-		Return _device
-	End
-
 	#rem monkeydoc The current render target.
 	#end	
-	Property RenderTarget:Image()
+	Property RenderTarget:RenderTarget()
 	
 		Return _rtarget
 	End
@@ -169,31 +165,29 @@ Class Canvas
 		_blendMode=blendMode
 	End
 	
-	#rem monkeydoc The current texture filter.
-	#end
-	Property TextureFilter:TextureFilter()
+	#rem monkeydoc TODO! Texture filtering enabled state.
 	
-		Return _textureFilter
+	Set to true for normal behavior.
 	
-	Setter( filter:TextureFilter )
-	
-		_textureFilter=filter
-	End
-
-	#rem monkeydoc Deprecated - use TextureFilter instead.
-	
-	Use TextureFilter instead.
+	Set to false for a groovy retro effect.
 	
 	#end	
 	Property TextureFilteringEnabled:Bool()
-	
-		Return TextureFilter=TextureFilter.Mipmap
-	
+		
+		Return Not _device.RetroMode
+		
 	Setter( enabled:Bool )
-	
-		TextureFilter=enabled ? TextureFilter.Mipmap Else TextureFilter.Nearest
+		DebugAssert( Not _lighting,"Canvas.TextureFilteringEnabled property cannot be modified while lighting" )
+		If _lighting Return
+		
+		Local rmode:=Not enabled
+		
+		If rmode=_device.RetroMode Return
+		
+		Flush()
 
-	End
+		_device.RetroMode=rmode
+	End	
 	
 	#rem monkeydoc The current point size for use with DrawPoint.
 	#end
@@ -392,13 +386,13 @@ Class Canvas
 	Method DrawPoint( x:Float,y:Float )
 	
 		If _pointSize<=0
-			AddDrawOp( _shader,_material,_blendMode,_textureFilter,1,1 )
+			AddDrawOp( _shader,_material,_blendMode,1,1 )
 			AddPointVertex( x,y,0,0 )
 			Return
 		Endif
 		
 		Local d:=_pointSize/2
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,1 )
+		AddDrawOp( _shader,_material,_blendMode,4,1 )
 		AddVertex( x-d,y-d,0,0 )
 		AddVertex( x+d,y-d,1,0 )
 		AddVertex( x+d,y+d,1,1 )
@@ -431,7 +425,7 @@ Class Canvas
 	Method DrawLine( x0:Float,y0:Float,x1:Float,y1:Float )
 
 		If _lineWidth<=0
-			AddDrawOp( _shader,_material,_blendMode,_textureFilter,2,1 )
+			AddDrawOp( _shader,_material,_blendMode,2,1 )
 			AddPointVertex( x0,y0,0,0 )
 			AddPointVertex( x1,y1,1,1 )
 			Return
@@ -447,7 +441,7 @@ Class Canvas
 		dx*=sc;dy*=sc
 		
 		If Not _lineSmoothing
-			AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,1 )
+			AddDrawOp( _shader,_material,_blendMode,4,1 )
 			AddPointVertex( x0-dx,y0-dy,0,0 )
 			AddPointVertex( x0+dx,y0+dy,0,0 )
 			AddPointVertex( x1+dx,y1+dy,0,0 )
@@ -457,7 +451,7 @@ Class Canvas
 		
 		Local pmcolor:=_pmcolor
 		
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,2 )
+		AddDrawOp( _shader,_material,_blendMode,4,2 )
 
 		AddPointVertex( x0,y0,0,0 )
 		AddPointVertex( x1,y1,0,0 )
@@ -484,7 +478,7 @@ Class Canvas
 
 	#End
 	Method DrawTriangle( x0:Float,y0:Float,x1:Float,y1:Float,x2:Float,y2:Float )
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,3,1 )
+		AddDrawOp( _shader,_material,_blendMode,3,1 )
 		AddVertex( x0,y0,0,0 )
 		AddVertex( x1,y1,1,0 )
 		AddVertex( x2,y2,1,1 )
@@ -502,7 +496,7 @@ Class Canvas
 
 	#end
 	Method DrawQuad( x0:Float,y0:Float,x1:Float,y1:Float,x2:Float,y2:Float,x3:Float,y3:Float )
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,1 )
+		AddDrawOp( _shader,_material,_blendMode,4,1 )
 		AddVertex( x0,y0,0,0 )
 		AddVertex( x1,y1,1,0 )
 		AddVertex( x2,y2,1,1 )
@@ -524,7 +518,7 @@ Class Canvas
 	
 		Local x0:=x,y0:=y,x1:=x+w,y1:=y+h
 		
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,4,1 )
+		AddDrawOp( _shader,_material,_blendMode,4,1 )
 		
 		AddVertex( x0,y0,0,0 )
 		AddVertex( x1,y0,1,0 )
@@ -538,7 +532,7 @@ Class Canvas
 	
 	Method DrawRect( rect:Rectf,srcImage:Image )
 		Local tc:=srcImage.TexCoords
-		AddDrawOp( srcImage.Shader,srcImage.Material,srcImage.BlendMode,srcImage.TextureFilter,4,1 )
+		AddDrawOp( srcImage.Shader,srcImage.Material,srcImage.BlendMode,4,1 )
 		AddVertex( rect.min.x,rect.min.y,tc.min.x,tc.min.y )
 		AddVertex( rect.max.x,rect.min.y,tc.max.x,tc.min.y )
 		AddVertex( rect.max.x,rect.max.y,tc.max.x,tc.max.y )
@@ -554,7 +548,7 @@ Class Canvas
 		Local t0:=Float(srcImage.Rect.min.y+srcRect.min.y)/srcImage.Texture.Height
 		Local s1:=Float(srcImage.Rect.min.x+srcRect.max.x)/srcImage.Texture.Width
 		Local t1:=Float(srcImage.Rect.min.y+srcRect.max.y)/srcImage.Texture.Height
-		AddDrawOp( srcImage.Shader,srcImage.Material,srcImage.BlendMode,srcImage.TextureFilter,4,1 )
+		AddDrawOp( srcImage.Shader,srcImage.Material,srcImage.BlendMode,4,1 )
 		AddVertex( rect.min.x,rect.min.y,s0,t0 )
 		AddVertex( rect.max.x,rect.min.y,s1,t0 )
 		AddVertex( rect.max.x,rect.max.y,s1,t1 )
@@ -599,7 +593,7 @@ Class Canvas
 		
 		Local x0:=x+xr,y0:=y+yr
 		
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,n,1 )
+		AddDrawOp( _shader,_material,_blendMode,n,1 )
 		
 		For Local i:=0 Until n
 			Local th:=(i+.5)*Pi*2/n
@@ -654,7 +648,7 @@ Class Canvas
 		Local order:=vertices.Length/2
 		DebugAssert( order>0,"Invalid polygon" )
 		
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,order,1 )
+		AddDrawOp( _shader,_material,_blendMode,order,1 )
 		
 		For Local i:=0 Until order*2 Step 2
 			AddVertex( vertices[i],vertices[i+1],0,0 )
@@ -675,7 +669,7 @@ Class Canvas
 	Method DrawPolys( order:Int,count:Int,vertices:Float[] )
 		DebugAssert( order>0 And count>0 And order*count<=vertices.Length,"Invalid polyon" )
 
-		AddDrawOp( _shader,_material,_blendMode,_textureFilter,order,count )
+		AddDrawOp( _shader,_material,_blendMode,order,count )
 		
 		For Local i:=0 Until order*count*2 Step 2
 			AddVertex( vertices[i],vertices[i+1],0,0 )
@@ -711,9 +705,9 @@ Class Canvas
 		DebugAssert( order>0 And count>0,"Illegal primitive" )
 
 		If image
-			AddDrawOp( image.Shader,image.Material,image.BlendMode,image.TextureFilter,order,count )
+			AddDrawOp( image.Shader,image.Material,image.BlendMode,order,count )
 		Else		
-			AddDrawOp( _shader,_material,_blendMode,_textureFilter,order,count )
+			AddDrawOp( _shader,_material,_blendMode,order,count )
 		Endif
 		
 		Local n:=order*count
@@ -724,7 +718,7 @@ Class Canvas
 					Local j:=indices[i]
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+j*verticesPitch )
 					Local tp:=Cast<Float Ptr>( Cast<UByte Ptr>( texCoords )+j*texCoordsPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+j*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+j*colorsPitch )
 					AddVertex( vp[0],vp[1],tp[0],tp[1],cp[0] )
 				Next
 			Else If texCoords
@@ -738,7 +732,7 @@ Class Canvas
 				For Local i:=0 Until n
 					Local j:=indices[i]
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+j*verticesPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+j*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+j*colorsPitch )
 					AddVertex( vp[0],vp[1],0,0,cp[0] )
 				Next
 			Else
@@ -753,7 +747,7 @@ Class Canvas
 				For Local i:=0 Until n
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+i*verticesPitch )
 					Local tp:=Cast<Float Ptr>( Cast<UByte Ptr>( texCoords )+i*texCoordsPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+i*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+i*colorsPitch )
 					AddVertex( vp[0],vp[1],tp[0],tp[1],cp[0] )
 				Next
 			Else If texCoords
@@ -765,7 +759,7 @@ Class Canvas
 			Else If colors
 				For Local i:=0 Until n
 					Local vp:=Cast<Float Ptr>( Cast<UByte Ptr>( vertices )+i*verticesPitch )
-					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( texCoords )+i*colorsPitch )
+					Local cp:=Cast<UInt Ptr>( Cast<UByte Ptr>( colors )+i*colorsPitch )
 					AddVertex( vp[0],vp[1],0,0,cp[0] )
 				Next
 			Else
@@ -801,7 +795,7 @@ Class Canvas
 		Local vs:=image.Vertices
 		Local ts:=image.TexCoords
 		
-		AddDrawOp( image.Shader,image.Material,image.BlendMode,image.TextureFilter,4,1 )
+		AddDrawOp( image.Shader,image.Material,image.BlendMode,4,1 )
 		
 		AddVertex( vs.min.x+tx,vs.min.y+ty,ts.min.x,ts.min.y )
 		AddVertex( vs.max.x+tx,vs.min.y+ty,ts.max.x,ts.min.y )
@@ -885,7 +879,7 @@ Class Canvas
 			Local image:=gpage.image
 			sx=image.Rect.min.x;sy=image.Rect.min.y
 			tw=image.Texture.Width;th=image.Texture.Height
-			AddDrawOp( image.Shader,image.Material,image.BlendMode,image.TextureFilter,4,i1-i0 )
+			AddDrawOp( image.Shader,image.Material,image.BlendMode,4,i1-i0 )
 			
 			For Local i:=i0 Until i1
 			
@@ -928,13 +922,12 @@ Class Canvas
 		Local lx:=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		Local ly:=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
 		
-		_vp=_lightVB.AddVertices( 4 )
+		_vp=Cast<Vertex2f Ptr>( _lightVB.AddVertices( 4 ) )
 		If Not _vp Return
 
 		Local op:=New LightOp
 		op.light=light
 		op.lightPos=New Vec2f( lx,ly )
-		op.textureFilter=light.TextureFilter<>TextureFilter.None ? light.TextureFilter Else _textureFilter
 		op.primOffset=_lightVB.Length-4
 		_lightOps.Push( op )
 		
@@ -1083,20 +1076,19 @@ Class Canvas
 
 			'render diffuse gbuffer
 			'
-			_device.RenderTarget=_gbuffers[0]
+			_device.RenderTarget=_gbrtargets[0]
 			
 			RenderDrawOps( 1 )
 			
 			'render normal gbuffer
 			'
-			_device.RenderTarget=_gbuffers[1]
+			_device.RenderTarget=_gbrtargets[1]
 			
 			RenderDrawOps( 2 )
 
 			'back to rendertarget
 			'			
-			_device.RenderTarget=_rtarget ? _rtarget.Texture Else Null
-		
+			_device.RenderTarget=_rtarget
 		Endif
 		
 		_drawVB.Clear()
@@ -1135,27 +1127,29 @@ Class Canvas
 
 			Local gbufferSize:=New Vec2i( 1920,1080 )
 			Local gbufferScale:=New Vec2f( 1 )/Cast<Vec2f>( gbufferSize )
-		
-			_gbuffers[0]=New Texture( gbufferSize.x,gbufferSize.y,PixelFormat.RGBA32,TextureFlags.Dynamic )
-			_gbuffers[1]=New Texture( gbufferSize.x,gbufferSize.y,PixelFormat.RGBA32,TextureFlags.Dynamic )
+			
+			For Local i:=0 Until 2
+				_gbuffers[i]=New Texture( gbufferSize.x,gbufferSize.y,PixelFormat.RGBA32,TextureFlags.Dynamic )
+				_gbrtargets[i]=New RenderTarget( New Texture[]( _gbuffers[i] ),Null )
+			Next
 
-			_uniforms.SetVector( "mx2_GBufferScale",gbufferScale )
-			_uniforms.SetTexture( "mx2_GBuffer0",_gbuffers[0] )
-			_uniforms.SetTexture( "mx2_GBuffer1",_gbuffers[1] )
+			_uniforms.SetVec2f( "GBufferScale",gbufferScale )
+			_uniforms.SetTexture( "GBuffer0",_gbuffers[0] )
+			_uniforms.SetTexture( "GBuffer1",_gbuffers[1] )
 			
 		Endif
 		
 		Validate()
 		
-		_uniforms.SetVector( "mx2_AmbientLight",_ambientLight )
+		_uniforms.SetVec4f( "AmbientLight",_ambientLight )
 		
-		_device.RenderTarget=_gbuffers[0]
+		_device.RenderTarget=_gbrtargets[0]
 		_device.Clear( Color.Black )
 			
-		_device.RenderTarget=_gbuffers[1]
+		_device.RenderTarget=_gbrtargets[1]
 		_device.Clear( New Color( .5,.5,0 ) )
 		
-		_device.RenderTarget=_rtarget ? _rtarget.Texture Else Null
+		_device.RenderTarget=_rtarget
 	End
 	
 	#rem monkeydoc Renders lighting and ends lighting mode.
@@ -1184,6 +1178,33 @@ Class Canvas
 		_lighting=False
 	End
 	
+	'***** INTERNAL *****
+	
+	#rem monkeydoc @hidden
+	#end	
+	Property GraphicsDevice:GraphicsDevice()
+		
+		If _lighting Return Null
+		
+		Flush()
+	
+		Return _device
+	End
+
+	#rem monkeydoc @hidden
+	#end
+	Property RenderMatrix:AffineMat3f()
+		
+		Return _rmatrix
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Property RenderBounds:Recti()
+		
+		Return _rbounds
+	End
+	
 	Private
 	
 	Enum Dirty
@@ -1196,7 +1217,6 @@ Class Canvas
 		Field shader:Shader
 		Field material:UniformBlock
 		Field blendMode:BlendMode
-		Field textureFilter:TextureFilter
 		Field primOrder:Int
 		Field primCount:Int
 		Field primOffset:Int
@@ -1205,7 +1225,6 @@ Class Canvas
 	Class LightOp
 		Field light:Image
 		Field lightPos:Vec2f
-		Field textureFilter:TextureFilter
 		Field primOrder:Int
 		Field primOffset:Int
 	End
@@ -1221,8 +1240,9 @@ Class Canvas
 
 	Global _lighting:Bool=False
 	Global _gbuffers:=New Texture[2]
+	Global _gbrtargets:=New RenderTarget[2]
 
-	Field _rtarget:Image
+	Field _rtarget:RenderTarget
 	Field _device:GraphicsDevice
 	Field _uniforms:UniformBlock
 	
@@ -1233,8 +1253,8 @@ Class Canvas
 	Field _scissor:Recti
 	Field _ambientLight:Color
 	
+	Field _retroMode:Bool
 	Field _blendMode:BlendMode
-	Field _textureFilter:TextureFilter
 	Field _font:Font
 	Field _alpha:Float
 	Field _color:Color
@@ -1279,8 +1299,8 @@ Class Canvas
 		inited=True
 
 		Local nquads:=MaxVertices/4
-		_quadIndices=New IndexBuffer( nquads*6 )
-		Local ip:=_quadIndices.AddIndices( nquads*6 )
+		_quadIndices=New IndexBuffer( IndexFormat.UINT16,nquads*6 )
+		Local ip:=Cast<UShort Ptr>( _quadIndices.AddIndices( nquads*6 ) )
 		For Local i:=0 Until nquads*4 Step 4
 			ip[0]=i
 			ip[1]=i+1
@@ -1291,30 +1311,34 @@ Class Canvas
 			ip+=6
 		Next
 		
-		_shadowVB=New VertexBuffer( MaxShadowVertices )
+		_shadowVB=New VertexBuffer( Vertex2fFormat.Instance,MaxShadowVertices )
 
 		_defaultFont=mojo.graphics.Font.Load( "font::DejaVuSans.ttf",16 )
 	End
 	
-	Method Init( rtarget:Image,device:GraphicsDevice )
+	Method Init( rtarget:RenderTarget,device:GraphicsDevice )
 		Init2()
 		
 		_rtarget=rtarget
 		_device=device
 
-		_device.RenderTarget=_rtarget ? _rtarget.Texture Else Null
+		_device.RenderTarget=_rtarget
 		
-		_uniforms=New UniformBlock
-		_device.SetUniformBlock( 0,_uniforms )
+		_device.CullMode=CullMode.None
+		_device.DepthFunc=DepthFunc.Always
+		_device.DepthMask=False
+		
+		_uniforms=New UniformBlock( 1 )
+		_device.BindUniformBlock( _uniforms )
 
-		_drawVB=New VertexBuffer( MaxVertices )
-		_lightVB=New VertexBuffer( MaxLights*4 )
-		_shadowVB=New VertexBuffer( 65536 )
+		_drawVB=New VertexBuffer( Vertex2fFormat.Instance,MaxVertices )
+		_lightVB=New VertexBuffer( Vertex2fFormat.Instance,MaxLights*4 )
+		_shadowVB=New VertexBuffer( Vertex2fFormat.Instance,65536 )
 		
 		_device.IndexBuffer=_quadIndices
 
 		_shader=Shader.GetShader( "null" )
-		_material=New UniformBlock
+		_material=New UniformBlock( 2 )
 		
 		_viewport=New Recti( 0,0,640,480 )
 		_ambientLight=Color.Black
@@ -1390,7 +1414,7 @@ Class Canvas
 	
 	'Drawing
 	'	
-	Method AddDrawOp( shader:Shader,material:UniformBlock,blendMode:BlendMode,textureFilter:TextureFilter,primOrder:int,primCount:Int )
+	Method AddDrawOp( shader:Shader,material:UniformBlock,blendMode:BlendMode,primOrder:int,primCount:Int )
 	
 		If _drawVB.Length+primCount*primOrder>_drawVB.Capacity
 			Flush()
@@ -1398,18 +1422,17 @@ Class Canvas
 		
 		If blendMode=BlendMode.None blendMode=_blendMode
 		
-		If textureFilter=TextureFilter.None textureFilter=_textureFilter
-		
-		If shader<>_drawOp.shader Or material<>_drawOp.material Or blendMode<>_drawOp.blendMode Or textureFilter<>_drawOp.textureFilter Or primOrder<>_drawOp.primOrder
+		If shader<>_drawOp.shader Or material<>_drawOp.material Or blendMode<>_drawOp.blendMode Or primOrder<>_drawOp.primOrder
 		
 			'pad quads so primOffset always on a 4 vert boundary
-			If primOrder=4 And _drawVB.Length & 3 _drawVB.AddVertices( 4-(_drawVB.Length&3) )
+			If primOrder=4 And _drawVB.Length & 3 
+				_drawVB.AddVertices( 4-(_drawVB.Length&3) )
+			Endif
 			
 			_drawOp=New DrawOp
 			_drawOp.shader=shader
 			_drawOp.material=material
 			_drawOp.blendMode=blendMode
-			_drawOp.textureFilter=textureFilter
 			_drawOp.primOrder=primOrder
 			_drawOp.primCount=primCount
 			_drawOp.primOffset=_drawVB.Length
@@ -1418,7 +1441,7 @@ Class Canvas
 			_drawOp.primCount+=primCount
 		Endif
 		
-		_vp=_drawVB.AddVertices( primOrder*primCount )
+		_vp=Cast<Vertex2f Ptr>( _drawVB.AddVertices( primOrder*primCount ) )
 	End
 	
 	Method Validate()
@@ -1443,16 +1466,15 @@ Class Canvas
 				_projMatrix=Mat4f.Ortho( 0,_rviewport.Width,_rviewport.Height,0,-1,1 ) * rmatrix
 			Endif
 			
-			_uniforms.SetMatrix( "mx2_ModelViewProjectionMatrix",_projMatrix )
+			_uniforms.SetMat4f( "ModelViewProjectionMatrix",_projMatrix )
 			
-			_uniforms.SetVector( "mx2_ViewportOrigin",_rviewport.Origin )
+			_uniforms.SetVec2f( "ViewportOrigin",_rviewport.Origin )
 			
-			_uniforms.SetVector( "mx2_ViewportSize",_rviewport.Size )
+			_uniforms.SetVec2f( "ViewportSize",_rviewport.Size )
 	
-			_uniforms.SetVector( "mx2_ViewportClip",_rviewportClip )
+			_uniforms.SetVec2f( "ViewportClip",_rviewportClip )
 			
 			_device.Viewport=_rviewport
-		
 		Endif
 		
 		If _dirty & Dirty.Scissor
@@ -1481,8 +1503,7 @@ Class Canvas
 		
 			_device.Shader=shader
 			_device.BlendMode=op.blendMode
-			_device.TextureFilter=op.textureFilter
-			_device.SetUniformBlock( 1,op.material )
+			_device.BindUniformBlock( op.material )
 
 			Select op.primOrder
 			Case 4
@@ -1525,7 +1546,7 @@ Class Canvas
 				Local d:=lv.Dot( nv )+pd
 				If d<0 Continue
 				
-				Local tp:=_shadowVB.AddVertices( 9 )
+				Local tp:=Cast<Vertex2f Ptr>( _shadowVB.AddVertices( 9 ) )
 				If Not tp Exit
 			
 				Local hv:=(pv+tv)/2
@@ -1568,7 +1589,7 @@ Class Canvas
 				Continue
 #end				
 				_device.RenderPass=4
-				_device.RenderTarget=_gbuffers[0]
+				_device.RenderTarget=_gbrtargets[0]
 				_device.BlendMode=BlendMode.Opaque
 				_device.ColorMask=ColorMask.Alpha
 				_device.VertexBuffer=_shadowVB
@@ -1578,7 +1599,7 @@ Class Canvas
 				_device.Render( 3,_shadowVB.Length/3,0 )
 				
 				_device.RenderPass=5				
-				_device.RenderTarget=_rtarget ? _rtarget.Texture Else Null
+				_device.RenderTarget=_rtarget
 				_device.BlendMode=BlendMode.Additive
 				_device.ColorMask=ColorMask.All
 				_device.VertexBuffer=_lightVB
@@ -1590,8 +1611,7 @@ Class Canvas
 			Local light:=op.light
 			
 			_device.Shader=light.Shader
-			_device.TextureFilter=op.textureFilter
-			_device.SetUniformBlock( 1,light.Material )
+			_device.BindUniformBlock( light.Material )
 			
 			_device.Render( 4,1,op.primOffset )
 		

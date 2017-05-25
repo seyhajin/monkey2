@@ -136,18 +136,28 @@ Class Window Extends View
 		
 	End
 
-	#rem monkeydoc @hidden
+	#rem monkeydoc Switches to 'desktop' fullscreen mode.
+	
+	Switches to 'desktop' fullscreen mode. 
+	
+	The window is resized to cover the entire desktop and any window decorations are hidden.
+	
+	The display resolution does not actually change.
+	
 	#end	
 	Method BeginFullscreen()
 		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN_DESKTOP )
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Changes display mode and switches to fullscreen mode.
+	
+	The display resolution is changed, the window is resized and any window decorations are hidden.
+	
 	#end
 	Method BeginFullscreen( width:Int,height:Int,hertz:Int )
 		Local mode:SDL_DisplayMode
-		mode.w=Width
-		mode.h=Height
+		mode.w=width
+		mode.h=height
 		mode.refresh_rate=hertz
 		Local closest:SDL_DisplayMode
 		SDL_GetClosestDisplayMode( 0,Varptr mode,Varptr closest )
@@ -155,30 +165,32 @@ Class Window Extends View
 		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN )
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Ends fullscreen mode.
 	#end
 	Method EndFullscreen()
 		SDL_SetWindowFullscreen( _sdlWindow,0 )
 	End
 
-	#rem monkeydoc Maximize the window.
+	#rem monkeydoc Maximizes the window.
 	#end	
 	Method Maximize()
 		SDL_MaximizeWindow( _sdlWindow )
 	End
 	
-	#rem monkeydoc Minimize the window.
+	#rem monkeydoc Minimizes the window.
 	#end	
 	Method Minimize()
 		SDL_MinimizeWindow( _sdlWindow )
 	End
 	
-	#rem monkeydoc Restore the window.
+	#rem monkeydoc Restores the window.
 	#end	
 	Method Restore()
 		SDL_RestoreWindow( _sdlWindow )
 	End
 	
+	'***** INTERNAL *****
+
 	#rem monkeydoc @hidden
 	#End
 	Method UpdateWindow( render:Bool )
@@ -188,9 +200,7 @@ Class Window Extends View
 		If render RenderWindow()
 	End
 	
-	'***** INTERNAL *****
-
-	#rem monkeydoc @hidden Mouse scale for ios retina devices.
+	#rem monkeydoc @hidden Mouse scale for ios retina devices. Should prob. be in App so @2.png can use it etc.
 	#end
 	Property MouseScale:Vec2f()
 	
@@ -257,7 +267,9 @@ Class Window Extends View
 	
 	Protected
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Theme changed handler.
+	
+	Called when the App theme changes.
 	#end
 	Method OnThemeChanged() override
 	
@@ -295,8 +307,6 @@ Class Window Extends View
 		End
 		
 	End
-	
-	Protected
 	
 	Method OnLayout() Override
 	

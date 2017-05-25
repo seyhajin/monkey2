@@ -64,20 +64,24 @@ Class JNIEnv Extends Void
 	Method CallVoidMethod:Void( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallVoidMethod"
 	
 	Method CallBooleanMethod:Bool( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallBooleanMethod"
+
+	Method CallObjectMethod:Bool( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallObjectMethod"
 	
 	'static methods...
 	'
 	Method GetStaticMethodID:jmethodID( clazz:jclass,name:CString,sig:CString )
 	
 	Method CallStaticVoidMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticVoidMethod"
+
+	Method CallStaticBooleanMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
 	
-	Method CallStaticBooleanMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
+	Method CallStaticObjectMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticObjectMethod"
 
 	'ctors...
 	'
 	Method AllocObject:jobject( clazz:jclass )
 		
-	Method NewObject:jobject( clazz:jclass,methodID:jmethodID )
+	Method NewObject:jobject( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::NewObject"
 		
 	'refs...
 	'

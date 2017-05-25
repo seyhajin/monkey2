@@ -1,5 +1,9 @@
 
-Namespace test
+Global c:C
 
-Class Socket
+Class C
+End
+
+Function F( c:C )
+	Print "F()!"
 End

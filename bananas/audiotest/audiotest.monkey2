@@ -21,44 +21,10 @@ Class MyWindow Extends Window
 		sound=Sound.Load( "asset::fine_morning.ogg" )
 		channel=New Channel
 		
-#if __TARGET__<>"emscripten"	
-		'SineWave()
-#endif
-		
+'		SineWave()
+
 	End
 
-#if __TARGET__<>"emscripten"	
-	Method SineWave()
-	
-		New Fiber( Lambda()
-		
-			Const len:=1024
-			
-			Local sine:=New UByte[len]
-			Local sineData:=New AudioData( len,AudioFormat.Mono8,22050,Cast<UByte Ptr>( sine.Data ) )
-			
-			For Local i:=0 Until len
-				sine[i]=Sin( Float(i)/len * Pi*2 * 16 ) * 127.5 + 127.5
-			Next
-			
-			Local sineChan:=New Channel
-			
-			Repeat
-			
-				If Keyboard.KeyDown( Key.Up )
-					sineChan.Rate*=1.00125
-				Else If Keyboard.KeyDown( Key.Down )
-					sineChan.Rate/=1.00125
-				Endif
-				
-				sineChan.Queue( sineData )
-				
-			Forever
-			
-		End )
-	End
-#endif
-	
 	Method OnRender( canvas:Canvas ) Override
 	
 		App.RequestRender()
@@ -70,6 +36,8 @@ Class MyWindow Extends Window
 		canvas.DrawText( "Volume="+channel.Volume,0,56 )
 		canvas.DrawText( "Rate="+channel.Rate,0,72 )
 		canvas.DrawText( "Pan="+channel.Pan,0,88 )
+		canvas.DrawText( "PlayheadSample="+channel.PlayheadSample,0,104 )
+		canvas.DrawText( "PlayheadTime="+channel.PlayheadTime,0,120 )
 
 	End
 	
@@ -100,6 +68,41 @@ Class MyWindow Extends Window
 				channel.Pan+=.25
 			End
 		End
+	End
+	
+	Method SineWave()
+
+#if __TARGET__<>"emscripten"	
+	
+		New Fiber( Lambda()
+		
+			Const len:=1024
+			
+			Local sine:=New UByte[len]
+			Local sineData:=New AudioData( len,AudioFormat.Mono8,22050,Cast<UByte Ptr>( sine.Data ) )
+			
+			For Local i:=0 Until len
+				sine[i]=Sin( Float(i)/len * Pi*2 * 16 ) * 127.5 + 127.5
+			Next
+			
+			Local sineChan:=New Channel
+			
+			Repeat
+			
+				If Keyboard.KeyDown( Key.Up )
+					sineChan.Rate*=1.00125
+				Else If Keyboard.KeyDown( Key.Down )
+					sineChan.Rate/=1.00125
+				Endif
+				
+				sineChan.Queue( sineData )
+				
+			Forever
+			
+		End )
+
+#Endif
+
 	End
 	
 End

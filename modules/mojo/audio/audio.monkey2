@@ -25,7 +25,6 @@ End
 
 Public
 
-
 #rem monkeydoc Global instance of the AudioDevice class.
 #end
 Const Audio:=New AudioDevice
@@ -77,6 +76,9 @@ Class Sound
 	Method New( data:AudioData )
 		alGenBuffers( 1,Varptr _alBuffer )
 		alBufferData( _alBuffer,ALFormat( data.Format ),data.Data,data.Size,data.Hertz )
+		_format=data.Format
+		_length=data.Length
+		_hertz=data.Hertz
 	End
 	
 	#rem monkeydoc Discards a sound.
@@ -85,6 +87,30 @@ Class Sound
 		If Not _alBuffer Return
 		alDeleteBuffers( 1,Varptr _alBuffer )
 		_alBuffer=0
+	End
+	
+	#rem monkeydoc The length, in samples, of the sound.
+	#end
+	Property Length:Int()
+		Return _length
+	End
+	
+	#rem monkeydoc The format of the sound.
+	#end
+	Property Format:AudioFormat()
+		Return _format
+	End
+	
+	#rem monkeydoc The playback rate of the sound.
+	#end
+	Property Hertz:Int()
+		Return _hertz
+	End
+	
+	#rem monkeydoc The duration, in seconds, of the sound.
+	#end
+	Property Duration:Double()
+		Return Double(_length)/Double(_hertz)
 	End
 	
 	#rem monkeydoc Plays a sound through a temporary channel.
@@ -117,6 +143,9 @@ Class Sound
 	Private
 	
 	Field _alBuffer:ALuint
+	Field _format:AudioFormat
+	Field _length:Int
+	Field _hertz:Int
 
 End
 
@@ -150,7 +179,8 @@ Class Channel
 		If _flags & ChannelFlags.AutoDiscard _tmpChannels.Push( Self )
 		
 		_active+=1
-		Print "Active channels="+_active
+		
+'		Print "Active channels="+_active
 	End
 	
 	Property Flags:ChannelFlags()
@@ -230,7 +260,53 @@ Class Channel
 		alSource3f( _alSource,AL_POSITION,x,0,z )
 	End
 	
-	#rem monkeydoc Discard channel resources.
+	#rem monkeydoc Channel playhead sample offset.
+	
+	Gets or sets the sample offset of the sound currently playing.
+	
+	If the channel is playing when set, playback is immediately affected.
+	
+	If the channel is not playing when set, the offset will be applied when the Play method is invoked.
+		
+	#end
+	Property PlayheadSample:Int()
+		If Not _alSource Return 0
+		
+		Local sample:Int
+		alGetSourcei( _alSource,AL_SAMPLE_OFFSET,Varptr sample )
+		
+		Return sample
+				
+	Setter( sample:Int )
+		If Not _alSource Return
+		
+		alSourcei( _alSource,AL_SAMPLE_OFFSET,sample )
+	End
+	
+	#rem monkeydoc Channel playhead time offset.
+
+	Gets or sets the time offset of the sound currently playing.
+	
+	If the channel is playing when set, playback is immediately affected.
+	
+	If the channel is not playing when set, the offset will be applied when the Play method is invoked.
+		
+	#end
+	Property PlayheadTime:Float()
+		If Not _alSource Return 0
+
+		Local time:Float		
+		alGetSourcef( _alSource,AL_SEC_OFFSET,Varptr time )
+		
+		Return time
+		
+	Setter( time:Float )
+		If Not _alSource Return
+		
+		alSourcef( _alSource,AL_SEC_OFFSET,time )
+	End
+	
+	#rem monkeydoc Discards channel resources.
 	#end
 	Method Discard()
 		If Not _alSource Return
@@ -242,7 +318,7 @@ Class Channel
 		Print "Active channels="+_active
 	End
 
-	#rem monkeydoc Play a sound through the channel.
+	#rem monkeydoc Plays a sound through the channel.
 	#end
 	Method Play( sound:Sound,loop:Bool=False )
 		If Not _alSource Or Not sound Or Not sound._alBuffer Return
