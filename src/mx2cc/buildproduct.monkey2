@@ -547,7 +547,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 			cmd+=" --preload-file ~q"+assetsDir+"@/assets~q"
 			
-			If opts.wasm cmd+=" -s BINARYEN=1"
+			If opts.wasm cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
 		End
 		
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."
