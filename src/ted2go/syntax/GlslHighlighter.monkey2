@@ -2,20 +2,20 @@
 Namespace ted2go
 
 
-Class CppHighlighter Extends HighlighterPlugin
+Class GlslHighlighter Extends HighlighterPlugin
 
 	Property Name:String() Override
-		Return "CppHighlighter"
+		Return "GlslHighlighter"
 	End
 
 		
 	Private
 	
-	Global _instance:=New CppHighlighter
+	Global _instance:=New GlslHighlighter
 		
 	Method New()
 		Super.New()
-		_types=New String[]( ".cpp",".h",".hpp",".c" )
+		_types=New String[]( ".glsl" )
 		_hl=New Highlighter
 		_hl.Painter=HL
 	End
