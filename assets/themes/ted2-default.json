@@ -1,11 +1,18 @@
 {
 	"extends":"default",
 	
+	"colors":{
+
+		"statusbar": "content",
+		"statusbar-active": "#CA5100"
+	},
+
 	"styles":{
 	
 		"GutterView":{
 			"extends":"TextView",
-			"textColor":"text-disabled"
+			"textColor":"text-disabled",
+			"font":"normal"
 		},
 		
 		"DebugToolBar":{
@@ -65,10 +72,14 @@
 			"margin":[ 1,0,2,0 ]
 		},
 
+		"ProgressBar":{
+			"icons":"progressbar_icons.png"
+		},
+
 		"StatusBar":{
 			"extends":"DockingView",
 			"padding":[ 0 ],
-			"backgroundColor":"content",
+			"backgroundColor":"statusbar",
 			"border":[ 0,1,0,0 ]
 		},
 		"StatusBarText":{
@@ -76,7 +87,7 @@
 		},
 		"StatusBarLineInfo":{
 			"extends":"Label",
-			"margin":[ 30,0,0,0 ]
+			"margin":[ 40,0,0,0 ]
 		},
 		"StatusBarIns":{
 			"extends":"Label"
@@ -84,6 +95,25 @@
 		"StatusBarProgress":{
 			"extends":"ProgressBar",
 			"margin":[ 6,0 ]
+		},
+
+		"CompletionDialog":{
+			"extends":"Dialog"
+		},
+		"CompletionDialogContent":{
+			"padding":[ 1 ]
+		},
+		
+		"ProjectTabView":{
+			"extends":"TabView",
+			"backgroundColor":"content"
+		},
+		
+		"StatusBarButton":{
+			"extends":"ToolButton",
+			"padding":[ 0 ],
+			"skinColor":"transparent"
 		}
+		
 	}
 }
