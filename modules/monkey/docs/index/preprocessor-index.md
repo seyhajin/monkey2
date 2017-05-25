@@ -1,3 +1,8 @@
+@manpage Preprocessor
+
+Monkey2 Preprocessor Index
+--
+
 #### #If
 Used to check preprocessor variables and modify your code depending on your options.
 
