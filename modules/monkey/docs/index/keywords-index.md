@@ -313,74 +313,110 @@ The Select statement allows you to execute a block of statements depending on a 
 
 #### Setter
 
+Marks the start of a Property setter definition.
 
+/linkto User-defined-types \linkto
 
 #### Static
 
-
+`Static` is not currently used but is reserved for future use.
 
 #### Step
 
+Defines the incrementation step for `Next` loops.
 
+/linkto Loop-statements \linkto
 
 #### Struct
 
+Used to declare a `Struct`
 
+/linkto User-defined-types \linkto
 
 #### Then
 
+Facultative keyword used in combination with the `If` keyword.
 
+/linkto Loop-statements \linkto
 
 #### Throw
 
+The `Throw` keyword is part of the Try/Catch exception-handling construct.
 
+/linkto Error-handling \linkto
 
 #### Throwable
 
+The Throwable class must be extended by all classes that are intended to be used with `Throw`.
 
+/linkto Error-handling \linkto
 
 #### To
 
+Defines range of values to be assigned to the index variable in a For/Next loop.
 
+/linkto Loop-statements \linkto
 
 #### Try
 
+Declares the start of a Try/Catch block.
 
+/linkto Error-handling \linkto
 
 #### TypeInfo
 
+Returns the type of a variable/object.
 
+/linkto Reflection \linkto
 
 #### Until
 
+Marks the end of a Repeat/Until loop. The `Until` keyword is also found as a modifier in For/Next loops.
 
+/linkto Loop-statements \linkto
 
 #### Using
 
+The `Using` directive provides a way to add namespace 'search paths' for locating identifiers.
 
+/linkto Namespaces-and-Using \linkto
 
 #### Var
 
-
+`Var` is not currently used but is reserved for future use.
 
 #### Variant
 
+The `Variant` type is a primitive type that can be used to 'box' values of any type.
 
+/linkto Variants \linkto
 
 #### Varptr
 
+`Varptr` is used to reference pointers.
 
+/linkto Pointers \linkto
 
 #### Virtual
 
+`Virtual` is not currently used but is reserved for future use. A virtual method is a method that can be overriden.
 
+/linkto User-defined-types \linkto
 
 #### Wend
 
+Wend, short for While [loop] End, marks the end of a While loop.
 
+/linkto Loop-statements \linkto
 
 #### Where
 
+`Where` allows generic type constrain with reflection.
 
+/linkto Reflection \linkto
 
 #### While
+
+Marks the start of a While loop.
+
+/linkto Loop-statements \linkto
