@@ -10,5 +10,3 @@ Local i:=$A0F
 #### Code lines splitting
 
 Lines can currently only be split after ‘[‘, ‘(‘ or ‘,’ tokens.
-
-####

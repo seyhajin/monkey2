@@ -1,13 +1,12 @@
 @manpage Keywords
 
-Monkey2 KeyWord Index
---
+**Monkey2 KeyWords**
 
 #### Abstract
 
 Used while declaring classes: class cannot be instantiated with `New`, it must be extended.
 
-/linkto User defined types \linkto
+/linkto User-defined-types \linkto
 
 #### Alias
 
@@ -23,31 +22,31 @@ Used to import extern typedefs too.
 
 #### Case
 
-Used with the `Select` statement.
+To be combined with with the `Select` statement.
 
-/linkto Loop-statements.Select \linkto
+/linkto Loop-statements \linkto
 
 #### Cast
 
-Used to cast custom pointers.
+Allows you to cast custom pointers.
 
 /linkto Pointers \linkto
 
 #### Catch
 
-??? Used for exeption handling.
+The `Catch` keyword is part of the Try/Catch exception-handling construct.
 
-/linkto Exceptions \linkto
+/linkto Errors-handling \linkto
 
 #### Class
 
-Used to declare user defined class object.
+Marks the start of a class object definition.
 
 /linkto User-defined-types \linkto
 
 #### Const
 
-Used to declare a constant variable
+Allows you to declare a constant.
 
 /linkto Variables \linkto
 
@@ -64,7 +63,7 @@ C style String for external string parameters
 
 #### Default
 
-Used with the `Select` statement.
+Marks the start of the default code block of a `Select` statement.
 
 /linkto Conditional-statements.Select \linkto
 
@@ -74,29 +73,29 @@ Used with the `Select` statement.
 
 #### Eachin
 
-Used with `For` loop with collections.
+Allows you to use `For` loop with collections.
 
 /linkto Loop-statements.For-(Eachin) \linkto
 
 #### Else
 
-Used with the `If` statement.
+To be combined with the `If` statement.
 
 /linkto Conditional-statements.If \linkto
 
 #### Elseif
 
-Used with the `If` statement.
+To be combined with the `If` statement.
 
 /linkto Conditional-statements.If \linkto
 
 #### End
 
-Used to end all kind of declarations/statements
+Ends all kind of declarations/statements
 
 #### Endif
 
-Used with the `If` statement.
+Ends `If` statement.
 
 /linkto Conditional-statements.If \linkto
 
