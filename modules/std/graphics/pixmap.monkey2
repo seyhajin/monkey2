@@ -395,17 +395,42 @@ Class Pixmap Extends Resource
 		DebugAssert( Width&1=0 And Height&1=0 )
 		
 		Local dst:=New Pixmap( Width/2,Height/2,Format )
-		
-		For Local y:=0 Until dst.Height
-			For Local x:=0 Until dst.Width
-				Local c0:=GetPixel( x*2,y*2 )
-				Local c1:=GetPixel( x*2+1,y*2 )
-				Local c2:=GetPixel( x*2+1,y*2+1 )
-				Local c3:=GetPixel( x*2,y*2+1 )
-				Local cm:=(c0+c1+c2+c3)*.25
-				dst.SetPixel( x,y,cm )
+
+		Select _format
+		Case PixelFormat.RGBA8
+			For Local y:=0 Until dst.Height
+				
+				Local dstp:=Cast<UInt Ptr>( dst.PixelPtr( 0,y ) )
+				Local srcp0:=Cast<UInt Ptr>( PixelPtr( 0,y*2 ) )
+				Local srcp1:=Cast<UInt Ptr>( PixelPtr( 0,y*2+1 ) )
+				
+				For Local x:=0 Until dst.Width
+					
+					Local src0:=srcp0[0],src1:=srcp0[1],src2:=srcp1[0],src3:=srcp1[1]
+					
+					Local dst:=( (src0 Shr 2)+(src1 Shr 2)+(src2 Shr 2)+(src3 Shr 2) ) & $ff000000
+					dst|=( (src0 & $ff0000)+(src1 & $ff0000)+(src2 & $ff0000)+(src3 & $ff0000) ) Shr 2 & $ff0000
+					dst|=( (src0 & $ff00)+(src1 & $ff00)+(src2 & $ff00)+(src3 & $ff00) ) Shr 2 & $ff00
+					dst|=( (src0 & $ff)+(src1 & $ff)+(src2 & $ff)+(src3 & $ff) ) Shr 2
+					
+					dstp[x]=dst
+					
+					srcp0+=2
+					srcp1+=2
+				Next
 			Next
-		Next
+		Default
+			For Local y:=0 Until dst.Height
+				For Local x:=0 Until dst.Width
+					Local c0:=GetPixel( x*2,y*2 )
+					Local c1:=GetPixel( x*2+1,y*2 )
+					Local c2:=GetPixel( x*2+1,y*2+1 )
+					Local c3:=GetPixel( x*2,y*2+1 )
+					Local cm:=(c0+c1+c2+c3)*.25
+					dst.SetPixel( x,y,cm )
+				Next
+			Next
+		End
 		
 		Return dst
 	End
