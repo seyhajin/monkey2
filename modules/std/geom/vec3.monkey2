@@ -107,17 +107,21 @@ Struct Vec3<T>
 	Property Length:Double()
 		Return Sqrt( x*x+y*y+z*z )
 	End
+
+	Method Distance:Double( v:Vec3 )
+		Return (v-Self).Length
+	End
+
+	Method Normalize:Vec3()
+		Return Self/Length
+	End
 	
-	Method Dot:Double( v:Vec3 )
+	Method Dot:T( v:Vec3 )
 		Return x*v.x+y*v.y+z*v.z
 	End
 
 	Method Cross:Vec3( v:Vec3 )
 		Return New Vec3( y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x )
-	End
-	
-	Method Normalize:Vec3()
-		Return Self/Length
 	End
 	
 	Method Blend:Vec3( v:Vec3,alpha:Double )
