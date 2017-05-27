@@ -100,6 +100,16 @@ Class UniformBlock Extends Resource
 		Return GetFloatPtr( id,Type.Vec4f )
 	End
 	
+	'***** Color (really just Vec4f) *****
+	'
+	Method SetColor( uniform:String,value:Color )
+		SetFloatData( uniform,value,Type.Vec4f )
+	End
+
+	Method GetColor:Color( uniform:String )
+		Return GetFloatData<Color>( uniform,Type.Vec4f )
+	End
+	
 	'***** Mat3f *****
 	'
 	Method SetMat3f( uniform:String,value:Mat3f )
