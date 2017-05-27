@@ -1,6 +1,7 @@
 {
 	"colors":{
 
+		"transparent": "#0000",
 		"clear": "#181818",
 		"gutter": "#262626",
 		"content": "#323232",
@@ -28,7 +29,8 @@
 		"textview-color6":"#fc0",
 		"textview-color7":"#fff",
 		
-		"windowClearColor":"clear"
+		"windowClearColor":"clear",
+		"menu-shortcut":"text-background"
 	},
 	
 	"fonts":{
@@ -127,7 +129,7 @@
 		},
 		
 		"TextField":{
-			"font":"editor",
+			"font":"normal",
 			"padding":[ 2 ],
 			"margin":[ 2 ],
 			"skin":"button_skin.png",
@@ -165,7 +167,7 @@
 		},
 		
 		"Menu":{
-			
+			"extends":"DockingView",
 			"padding":[ 0 ],
 			"skin":"dialog_skin.png",
 			"skinColor":"panel"

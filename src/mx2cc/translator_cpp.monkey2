@@ -2033,6 +2033,7 @@ Class Translator_CPP Extends Translator
 				If _gcframe
 					t=AllocGCTmp( arg.type )+"="+t
 				Else
+					Uses( arg.type )
 					t="bbGC::tmp("+t+")"
 					_gctmps+=1
 				Endif

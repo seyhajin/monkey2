@@ -122,6 +122,18 @@ Struct Vec2<T>
 		Return Sqrt( x*x+y*y )
 	End
 
+	#rem monkeydoc Computes the distance from this vector to another.
+	#end
+	Method Distance:Double( v:Vec2 )
+		Return (v-Self).Length
+	End
+	
+	#rem monkeydoc Normalizes the vector and returns the result.
+	#end
+	Method Normalize:Vec2()
+		Return Self/Length
+	End
+	
 	#rem monkeydoc The normal to the vector.
 	#end	
 	Property Normal:Vec2()
@@ -130,21 +142,8 @@ Struct Vec2<T>
 
 	#rem monkeydoc Computes the dot product of the vector with another vector.
 	#end
-	Method Dot:Double( v:Vec2 )
+	Method Dot:T( v:Vec2 )
 		Return x*v.x+y*v.y
-	End
-	
-	#rem monkeydoc Computes the distance from this vector to another.
-	#end
-	Method Distance:Double( v:Vec2 )
-		Local d:=v-Self
-		Return Sqrt( d.Dot( d ) )
-	End
-	
-	#rem monkeydoc Normalizes the vector and returns the result.
-	#end
-	Method Normalize:Vec2()
-		Return Self/Length
 	End
 	
 	#rem monkeydoc Blends the vector with another vector and returns the result.

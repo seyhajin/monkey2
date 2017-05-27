@@ -15,8 +15,6 @@ Class IndexBuffer
 		_format=format
 		_capacity=capacity
 		_pitch=_format=IndexFormat.UINT16 ? 2 Else 4
-		_length=0
-		_clean=0
 		_data=New UByte[_capacity*_pitch]
 	End
 	
@@ -26,20 +24,21 @@ Class IndexBuffer
 		_capacity=indices._capacity
 		_pitch=indices._pitch
 		_length=indices._length
-		_clean=0
 		_data=indices._data.Slice( 0 )
 	End
 	
 	Method New( indices:UInt[] )
+		
 		Self.New( IndexFormat.UINT32,indices.Length )
 		
-		libc.memcpy( AddIndices( indices.Length ),indices.Data,_capacity*_pitch )
+		If _capacity libc.memcpy( AddIndices( _capacity ),indices.Data,_capacity*_pitch )
 	End
 	
 	Method New( indices:UShort[] )
+		
 		Self.New( IndexFormat.UINT16,indices.Length )
 		
-		libc.memcpy( AddIndices( indices.Length ),indices.Data,_capacity*_pitch )
+		If _capacity libc.memcpy( AddIndices( _capacity ),indices.Data,_capacity*_pitch )
 	End
 	
 	Property Data:UByte Ptr()
@@ -68,15 +67,18 @@ Class IndexBuffer
 	End
 	
 	Method Clear()
+		
 		_length=0
 		_clean=0
 	End
 	
 	Method Invalidate()
+		
 		_clean=0
 	End
 	
 	Method AddIndices:UByte Ptr( count:Int )
+		
 		Reserve( _length+count )
 		
 		Local p:=_data.Data+_length*_pitch
@@ -137,10 +139,9 @@ Class IndexBuffer
 		
 		Local data:=New UByte[_capacity*_pitch]
 		
-		libc.memcpy( data.Data,_data.Data,_length*_pitch )
+		If _length libc.memcpy( data.Data,_data.Data,_length*_pitch )
 		
 		_data=data
-		
 	End
 
 End

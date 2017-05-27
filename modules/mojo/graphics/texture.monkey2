@@ -77,10 +77,9 @@ Enum TextureFlags
 	
 	Dynamic=		$00100
 	Cubemap=		$00200
-
-	Skybox=			Filter|Mipmap|Cubemap
-	ColorTarget=	Filter|Dynamic
-	DepthTarget=	Dynamic
+	
+	WrapST=			WrapS|WrapT
+	FilterMipmap=	Filter|Mipmap
 End
 
 #rem monkeydoc @hidden
@@ -377,7 +376,13 @@ Class Texture Extends Resource
 				For Local i:=0 Until 6
 					If _managed
 						Local image:=_managed.Window( offsets[i*2]*Width,offsets[i*2+1]*Height,Width,Height )
-						UploadTexImage2D( cubeFaces[i],image )
+						If _flags & TextureFlags.Mipmap
+'							UploadTexImage2D( cubeFaces[i],image )
+							UploadTexImageCubeMap( cubeFaces[i],image )
+							_dirty&=~Dirty.Mipmaps
+						Else
+							UploadTexImage2D( cubeFaces[i],image )
+						Endif
 					Else
 						ClearTexImage2D( cubeFaces[i] )
 					Endif
@@ -399,7 +404,6 @@ Class Texture Extends Resource
 			If _flags & TextureFlags.Mipmap glGenerateMipmap( _glTarget )
 				
 			glCheck()
-
 		End
 		
 		_dirty=Null
@@ -457,6 +461,51 @@ Class Texture Extends Resource
 	Field _glInternalFormat:GLenum
 	Field _glFormat:GLenum
 	Field _glType:GLenum
+	
+	Method UploadTexImageCubeMap( glTarget:GLenum,image:Pixmap )
+	
+		Local format:=PixelFormat.RGBA32
+		Local gliformat:=glInternalFormat( format )
+		Local glformat:=glFormat( format )
+		Local gltype:=glType( format )
+	
+		Local data:=image.Convert( format )
+		
+		Local width:=Width,height:=Height,mip:=0
+		
+		While width>=1 And height>=1
+		
+'			Print "Uploading cube texture, width="+width+", height="+height+", mip="+mip
+		
+			glTexImage2D( glTarget,mip,gliformat,width,height,0,glformat,gltype,Null )
+			
+			For Local y:=0 Until height
+				
+				Local p:=data.PixelPtr( 0,y )
+				
+				'write miplevel to alpha!
+				For Local x:=0 Until width
+					p[x*4+3]=mip
+				Next
+		
+				glTexSubImage2D( glTarget,mip,0,y,width,1,glformat,gltype,p )
+			Next
+			
+			glFlush() 'macos nvidia bug!
+		
+			If width=1 And height=1 Exit
+			
+			Local hdata:=data.MipHalve()
+			data.Discard()
+			data=hdata
+			width/=2
+			height/=2
+			mip+=1
+		
+		Wend
+		
+		data.Discard()
+	End
 	
 	Method UploadTexImage2D( glTarget:GLenum,image:Pixmap )
 		glCheck()
