@@ -15,27 +15,27 @@ End
 Class VertexBuffer
 
 	Method New( format:VertexFormat,capacity:Int )
+		
 		_format=format
 		_capacity=capacity
 		_pitch=_format.Pitch
-		_length=0
-		_clean=0
 		_data=New UByte[_capacity*_pitch]
 	End
 	
 	Method New( vertices:VertexBuffer )
+		
 		_format=vertices._format
 		_capacity=vertices._capacity
 		_pitch=vertices._pitch
 		_length=vertices._length
-		_clean=0
 		_data=vertices._data.Slice( 0 )
 	End
 	
 	Method New( vertices:Vertex3f[] )
+		
 		Self.New( Vertex3fFormat.Instance,vertices.Length )
 		
-		libc.memcpy( AddVertices( vertices.Length ),vertices.Data,_capacity*_pitch )
+		If _capacity libc.memcpy( AddVertices( _capacity ),vertices.Data,_capacity*_pitch )
 	End
 	
 	Property Data:UByte Ptr()
@@ -64,15 +64,18 @@ Class VertexBuffer
 	End
 	
 	Method Clear()
+		
 		_length=0
 		_clean=0
 	End
 	
 	Method Invalidate()
+		
 		_clean=0
 	End
 	
 	Method AddVertices:UByte Ptr( count:Int )
+		
 		Reserve( _length+count )
 
 		Local p:=_data.Data+_length*_pitch
@@ -135,7 +138,7 @@ Class VertexBuffer
 		
 		Local data:=New UByte[_capacity*_pitch]
 		
-		libc.memcpy( data.Data,_data.Data,_length*_pitch )
+		If _length libc.memcpy( data.Data,_data.Data,_length*_pitch )
 		
 		_data=data
 	End

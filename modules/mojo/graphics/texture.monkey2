@@ -77,10 +77,9 @@ Enum TextureFlags
 	
 	Dynamic=		$00100
 	Cubemap=		$00200
-
-	Skybox=			Filter|Mipmap|Cubemap
-	ColorTarget=	Filter|Dynamic
-	DepthTarget=	Dynamic
+	
+	WrapST=			WrapS|WrapT
+	FilterMipmap=	Filter|Mipmap
 End
 
 #rem monkeydoc @hidden
