@@ -49,7 +49,7 @@ Used to declare user defined class object.
 
 Used to declare a constant variable
 
-/linkto Variables \linkto 
+/linkto Variables \linkto
 
 #### Continue
 
@@ -70,7 +70,7 @@ Used with the `Select` statement.
 
 #### Delete
 
-????
+`Delete` is not currently used but is reserved for future use.
 
 #### Eachin
 
@@ -126,7 +126,7 @@ Used to add some features to an existing user defined type without inheritance.
 
 #### Extern
 
-Used for declaring external C/C++ imports.
+Marks the start of definitions for C/C++ imports.
 
 /linkto Integration-with-native-code \linkto
 
@@ -148,7 +148,7 @@ Methods declared as `Final` are non-virtual and cannot be overridden by a subcla
 
 #### For
 
-Used to start a `For` loop
+Merks the start of a `For` loop
 
 /linkto Loop-statements \linkto
 
@@ -176,7 +176,7 @@ Used to declare a function within a struct, a class or at global scope.
 
 #### Global
 
-Used to declare global variables. Global variables live in global memory and exist for the lifetime of the application.
+Global variables live in global memory and exist for the lifetime of the application.
 
 /linkto Variables \linkto
 
@@ -189,13 +189,13 @@ The `If` statement allows you to conditionally execute a block of statements dep
 #### Implements
 
 Used to declare classes implementing an interface.
-`Implements` is also used with the `where` keyword to check type constrain on generics.
+`Implements` can also be combined with `where` to check type constrain on generics.
 
 /linkto User-defined-types \linkto
 
 #### Import
 
-Used to import assets or code.
+Assets and code files can be imported with 'Import'
 
 /linkto Modules-and-Applications \linkto
 /linkto ???Assets??? \linkto
@@ -250,7 +250,7 @@ Used at the end of a `For` loop.
 
 #### Operator
 
-`Operator` is used to declare special methods using a set of available expressions (+,-,*,<>,...)
+`Operator` is used to declare special methods using a set of available expressions (+,-,/,<>,...)
 
 /linkto User-defined-types \linkto
 /linkto Expressions \linkto
@@ -411,7 +411,7 @@ Wend, short for While [loop] End, marks the end of a While loop.
 
 #### Where
 
-`Where` allows generic type constrain with reflection.
+`Where` allows generic type constrains.
 
 /linkto Reflection \linkto
 
