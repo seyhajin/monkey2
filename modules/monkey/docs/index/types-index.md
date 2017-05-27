@@ -17,6 +17,6 @@ Monkey2 Types Index
 ####Double
 ####String
 ####Array
+####Enum
 ####Object
 ####Ptr
-
