@@ -30,7 +30,22 @@ End
 Function glCheck()
 	Local err:=glGetError()
 	If err=GL_NO_ERROR Return
-	RuntimeError( "GL ERROR! err="+err )
+	Local msg:=""
+	Select err
+	Case GL_INVALID_ENUM
+		msg="INVALID_ENUM"
+	Case GL_INVALID_VALUE
+		msg="INVALID_VALUE"
+	Case GL_INVALID_OPERATION
+		msg="INVALID_OPERATION"
+	Case GL_INVALID_FRAMEBUFFER_OPERATION
+		msg="INVALID_FRAMEBUFFER_OPERATION"
+	Case GL_OUT_OF_MEMORY
+		msg="OUT_OF_MEMORY"
+	Default
+		msg="?????"
+	End
+	RuntimeError( "GL ERROR: "+msg+" "+err )
 End
 
 #rem monkeydoc @hidden
