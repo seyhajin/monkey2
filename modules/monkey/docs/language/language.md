@@ -23,7 +23,7 @@ Note: This documentation is currently WIP.
 @import user-types.md
 @import preprocessor.md
 @import reflection.md
-@import errors-handling.md
+@import error-handling.md
 @import assets-management.md
 @import native-code.md
 @import build-system.md
