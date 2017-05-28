@@ -21,9 +21,13 @@ The Try/Catch method of error-handling allows code to be written without the nee
 Syntax:
 
 `Try`
+
 code (sould contain at least one `throw`)
+
 `Catch` exception
+
 error handling code
+
 `End`
 
 Example code:

@@ -1,6 +1,8 @@
 @manpage Index
 
-**Monkey2 Language Index**
+Monkey2 Language Index
+
+Unfold in TreeView to see Index sections
 
 @import keywords-index.md
 
