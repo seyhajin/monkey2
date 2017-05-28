@@ -13,6 +13,7 @@ Note: This documentation is currently WIP.
 @import arrays.md
 @import strings.md
 @import variants.md
+@import Enums.md
 @import variables.md
 @import pointers.md
 @import functions.md
