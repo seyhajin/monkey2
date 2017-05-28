@@ -1,7 +1,5 @@
 @manpage Keywords
 
-**Monkey2 KeyWords**
-
 #### Abstract
 
 Used while declaring classes: class cannot be instantiated with `New`, it must be extended.

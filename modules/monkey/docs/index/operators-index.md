@@ -1,7 +1,5 @@
 @manpage Operators
 
-**Monkey2 Operators**
-
 ####New
 New object or array
 1

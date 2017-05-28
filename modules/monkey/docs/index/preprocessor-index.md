@@ -1,7 +1,5 @@
 @manpage Preprocessor
 
-**Monkey2 Preprocessor**
-
 #### #If
 The `#If` directive allows you to conditionally execute a block of statements depending on the result of a series of boolean expressions.
 #### #Else if

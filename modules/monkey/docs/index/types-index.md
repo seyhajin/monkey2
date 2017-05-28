@@ -1,7 +1,5 @@
 @manpage Primitive Types
 
-**Monkey2 Types**
-
 ####Void
 No type.
 ####Bool
@@ -31,7 +29,7 @@ String of 16 bit characters.
 ####Array
 Array type.
 ####Enum
-Enumerated type.
+32bit UInt Enumerated type.
 ####Object
 Object type.
 ####Ptr
