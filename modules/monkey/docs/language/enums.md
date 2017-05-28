@@ -22,7 +22,7 @@ Local i:Int=myCustomEnum.b
 
 You can also create `Enum` variables. An `Enum` variable contains a 'combination' value in addition to it's constant members (default value is zero).
 
-Bitwise operators (|,&,~) can be used with Enums variables and Enums members to define such combinations. It is higly advised to have single non-zero bit numbers as members!(i.e. powers of 2: 1,2,4,8,16,32,64,...not 0!)
+Bitwise operators (|,&,~) can be used with Enums variables and Enums members to define such combinations. It is higly advised to have powers of 2 numbers as members! (1,2,4,8,16,32,64,...not 0!)
 
 A bitmask Enum example:
 ```
@@ -40,8 +40,8 @@ Local flags2:=flags1 | Flags.C
 Local flags3:=Flags.B & (flags1 ~ flags3.D)
 ```
 
-You can 'extract' the 'combination' value by simply assigning your Enum variable to an integer.
+You can 'extract' the 'combination' value by simply assigning your `Enum` variable to a `UInt`.
 
 ```
-Local i:Int=flags1
+Local i:UInt=flags1
 ```
