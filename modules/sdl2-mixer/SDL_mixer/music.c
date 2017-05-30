@@ -117,6 +117,7 @@ struct _Mix_Music {
 #ifdef FLAC_MUSIC
         FLAC_music *flac;
 #endif
+	void *mark_sibly_dummy;	//MSVC complains if union has no members...
     } data;
     Mix_Fading fading;
     int fade_step;

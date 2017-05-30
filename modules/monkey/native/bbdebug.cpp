@@ -6,9 +6,9 @@
 #if _WIN32
 #include <windows.h>
 #include <thread>
-#else
-#include <signal.h>
 #endif
+
+#include <signal.h>
 
 typedef void(*dbEmit_t)(void*);
 
