@@ -1,10 +1,16 @@
 
-Const RTA:Float = 180.0/Pi
-Const ATR:Float = Pi/180.0
+#Import "<mojo>"
+
+Using std..
+Using mojo..
 
 Function Main()
 	
-	Print RTA
-	Print ATR
+	Print "Wotzup?"
+	Print "Hello World!!!!"
+	
+	Print "CurrentDir="+CurrentDir()
+	ChangeDir( "../.." )
+	Print "CurrentDir="+CurrentDir()
 
 End
