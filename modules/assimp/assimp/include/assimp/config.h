@@ -66,7 +66,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OPENDDLPARSER_BUILD
 
 //Can't get IFC importer to build...
-#define ASSIMP_BUILD_NO_IFC_IMPORTER 1
+//#define ASSIMP_BUILD_NO_IFC_IMPORTER 1
+
+//Can't get IFC importer to build...
+//#define ASSIMP_BUILD_NO_GLTF_IMPORTER 1
 
 
 // ###########################################################################
