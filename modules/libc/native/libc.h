@@ -7,15 +7,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <dirent.h>
 #include <time.h>
 
-#if _WIN32
+#if _MSC_VER
 #include <direct.h>
+#include <winsock2.h>	//for struct timeval?!?
+#include "dirent_msvc.h"
+typedef int mode_t;
 #else
 #include <unistd.h>
+#include <dirent.h>
+#include <sys/time.h>
 #endif
 
 typedef struct tm tm_t;

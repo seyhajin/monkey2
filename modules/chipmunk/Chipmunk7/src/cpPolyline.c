@@ -561,7 +561,12 @@ FindSteiner(int count, cpVect *verts, struct Notch notch)
 static struct Notch
 DeepestNotch(int count, cpVect *verts, int hullCount, cpVect *hullVerts, int first, cpFloat tol)
 {
-	struct Notch notch = {};
+
+//	struct Notch notch = {};
+//	MSVC doesn't like the above?
+	struct Notch notch;
+	memset( &notch,0,sizeof(notch) );
+	
 	int j = Next(first, count);
 	
 	for(int i=0; i<hullCount; i++){

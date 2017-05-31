@@ -7,7 +7,9 @@
 #include <windows.h>
 #include <tlhelp32.h>
 
+#if !_MSC_VER
 extern "C" WINBASEAPI WINBOOL WINAPI CancelIoEx( HANDLE hFile,LPOVERLAPPED lpOverlapped );
+#endif
 
 namespace bbProcUtil{
 

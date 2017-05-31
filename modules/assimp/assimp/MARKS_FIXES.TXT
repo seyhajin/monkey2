@@ -1,0 +1,2 @@
+
+Tweaked include/assimp.config.h to #define some stuff like BUILD_DLL etc.
