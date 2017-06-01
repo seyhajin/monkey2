@@ -13,7 +13,7 @@ Function Main()
 '	Local flags:UInt=aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
 	Local flags:UInt=aiProcess_PreTransformVertices | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
 	
-	Local scene:=aiImportFile( AssetsDir()+"turtle1.b3d",flags )
+Local scene:=aiImportFile( AssetsDir()+"turtle1.b3d",flags )
 
 	If scene
 		Print "Loaded!"

@@ -37,6 +37,8 @@ Namespace assimp
 #Import "assimp/code/DefaultLogger.cpp"
 #Import "assimp/code/Exporter.cpp"
 #Import "assimp/code/AssimpCExport.cpp"
+
+'Processors?
 #Import "assimp/code/CalcTangentsProcess.cpp"
 #Import "assimp/code/ComputeUVMappingProcess.cpp"
 #Import "assimp/code/ConvertToLHProcess.cpp"
@@ -63,25 +65,43 @@ Namespace assimp
 #Import "assimp/code/ProcessHelper.cpp"
 #Import "assimp/code/MakeVerboseFormat.cpp"
 #Import "assimp/code/MaterialSystem.cpp"
+
+'importers/exporters?
+'
+'Also need to edit assimp/include/assimp/config.h to enable/disable these...
+
+#Import "assimp/code/B3DImporter.cpp"
+
+#Import "assimp/code/3DSConverter.cpp"
+#Import "assimp/code/3DSLoader.cpp"
+#Import "assimp/code/3DSExporter.cpp"
+
+#Import "assimp/code/ObjFileImporter.cpp"
+#Import "assimp/code/ObjFileMtlImporter.cpp"
+#Import "assimp/code/ObjFileParser.cpp"
+#Import "assimp/code/ObjExporter.cpp"
+
+#Import "assimp/code/XFileImporter.cpp"
+#Import "assimp/code/XFileParser.cpp"
+#Import "assimp/code/XFileExporter.cpp"
+
+#Import "assimp/code/ColladaLoader.cpp"
+#Import "assimp/code/ColladaParser.cpp"
+#Import "assimp/code/ColladaExporter.cpp"
+
+#rem
 #Import "assimp/code/StepExporter.cpp"
 #Import "assimp/code/AMFImporter.cpp"
 #Import "assimp/code/AMFImporter_Geometry.cpp"
 #Import "assimp/code/AMFImporter_Material.cpp"
 #Import "assimp/code/AMFImporter_Postprocess.cpp"
-#Import "assimp/code/3DSConverter.cpp"
-#Import "assimp/code/3DSLoader.cpp"
-#Import "assimp/code/3DSExporter.cpp"
 #Import "assimp/code/ACLoader.cpp"
 #Import "assimp/code/ASELoader.cpp"
 #Import "assimp/code/ASEParser.cpp"
 #Import "assimp/code/AssbinExporter.cpp"
 #Import "assimp/code/AssbinLoader.cpp"
 #Import "assimp/code/AssxmlExporter.cpp"
-#Import "assimp/code/B3DImporter.cpp"
 #Import "assimp/code/BVHLoader.cpp"
-#Import "assimp/code/ColladaLoader.cpp"
-#Import "assimp/code/ColladaParser.cpp"
-#Import "assimp/code/ColladaExporter.cpp"
 #Import "assimp/code/DXFLoader.cpp"
 #Import "assimp/code/CSMLoader.cpp"
 #Import "assimp/code/HMPLoader.cpp"
@@ -103,10 +123,6 @@ Namespace assimp
 #Import "assimp/code/NFFLoader.cpp"
 #Import "assimp/code/NDOLoader.cpp"
 #Import "assimp/code/OFFLoader.cpp"
-#Import "assimp/code/ObjFileImporter.cpp"
-#Import "assimp/code/ObjFileMtlImporter.cpp"
-#Import "assimp/code/ObjFileParser.cpp"
-#Import "assimp/code/ObjExporter.cpp"
 #Import "assimp/code/OgreImporter.cpp"
 #Import "assimp/code/OgreStructs.cpp"
 #Import "assimp/code/OgreBinarySerializer.cpp"
@@ -166,9 +182,6 @@ Namespace assimp
 #Import "assimp/code/STLExporter.cpp"
 #Import "assimp/code/TerragenLoader.cpp"
 #Import "assimp/code/UnrealLoader.cpp"
-#Import "assimp/code/XFileImporter.cpp"
-#Import "assimp/code/XFileParser.cpp"
-#Import "assimp/code/XFileExporter.cpp"
 #Import "assimp/code/X3DExporter.cpp"
 #Import "assimp/code/X3DImporter.cpp"
 #Import "assimp/code/X3DImporter_Geometry2D.cpp"
@@ -181,32 +194,19 @@ Namespace assimp
 #Import "assimp/code/X3DImporter_Rendering.cpp"
 #Import "assimp/code/X3DImporter_Shape.cpp"
 #Import "assimp/code/X3DImporter_Texturing.cpp"
-'#Import "assimp/code/glTFImporter.cpp"
-'#Import "assimp/code/glTFExporter.cpp"
+#Import "assimp/code/glTFImporter.cpp"
+#Import "assimp/code/glTFExporter.cpp"
 #Import "assimp/code/D3MFImporter.cpp"
 #Import "assimp/code/D3MFOpcPackage.cpp"
-#Import "assimp/contrib/ConvertUTF/ConvertUTF.c"
-#Import "assimp/contrib/unzip/ioapi.c"
-#Import "assimp/contrib/unzip/unzip.c"
-#Import "assimp/contrib/poly2tri/poly2tri/common/shapes.cc"
-#Import "assimp/contrib/poly2tri/poly2tri/sweep/advancing_front.cc"
-#Import "assimp/contrib/poly2tri/poly2tri/sweep/cdt.cc"
-#Import "assimp/contrib/poly2tri/poly2tri/sweep/sweep.cc"
-#Import "assimp/contrib/poly2tri/poly2tri/sweep/sweep_context.cc"
-#Import "assimp/contrib/clipper/clipper.cpp"
-#Import "assimp/contrib/openddlparser/code/OpenDDLParser.cpp"
-#Import "assimp/contrib/openddlparser/code/DDLNode.cpp"
-#Import "assimp/contrib/openddlparser/code/OpenDDLCommon.cpp"
-#Import "assimp/contrib/openddlparser/code/OpenDDLExport.cpp"
-#Import "assimp/contrib/openddlparser/code/Value.cpp"
-#Import "assimp/contrib/Open3DGC/o3dgcArithmeticCodec.cpp"
-#Import "assimp/contrib/Open3DGC/o3dgcDynamicVectorDecoder.cpp"
-#Import "assimp/contrib/Open3DGC/o3dgcDynamicVectorEncoder.cpp"
-#Import "assimp/contrib/Open3DGC/o3dgcTools.cpp"
-#Import "assimp/contrib/Open3DGC/o3dgcTriangleFans.cpp"
+#end
 
+'ConvertUTF
+#Import "assimp/contrib/ConvertUTF/ConvertUTF.c"
+
+'irrXML
 #Import "assimp/contrib/irrXML/irrXML.cpp"
 
+'zlib
 #Import "assimp/contrib/zlib/adler32.c"
 #Import "assimp/contrib/zlib/compress.c"
 #Import "assimp/contrib/zlib/crc32.c"
@@ -222,3 +222,32 @@ Namespace assimp
 #Import "assimp/contrib/zlib/trees.c"
 #Import "assimp/contrib/zlib/uncompr.c"
 #Import "assimp/contrib/zlib/zutil.c"
+
+'unzip
+'#Import "assimp/contrib/unzip/ioapi.c"
+'#Import "assimp/contrib/unzip/unzip.c"
+
+'poly2tri
+'#Import "assimp/contrib/poly2tri/poly2tri/common/shapes.cc"
+'#Import "assimp/contrib/poly2tri/poly2tri/sweep/advancing_front.cc"
+'#Import "assimp/contrib/poly2tri/poly2tri/sweep/cdt.cc"
+'#Import "assimp/contrib/poly2tri/poly2tri/sweep/sweep.cc"
+'#Import "assimp/contrib/poly2tri/poly2tri/sweep/sweep_context.cc"
+
+'clipper
+'#Import "assimp/contrib/clipper/clipper.cpp"
+
+'openddl
+'#Import "assimp/contrib/openddlparser/code/OpenDDLParser.cpp"
+'#Import "assimp/contrib/openddlparser/code/DDLNode.cpp"
+'#Import "assimp/contrib/openddlparser/code/OpenDDLCommon.cpp"
+'#Import "assimp/contrib/openddlparser/code/OpenDDLExport.cpp"
+'#Import "assimp/contrib/openddlparser/code/Value.cpp"
+
+'Open3DGC
+'#Import "assimp/contrib/Open3DGC/o3dgcArithmeticCodec.cpp"
+'#Import "assimp/contrib/Open3DGC/o3dgcDynamicVectorDecoder.cpp"
+'#Import "assimp/contrib/Open3DGC/o3dgcDynamicVectorEncoder.cpp"
+'#Import "assimp/contrib/Open3DGC/o3dgcTools.cpp"
+'#Import "assimp/contrib/Open3DGC/o3dgcTriangleFans.cpp"
+
