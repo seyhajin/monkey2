@@ -78,6 +78,11 @@ Struct aiColor4D
 	Field a:Float
 End
 
+Struct aiFace
+	Field mIndices:UInt Ptr
+	Field mNumIndices:UInt
+End
+
 Class aiMaterial Extends Void
 End
 
@@ -85,13 +90,17 @@ Class aiMesh Extends Void
 	
 	Field mVertices:aiVector3D Ptr 
 	Field mNormals:aiVector3D Ptr
+	Field mTangents:aiVector3D Ptr
+	Field mBitangents:aiVector3D Ptr
 	Field mTextureCoords:aiVector3D Ptr Ptr
+	Field mFaces:aiFace Ptr
 	
 	Field mName:aiString
-	
 	Field mMaterialIndex:UInt
-	
 	Field mNumVertices:UInt
+	Field mPrimitiveTypes:UInt
+	Field mNumUVComponents:UInt Ptr
+	Field mNumFaces:UInt
 
 End
 
@@ -107,7 +116,7 @@ End
 
 Function aiImportFile:aiScene( pFile:CString,pFlags:UInt )
 
-Function aiImportFileFromMemory:aiScene( pBuffer:Void Ptr,pLength:UInt,pFlags:UInt,pHint:CString )
+Function aiImportFileFromMemory:aiScene( pBuffer:libc.char_t Ptr,pLength:UInt,pFlags:UInt,pHint:CString )
 
 Function aiReleaseImport( scene:aiScene )
 	
