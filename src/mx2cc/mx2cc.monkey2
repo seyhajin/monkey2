@@ -38,6 +38,9 @@ Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/t
 'Const TestArgs:="mx2cc makeapp -build -clean -config=release -target=raspbian src/mx2cc/mx2cc.monkey2"
 
 Function Main()
+	
+	'Set aside 256M for GC!
+	GCSetTrigger( 256*1024*1024 )
 
 	Print ""
 	Print "Mx2cc version "+MX2CC_VERSION
