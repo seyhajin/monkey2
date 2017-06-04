@@ -16,9 +16,6 @@
 #define BBGC_TRIGGER 4*1024*1024
 //#define BBGC_TRIGGER 16*1024*1024
 
-//mark while allocating, slower but smoother...
-#define BBGC_INCREMENTAL 1
-
 //reclaim all memory after a sweep, lumpier...
 //#define BBGC_AGGRESSIVE 1
 
@@ -27,7 +24,7 @@
 
 #if BBGC_DEBUG
 #define BBGC_VALIDATE( P ) \
-	if( (P) && (P)->flags==3 ){ \
+	if( (P) && (P)->state==3 ){ \
 		printf( "Attempt to use deleted object %p of type '%s'\n",(P),(P)->typeName() ); \
 		fflush( stdout ); \
 		abort(); \
@@ -67,12 +64,21 @@ namespace bbGC{
 struct bbGCNode{
 	bbGCNode *succ;
 	bbGCNode *pred;
-	size_t flags;		//0=lonely, 1/2=marked/unmarked; 3=destroyed
+	char pad[2];
+	char state;		//0=lonely, 1/2=marked/unmarked; 3=destroyed
+	char flags;		//1=finalize
 
 	bbGCNode(){
 	}
 	
+	void gcNeedsFinalize(){
+		flags|=1;
+	}
+	
 	virtual ~bbGCNode(){
+	}
+	
+	virtual void gcFinalize(){
 	}
 
 	virtual void gcMark(){
@@ -163,13 +169,13 @@ namespace bbGC{
 	inline void enqueue( bbGCNode *p ){
 		BBGC_VALIDATE( p )
 
-		if( !p || p->flags!=unmarkedBit ) return;
+		if( !p || p->state!=unmarkedBit ) return;
 		
 		remove( p );
 		p->succ=markQueue;
 		markQueue=p;
 		
-		p->flags=markedBit;
+		p->state=markedBit;
 	}
 	
 	inline void pushTmp( bbGCNode *p ){
@@ -203,14 +209,9 @@ namespace bbGC{
 	
 	inline void endCtor( bbGCNode *p ){
 		currentFiber->ctoring=p->succ;
-#if BBGC_INCREMENTAL
 		p->succ=markQueue;
 		markQueue=p;
-		p->flags=markedBit;
-#else
-		p->flags=unmarkedBit;
-		insert( p,unmarkedList );
-#endif
+		p->state=markedBit;
 	}
 }
 
@@ -221,9 +222,7 @@ template<class T> struct bbGCVar{
 	T *_ptr;
 	
 	void enqueue(){
-#if BBGC_INCREMENTAL
 		bbGC::enqueue( dynamic_cast<bbGCNode*>( _ptr ) );
-#endif
 	}
 	
 	bbGCVar():_ptr( nullptr ){
@@ -247,6 +246,9 @@ template<class T> struct bbGCVar{
 		_ptr=p._ptr;
 		enqueue();
 		return *this;
+	}
+	void discard(){
+		_ptr=nullptr;
 	}
 	
 	T *get()const{

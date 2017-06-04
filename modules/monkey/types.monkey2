@@ -700,14 +700,18 @@ End
 #end
 Class @Object="bbObject"
 
-	#rem monkeydoc The runtime typ eof the object
+	#rem monkeydoc The runtime type of the object.
 	#end
 	Property InstanceType:TypeInfo()="typeof"
 	
+	#rem monkeydoc Finalize method.
+	#end
+	Method Finalize() Virtual="gcFinalize"
+
 	#rem monkeydoc @hidden
 	#end
 	Method typeName:Void Ptr()="typeName"
-
+		
 End
 
 #rem monkeydoc Base class of all throwable objects.

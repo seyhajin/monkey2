@@ -188,6 +188,12 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		release();
 	}
 	
+	void discard(){
+		if( _rep==&_nullRep ) return;
+		delete _rep;
+		_rep=&_nullRep;
+	}
+	
 	bbFunction &operator=( const bbFunction &p ){
 		p.retain();
 		release();

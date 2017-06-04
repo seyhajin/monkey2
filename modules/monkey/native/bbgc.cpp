@@ -95,13 +95,17 @@ namespace bbGC{
 	
 	void destroy( bbGCNode *p ){
 	
-//		printf( "destroying: %s %p\n",p->typeName(),p );
+		if( p->flags & 1 ){
+			p->state=unmarkedBit;
+			p->gcFinalize();
+			if( p->state==markedBit ) bbRuntimeError( "Object resurrected in finalizer" );
+		}
 		
 #if BBGC_DEBUG
-
-		p->flags=3;
-
+//		printf( "destroying: %s %p\n",p->typeName(),p );
+		p->state=3;
 #else
+
 		p->~bbGCNode();
 			
 		bbFree( p );
@@ -117,6 +121,7 @@ namespace bbGC{
 			size_t psize=bbMallocSize( p );
 			
 			remove( p );
+			
 			destroy( p );
 
 			if( psize>=size ) break;
@@ -125,12 +130,12 @@ namespace bbGC{
 	}
 	
 	void mark( bbGCNode *p ){
-		if( !p || p->flags==markedBit ) return;
+		if( !p || p->state==markedBit ) return;
 		
 		remove( p );
 		insert( p,markedList );
 		
-		p->flags=markedBit;
+		p->state=markedBit;
 		
 		markedBytes+=bbMallocSize( p );
 
@@ -245,14 +250,11 @@ namespace bbGC{
 #endif
 		}else{
 		
-#if BBGC_INCREMENTAL
-
 //			size_t tomark=double( allocedBytes ) / double( BBGC_TRIGGER ) * double( unmarkedBytes + allocedBytes );
 
 			size_t tomark=double( allocedBytes ) / double( BBGC_TRIGGER ) * double( unmarkedBytes + BBGC_TRIGGER );
 	
 			markQueued( tomark );
-#endif
 		}
 
 #endif
@@ -261,7 +263,7 @@ namespace bbGC{
 		
 		*((void**)p)=(void*)0xcafebabe;
 		
-		p->flags=0;
+		p->state=0;
 		
 		size=bbMallocSize( p );
 		
