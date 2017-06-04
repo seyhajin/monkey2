@@ -15,13 +15,7 @@ class bbString{
 		int length;
 		bbChar data[0];
 		
-		static Rep *alloc( int length ){
-			if( !length ) return &_nullRep;
-			Rep *rep=(Rep*)bbMalloc( sizeof(Rep)+length*sizeof(bbChar) );
-			rep->refs=1;
-			rep->length=length;
-			return rep;
-		}
+		static Rep *alloc( int length );
 		
 		template<class C> static Rep *create( const C *p,int length ){
 			Rep *rep=alloc( length );
@@ -34,6 +28,7 @@ class bbString{
 			while( *e ) ++e;
 			return create( p,e-p );
 		}
+
 	};
 	
 	Rep *_rep;
@@ -51,15 +46,6 @@ class bbString{
 	bbString( Rep *rep ):_rep( rep ){
 	}
 	
-	template<class C> static int t_memcmp( const C *p1,const C *p2,int count ){
-		return memcmp( p1,p2,count*sizeof(C) );
-	}
-
-	//returns END of dst!	
-	template<class C> static C *t_memcpy( C *dst,const C *src,int count ){
-		return (C*)memcpy( dst,src,count*sizeof(C) )+count;
-	}
-	
 	public:
 	
 	const char *c_str()const;
@@ -75,70 +61,33 @@ class bbString{
 	
 	bbString( const void *data,int length );
 	
-	bbString( const bbChar *data ):_rep( Rep::create( data ) ){
-	}
+	bbString( const bbChar *data );
 	
-	bbString( const bbChar *data,int length ):_rep( Rep::create( data,length ) ){
-	}
+	bbString( const bbChar *data,int length );
 
-	bbString( const wchar_t *data ):_rep( Rep::create( data ) ){
-	}
+	bbString( const wchar_t *data );
 	
-	bbString( const wchar_t *data,int length ):_rep( Rep::create( data,length ) ){
-	}
+	bbString( const wchar_t *data,int length );
 	
 #if __OBJC__
-	bbString( NSString *str ):_rep( Rep::create( str.UTF8String ) ){
-	}
+	bbString( NSString *str );
 #endif
 
-	explicit bbString( int n ){
-		char data[64];
-		sprintf( data,"%d",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( int n );
 	
-	explicit bbString( unsigned int n ){
-		char data[64];
-		sprintf( data,"%u",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( unsigned int n );
 	
-	explicit bbString( long n ){
-		char data[64];
-		sprintf( data,"%ld",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( long n );
 	
-	explicit bbString( unsigned long n ){
-		char data[64];
-		sprintf( data,"%lu",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( unsigned long n );
+
+	explicit bbString( long long n );
 	
-	explicit bbString( long long n ){
-		char data[64];
-		sprintf( data,"%lld",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( unsigned long long n );
 	
-	explicit bbString( unsigned long long n ){
-		char data[64];
-		sprintf( data,"%llu",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( float n );
 	
-	explicit bbString( float n ){
-		char data[64];
-		sprintf( data,"%.9g",n );
-		_rep=Rep::create( data );
-	}
-	
-	explicit bbString( double n ){
-		char data[64];
-		sprintf( data,"%.17g",n );
-		_rep=Rep::create( data );
-	}
+	explicit bbString( double n );
 	
 	~bbString(){
 		release();
@@ -161,37 +110,15 @@ class bbString{
 		return *this;
 	}
 	
-	bbString operator-()const{
-		Rep *rep=Rep::alloc( length() );
-		const bbChar *p=data()+length();
-		for( int i=0;i<rep->length;++i ) rep->data[i]=*--p;
-		return rep;
-	}
+	bbString operator-()const;
 	
-	bbString operator+( const bbString &str ){
+	bbString operator+( const bbString &str )const;
 	
-		if( !length() ) return str;
-		if( !str.length() ) return *this;
-		
-		Rep *rep=Rep::alloc( length()+str.length() );
-		t_memcpy( rep->data,data(),length() );
-		t_memcpy( rep->data+length(),str.data(),str.length() );
-
-		return rep;
-	}
-	
-	bbString operator+( const char *str ){
+	bbString operator+( const char *str )const{
 		return operator+( bbString( str ) );
 	}
 	
-	bbString operator*( int n ){
-		Rep *rep=Rep::alloc( length()*n );
-		bbChar *p=rep->data;
-		for( int j=0;j<n;++j ){
-			for( int i=0;i<_rep->length;++i ) *p++=data()[i];
-		}
-		return rep;
-	}
+	bbString operator*( int n )const;
 	
 	bbString &operator=( const bbString &str ){
 		str.retain();
@@ -215,57 +142,17 @@ class bbString{
 		return operator+=( bbString( str ) );
 	}
 	
-	int find( bbString str,int from=0 )const{
-		if( from<0 ) from=0;
-		for( int i=from;i<=length()-str.length();++i ){
-			if( !t_memcmp( data()+i,str.data(),str.length() ) ) return i;
-		}
-		return -1;
-	}
+	int find( bbString str,int from=0 )const;
 	
-	int findLast( const bbString &str,int from=0 )const{
-		if( from<0 ) from=0;
-		for( int i=length()-str.length();i>=from;--i ){
-			if( !t_memcmp( data()+i,str.data(),str.length() ) ) return i;
-		}
-		return -1;
-	}
+	int findLast( const bbString &str,int from=0 )const;
 	
 	bool contains( const bbString &str )const{
 		return find( str )!=-1;
 	}
 	
-	bbString slice( int from )const{
-		int length=this->length();
-		if( from<0 ){
-			from+=length;
-			if( from<0 ) from=0;
-		}else if( from>length ){
-			from=length;
-		}
-		if( !from ) return *this;
-		return bbString( data()+from,length-from );
-	}
+	bbString slice( int from )const;
 	
-	bbString slice( int from,int term )const{
-		int length=this->length();
-		if( from<0 ){
-			from+=length;
-			if( from<0 ) from=0;
-		}else if( from>length ){
-			from=length;
-		}
-		if( term<0 ){
-			term+=length;
-			if( term<from ) term=from;
-		}else if( term<from ){
-			term=from;
-		}else if( term>length ){
-			term=length;
-		}
-		if( !from && term==length ) return *this;
-		return bbString( data()+from,term-from );
-	}
+	bbString slice( int from,int term )const;
 
 	bbString left( int count )const{
 		return slice( 0,count );
@@ -279,115 +166,31 @@ class bbString{
 		return slice( from,from+count );
 	}
 	
-	bool startsWith( const bbString &str )const{
-		if( str.length()>length() ) return false;
-		return t_memcmp( data(),str.data(),str.length() )==0;
-	}
+	bool startsWith( const bbString &str )const;
 	
-	bool endsWith( const bbString &str )const{
-		if( str.length()>length() ) return false;
-		return t_memcmp( data()+(length()-str.length()),str.data(),str.length() )==0;
-	}
+	bool endsWith( const bbString &str )const;
 	
-	bbString toUpper()const{
-		Rep *rep=Rep::alloc( length() );
-		for( int i=0;i<length();++i ) rep->data[i]=std::toupper( data()[i] );
-		return rep;
-	}
+	bbString toUpper()const;
 	
-	bbString toLower()const{
-		Rep *rep=Rep::alloc( length() );
-		for( int i=0;i<length();++i ) rep->data[i]=std::tolower( data()[i] );
-		return rep;
-	}
+	bbString toLower()const;
 	
-	bbString capitalize()const{
-		if( !length() ) return &_nullRep;
-		Rep *rep=Rep::alloc( length() );
-		rep->data[0]=std::toupper( data()[0] );
-		for( int i=1;i<length();++i ) rep->data[i]=data()[i];
-		return rep;
-	}
+	bbString capitalize()const;
 	
-	bbString trim()const{
-		const bbChar *beg=data();
-		const bbChar *end=data()+length();
-		while( beg!=end && *beg<=32 ) ++beg;
-		while( beg!=end && *(end-1)<=32 ) --end;
-		if( end-beg==length() ) return *this;
-		return bbString( beg,end-beg );
-	}
+	bbString trim()const;
 	
-	bbString trimStart()const{
-		const bbChar *beg=data();
-		const bbChar *end=data()+length();
-		while( beg!=end && *beg<=32 ) ++beg;
-		if( end-beg==length() ) return *this;
-		return bbString( beg,end-beg );
-	}
+	bbString trimStart()const;
 	
-	bbString trimEnd()const{
-		const bbChar *beg=data();
-		const bbChar *end=data()+length();
-		while( beg!=end && *(end-1)<=32 ) --end;
-		if( end-beg==length() ) return *this;
-		return bbString( beg,end-beg );
-	}
+	bbString trimEnd()const;
 	
-	bbString dup( int n )const{
-		Rep *rep=Rep::alloc( length()*n );
-		bbChar *p=rep->data;
-		for( int j=0;j<n;++j ){
-			for( int i=0;i<_rep->length;++i ) *p++=data()[i];
-		}
-		return rep;
-	}
+	bbString dup( int n )const;
 	
-	bbString replace( const bbString &str,const bbString &repl )const{
-	
-		int n=0;
-		for( int i=0;; ){
-			i=find( str,i );
-			if( i==-1 ) break;
-			i+=str.length();
-			++n;
-		}
-		if( !n ) return *this;
-		
-		Rep *rep=Rep::alloc( length()+n*(repl.length()-str.length()) );
-		
-		bbChar *dst=rep->data;
-		
-		for( int i=0;; ){
-		
-			int i2=find( str,i );
-			if( i2==-1 ){
-				t_memcpy( dst,data()+i,(length()-i) );
-				break;
-			}
-			
-			t_memcpy( dst,data()+i,(i2-i) );
-			dst+=(i2-i);
-			
-			t_memcpy( dst,repl.data(),repl.length() );
-			dst+=repl.length();
-			
-			i=i2+str.length();
-		}
-		return rep;
-	}
+	bbString replace( const bbString &str,const bbString &repl )const;
 	
 	bbArray<bbString> split( bbString sep )const;
 	
 	bbString join( bbArray<bbString> bits )const;
 	
-	int compare( const bbString &t )const{
-		int len=length()<t.length() ? length() : t.length();
-		for( int i=0;i<len;++i ){
-			if( int n=data()[i]-t.data()[i] ) return n;
-		}
-		return length()-t.length();
-	}
+	int compare( const bbString &t )const;
 	
 	bool operator<( const bbString &t )const{
 		return compare( t )<0;
@@ -414,54 +217,28 @@ class bbString{
 	}
 	
 	operator bbBool()const{
-		return length();
+		return length()!=0;
 	}
 	
-	operator bbInt()const{
-		return std::atoi( c_str() );
-	}
+	operator bbInt()const;
 	
-	operator bbByte()const{
-		return operator bbInt() & 0xff;
-	}
+	operator bbByte()const;
 	
-	operator bbUByte()const{
-		return operator bbInt() & 0xffu;
-	}
+	operator bbUByte()const;
 	
-	operator bbShort()const{
-		return operator bbInt() & 0xffff;
-	}
+	operator bbShort()const;
 	
-	operator bbUShort()const{
-		return operator bbInt() & 0xffffu;
-	}
+	operator bbUShort()const;
 	
-	operator bbUInt()const{
-		bbUInt n;
-		sscanf( c_str(),"%u",&n );
-		return n;
-	}
+	operator bbUInt()const;
 	
-	operator bbLong()const{
-		bbLong n;
-		sscanf( c_str(),"%lld",&n );
-		return n;
-	}
+	operator bbLong()const;
 	
-	operator bbULong()const{
-		bbULong n;
-		sscanf( c_str(),"%llu",&n );
-		return n;
-	}
+	operator bbULong()const;
 	
-	operator float()const{
-		return std::atof( c_str() );
-	}
+	operator float()const;
 	
-	operator double()const{
-		return std::atof( c_str() );
-	}
+	operator double()const;
 	
 	int utf8Length()const;
 	
@@ -489,31 +266,20 @@ class bbString{
 };
 
 class bbCString{
+	
 	char *_data;
 	
 	public:
 
-	bbCString( const bbString &str ){
-		int size=str.utf8Length()+1;
-		_data=(char*)malloc( size );
-		str.toCString( _data,size );
-	}
+	bbCString( const bbString &str );
 	
-	~bbCString(){
-		free( _data );
-	}
+	~bbCString();
 	
-	operator char*()const{
-		return _data;
-	}
+	operator char*()const;
 	
-	operator signed char*()const{
-		return (signed char*)_data;
-	}
+	operator signed char*()const;
 	
-	operator unsigned char*()const{
-		return (unsigned char*)_data;
-	}
+	operator unsigned char*()const;
 };
 
 class bbWString{
@@ -521,19 +287,11 @@ class bbWString{
 	
 	public:
 	
-	bbWString( const bbString &str ){
-		int size=(str.length()+1)*sizeof(wchar_t);
-		_data=(wchar_t*)malloc( size );
-		str.toWString( _data,size );
-	}
+	bbWString( const bbString &str );
 	
-	~bbWString(){
-		free( _data );
-	}
+	~bbWString();
 	
-	operator wchar_t*()const{
-		return _data;
-	}
+	operator wchar_t*()const;
 };
 
 template<class C> bbString operator+( const C *str,const bbString &str2 ){

@@ -40,4 +40,19 @@ The number of GCSuspends and GCResumes executed must match for garbage collectio
 
 #end
 Function GCResume:Void()="bbGC::resume"
+	
+
+#rem monkeydoc Allocates GC aware memory.
+
+If the requested size is large enough, it may trigger a garbage collection.
+	
+#end
+Function GCMalloc:Void Ptr( size:UInt )="bbGC::malloc"
+	
+#rem monkeydoc Frees GC aware memory.
+
+Frees memory allocated with GCMalloc.
+
+#end
+Function GCFree( p:Void Ptr )="bbGC::free"
 		
