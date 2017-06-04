@@ -542,19 +542,19 @@ bbString::operator bbUShort()const{
 }
 
 bbString::operator bbUInt()const{
-	bbUInt n;
+	bbUInt n=0;
 	sscanf( c_str(),"%u",&n );
 	return n;
 }
 
 bbString::operator bbLong()const{
-	bbLong n;
+	bbLong n=0;
 	sscanf( c_str(),"%lld",&n );
 	return n;
 }
 
 bbString::operator bbULong()const{
-	bbULong n;
+	bbULong n=0;
 	sscanf( c_str(),"%llu",&n );
 	return n;
 }
@@ -571,12 +571,12 @@ bbString::operator double()const{
 
 bbCString::bbCString( const bbString &str ){
 	int size=str.utf8Length()+1;
-	_data=(char*)malloc( size );
+	_data=(char*)bbMalloc( size );
 	str.toCString( _data,size );
 }
 
 bbCString::~bbCString(){
-	free( _data );
+	bbFree( _data );
 }
 
 bbCString::operator char*()const{
@@ -595,15 +595,14 @@ bbCString::operator unsigned char*()const{
 
 bbWString::bbWString( const bbString &str ){
 	int size=(str.length()+1)*sizeof(wchar_t);
-	_data=(wchar_t*)malloc( size );
+	_data=(wchar_t*)bbMalloc( size );
 	str.toWString( _data,size );
 }
 
 bbWString::~bbWString(){
-	free( _data );
+	bbFree( _data );
 }
 
 bbWString::operator wchar_t*()const{
 	return _data;
 }
-

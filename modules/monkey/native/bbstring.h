@@ -6,6 +6,11 @@
 #include "bbassert.h"
 #include "bbmemory.h"
 
+namespace bbGC{
+	void *malloc( size_t size );
+	void free( void *p );
+}
+
 class bbCString;
 
 class bbString{
@@ -15,7 +20,15 @@ class bbString{
 		int length;
 		bbChar data[0];
 		
+//		Rep():refs( $80000000 ),length( 0 ){
+//		}
+		
+//		Rep( int length ):refs( 1 ),length( length ){
+//		}
+		
 		static Rep *alloc( int length );
+//			return new( bbGC::malloc( sizeof( Rep )+length*sizeof( bbChar ) ) ) Rep( length );
+//		}
 		
 		template<class C> static Rep *create( const C *p,int length ){
 			Rep *rep=alloc( length );

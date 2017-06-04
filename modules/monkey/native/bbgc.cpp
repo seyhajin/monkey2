@@ -8,40 +8,6 @@
 // For testing only...
 // #define BBGC_DISABLED 1
 
-//For future ref...
-#if BB_THREADED
-
-//fast but unpredictable
-//#define BBGC_LOCK while( bbGC::spinlock.test_and_set( std::memory_order_acquire ) ) std::this_thread::yield();
-//#define BBGC_UNLOCK bbGC::spinlock.clear( std::memory_order_release );
-
-//pretty slow...
-//#define BBGC_LOCK bbGC::mutex.lock();
-//#define BBGC_UNLOCK bbGC::mutex.unlock();
-
-//better...a 'Benaphore' apparently...
-#define BBGC_LOCK \
-	if( ++bbGC::locks>1 ){ \
-		std::unique_lock<std::mutex> lock( bbGC::mutex ); \
-		bbGC::cond_var.wait( lock,[]{ return bbGC::sem_count>0;} ); \
-		--bbGC::sem_count; \
-	}
-
-#define BBGC_UNLOCK \
-	if( --bbGC::locks>0 ){ \
-		std::unique_lock<std::mutex> lock( bbGC::mutex ); \
-		++bbGC::sem_count; \
-		bbGC::cond_var.notify_one(); \
-	}
-	
-	int sem_count;
-	std::mutex mutex;
-	std::atomic_int locks;
-	std::condition_variable cond_var;
-	std::atomic_flag spinlock=ATOMIC_FLAG_INIT;
-	
-#endif
-
 namespace bbGC{
 
 	size_t trigger=4*1024*1024;
@@ -72,16 +38,16 @@ namespace bbGC{
 	
 	size_t allocedBytes;
 	
-	
 	void *pools[32];
 	
 	unsigned char *poolBuf;
 	size_t poolBufSize;
 	
+	bool inited;
+	
 	void init(){
-		static bool done;
-		if( done ) return;
-		done=true;
+		if( inited ) return;
+		inited=true;
 
 		markedBit=1;
 		markedList=&markLists[0];
@@ -289,13 +255,27 @@ namespace bbGC{
 	
 	void *malloc( size_t size ){
 	
-		size=(size+sizeof( size_t )+7)&~7;
+//		if( !inited ){ printf( "GC not inited!\n" );fflush( stdout ); }
+	
+		size=(size+sizeof(size_t)+7)&~7;
+		
+		if( size<256 && pools[size>>3] ){
+			void *p=pools[size>>3];
+			pools[size>>3]=*(void**)p;
+			allocedBytes+=size;
+			size_t *q=(size_t*)p;
+			*q++=size;
+			return q;
+		}
 		
 		if( !suspended ){
 			
 			if( allocedBytes+size>=trigger ){
+				
 				sweep();
+				
 			}else{
+			
 				markQueued( double( allocedBytes+size ) / double( trigger ) * double( unmarkedBytes + trigger ) );
 			}
 			
@@ -305,32 +285,24 @@ namespace bbGC{
 		void *p;
 		
 		if( size<256 ){
-			if( pools[size>>3] ){
-				p=pools[size>>3];
-				pools[size>>3]=*(void**)p;
-			}else{
-				if( size>poolBufSize ){
-					if( poolBufSize ){
-						*(void**)poolBuf=pools[poolBufSize>>3];
-						pools[poolBufSize>>3]=poolBuf;
-					}
-					poolBufSize=65536;
-					poolBuf=(unsigned char*)::malloc( poolBufSize );
+			if( size>poolBufSize ){
+				if( poolBufSize ){
+					*(void**)poolBuf=pools[poolBufSize>>3];
+					pools[poolBufSize>>3]=poolBuf;
 				}
-				p=poolBuf;
-				poolBuf+=size;
-				poolBufSize-=size;
+				poolBufSize=65536;
+				poolBuf=(unsigned char*)::malloc( poolBufSize );
 			}
+			p=poolBuf;
+			poolBuf+=size;
+			poolBufSize-=size;
 		}else{
 			p=::malloc( size );
 		}
 		
 		allocedBytes+=size;
-		
 		size_t *q=(size_t*)p;
-		
 		*q++=size;
-		
 		return q;
 	}
 	
