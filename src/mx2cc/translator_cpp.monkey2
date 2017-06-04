@@ -607,7 +607,7 @@ Class Translator_CPP Extends Translator
 	Method NeedsFinalize:Bool( ctype:ClassType )
 		If Not ctype Or Not ctype.cdecl.HasFinalizer Return false
 		ctype=ctype.superType
-		While ctype
+		While ctype And ctype<>Type.ObjectClass 
 			If ctype.cdecl.HasFinalizer Return False
 			ctype=ctype.superType
 		Wend
