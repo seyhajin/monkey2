@@ -1,16 +1,23 @@
 
-#Import "<mojo>"
+Global g:C
 
-Using std..
-Using mojo..
+Class C
+	
+	Field c:C
+	
+	Method Finalize() Override
+		Print "Finalizing 'C'!"
+		g=Self
+	End
+
+End
 
 Function Main()
 	
-	Print "Wotzup?"
-	Print "Hello World!!!!"
+	Print "Hello World!"
 	
-	Print "CurrentDir="+CurrentDir()
-	ChangeDir( "../.." )
-	Print "CurrentDir="+CurrentDir()
+	For Local i:=0 Until 1000000
+		Local c:=New C
+	Next
 
 End

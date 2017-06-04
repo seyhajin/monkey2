@@ -32,7 +32,7 @@ Function InitKeywords()
 	kws+="Select;Case;Default;"
 	kws+="Try;Catch;Throw;Throwable;"
 	kws+="Return;Print;Static;Cast;Extension;"
-	kws+="Typeof"
+	kws+="Typeof;Finalize"
 	
 	For Local kw:=Eachin kws.Split( ";" )
 		Keywords[kw.ToLower()]=kw

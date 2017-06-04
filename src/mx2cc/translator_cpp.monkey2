@@ -465,7 +465,7 @@ Class Translator_CPP Extends Translator
 		
 		'Emit fields...
 		'
-		Local needsInit:=False
+		Local needsInit:=NeedsFinalize( ctype )
 		Local needsMark:=False
 
 		EmitBr()		
@@ -604,6 +604,16 @@ Class Translator_CPP Extends Translator
 		
 	End
 	
+	Method NeedsFinalize:Bool( ctype:ClassType )
+		If Not ctype Or Not ctype.cdecl.HasFinalizer Return false
+		ctype=ctype.superType
+		While ctype
+			If ctype.cdecl.HasFinalizer Return False
+			ctype=ctype.superType
+		Wend
+		Return True
+	End
+	
 	Method EmitClassMembers( ctype:ClassType )
 	
 		Local cdecl:=ctype.cdecl
@@ -613,10 +623,10 @@ Class Translator_CPP Extends Translator
 		
 		'Emit fields...
 		'
-		Local needsInit:=False
+		Local needsInit:=NeedsFinalize( ctype )
 		Local needsMark:=False
 
-		EmitBr()		
+		EmitBr()
 		For Local vvar:=Eachin ctype.fields
 		
 			If IsGCType( vvar.type ) needsMark=True
@@ -624,13 +634,14 @@ Class Translator_CPP Extends Translator
 			If vvar.init And vvar.init.HasSideEffects needsInit=True
 		Next
 		
-		
 		'Emit init() method
 		'
 		If needsInit
 
 			EmitBr()
 			Emit( "void "+cname+"::init(){" )
+			
+			If NeedsFinalize( ctype ) Emit( "gcNeedsFinalize();" )
 			
 			BeginGCFrame()
 			
@@ -1018,6 +1029,22 @@ Class Translator_CPP Extends Translator
 		Emit( "return &"+rcname+"::instance;" )
 		Emit( "}" )
 	End
+	
+	Method DiscardGCFields( ctype:ClassType,prefix:String )
+		
+		For Local vvar:=Eachin ctype.fields
+			
+			If Not IsGCType( vvar.type ) Continue
+			
+			Local ctype:=TCast<ClassType>( vvar.type )
+			If ctype And ctype.cdecl.kind="struct"
+				DiscardGCFields( ctype,prefix+VarName( vvar )+"." )
+			Else
+				Emit( prefix+VarName( vvar )+".discard();" )
+			Endif
+			
+		Next		
+	End
 
 	Method EmitFunc( func:FuncValue,init:Bool=False )
 	
@@ -1043,6 +1070,14 @@ Class Translator_CPP Extends Translator
 		If _gctmps
 			Emit( "bbGC::popTmps("+_gctmps+");" )
 			_gctmps=0
+		Endif
+		
+		If func.fdecl.ident="finalize"
+			
+			Local ctype:=func.cscope.ctype
+			
+			DiscardGCFields( ctype,"" )
+			
 		Endif
 		
 		If init Emit( "init();" )
