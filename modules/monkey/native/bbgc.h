@@ -7,18 +7,6 @@
 #include "bbmemory.h"
 #include "bbfunction.h"
 
-//how much to allocate before a sweep occurs
-//#define BBGC_TRIGGER 0
-//#define BBGC_TRIGGER 64
-//#define BBGC_TRIGGER 256
-//#define BBGC_TRIGGER 65536
-//#define BBGC_TRIGGER 1*1024*1024
-#define BBGC_TRIGGER 4*1024*1024
-//#define BBGC_TRIGGER 16*1024*1024
-
-//reclaim all memory after a sweep, lumpier...
-//#define BBGC_AGGRESSIVE 1
-
 //check for use of deleted objects, MUCH leakier...
 //#define BBGC_DEBUG 1
 
@@ -41,6 +29,9 @@ struct bbGCTmp;
 
 namespace bbGC{
 
+	extern int markedBit;
+	extern int unmarkedBit;
+	
 	extern bbGCRoot *roots;
 	
 	extern bbGCTmp *freeTmps;
@@ -50,14 +41,27 @@ namespace bbGC{
 	
 	extern bbGCFiber *fibers;
 	extern bbGCFiber *currentFiber;
-	
-	extern int markedBit;
-	extern int unmarkedBit;
-	
+
 	void init();
 	
-	void collect();
+	void suspend();
 	
+	void resume();
+	
+	void retain( bbGCNode *p );
+	
+	void release( bbGCNode *p );
+
+	void setTrigger( size_t trigger );
+
+	void *malloc( size_t size );
+	
+	size_t mallocSize( void *p );
+
+	void free( void *p );
+
+	void collect();
+
 	bbGCNode *alloc( size_t size );
 }
 
@@ -150,10 +154,6 @@ struct bbGCTmp{
 
 namespace bbGC{
 
-	void retain( bbGCNode *p );
-	
-	void release( bbGCNode *p );
-	
 	inline void insert( bbGCNode *p,bbGCNode *succ ){
 		p->succ=succ;
 		p->pred=succ->pred;
@@ -184,11 +184,9 @@ namespace bbGC{
 		tmp->node=p;
 		tmp->succ=currentFiber->tmps;
 		currentFiber->tmps=tmp;
-//		puts( "pushTmp" );
 	}
 	
 	inline void popTmps( int n ){
-//		printf( "popTmps %i\n",n );
 		while( n-- ){
 			bbGCTmp *tmp=currentFiber->tmps;
 			currentFiber->tmps=tmp->succ;
