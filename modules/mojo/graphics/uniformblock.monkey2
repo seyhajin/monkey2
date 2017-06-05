@@ -10,9 +10,12 @@ Class UniformBlock Extends Resource
 	End
 	
 	Method New( uniforms:UniformBlock )
+		Self.New( uniforms._name )
+		
 		_name=uniforms._name
 		For Local i:=0 Until _uniforms.Length
 			_uniforms[i]=uniforms._uniforms[i]
+			SafeRetain( _uniforms[i].texture )
 		Next
 	End
 	
@@ -167,6 +170,10 @@ Class UniformBlock Extends Resource
 	'
 	Method SetTexture( uniform:String,value:Texture )
 		Local id:=GetUniformId( uniform )
+		
+		SafeRetain( value )
+		SafeRelease( _uniforms[id].texture )
+		
 		_uniforms[id].texture=value
 		_uniforms[id].type=Type.Texture
 		_seq=_gseq
@@ -188,6 +195,14 @@ Class UniformBlock Extends Resource
 	#end	
 	Property Seq:Int()
 		Return _seq
+	End
+	
+	Protected
+	
+	Method OnDiscard() Override
+		For Local i:=0 Until _uniforms.Length
+			SafeRelease( _uniforms[i].texture )
+		Next
 	End
 	
 	Private
