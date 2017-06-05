@@ -97,9 +97,50 @@ Namespace std.graphics
 	#end
 	Const Pink:=New Color( 1,.75,.8 )
 	
-	#rem monkeydoc HotPink!
+	#rem monkeydoc HotPink.
 	#end
 	Const HotPink:=New Color( 1,.41,.71 )
+	
+	#rem monkeydoc Silver.
+	#end
+	Const Silver:=New Color( .971519,.959915,.915324,1 )
+	
+	#rem monkeydoc Aluminum.
+	#end
+	Const Aluminum:=New Color( .913183,.921494,.924524,1 )
+	
+	#rem monkeydoc Gold.
+	#end
+	Const Gold:=New Color( 1,.765557,.336057,1 )
+	
+	#rem monkeydoc Copper.
+	#end
+	Const Copper:=New Color( .955008,.637427,.538163,1 )
+	
+	#rem monkeydoc Chromium.
+	#end
+	Const Chromium:=New Color( .549585,.556114,.554256,1 )
+	
+	#rem monkeydoc Nickel.
+	#end
+	Const Nickel:=New Color( .659777,.608679,.525649,1 )
+	
+	#rem monkeydoc Titanium.
+	#end
+	Const Titanium:=New Color( .541931,.496791,.449419,1 )
+	
+	#rem monkeydoc Cobalt.
+	#end
+	Const Cobalt:=New Color( .662124,.654864,.633732,1 )
+	
+	#rem monkeydoc Platinum.
+	#end
+	Const Platinum:=New Color( .672411,.637331,.585456,1 )
+	
+	
+	#rem monkeydoc SeaGreen.
+	#end
+	Const SeaGreen:=New Color( .031372,.301960,.247058,1 )
 	
 #rem
 	#rem monkeydoc Transparent black.

@@ -31,19 +31,15 @@ Class Pixmap Extends Resource
 
 		Local depth:=PixelFormatDepth( format )
 		Local pitch:=width*depth
-		Local data:=Cast<UByte Ptr>( libc.malloc( pitch*height ) )
+		Local data:=Cast<UByte Ptr>( GCMalloc( pitch*height ) )
 		
 		_width=width
 		_height=height
 		_format=format
 		_depth=depth
+		_gcdata=data
 		_data=data
 		_pitch=pitch
-		
-		OnDiscarded+=Lambda()
-			libc.free( _data )
-			_data=Null
-		End
 	End
 	
 	Method New( width:Int,height:Int,format:PixelFormat,data:UByte Ptr,pitch:Int )
@@ -467,8 +463,6 @@ Class Pixmap Extends Resource
 		
 		Local pixmap:=New Pixmap( width,height,_format,PixelPtr( x,y ),_pitch )
 		
-		AddDependancy( pixmap )
-		
 		Return pixmap
 	End
 	
@@ -500,6 +494,20 @@ Class Pixmap Extends Resource
 		
 		Return pixmap
 	End
+	
+	Protected
+	
+	Method OnDiscard() Override
+		
+		GCFree( _gcdata )
+		_gcdata=Null
+		_data=null
+	End
+	
+	Method Finalize() Override
+		
+		GCFree( _gcdata )
+	End
 
 	Private
 	
@@ -507,6 +515,7 @@ Class Pixmap Extends Resource
 	Field _height:Int
 	Field _format:PixelFormat
 	Field _depth:Int
+	Field _gcdata:UByte Ptr
 	Field _data:UByte Ptr
 	Field _pitch:Int
 
@@ -522,8 +531,10 @@ Class ResourceManager Extension
 		If pixmap Return pixmap
 		
 		pixmap=Pixmap.Load( path,format,pmAlpha )
+		If Not pixmap Return Null
 		
 		AddResource( slug,pixmap )
+		
 		Return pixmap
 	End
 	

@@ -46,6 +46,8 @@ Class Map<K,V>
 		#end
 		Property Value:V()
 			Return _value
+		Setter( value:V )
+			_value=value
 		End
 	
 		Private	
