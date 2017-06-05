@@ -1,3 +1,17 @@
+#include <bbmonkey.h>
+
+#define STBI_MALLOC(sz) bbGC::malloc(sz)
+#define STBI_REALLOC(p,newsz) bbRealloc(p,newsz)
+#define STBI_REALLOC_SIZED(p,oldsz,newsz) bbRealloc(p,newsz)
+#define STBI_FREE(p) bbGC::free(p)
+
+void *bbRealloc( void *p,size_t newsz ){
+	void *newp=bbGC::malloc( newsz );
+	size_t oldsz=bbGC::mallocSize( p );
+	memcpy( newp,p,oldsz<newsz ? oldsz : newsz );
+	bbGC::free( p );
+	return newp;
+}
 
 #include "stb_image.h"
 
