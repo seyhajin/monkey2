@@ -11,7 +11,6 @@ Namespace monkey
 #Import "gc.monkey2"
 
 #Import "native/bbtypes.cpp"
-#Import "native/bbinit.cpp"
 #Import "native/bbassert.cpp"
 #Import "native/bbmemory.cpp"
 #Import "native/bbstring.cpp"

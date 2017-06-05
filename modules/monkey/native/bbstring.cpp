@@ -114,7 +114,7 @@ namespace{
 
 bbString::Rep *bbString::Rep::alloc( int length ){
 	if( !length ) return &_nullRep;
-	Rep *rep=(Rep*)bbMalloc( sizeof(Rep)+length*sizeof(bbChar) );
+	Rep *rep=(Rep*)bbGC::malloc( sizeof(Rep)+length*sizeof(bbChar) );
 	rep->refs=1;
 	rep->length=length;
 	return rep;
@@ -273,8 +273,8 @@ const char *bbString::c_str()const{
 	
 	int sz=utf8Length()+1;
 	if( sz>_sz ){
-		free( _tmp );
-		_tmp=(char*)malloc( _sz=sz );
+		::free( _tmp );
+		_tmp=(char*)::malloc( _sz=sz );
 	}
 	toCString( _tmp,sz );
 	return _tmp;
@@ -571,12 +571,12 @@ bbString::operator double()const{
 
 bbCString::bbCString( const bbString &str ){
 	int size=str.utf8Length()+1;
-	_data=(char*)bbMalloc( size );
+	_data=(char*)bbGC::malloc( size );
 	str.toCString( _data,size );
 }
 
 bbCString::~bbCString(){
-	bbFree( _data );
+	bbGC::free( _data );
 }
 
 bbCString::operator char*()const{
@@ -595,12 +595,12 @@ bbCString::operator unsigned char*()const{
 
 bbWString::bbWString( const bbString &str ){
 	int size=(str.length()+1)*sizeof(wchar_t);
-	_data=(wchar_t*)bbMalloc( size );
+	_data=(wchar_t*)bbGC::malloc( size );
 	str.toWString( _data,size );
 }
 
 bbWString::~bbWString(){
-	bbFree( _data );
+	bbGC::free( _data );
 }
 
 bbWString::operator wchar_t*()const{

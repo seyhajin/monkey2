@@ -51,23 +51,14 @@ int main( int argc,char **argv ){
 
 #endif
 
+	bbGC::init();
+	bbDB::init();
+
 	bb_argc=argc;
 	bb_argv=argv;
 	
 	try{
 	
-		bbGC::init();
-		
-		bbDB::init();
-
-		{		
-			bbDBFrame( "_void()","" );
-			
-			for( bbInit *init=bbInit::first;init;init=init->succ ){
-				init->init();
-			}
-		}
-		
 		bbMain();
 	
 	}catch( bbThrowable *t ){

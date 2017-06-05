@@ -12,8 +12,8 @@ namespace bbGC{
 
 	size_t trigger=4*1024*1024;
 
-	int suspended;
-
+	int suspended=1;
+	
 	int markedBit;
 	int unmarkedBit;
 
@@ -46,6 +46,7 @@ namespace bbGC{
 	bool inited;
 	
 	void init(){
+
 		if( inited ) return;
 		inited=true;
 
@@ -62,6 +63,8 @@ namespace bbGC{
 		fibers=new bbGCFiber;
 		
 		currentFiber=fibers;
+		
+		suspended=0;
 	}
 	
 	void setTrigger( size_t size ){
@@ -194,9 +197,6 @@ namespace bbGC{
 	}
 
 	void sweep(){
-	
-//		puts( "bbGC::sweep()" );fflush( stdout );
-	
 		markRetained();
 		
 		markFibers();
@@ -214,16 +214,16 @@ namespace bbGC{
 			//clear unmarked
 			unmarkedList->succ=unmarkedList->pred=unmarkedList;
 		}
-		
+
+		//swap mark/unmarked lists		
 		std::swap( markedList,unmarkedList );
 		std::swap( markedBit,unmarkedBit );
-		
 		unmarkedBytes=markedBytes;
-
 		markedBytes=0;
-		
+
+		//start new sweep phase
 		allocedBytes=0;
-		
+
 		markRoots();
 	}
 	
@@ -255,8 +255,6 @@ namespace bbGC{
 	
 	void *malloc( size_t size ){
 	
-//		if( !inited ){ printf( "GC not inited!\n" );fflush( stdout ); }
-	
 		size=(size+sizeof(size_t)+7)&~7;
 		
 		if( size<256 && pools[size>>3] ){
@@ -269,7 +267,7 @@ namespace bbGC{
 		}
 		
 		if( !suspended ){
-			
+
 			if( allocedBytes+size>=trigger ){
 				
 				sweep();
@@ -340,4 +338,14 @@ namespace bbGC{
 		
 		return p;
 	}
+	
+	void collect(){
+	
+		if( !inited ) return;
+	
+		sweep();
+		
+		reclaim();
+	}
 }
+
