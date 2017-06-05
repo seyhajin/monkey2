@@ -16,10 +16,9 @@ Class C
 	Field f:Void()=F
 	
 	Method Finalize() Override
-		Global n:=0
 		n+=1
 		Assert( Not c And Not v )
-		Print "Finalizing:"+n
+'		Print "Finalizing:"+n
 		f()
 	End
 
@@ -31,8 +30,25 @@ Function Main()
 	
 	GCSetTrigger( 65536 )
 	
-	For Local i:=0 Until 10000
-		Local c:=New C
+	For Local i:=0 Until 100000
+		
+		For Local j:=0 Until 1000
+		
+			Local c:=New C
+		Next
+		
+		Print "One"
+		
+		GCCollect()
+		
+		Print n
+		
+		Print "Two"
+		
+		GCCollect()
+		
+		Print n
+		
 	Next
 
 End

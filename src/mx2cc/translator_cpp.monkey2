@@ -331,9 +331,6 @@ Class Translator_CPP Extends Translator
 			Emit( "}mx2_"+fdecl.ident+"_roots;" )
 		Endif
 		
-'		EmitBr()
-'		Emit( "bbInit mx2_"+fdecl.ident+"_init(~q"+fdecl.ident+"~q,&mx2_"+fdecl.ident+"_init_f);" )
-	
 	End
 	
 	Method EmitClassProto( ctype:ClassType,fdecl:FileDecl,emitted:StringMap<Bool> )

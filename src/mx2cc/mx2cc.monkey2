@@ -39,8 +39,8 @@ Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/t
 
 Function Main()
 	
-	'Set aside 256M for GC!
-	GCSetTrigger( 256*1024*1024 )
+	'Set aside 64M for GC!
+	GCSetTrigger( 64*1024*1024 )
 
 	Print ""
 	Print "Mx2cc version "+MX2CC_VERSION
