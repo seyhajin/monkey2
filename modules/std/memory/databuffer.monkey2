@@ -523,12 +523,15 @@ Class DataBuffer Extends std.resource.Resource
 	
 	Method OnDiscard() Override
 		
-		GCFree( _data )
+		If _data
+			GCFree( _data )
+			_data=Null
+		Endif
 	End
 
 	Method Finalize() Override
 		
-		GCFree( _data )
+		If _data GCFree( _data )
 	End
 	
 	Private

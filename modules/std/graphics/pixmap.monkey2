@@ -498,15 +498,17 @@ Class Pixmap Extends Resource
 	Protected
 	
 	Method OnDiscard() Override
-		
-		GCFree( _gcdata )
-		_gcdata=Null
-		_data=null
+
+		If _gcdata		
+			GCFree( _gcdata )
+			_gcdata=Null
+			_data=null
+		Endif
 	End
 	
 	Method Finalize() Override
 		
-		GCFree( _gcdata )
+		If _gcdata GCFree( _gcdata )
 	End
 
 	Private
