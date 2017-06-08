@@ -423,23 +423,22 @@ Class Texture Extends Resource
 	#rem monkeydoc @hidden
 	#end	
 	Method OnDiscard() Override
-	
-		If _glSeq=glGraphicsSeq
-			glDeleteTextures( 1,Varptr _glTexture )
-		Endif
 		
-		_glSeq=0
-		_glTexture=0
+		If _discarded Return
+	
+		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
+			
 		_discarded=True
+		_managed=Null
+		_glTexture=0
+		_glSeq=0
 	End
 	
 	#rem monkeydoc @hidden
 	#end	
 	Method Finalize() Override
 		
-		If _glSeq=glGraphicsSeq
-			glDeleteTextures( 1,Varptr _glTexture )
-		Endif
+		If Not _discarded And _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 	End
 	
 	Private

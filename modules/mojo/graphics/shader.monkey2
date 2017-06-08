@@ -71,6 +71,12 @@ Class GLProgram
 			glGetActiveUniform( _glprogram,i,nameBuf.Length,Varptr length,Varptr size,Varptr type,Cast<GLchar Ptr>( nameBuf.Data ) )
 	
 			Local name:=String.FromCString( nameBuf.Data )
+			
+			Local i:=name.Find( "[" )
+			If i<>-1
+				Print "Uniform array name="+name
+				name=name.Slice( 0,i )
+			Endif
 				
 			Local location:=glGetUniformLocation( _glprogram,name )
 			If location=-1 Continue  'IE fix...
@@ -142,8 +148,8 @@ Class GLProgram
 					glUniformMatrix3fv( u.location,1,False,ublock.GetMat3fv( u.uniformId ) )
 					
 				Case GL_FLOAT_MAT4
-				
-					glUniformMatrix4fv( u.location,1,False,ublock.GetMat4fv( u.uniformId ) )
+					
+					glUniformMatrix4fv( u.location,u.size,False,ublock.GetMat4fv( u.uniformId ) )
 					
 				Case GL_SAMPLER_2D,GL_SAMPLER_CUBE
 				
