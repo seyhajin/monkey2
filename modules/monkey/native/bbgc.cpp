@@ -298,6 +298,10 @@ namespace bbGC{
 			p=::malloc( size );
 		}
 		
+		p=::malloc( size );
+		
+//		printf( "alloc:%p %i\n",p,size );fflush( stdout );
+		
 		allocedBytes+=size;
 		size_t *q=(size_t*)p;
 		*q++=size;
@@ -318,6 +322,8 @@ namespace bbGC{
 		size_t *q=(size_t*)p-1;
 		
 		size_t size=*q;
+		
+//		printf( "free:%p %i\n",q,size );fflush( stdout );
 		
 		if( size<256 ){
 			*(void**)q=pools[size>>3];
