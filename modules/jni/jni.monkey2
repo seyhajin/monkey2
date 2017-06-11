@@ -65,7 +65,9 @@ Class JNIEnv Extends Void
 	
 	Method CallBooleanMethod:Bool( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallBooleanMethod"
 
-	Method CallObjectMethod:Bool( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallObjectMethod"
+	Method CallStringMethod:String( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStringMethod"
+
+	Method CallObjectMethod:jobject( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallObjectMethod"
 	
 	'static methods...
 	'
@@ -73,9 +75,11 @@ Class JNIEnv Extends Void
 	
 	Method CallStaticVoidMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticVoidMethod"
 
-	Method CallStaticBooleanMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
+	Method CallStaticBooleanMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
+
+	Method CallStaticStringMethod:String( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticStringMethod"
 	
-	Method CallStaticObjectMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticObjectMethod"
+	Method CallStaticObjectMethod:jobject( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticObjectMethod"
 
 	'ctors...
 	'

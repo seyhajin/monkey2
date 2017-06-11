@@ -98,6 +98,17 @@ namespace bbJNI{
 		return r;
 	}
 
+	bbString CallStringMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbString r=JStringToString( env,(jstring)env->CallObjectMethodA( obj,methodID,jargs ) );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
 	jobject CallObjectMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );
@@ -128,7 +139,18 @@ namespace bbJNI{
 		
 		return r;
 	}
-
+	
+	bbString CallStaticStringMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbString r=JStringToString( env,(jstring)env->CallStaticObjectMethodA( clazz,methodID,jargs ) );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+	
 	jobject CallStaticObjectMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );

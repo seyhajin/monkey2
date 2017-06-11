@@ -58,14 +58,9 @@ Class Image Extends Resource
 	
 		Local texture:=New Texture( pixmap,textureFlags )
 		
+		Discarded+=texture.Release
+		
 		Init( texture,shader )
-		
-		AddDependancy( texture )
-	End
-
-	Method New( width:Int,height:Int,textureFlags:TextureFlags=null,shader:Shader=Null )
-		
-		Self.New( width,height,PixelFormat.RGBA8,textureFlags,shader )
 	End
 
 	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=Null,shader:Shader=Null )
@@ -74,16 +69,19 @@ Class Image Extends Resource
 	
 		Local texture:=New Texture( width,height,format,textureFlags )
 		
-		Init( texture,shader )
+		Discarded+=texture.Release
 		
-		AddDependancy( texture )
+		Init( texture,shader )
+	End
+
+	Method New( width:Int,height:Int,textureFlags:TextureFlags=null,shader:Shader=Null )
+		
+		Self.New( width,height,PixelFormat.RGBA8,textureFlags,shader )
 	End
 
 	Method New( image:Image )
 	
 		Init( image._textures[0],image._rect,image._shader )
-		
-		image.AddDependancy( Self )
 		
 		For Local i:=1 Until 4
 			SetTexture( i,image.GetTexture( i ) )
@@ -99,8 +97,6 @@ Class Image Extends Resource
 	Method New( image:Image,rect:Recti )
 	
 		Init( image._textures[0],rect+image._rect.Origin,image._shader )
-		
-		image.AddDependancy( Self )
 		
 		For Local i:=1 Until 4
 			SetTexture( i,image.GetTexture( i ) )
@@ -336,10 +332,8 @@ Class Image Extends Resource
 		If Not shader shader=mojo.graphics.Shader.GetShader( "sprite" )
 		
 		Local image:=New Image( pixmap,Null,shader )
-			
-		image.OnDiscarded+=Lambda()
-			pixmap.Discard()
-		End
+		
+		image.Discarded+=pixmap.Release
 		
 		Return image
 	End
@@ -367,12 +361,11 @@ Class Image Extends Resource
 		If Not shader shader=graphics.Shader.GetShader( "bump" )
 		
 		Local image:=New Image( texture0,shader )
-		image.SetTexture( 1,texture1 )
+
+		image.Discarded+=texture0.Release
+		image.Discarded+=texture1.Release
 		
-		image.OnDiscarded+=Lambda()
-			If texture0 texture0.Discard()
-			If texture1 texture1.Discard()
-		End
+		image.SetTexture( 1,texture1 )
 		
 		Return image
 	End
@@ -395,7 +388,7 @@ Class Image Extends Resource
 
 			Local tpixmap:=pixmap
 			pixmap=pixmap.Convert( PixelFormat.IA16 )
-			tpixmap.Discard()
+			tpixmap.Release()
 
 			'Copy A->I
 			For Local y:=0 Until pixmap.Height
@@ -410,7 +403,7 @@ Class Image Extends Resource
 		
 			Local tpixmap:=pixmap
 			pixmap=pixmap.Convert( PixelFormat.IA16 )
-			tpixmap.Discard()
+			tpixmap.Release()
 			
 			'Copy I->A
 			For Local y:=0 Until pixmap.Height
@@ -425,7 +418,7 @@ Class Image Extends Resource
 		
 			Local tpixmap:=pixmap
 			pixmap=pixmap.Convert( PixelFormat.RGBA32 )
-			tpixmap.Discard()
+			tpixmap.Release()
 			
 			'Copy Max(R,G,B)->A
 			For Local y:=0 Until pixmap.Height
@@ -442,18 +435,13 @@ Class Image Extends Resource
 		
 		Local image:=New Image( texture,shader )
 		
-		image.OnDiscarded+=Lambda()
-			pixmap.Discard()
-		End
-		
 		Return image
 	End
-
+	
 	Private
 	
 	Field _shader:Shader
 	Field _material:UniformBlock
-
 	Field _textures:=New Texture[4]
 	Field _blendMode:BlendMode
 	Field _color:Color
@@ -481,8 +469,6 @@ Class Image Extends Resource
 		_rect=rect
 		_shader=shader
 		_material=New UniformBlock( 2 )
-		
-		AddDependancy( _material )
 		
 		SetTexture( 0,texture )
 		
@@ -538,11 +524,14 @@ Class ResourceManager Extension
 		
 		Local image:=Cast<Image>( OpenResource( slug ) )
 		If image Return image
-
-		Local texture:=OpenTexture( path,Null )
-		If texture image=New Image( texture,shader )
 		
+		Local texture:=OpenTexture( path,Null )
+		If Not texture Return Null
+		
+		image=New Image( texture,shader )
+
 		AddResource( slug,image )
+
 		Return image
 	End
 

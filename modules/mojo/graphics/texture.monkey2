@@ -106,7 +106,6 @@ Class Texture Extends Resource
 #If Not __DESKTOP_TARGET__
 		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
 #Endif
-
 		_glTarget=_flags & TextureFlags.Cubemap ? GL_TEXTURE_CUBE_MAP Else GL_TEXTURE_2D
 		_glInternalFormat=glInternalFormat( _format )
 		_glFormat=glFormat( _format )
@@ -148,7 +147,7 @@ Class Texture Extends Resource
 		If Not (_flags & TextureFlags.Dynamic)
 			_managed=New Pixmap( width,height,format )
 			_managed.Clear( Color.Magenta )
-			AddDependancy( _managed )
+			Discarded+=_managed.Release
 		Endif
 	End
 	
@@ -221,9 +220,7 @@ Class Texture Extends Resource
 		
 		Local texture:=New Texture( pixmap,flags )
 		
-		texture.OnDiscarded+=Lambda()
-			pixmap.Discard()
-		End
+		texture.Discarded+=pixmap.Release
 		
 		Return texture
 	End
@@ -260,11 +257,13 @@ Class Texture Extends Resource
 			Next
 		Endif
 			
-		If pspec pspec.Discard()
+		If pspec pspec.Release()
 			
 		Local texture:=New Texture( pnorm,Null )
-		Return texture
 		
+		texture.Discarded+=pnorm.Release
+		
+		Return texture
 	End
 	
 	Function ColorTexture:Texture( color:Color )
@@ -280,7 +279,12 @@ Class Texture Extends Resource
 		Endif
 		Return texture
 	End
-
+	
+	Function FlatNormal:Texture()
+		
+		Return ColorTexture( New Color( .5,.5,1 ) )
+	End
+	
 	'***** INTERNAL *****
 		
 	#rem monkeydoc @hidden
@@ -377,7 +381,6 @@ Class Texture Extends Resource
 					If _managed
 						Local image:=_managed.Window( offsets[i*2]*Width,offsets[i*2+1]*Height,Width,Height )
 						If _flags & TextureFlags.Mipmap
-'							UploadTexImage2D( cubeFaces[i],image )
 							UploadTexImageCubeMap( cubeFaces[i],image )
 							_dirty&=~Dirty.Mipmaps
 						Else
@@ -420,17 +423,22 @@ Class Texture Extends Resource
 	#rem monkeydoc @hidden
 	#end	
 	Method OnDiscard() Override
-	
-		If _glSeq=glGraphicsSeq
-'			For Local i:=0 Until 8
-'				If _bound[i]=_glTexture _bound[i]=0
-'			Next
-			glDeleteTextures( 1,Varptr _glTexture )
-		Endif
 		
-		_glSeq=0
-		_glTexture=0
+		If _discarded Return
+	
+		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
+			
 		_discarded=True
+		_managed=Null
+		_glTexture=0
+		_glSeq=0
+	End
+	
+	#rem monkeydoc @hidden
+	#end	
+	Method Finalize() Override
+		
+		If Not _discarded And _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 	End
 	
 	Private
@@ -496,7 +504,7 @@ Class Texture Extends Resource
 			If width=1 And height=1 Exit
 			
 			Local hdata:=data.MipHalve()
-			data.Discard()
+			data.Release()
 			data=hdata
 			width/=2
 			height/=2
@@ -504,7 +512,7 @@ Class Texture Extends Resource
 		
 		Wend
 		
-		data.Discard()
+		data.Release()
 	End
 	
 	Method UploadTexImage2D( glTarget:GLenum,image:Pixmap )
@@ -546,7 +554,7 @@ Class Texture Extends Resource
 			
 			glFlush() 'macos nvidia bug!
 			
-			image.Discard()
+			image.Release()
 		
 		Endif
 		
@@ -565,9 +573,12 @@ Class ResourceManager Extension
 		If texture Return texture
 		
 		Local pixmap:=OpenPixmap( path,Null,True )
-		If pixmap texture=New Texture( pixmap,flags )
-				
+		If Not pixmap Return Null
+		
+		texture=New Texture( pixmap,flags )
+		
 		AddResource( slug,texture )
+		
 		Return texture
 	End
 

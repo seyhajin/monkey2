@@ -127,6 +127,13 @@ Class FileStream Extends Stream
 		Return New FileStream( file )
 	End
 	
+	Protected
+	
+	Method Finalize() Override
+		
+		If _file fclose( _file )
+	End
+	
 	Private
 	
 	Field _file:FILE Ptr

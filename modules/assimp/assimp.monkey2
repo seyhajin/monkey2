@@ -67,6 +67,20 @@ Struct aiVector3D
 	Field z:Float
 End
 
+Struct aiMatrix4x4
+	Field a1:Float,a2:Float,a3:Float,a4:float
+	Field b1:Float,b2:Float,b3:Float,b4:float
+	Field c1:Float,c2:Float,c3:Float,c4:float
+	Field d1:Float,d2:Float,d3:Float,d4:Float
+End
+
+Struct aiQuaternion
+	Field w:Float
+	Field x:Float
+	Field y:Float
+	Field z:Float
+End
+
 Struct aiString
 	Field data:CString
 End
@@ -83,7 +97,55 @@ Struct aiFace
 	Field mNumIndices:UInt
 End
 
+Struct aiVectorKey
+	Field mTime:Double
+	Field mValue:aiVector3D
+End
+
+Struct aiQuatKey
+	Field mTime:Double
+	Field mValue:aiQuaternion
+End
+
+Struct aiVertexWeight
+	Field mVertexId:UInt
+	Field mWeight:Float
+End
+
+Class aiBone Extends void
+	
+	Field mName:aiString
+	Field mOffsetMatrix:aiMatrix4x4
+	Field mWeights:aiVertexWeight Ptr
+	Field mNumWeights:UInt
+End
+
+Class aiNodeAnim Extends Void
+	
+	Field mNodeName:aiString
+	
+	Field mPositionKeys:aiVectorKey Ptr
+	Field mRotationKeys:aiQuatKey Ptr
+	Field mScalingKeys:aiVectorKey Ptr
+	
+	Field mNumPositionKeys:UInt
+	Field mNumRotationKeys:UInt
+	Field mNumScalingKeys:UInt
+End
+
+Class aiAnimation Extends Void
+	
+	Field mDuration:Double
+	
+	Field mTicksPerSecond:Double
+
+	Field mChannels:aiNodeAnim Ptr
+	
+	Field mNumChannels:UInt
+End
+
 Class aiMaterial Extends Void
+
 End
 
 Class aiMesh Extends Void
@@ -93,6 +155,7 @@ Class aiMesh Extends Void
 	Field mTangents:aiVector3D Ptr
 	Field mBitangents:aiVector3D Ptr
 	Field mTextureCoords:aiVector3D Ptr Ptr
+	Field mBones:aiBone Ptr
 	Field mFaces:aiFace Ptr
 	
 	Field mName:aiString
@@ -100,17 +163,37 @@ Class aiMesh Extends Void
 	Field mNumVertices:UInt
 	Field mPrimitiveTypes:UInt
 	Field mNumUVComponents:UInt Ptr
+	Field mNumBones:UInt
 	Field mNumFaces:UInt
+
+End
+
+Class aiNode Extends Void
+	
+	Field mName:aiString
+	
+	Field mTransformation:aiMatrix4x4
+	
+	Field mParent:aiNode Ptr
+	Field mChildren:aiNode Ptr
+	Field mMeshes:UInt Ptr
+	
+	Field mNumChildren:UInt
+	Field mNumMeshes:UInt
 
 End
 
 Class aiScene Extends Void="const aiScene"
 	
-	Field mMeshes:aiMesh Ptr
-	Field mMaterials:aiMaterial Ptr
+	Field mRootNode:aiNode
 	
-	Field mNumMeshes:UInt
+	Field mAnimations:aiAnimation Ptr
+	Field mMaterials:aiMaterial Ptr
+	Field mMeshes:aiMesh Ptr
+
+	Field mNumAnimations:uint	
 	Field mNumMaterials:UInt
+	Field mNumMeshes:UInt
 	
 End
 

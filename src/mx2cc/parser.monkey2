@@ -404,6 +404,10 @@ Class Parser
 		
 		decl.members=ParseDecls( mflags,False )
 		
+		For Local mdecl:=Eachin decl.members
+			If mdecl.ident="finalize" decl.flags|=DECL_HASFINALIZER
+		Next
+		
 		Try
 			Parse( "end" )
 			CParse( decl.kind )
@@ -472,6 +476,8 @@ Class Parser
 			
 				If CParse( "new" )
 					ident="new"
+				Else If CParse( "finalize" )
+					ident="finalize"
 				Else If CParse( "to" )
 					ident="to"
 				Else
@@ -487,20 +493,23 @@ Class Parser
 			Default
 			
 				ident=ParseIdent()
+				
 				If ident="@typeof" ident="Typeof"
 			End
-	
+			
 			genArgs=ParseGenArgs()
 			
-'			If genArgs And (flags & DECL_EXTENSION) Error( "Extension methods cannot be generic" )
-			
+'			If genArgs And ident="finalize" Error( "Finalizers cannot be generic" )
+
 			If CParse( ":" )
 				type=Cast<FuncTypeExpr>( ParseType() )
 				If Not type Error( "Expecting function type" )
 			Else
 				type=ParseFuncType( New IdentExpr( "void",SrcPos,SrcPos ) )
 			Endif
-
+			
+'			If type.argTypes And ident="finalize" Error( "Finalizers cannot have any parameters" )
+			
 			If kind="lambda"
 				For Local p:=Eachin type.params
 					If p.init Error( "Lambda function parameters cannot have default values" )
@@ -555,19 +564,31 @@ Class Parser
 				
 			End
 			
+'			If Not (flags & DECL_OVERRIDE) And ident="finalize" Error( "Finalizers must be declared 'Override'" )
+			
 			If CParse( "=" )
+				
 				If Not (flags & DECL_EXTERN) Error( "Non-extern declarations cannot be assigned an extern symbol" )
+					
 				symbol=ParseString()
+			
+'			Else If ident="finalize"
+				
+'				symbol="gcFinalize"
 			Endif
 
 			If CParse( "where" )
+				
 				whereExpr=ParseExpr()
 			Endif
 			
 			If CParse( "default" )
+				
 				If Not (flags & DECL_IFACEMEMBER) Error( "Only interface methods can be declared 'Default'" )
+					
 				flags&=~DECL_ABSTRACT
 				flags|=DECL_DEFAULT
+				
 				If CParse( "virtual" ) flags|=DECL_VIRTUAL
 			Endif
 			

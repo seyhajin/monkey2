@@ -10,9 +10,12 @@ Class UniformBlock Extends Resource
 	End
 	
 	Method New( uniforms:UniformBlock )
+		Self.New( uniforms._name )
+		
 		_name=uniforms._name
 		For Local i:=0 Until _uniforms.Length
 			_uniforms[i]=uniforms._uniforms[i]
+			SafeRetain( _uniforms[i].texture )
 		Next
 	End
 	
@@ -85,7 +88,7 @@ Class UniformBlock Extends Resource
 	Method GetVec3fv:Float Ptr( id:Int )
 		Return GetFloatPtr( id,Type.Vec3f )
 	End
-
+	
 	'***** Vec4f *****
 	'	
 	Method SetVec4f( uniform:String,value:Vec4f )
@@ -124,6 +127,18 @@ Class UniformBlock Extends Resource
 		Return GetFloatPtr( id,Type.Mat3f )
 	End
 	
+	'***** AffineMat3f *****
+	'
+	Method SetAffineMat3f( uniform:String,value:AffineMat3f )
+		Local m:=New Mat3f( value.i.x,value.i.y,0, value.j.x,value.j.y,0, value.t.x,value.t.y,1 )
+		SetFloatData( uniform,m,Type.Mat3f )
+	End
+	
+	Method GetAffineMat3f:AffineMat3f( uniform:String )
+		Local m:=GetFloatData<Mat3f>( uniform,Type.Mat3f )
+		Return New AffineMat3f( m.i.x,m.i.y,m.j.x,m.j.y,m.k.x,m.k.y )
+	End
+	
 	'***** Mat4f *****
 	'
 	Method SetMat4f( uniform:String,value:Mat4f )
@@ -139,6 +154,7 @@ Class UniformBlock Extends Resource
 	End
 	
 	Method GetMat4fv:Float Ptr( id:Int )
+		If _uniforms[id].type=Type.Mat4fArray Return Varptr _uniforms[id].arrayData[0].i.x
 		Return GetFloatPtr( id,Type.Mat4f )
 	End
 
@@ -146,7 +162,7 @@ Class UniformBlock Extends Resource
 	'
 	Method SetMat4fArray( uniform:String,value:Mat4f[] )
 		Local id:=GetUniformId( uniform )
-		_uniforms[id].mat4fArray=value
+		_uniforms[id].arrayData=value
 		_uniforms[id].type=Type.Mat4fArray
 		_seq=_gseq
 		_gseq+=1
@@ -154,19 +170,18 @@ Class UniformBlock Extends Resource
 	
 	Method GetMat4fArray:Mat4f[]( uniform:String )
 		Local id:=GetUniformId( uniform )
-		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalid uniform type" )
-		Return _uniforms[id].mat4fArray
+		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalidate uniform type" )
+		Return _uniforms[id].arrayData
 	End
 
-	Method GetMat4fArrayv:Float Ptr( id:Int )
-		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalid uniform type" )
-		Return Varptr _uniforms[id].mat4fArray[0].i.x
-	End
-	
 	'***** Texture *****
 	'
 	Method SetTexture( uniform:String,value:Texture )
 		Local id:=GetUniformId( uniform )
+		
+		SafeRetain( value )
+		SafeRelease( _uniforms[id].texture )
+		
 		_uniforms[id].texture=value
 		_uniforms[id].type=Type.Texture
 		_seq=_gseq
@@ -190,6 +205,14 @@ Class UniformBlock Extends Resource
 		Return _seq
 	End
 	
+	Protected
+	
+	Method OnDiscard() Override
+		For Local i:=0 Until _uniforms.Length
+			SafeRelease( _uniforms[i].texture )
+		Next
+	End
+	
 	Private
 	
 	Global _gseq:Int
@@ -209,35 +232,24 @@ Class UniformBlock Extends Resource
 	
 	Struct Uniform
 		Field type:Type
-
-		Field mat4fArray:Mat4f[]
 		Field texture:Texture
-		
-		'yuck...		
-		Field fdata0:Mat4f
-		Field fdata1:Mat4f
-		Field fdata2:Mat4f
-		Field fdata3:Mat4f
-		Field fdata4:Mat4f
-		Field fdata5:Mat4f
-		Field fdata6:Mat4f
-		Field fdata7:Mat4f
+		Field arrayData:Mat4f[]
+		Field floatData:Mat4f
 		
 		Method SetFloatData<T>( t:T,type:Type )
-			Cast<T Ptr>(Varptr fdata0.i.x)[0]=t
+			Cast<T Ptr>(Varptr floatData.i.x)[0]=t
 			Self.type=type
 		End
 		
 		Method GetFloatData<T>:T()
-			Return Cast<T Ptr>(Varptr fdata0.i.x)[0]
+			Return Cast<T Ptr>(Varptr floatData.i.x)[0]
 		End
 		
 		Method GetFloatPtr:Float Ptr()
-			Return Cast<Float Ptr>(Varptr fdata0.i.x)
+			Return Cast<Float Ptr>(Varptr floatData.i.x)
 		End
-		
 	End
-	
+
 	Field _name:Int
 	Field _seq:Int
 	Field _uniforms:=New Uniform[64]

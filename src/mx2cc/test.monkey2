@@ -1,16 +1,9 @@
 
-#Import "<mojo>"
-
-Using std..
-Using mojo..
-
 Function Main()
 	
-	Print "Wotzup?"
-	Print "Hello World!!!!"
+	Print ULong( ".1" )
 	
-	Print "CurrentDir="+CurrentDir()
-	ChangeDir( "../.." )
-	Print "CurrentDir="+CurrentDir()
-
+	Local x:Int=.1
+	Print x
+	
 End

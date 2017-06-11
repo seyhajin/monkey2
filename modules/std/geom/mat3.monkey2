@@ -30,6 +30,15 @@ Struct Mat3<T>
 		j.x=jx; j.y=jy; j.z=jz
 		k.x=kx; k.y=ky; k.z=kz
 	End
+
+	Method New( quat:Quat<T> )
+		Local xx:=quat.v.x*quat.v.x , yy:=quat.v.y*quat.v.y , zz:=quat.v.z*quat.v.z
+		Local xy:=quat.v.x*quat.v.y , xz:=quat.v.x*quat.v.z , yz:=quat.v.y*quat.v.z
+		Local wx:=quat.w*quat.v.x   , wy:=quat.w*quat.v.y   , wz:=quat.w*quat.v.z
+		i.x=1-2*(yy+zz) ; i.y=  2*(xy-wz) ; i.z=  2*(xz+wy)
+		j.x=  2*(xy+wz) ; j.y=1-2*(xx+zz) ; j.z=  2*(yz-wx)
+		k.x=  2*(xz-wy) ; k.y=  2*(yz+wx) ; k.z=1-2*(xx+yy)
+	End
 	
 	Operator To<C>:Mat3<C>()
 		Return New Mat3<C>( i,j,k )

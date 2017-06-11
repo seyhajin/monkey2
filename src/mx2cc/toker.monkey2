@@ -38,7 +38,7 @@ Function InitToker:Void()
 	keyWords+="Select;Case;Default;"
 	keyWords+="Try;Catch;Throw;Throwable;Variant;CString;TypeInfo;Typeof;"
 	keyWords+="Return;Print;Static;Cast;"
-	keyWords+="Extension;Protocol;Delete"
+	keyWords+="Extension;Protocol;Finalize;Delete"
 
 	KeyWords=New StringMap<String>
 	

@@ -26,7 +26,7 @@ Class Canvas
 		
 		Local rtarget:=New RenderTarget( New Texture[]( image.Texture ),Null )
 		
-		image.OnDiscarded+=rtarget.Discard
+		image.Discarded+=rtarget.Release
 		
 		Init( rtarget,New GraphicsDevice )
 		
@@ -36,12 +36,14 @@ Class Canvas
 	#rem monkeydoc @hidden Creates a canvas that renders to the backbuffer.
 	#end	
 	Method New( width:Int,height:Int )
+		
 		Init( Null,New GraphicsDevice( width,height ) )
 	End
 
 	#rem monkeydoc @hidden Resizes a canvas that renders to the backbuffer.
 	#end	
 	Method Resize( size:Vec2i )
+		
 		_device.Resize( size )
 	End
 

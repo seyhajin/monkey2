@@ -1,7 +1,7 @@
 
 Namespace stb.image
 
-#Import "native/stb_image.c"
+#Import "native/stb_image.cpp"
 #Import "native/stb_image.h"
 
 Extern

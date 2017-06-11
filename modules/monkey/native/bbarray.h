@@ -71,6 +71,10 @@ template<class T,int D> struct bbArray{
 			
 		bbGC::endCtor( _rep );
 	}
+	
+	void discard(){
+		_rep=nullptr;
+	}
 		
 	T *data(){
 		return _rep->_data;

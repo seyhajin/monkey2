@@ -8,47 +8,12 @@
 // For testing only...
 // #define BBGC_DISABLED 1
 
-//For future ref...
-#if BB_THREADED
-
-//fast but unpredictable
-//#define BBGC_LOCK while( bbGC::spinlock.test_and_set( std::memory_order_acquire ) ) std::this_thread::yield();
-//#define BBGC_UNLOCK bbGC::spinlock.clear( std::memory_order_release );
-
-//pretty slow...
-//#define BBGC_LOCK bbGC::mutex.lock();
-//#define BBGC_UNLOCK bbGC::mutex.unlock();
-
-//better...a 'Benaphore' apparently...
-#define BBGC_LOCK \
-	if( ++bbGC::locks>1 ){ \
-		std::unique_lock<std::mutex> lock( bbGC::mutex ); \
-		bbGC::cond_var.wait( lock,[]{ return bbGC::sem_count>0;} ); \
-		--bbGC::sem_count; \
-	}
-
-#define BBGC_UNLOCK \
-	if( --bbGC::locks>0 ){ \
-		std::unique_lock<std::mutex> lock( bbGC::mutex ); \
-		++bbGC::sem_count; \
-		bbGC::cond_var.notify_one(); \
-	}
-	
-	int sem_count;
-	std::mutex mutex;
-	std::atomic_int locks;
-	std::condition_variable cond_var;
-	std::atomic_flag spinlock=ATOMIC_FLAG_INIT;
-	
-#endif
-
-struct bbGCRetained{
-	bbGCRetained *succ;
-	bbGCNode *node;
-};
-
 namespace bbGC{
 
+	size_t trigger=4*1024*1024;
+
+	int suspended=1;
+	
 	int markedBit;
 	int unmarkedBit;
 
@@ -62,22 +27,29 @@ namespace bbGC{
 	bbGCFiber *currentFiber;
 	
 	bbGCTmp *freeTmps;
+	
+	bbGCTmp *retained;
 
 	bbGCNode markLists[2];
 	bbGCNode freeList;
 	
 	size_t markedBytes;
 	size_t unmarkedBytes;
+	
 	size_t allocedBytes;
 	
-	bbGCRetained *retained;
-	bbGCRetained *retained_free;
+	void *pools[32];
+	
+	unsigned char *poolBuf;
+	size_t poolBufSize;
+	
+	bool inited;
 	
 	void init(){
-		static bool done;
-		if( done ) return;
-		done=true;
-		
+
+		if( inited ) return;
+		inited=true;
+
 		markedBit=1;
 		markedList=&markLists[0];
 		markedList->succ=markedList->pred=markedList;
@@ -91,20 +63,44 @@ namespace bbGC{
 		fibers=new bbGCFiber;
 		
 		currentFiber=fibers;
+		
+		suspended=0;
+	}
+	
+	void setTrigger( size_t size ){
+	
+		trigger=size;
+	}
+	
+	void suspend(){
+	
+		++suspended;
+	}
+	
+	void resume(){
+	
+		--suspended;
 	}
 	
 	void destroy( bbGCNode *p ){
 	
-//		printf( "destroying: %s %p\n",p->typeName(),p );
+		if( p->flags & 1 ){
+			//Run finalizer
+			++suspended;
+			p->state=unmarkedBit;
+			p->gcFinalize();
+			if( p->state==markedBit ) bbRuntimeError( "Object resurrected in finalizer" );
+			--suspended;
+		}
 		
 #if BBGC_DEBUG
-
-		p->flags=3;
-
+//		printf( "destroying: %s %p\n",p->typeName(),p );
+		p->state=3;
+		p->flags=0;
 #else
 		p->~bbGCNode();
 			
-		bbFree( p );
+		bbGC::free( p );
 #endif
 	}
 	
@@ -114,9 +110,10 @@ namespace bbGC{
 		
 			bbGCNode *p=freeList.succ;
 			
-			size_t psize=bbMallocSize( p );
+			size_t psize=mallocSize( p );
 			
 			remove( p );
+			
 			destroy( p );
 
 			if( psize>=size ) break;
@@ -125,14 +122,14 @@ namespace bbGC{
 	}
 	
 	void mark( bbGCNode *p ){
-		if( !p || p->flags==markedBit ) return;
+		if( !p || p->state==markedBit ) return;
 		
 		remove( p );
 		insert( p,markedList );
 		
-		p->flags=markedBit;
+		p->state=markedBit;
 		
-		markedBytes+=bbMallocSize( p );
+		markedBytes+=mallocSize( p );
 
 		p->gcMark();
 	}
@@ -147,9 +144,9 @@ namespace bbGC{
 	
 	void markRetained(){
 	
-		for( bbGCRetained *r=retained;r;r=r->succ ){
-			if( r->node ) r->node->gcMark();
-				r=r->succ;
+		for( bbGCTmp *tmp=retained;tmp;tmp=tmp->succ ){
+		
+			tmp->node->gcMark();
 		}
 	}
 	
@@ -173,10 +170,11 @@ namespace bbGC{
 			
 			for( bbGCTmp *tmp=fiber->tmps;tmp;tmp=tmp->succ ){
 			
-				tmp->node->gcMark();
+				if( tmp->node ) tmp->node->gcMark();
 			}
 			
 			fiber=fiber->succ;
+			
 			if( fiber==fibers ) break; 
 		}
 	}
@@ -190,7 +188,7 @@ namespace bbGC{
 			
 			insert( p,markedList );
 			
-			markedBytes+=bbMallocSize( p );
+			markedBytes+=mallocSize( p );
 			
 //			printf( "marking %s\n",p->typeName() );fflush( stdout );
 			
@@ -199,9 +197,6 @@ namespace bbGC{
 	}
 
 	void sweep(){
-	
-//		puts( "bbGC::sweep()" );fflush( stdout );
-	
 		markRetained();
 		
 		markFibers();
@@ -219,92 +214,144 @@ namespace bbGC{
 			//clear unmarked
 			unmarkedList->succ=unmarkedList->pred=unmarkedList;
 		}
-		
+
+		//swap mark/unmarked lists		
 		std::swap( markedList,unmarkedList );
 		std::swap( markedBit,unmarkedBit );
-		
 		unmarkedBytes=markedBytes;
-
 		markedBytes=0;
-		
+
+		//start new sweep phase
 		allocedBytes=0;
-		
+
 		markRoots();
 	}
 	
+	void retain( bbGCNode *node ){
+		if( !node ) return;
+		
+		bbGCTmp *tmp=freeTmps;
+		if( !tmp ) tmp=new bbGCTmp;
+		tmp->node=node;
+		tmp->succ=retained;
+		retained=tmp;
+	}
+	
+	void release( bbGCNode *node ){
+		if( !node ) return;
+		
+		bbGCTmp **p=&retained;
+		while( bbGCTmp *tmp=*p ){
+			if( tmp->node==node ){
+				*p=tmp->succ;
+				tmp->succ=freeTmps;
+				freeTmps=tmp;
+				return;
+			}
+			p=&tmp->succ;
+		}
+		printf( "Warning! bbGC::release() - node not found!\n" );
+	}
+	
+	void *malloc( size_t size ){
+	
+		size=(size+sizeof(size_t)+7)&~7;
+		
+		if( size<256 && pools[size>>3] ){
+			void *p=pools[size>>3];
+			pools[size>>3]=*(void**)p;
+			allocedBytes+=size;
+			size_t *q=(size_t*)p;
+			*q++=size;
+			return q;
+		}
+		
+		if( !suspended ){
+
+			if( allocedBytes+size>=trigger ){
+				
+				sweep();
+				
+			}else{
+			
+				markQueued( double( allocedBytes+size ) / double( trigger ) * double( unmarkedBytes + trigger ) );
+			}
+			
+			reclaim( size );
+		}
+		
+		void *p;
+		
+		if( size<256 ){
+			if( size>poolBufSize ){
+				if( poolBufSize ){
+					*(void**)poolBuf=pools[poolBufSize>>3];
+					pools[poolBufSize>>3]=poolBuf;
+				}
+				poolBufSize=65536;
+				poolBuf=(unsigned char*)::malloc( poolBufSize );
+			}
+			p=poolBuf;
+			poolBuf+=size;
+			poolBufSize-=size;
+		}else{
+			p=::malloc( size );
+		}
+		
+		p=::malloc( size );
+		
+//		printf( "alloc:%p %i\n",p,size );fflush( stdout );
+		
+		allocedBytes+=size;
+		size_t *q=(size_t*)p;
+		*q++=size;
+		return q;
+	}
+	
+	size_t mallocSize( void *p ){
+	
+		if( p ) return *((size_t*)p-1);
+		
+		return 0;
+	}
+	
+	void free( void *p ){
+	
+		if( !p ) return;
+		
+		size_t *q=(size_t*)p-1;
+		
+		size_t size=*q;
+		
+//		printf( "free:%p %i\n",q,size );fflush( stdout );
+		
+		if( size<256 ){
+			*(void**)q=pools[size>>3];
+			pools[size>>3]=q;
+		}else{
+			::free( q );
+		}
+	}
+
 	bbGCNode *alloc( size_t size ){
 
-#ifndef BBGC_DISABLED
-	
-		if( allocedBytes>=BBGC_TRIGGER ){
-
-			sweep();
-		
-#if BBGC_AGGRESSIVE
-			reclaim();
-#endif
-		}else{
-		
-#if BBGC_INCREMENTAL
-
-//			size_t tomark=double( allocedBytes ) / double( BBGC_TRIGGER ) * double( unmarkedBytes + allocedBytes );
-
-			size_t tomark=double( allocedBytes ) / double( BBGC_TRIGGER ) * double( unmarkedBytes + BBGC_TRIGGER );
-	
-			markQueued( tomark );
-#endif
-		}
-
-#endif
-	
-		bbGCNode *p=(bbGCNode*)bbMalloc( size );
+		bbGCNode *p=(bbGCNode*)bbGC::malloc( size );
 		
 		*((void**)p)=(void*)0xcafebabe;
 		
+		p->state=0;
 		p->flags=0;
 		
-		size=bbMallocSize( p );
-		
-		allocedBytes+=size;
-		
-#if !BBGC_AGGRESSIVE
-		reclaim( size );
-#endif
 		return p;
 	}
 	
 	void collect(){
 	
+		if( !inited ) return;
+	
 		sweep();
-
-		reclaim();
 		
-//		printf( "GCCollect: in use=%i\n",(int)unmarkedBytes );fflush( stdout );
-	}
-	
-	void retain( bbGCNode *node ){
-		bbGCRetained *r=retained_free;
-		if( !r ){
-			//should alloc buf-worth...
-			r=new bbGCRetained;
-		}
-		r->node=node;
-		r->succ=retained;
-		retained=r;
-	}
-	
-	void release( bbGCNode *node ){
-		bbGCRetained **p=&retained;
-		while( bbGCRetained *r=*p ){
-			if( r->node==node ){
-				*p=r->succ;
-				r->succ=retained_free;
-				retained_free=r;
-				return;
-			}
-			p=&r->succ;
-			r=r->succ;
-		}
-		printf( "Wanting! bbGC::release() node not found!\n" );
+		reclaim();
 	}
 }
+

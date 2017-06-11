@@ -43,16 +43,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method New( length:Int,byteOrder:ByteOrder=std.memory.ByteOrder.LittleEndian )
-	
+		
 		_length=length
-		_data=Cast<UByte Ptr>( libc.malloc( length ) )
+		_data=Cast<UByte Ptr>( GCMalloc( length ) )
 		_byteOrder=byteOrder
 		_swapEndian=False
-		
-		OnDiscarded+=Lambda()
-			libc.free( _data )
-			_data=Null
-		End
 	End
 	
 	#rem monkeydoc A raw pointer to the databuffer's internal memory.
@@ -87,9 +82,9 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end	
 	Method Resize( length:Int )
-		Local data:=Cast<UByte Ptr>( libc.malloc( length ) )
+		Local data:=Cast<UByte Ptr>( GCMalloc( length ) )
 		libc.memcpy( data,_data,Min( length,_length ) )
-		libc.free( _data )
+		GCFree( _data )
 		_data=data
 	End
 	
@@ -523,7 +518,22 @@ Class DataBuffer Extends std.resource.Resource
 		
 		Return data
 	End
+	
+	Protected
+	
+	Method OnDiscard() Override
+		
+		If _data
+			GCFree( _data )
+			_data=Null
+		Endif
+	End
 
+	Method Finalize() Override
+		
+		If _data GCFree( _data )
+	End
+	
 	Private
 	
 	Field _data:UByte Ptr
