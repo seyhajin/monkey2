@@ -13,6 +13,8 @@ Have fun!
 
 @import language/language.md
 
+@import articles/articles.md
+
 @import sdks.md
 
 @import mx2cc.md
