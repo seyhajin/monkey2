@@ -1,9 +1,36 @@
+Namespace myapp
+
+#Import "<std>"
+#Import "<mojo>"
+
+Using std..
+Using mojo..
+
+Class MyWindow Extends Window
+
+	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=Null )
+
+		Super.New( title,width,height,flags )
+		
+		New Fiber( Lambda()
+			Print "HERE"
+		End )
+	End
+
+	Method OnRender( canvas:Canvas ) Override
+	
+		App.RequestRender()
+	
+		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
+	End
+	
+End
 
 Function Main()
+
+	New AppInstance
 	
-	Print ULong( ".1" )
+	New MyWindow
 	
-	Local x:Int=.1
-	Print x
-	
+	App.Run()
 End

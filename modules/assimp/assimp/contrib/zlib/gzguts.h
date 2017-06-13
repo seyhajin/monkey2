@@ -20,7 +20,9 @@
 
 #include <stdio.h>
 
+#if !_MSC_VER
 #include <unistd.h>
+#endif
 
 #include "zlib.h"
 #ifdef STDC

@@ -19,9 +19,17 @@ Using libc..
 Using std..
 Using mx2..
 
+#If __CONFIG__="debug"
+Const FORCE_MSVC:=False
+#Endif
+
 Global StartDir:String
 
+'Const TestArgs:="mx2cc makemods -clean"
+
 'Const TestArgs:="mx2cc makemods -clean monkey"
+
+'Const TestArgs:="mx2cc makemods -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
 
 Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
 
@@ -38,7 +46,7 @@ Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/t
 'Const TestArgs:="mx2cc makeapp -build -clean -config=release -target=raspbian src/mx2cc/mx2cc.monkey2"
 
 Function Main()
-	
+
 	'Set aside 64M for GC!
 	GCSetTrigger( 64*1024*1024 )
 
@@ -59,6 +67,10 @@ Function Main()
 	If GetFileType( env )<>FILETYPE_FILE Fail( "Unable to locate mx2cc 'bin' directory" )
 
 	LoadEnv( env )
+	
+#If __CONFIG__="debug"
+	If FORCE_MSVC libc.setenv( "MX2_USE_MSVC","1",1 )
+#Endif
 	
 	Local args:=AppArgs()
 	

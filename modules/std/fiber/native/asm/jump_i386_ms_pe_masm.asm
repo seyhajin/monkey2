@@ -24,7 +24,10 @@
 .model flat, c
 .code
 
-jump_fcontext PROC BOOST_CONTEXT_EXPORT
+jump_fcontext PROC 
+
+	;BOOST_CONTEXT_EXPORT
+	
     push  ebp  ; save EBP 
     push  ebx  ; save EBX 
     push  esi  ; save ESI 

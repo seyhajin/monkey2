@@ -126,6 +126,7 @@ Class BuilderInstance
 		End
 
 		profileName=opts.target+"_"+opts.config
+		If opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) profileName+="_msvc"
 		
 		MODULES_DIR=CurrentDir()+"modules/"
 		
@@ -607,19 +608,43 @@ Class BuilderInstance
 		
 		Select ext.ToLower()
 		Case ".a"
-
-			If name.StartsWith( "lib" ) name=name.Slice( 3 ) Else name=path
-			product.LD_SYSLIBS.Push( "-l"+name )
 			
-		Case ".lib",".dylib"
-		
-			product.LD_SYSLIBS.Push( "-l"+name )
+			If name.StartsWith( "lib" )
+				
+				name=name.Slice( 3 )
+				
+				If product.toolchain="msvc"
+					product.LIB_FILES.Push( name+".lib" )
+				Else
+					product.LIB_FILES.Push( "-l"+name )
+				Endif
+			
+			Else
+				
+				New BuildEx( "Import Error: "+path )
+			Endif
+			
+		Case ".lib"
+			
+			If product.toolchain="msvc"
+				product.LIB_FILES.Push( name )
+			Else
+				product.LIB_FILES.Push( "-l"+name )
+			Endif
+			
+		Case ".dylib"
+			
+			If product.toolchain="gcc"
+				product.LIB_FILES.Push( "-l"+name )
+			Endif
 			
 		Case ".framework"
-		
-			product.LD_SYSLIBS.Push( "-framework "+name )
 			
-		Case ".h",".hh",".hpp"
+			If product.toolchain="gcc"
+				product.LIB_FILES.Push( "-framework "+name )
+			Endif
+			
+		Case ".h",".hh",".hxx",".hpp"
 		
 '			STD_INCLUDES.Push( "<"+path+">" )
 			
@@ -674,17 +699,29 @@ Class BuilderInstance
 				product.CC_OPTS+=" -I"+qdir
 				product.CPP_OPTS+=" -I"+qdir
 				
-			Case ".hh",".hpp"
+			Case ".hh",".hpp",".hxx"
 			
 				product.CPP_OPTS+=" -I"+qdir
 				
-			Case ".a",".lib",".dylib"
-			
-				product.LD_OPTS+=" -L"+qdir
+			Case ".a",".lib"
+				
+				If product.toolchain="msvc"
+					product.LD_OPTS+=" -LIBPATH:"+qdir
+				Else
+					product.LD_OPTS+=" -L"+qdir
+				Endif
+				
+			Case ".dylib"
+				
+				If product.toolchain="gcc"
+					product.LD_OPTS+=" -L"+qdir
+				Endif
 				
 			Case ".framework"
-			
-				product.LD_OPTS+=" -F"+qdir
+				
+				If product.toolchain="gcc"
+					product.LD_OPTS+=" -F"+qdir
+				Endif
 				
 			Default
 			
@@ -699,9 +736,11 @@ Class BuilderInstance
 		Select ext
 		Case ".framework"
 			
-			If GetFileType( path )<>FileType.Directory
-				New BuildEx( "Framework "+qpath+" not found" )
-				Return
+			If product.toolchain="gcc"
+				If GetFileType( path )<>FileType.Directory
+					New BuildEx( "Framework "+qpath+" not found" )
+					Return
+				Endif
 			Endif
 			
 		Default
@@ -724,60 +763,57 @@ Class BuilderInstance
 		
 			MX2_SRCS.Push( path )
 			
-		Case ".h",".hh",".hpp"
+		Case ".h",".hh",".hxx",".hpp"
 		
 '			STD_INCLUDES.Push( qpath )
 			
 		Case ".c",".cc",".cxx",".cpp",".m",".mm",".asm",".s"
 		
-			If parsingModule=mainModule product.SRC_FILES.Push( path )
+			If parsingModule=mainModule 
+				product.SRC_FILES.Push( path )
+			Endif
 		
-'			If modules.Length=1
-'				SRC_FILES.Push( path )
-'			Endif
-
 		Case ".java"
-		
-'			If parsingModule=mainModule product.JAVA_FILES.Push( path )
-			product.JAVA_FILES.Push( path )
+			
+			If opts.target="android"
+				product.JAVA_FILES.Push( path )
+			Endif
 			
 		Case ".o"
 		
 			product.OBJ_FILES.Push( path )
 			
-		Case ".a",".lib"
+		Case ".lib"
+			
+			product.LIB_FILES.Push( qpath )
 		
-			product.LD_SYSLIBS.Push( qpath )
+		Case ".a"
 			
-		Case ".so"
-		
-			If opts.target="android"		'probably all non-windows targets
-			
-				product.LD_SYSLIBS.Push( qpath )
-			
+			If product.toolchain="gcc"
+				product.LIB_FILES.Push( qpath )
 			Endif
 			
-			product.DLL_FILES.Push( path )
+		Case ".so",".dylib"
+			
+			If product.toolchain="gcc"
+				product.LIB_FILES.Push( qpath )
+				product.DLL_FILES.Push( path )
+			Endif
 			
 		Case ".dll",".exe"
-		
-			product.DLL_FILES.Push( path )
 			
-		Case ".dylib"
-		
-			product.LD_SYSLIBS.Push( qpath )
-			
-			product.DLL_FILES.Push( path )
+			If opts.target="windows"
+				product.DLL_FILES.Push( path )
+			Endif
 			
 		Case ".framework"
-		
-			'OK, this is ugly...
-		
-			ImportLocalFile( ExtractDir( path )+"*.framework" )
 			
-			ImportSystemFile( StripDir( path ) )
-			
-			product.DLL_FILES.Push( path )
+			If product.toolchain="gcc"
+				'OK, this is ugly...
+				ImportLocalFile( ExtractDir( path )+"*.framework" )
+				ImportSystemFile( StripDir( path ) )
+				product.DLL_FILES.Push( path )
+			Endif
 		
 		Default
 		
