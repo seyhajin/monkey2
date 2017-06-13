@@ -34,7 +34,7 @@ Class HelpActions
 		about.Triggered=Lambda()
 		
 			Local htmlView:=New HtmlView
-			htmlView.Go( "asset::ted2/about.html" )
+			htmlView.Go( "ABOUT.HTML" )
 	
 			Local dialog:=New Dialog( "About monkey2" )
 			dialog.ContentView=htmlView

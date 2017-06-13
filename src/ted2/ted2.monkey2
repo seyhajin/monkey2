@@ -35,6 +35,8 @@
 #import "jsondocument"
 #import "xmldocument"
 
+'#Import "scenedocument"
+
 #import "textviewkeyeventfilter"
 
 #Import "buildproduct"
