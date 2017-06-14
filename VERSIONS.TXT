@@ -5,5 +5,5 @@
 
 * Added assimp model for loading 3d models.
 
-* Added OpenUrl support for android and ios to std.requesters namespace in std module.
+* Added std.requesters.OpenUrl support for android and ios.
 
