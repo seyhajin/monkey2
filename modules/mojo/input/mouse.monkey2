@@ -104,9 +104,15 @@ Class MouseDevice Extends InputDevice
 	End
 
 	#rem monkeydoc The mouse location.
+	
+	This property may be written to warp the mouse to a new location.
+	
 	#end
 	Property Location:Vec2i()
 		Return _location
+	Setter( location:Vec2i )
+		_location=location
+		SDL_WarpMouseInWindow( Null,location.x,location.y )
 	End
 	
 	#rem monkeydoc The mouse wheel delta x value since the last app update.

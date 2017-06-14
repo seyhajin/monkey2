@@ -19,7 +19,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if _MSC_VER
+#include "strings.h"
+#else
 #include <strings.h>
+#endif
 
 #include "attribute.h"
 #include "error.h"

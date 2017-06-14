@@ -19,7 +19,12 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if _MSC_VER
+#include "strings.h"
+#else
 #include <strings.h>
+#endif
 
 #include "string_piece.h"
 #include "util.h"

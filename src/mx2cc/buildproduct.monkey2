@@ -8,21 +8,26 @@ Class BuildProduct
 	Field imports:=New Stack<Module>
 	Field outputFile:String
 	
+	Field toolchain:String
+
 	Field CC_OPTS:String
 	Field CPP_OPTS:String
 	Field AS_OPTS:String
 	Field LD_OPTS:String
 	
-	Field SRC_FILES:=New StringStack
-	Field OBJ_FILES:=New StringStack
-	Field LD_SYSLIBS:=New StringStack
+	Field SRC_FILES:=New StringStack	'source code files
+	Field JAVA_FILES:=New StringStack	'java files
+	Field OBJ_FILES:=New StringStack	'object code files - added to module .a
+	Field LIB_FILES:=New StringStack	'library files - passed to linker.
+	Field DLL_FILES:=New StringStack	'dll/exe files, copied to app dir.
+	
 	Field ASSET_FILES:=New StringStack
-	Field JAVA_FILES:=New StringStack
-	Field DLL_FILES:=New StringStack
 	
 	Method New( module:Module,opts:BuildOpts )
 		Self.module=module
 		Self.opts=opts
+		
+		toolchain=opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) ? "msvc" Else "gcc"
 		
 		Local copts:=""
 		copts+=" -I~q"+MODULES_DIR+"~q"
@@ -256,8 +261,6 @@ End
 
 Class GccBuildProduct Extends BuildProduct
 	
-	Field toolchain:String
-
 	Field CC_CMD:=""
 	Field CXX_CMD:=""
 	Field AS_CMD:=""
@@ -266,8 +269,6 @@ Class GccBuildProduct Extends BuildProduct
 	
 	Method New( module:Module,opts:BuildOpts )
 		Super.New( module,opts )
-		
-		toolchain=opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) ? "msvc" Else "gcc"
 		
 		Local target:="_"+opts.target.ToUpper()
 		Local config:="_"+opts.config.ToUpper()
@@ -460,8 +461,6 @@ Class GccBuildProduct Extends BuildProduct
 			
 		Else If toolchain="msvc"
 			
-			'args="-out:~q"+output+"~q"+args
-
 			Local tmp:=AllocTmpFile( "libFiles" )
 			SaveString( args,tmp )
 			
@@ -479,7 +478,6 @@ Class GccBuildProduct Extends BuildProduct
 #Else
 			cmd=AR_CMD+" q ~q"+output+"~q"+args
 #Endif
-			
 		Endif
 		
 		Exec( cmd )
@@ -503,8 +501,8 @@ Class GccBuildProduct Extends BuildProduct
 			If ExtractExt( outputFile ).ToLower()<>".exe" outputFile+=".exe"
 				
 			If toolchain="msvc"
-				If opts.appType="gui" cmd+=" -subsystem:windows" Else cmd+=" -subsystem:console"
 '				cmd+=" -entry:main"
+				If opts.appType="gui" cmd+=" -subsystem:windows" Else cmd+=" -subsystem:console"
 			Else
 				If opts.appType="gui" cmd+=" -mwindows"
 			Endif
@@ -565,7 +563,7 @@ Class GccBuildProduct Extends BuildProduct
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."
 			
 		If toolchain="msvc"
-			cmd+=" -out:~q"+outputFile+"~q"
+			cmd+=" -entry:mainCRTStartup -out:~q"+outputFile+"~q"
 		Else
 			cmd+=" -o ~q"+outputFile+"~q"
 		Endif
@@ -582,14 +580,7 @@ Class GccBuildProduct Extends BuildProduct
 			lnkFiles+=" ~q"+afile+"~q"
 		Next
 
-		If toolchain="msvc"
-			For Local i:=0 Until LD_SYSLIBS.Length
-				Local lib:=LD_SYSLIBS[i]
-				If lib.StartsWith( "-l" ) LD_SYSLIBS[i]=lib.Slice( 2 )+".lib"
-			Next
-		endif
-
-		lnkFiles+=" "+LD_SYSLIBS.Join( " " )
+		lnkFiles+=" "+LIB_FILES.Join( " " )
 		
 #If __TARGET__="windows"
 		lnkFiles=lnkFiles.Replace( " -Wl,"," " )
@@ -599,7 +590,7 @@ Class GccBuildProduct Extends BuildProduct
 #Else
 		cmd+=lnkFiles
 #Endif
-CopyAssets( assetsDir )
+		CopyAssets( assetsDir )
 		
 		CopyDlls( dllsDir )
 		
@@ -650,7 +641,7 @@ Class IosBuildProduct Extends GccBuildProduct
 
 		If opts.wholeArchive cmd+=" -Wl,--no-whole-archive"
 		
-		For Local lib:=Eachin LD_SYSLIBS
+		For Local lib:=Eachin LIB_FILES
 			If lib.ToLower().EndsWith( ".a~q" ) cmd+=" "+lib
 		Next
 		
@@ -803,7 +794,7 @@ Class AndroidBuildProduct Extends BuildProduct
 			
 			buf.Push( "LOCAL_LDLIBS += -ldl" )
 			
-			For Local lib:=Eachin LD_SYSLIBS
+			For Local lib:=Eachin LIB_FILES
 				If lib.StartsWith( "-l" ) buf.Push( "LOCAL_LDLIBS += "+lib )
 			Next
 			

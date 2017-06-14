@@ -37,21 +37,20 @@ MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG
 
 MX2_USE_MSVC=0
 
-PATH=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin;${PATH}
+PATH=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\bin;${PATH}
 
-INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE;C:\Program Files (x86)\Windows Kits\10\include\10.0.10586.0\ucrt;C:\Program Files (x86)\Windows Kits\10\include\10.0.10586.0\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.10586.0\shared;
+INCLUDE=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\INCLUDE;${ProgramFiles(x86)}\Windows Kits\10\include\10.0.10586.0\ucrt;${ProgramFiles(x86)}\Windows Kits\10\include\10.0.10586.0\um;${ProgramFiles(x86)}\Windows Kits\10\include\10.0.10586.0\shared;
 
-LIB=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB;C:\Program Files (x86)\Windows Kits\10\lib\10.0.10586.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.10586.0\um\x86;
+LIB=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\LIB;${ProgramFiles(x86)}\Windows Kits\10\lib\10.0.10586.0\ucrt\x86;${ProgramFiles(x86)}\Windows Kits\10\lib\10.0.10586.0\um\x86;
 
 'Linker options
 MX2_LD_OPTS_MSVC=
 MX2_LD_OPTS_MSVC_DEBUG=
 MX2_LD_OPTS_MSVC_RELEASE=
 
-'C Compiler options. Note: -D_WIN32_WINNT=0x0601 means headers for Windows 7, ie: Windows 7 is min SDK!
 MX2_CC_OPTS_MSVC=-EHs -W0 -MT
 MX2_CC_OPTS_MSVC_DEBUG=
-MX2_CC_OPTS_MSVC_RELEASE=
+MX2_CC_OPTS_MSVC_RELEASE=-Ox
 
 'C++ Compiler options
 MX2_CPP_OPTS_MSVC=-EHs -W0 -MT
