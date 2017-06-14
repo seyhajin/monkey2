@@ -1,15 +1,26 @@
 
 Namespace std.resource
 
+#Rem monkeydoc The Resource class.
+
+Currently WIP!
+
+#end
 Class Resource
 	
+	#rem monkeydoc Invoked when a resource is dscarded.
+	#end
 	Field Discarded:Void()
 	
+	#rem monkeyoc @hidden
+	#end
 	Property Refs:Int()
 		
 		Return _refs
 	End
 	
+	#rem monkeyoc @hidden
+	#end
 	Method Retain()
 		
 		If Not _refs Return
@@ -17,6 +28,8 @@ Class Resource
 		_refs+=1
 	End
 	
+	#rem monkeyoc @hidden
+	#end
 	Method Release()
 		
 		If Not _refs Return
@@ -24,6 +37,24 @@ Class Resource
 		If _refs=1 Discard() Else _refs-=1
 	End
 	
+	#rem monkeyoc @hidden
+	#end
+	Method AddDependancy( r:Resource )
+		
+		If Not r Return
+		
+		r.Retain()
+
+		Discarded+=r.Release
+	End
+	
+	#rem monkeyoc Discards the resource.
+	
+	Calling this will cause the resource's internal [[OnDiscard]] method to be invoked, followed by the [[Discarded]] signal.
+	
+	A resource can only be discarded once. Once discarded a resource should be consider invalid.
+	
+	#end
 	Method Discard()
 		
 		If Not _refs Return
@@ -35,17 +66,15 @@ Class Resource
 		Discarded()
 	End
 	
-	Method AddDependancy( r:Resource )
-		
-		If Not r Return
-		
-		r.Retain()
-
-		Discarded+=r.Release
-	End
-	
 	Protected
 	
+	#rem monkeyoc @hidden
+	
+	This method is invoked when the resource is discarded.
+	
+	This is where subclasses should place their actual discard code.
+	
+	#end
 	Method OnDiscard() Virtual
 	End
 	
@@ -54,6 +83,8 @@ Class Resource
 	Field _refs:=1
 End
 
+#rem monkeydoc @hidden
+#end
 Class ResourceManager Extends Resource
 
 	Method New()
@@ -110,11 +141,15 @@ Class ResourceManager Extends Resource
 
 End
 
+#rem monkeydoc @hidden
+#end
 Function SafeRetain( r:Resource )
 	
 	If r r.Retain()
 End
 
+#rem monkeydoc @hidden
+#end
 Function SafeRelease( r:Resource )
 	
 	If r r.Release()
