@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.04"
+Const MX2CC_VERSION:="1.1.05"
 
 Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
 
@@ -84,6 +84,7 @@ Function CopyRelease()
 	CreateDir( output )
 	
 	CreateDir( output+"/devtools" )
+	CreateDir( output+"/tmp" )
 	
 	CopyFiles( "bin" )
 	CopyFiles( "docs" )
@@ -93,9 +94,10 @@ Function CopyRelease()
 	CopyFiles( "src" )
 	
 	Copy( "hello-world.monkey2" )
+	Copy( "ABOUT.HTML" )
+	Copy( "VERSIONS.TXT" )
 	Copy( "LICENSE.TXT" )
 	Copy( "README.TXT" )
-	Copy( "TODO.TXT" )
 	
 #if __TARGET__="windows"
 	Copy( "Monkey2 (Windows).exe" )
