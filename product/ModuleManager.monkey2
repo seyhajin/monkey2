@@ -4,6 +4,9 @@ Namespace ted2go
 
 Private
 
+Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
+
+
 Class Module
 	Field name:String
 	Field about:String
@@ -18,7 +21,7 @@ Public
 
 Class ModuleManager Extends Dialog
 
-	Method New( console:Console )
+	Method New( console:ConsoleExt )
 		Super.New( "Module Manager" )
 		
 		_console=console
@@ -99,13 +102,14 @@ Class ModuleManager Extends Dialog
 	Private
 	
 	'Const downloadUrl:="http://monkey2.monkey-x.com/wp-content/uploads/mx2-modules/public/"
-    Const downloadUrl:="http://monkey2.monkey-x.com/send-file?file="
-    
+    'Const downloadUrl:="http://monkey2.monkey-x.com/send-file?file="
+    Const downloadUrl:=MONKEY2_DOMAIN+"/send-file?file="
+	
 	Const downloadDir:="modules/module-manager/downloads/"
 	
 	Const backupDir:="modules/module-manager/backups/"
 	
-	Field _console:Console
+	Field _console:ConsoleExt
 	Field _docker:DockingView
 	Field _modules:=New StringMap<Module>
 	Field _filters:=New StringMap<CheckButton>
@@ -600,6 +604,12 @@ Class ModuleManager Extends Dialog
 			i+=1
 
 		Next
+		
+		' some bottom pagdding
+		_table.Rows+=1
+		Local label:=New Label( "" )
+		label.MinSize=New Vec2i( 0,30 )
+		_table[0,_table.Rows-1]=label
 		
 		App.RequestRender()
 	
