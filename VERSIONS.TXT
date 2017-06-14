@@ -1,0 +1,9 @@
+
+***** Monkey2 v1.1.05 *****
+
+* Added WIP MSVC support - see: #MX2_USE_MSVC in bin/windows_env.txt
+
+* Added assimp model for loading 3d models.
+
+* Added OpenUrl support for android and ios to std.requesters namespace in std module.
+
