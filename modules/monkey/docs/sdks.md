@@ -6,11 +6,19 @@ Monkey2 target SDKs.
 
 #### The Windows Desktop Target
 
-Monkey2 uses the mingw compilers and tools to build desktop apps for windows.
+Monkey2 can use either the mingw or msvc express 2015 compilers to build desktop apps.
 
-If you don't already have mingw installed, you can use the mingw build tools available at [[http://monkey2.monkey-x.com/monkey2-files]]. Simply download the mingw build tools package, run it (it's a self extracting exe), and select your monkey2 'devtools' dir for installation.
+To use mingw, you can use the mingw build tools available at [[http://monkey2.monkey-x.com/monkey2-files]]. Simply download the mingw build tools package, run it (it's a self extracting exe), and select your monkey2 'devtools' dir for installation.
 
-Note that the prebuilt binaries available from itch.io already include mingw.
+Note that the prebuilt binaries available from itch.io already include mingw in the 'devtools' dir.
+
+To use msvc instead of mingw, you will need to install msvc express 2015 and change the following line in bin/env_windows.txt:
+
+#MX2_USE_MSVC=1
+
+You will need to rebuild all modules after doing this.
+
+Downloads for msvc express can be found here - https://www.visualstudio.com/vs/visual-studio-express/
 
 
 #### The Macos Desktop Target
