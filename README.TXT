@@ -10,7 +10,7 @@ Grabbing the most recently tagged version is recommended if you just want to giv
 
 1) Install the mingw-64 compiler. There is a self-extracting archive of mingw-64 that has been tested with monkey2 here:
 
-http://monkey2.monkey-x.com/get-file?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe
+http://monkeycoder.co.nz/get-file?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe
 
 If you install this to the monkey2 'devtools' directory, the following steps should 'just work'.
 
@@ -44,10 +44,8 @@ When installing, you should select 'i686' for 'architecture', 'posix' for 'threa
 
 ***** More information *****
 
-Monkey2 patreon page: https://www.patreon.com/monkey2?ty=h
+Monkey2 patreon page: https://www.patreon.com/monkey2
 
-Monkey2 development blog: http://monkey2.monkey-x.com/
+Monkey2 development blog: http://monkeycoder.co.nz/
 
-Monkey2 development forums: http://monkey2.monkey-x.com/forums
-
-Monkey2 xmas 2015 demo: http://monkey2.monkey-x.com/2015/12/23/xmas-demo-2015/
+Monkey2 development forums: http://monkeycoder.co.nz/forums
