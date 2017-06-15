@@ -8,7 +8,7 @@ Monkey2 target SDKs.
 
 Monkey2 can use either the mingw or msvc express 2015 compilers to build desktop apps.
 
-To use mingw, you can use the mingw build tools available at [[http://monkey2.monkey-x.com/monkey2-files]]. Simply download the mingw build tools package, run it (it's a self extracting exe), and select your monkey2 'devtools' dir for installation.
+To use mingw, you can use the mingw build tools available at [[http://monkeycoder.co.nz/monkey2-files]]. Simply download the mingw build tools package, run it (it's a self extracting exe), and select your monkey2 'devtools' dir for installation.
 
 Note that the prebuilt binaries available from itch.io already include mingw in the 'devtools' dir.
 
