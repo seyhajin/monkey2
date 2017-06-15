@@ -14,7 +14,7 @@ Note that the prebuilt binaries available from itch.io already include mingw in 
 
 To use msvc instead of mingw, you will need to install msvc express 2015 and change the following line in bin/env_windows.txt:
 
-#MX2_USE_MSVC=1
+\#MX2\_USE\_MSVC=1
 
 You will need to rebuild all modules after doing this.
 
@@ -70,4 +70,3 @@ With this enabled, android studio doesn't seem to notice when external project f
 #### The iOS Target
 
 Monkey2 uses the command line tools included with xcode to build ios apps.
-
