@@ -141,6 +141,13 @@ Class ResourceManager Extends Resource
 
 End
 
+#rem monkeydoc Releases a resource unless it's null.
+#end
+Function SafeDiscard( r:Resource )
+	
+	If r r.Discard()
+End
+
 #rem monkeydoc @hidden
 #end
 Function SafeRetain( r:Resource )

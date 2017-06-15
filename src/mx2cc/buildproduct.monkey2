@@ -284,7 +284,7 @@ Class GccBuildProduct Extends BuildProduct
 			CC_CMD= "emcc -c"
 			CXX_CMD="em++ -c"
 			AR_CMD="emar"
-			LD_CMD="g++"
+			LD_CMD="em++"
 		Else
 			Local prefix:=(opts.target="raspbian" ? "arm-linux-gnueabihf-" Else "")
 			Local suffix:=GetEnv( "MX2_GCC_SUFFIX" )
