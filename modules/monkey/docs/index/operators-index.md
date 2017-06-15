@@ -1,32 +1,7 @@
 @manpage Operators
 
-####New
-New object or array
-1
-####Null
-Null value
-####Self
-Self instance
-####Super
-Super instance
-####True
-Boolean true
-####False
-Boolean false
-####Typeof
-Typeof operator
-####Cast
-Cast operator
-####Lambda
-Lambda function
-####identifier
-Identifier
-####literal
-Literal value
-
 ####.
 Postfix member acccess
-2
 ####( )
 Postfix Invoke
 ####[ ]
@@ -46,66 +21,73 @@ equivalent to `[0].`
 /linkto Pointers \linkto
 ####< >
 Postfix Generic instance
-####Varptr
-Unary variable address
-3
 ####-
 Unary numeric negate
 ####~
 Unary integer complement
 ####Not
 Unary boolean invert
-
 ####*
-Numeric multiplication 	4
+Numeric multiplication
 ####/
 Numeric division
-####Mod
-Numeric modulo
-
 ####+
-Numeric addition 	5
+Numeric addition
 ####-
 Numeric subtraction
-
-####Shl
-Integer shift left
-6
-####Shr
-Integer shift right
-
 ####&
-Integer and 	7
+Integer and
 ####~
 Integer xor
-
 ####|
-Integer or 	8
-
+Integer or
 ####<=>
-Compare 	9
-
+Compare
 ####<
-Less than 	10
+Less than
 ####>
 Greater than
 ####<=
 Less than or equal
 ####>=
 Greater than or equal
-
 ####=
-Equal 	11
+Equal
 ####<>
 Not equal
-
-####And
-Boolean and
-12
-
-####Or
-Boolean or
-13
-
 ####? Else
 If-then-else
+####And
+Boolean and
+####Cast
+Cast operator
+####Or
+Boolean or
+####False
+Boolean false
+####Identifier
+Identifier
+####Lambda
+Lambda function
+####Literal
+Literal value
+####Mod
+Numeric modulo
+####New
+New object or array
+####Null
+Null value
+####Self
+Self instance
+####Shl
+Integer shift left
+####Shr
+Integer shift right
+####Super
+Super instance
+####True
+Boolean true
+####Typeof
+Typeof operator
+####Varptr
+Unary variable address

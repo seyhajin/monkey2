@@ -8,7 +8,7 @@ Used while declaring classes: class cannot be instantiated with `New`, it must b
 
 #### Alias
 
-Used for convenience types. For example vec2i is a convenience type alias for Vec2<Int>.
+Used for convenience types. For example `Vec2i` is a convenience type alias for `Vec2<Int>`.
 
 Used to import extern typedefs too.
 
