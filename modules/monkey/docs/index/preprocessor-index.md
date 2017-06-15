@@ -16,6 +16,8 @@ Ends an #if or #rem
 Used to import modules, code or assets.
 
 /linkto Modules-and-Applications \linkto
+/linkto Assets-Management \linkto
+/linkto Articles-And-Tutorials/Multifile-projects-and-#Import \linkto
 #### __TARGET__
 Is set to one of the following values: “windows”, “macos”, “linux”, “emscripten”, “android” or “ios” – ie: the precise target.
 #### __DESKTOP_TARGET__
