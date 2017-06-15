@@ -8,7 +8,7 @@ MX2_WHOLE_ARCHIVE=0
 
 '***** WINDOWS DESKTOP TARGET - MINGW *****
 
-'Note: Requires MinGW compilers+build tools, see: https://monkey2.monkey-x.com/monkey2-files.
+'Note: Requires MinGW compilers+build tools, see: http://monkeycoder.co.nz/monkey2-files.
 '
 '(Note: TDM GCC not recommended, as it uses SJLJ exceptions which are very slow)
 '
