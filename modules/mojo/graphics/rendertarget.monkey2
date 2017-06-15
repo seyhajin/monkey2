@@ -9,6 +9,12 @@ Class RenderTarget Extends Resource
 		
 		_depthTexture=depthTexture
 		
+		For Local texture:=Eachin _colorTextures
+			SafeRetain( texture )
+		Next
+		
+		SafeRetain( _depthTexture )
+		
 		_drawBufs=New GLenum[_colorTextures.Length]
 		
 		For Local i:=0 Until _colorTextures.Length
@@ -17,22 +23,27 @@ Class RenderTarget Extends Resource
 	End
 	
 	Property NumColorTextures:Int()
+		
 		Return _colorTextures.Length
 	End
 	
 	Property HasDepthTexture:Bool()
+		
 		Return _depthTexture
 	End
 	
 	Property Size:Vec2i()
+		
 		Return _colorTextures ? _colorTextures[0].Size Else _depthTexture.Size
 	End
 	
 	Method GetColorTexture:Texture( index:Int )
+		
 		Return index>=0 And index<_colorTextures.Length ? _colorTextures[index] Else Null
 	End
 	
 	Method GetDepthTexture:Texture()
+		
 		Return _depthTexture
 	End
 	
@@ -77,6 +88,33 @@ Class RenderTarget Extends Resource
 		CheckStatus()
 	End
 	
+	Protected
+	
+	#rem monkeydoc Discards the rendertarget
+	#end
+	Method OnDiscard() Override
+		
+		If _glSeq=glGraphicsSeq glDeleteFramebuffers( 1,Varptr _glFramebuffer )
+			
+		For Local texture:=Eachin _colorTextures
+			SafeRelease( texture )
+		Next
+		
+		SafeRelease( _depthTexture )
+		
+		_colorTextures=Null
+		_depthTexture=Null
+		_glSeq=0
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method Finalize() Override
+
+		If _glSeq=glGraphicsSeq glDeleteFramebuffers( 1,Varptr _glFramebuffer )
+			
+	End
+	
 	Private
 	
 	Field _colorTextures:Texture[]
@@ -102,7 +140,7 @@ Class RenderTarget Extends Resource
 			Local texture:=_colorTextures[i]
 			
 			If texture glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,GL_TEXTURE_2D,texture.ValidateGLTexture(),0 )
-			
+
 		Next
 		
 		If _depthTexture
