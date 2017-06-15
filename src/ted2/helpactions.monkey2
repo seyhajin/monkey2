@@ -13,7 +13,7 @@ Class HelpActions
 		onlineHelp=New Action( "Online help" )
 		onlineHelp.Triggered=lambda()
 		
-			OpenUrl( "http://monkey2.monkey-x.com/modules-reference/" )
+			OpenUrl( "http://monkeycoder.co.nz/modules-reference/" )
 		End
 		
 		viewManuals=New Action( "Browse manuals" )
@@ -25,9 +25,9 @@ Class HelpActions
 		uploadModules=New Action( "Upload module" )
 		uploadModules.Triggered=Lambda()
 		
-			Alert( "Now taking you to the module manager page at monkey2.monkey-x.com~n~nNote: You must have an account at monkey2.monkey-x.com and be logged in to upload modules" )
+			Alert( "Now taking you to the module manager page at monkeycoder.co.nz~n~nNote: You must have an account at monkeycoder.co.nz and be logged in to upload modules" )
 		
-			OpenUrl( RealPath( "http://monkey2.monkey-x.com/module-manager/" ) )
+			OpenUrl( RealPath( "http://monkeycoder.co.nz/module-manager/" ) )
 		End
 
 		about=New Action( "About monkey2" )
