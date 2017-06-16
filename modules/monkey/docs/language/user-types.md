@@ -194,7 +194,9 @@ Extensions allow you to add extra methods and functions to existing classes or s
 Struct Foo
 	Field i:Int=0
 End
-Struct Foo Extensions
+```
+```
+Struct Foo Extension
 	Method Increment()
 		i+=1
 	End
