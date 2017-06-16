@@ -185,7 +185,7 @@ Local v:=New Vec2
 Print v
 ```
 
-We no longer need to use '.ToString()' when printing the string. Since Print() takes a string argument, and Vec2 has a conversion operator that returns a string, the conversion  operator is automatically called for you.
+We no longer need to use '.ToString()' when printing the string. Since Print() takes a string argument, and Vec2 has a conversion operator that returns a string, the conversion operator is automatically called for you.
 
 #### Extensions
 
@@ -200,5 +200,37 @@ Struct Foo Extension
 	Method Increment()
 		i+=1
 	End
+End
+```
+
+#### Encapsulation
+
+There are three Levels of encapsulation for class and struct members:
+
+-`Public` members can be accessed from anywhere. It is the default encapsulation level.
+
+-`Protected` members can only be accessed by the base class and the derived ones or by class/struct extensions. Code existing in the same source file have acces to `Protected` members too.
+
+`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
+
+example:
+```
+Class Foo
+
+	'public by default'
+	Field i:Int
+
+	Protected
+
+	Field someProtectedThing:Int
+
+	Method doSomething()
+		Print "Doing something"
+	End
+
+	Private
+
+	Field _somePrivateThing:String
+
 End
 ```

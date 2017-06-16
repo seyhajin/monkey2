@@ -1,15 +1,27 @@
 ### Miscellaneous
 
-#### Encapsulation
+#### File Encapsulation
 
-There are three Levels of encapsulation in monkey2: `Public`, `Protected` and `Private`. `Public` and `Private` are applicable to variables, functions, structs, classes, interfaces. `Protected` can only be used inside a class, struct or interface.
+There are two Levels of encapsulation at .monkey2 source files scope: `Public`and `Private` (`Protected` can only be used inside a class, struct or interface).
 
-`Public` can be accessed from anywhere. It is the default encapsulation level.
+`Public` can be accessed from anywhere. It is the default encapsulation level. Code existing in the same source file have also acces to expressions declared as `Private`.
 
-`Protected` members can only be accessed by the base class and the derived ones or by class/struct extentions. Code existing in the same source file have acces to `Protected` too.
+example:
+```
+Namespace myapp
+#Import "<std>"
+Using std..
 
-`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private`.
+Function Main()
+	SayHello()
+End
 
+Private 'this section won't be accessible in other imported files
+
+Function SayHello()
+  Print "Hello"
+End
+```
 
 #### Code lines splitting
 
