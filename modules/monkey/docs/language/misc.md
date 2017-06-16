@@ -22,6 +22,8 @@ Function SayHello()
   Print "Hello"
 End
 ```
+see also
+/linto Articles-and-tutorials/Multifiles-projects-and-#import \linkto
 
 #### Code lines splitting
 
