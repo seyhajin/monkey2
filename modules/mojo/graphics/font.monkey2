@@ -132,7 +132,7 @@ Class Font Extends Resource
 	Method OnDiscard() Override
 
 		For Local page:=Eachin _pages
-			If page SafeRelease( page.image )
+			If page.image page.image.Discard()
 		Next
 		
 		_pages=Null

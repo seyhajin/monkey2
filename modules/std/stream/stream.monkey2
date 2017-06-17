@@ -7,7 +7,7 @@ Using std.collections
 
 #rem monkeydoc Stream class.
 #end
-Class Stream
+Class Stream Extends std.resource.Resource
 
 	#rem monkeydoc True if no more data can be read from the stream.
 	#end
@@ -30,8 +30,8 @@ Class Stream
 	#rem monkeydoc Closes the stream.
 	#end
 	Method Close:Void()
+		
 		OnClose()
-		_tmpbuf.Discard()
 	End
 
 	#rem monkeydoc Seeks to a position in the stream.
@@ -95,9 +95,12 @@ Class Stream
 	
 	#end
 	Property ByteOrder:ByteOrder()
+		
 		Return _tmpbuf.ByteOrder
+		
 	Setter( byteOrder:ByteOrder )
-		_tmpbuf.ByteOrder=byteOrder
+		
+		_tmpbuf=byteOrder=ByteOrder.BigEndian ? _BEbuf Else _LEbuf
 	End
 	
 	#rem monkeydoc Reads as many bytes as possible from a stream into memory.
@@ -195,6 +198,7 @@ Class Stream
 	
 	#end
 	Method ReadByte:Byte()
+		
 		If Read( _tmpbuf.Data,1 )=1 Return _tmpbuf.PeekByte( 0 )
 		
 		Return 0
@@ -206,6 +210,7 @@ Class Stream
 	
 	#end
 	Method ReadUByte:UByte()
+		
 		If Read( _tmpbuf.Data,1 )=1 Return _tmpbuf.PeekUByte( 0 )
 		
 		Return 0
@@ -217,6 +222,7 @@ Class Stream
 	
 	#end
 	Method ReadShort:Short()
+		
 		If ReadAll( _tmpbuf.Data,2 )=2 Return _tmpbuf.PeekShort( 0 )
 		
 		Return 0
@@ -228,6 +234,7 @@ Class Stream
 	
 	#end
 	Method ReadUShort:UShort()
+		
 		If ReadAll( _tmpbuf.Data,2 )=2 Return _tmpbuf.PeekUShort( 0 )
 		
 		Return 0
@@ -239,6 +246,7 @@ Class Stream
 	
 	#end
 	Method ReadInt:Int()
+		
 		If ReadAll( _tmpbuf.Data,4 )=4 Return _tmpbuf.PeekInt( 0 )
 		
 		Return 0
@@ -250,6 +258,7 @@ Class Stream
 	
 	#end
 	Method ReadUInt:UInt()
+		
 		If ReadAll( _tmpbuf.Data,4 )=4 Return _tmpbuf.PeekUInt( 0 )
 		
 		Return 0
@@ -261,6 +270,7 @@ Class Stream
 	
 	#end
 	Method ReadLong:Long()
+		
 		If ReadAll( _tmpbuf.Data,8 )=8 Return _tmpbuf.PeekLong( 0 )
 
 		Return 0
@@ -272,6 +282,7 @@ Class Stream
 	
 	#end
 	Method ReadULong:ULong()
+		
 		If ReadAll( _tmpbuf.Data,8 )=8 Return _tmpbuf.PeekULong( 0 )
 
 		Return 0
@@ -283,6 +294,7 @@ Class Stream
 	
 	#end
 	Method ReadFloat:Float()
+		
 		If ReadAll( _tmpbuf.Data,4 )=4 Return _tmpbuf.PeekFloat( 0 )
 
 		Return 0
@@ -294,6 +306,7 @@ Class Stream
 	
 	#end
 	Method ReadDouble:Double()
+		
 		If ReadAll( _tmpbuf.Data,8 )=8 Return _tmpbuf.PeekDouble( 0 )
 
 		Return 0
@@ -530,13 +543,19 @@ Class Stream
 	Protected
 	
 	Method New()
-		_tmpbuf=New DataBuffer( 8,ByteOrder.LittleEndian )
+		_tmpbuf=_LEbuf
 	End
 	
-	Method OnClose() Abstract
+	Method OnClose() Virtual
+		
+		Discard()
+	End
 	
 	Private
 	
 	Field _tmpbuf:DataBuffer
+	
+	Global _BEbuf:=New DataBuffer( 8,std.memory.ByteOrder.LittleEndian )
+	Global _LEbuf:=New DataBuffer( 8,std.memory.ByteOrder.BigEndian )
 
 End

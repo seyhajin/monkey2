@@ -37,9 +37,9 @@ Class Pixmap Extends Resource
 		_height=height
 		_format=format
 		_depth=depth
-		_gcdata=data
-		_data=data
 		_pitch=pitch
+		_owned=True
+		_data=data
 	End
 	
 	Method New( width:Int,height:Int,format:PixelFormat,data:UByte Ptr,pitch:Int )
@@ -60,6 +60,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Property Width:Int()
+		
 		Return _width
 	End
 	
@@ -67,6 +68,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Property Height:Int()
+		
 		Return _height
 	End
 	
@@ -74,6 +76,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Property Format:PixelFormat()
+		
 		Return _format
 	End
 	
@@ -83,12 +86,14 @@ Class Pixmap Extends Resource
 	
 	#end
 	Property Depth:Int()
+		
 		Return _depth
 	End
 	
 	#rem monkeydoc True if pixmap format includes alpha.
 	#end
 	Property HasAlpha:Bool()
+		
 		Select _format
 		Case PixelFormat.A8,PixelFormat.IA16,PixelFormat.RGBA32
 			Return True
@@ -100,6 +105,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Property Data:UByte Ptr()
+		
 		Return _data
 	End
 	
@@ -109,6 +115,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Property Pitch:Int()
+		
 		Return _pitch
 	End
 	
@@ -122,6 +129,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method PixelPtr:UByte Ptr( x:Int,y:Int )
+		
 		Return _data + y*_pitch + x*_depth
 	End
 	
@@ -282,6 +290,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method Clear( color:Color )
+		
 		For Local y:=0 Until _height
 			For Local x:=0 Until _width
 				SetPixel( x,y,color )
@@ -295,11 +304,14 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method ClearARGB( color:UInt )
+		
 		For Local y:=0 Until _height
+			
 			For Local x:=0 Until _width
+				
 				SetPixelARGB( x,y,color )
 			Next
-		next
+		Next
 	End
 
 	#rem monkeydoc Creates a copy of the pixmap.
@@ -310,8 +322,11 @@ Class Pixmap Extends Resource
 	Method Copy:Pixmap()
 	
 		Local pitch:=Width * Depth
+		
 		Local data:=Cast<UByte Ptr>( libc.malloc( pitch * Height ) )
+		
 		For Local y:=0 Until Height
+			
 			memcpy( data+y*pitch,PixelPtr( 0,y ),pitch )
 		Next
 		
@@ -335,7 +350,9 @@ Class Pixmap Extends Resource
 		DebugAssert( x>=0 And x+pixmap._width<=_width And y>=0 And y+pixmap._height<=_height )
 		
 		For Local ty:=0 Until pixmap._height
+			
 			For Local tx:=0 Until pixmap._width
+				
 				SetPixel( x+tx,y+ty,pixmap.GetPixel( tx,ty ) )
 			Next
 		Next
@@ -351,9 +368,13 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method Convert:Pixmap( format:PixelFormat )
+		
 		Local t:=New Pixmap( _width,_height,format )
+		
 		For Local y:=0 Until _height
+			
 			For Local x:=0 Until _width
+				
 				t.SetPixel( x,y,GetPixel( x,y ) )
 			Next
 		Next
@@ -365,10 +386,14 @@ Class Pixmap Extends Resource
 	#rem monkeydoc Premultiply pixmap r,g,b components by alpha.
 	#end
 	Method PremultiplyAlpha()
+		
 		Select _format
 		Case PixelFormat.IA16,PixelFormat.RGBA32
+			
 			For Local y:=0 Until _height
+				
 				For Local x:=0 Until _width
+					
 					Local color:=GetPixel( x,y )
 					color.r*=color.a
 					color.g*=color.a
@@ -394,6 +419,7 @@ Class Pixmap Extends Resource
 
 		Select _format
 		Case PixelFormat.RGBA8
+			
 			For Local y:=0 Until dst.Height
 				
 				Local dstp:=Cast<UInt Ptr>( dst.PixelPtr( 0,y ) )
@@ -417,7 +443,9 @@ Class Pixmap Extends Resource
 			Next
 		Default
 			For Local y:=0 Until dst.Height
+				
 				For Local x:=0 Until dst.Width
+					
 					Local c0:=GetPixel( x*2,y*2 )
 					Local c1:=GetPixel( x*2+1,y*2 )
 					Local c2:=GetPixel( x*2+1,y*2+1 )
@@ -434,11 +462,16 @@ Class Pixmap Extends Resource
 	#rem monkeydoc Flips the pixmap on the Y axis.
 	#end
 	Method FlipY()
+		
 		Local sz:=Width*Depth
+		
 		Local tmp:=New UByte[sz]
+		
 		For Local y:=0 Until Height/2
+			
 			Local p1:=PixelPtr( 0,y )
 			Local p2:=PixelPtr( 0,Height-1-y )
+			
 			libc.memcpy( tmp.Data,p1,sz )
 			libc.memcpy( p1,p2,sz )
 			libc.memcpy( p2,tmp.Data,sz )
@@ -488,6 +521,7 @@ Class Pixmap Extends Resource
 	Function Load:Pixmap( path:String,format:PixelFormat=Null,pmAlpha:Bool=False )
 
 		Local pixmap:=pixmaploader.LoadPixmap( path,format )
+		
 		If Not pixmap And Not ExtractRootDir( path ) pixmap=pixmaploader.LoadPixmap( "image::"+path,format )
 		
 		If pixmap And pmAlpha pixmap.PremultiplyAlpha()
@@ -497,18 +531,20 @@ Class Pixmap Extends Resource
 	
 	Protected
 	
+	#rem monkeydoc @hidden
+	#end
 	Method OnDiscard() Override
-
-		If _gcdata		
-			GCFree( _gcdata )
-			_gcdata=Null
-			_data=null
-		Endif
+		
+		If _owned GCFree( _data )
+			
+		_data=Null
 	End
 	
-	Method Finalize() Override
+	#rem monkeydoc @hidden
+	#end
+	Method OnFinalize() Override
 		
-		If _gcdata GCFree( _gcdata )
+		If _owned GCFree( _data )
 	End
 
 	Private
@@ -517,10 +553,9 @@ Class Pixmap Extends Resource
 	Field _height:Int
 	Field _format:PixelFormat
 	Field _depth:Int
-	Field _gcdata:UByte Ptr
-	Field _data:UByte Ptr
 	Field _pitch:Int
-
+	Field _owned:Bool
+	Field _data:UByte Ptr
 End
 
 Class ResourceManager Extension

@@ -26,8 +26,6 @@ Class Canvas
 		
 		Local rtarget:=New RenderTarget( New Texture[]( image.Texture ),Null )
 		
-		image.Discarded+=rtarget.Release
-		
 		Init( rtarget,New GraphicsDevice )
 		
 		BeginRender( New Recti( 0,0,image.Rect.Size ),AffineMat3f.Translation( image.Rect.Origin ) )

@@ -36,19 +36,6 @@ Class FileStream Extends Stream
 		Return _end
 	End
 	
-	#rem monkeydoc Closes the filestream.
-	
-	Closing the filestream also sets its position and length to 0.
-	
-	#end
-	Method OnClose() Override
-		If Not _file Return	
-		fclose( _file )
-		_file=Null
-		_pos=0
-		_end=0
-	End
-	
 	#rem monkeydoc Seeks to a position in the filestream.
 	
 	@param offset The position to seek to.
@@ -129,9 +116,17 @@ Class FileStream Extends Stream
 	
 	Protected
 	
-	Method Finalize() Override
+	Method OnDiscard() Override
 		
-		If _file fclose( _file )
+		fclose( _file )
+		_file=Null
+		_pos=0
+		_end=0
+	end
+	
+	Method OnFinalize() Override
+		
+		fclose( _file )
 	End
 	
 	Private

@@ -113,8 +113,6 @@ Class Texture Extends Resource
 		
 		If _flags & TextureFlags.Dynamic
 			PastePixmap( _managed,0,0 )
-		Else
-			AddDependancy( _managed )
 		Endif
 	End
 	
@@ -147,7 +145,6 @@ Class Texture Extends Resource
 		If Not (_flags & TextureFlags.Dynamic)
 			_managed=New Pixmap( width,height,format )
 			_managed.Clear( Color.Magenta )
-			Discarded+=_managed.Release
 		Endif
 	End
 	
@@ -220,8 +217,6 @@ Class Texture Extends Resource
 		
 		Local texture:=New Texture( pixmap,flags )
 		
-		texture.Discarded+=pixmap.Release
-		
 		Return texture
 	End
 	
@@ -257,11 +252,7 @@ Class Texture Extends Resource
 			Next
 		Endif
 			
-		If pspec pspec.Release()
-			
 		Local texture:=New Texture( pnorm,Null )
-		
-		texture.Discarded+=pnorm.Release
 		
 		Return texture
 	End
@@ -424,8 +415,6 @@ Class Texture Extends Resource
 	#end	
 	Method OnDiscard() Override
 		
-		If _discarded Return
-	
 		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 			
 		_discarded=True
@@ -436,9 +425,9 @@ Class Texture Extends Resource
 	
 	#rem monkeydoc @hidden
 	#end	
-	Method Finalize() Override
+	Method OnFinalize() Override
 		
-		If Not _discarded And _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
+		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 	End
 	
 	Private
@@ -504,15 +493,13 @@ Class Texture Extends Resource
 			If width=1 And height=1 Exit
 			
 			Local hdata:=data.MipHalve()
-			data.Release()
 			data=hdata
 			width/=2
 			height/=2
 			mip+=1
 		
 		Wend
-		
-		data.Release()
+
 	End
 	
 	Method UploadTexImage2D( glTarget:GLenum,image:Pixmap )
@@ -553,8 +540,6 @@ Class Texture Extends Resource
 			Next
 			
 			glFlush() 'macos nvidia bug!
-			
-			image.Release()
 		
 		Endif
 		

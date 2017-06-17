@@ -520,18 +520,21 @@ Class DataBuffer Extends std.resource.Resource
 	End
 	
 	Protected
-	
+
+	#rem monkeydoc @hidden
+	#end	
 	Method OnDiscard() Override
 		
-		If _data
-			GCFree( _data )
-			_data=Null
-		Endif
+		GCFree( _data )
+		
+		_data=Null
 	End
 
-	Method Finalize() Override
+	#rem monkeydoc @hidden
+	#end	
+	Method OnFinalize() Override
 		
-		If _data GCFree( _data )
+		GCFree( _data )
 	End
 	
 	Private

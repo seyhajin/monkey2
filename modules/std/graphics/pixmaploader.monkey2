@@ -25,7 +25,8 @@ Function stbi_eof:Int( user:Void Ptr )
 	Return stream.Eof
 End
 
-'this is a bit nasty but meh...
+#rem monkeydoc @hidden
+#end
 Class StbPixmap Extends Pixmap
 	
 	Method New( width:Int,height:Int,format:PixelFormat,data:UByte Ptr,pitch:Int )
@@ -34,20 +35,23 @@ Class StbPixmap Extends Pixmap
 		_data=data
 	End
 	
-	Protected
-	
-	Method OnDiscard() Override
-		stbi_image_free( _data )
-		_data=Null
-	End
-	
-	Method Finalize() Override
-		stbi_image_free( _data )
-	End
-	
 	Private
 	
 	Field _data:UByte Ptr
+	
+	Method OnDiscard() Override
+		
+		Super.OnDiscard()
+		
+		stbi_image_free( _data )
+		
+		_data=Null
+	End
+	
+	Method OnFinalize() Override
+		
+	 	stbi_image_free( _data )
+	End
 End
 
 Public

@@ -35,8 +35,6 @@ Class Image Extends Resource
 	
 	New( image,... ) Creates an image from within an 'atlas' image.
 	
-	Note: `textureFlags` should be null for static images or TextureFlags.Dynamic for dynamic images.
-
 	@param pixmap Source image.
 	
 	@param textureFlags Image texture flags. 
@@ -52,29 +50,21 @@ Class Image Extends Resource
 	@param width,height Image size.
 	
 	#end	
-	Method New( pixmap:Pixmap,textureFlags:TextureFlags=Null,shader:Shader=Null )
+	Method New( pixmap:Pixmap,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
 		
-		textureFlags=MakeTextureFlags( textureFlags )
-	
 		Local texture:=New Texture( pixmap,textureFlags )
 		
-		Discarded+=texture.Release
-		
 		Init( texture,shader )
 	End
 
-	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=Null,shader:Shader=Null )
+	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
 		
-		textureFlags=MakeTextureFlags( textureFlags )
-	
 		Local texture:=New Texture( width,height,format,textureFlags )
 		
-		Discarded+=texture.Release
-		
 		Init( texture,shader )
 	End
 
-	Method New( width:Int,height:Int,textureFlags:TextureFlags=null,shader:Shader=Null )
+	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
 		
 		Self.New( width,height,PixelFormat.RGBA8,textureFlags,shader )
 	End
@@ -218,7 +208,7 @@ Class Image Extends Resource
 	
 		_color=color
 		
-		_material.SetVec4f( "ImageColor",_color )
+		_uniforms.SetVec4f( "ImageColor",_color )
 	End
 
 	#rem monkeydoc The image light depth.
@@ -231,7 +221,7 @@ Class Image Extends Resource
 	
 		_lightDepth=depth
 		
-		_material.SetFloat( "LightDepth",_lightDepth )
+		_uniforms.SetFloat( "LightDepth",_lightDepth )
 	End
 
 	#rem monkeydoc Shadow caster attached to image.
@@ -289,7 +279,7 @@ Class Image Extends Resource
 	#end
 	Property Material:UniformBlock()
 	
-		Return _material
+		Return _uniforms
 	End
 
 	#rem monkeydoc @hidden Image vertices.
@@ -312,7 +302,7 @@ Class Image Extends Resource
 	
 		_textures[index]=texture
 		
-		_material.SetTexture( "ImageTexture"+index,texture )
+		_uniforms.SetTexture( "ImageTexture"+index,texture )
 	End
 	
 	#rem monkeydoc @hidden gets an image's texture.
@@ -321,19 +311,17 @@ Class Image Extends Resource
 	
 		Return _textures[index]
 	End
-	
+
 	#rem monkeydoc Loads an image from file.
 	#end
-	Function Load:Image( path:String,shader:Shader=Null )
+	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 		
 		Local pixmap:=Pixmap.Load( path,Null,True )
 		If Not pixmap Return Null
 
 		If Not shader shader=mojo.graphics.Shader.GetShader( "sprite" )
 		
-		Local image:=New Image( pixmap,Null,shader )
-		
-		image.Discarded+=pixmap.Release
+		Local image:=New Image( pixmap,textureFlags,shader )
 		
 		Return image
 	End
@@ -362,9 +350,6 @@ Class Image Extends Resource
 		
 		Local image:=New Image( texture0,shader )
 
-		image.Discarded+=texture0.Release
-		image.Discarded+=texture1.Release
-		
 		image.SetTexture( 1,texture1 )
 		
 		Return image
@@ -386,9 +371,7 @@ Class Image Extends Resource
 			
 		Case PixelFormat.A8
 
-			Local tpixmap:=pixmap
 			pixmap=pixmap.Convert( PixelFormat.IA16 )
-			tpixmap.Release()
 
 			'Copy A->I
 			For Local y:=0 Until pixmap.Height
@@ -401,9 +384,7 @@ Class Image Extends Resource
 
 		Case PixelFormat.I8
 		
-			Local tpixmap:=pixmap
 			pixmap=pixmap.Convert( PixelFormat.IA16 )
-			tpixmap.Release()
 			
 			'Copy I->A
 			For Local y:=0 Until pixmap.Height
@@ -416,9 +397,7 @@ Class Image Extends Resource
 
 		Case PixelFormat.RGB24
 		
-			Local tpixmap:=pixmap
 			pixmap=pixmap.Convert( PixelFormat.RGBA32 )
-			tpixmap.Release()
 			
 			'Copy Max(R,G,B)->A
 			For Local y:=0 Until pixmap.Height
@@ -438,10 +417,21 @@ Class Image Extends Resource
 		Return image
 	End
 	
+	Protected
+
+	#rem monkeydoc @hidden
+	#end	
+	Method OnDiscard() Override
+
+		SafeDiscard( _uniforms )
+		_uniforms=Null
+		_textures=Null
+	End
+	
 	Private
 	
 	Field _shader:Shader
-	Field _material:UniformBlock
+	Field _uniforms:UniformBlock
 	Field _textures:=New Texture[4]
 	Field _blendMode:BlendMode
 	Field _color:Color
@@ -468,7 +458,7 @@ Class Image Extends Resource
 	
 		_rect=rect
 		_shader=shader
-		_material=New UniformBlock( 2 )
+		_uniforms=New UniformBlock( 2 )
 		
 		SetTexture( 0,texture )
 		
@@ -503,15 +493,6 @@ Class Image Extends Resource
 		_texCoords.min.y=Float(_rect.min.y)/_textures[0].Height
 		_texCoords.max.x=Float(_rect.max.x)/_textures[0].Width
 		_texCoords.max.y=Float(_rect.max.y)/_textures[0].Height
-	End
-	
-	Method MakeTextureFlags:TextureFlags( textureFlags:TextureFlags )
-		
-		textureFlags|=TextureFlags.Filter
-		
-		If Not (textureFlags & TextureFlags.Dynamic) textureFlags|=textureFlags.Mipmap
-		
-		Return textureFlags
 	End
 	
 End

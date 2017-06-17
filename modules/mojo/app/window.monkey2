@@ -259,7 +259,7 @@ Class Window Extends View
 		Case EventType.WindowMoved,EventType.WindowResized
 			_frame=GetFrame()
 			Frame=_frame
-			_weirdHack=true
+			_weirdHack=True
 		End
 		
 		OnWindowEvent( event )
@@ -342,20 +342,6 @@ Class Window Extends View
 	Global _visibleWindows:=New Stack<Window>
 	Global _windowsByID:=New Map<UInt,Window>
 	
-	Method UpdateMouseScale()
-	
-		Local w:Int,h:Int,dw:Int,dh:Int
-		
-		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
-		
-#If __TARGET__="emscripten"
-		emscripten_get_canvas_size( Varptr dw,Varptr dh,Null )'Varptr fs )
-#Else
-		SDL_GL_GetDrawableSize( _sdlWindow,Varptr dw,Varptr dh )
-#Endif
-		_mouseScale=New Vec2f( Float(dw)/w,Float(dh)/h )
-	End
-	
 	Method SetMinSize( size:Vec2i )
 		size/=_mouseScale
 		SDL_SetWindowMinimumSize( _sdlWindow,size.x,size.y )
@@ -391,8 +377,22 @@ Class Window Extends View
 		Return New Recti( x,y,x+w,y+h ) * _mouseScale
 	End
 	
+	Method UpdateMouseScale()
+	
+		Local w:Int,h:Int,dw:Int,dh:Int
+		
+		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
+		
+#If __TARGET__="emscripten"
+		emscripten_get_canvas_size( Varptr dw,Varptr dh,Null )
+#Else
+		SDL_GL_GetDrawableSize( _sdlWindow,Varptr dw,Varptr dh )
+#Endif
+		_mouseScale=New Vec2f( Float(dw)/w,Float(dh)/h )
+	End
+	
 	Method LayoutWindow()
-
+		
 		'All this polling is a bit ugly...fixme.
 		'		
 #If __DESKTOP_TARGET__
@@ -415,6 +415,12 @@ Class Window Extends View
 			_frame=Frame
 			_weirdHack=True
 		Endif
+		
+#Else if __WEB_TARGET__
+
+		Local dw:Int,dh:Int
+		emscripten_get_canvas_size( Varptr dw,Varptr dh,Null )
+		Frame=New Recti( 0,0,dw,dh )
 #Else
 		_frame=GetFrame()
 		Frame=_frame

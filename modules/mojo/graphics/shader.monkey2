@@ -115,6 +115,11 @@ Class GLProgram
 			_glRetroSeq=glRetroSeq
 		Endif
 		#end
+		
+'		For Local i:=0 Until 8
+'			glActiveTexture( GL_TEXTURE0+i )
+'			glBindTexture( GL_TEXTURE_2D,0 )
+'		Next
 
 		For Local i:=0 Until 4
 
@@ -238,7 +243,7 @@ Class Shader
 			_glSeq=glGraphicsSeq
 			Rebuild()
 		Endif
-	
+		
 		glUseProgram( _programs[renderPass].GLProgram )
 	End
 	

@@ -3,6 +3,10 @@ Namespace monkey.gc
 
 Extern
 
+#rem monkeydoc @hidden
+#end
+Function GCSetDebug( debug:Bool )="bbGC::setDebug"
+
 #rem monkeydoc Sets garbage collection trigger value.
 
 The GC trigger is the number of bytes of memory that must be allocated before a garbage collection is automatically performed.
