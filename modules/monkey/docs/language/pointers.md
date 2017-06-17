@@ -1,3 +1,4 @@
+
 ### Pointers
 
 Pointers are special variables containing a memory adress.

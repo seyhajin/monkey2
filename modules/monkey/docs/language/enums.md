@@ -21,7 +21,7 @@ Enums values are implicitly converted to integral values when assigned to it.
 Local i:UInt=myCustomEnum.b
 ```
 
-You can also create `Enum` variables. An `Enum` variable contains a Uint variable in addition to it's constant members (default value is zero). This value is of the Uint type.
+You can also create `Enum` variables. An `Enum` variable contains a Uint variable in addition to it's constant members (default value is zero).
 
 Bitwise operators (|,&,~) can be used with Enums variables and Enums members to compute combinations. Such Enums most often contain powers of 2 numbers as members! (1,2,4,8,16,32,64,... and 0 if needed).
 

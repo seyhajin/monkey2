@@ -22,11 +22,11 @@ Syntax:
 
 `Try`
 
-code (sould contain at least one `throw`)
+_...code (sould contain at least one `throw`)..._
 
 `Catch` exception
 
-error handling code
+_...error handling code..._
 
 `End`
 
