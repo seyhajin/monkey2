@@ -97,7 +97,7 @@ If Collection is an array, the loop will iterate through each element of the arr
 
 If Collection is a string, the loop will iterate through each character code of the string, and the type of the index variable must be numeric.
 
-If Collection is an object, it must implement the std.collections.Icontainer interface. See <a href=http://monkey2.monkey-x.com/mx2-docs/std-std-collections-icontainer/ target=blank>std-std-collections-icontainer</a>.
+If Collection is an object, it must implement the std.collections.Icontainer interface. See <a href=http://monkeycoder.co.nz/mx2-docs/std-std-collections-icontainer/ target=blank>std-std-collections-icontainer</a>.
 
 #### Exit
 
