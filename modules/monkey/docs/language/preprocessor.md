@@ -10,7 +10,7 @@ Preprocessor expressions may only use the 'And', 'Or' and comparison operators.
 The following symbols may be used in preprocessor expressions:
 
 | Symbol			| Type		| Meaning
-|:------------------|:----------|--------
+|:----------------------|:------|:--------------------------------------------:
 | \_\_TARGET\_\_			| String	| The current build target. One of: "windows", "macos", "linux", "android", "ios", "emscripten"
 | \_\_CONFIG\_\_			| String	| The current build config. One of: "release", "debug"
 | \_\_DESKTOP\_TARGET\_\_	| Bool		| True if the current build target is windows, macos or linux.
@@ -34,4 +34,3 @@ To include code on desktop or mobile builds, use:
 Print "This code is only include in desktop and mobile builds."
 #Endif
 ```
-

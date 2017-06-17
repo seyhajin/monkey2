@@ -211,19 +211,17 @@ There are three Levels of encapsulation for class and struct members:
 
 -`Protected` members can only be accessed by the base class and the derived ones or by class/struct extensions. Code existing in the same source file have acces to `Protected` members too.
 
-`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
+-`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
 
 example:
 ```
 Class Foo
-
 	'public by default'
 	Field i:Int
 
 	Protected
 
 	Field someProtectedThing:Int
-
 	Method doSomething()
 		Print "Doing something"
 	End
@@ -231,6 +229,5 @@ Class Foo
 	Private
 
 	Field _somePrivateThing:String
-
 End
 ```

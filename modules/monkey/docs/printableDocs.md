@@ -1247,19 +1247,17 @@ There are three Levels of encapsulation for class and struct members:
 
 -`Protected` members can only be accessed by the base class and the derived ones or by class/struct extensions. Code existing in the same source file have acces to `Protected` members too.
 
-`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
+-`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
 
 example:
 ```
 Class Foo
-
 	'public by default'
 	Field i:Int
 
 	Protected
 
 	Field someProtectedThing:Int
-
 	Method doSomething()
 		Print "Doing something"
 	End
@@ -1267,7 +1265,6 @@ Class Foo
 	Private
 
 	Field _somePrivateThing:String
-
 End
 ```
 
@@ -1282,7 +1279,7 @@ Preprocessor expressions may only use the 'And', 'Or' and comparison operators.
 The following symbols may be used in preprocessor expressions:
 
 | Symbol			| Type		| Meaning
-|:------------------|:----------|--------
+|:----------------------|:------|:--------------------------------------------:
 | \_\_TARGET\_\_			| String	| The current build target. One of: "windows", "macos", "linux", "android", "ios", "emscripten"
 | \_\_CONFIG\_\_			| String	| The current build config. One of: "release", "debug"
 | \_\_DESKTOP\_TARGET\_\_	| Bool		| True if the current build target is windows, macos or linux.
@@ -1306,7 +1303,6 @@ To include code on desktop or mobile builds, use:
 Print "This code is only include in desktop and mobile builds."
 #Endif
 ```
-
 
 ### Reflection
 
@@ -1674,6 +1670,13 @@ Lines can currently only be split after ‘[‘, ‘(‘ or ‘,’ tokens.
 Hexadecimal numbers can be entered using the $ symbol
 ```
 Local i:=$A0F
+```
+
+#### Inline Code comments
+
+Inline comments can be done with the `'` character.
+```
+Print "hello!" 'this line prints hello on the output console
 ```
 
 # Articles and Tutorials
