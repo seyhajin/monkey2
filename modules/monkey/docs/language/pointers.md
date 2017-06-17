@@ -3,7 +3,8 @@
 
 Pointers are special variables containing a memory adress.
 In Monkey2 pointers are mainly used with external C/C++ code.
-It is not advised to use pointers if not necessary. It can lead to bug or memory acces violation if the pointed adress is not kept "alive". Pointer to globals are safe for example.
+It is not advised to use pointers if not necessary. It can lead to bug if the pointed adress is not kept "alive". Pointer to globals are safe for example.  
+You must have acces to the memory you try to reach or you'll have a (fatal) memory acces violation.
 
 A pointer can point to any kind of type, even garbage collected types. This can lead to bad things too as the garbage collector is not 'aware' of pointers.
 
@@ -20,7 +21,7 @@ Local anotherPtr:Void Ptr
 
 #### Referencing
 
-Use the `VarPtr` operator to reference a pointer 
+Use the `VarPtr` operator to reference a pointer
 
 ```
 Local i:int=1
@@ -58,7 +59,7 @@ Function Main()
    Local strPtr:str Ptr
    strPtr=VarPtr s
 
-   Print strPtr->i	
+   Print strPtr->i
 End
 ```
 will show the value of the struct's field i

@@ -1,3 +1,46 @@
+# Monkey2 Language Reference
+
+!! this is WIP with non official addons !!
+ 
+ 
+ please review and comment on http://monkeycoder.co.nz/forums/topic/integrated-docs-github-community-organisation/ 
+or https://github.com/mx2DocsCommunity/monkey2 
+
+ 
+ 
+## Table of contents
+
+-modules  
+-namespaces  
+-types  
+-arrays  
+-strings  
+-variants  
+-Enums  
+-variables  
+-pointers  
+-functions  
+-loop-statements  
+-conditional-statements  
+-expressions  
+-user-types  
+-preprocessor  
+-reflection  
+-error-handling  
+-assets-management  
+-native-code  
+-build-system  
+-misc  
+
+
+-operator-overloading  
+-lambda-functions  
+-namespaces-and-using  
+-multifile-projects
+
+ 
+-sdks  
+-mxcc  
 
 ### Modules and Applications
 
@@ -516,7 +559,8 @@ Consts are stored in the same way as globals, but cannot be modified after they 
 
 Pointers are special variables containing a memory adress.
 In Monkey2 pointers are mainly used with external C/C++ code.
-It is not advised to use pointers if not necessary. It can lead to bug or memory acces violation if the pointed adress is not kept "alive". Pointer to globals are safe for example.
+It is not advised to use pointers if not necessary. It can lead to bug if the pointed adress is not kept "alive". Pointer to globals are safe for example.  
+You must have acces to the memory you try to reach or you'll have a (fatal) memory acces violation.
 
 A pointer can point to any kind of type, even garbage collected types. This can lead to bad things too as the garbage collector is not 'aware' of pointers.
 
@@ -533,7 +577,7 @@ Local anotherPtr:Void Ptr
 
 #### Referencing
 
-Use the `VarPtr` operator to reference a pointer 
+Use the `VarPtr` operator to reference a pointer
 
 ```
 Local i:int=1
@@ -571,7 +615,7 @@ Function Main()
    Local strPtr:str Ptr
    strPtr=VarPtr s
 
-   Print strPtr->i	
+   Print strPtr->i
 End
 ```
 will show the value of the struct's field i
@@ -597,6 +641,7 @@ j=myIntPtr[0]
 ```
 j receives to value of i but does not have the same adress.
 myIntPtr and myVoidPtr both points to the same adress(VarPtr i) but have different types.
+
 ### Functions
 
 #### Global functions
@@ -1923,7 +1968,7 @@ End
 
 This is perfectly valid, as long as file1.monkey2 is the ‘root file’ you compile.
 
-You may encapsulate some code within a file by using the `Private` keyword. That code will  only be accessible within the file. The `Public` keyword allows you to go back to the default public privacy level.
+You may encapsulate some code within a file by using the `Private` keyword. That code will only be accessible within the file. The `Public` keyword allows you to go back to the default public privacy level.
 
 ```
 '***** file1.monkey2 *****

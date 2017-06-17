@@ -55,7 +55,7 @@ End
 
 This is perfectly valid, as long as file1.monkey2 is the ‘root file’ you compile.
 
-You may encapsulate some code within a file by using the `Private` keyword. That code will  only be accessible within the file. The `Public` keyword allows you to go back to the default public privacy level.
+You may encapsulate some code within a file by using the `Private` keyword. That code will only be accessible within the file. The `Public` keyword allows you to go back to the default public privacy level.
 
 ```
 '***** file1.monkey2 *****
