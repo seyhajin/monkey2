@@ -36,24 +36,16 @@ Class FreeTypeFont Extends Font
 		
 		Local face:FT_Face
 		If FT_New_Memory_Face( FreeType,data.Data,data.Length,0,Varptr face ) 
-			data.Release()
+			data.Discard()
 			Return Null
 		Endif
 		
 		Local font:=New FreeTypeFont( data,face,fheight,shader )
-		font.Discarded+=data.Discard
 		
 		Return font
 	End
 	
 	Protected
-	
-	Method OnDiscard() Override
-	
-		FT_Done_Face( _face )
-	
-		Super.OnDiscard()
-	End
 	
 	Method OnLoadGlyphPage( page:Int,gpage:GlyphPage ) Override
 	
@@ -130,7 +122,7 @@ Class FreeTypeFont Extends Font
 			
 			pixmap.Paste( tmp,tx,ty )
 			
-			tmp.Release()
+			tmp.Discard()
 			
 			Local glyph:=New Glyph( New Recti( tx,ty,tx+gw,ty+gh ),New Vec2f( slot->bitmap_left,_ascent-slot->bitmap_top ),slot->advance.x Shr 6 )
 	
@@ -143,11 +135,21 @@ Class FreeTypeFont Extends Font
 		gpage.image=New Image( pixmap,TextureFlags.Filter|TextureFlags.Mipmap,_shader )
 		gpage.glyphs=glyphs
 		
-		pixmap.Release()
-		
 '		Print "Loading glyph page "+page+", image size="+gpage.image.Rect.Size
 	End
-
+	
+	Method OnDiscard() Override
+	
+		FT_Done_Face( _face )
+		
+		_data.Discard()
+		
+		_data=Null
+		_face=Null
+		_shader=Null
+		
+	End
+	
 	Private
 	
 	Field _data:DataBuffer
@@ -157,6 +159,7 @@ Class FreeTypeFont Extends Font
 	Field _ascent:Int
 	
 	Method New( data:DataBuffer,face:FT_Face,fheight:Float,shader:Shader )
+		
 		_data=data
 		_face=face
 		_shader=shader

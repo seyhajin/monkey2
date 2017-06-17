@@ -704,9 +704,9 @@ Class @Object="bbObject"
 	#end
 	Property InstanceType:TypeInfo()="typeof"
 	
-	#rem monkeydoc Finalize method.
-	#end
-	Method Finalize() Virtual="gcFinalize"
+	'#rem monkeydoc Finalize method.
+	'#end
+	'Method Finalize() Virtual="gcFinalize"
 
 	#rem monkeydoc @hidden
 	#end

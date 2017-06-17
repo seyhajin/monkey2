@@ -3,6 +3,6 @@
 	"about":"GUI extensions for mojo",
 	"author":"Mark Sibly",
 	"version":"1.0.0",
-	"support":"http://monkey2.monkey-x.com",
+	"support":"http://monkeycoder.co.nz",
 	"depends":["std","mojo","hoedown","litehtml"]
 }

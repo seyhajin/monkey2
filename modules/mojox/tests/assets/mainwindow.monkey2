@@ -347,7 +347,7 @@ Class MainWindowInstance Extends Window
 	Method OnHelpOnlineHelp()
 	
 		App.Idle+=Lambda()
-			mojo.requesters.OpenUrl( "http://monkey2.monkey-x.com/modules-reference/" )
+			mojo.requesters.OpenUrl( "http://monkeycoder.co.nz/modules-reference/" )
 		End
 		
 	End

@@ -38,18 +38,10 @@ Class MyWindow Extends Window
 		'		
 		ClearColor=New Color( .03,.03,.03 )
 		
-		'Load laser sound effect
-		'		
-		laser=Sound.Load( "asset::bang.wav" )
+		'load audio/images
+		'
+		LoadResources()
 		
-		'Load spaceship image.
-		'
-		'Note: scaling image here is faster than scaling via Canvas matrix.
-		'
-		image=Image.Load( "asset::spaceship_32.png" )
-		image.Scale=New Vec2f( 2 )
-		image.Handle=New Vec2f( .5 )
-
 		'Set initial image pos
 		'
 		pos=New Vec2f( VirtualWidth/2,VirtualHeight/2 )
@@ -61,6 +53,21 @@ Class MyWindow Extends Window
 		'Enable vsync.
 		'	
 		SwapInterval=1
+	End
+	
+	Method LoadResources()
+		
+		'Load laser sound effect
+		'		
+		laser=Sound.Load( "asset::bang.wav" )
+		
+		'Load spaceship image.
+		'
+		'Note: scaling image here via Image.Scale is faster than scaling via Canvas matrix.
+		'
+		image=Image.Load( "asset::spaceship_32.png" )
+		image.Scale=New Vec2f( 2 )
+		image.Handle=New Vec2f( .5 )
 	End
 	
 	Method OnKeyEvent( event:KeyEvent ) Override
@@ -108,6 +115,10 @@ Class MyWindow Extends Window
 	Method OnUpdate()
 	
 		RequestRender()
+		
+		'give GC a bit of a thrash....
+		'
+		'LoadResources()
 		
 		'rotate
 		'
@@ -194,7 +205,6 @@ Class MyWindow Extends Window
 	Method OnMeasure:Vec2i() Override
 	
 		Return New Vec2i( VirtualWidth,VirtualHeight )
-		
 	End
 	
 End

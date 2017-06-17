@@ -133,8 +133,6 @@ Class Theme
 				icons.images[i]=image
 			Next
 			
-			icons.AddDependancy( atlas )
-
 			_res.AddResource( slug,icons )
 		Endif
 		

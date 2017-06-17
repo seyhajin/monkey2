@@ -9,12 +9,6 @@ Class RenderTarget Extends Resource
 		
 		_depthTexture=depthTexture
 		
-		For Local texture:=Eachin _colorTextures
-			SafeRetain( texture )
-		Next
-		
-		SafeRetain( _depthTexture )
-		
 		_drawBufs=New GLenum[_colorTextures.Length]
 		
 		For Local i:=0 Until _colorTextures.Length
@@ -96,12 +90,6 @@ Class RenderTarget Extends Resource
 		
 		If _glSeq=glGraphicsSeq glDeleteFramebuffers( 1,Varptr _glFramebuffer )
 			
-		For Local texture:=Eachin _colorTextures
-			SafeRelease( texture )
-		Next
-		
-		SafeRelease( _depthTexture )
-		
 		_colorTextures=Null
 		_depthTexture=Null
 		_glSeq=0
@@ -109,10 +97,9 @@ Class RenderTarget Extends Resource
 	
 	#rem monkeydoc @hidden
 	#end
-	Method Finalize() Override
+	Method OnFinalize() Override
 
 		If _glSeq=glGraphicsSeq glDeleteFramebuffers( 1,Varptr _glFramebuffer )
-			
 	End
 	
 	Private

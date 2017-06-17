@@ -51,6 +51,8 @@ namespace bbGC{
 	void retain( bbGCNode *p );
 	
 	void release( bbGCNode *p );
+	
+	void setDebug( bool debug );
 
 	void setTrigger( size_t trigger );
 

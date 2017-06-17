@@ -1,86 +1,93 @@
 
 Namespace std.resource
 
+#Import "native/bbresource.cpp"
+
+#Import "native/bbresource.h"
+
+Extern Private
+
+Class BBResource="bbResource"
+	
+	Protected
+	
+	Method InternalDiscard()="discard"
+		
+	Method OnDiscard() Virtual="onDiscard"
+	
+	Method OnFinalize() Virtual="onFinalize"
+	
+End
+
+Public
+
 #Rem monkeydoc The Resource class.
 
-Currently WIP!
+The resource class helps with managing finite OS resources in a garbage collected environment.
 
+To implement a resource object, you should extend the Resource class and override the OnDiscard and/or OnFinalize methods.
+
+Code to actually discard the resource should be placed in [[OnDiscard]]. Discarding a resource might involve closing a file, deleting 
+a texture handle or other similar actions. 'Last chance' cleanup code should be placed in [[OnFinalize]].
+
+IMPORTANT! There are a number of restrictions on code that may be placed in OnFinalize, please refer to the documentation for [[OnFinalize]]
+for more information.
+	
 #end
-Class Resource
-	
-	#rem monkeydoc Invoked when a resource is dscarded.
-	#end
-	Field Discarded:Void()
-	
-	#rem monkeyoc @hidden
-	#end
-	Property Refs:Int()
-		
-		Return _refs
-	End
-	
-	#rem monkeyoc @hidden
-	#end
-	Method Retain()
-		
-		If Not _refs Return
-		
-		_refs+=1
-	End
-	
-	#rem monkeyoc @hidden
-	#end
-	Method Release()
-		
-		If Not _refs Return
-		
-		If _refs=1 Discard() Else _refs-=1
-	End
-	
-	#rem monkeyoc @hidden
-	#end
-	Method AddDependancy( r:Resource )
-		
-		If Not r Return
-		
-		r.Retain()
-
-		Discarded+=r.Release
-	End
+Class Resource Extends BBResource
 	
 	#rem monkeyoc Discards the resource.
+		
+	If the resource has not yet been discarded, calling this method will cause any internally managed OS resources to be cleaned up.
 	
-	Calling this will cause the resource's internal [[OnDiscard]] method to be invoked, followed by the [[Discarded]] signal.
-	
-	A resource can only be discarded once. Once discarded a resource should be consider invalid.
+	If the resource has already been discarded, this method does nothing.
+		
+	Once discarded, a resource should be consider invalid.
 	
 	#end
 	Method Discard()
 		
-		If Not _refs Return
-		
-		_refs=0
-		
-		OnDiscard()
-		
-		Discarded()
+		InternalDiscard()
 	End
 	
 	Protected
 	
-	#rem monkeyoc @hidden
-	
-	This method is invoked when the resource is discarded.
+	#rem monkeyoc The OnDiscard method.
 	
 	This is where subclasses should place their actual discard code.
 	
+	This method will be invoked the first time Resource.Discard() is invoked.
+	
+	This method will only ever be invoked at most once during the lifetime of a resource.
+	
 	#end
-	Method OnDiscard() Virtual
+	Method OnDiscard() Override
 	End
 	
-	Private
+	#rem monkeydoc The OnFinalize method.
 	
-	Field _refs:=1
+	This method will be invoked when a resource object's memory is about to be reclaimed and if the resource's Discard() method has
+	never been called during the lifetime of the object.
+	
+	This method is intended to be used for the 'last chance' cleanup of criticial OS resources, such as file handles, texture objects etc.
+	
+	***** WARNING *****
+	
+	Code inside this method executes at a critical point in the garbage collection process, and should be kept short and sweet.
+	
+	Code inside OnFinalize MUST obey the following rules:
+	
+	* Code MUST NOT read or write any fields of Self containing objects, arrays, or function pointers as there is no guarantee that such fields
+	 are still valid when the finalizer executes.
+	
+	* Code MUST NOT assign Self to any variable.
+	
+	Failure to follow these rules *will* lead to eventual disaster!
+	
+	#end
+	Method OnFinalize() Override
+	End
+	
 End
 
 #rem monkeydoc @hidden
@@ -121,13 +128,6 @@ Class ResourceManager Extends Resource
 	
 		_managers.Remove( Self )
 		
-		For Local it:=Eachin _retained
-			
-			it.Value.Release()
-				
-			it.Value=Null
-		Next
-		
 		_retained=Null
 	End
 	
@@ -135,29 +135,10 @@ Class ResourceManager Extends Resource
 	
 	Global _managers:=New Stack<ResourceManager>
 	
-	Global _refs:=New StringMap<Int>
-	
 	Field _retained:=New StringMap<Resource>
-
 End
 
-#rem monkeydoc Releases a resource unless it's null.
-#end
 Function SafeDiscard( r:Resource )
 	
 	If r r.Discard()
-End
-
-#rem monkeydoc @hidden
-#end
-Function SafeRetain( r:Resource )
-	
-	If r r.Retain()
-End
-
-#rem monkeydoc @hidden
-#end
-Function SafeRelease( r:Resource )
-	
-	If r r.Release()
 End

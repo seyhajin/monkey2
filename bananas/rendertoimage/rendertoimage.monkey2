@@ -23,6 +23,8 @@ Class MyWindow Extends mojo.app.Window
 	
 		image=New Image( 256,256,PixelFormat.RGBA8,Dynamic ? TextureFlags.Dynamic Else Null )
 		
+		image.Texture.Flags|=TextureFlags.Filter
+		
 		image.Handle=New Vec2f( .5,.5 )
 		
 		icanvas=New Canvas( image )

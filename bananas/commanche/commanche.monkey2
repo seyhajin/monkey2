@@ -45,7 +45,6 @@ Class MyWindow Extends Window
 	End Method
 	'-----------------------------------------------------------------------------------------------------------
 	Method OnRender( canvas:Canvas ) Override
-		GCCollect()
 		PmapDest.Clear(Color.Black)
 		App.RequestRender()
 		UpdateCamera()

@@ -8,7 +8,7 @@ Namespace std.socket
 #Import "native/socket.cpp"
 #Import "native/socket.h"
 
-Extern
+Extern private
 
 #rem monkeydoc @hidden
 #end
@@ -209,7 +209,7 @@ Sockets support asynchronous programming through the use of fibers. To connect, 
 Sockets are ipv4/ipv6 compatible.
 
 #end
-Class Socket
+Class Socket Extends std.resource.Resource
 
 	#rem Not on Windows...
 	
@@ -288,11 +288,8 @@ Class Socket
 	
 	#end	
 	Method Close()
-		If _socket=-1 Return
-		socket_close( _socket )
-		_socket=-1
-		_addr=Null
-		_peer=null
+		
+		Discard()
 	End
 	
 	#rem monkeydoc Sends data on a connected socket.
@@ -427,6 +424,25 @@ Class Socket
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
+	End
+	
+	Protected
+
+	#rem monkeydoc @hidden
+	#end	
+	Method OnDiscard() Override
+		
+		socket_close( _socket )
+		_socket=-1
+		_addr=Null
+		_peer=null
+	End
+	
+	#rem  monkeydoc @hidden
+	#end
+	Method OnFinalize() Override
+		
+		socket_close( _socket )
 	End
 	
 	Private

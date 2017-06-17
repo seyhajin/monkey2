@@ -3,6 +3,6 @@
 	"about":"Standard monkey2 library",
 	"author":"Mark Sibly",
 	"version":"1.0.0",
-	"support":"http://monkey2.monkey-x.com",
+	"support":"http://monkeycoder.co.nz",
 	"depends":["libc","jni","sdl2","miniz","stb-image","stb-image-write","stb-vorbis"]
 }

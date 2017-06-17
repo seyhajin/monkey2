@@ -47,15 +47,12 @@ Class Skin Extends Resource
 		If Not pixmap Return Null
 		
 		Return New Skin( pixmap )
-		
-		pixmap.Release()
 	End
 	
 	Protected
 	
 	Method OnDiscard() Override
-
-		_image.Release()
+		_image=Null
 	End
 	
 	Private

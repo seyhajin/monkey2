@@ -3,32 +3,23 @@ Namespace std.audio
 
 #rem monkeydoc The AudioData class.
 #end
-Class AudioData
-
-	#rem monkeydoc Invoked when audio data is discarded.
-	#end
-	Field OnDiscarded:Void()
+Class AudioData Extends Resource
 
 	#rem monkeydoc Creates a new AudioData object
 	#end
 	Method New( length:Int,format:AudioFormat,hertz:Int )
-	
-		Local data:=libc.malloc( BytesPerSample( format )*length )
-		
 		_length=length
 		_format=format
 		_hertz=hertz
-		_data=Cast<UByte Ptr>( data )
-		
-		OnDiscarded=Lambda()
-			libc.free( data )
-		End
+		_owned=True
+		_data=Cast<UByte Ptr>( GCMalloc( BytesPerSample( format )*length ) )
 	End
 
 	Method New( length:Int,format:AudioFormat,hertz:Int,data:Void Ptr )
 		_length=length
 		_format=format
 		_hertz=hertz
+		_owned=false
 		_data=Cast<UByte Ptr>( data )
 	End
 	
@@ -99,17 +90,6 @@ Class AudioData
 		RuntimeError( "TODO!" )
 	End
 	
-	#rem monkeydoc Discards the audio data object.
-	#end
-	Method Discard()
-		If _discarded Return
-		_discarded=True
-		OnDiscarded()
-		_length=0
-		_format=Null
-		_data=Null
-	End
-	
 	#rem monkey Loads audio data from a file.
 	#end
 	Function Load:AudioData( path:String )
@@ -122,12 +102,31 @@ Class AudioData
 		Return Null
 	End
 	
+	Protected
+	
+	#rem monkeydoc @hidden
+	#end
+	Method OnDiscard() Override
+		
+		If _owned GCFree( _data )
+			
+		_data=Null
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Method OnFinalize() Override
+		
+		If _owned GCFree( _data )
+	End
+	
 	Private
 	
 	Field _length:Int
 	Field _format:AudioFormat
 	Field _hertz:Int
+	Field _owned:Bool
+
 	Field _data:UByte Ptr
-	Field _discarded:Bool
 	
 End

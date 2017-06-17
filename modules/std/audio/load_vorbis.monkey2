@@ -1,6 +1,35 @@
 
 Namespace std.audio
 
+#rem monkeydoc @hidden
+#end
+Class StbAudioData Extends AudioData
+	
+	Method New( length:Int,format:AudioFormat,hertz:Int,data:Void Ptr )
+		Super.New( length,format,hertz,data )
+		
+		_data=data
+	End
+	
+	Private
+	
+	Field _data:Void Ptr
+	
+	Method OnDiscard() Override
+		
+		libc.free( _data )
+		
+		_data=Null
+	End
+	
+	Method OnFinalize() Override
+		
+		libc.free( _data )
+	End
+	
+End
+
+
 Function LoadAudioData_OGG:AudioData( path:String )
 
 	Local buf:=std.memory.DataBuffer.Load( path )
@@ -26,10 +55,6 @@ Function LoadAudioData_OGG:AudioData( path:String )
 	End
 	
 	Local data:=New AudioData( length,format,hertz,samples )
-	
-	data.OnDiscarded+=Lambda()
-		libc.free( samples )
-	End
 	
 	Return data
 
