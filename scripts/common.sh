@@ -13,7 +13,7 @@ then
 	
 	ted2="../bin/ted2_linux"
 	ted2_new="../src/ted2/ted2.buildv1.1.05/linux_release"
-	ted2go_new="../src/ted2go/ted2.buildv1.1.05/linux_release"
+	ted2go_new="../src/ted2go/Ted2.buildv1.1.05/linux_release"
 	
 	launcher="../Monkey2 (Linux)"
 	launcher_new="../src/launcher/launcher.buildv1.1.05/linux_release/launcher"
@@ -25,7 +25,7 @@ then
 	
 	ted2="../bin/ted2_raspbian"
 	ted2_new="../src/ted2/ted2.buildv1.1.02/raspbian_release"
-	ted2go_new="../src/ted2go/ted2.buildv1.1.02/raspbian_release"
+	ted2go_new="../src/ted2go/Ted2.buildv1.1.02/raspbian_release"
 	
 	launcher="../Monkey2 (Raspbian)"
 	launcher_new="../src/launcher/launcher.buildv1.1.02/raspbian_release/launcher"
@@ -35,7 +35,7 @@ else
 	
 	ted2="../bin/ted2_macos.app"
 	ted2_new="../src/ted2/ted2.buildv1.1.05/macos_release/ted2.app"
-	ted2go_new="../src/ted2go/ted2.buildv1.1.05/macos_release/ted2.app"
+	ted2go_new="../src/ted2go/Ted2.buildv1.1.05/macos_release/ted2.app"
 	
 	launcher="../Monkey2 (Macos).app"
 	launcher_new="../src/launcher/launcher.buildv1.1.05/macos_release/launcher.app"
