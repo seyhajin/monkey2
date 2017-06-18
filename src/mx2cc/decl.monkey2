@@ -19,8 +19,6 @@ Const DECL_SETTER:=			$020000
 Const DECL_OPERATOR:=		$040000
 Const DECL_IFACEMEMBER:=	$080000
 
-Const DECL_HASFINALIZER:=	$100000
-
 Const DECL_ACCESSMASK:=DECL_PUBLIC|DECL_PRIVATE|DECL_PROTECTED|DECL_INTERNAL
 
 Class Decl Extends PNode
@@ -92,10 +90,6 @@ Class Decl Extends PNode
 	
 	Property IsDefault:Bool()
 		Return (flags & DECL_DEFAULT)<>0
-	End
-	
-	Property HasFinalizer:Bool()
-		Return (flags & DECL_HASFINALIZER)<>0
 	End
 	
 	Method ToNode:SNode( scope:Scope ) Virtual
