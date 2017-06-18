@@ -16,9 +16,9 @@ Namespace std.requesters
 
 #Elseif __TARGET__="linux"
 
-	'Nice and tiny! No yesnocancel...
+	'Nice, but no yesnocancel!
 	'
-	'#Import "native/tinyfiledialogs.c"
+	#Import "native/tinyfiledialogs.c"
 
 	#Import "native/requesters_linux.cpp"
 	#Import "native/requesters.h"
