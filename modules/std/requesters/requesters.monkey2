@@ -16,11 +16,10 @@ Namespace std.requesters
 
 #Elseif __TARGET__="linux"
 
-'	Can't get gtk building...later...
-'
-'	#Import "native/nfd/nfd_gtk.c"
-'	#Import "native/nfd/include/*.h"
-	
+	'Nice and tiny! No yesnocancel...
+	'
+	'#Import "native/tinyfiledialogs.c"
+
 	#Import "native/requesters_linux.cpp"
 	#Import "native/requesters.h"
 

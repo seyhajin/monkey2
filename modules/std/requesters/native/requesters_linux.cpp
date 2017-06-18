@@ -3,24 +3,7 @@
 
 #include <limits.h>
 
-/* Can't get gtk building...
- 
-#include <nfd.h>
-
-bbString bbRequesters::RequestFile( bbString title,bbString exts,bbBool save,bbString path ){
-
-	nfdchar_t *cstr=0;
-
-	nfdresult_t result=NFD_OpenDialog( 0,0,&cstr );
-	if( result!=NFD_OKAY ) return "";
-	
-	bbString str( cstr );
-	
-	free( cstr );
-	
-	return str;
-}
-*/
+//#include "tinyfiledialogs.h"
 
 namespace{
 
@@ -74,7 +57,7 @@ bbInt bbRequesters::Proceed( bbString title,bbString text,bbBool serious ){
 bbString bbRequesters::RequestFile( bbString title,bbString exts,bbBool save,bbString path ){
 
 	if( path=="" ) path=".";
-
+	
 	// kdialog
 	//
 	bbString cmd=save ? "kdialog --getsavefilename" : "kdialog --getopenfilename";
