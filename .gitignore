@@ -40,7 +40,6 @@ __MANPAGES__/
 /modules/pyro-framework
 /modules/pyro-gui
 /modules/pyro-scenegraph
-/modules/bullet
 /modules/gles30
 /modules/timelinefx
 /modules/admob
