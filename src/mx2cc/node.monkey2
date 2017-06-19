@@ -118,14 +118,14 @@ Class SNode Extends UNode
 	End
 	
 	Method ToValue:Value( instance:Value ) Virtual
-		Print String.FromCString( typeName() )
+'		Print String.FromCString( typeName() )
 		SemantError( "SNode.ToValue()" )
 		Return Null
 	End
 	
-	Method ToString:String() override
+	Method ToString:String() Override
 		If pnode Return pnode.ToString()
-		Print String.FromCString( typeName() )
+'		Print String.FromCString( typeName() )
 		Return "????? SNode.ToString() ?????"
 	End
 	

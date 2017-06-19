@@ -10,7 +10,8 @@ Class Value Extends SNode
 	Field flags:Int
 	
 	Method ToString:String() Override
-		Return "????? VALUE ????? "+String.FromCString( typeName() )
+'		Return "????? VALUE ????? "+String.FromCString( typeName() )
+		Return "????? VALUE ????? "
 	End
 	
 	Method ToValue:Value( instance:Value ) Override

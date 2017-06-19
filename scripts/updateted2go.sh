@@ -5,7 +5,7 @@ echo ""
 echo "***** Updating ted2 *****"
 echo ""
 
-$mx2cc makeapp -apptype=gui -build -config=release -target=desktop ../src/ted2go/ted2.monkey2
+$mx2cc makeapp -apptype=gui -build -config=release -target=desktop ../src/ted2go/Ted2.monkey2
 
 $mx2cc makeapp -apptype=gui -build -config=release -target=desktop ../src/launcher/launcher.monkey2
 
@@ -15,7 +15,7 @@ then
 	rm -r -f "$ted2"
 	mkdir "$ted2"
 	cp -R "$ted2go_new/assets" "$ted2/assets"
-	cp "$ted2go_new/ted2" "$ted2/ted2"
+	cp "$ted2go_new/Ted2" "$ted2/ted2"
 	rm -r -f "$launcher"
 	cp "$launcher_new" "$launcher"
 
@@ -25,7 +25,7 @@ then
 	rm -r -f "$ted2"
 	mkdir "$ted2"
 	cp -R "$ted2go_new/assets" "$ted2/assets"
-	cp "$ted2go_new/ted2" "$ted2/ted2"
+	cp "$ted2go_new/Ted2" "$ted2/ted2"
 	rm -r -f "$launcher"
 	cp "$launcher_new" "$launcher"
 

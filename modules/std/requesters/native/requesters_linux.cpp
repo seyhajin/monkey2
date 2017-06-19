@@ -3,42 +3,43 @@
 
 #include <limits.h>
 
+#include "tinyfiledialogs.h"
+
+void bbRequesters::Notify( bbString title,bbString text,bbBool serious ){
+
+	tinyfd_messageBox( bbCString( title ),bbCString( text ),"ok",serious ? "error" : "info",1 );
+}
+
+bbBool bbRequesters::Confirm( bbString title,bbString text,bbBool serious ){
+
+	return tinyfd_messageBox( bbCString( title ),bbCString( text ),"okcancel",serious ? "error" : "info",1 );
+}
+
+bbInt bbRequesters::Proceed( bbString title,bbString text,bbBool serious ){
+
+	// Ok, no yesnocancal in tinyfd so we'll use kdialog...
+
+	bbString cmd=BB_T( "kdialog --title \"" )+title+"\" --yesnocancel \""+text+"\"";
+
+	int result=system( cmd.c_str() );
+	
+	if( result==0 ) return 1;	//YES
+	if( result==256 ) return 0;	//NO
+	return -1;					//CANCEL
+}
+
 bbString bbRequesters::RequestFile( bbString title,bbString exts,bbBool save,bbString path ){
 
-	bbString cmd=BB_T("zenity --title=\"")+title+BB_T("\" --file-selection");
-	
-	if( save ) cmd+=" --save";
-	
-	FILE *f=popen( cmd.c_str(),"r" );
-	if( !f ) return "";
-	
-	char buf[PATH_MAX];
-	int n=fread( buf,1,PATH_MAX,f );
-	pclose( f );
-	
-	if( n<0 || n>PATH_MAX ) return "";
-	
-	while( n && buf[n-1]<=32 ) --n;
-	
-	return bbString::fromCString( buf,n );
+	if( path=="" ) path=".";
+		
+	return tinyfd_openFileDialog( bbCString( title ),bbCString( path ),0,0,0,0 );
 }
 
 bbString bbRequesters::RequestDir( bbString title,bbString dir ){
 
-	bbString cmd=BB_T("zenity --title=\"")+title+BB_T("\" --file-selection --directory");
-
-	FILE *f=popen( cmd.c_str(),"r" );
-	if( !f ) return "";
-	
-	char buf[PATH_MAX];
-	int n=fread( buf,1,PATH_MAX,f );
-	pclose( f );
-	
-	if( n<0 || n>PATH_MAX ) return "";
-	
-	while( n && buf[n-1]<=32 ) --n;
-	
-	return bbString::fromCString( buf,n );
+	if( dir=="" ) dir=".";
+		
+	return tinyfd_selectFolderDialog( bbCString( title ),bbCString( dir ) );
 }
 
 void bbRequesters::OpenUrl( bbString url ){

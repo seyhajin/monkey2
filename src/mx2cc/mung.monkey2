@@ -92,7 +92,8 @@ Function MungArg:String( type:Type )
 		Return "P"+MungArg( qtype.elemType )
 	Endif
 	
-	Return "????? MungArg "+String.FromCString( type.typeName() )+" ?????"
+'	Return "????? MungArg "+String.FromCString( type.typeName() )+" ?????"
+	Return "????? MungArg ?????"
 End
 
 Function MungArgs:String( types:Type[] )

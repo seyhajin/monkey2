@@ -5,7 +5,7 @@ set mx2cc_raspbian_new=..\src\mx2cc\mx2cc.buildv1.1.05\raspbian_release\mx2cc
 
 set ted2=..\bin\ted2_windows
 set ted2_new=..\src\ted2\ted2.buildv1.1.05\windows_release
-set ted2go_new=..\src\ted2go\ted2.buildv1.1.05\windows_release
+set ted2go_new=..\src\ted2go\Ted2.buildv1.1.05\windows_release
 
 set launcher="..\Monkey2 (Windows).exe"
 set launcher_new=..\src\launcher\launcher.buildv1.1.05\windows_release\launcher.exe

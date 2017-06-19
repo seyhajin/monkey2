@@ -462,7 +462,7 @@ Class Translator_CPP Extends Translator
 		
 		'Emit fields...
 		'
-		Local needsInit:=NeedsFinalize( ctype )
+		Local needsInit:=False
 		Local needsMark:=False
 
 		EmitBr()		
@@ -601,16 +601,6 @@ Class Translator_CPP Extends Translator
 		
 	End
 	
-	Method NeedsFinalize:Bool( ctype:ClassType )
-		If Not ctype Or Not ctype.cdecl.HasFinalizer Return false
-		ctype=ctype.superType
-		While ctype And ctype<>Type.ObjectClass 
-			If ctype.cdecl.HasFinalizer Return False
-			ctype=ctype.superType
-		Wend
-		Return True
-	End
-	
 	Method EmitClassMembers( ctype:ClassType )
 	
 		Local cdecl:=ctype.cdecl
@@ -620,7 +610,7 @@ Class Translator_CPP Extends Translator
 		
 		'Emit fields...
 		'
-		Local needsInit:=NeedsFinalize( ctype )
+		Local needsInit:=False
 		Local needsMark:=False
 
 		EmitBr()
@@ -637,8 +627,6 @@ Class Translator_CPP Extends Translator
 
 			EmitBr()
 			Emit( "void "+cname+"::init(){" )
-			
-			If NeedsFinalize( ctype ) Emit( "gcNeedsFinalize();" )
 			
 			BeginGCFrame()
 			
@@ -1026,7 +1014,8 @@ Class Translator_CPP Extends Translator
 		Emit( "return &"+rcname+"::instance;" )
 		Emit( "}" )
 	End
-	
+
+	'For later...
 	Method DiscardGCFields( ctype:ClassType,prefix:String )
 		
 		For Local vvar:=Eachin ctype.fields
@@ -1067,14 +1056,6 @@ Class Translator_CPP Extends Translator
 		If _gctmps
 			Emit( "bbGC::popTmps("+_gctmps+");" )
 			_gctmps=0
-		Endif
-		
-		If func.fdecl.ident="finalize"
-			
-			Local ctype:=func.cscope.ctype
-			
-			DiscardGCFields( ctype,"" )
-			
 		Endif
 		
 		If init Emit( "init();" )
@@ -1306,7 +1287,8 @@ Class Translator_CPP Extends Translator
 		Local printStmt:=Cast<PrintStmt>( stmt )
 		If printStmt EmitStmt( printStmt ) ; Return
 		
-		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt '"+String.FromCString( stmt.typeName() )+"' not recognized" )
+'		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt '"+String.FromCString( stmt.typeName() )+"' not recognized" )
+		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt not recognized" )
 	End
 	
 	Method EmitStmt( stmt:PrintStmt )
@@ -1632,7 +1614,8 @@ Class Translator_CPP Extends Translator
 		Local typeofTypeValue:=Cast<TypeofTypeValue>( value )
 		If typeofTypeValue Return Trans( typeofTypeValue )
 		
-		Return "{* "+value.ToString()+" "+String.FromCString( value.typeName() )+" *}"
+'		Return "{* "+value.ToString()+" "+String.FromCString( value.typeName() )+" *}"
+		Return "{* "+value.ToString()+" *}"
 	End
 	
 	Method Trans:String( value:UpCastValue )
@@ -2105,7 +2088,8 @@ Class Translator_CPP Extends Translator
 		Local genArgType:=TCast<GenArgType>( type )
 		If genArgType Return TransType( genArgType )
 		
-		Throw New TransEx( "Translator_CPP.Trans() Type '"+String.FromCString( type.typeName() )+"' not recognized" )
+		'Throw New TransEx( "Translator_CPP.Trans() Type '"+String.FromCString( type.typeName() )+"' not recognized" )
+		Throw New TransEx( "Translator_CPP.Trans() Type not recognized" )
 	End
 	
 	Method TransType:String( type:ClassType )
