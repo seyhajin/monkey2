@@ -6,12 +6,12 @@ Namespace bullet
 
 #Import "bullet3-2.85.1/src/*.h"
 
+#Import "bullet_glue.cpp"
+#Import "bullet_glue.h"
+
 #Import "makefile_linearmath"
 #Import "makefile_collision"
 #Import "makefile_dynamics"
-
-#Import "bullet_glue.cpp"
-#Import "bullet_glue.h"
 
 Using std.geom
 
@@ -51,7 +51,8 @@ Struct btMatrix3x3
 	Method New( xx:btScalar,xy:btScalar,xz:btScalar,yx:btScalar,yy:btScalar,yz:btScalar,zx:btScalar,zy:btScalar,zz:btScalar )
 	
 	Method getRow:btVector3( i:Int )
-	
+		
+	Method getColumn:btVector3( j:Int )
 End
 
 Struct btQuaternion
@@ -198,6 +199,60 @@ Class btSphereShape Extends btConvexShape
 	Method New( radius:btScalar )
 End
 
+Class btCapsuleShape Extends btConvexShape
+	
+	Method New( radius:btScalar,height:btScalar )
+		
+End
+
+Class btCapsuleShapeX Extends btCapsuleShape
+	
+	Method New( radius:btScalar,height:btScalar )
+		
+End
+
+Class btCapsuleShapeZ Extends btCapsuleShape
+	
+	Method New( radius:btScalar,height:btScalar )
+		
+End
+
+Class btCylinderShape Extends btConvexShape
+	
+	Method New( halfExtents:btVector3 )
+		
+End
+
+Class btCylinderShapeX Extends btCylinderShape
+	
+	Method New( halfExtents:btVector3 )
+		
+End
+
+Class btCylinderShapeZ Extends btCylinderShape
+	
+	Method New( halfExtents:btVector3 )
+		
+End
+
+Class btConeShape Extends btConvexShape
+
+	Method New( radius:btScalar,height:btScalar )
+			
+End
+
+Class btConeShapeX Extends btConeShape
+
+	Method New( radius:btScalar,height:btScalar )
+			
+End
+
+Class btConeShapeZ Extends btConeShape
+
+	Method New( radius:btScalar,height:btScalar )
+			
+End
+
 Enum PHY_ScalarType
 End
 
@@ -218,6 +273,13 @@ Class btHeightfieldTerrainShape Extends btConcaveShape
 End
 
 Class btTriangleMeshShape Extends btConcaveShape
+	
+	Field m_convexEpsilon:btScalar
+	Field m_planarEpsilon:btScalar
+	Field m_equalVertexThreshold:btScalar
+	Field m_edgeDistanceThreshold:btScalar
+	Field m_maxEdgeAngleThreshold:btScalar
+	Field m_zeroAreaThreshold:btScalar
 
 End
 
@@ -234,7 +296,6 @@ End
 Class btTriangleIndexVertexArray Extends btStridingMeshInterface
 
 	Method New( numTriangles:Int,triangleIndexBase:Int Ptr,triangleIndexStride:Int,numVertices:Int,vertexBase:btScalar Ptr,vertexStride:Int )
-	
 
 End
 
@@ -262,15 +323,15 @@ Class btDefaultMotionState Extends btMotionState
 
 End
 
-Const CF_STATIC_OBJECT:Int
-Const CF_KINEMATIC_OBJECT:Int
-Const CF_NO_CONTACT_RESPONSE:Int
-Const CF_CUSTOM_MATERIAL_CALLBACK:Int
-Const CF_CHARACTER_OBJECT:Int
-Const CF_DISABLE_VISUALIZE_OBJECT:Int
-Const CF_DISABLE_SPU_COLLISION_PROCESSING:Int
- 	
 Class btCollisionObject Extends btObject
+	
+	Const CF_STATIC_OBJECT:Int="btCollisionObject::CF_STATIC_OBJECT"
+	Const CF_KINEMATIC_OBJECT:Int="btCollisionObject::CF_KINEMATIC_OBJECT"
+	Const CF_NO_CONTACT_RESPONSE:Int="btCollisionObject::CF_NO_CONTACT_RESPONSE"
+	Const CF_CUSTOM_MATERIAL_CALLBACK:Int="btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK"
+	Const CF_CHARACTER_OBJECT:Int="btCollisionObject::CF_CHARACTER_OBJECT"
+	Const CF_DISABLE_VISUALIZE_OBJECT:Int="btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT"
+	Const CF_DISABLE_SPU_COLLISION_PROCESSING:Int="btCollisionObject::CF_DISABLE_SPU_COLLISION_PROCESSING"
 
 	Method setWorldTransform( transform:btTransform )
 	
@@ -335,6 +396,4 @@ Class btRigidBody Extends btCollisionObject
 	
 	Method getLinearVelocity:btVector3()
 End
-
-Function BulletKludge1( obj:btCollisionObject )="bbBullet::bulletKludge1"
 
