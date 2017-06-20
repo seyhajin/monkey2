@@ -79,6 +79,14 @@ Struct Mat3<T>
 		Return New Vec3<T>( i.x*v.x+j.x*v.y+k.x*v.z,i.y*v.x+j.y*v.y+k.y*v.z,i.z*v.x+j.z*v.y+k.z*v.z )
 	End
 	
+	Method GetRow:Vec3<T>( row:Int )
+		Return row=0 ? i Else (row=1 ? j Else k)
+	End
+	
+	Method GetColumn:Vec3<T>( col:Int )
+		Return col=0 ? New Vec3<T>( i.x,j.x,k.x ) Else (col=1 ? New Vec3<T>( i.y,j.y,k.y ) Else New Vec3<T>( i.z,j.z,k.z ))
+	End
+	
 	Method Cofactor:Mat3()
 		Return New Mat3(
 			 (j.y*k.z-j.z*k.y),-(j.x*k.z-j.z*k.x), (j.x*k.y-j.y*k.x),
