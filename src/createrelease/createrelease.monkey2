@@ -9,6 +9,23 @@ Const MX2CC_VERSION:="1.1.05"
 
 Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
 
+Const IGNORE:="
+.gitignore
+src/c2mx2
+src/createrelease
+src/launcher
+modules/admob
+modules/linq
+modules/gles30
+modules/mojo3d
+modules/mojo3d-loaders
+modules/mojo3d-physics
+bin/ted2.state.json
+bin/ted2_windows/state.json
+bin/ted2_macos/state.json
+bin/ted2_linux/state.json
+"
+
 Global desktop:String
 Global output:String
 
@@ -26,8 +43,10 @@ Function CopyFiles( dir:String )
 	CreateDir( output+"/"+dir )
 	
 	For Local file:=Eachin LoadDir( dir )
+
+		Local src:=dir+"/"+file
 		
-		If file=".gitignore" continue
+		If IGNORE.Contains( "~n"+src+"~n" ) Continue
 		
 		If file.Contains( "_raspbian" ) Continue
 
@@ -41,12 +60,10 @@ Function CopyFiles( dir:String )
 		If file.Contains( "_windows" ) Continue
 		If file.Contains( "_macos" ) Continue
 #Endif
-			
-		Local src:=dir+"/"+file
 		
 		Select GetFileType( src )
 		Case FileType.Directory
-		
+			
 			If dir.StartsWith( "modules/" )
 			
 				If file.Contains( ".buildv" ) And Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
@@ -68,8 +85,6 @@ Function CopyFiles( dir:String )
 			CopyFiles( src )
 		
 		Case FileType.File
-		
-			If file="ted2.state.json" Continue
 		
 			Local dst:=output+"/"+dir+"/"+file
 			
@@ -93,13 +108,12 @@ Function CopyRelease()
 	CopyFiles( "products" )
 	CopyFiles( "src" )
 	
-	Copy( "hello-world.monkey2" )
 	Copy( "ABOUT.HTML" )
 	Copy( "VERSIONS.TXT" )
 	Copy( "LICENSE.TXT" )
 	Copy( "README.TXT" )
 	
-#if __TARGET__="windows"
+#If __TARGET__="windows"
 	Copy( "Monkey2 (Windows).exe" )
 #Else if __TARGET__="macos"
 	CopyFiles( "Monkey2 (Macos).app" )
@@ -107,14 +121,6 @@ Function CopyRelease()
 	Copy( "Monkey2 (Linux)" )
 #Endif
 
-	DeleteDir( output+"/src/c2mx2",True )
-	DeleteDir( output+"/src/mx23d",True )
-	
-	DeleteDir( output+"/modules/admob",True )
-	DeleteDir( output+"/modules/linq",True )
-	DeleteDir( output+"/modules/bullet",True )
-	DeleteDir( output+"/modules/gles30",True )
-	
 End
 
 Function MakeInno()
