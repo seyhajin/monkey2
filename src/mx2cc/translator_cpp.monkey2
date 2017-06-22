@@ -650,7 +650,8 @@ Class Translator_CPP Extends Translator
 				EmitBr()
 				Emit( "void "+cname+"::gcMark(){" )
 				
-				If ctype.superType And ctype.superType<>Type.ObjectClass
+				If ctype.superType And Not ctype.superType.ExtendsVoid And ctype.superType<>Type.ObjectClass
+					
 					Emit( ClassName( ctype.superType )+"::gcMark();" )
 				End
 			
