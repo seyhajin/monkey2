@@ -300,7 +300,7 @@ Class btTriangleIndexVertexArray Extends btStridingMeshInterface
 End
 
 Class btMotionState Extends btObject
-	
+
 	Method setWorldTransform( worldTrans:btTransform )
 		
 	Method getWorldTransform:btTransform() Extension="bbBullet::getWorldTransform"
@@ -310,18 +310,20 @@ End
 Class btDefaultMotionState Extends btMotionState
 
 	Field m_graphicsWorldTrans:btTransform
- 
 	Field m_centerOfMassOffset:btTransform
- 
 	Field m_startWorldTrans:btTransform
-	
 	Field m_userPointer:Void Ptr
 	
-'	Method New()
-	
+	Method New()
  	Method New( startTrans:btTransform=btTransform.getIdentity(),centerOfMassOffset:btTransform=btTransform.getIdentity() )
 
 End
+
+Const ACTIVE_TAG:Int
+Const ISLAND_SLEEPING:Int
+Const WANTS_DEACTIVATION:Int
+Const DISABLE_DEACTIVATION:Int
+Const DISABLE_SIMULATION:Int
 
 Class btCollisionObject Extends btObject
 	
@@ -360,6 +362,11 @@ Class btCollisionObject Extends btObject
 	Method setCollisionFlags( flags:Int )
 	
 	Method getCollisionFlags:Int()
+		
+	Method setActivationState( newState:Int )
+	
+	Method getActivationState:Int()
+		
 End
 
 Struct btRigidBodyConstructionInfo
