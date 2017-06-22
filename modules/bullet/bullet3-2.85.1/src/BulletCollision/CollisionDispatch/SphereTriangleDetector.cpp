@@ -79,7 +79,7 @@ btScalar SegmentSqrDistance(const btVector3& from, const btVector3& to,const btV
 		}
 	} else
 		t = 0;
-
+		
 	nearest = from + t*v;
 	return diff.dot(diff);	
 }
@@ -136,6 +136,7 @@ bool SphereTriangleDetector::collide(const btVector3& sphereCenter,btVector3 &po
 				if (distanceSqr < contactCapsuleRadiusSqr) {
 					// Yep, we're inside a capsule
 					hasContact = true;
+					
 					contactPoint = nearestOnEdge;
 				}
 				

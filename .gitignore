@@ -44,7 +44,7 @@ __MANPAGES__/
 /modules/timelinefx
 /modules/admob
 /modules/mojo3d
-/modules/mojo3d-assimp
+/modules/mojo3d-loaders
 /modules/mojo3d-physics
 
 /modules/module-manager/backups
