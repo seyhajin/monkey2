@@ -14,11 +14,13 @@ Note that the prebuilt binaries available from itch.io already include mingw in 
 
 To use msvc instead of mingw, you will need to install msvc express 2015 and change the following line in bin/env_windows.txt:
 
+```
 #MX2_USE_MSVC=1
+```
 
 You will need to rebuild all modules after doing this.
 
-Downloads for msvc express can be found here - https://www.visualstudio.com/vs/visual-studio-express/
+Downloads for msvc express can be found here: [[https://www.visualstudio.com/vs/visual-studio-express/]]
 
 
 #### The Macos Desktop Target
