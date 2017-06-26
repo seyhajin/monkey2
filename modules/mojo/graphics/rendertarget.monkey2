@@ -76,7 +76,7 @@ Class RenderTarget Extends Resource
 		Endif
 
 		If glexts.GL_read_buffer
-			glReadBuffer( GL_NONE )
+			glReadBuffer( _drawBufs ? _drawBufs[0] Else GL_NONE )
 		Endif
 
 		CheckStatus()
