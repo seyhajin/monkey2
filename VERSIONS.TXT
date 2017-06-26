@@ -1,9 +1,10 @@
 
 ***** Monkey2 v1.1.05 *****
 
-* Added WIP MSVC support - see: #MX2_USE_MSVC in bin/windows_env.txt
-
-* Added assimp model for loading 3d models.
-
 * Added std.requesters.OpenUrl support for android and ios.
 
+* Added WIP assimp and bullet modules mainly for future use by mojo3d but its nice to have standalone versions of these.
+
+* Added tinyfiledialog library for linux requesters, except for Proceed which uses kdialog as there's no equivalent in tfd.
+
+* Added WIP MSVC support for faster compile times on windows. To enable, use 'MX2_USE_MSVC=1' in bin/env_windows.txt and rebuild all modules.
