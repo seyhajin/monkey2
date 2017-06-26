@@ -21,7 +21,7 @@ modules/mojo3d-loaders
 modules/mojo3d-physics
 bin/ted2.state.json
 bin/ted2_windows/state.json
-bin/ted2_macos/state.json
+bin/ted2_macos.app/Contents/MacOS/state.json
 bin/ted2_linux/state.json
 "
 
