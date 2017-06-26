@@ -430,11 +430,11 @@ Class GraphicsDevice
 
 		glCheck()
 		
-		#If __CONFIG__="debug"
-		Print "GL_VERSION="+glGetString( GL_VERSION )
-		Print "GL_VENDOR="+glGetString( GL_VENDOR )
-		Print "GL_RENDERER="+glGetString( GL_VENDOR )
-		#Endif
+		'#If __CONFIG__="debug"
+		'Print "GL_VERSION="+glGetString( GL_VERSION )
+		'Print "GL_VENDOR="+glGetString( GL_VENDOR )
+		'Print "GL_RENDERER="+glGetString( GL_VENDOR )
+		'#Endif
 			
 		InitGLexts()
 		
