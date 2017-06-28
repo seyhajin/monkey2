@@ -403,11 +403,11 @@ Class GccBuildProduct Extends BuildProduct
 
 		Endif
 			
-		If opts.verbose>0 Print "Compiling "+src
+'		If opts.verbose>0 Print "Compiling "+src
 			
 		cmd+=(toolchain="msvc" ? " -Fo~q" Else " -o ~q") +obj+"~q ~q"+src+"~q"
 		
-		'If toolchain<>"msvc" Print StripDir( src )
+		If opts.verbose>0 And toolchain<>"msvc" Print StripDir( src )
 		
 		Exec( cmd )
 		
