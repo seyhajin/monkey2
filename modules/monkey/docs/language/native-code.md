@@ -25,6 +25,25 @@ Global Counter:Int
 Function DoSomething( x:int,y:Int )
 ```
 
+You can declare the following inside extern blocks:
+
+* Consts
+
+* Globals
+
+* Structs
+
+* Classes
+
+* Functions
+
+
+You cannot declare the following inside extern blocks:
+
+* Generic functions or types
+
+* Operator methods
+
 
 #### Extern symbols
 
@@ -43,7 +62,6 @@ Class Actor="mylib::Actor"
 	Function Clear()="mylib::Actor::Clear"
 End
 ```
-
 
 #### Extern classes
 
