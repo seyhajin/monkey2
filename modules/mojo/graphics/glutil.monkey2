@@ -9,6 +9,10 @@ Public
 
 #rem monkeydoc @hidden
 #end
+Global glDebug:Bool=False
+
+#rem monkeydoc @hidden
+#end
 Global glGraphicsSeq:Int=1
 
 #rem monkeydoc @hidden
@@ -28,8 +32,12 @@ End
 #rem monkeydoc @hidden
 #end
 Function glCheck()
+	
+	If Not glDebug Return
+	
 	Local err:=glGetError()
 	If err=GL_NO_ERROR Return
+	
 	Local msg:=""
 	Select err
 	Case GL_INVALID_ENUM
@@ -45,6 +53,7 @@ Function glCheck()
 	Default
 		msg="?????"
 	End
+	
 	RuntimeError( "GL ERROR: "+msg+" "+err )
 End
 
