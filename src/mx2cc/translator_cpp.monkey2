@@ -1069,16 +1069,9 @@ Class Translator_CPP Extends Translator
 			EmitMain()
 		Endif
 		
-		If _debug And func.IsMethod
-		
-			If Not func.IsVirtual And Not func.IsExtension
-				'			
-				'Can't do this yet as it breaks mx2cc!
-				'
-				'Emit( "bbDBAssertSelf(this);" )
-				'
-			Endif
-			
+		If _debug And func.IsMethod And func.cscope.ctype.IsClass And Not func.IsVirtual And Not func.IsExtension
+
+			Emit( "bbDBAssertSelf(this);" )
 		Endif
 		
 		EmitBlock( func )

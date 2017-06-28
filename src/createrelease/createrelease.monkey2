@@ -13,7 +13,6 @@ Const IGNORE:="
 .gitignore
 src/c2mx2
 src/createrelease
-src/launcher
 modules/admob
 modules/linq
 modules/gles30
@@ -22,7 +21,7 @@ modules/mojo3d-loaders
 modules/mojo3d-physics
 bin/ted2.state.json
 bin/ted2_windows/state.json
-bin/ted2_macos/state.json
+bin/ted2_macos.app/Contents/MacOS/state.json
 bin/ted2_linux/state.json
 "
 
@@ -101,11 +100,12 @@ Function CopyRelease()
 	CreateDir( output+"/devtools" )
 	CreateDir( output+"/tmp" )
 	
+	CopyFiles( "bananas" )
 	CopyFiles( "bin" )
 	CopyFiles( "docs" )
 	CopyFiles( "modules" )
-	CopyFiles( "bananas" )
 	CopyFiles( "products" )
+	CopyFiles( "scripts" )
 	CopyFiles( "src" )
 	
 	Copy( "ABOUT.HTML" )

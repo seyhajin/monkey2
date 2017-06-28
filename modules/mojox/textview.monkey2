@@ -937,10 +937,13 @@ Class TextView Extends ScrollableView
 	End
 	
 	Method OnRenderContent( canvas:Canvas ) Override
+		
+		OnRenderContent( canvas,VisibleRect )
+	End
+	
+	Method OnRenderContent( canvas:Canvas,clip:Recti ) Virtual
 
 		If App.KeyView=Self And Not _blinkTimer RestartBlinkTimer()
-		
-		Local clip:=VisibleRect
 		
 		Local firstLine:=LineAtPoint( New Vec2i( 0,clip.Top ) ) 
 		Local lastLine:=LineAtPoint( New Vec2i( 0,clip.Bottom-1 ) )+1

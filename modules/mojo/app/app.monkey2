@@ -926,7 +926,7 @@ Class AppInstance
 				
 			Case SDL_WINDOWEVENT_FOCUS_GAINED
 			
-				Print "SDL_WINDOWEVENT_FOCUS_GAINED"
+				'Print "SDL_WINDOWEVENT_FOCUS_GAINED"
 			
 				Local active:=_active
 				_activeWindow=_window
@@ -938,7 +938,7 @@ Class AppInstance
 				
 			Case SDL_WINDOWEVENT_FOCUS_LOST
 			
-				Print "SDL_WINDOWEVENT_FOCUS_LOST"
+				'Print "SDL_WINDOWEVENT_FOCUS_LOST"
 			
 				Local active:=_active
 				_active=False
@@ -991,13 +991,13 @@ Class AppInstance
 
 		Case SDL_RENDER_TARGETS_RESET
 		
-			Print "SDL_RENDER_TARGETS_RESET"
+			'Print "SDL_RENDER_TARGETS_RESET"
 		
 			RequestRender()
 			
 		Case SDL_RENDER_DEVICE_RESET
 		
-			Print "SDL_RENDER_DEVICE_RESET"
+			'Print "SDL_RENDER_DEVICE_RESET"
 		
 			mojo.graphics.glutil.glGraphicsSeq+=1
 
@@ -1014,7 +1014,7 @@ Class AppInstance
 		Case SDL_APP_WILLENTERBACKGROUND
 			'Prepare your app to go into the background. Stop loops, etc.
 			'This gets called when the user hits the home button, or gets a call.
-			Print "SDL_APP_WILLENTERBACKGROUND"
+			'Print "SDL_APP_WILLENTERBACKGROUND"
 			_frozen=True
 
 		Case SDL_APP_DIDENTERBACKGROUND
@@ -1030,7 +1030,7 @@ Class AppInstance
 		Case SDL_APP_DIDENTERFOREGROUND
 			'Restart your loops here.
 			'Your app is interactive and getting CPU again.
-			Print "SDL_APP_DIDENTERFOREGROUND"
+			'Print "SDL_APP_DIDENTERFOREGROUND"
 			RequestRender()
 			_frozen=False
 #Endif

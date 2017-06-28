@@ -407,7 +407,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 		cmd+=(toolchain="msvc" ? " -Fo~q" Else " -o ~q") +obj+"~q ~q"+src+"~q"
 		
-		If toolchain<>"msvc" Print StripDir( src )
+		'If toolchain<>"msvc" Print StripDir( src )
 		
 		Exec( cmd )
 		
