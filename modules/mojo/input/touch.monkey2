@@ -85,7 +85,7 @@ Class TouchDevice Extends InputDevice
 		
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
-			Print "SDL_FINGERDOWN, id="+tevent->fingerId
+'			Print "SDL_FINGERDOWN, id="+tevent->fingerId
 		
 			Local id:=-1
 			For Local i:=0 Until 10
@@ -105,7 +105,7 @@ Class TouchDevice Extends InputDevice
 
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
-			Print "SDL_FINGERUP, id="+tevent->fingerId
+'			Print "SDL_FINGERUP, id="+tevent->fingerId
 		
 			Local id:=-1
 			For Local i:=0 Until 10
@@ -124,7 +124,7 @@ Class TouchDevice Extends InputDevice
 
 			Local tevent:=Cast<SDL_TouchFingerEvent Ptr>( event )
 			
-			Print "SDL_FINGERMOTION, id="+tevent->fingerId
+'			Print "SDL_FINGERMOTION, id="+tevent->fingerId
 			
 			Local id:=-1
 			For Local i:=0 Until 10
