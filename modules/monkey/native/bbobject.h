@@ -67,7 +67,7 @@ template<class T,class C> T bb_object_cast( C *p ){
 }
 
 inline void bbDBAssertSelf( void *p ){
-	bbDebugAssert( p,"'Self' is null" );
+	bbDebugAssert( p,"Attempt to invoke method on null instance" );
 }
 
 inline bbString bbDBObjectValue( bbObject *p ){
