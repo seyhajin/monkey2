@@ -19,8 +19,8 @@ PATH=${MX2_HOME}\devtools\i686-6.2.0-posix-dwarf-rt_v5-rev1\mingw32\bin;${PATH}
 GCC_EXEC_PREFIX=
 
 'Linker options
-MX2_LD_OPTS_WINDOWS=-static -m32
-MX2_LD_OPTS_WINDOWS_DEBUG=-s
+MX2_LD_OPTS_WINDOWS=-s -static -m32
+MX2_LD_OPTS_WINDOWS_DEBUG=
 MX2_LD_OPTS_WINDOWS_RELEASE=
 
 'C Compiler options. Note: -D_WIN32_WINNT=0x0601 means headers for Windows 7, ie: Windows 7 is min SDK!
