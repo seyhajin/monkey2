@@ -40,6 +40,13 @@ template<class T,int D> struct bbArray{
 
 	bbArray(){
 	}
+	
+	bbArray( const bbArray &t ){
+	
+		bbGC::enqueue( t._rep );
+		
+		_rep=t._rep;
+	}
 		
 	template<class...Args> explicit bbArray( Args...args ){
 		
@@ -92,6 +99,15 @@ template<class T,int D> struct bbArray{
 		bbDebugAssert( q>=0 && q<D,"Array dimension out of range" );
 			
 		return _rep ? (q ? _rep->_sizes[q]/_rep->_sizes[q-1] : _rep->_sizes[0]) : 0;
+	}
+	
+	bbArray &operator=( const bbArray &t ){
+	
+		bbGC::enqueue( t._rep );
+		
+		_rep=t._rep;
+		
+		return *this;
 	}
 		
 	T &operator[]( int index ){

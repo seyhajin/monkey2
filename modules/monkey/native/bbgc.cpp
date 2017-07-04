@@ -105,14 +105,22 @@ namespace bbGC{
 	void destroy( bbGCNode *p ){
 	
 		if( p->flags & 1 ){
+			
 			//Run finalizer
-			//printf( "Running finalizer\n" );fflush( stdout );
+			//printf( "finalizing: %s %p\n",p->typeName(),p );fflush( stdout );
+			
 			++suspended;
+			
 			p->state=unmarkedBit;
+			
 			p->gcFinalize();
+			
 			if( p->state==markedBit ) bbRuntimeError( "Object resurrected in finalizer" );
+				
 			--suspended;
 		}
+		
+		//printf( "destroying: %s %p\n",p->typeName(),p );fflush( stdout );
 		
 #if BBGC_DEBUG
 //		printf( "destroying: %s %p\n",p->typeName(),p );
@@ -214,13 +222,12 @@ namespace bbGC{
 			
 			markedBytes+=mallocSize( p );
 			
-//			printf( "marking %s\n",p->typeName() );fflush( stdout );
-			
 			p->gcMark();
 		}
 	}
 
 	void sweep(){
+	
 		markRetained();
 		
 		markFibers();
@@ -281,12 +288,6 @@ namespace bbGC{
 	
 		size=(size+sizeof(size_t)+7)&~7;
 		
-		if( debug && size==40 ){
-			debug=false;
-			bbDB::stop();
-			bbDB::stopped();
-		}
-		
 		memused+=size;
 		
 		if( size<256 && pools[size>>3] ){
@@ -295,9 +296,6 @@ namespace bbGC{
 			allocedBytes+=size;
 			size_t *q=(size_t*)p;
 			*q++=size;
-			
-//			if( debug ){ printf( "bbGC::malloc %p size=%i\n",q,size );fflush( stdout ); }
-		
 			return q;
 		}
 		
@@ -339,8 +337,6 @@ namespace bbGC{
 		size_t *q=(size_t*)p;
 		*q++=size;
 
-//		if( debug ){ printf( "bbGC::malloc %p size=%i\n",q,size );fflush( stdout ); }
-		
 		return q;
 	}
 	
