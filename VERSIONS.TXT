@@ -1,4 +1,9 @@
 
+***** Monkey2 v1.1.05b *****
+
+* Fixes a fairly critical GC bug.
+
+
 ***** Monkey2 v1.1.05 *****
 
 * Added std.requesters.OpenUrl support for android and ios.
