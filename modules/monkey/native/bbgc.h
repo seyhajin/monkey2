@@ -215,64 +215,7 @@ namespace bbGC{
 	}
 }
 
-template<class T> struct bbGCVar{
-
-	public:
-	
-	T *_ptr;
-	
-	void enqueue(){
-		bbGC::enqueue( dynamic_cast<bbGCNode*>( _ptr ) );
-	}
-	
-	bbGCVar():_ptr( nullptr ){
-	}
-	
-	bbGCVar( T *p ):_ptr( p ){
-		enqueue();
-	}
-	
-	bbGCVar( const bbGCVar &p ):_ptr( p._ptr ){
-		enqueue();
-	}
-	
-	bbGCVar &operator=( T *p ){
-		_ptr=p;
-		enqueue();
-		return *this;
-	}
-	
-	bbGCVar &operator=( const bbGCVar &p ){
-		_ptr=p._ptr;
-		enqueue();
-		return *this;
-	}
-	void discard(){
-		_ptr=nullptr;
-	}
-	
-	T *get()const{
-		return _ptr;
-	}
-	
-	T *operator->()const{
-		return _ptr;
-	}
-	
-	operator T*()const{
-		return _ptr;
-	}
-	
-	T **operator&(){
-		return &_ptr;
-	}
-};
-
 template<class T> void bbGCMark( T const& ){
-}
-
-template<class T> void bbGCMark( const bbGCVar<T> &v ){
-	bbGCMark( v._ptr );
 }
 
 #endif
