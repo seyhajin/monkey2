@@ -101,7 +101,7 @@ bbString bbRequesters::RequestFile( bbString title,bbString filter,bbBool save,b
 	NSMutableArray *nsfilter=0;
 	bool allowOthers=true;
 
-	if( filter.length() ){
+	if( filter.length() && !save ){
 	
 		nsfilter=[NSMutableArray arrayWithCapacity:10];
 		
