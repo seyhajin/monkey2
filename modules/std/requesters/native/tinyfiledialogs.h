@@ -1,5 +1,5 @@
 /*_________
- /         \ tinyfiledialogs.h v2.8.6 [Jun 16, 2017] zlib licence
+ /         \ tinyfiledialogs.h v2.9.2 [July 05, 2017] zlib licence
  |tiny file| Unique header file created [November 9, 2014]
  | dialogs | Copyright (c) 2014 - 2017 Guillaume Vareille http://ysengrin.com
  \____  ___/ http://tinyfiledialogs.sourceforge.net
@@ -41,6 +41,7 @@ CEGUI MathGL CPW GLOW IMGUI MyGUI GLT NGL STB & GUI less programs
 
 NO INIT
 NO MAIN LOOP
+NO LINKING (true on unix, almost true on windows)
 
 The dialogs can be forced into console mode
 
@@ -137,10 +138,10 @@ for the console mode:
 int tinyfd_messageBox (
 	char const * const aTitle , /* "" */
 	char const * const aMessage , /* "" may contain \n \t */
-	char const * const aDialogType , /* "ok" "okcancel" "yesno" */
+	char const * const aDialogType , /* "ok" "okcancel" "yesno" "yesnocancel" */
 	char const * const aIconType , /* "info" "warning" "error" "question" */
-	int const aDefaultButton ) ; /* 0 for cancel/no , 1 for ok/yes */
-		/* returns 0 for cancel/no , 1 for ok/yes */
+	int const aDefaultButton ) ;
+		/* 0 for cancel/no , 1 for ok/yes , 2 for no in yesnocancel */
 
 char const * tinyfd_inputBox (
 	char const * const aTitle , /* "" */
@@ -258,7 +259,7 @@ char const * tinyfd_arrayDialog(
 /*
 - This is not for android nor ios.
 - The code is pure C, perfectly compatible with C++.
-- the windows wchar_t (utf-16) prototypes are in the header file
+- the windows only wchar_t (utf-16) prototypes are in the header file
 - windows is fully supported from XP to 10 (maybe even older versions)
 - C# & LUA via dll, see example files
 - OSX supported from 10.4 to 10.11 (maybe even older versions)
@@ -270,13 +271,13 @@ char const * tinyfd_arrayDialog(
 - On windows link against Comdlg32.lib and Ole32.lib
   This linking is not compulsary for console mode (see above).
 - On unix: it tries command line calls, so no such need.
-- On unix you need applescript, zenity, matedialog, kdialog, Xdialog,
+- On unix you need applescript, zenity, matedialog, qarma, kdialog, Xdialog,
   python2/tkinter or dialog (will open a terminal if running without console).
 - One of those is already included on most (if not all) desktops.
 - In the absence of those it will use gdialog, gxmessage or whiptail
   with a textinputbox.
 - If nothing is found, it switches to basic console input,
-  it opens a console if needed.
+  it opens a console if needed (requires xterm + bash).
 - Use windows separators on windows and unix separators on unix.
 - String memory is preallocated statically for all the returned values.
 - File and path names are tested before return, they are valid.
