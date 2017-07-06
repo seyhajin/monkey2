@@ -1126,7 +1126,7 @@ Class Canvas
 		Local gbufferSize:=_device.RenderTargetSize
 		gbufferSize.x=Max( gbufferSize.x,1920 )
 		gbufferSize.y=Max( gbufferSize.y,1080 )
-	
+
 		If Not _gbuffers[0] Or gbufferSize.x>_gbuffers[0].Width Or gbufferSize.y>_gbuffers[0].Height
 			
 			For Local i:=0 Until 2
