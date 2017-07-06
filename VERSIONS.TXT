@@ -1,7 +1,9 @@
 
 ***** Monkey2 v1.1.05b *****
 
-* Fixes a fairly critical GC bug.
+* Fixes a number of fairly critical GC bugs. GC is more aggressive now which has turned up a few 'lurkers'.
+
+* Mojo 2d lighting now handles windows/devices larger than 1920,1080.
 
 
 ***** Monkey2 v1.1.05 *****
