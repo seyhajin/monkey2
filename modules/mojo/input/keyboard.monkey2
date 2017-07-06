@@ -289,9 +289,10 @@ Class KeyboardDevice Extends InputDevice
 		Case SDL_TEXTINPUT
 		
 			Local tevent:=Cast<SDL_TextInputEvent Ptr>( event )
-			Local char:=tevent->text[0]
-			If char PushChar( char )
 			
+			Local text:=String.FromCString( tevent->text )
+			
+			If text PushChar( text[0] )
 		End
 
 	End
