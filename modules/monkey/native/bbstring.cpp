@@ -298,10 +298,17 @@ bbString bbString::fromChar( int chr ){
 bbArray<bbString> bbString::split( bbString sep )const{
 
 	if( !sep.length() ){
+		
 		bbArray<bbString> bits=bbArray<bbString>( length() );
+		
+		bits.retain();
+		
 		for( int i=0;i<length();++i ){
 			bits[i]=bbString( &data()[i],1 );
 		}
+		
+		bits.release();
+		
 		return bits;
 	}
 	
@@ -310,17 +317,24 @@ bbArray<bbString> bbString::split( bbString sep )const{
 		++n;
 		i=i2+sep.length();
 	}
+	
 	bbArray<bbString> bits=bbArray<bbString>( n );
+	
+	bits.retain();
+	
 	if( n==1 ){
 		bits[0]=*this;
-		return bits;
+	}else{
+		i=0;n=0;
+		while( (i2=find( sep,i ))!=-1 ){
+			bits[n++]=slice( i,i2 );
+			i=i2+sep.length();
+		}
+		bits[n]=slice( i );
 	}
-	i=0;n=0;
-	while( (i2=find( sep,i ))!=-1 ){
-		bits[n++]=slice( i,i2 );
-		i=i2+sep.length();
-	}
-	bits[n]=slice( i );
+	
+	bits.release();
+	
 	return bits;
 }
 

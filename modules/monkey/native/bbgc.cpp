@@ -1,12 +1,5 @@
 
-//v1001
-
-#include <utility>
-
 #include "bbgc.h"
-
-// For testing only...
-// #define BBGC_DISABLED 1
 
 namespace bbDB{
 
@@ -23,8 +16,6 @@ namespace bbGC{
 	
 	int malloced;
 
-	bool debug;
-	
 	size_t trigger=4*1024*1024;
 
 	int suspended=1;
@@ -82,11 +73,6 @@ namespace bbGC{
 		suspended=0;
 	}
 	
-	void setDebug( bool debug ){
-	
-		bbGC::debug=debug;
-	}
-	
 	void setTrigger( size_t size ){
 	
 		trigger=size;
@@ -102,43 +88,11 @@ namespace bbGC{
 		--suspended;
 	}
 	
-	void destroy( bbGCNode *p ){
-	
-		if( p->flags & 1 ){
-			
-			//Run finalizer
-			//printf( "finalizing: %s %p\n",p->typeName(),p );fflush( stdout );
-			
-			++suspended;
-			
-			p->state=unmarkedBit;
-			
-			p->gcFinalize();
-			
-			if( p->state==markedBit ) bbRuntimeError( "Object resurrected in finalizer" );
-				
-			--suspended;
-		}
-		
-		//printf( "destroying: %s %p\n",p->typeName(),p );fflush( stdout );
-		
-#if BBGC_DEBUG
-//		printf( "destroying: %s %p\n",p->typeName(),p );
-		p->state=3;
-		p->flags=0;
-#else
-		
-		p->~bbGCNode();
-			
-		bbGC::free( p );
-#endif
-	}
-	
 	void reclaim( size_t size=0x7fffffff ){
 	
 		size_t freed=0;
 	
-		while( freeList.succ!=&freeList ){
+		while( freeList.succ!=&freeList && freed<size ){
 		
 			bbGCNode *p=freeList.succ;
 			
@@ -146,26 +100,42 @@ namespace bbGC{
 			
 			remove( p );
 			
-			destroy( p );
+			if( p->flags & 1 ){
+				
+				//printf( "finalizing: %s %p\n",p->typeName(),p );fflush( stdout );
+				
+				++suspended;
+				
+				p->state=unmarkedBit;
+				
+				p->gcFinalize();
+				
+				if( p->state==markedBit ) bbRuntimeError( "Object resurrected in finalizer" );
+					
+				--suspended;
+			}
 			
-			if( freed>=size ) break;
+			p->~bbGCNode();
+			
+			bbGC::free( p );
 		}
 	}
 	
-	void mark( bbGCNode *p ){
-
-		if( !p || p->state==markedBit ) return;
-		
-		remove( p );
-		insert( p,markedList );
-		
-		markedBytes+=mallocSize( p );
-
-		p->state=markedBit;
-		
-		p->gcMark();
-	}
+	void markQueued( size_t tomark=0x7fffffff ){
 	
+		while( markQueue && markedBytes<tomark ){
+
+			bbGCNode *p=markQueue;
+			markQueue=p->succ;
+			
+			insert( p,markedList );
+			
+			markedBytes+=mallocSize( p );
+			
+			p->gcMark();
+		}
+	}
+
 	void markRoots(){
 	
 		for( bbGCRoot *root=roots;root;root=root->succ ){
@@ -178,7 +148,7 @@ namespace bbGC{
 	
 		for( bbGCTmp *tmp=retained;tmp;tmp=tmp->succ ){
 		
-			tmp->node->gcMark();
+			enqueue( tmp->node );
 		}
 	}
 	
@@ -202,7 +172,7 @@ namespace bbGC{
 			
 			for( bbGCTmp *tmp=fiber->tmps;tmp;tmp=tmp->succ ){
 			
-				if( tmp->node ) tmp->node->gcMark();
+				enqueue( tmp->node );
 			}
 			
 			fiber=fiber->succ;
@@ -211,21 +181,6 @@ namespace bbGC{
 		}
 	}
 	
-	void markQueued( size_t tomark=0x7fffffff ){
-	
-		while( markQueue && markedBytes<tomark ){
-
-			bbGCNode *p=markQueue;
-			markQueue=p->succ;
-			
-			insert( p,markedList );
-			
-			markedBytes+=mallocSize( p );
-			
-			p->gcMark();
-		}
-	}
-
 	void sweep(){
 	
 		markRetained();
@@ -259,6 +214,8 @@ namespace bbGC{
 	}
 	
 	void retain( bbGCNode *node ){
+		BBGC_VALIDATE( node );
+
 		if( !node ) return;
 		
 		bbGCTmp *tmp=freeTmps;
@@ -290,6 +247,7 @@ namespace bbGC{
 		
 		memused+=size;
 		
+		/*
 		if( size<256 && pools[size>>3] ){
 			void *p=pools[size>>3];
 			pools[size>>3]=*(void**)p;
@@ -298,6 +256,7 @@ namespace bbGC{
 			*q++=size;
 			return q;
 		}
+		*/
 		
 		if( !suspended ){
 
@@ -316,18 +275,27 @@ namespace bbGC{
 		void *p;
 		
 		if( size<256 ){
-			if( size>poolBufSize ){
-				if( poolBufSize ){
-					*(void**)poolBuf=pools[poolBufSize>>3];
-					pools[poolBufSize>>3]=poolBuf;
+			
+			if( pools[size>>3] ){
+				
+				p=pools[size>>3];
+				pools[size>>3]=*(void**)p;
+				
+			}else{
+			
+				if( size>poolBufSize ){
+					if( poolBufSize ){
+						*(void**)poolBuf=pools[poolBufSize>>3];
+						pools[poolBufSize>>3]=poolBuf;
+					}
+					poolBufSize=65536;
+					poolBuf=(unsigned char*)::malloc( poolBufSize );
+					malloced+=poolBufSize;
 				}
-				poolBufSize=65536;
-				poolBuf=(unsigned char*)::malloc( poolBufSize );
-				malloced+=poolBufSize;
+				p=poolBuf;
+				poolBuf+=size;
+				poolBufSize-=size;
 			}
-			p=poolBuf;
-			poolBuf+=size;
-			poolBufSize-=size;
 		}else{
 			p=::malloc( size );
 			malloced+=size;
@@ -355,9 +323,9 @@ namespace bbGC{
 		
 		size_t size=*q;
 		
-		if( debug ){
-//			printf( "bbGC::free %p size=%i\n",q,size );fflush( stdout );
-		}
+		#ifndef NDEBUG
+		memset( q,0xa5,size );
+		#endif
 		
 		memused-=size;
 		

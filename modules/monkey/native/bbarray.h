@@ -79,6 +79,14 @@ template<class T,int D> struct bbArray{
 		bbGC::endCtor( _rep );
 	}
 	
+	void retain()const{
+		bbGC::retain( _rep );
+	}
+	
+	void release()const{
+		bbGC::release( _rep );
+	}
+	
 	void discard(){
 		_rep=nullptr;
 	}
