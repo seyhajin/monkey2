@@ -201,9 +201,9 @@ namespace bbGC{
 			unmarkedList->succ=unmarkedList->pred=unmarkedList;
 		}
 
-		//swap mark/unmarked lists		
-		std::swap( markedList,unmarkedList );
-		std::swap( markedBit,unmarkedBit );
+		//swap mark/unmarked lists
+		auto tmp1=markedList;markedList=unmarkedList;unmarkedList=tmp1;
+		auto tmp2=markedBit;markedBit=unmarkedBit;unmarkedBit=tmp2;
 		unmarkedBytes=markedBytes;
 		markedBytes=0;
 
