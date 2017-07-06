@@ -5,9 +5,11 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.05b"
+Const MX2CC_VERSION:="1.1.05"
 
-Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
+Const RELEASE_SUFFIX:="b"
+
+Const OUTPUT:="Monkey2-v"+MX2CC_VERSION+RELEASE_SUFFIX
 
 Const IGNORE:="
 .gitignore
@@ -64,6 +66,8 @@ Function CopyFiles( dir:String )
 		Case FileType.Directory
 			
 			If dir.StartsWith( "modules/" )
+				
+				If file.EndsWith( ".products" ) Continue
 			
 				If file.Contains( ".buildv" ) And Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
 	
