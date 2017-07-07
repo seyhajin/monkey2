@@ -148,8 +148,6 @@ void main(){
 	
 	float shadow=evalShadow();
 	
-	shadow=1.0;
-	
 	vec3 light=evalLight( color_m.rgb,color_m.a,normal_r.a );
 	
 	gl_FragColor=vec4( min( light * shadow,8.0 ),1.0 );

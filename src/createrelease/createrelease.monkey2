@@ -62,23 +62,22 @@ Function CopyFiles( dir:String )
 		Select GetFileType( src )
 		Case FileType.Directory
 			
-			If dir.StartsWith( "modules/" )
+			If file.EndsWith( ".products" )
 				
-				If file.EndsWith( ".products" ) Continue
-			
-				If file.Contains( ".buildv" ) And Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
-	
-				If dir.Contains( ".buildv" )
-					If file.StartsWith( "emscripten_" ) Continue
-					If file.StartsWith( "android_" ) Continue
-					If file.StartsWith( "ios_" ) Continue
-					If file="build" Continue
-					If file="src" Continue
-				Endif
-			
-			Else If file.Contains( ".buildv" ) Or file.EndsWith( ".products" )
-			
 				Continue
+			
+			Else If file.Contains( ".buildv" )
+				
+				If ExtractDir( dir )<>"modules/" Or Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
+				
+			Else If dir.Contains( ".buildv" )
+				
+				If file.StartsWith( "emscripten_" ) Continue
+				If file.StartsWith( "android_" ) Continue
+				If file.StartsWith( "ios_" ) Continue
+				If file.EndsWith( "_msvc" )  Continue
+				If file="build" Continue
+				If file="src" Continue
 			
 			Endif
 			
