@@ -5,6 +5,8 @@
 
 * Mojo 2d lighting now handles windows/devices larger than 1920,1080.
 
+* Added 3d modules!
+
 
 ***** Monkey2 v1.1.05 *****
 
