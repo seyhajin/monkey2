@@ -18,9 +18,6 @@ src/createrelease
 modules/admob
 modules/linq
 modules/gles30
-modules/mojo3d
-modules/mojo3d-loaders
-modules/mojo3d-physics
 bin/ted2.state.json
 bin/ted2_windows/state.json
 bin/ted2_macos.app/Contents/MacOS/state.json
