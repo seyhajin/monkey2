@@ -1,0 +1,8 @@
+{
+	"module":"mojo3d-loaders",
+	"about":"Mojo3d assimp support",
+	"author":"Mark Sibly",
+	"version":"1.0.0",
+	"support":"http://monkeycoder.co.nz",
+	"depends":["std","assimp","mojo3d"]
+}
