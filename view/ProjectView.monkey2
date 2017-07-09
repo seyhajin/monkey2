@@ -160,16 +160,41 @@ Class ProjectView Extends ScrollView
 					
 					menu.AddSeparator()
 					
-					menu.AddAction( "Update module" ).Triggered=Lambda()
+					menu.AddAction( "Update / Rebuild "+name ).Triggered=Lambda()
 						
-						_builder.BuildModules( False,name )
-					End
-					
-					menu.AddAction( "Rebuild module" ).Triggered=Lambda()
-				
 						_builder.BuildModules( True,name )
 					End
+					
+				Endif
 				
+				' update all modules
+				Local path2:=MainWindow.ModsPath
+				If path2.EndsWith( "/" ) Then path2=path2.Slice( 0,path2.Length-1 )
+				
+				If path = path2
+					
+					menu.AddSeparator()
+					
+					menu.AddAction( "Update / Rebuild modules" ).Triggered=Lambda()
+					
+						_builder.BuildModules( False )
+					End
+					
+				Endif
+				
+				' bananas showcase
+				If IsBananasShowcaseAvailable()
+					path2=Prefs.MonkeyRootPath+"bananas"
+					If path = path2
+					
+						menu.AddSeparator()
+					
+						menu.AddAction( "Open bananas showcase" ).Triggered=Lambda()
+					
+							MainWindow.ShowBananasShowcase()
+						End
+					
+					Endif
 				Endif
 				
 			Case FileType.File
@@ -292,7 +317,7 @@ Class ProjectView Extends ScrollView
 	
 	Field _docs:DocumentManager
 	Field _docker:=New DockingView
-	Field _projects:=New StringMap<FileBrowser>
+	Field _projects:=New StringMap<FileBrowserExt>
 	Field _builder:IModuleBuilder
 
 	Method OnOpenProject()
