@@ -18,7 +18,12 @@ bbBool bbRequesters::Confirm( bbString title,bbString text,bbBool serious ){
 bbInt bbRequesters::Proceed( bbString title,bbString text,bbBool serious ){
 
 	// Ok, no yesnocancal in tinyfd so we'll use kdialog...
-
+	
+	int result=tinyfd_messageBox( bbCString( title ),bbCString( text ),"yesnocancel",serious ? "error" : "info",1 );
+	
+	return result==2 ? -1 : result;
+	
+/*	
 	bbString cmd=BB_T( "kdialog --title \"" )+title+"\" --yesnocancel \""+text+"\"";
 
 	int result=system( cmd.c_str() );
@@ -26,6 +31,7 @@ bbInt bbRequesters::Proceed( bbString title,bbString text,bbBool serious ){
 	if( result==0 ) return 1;	//YES
 	if( result==256 ) return 0;	//NO
 	return -1;					//CANCEL
+*/
 }
 
 bbString bbRequesters::RequestFile( bbString title,bbString exts,bbBool save,bbString path ){

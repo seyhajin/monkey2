@@ -7,7 +7,9 @@ Using std..
 
 Const MX2CC_VERSION:="1.1.05"
 
-Const OUTPUT:="Monkey2-v"+MX2CC_VERSION
+Const RELEASE_SUFFIX:="b"
+
+Const OUTPUT:="Monkey2-v"+MX2CC_VERSION+RELEASE_SUFFIX
 
 Const IGNORE:="
 .gitignore
@@ -16,9 +18,6 @@ src/createrelease
 modules/admob
 modules/linq
 modules/gles30
-modules/mojo3d
-modules/mojo3d-loaders
-modules/mojo3d-physics
 bin/ted2.state.json
 bin/ted2_windows/state.json
 bin/ted2_macos.app/Contents/MacOS/state.json
@@ -63,21 +62,22 @@ Function CopyFiles( dir:String )
 		Select GetFileType( src )
 		Case FileType.Directory
 			
-			If dir.StartsWith( "modules/" )
-			
-				If file.Contains( ".buildv" ) And Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
-	
-				If dir.Contains( ".buildv" )
-					If file.StartsWith( "emscripten_" ) Continue
-					If file.StartsWith( "android_" ) Continue
-					If file.StartsWith( "ios_" ) Continue
-					If file="build" Continue
-					If file="src" Continue
-				Endif
-			
-			Else If file.Contains( ".buildv" ) Or file.EndsWith( ".products" )
-			
+			If file.EndsWith( ".products" )
+				
 				Continue
+			
+			Else If file.Contains( ".buildv" )
+				
+				If ExtractDir( dir )<>"modules/" Or Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
+				
+			Else If dir.Contains( ".buildv" )
+				
+				If file.StartsWith( "emscripten_" ) Continue
+				If file.StartsWith( "android_" ) Continue
+				If file.StartsWith( "ios_" ) Continue
+				If file.EndsWith( "_msvc" )  Continue
+				If file="build" Continue
+				If file="src" Continue
 			
 			Endif
 			

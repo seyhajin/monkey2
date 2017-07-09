@@ -1,4 +1,13 @@
 
+***** Monkey2 v1.1.05b *****
+
+* Fixes a number of fairly critical GC bugs. GC is more aggressive now which has turned up a few 'lurkers'.
+
+* Mojo 2d lighting now handles windows/devices larger than 1920,1080.
+
+* Added 3d modules!
+
+
 ***** Monkey2 v1.1.05 *****
 
 * Added std.requesters.OpenUrl support for android and ios.

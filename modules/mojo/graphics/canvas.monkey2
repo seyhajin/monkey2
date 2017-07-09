@@ -1123,20 +1123,27 @@ Class Canvas
 		
 		_lighting=True
 		
-		If Not _gbuffers[0]
+		Local gbufferSize:=_device.RenderTargetSize
+		gbufferSize.x=Max( gbufferSize.x,1920 )
+		gbufferSize.y=Max( gbufferSize.y,1080 )
 
-			Local gbufferSize:=New Vec2i( 1920,1080 )
-			Local gbufferScale:=New Vec2f( 1 )/Cast<Vec2f>( gbufferSize )
+		If Not _gbuffers[0] Or gbufferSize.x>_gbuffers[0].Width Or gbufferSize.y>_gbuffers[0].Height
 			
 			For Local i:=0 Until 2
+	
+				If _gbuffers[i] _gbuffers[i].Discard()
+				If _gbrtargets[i] _gbrtargets[i].Discard()
+	
 				_gbuffers[i]=New Texture( gbufferSize.x,gbufferSize.y,PixelFormat.RGBA32,TextureFlags.Dynamic )
 				_gbrtargets[i]=New RenderTarget( New Texture[]( _gbuffers[i] ),Null )
 			Next
-
+	
+			Local gbufferScale:=New Vec2f( 1 )/Cast<Vec2f>( gbufferSize )
+	
 			_uniforms.SetVec2f( "GBufferScale",gbufferScale )
 			_uniforms.SetTexture( "GBuffer0",_gbuffers[0] )
 			_uniforms.SetTexture( "GBuffer1",_gbuffers[1] )
-			
+	
 		Endif
 		
 		Validate()
