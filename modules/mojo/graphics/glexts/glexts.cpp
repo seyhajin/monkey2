@@ -61,7 +61,7 @@ namespace bbGLexts{
 			SDL_GL_ExtensionSupported( "GL_WEBGL_depth_texture" ) ||
 			SDL_GL_ExtensionSupported( "GL_OES_depth_texture" );
 		
-		GL_seamless_cube_map=SDL_GL_ExtensionsSupported( "GL_ARB_seamless_cube_map" );
+		GL_seamless_cube_map=SDL_GL_ExtensionSupported( "GL_ARB_seamless_cube_map" );
 			
 //		bb_printf( "GL_draw_buffers=%i\n",int( GL_draw_buffers ) );
 //		bb_printf( "GL_texture_float=%i\n",int( GL_texture_float ) );
