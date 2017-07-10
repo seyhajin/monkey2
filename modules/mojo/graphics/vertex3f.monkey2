@@ -5,12 +5,13 @@ Struct Vertex3f
 
 	Field position:Vec3f	'0
 	Field texCoord0:Vec2f	'12
-	Field normal:Vec3f		'20
-	Field tangent:Vec4f		'32
-	Field weights:Vec4f		'48
-	Field bones:UInt		'64
+	Field texCoord1:Vec2f	'20
+	Field normal:Vec3f		'28
+	Field tangent:Vec4f		'40
+	Field weights:Vec4f		'56
+	Field bones:UInt		'72
 
-	Const Pitch:=68			'68
+	Const Pitch:=76			'76
 	
 	Method New()
 	End
@@ -66,6 +67,30 @@ Struct Vertex3f
 		texCoord0.y=sy
 	End
 	
+	Property Sx0:Float()
+		Return texCoord0.x
+	Setter( sx:Float )
+		texCoord0.x=sx
+	End
+	
+	Property Sy0:Float()
+		Return texCoord0.y
+	Setter( sy:Float )
+		texCoord0.y=sy
+	End
+	
+	Property Sx1:Float()
+		Return texCoord1.x
+	Setter( sx:Float )
+		texCoord1.x=sx
+	End
+	
+	Property Sy1:Float()
+		Return texCoord1.y
+	Setter( sy:Float )
+		texCoord1.y=sy
+	End
+	
 End
 
 Class Vertex3fFormat Extends VertexFormat
@@ -74,17 +99,17 @@ Class Vertex3fFormat Extends VertexFormat
 	
 	Property Pitch:Int() Override
 		
-		Return 68
+		Return Vertex3f.Pitch
 	End
 
 	Method UpdateGLAttribs() Override
-		
 		glEnableVertexAttribArray( A_POSITION ) ; glVertexAttribPointer( A_POSITION,3,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 0 ) )
 		glEnableVertexAttribArray( A_TEXCOORD0 ) ; glVertexAttribPointer( A_TEXCOORD0,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 12 ) )
-		glEnableVertexAttribArray( A_NORMAL ) ; glVertexAttribPointer( A_NORMAL,3,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 20 ) )
-		glEnableVertexAttribArray( A_TANGENT ) ; glVertexAttribPointer( A_TANGENT,4,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 32 ) )
-		glEnableVertexAttribArray( A_WEIGHTS ) ; glVertexAttribPointer( A_WEIGHTS,4,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 48 ) )
-		glEnableVertexAttribArray( A_BONES ) ; glVertexAttribPointer( A_BONES,4,GL_UNSIGNED_BYTE,False,Pitch,Cast<Void Ptr>( 64 ) )
+		glEnableVertexAttribArray( A_TEXCOORD1 ) ; glVertexAttribPointer( A_TEXCOORD1,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 20 ) )
+		glEnableVertexAttribArray( A_NORMAL ) ; glVertexAttribPointer( A_NORMAL,3,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 28 ) )
+		glEnableVertexAttribArray( A_TANGENT ) ; glVertexAttribPointer( A_TANGENT,4,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 40 ) )
+		glEnableVertexAttribArray( A_WEIGHTS ) ; glVertexAttribPointer( A_WEIGHTS,4,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 56 ) )
+		glEnableVertexAttribArray( A_BONES ) ; glVertexAttribPointer( A_BONES,4,GL_UNSIGNED_BYTE,False,Pitch,Cast<Void Ptr>( 72 ) )
 	End
 	
 End
