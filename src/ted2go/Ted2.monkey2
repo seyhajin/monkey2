@@ -33,6 +33,7 @@
 #Import "dialog/DialogExt"
 #Import "dialog/NoTitleDialog"
 #Import "dialog/FindInFilesDialog"
+#Import "dialog/UpdateModulesDialog"
 
 #Import "document/DocumentManager"
 #Import "document/Ted2Document"
@@ -42,6 +43,7 @@
 #Import "document/AudioDocument"
 #Import "document/JsonDocument"
 #Import "document/XmlDocument"
+#Import "document/BananasDocument"
 
 #Import "eventfilter/TextViewKeyEventFilter"
 #Import "eventfilter/Monkey2KeyEventFilter"
@@ -71,12 +73,15 @@
 #Import "utils/JsonUtils"
 #Import "utils/Utils"
 
+#Import "view/IRCView"
+#Import "view/CodeMapView"
 #Import "view/CodeTextView"
 #Import "view/ConsoleViewExt"
 #Import "view/ListViewExt"
 #Import "view/AutocompleteView"
 #Import "view/CodeTreeView"
 #Import "view/TreeViewExt"
+#Import "view/FileBrowserExt"
 #Import "view/CodeGutterView"
 #Import "view/ToolBarViewExt"
 #Import "view/HintView"
@@ -93,6 +98,7 @@
 #Import "view/Monkey2TreeView"
 #Import "view/GutterView"
 #Import "view/MenuExt"
+#Import "view/ScrollableViewExt"
 
 #Import "MainWindow"
 #Import "Plugin"
@@ -111,7 +117,7 @@ Using tinyxml2..
 
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.3.2"
+Global AppTitle:="Ted2Go v2.4"
 
 
 Function Main()
@@ -141,7 +147,7 @@ Function Main()
 	Prefs.LoadState( jobj )
 	
 	'initial theme
-	'	
+	'
 	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-classic-dark" )
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
 	
@@ -151,7 +157,7 @@ Function Main()
 	config["initialThemeScale"]=jobj.GetNumber( "themeScale" )
 	
 	'start the app!
-	'	
+	'
 	New AppInstance( config )
 	
 	'initial window state
@@ -163,8 +169,8 @@ Function Main()
 	If jobj.Contains( "windowRect" ) 
 		rect=ToRecti( jobj["windowRect"] )
 	Else
-		Local w:=Min( 1024,App.DesktopSize.x-40 )
-		Local h:=Min( 768,App.DesktopSize.y-64 )
+		Local w:=Min( 1380,App.DesktopSize.x-40 )
+		Local h:=Min( 970,App.DesktopSize.y-64 )
 		rect=New Recti( 0,0,w,h )
 		flags|=WindowFlags.Center
 	Endif
@@ -182,7 +188,7 @@ Function Main()
 	Next
 	
 	App.Run()
-		
+	
 End
 
 Function SetupMonkeyRootPath:String( rootPath:String,searchMode:Bool )
@@ -192,23 +198,22 @@ Function SetupMonkeyRootPath:String( rootPath:String,searchMode:Bool )
 	ChangeDir( rootPath )
 	
 	If searchMode
-		While GetFileType( "bin" )<>FileType.Directory Or GetFileType( "modules" )<>FileType.Directory
+		' search for desired folder
+		Local found:=FindBinFolder( rootPath )
+		' search for AddDir() folder
+		If Not found And rootPath<>AppDir() Then found=FindBinFolder( AppDir() )
+		' search for choosen-by-requester folder
+		While Not found
 	
-			If IsRootDir( CurrentDir() )
-				
-				Local ok:=Confirm( "Initializing","Error initializing - can't find working dir!~nDo you want to specify Monkey2 root folder now?" )
-				If Not ok
-					Return ""
-				End
-				Local s:=requesters.RequestDir( "Choose Monkey2 folder",AppDir() )
-				ChangeDir( s )
-				Continue
-			Endif
-			
-			ChangeDir( ExtractDir( CurrentDir() ) )
+			Local ok:=Confirm( "Initializing","Error initializing - can't find working dir!~nDo you want to specify Monkey2 root folder now?" )
+			If Not ok
+				Return ""
+			End
+			Local s:=requesters.RequestDir( "Choose Monkey2 folder",AppDir() )
+			found=FindBinFolder( s )
 		Wend
 		
-		rootPath=CurrentDir()
+		rootPath=found
 	Else
 		
 		Local ok:= (GetFileType( "bin" )=FileType.Directory And GetFileType( "modules" )=FileType.Directory)
@@ -232,4 +237,51 @@ End
 Function IsFileExists:Bool( path:String )
 	
 	Return GetFileType( path ) = FileType.File
+End
+
+Function Exec( exePath:String,args:String="" )
+
+#If __HOSTOS__="windows"
+
+	libc.system( exePath+" "+args )
+	
+#Else If __HOSTOS__="macos"
+
+	libc.system( "open ~q"+exePath+"~q --args "+args )
+
+#Else If __HOSTOS__="linux"
+
+	libc.system( exePath+" "+args+" >/dev/null 2>/dev/null &" )
+
+#Else If __HOSTOS__="raspbian"
+
+	libc.system( exePath+" "+args+" >/dev/null 2>/dev/null &" )
+
+#Endif
+
+End
+
+
+Private
+
+Function FindBinFolder:String( startingFolder:String )
+	
+	Local cur:=CurrentDir()
+	Local ok:=True
+	ChangeDir( startingFolder )
+	
+	While GetFileType( "bin" )<>FileType.Directory Or GetFileType( "modules" )<>FileType.Directory
+	
+		If IsRootDir( CurrentDir() )
+			
+			ok=False
+			Exit
+		Endif
+	
+		ChangeDir( ExtractDir( CurrentDir() ) )
+	Wend
+	Local result:=ok ? CurrentDir() Else ""
+	ChangeDir( cur )
+	
+	Return result
 End

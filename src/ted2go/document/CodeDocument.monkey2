@@ -1,3 +1,4 @@
+
 Namespace ted2go
 
 
@@ -40,7 +41,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		
 		'very important to set FileType for init
 		'formatter, highlighter and keywords
-		FileType=doc.FileType
+		FileType=doc.FileExtension
 		FilePath=doc.Path
 		
 		'AutoComplete
@@ -64,6 +65,10 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		UpdatePrefs()
 	End
 	
+	Property Gutter:CodeGutterView()
+		Return _gutter
+	End
+	
 	Property CharsToShowAutoComplete:Int()
 		
 		Return Prefs.AcShowAfter
@@ -73,16 +78,32 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		
 		ShowWhiteSpaces=Prefs.EditorShowWhiteSpaces
 		
-		RemoveView( _gutter )
-		If Prefs.EditorGutterVisible
-			If Not _gutter Then _gutter=New CodeGutterView( _doc )
-			AddView( _gutter,"left" )
+		Local visible:Bool
+		
+		'gutter view
+		visible=Prefs.EditorGutterVisible
+		If visible
+			If Not _gutter
+				_gutter=New CodeGutterView( _doc )
+				AddView( _gutter,"left" )
+			Endif
 		Endif
+		If _gutter Then _gutter.Visible=visible
+		
+		'codemap view
+		visible=Prefs.EditorCodeMapVisible
+		If visible
+			If Not _codeMap
+				_codeMap=New CodeMapView( Self )
+				AddView( _codeMap,"right" )
+			Endif
+		Endif
+		If _codeMap Then _codeMap.Visible=visible
 		
 		_doc.ArrangeElements()
 	End
 	
-	
+
 	Protected
 	
 	Method OnRenderContent( canvas:Canvas ) Override
@@ -90,9 +111,11 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		Local color:=canvas.Color
 		Local xx:=Scroll.x
 		' whole current line
+		Local r:=CursorRect
+		r.Left=xx
+		r.Right=Width
 		canvas.Color=_lineColor
-		canvas.DrawRect( xx,Line*LineHeight-1,Width,LineHeight+3 )
-		
+		canvas.DrawRect( r )
 		
 		If _doc._debugLine<>-1
 			
@@ -264,7 +287,8 @@ Class CodeDocumentView Extends Ted2CodeTextView
 			
 					Local s:=(indent ? text.Slice( 0,indent ) Else "")
 			
-					If Not beforeIndent
+					' auto indentation
+					If Prefs.EditorAutoIndent And Not beforeIndent
 						text=text.Trim().ToLower()
 						If text.StartsWith( "if" )
 							If Not Utils.BatchContains( text,_arrIf,True )
@@ -534,6 +558,12 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		
 		Endif
 		
+		' text overwrite mode
+		If event.Key=Key.Insert And Not (shift Or ctrl Or alt)
+			
+			MainWindow.OverwriteTextMode=Not MainWindow.OverwriteTextMode
+		Endif
+		
 	End
 	
 	Method ShowJsonDialog()
@@ -608,13 +638,13 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		
 	End
 	
-	
 	Private
 	
 	Field _doc:CodeDocument
 	Field _prevErrorLine:Int
 	Field _lineColor:Color
 	Field _gutter:CodeGutterView
+	Field _codeMap:CodeMapView
 	
 	Method UpdateThemeColors() Override
 		
@@ -644,11 +674,6 @@ Class CodeDocument Extends Ted2Document
 	
 		_doc=New TextDocument
 		
-		_doc.TextChanged+=Lambda()
-			Dirty=True
-			OnTextChanged()
-		End
-		
 		_doc.LinesModified+=Lambda( first:Int,removed:Int,inserted:Int )
 		
 			Local put:=0
@@ -676,11 +701,13 @@ Class CodeDocument Extends Ted2Document
 		
 		' Editor
 		_codeView=New CodeDocumentView( Self )
-		_codeView.LineChanged += Lambda( prev:Int,cur:Int )
-			If AutoComplete.IsOpened Then AutoComplete.Hide()
-		End
 		_codeView.LineChanged += OnLineChanged
 		
+		_doc.TextChanged+=Lambda()
+			Dirty=True
+			OnTextChanged()
+			_codeView.TextChanged()
+		End
 		
 		' bar + editor
 		_content=New DockingView
@@ -777,7 +804,7 @@ Class CodeDocument Extends Ted2Document
 	' not multipurpose method, need to move into plugin
 	Method PrepareForInsert:String( ident:String,text:String,addSpace:Bool,textLine:String,cursorPosInLine:Int,item:CodeItem )
 		
-		If FileType <> ".monkey2" Return ident
+		If FileExtension <> ".monkey2" Return ident
 		
 		If ident <> text And item And item.IsLikeFunc 'not a keyword
 			
@@ -968,7 +995,7 @@ Class CodeDocument Extends Ted2Document
 		Local text:=TextDocument.GetLine( line )
 		Local posInLine:=_codeView.Cursor-TextDocument.StartOfLine( line )
 		
-		Local can:=AutoComplete.CanShow( text,posInLine,FileType )
+		Local can:=AutoComplete.CanShow( text,posInLine,FileExtension )
 		Return can
 		
 	End
@@ -984,7 +1011,7 @@ Class CodeDocument Extends Ted2Document
 			AutoComplete.DisableUsingsFilter=Not AutoComplete.DisableUsingsFilter
 		Endif
 		
-		AutoComplete.Show( ident,Path,FileType,line )
+		AutoComplete.Show( ident,Path,FileExtension,line )
 		
 		If Not AutoComplete.IsOpened Return
 		
@@ -1043,13 +1070,16 @@ Class CodeDocument Extends Ted2Document
 		_codeView.OnKeyEvent( event )
 	End
 	
+	Property CodeView:CodeDocumentView()
+		Return _codeView
+	End
+	
 	Protected
 	
 	Method OnGetTextView:TextView( view:View ) Override
 	
 		Return _codeView
 	End
-	
 	
 	Private
 
@@ -1072,7 +1102,6 @@ Class CodeDocument Extends Ted2Document
 	
 	Field _toolBar:ToolBarExt
 	Field _content:DockingView
-	
 	
 	Method GetToolBar:ToolBarExt()
 		
@@ -1164,7 +1193,7 @@ Class CodeDocument Extends Ted2Document
 	
 	Method OnLoad:Bool() Override
 	
-		_parser=ParsersManager.Get( FileType )
+		_parser=ParsersManager.Get( FileExtension )
 	
 		Local text:=stringio.LoadString( Path )
 		
@@ -1204,14 +1233,18 @@ Class CodeDocument Extends Ted2Document
 			_treeView.SelectByScope( scope )
 			_prevScope = scope
 		Endif
+		
+		If AutoComplete.IsOpened Then AutoComplete.Hide()
 	End
 	
 	Method UpdateCodeTree()
 		
-		_treeView.Fill( FileType,Path )
+		_treeView.Fill( FileExtension,Path )
 	End
 	
 	Method BgParsing( pathOnDisk:String )
+		
+		If MainWindow.IsTerminating Return
 		
 		ResetErrors()
 		
@@ -1254,7 +1287,7 @@ Class CodeDocument Extends Ted2Document
 		' -----------------------------------
 		' catch for parsing
 		
-		If FileType <> ".monkey2" Return
+		If FileExtension <> ".monkey2" Return
 
 		
 		If _timer _timer.Cancel()
@@ -1280,7 +1313,7 @@ Class CodeDocument Extends Ted2Document
 				DeleteFile( tmp )
 				
 				_timer.Cancel()
-							
+				
 				_timer=Null
 				_parsing=False
 				

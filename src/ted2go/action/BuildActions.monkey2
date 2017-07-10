@@ -26,7 +26,7 @@ End
 
 Interface IModuleBuilder
 	
-	Method BuildModules:Bool( clean:Bool,modules:String="" )
+	Method BuildModules:Bool( clean:Bool,modules:String="",configs:String="debug release" )
 	
 End
 
@@ -41,7 +41,6 @@ Class BuildActions Implements IModuleBuilder
 	Field nextError:Action
 	Field lockBuildFile:Action
 	Field updateModules:Action
-	Field rebuildModules:Action
 	Field moduleManager:Action
 	Field rebuildHelp:Action
 	
@@ -110,15 +109,10 @@ Class BuildActions Implements IModuleBuilder
 		lockBuildFile.HotKey=Key.L
 		lockBuildFile.HotKeyModifiers=Modifier.Menu
 		
-		updateModules=New Action( "Update modules..." )
+		updateModules=New Action( "Update / Rebuild modules..." )
 		updateModules.Triggered=OnUpdateModules
 		updateModules.HotKey=Key.U
 		updateModules.HotKeyModifiers=Modifier.Menu
-		
-		rebuildModules=New Action( "Rebuild modules..." )
-		rebuildModules.Triggered=OnRebuildModules
-		rebuildModules.HotKey=Key.U
-		rebuildModules.HotKeyModifiers=Modifier.Menu|Modifier.Shift
 		
 		moduleManager=New Action( "Module manager..." )
 		moduleManager.Triggered=OnModuleManager
@@ -220,6 +214,11 @@ Class BuildActions Implements IModuleBuilder
 		Return _locked
 	End
 	
+	Method LockBuildFile()
+		
+		OnLockBuildFile()
+	End
+	
 	Method SaveState( jobj:JsonObject )
 		
 		If _locked jobj["lockedDocument"]=New JsonString( _locked.Path )
@@ -288,50 +287,42 @@ Class BuildActions Implements IModuleBuilder
 		buildAndRun.Enabled=canbuild
 		nextError.Enabled=Not _errors.Empty
 		updateModules.Enabled=idle
-		rebuildModules.Enabled=idle
 		rebuildHelp.Enabled=idle
 		moduleManager.Enabled=idle
 	End
 
-	Method BuildModules:Bool( clean:Bool,modules:String="" )
+	Method BuildModules:Bool( clean:Bool,modules:String="",configs:String="debug release" )
 	
-		Local targets:=New StringStack
-	
-		For Local target:=Eachin _validTargets
-			targets.Push( target="ios" ? "iOS" Else target.Capitalize() )
-		Next
-	
-		targets.Push( "All!" )
-		targets.Push( "Cancel" )
-	
-		Local prefix:=clean ? "Rebuild" Else "Update"
-		Local text:="Modules: "
-		If modules Then text+=modules.Replace( " ",", " ) Else text+="All"
-		text+="~n~nSelect target:"
-	
-		Local i:=TextDialog.Run( prefix+" modules",text,targets.ToArray(),0,targets.Length-1 )
-	
+		Local dialog:=New UpdateModulesDialog( _validTargets,modules,configs,clean )
+		dialog.Title="Update / Rebuild modules"
+		
+		Local ok:=dialog.ShowModal()
+		If Not ok Return False
+		
 		Local result:=True
-	
-		Select i
-		Case targets.Length-1	'Cancel
-			Return False
-		Case targets.Length-2	'All!
-			For Local i:=0 Until targets.Length-2
-				If BuildModules( clean,targets[i],modules ) Continue
-				result=False
-				Exit
-			Next
-		Default
-			result=BuildModules( clean,targets[i],modules )
-		End
-	
+		
+		Local targets:=dialog.SelectedTargets
+		modules=dialog.SelectedModules
+		clean=dialog.NeedClean
+		configs=dialog.SelectedConfigs
+		
+		Local time:=Millisecs()
+		
+		For Local target:=Eachin targets
+			result=BuildModules( clean,target,modules,configs )
+			If result=False Exit
+		Next
+		
+		time=Millisecs()-time
+		Local prefix:=clean ? "Rebuild" Else "Update"
+		
 		If result
 			_console.Write( "~n"+prefix+" modules completed successfully!~n" )
 		Else
 			_console.Write( "~n"+prefix+" modules failed.~n" )
 		Endif
-	
+		_console.Write( "Total time elapsed: "+FormatTime( time )+".~n" )
+		
 		Return result
 	End
 	
@@ -359,6 +350,7 @@ Class BuildActions Implements IModuleBuilder
 	
 	Field _validTargets:StringStack
 	Field _timing:Long
+	
 	
 	Method BuildDoc:CodeDocument()
 		
@@ -400,7 +392,7 @@ Class BuildActions Implements IModuleBuilder
 		tv.GotoLine( err.line )
 	End
 	
-	Method BuildMx2:Bool( cmd:String,progressText:String,action:String="build" )
+	Method BuildMx2:Bool( cmd:String,progressText:String,action:String="build",showElapsedTime:Bool=False )
 	
 		ClearErrors()
 		
@@ -478,23 +470,24 @@ Class BuildActions Implements IModuleBuilder
 		Local status:=hasErrors ? "{0} failed. See the build console for details." Else (_console.ExitCode=0 ? "{0} finished." Else "{0} cancelled.")
 		status=status.Replace( "{0}",title )
 		
-		Local elapsed:=(Millisecs()-_timing)/1000
-		Local m:=elapsed/60
-		Local sec:=elapsed Mod 60
-		status+="   Time elapsed: "+m+" m "+sec+" s."
+		If showElapsedTime
+			Local elapsed:=(Millisecs()-_timing)
+			status+="   Time elapsed: "+FormatTime( elapsed )+"."
+		Endif
 		
 		MainWindow.ShowStatusBarText( status )
 		
 		Return _console.ExitCode=0
 	End
 
-	Method BuildModules:Bool( clean:Bool,target:String,modules:String )
-	
+	Method BuildModules:Bool( clean:Bool,target:String,modules:String,configs:String="debug release" )
+		
 		Local msg:=(clean ? "Rebuilding ~ " Else "Updating ~ ")+target
 		
-		For Local config:=0 Until 2
+		Local arr:=configs.Split( " " )
+		For Local cfg:=Eachin arr
 		
-			Local cfg:=(config ? "debug" Else "release")
+			'Local cfg:=(config ? "debug" Else "release")
 			
 			Local cmd:=MainWindow.Mx2ccPath+" makemods -target="+target
 			If clean cmd+=" -clean"
@@ -512,7 +505,7 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method MakeDocs:Bool()
 	
-		Return BuildMx2( MainWindow.Mx2ccPath+" makedocs","Rebuilding documentation..." )
+		Return BuildMx2( MainWindow.Mx2ccPath+" makedocs","Rebuilding documentation...","build",True )
 	End
 	
 	Method BuildApp:Bool( config:String,target:String,sourceAction:String )
@@ -538,7 +531,7 @@ Class BuildActions Implements IModuleBuilder
 		Local title := sourceAction="build" ? "Building" Else (sourceAction="run" ? "Running" Else "Checking")
 		Local msg:=title+" ~ "+target+" ~ "+config+" ~ "+StripDir( buildDoc.Path )
 		
-		If Not BuildMx2( cmd,msg,sourceAction ) Return False
+		If Not BuildMx2( cmd,msg,sourceAction,True ) Return False
 		
 		_console.Write("~nDone.")
 		
@@ -619,6 +612,7 @@ Class BuildActions Implements IModuleBuilder
 	Method OnLockBuildFile()
 	
 		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
+		
 		If Not doc Return
 		
 		If _locked _locked.State=""
@@ -646,13 +640,6 @@ Class BuildActions Implements IModuleBuilder
 		If _console.Running Return
 	
 		BuildModules( False )
-	End
-	
-	Method OnRebuildModules()
-	
-		If _console.Running Return
-	
-		BuildModules( True )
 	End
 	
 	Method OnModuleManager()

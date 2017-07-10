@@ -15,7 +15,10 @@ Namespace ted2go
 Global MainWindow:MainWindowInstance
 
 Class MainWindowInstance Extends Window
-
+	
+	Field SizeChanged:Void()
+	Field Rendered:Void()
+	
 	Method New( title:String,rect:Recti,flags:WindowFlags,jobj:JsonObject )
 		Super.New( title,rect,flags )
 		
@@ -52,7 +55,15 @@ Class MainWindowInstance Extends Window
 			If IsTmpPath( doc.Path ) DeleteFile( doc.Path )
 			SaveState()
 		End
-
+		
+		'IRC tab
+		_ircView=New IRCView
+		_ircView.introScreen.Text="Get live help from other Monkey 2 users"
+		_ircView.introScreen.OnNickChange+=Lambda( nick:String )
+			Prefs.IrcNickname=nick
+		End
+		SetupChatTab()
+		
 		'Build tab
 		
 		_buildConsole=New ConsoleExt
@@ -174,7 +185,7 @@ Class MainWindowInstance Extends Window
 		_findActions=New FindActions( _docsManager,_projectView,_findConsole )
 		_helpActions=New HelpActions
 		_viewActions=New ViewActions( _docsManager )
-
+		
 		_tabMenu=New Menu
 		_tabMenu.AddAction( _fileActions.close )
 		_tabMenu.AddAction( _fileActions.closeOthers )
@@ -299,8 +310,6 @@ Class MainWindowInstance Extends Window
 		_buildMenu.AddAction( _buildActions.lockBuildFile )
 		_buildMenu.AddSeparator()
 		_buildMenu.AddAction( _buildActions.updateModules )
-		_buildMenu.AddAction( _buildActions.rebuildModules )
-		_buildMenu.AddSeparator()
 		_buildMenu.AddAction( _buildActions.moduleManager )
 		
 		'Window menu
@@ -322,6 +331,7 @@ Class MainWindowInstance Extends Window
 		_helpMenu=New MenuExt( "Help" )
 		_helpMenu.AddAction( _helpActions.quickHelp )
 		_helpMenu.AddAction( _helpActions.viewManuals )
+		If IsBananasShowcaseAvailable() Then _helpMenu.AddAction( _helpActions.bananas )
 		_helpMenu.AddSeparator()
 		_helpMenu.AddAction( _buildActions.rebuildHelp )
 		_helpMenu.AddSeparator()
@@ -355,6 +365,7 @@ Class MainWindowInstance Extends Window
 		_consolesTabView.AddTab( "Output",_outputConsoleView,False )
 		_consolesTabView.AddTab( "Docs",_helpConsole,False )
 		_consolesTabView.AddTab( "Find",_findConsole,False )
+		_consolesTabView.AddTab( "Chat",_ircView,False )
 		
 		_statusBar=New StatusBarView
 		
@@ -373,9 +384,19 @@ Class MainWindowInstance Extends Window
 		
 		App.Idle+=OnAppIdle
 		
-		If GetFileType( "bin/ted2.state.json" )=FileType.None _helpActions.about.Trigger()
+		CheckFirstStart()
 		
 		_enableSaving=True
+		
+	End
+	
+	Field PrefsChanged:Void()
+	Method OnPrefsChanged()
+		
+		ArrangeElements()
+		PrefsChanged()
+		
+		SetupChatTab()
 		
 	End
 	
@@ -396,14 +417,15 @@ Class MainWindowInstance Extends Window
 		Local location:=Prefs.MainProjectTabsRight ? "right" Else "left"
 		
 		Local size:=_browsersTabView.Rect.Width
-		If size=0 Then size=250
+		If size=0 Then size=300
 		_contentView.AddView( _browsersTabView,location,size,True )
 		
 		size=_consolesTabView.Rect.Height
-		If size=0 Then size=200
+		If size=0 Then size=150
 		_contentView.AddView( _consolesTabView,"bottom",size,True )
 		
 		_contentView.ContentView=_docsTabView
+		
 	End
 	
 	
@@ -441,7 +463,7 @@ Class MainWindowInstance Extends Window
 		Return _modsDir
 	End
 	
-	Property OverrideTextMode:Bool()
+	Property OverwriteTextMode:Bool()
 	
 		Return _ovdMode
 	Setter( value:Bool )
@@ -476,21 +498,21 @@ Class MainWindowInstance Extends Window
 	
 	Property AboutPagePath:String()
 		
-		Local path:=Prefs.MonkeyRootPath+"About.html"
-		If Not IsFileExists( path )
-			path="asset::ted2/about.html"
-		Endif
+		Local path:=Prefs.MonkeyRootPath+"ABOUT.HTML"
+'		If Not IsFileExists( path )
+'			path="asset::ted2/about.html"
+'		Endif
 		Return path
 	End
 	
 	Method Terminate()
 	
 		_isTerminating=True
-		
 		SaveState()
-		
-		_fileActions.closeAll.Trigger() 'stops all parser's timers on close docs
-		
+		_enableSaving=False
+		OnForceStop() ' kill build process if started
+		ProcessReader.StopAll()
+
 		App.Terminate()
 	End
 
@@ -676,6 +698,15 @@ Class MainWindowInstance Extends Window
 		
 	End
 	
+	Method CheckFirstStart()
+		
+		If GetFileType( "bin/ted2.state.json" )=FileType.None
+			_helpActions.about.Trigger()
+			ShowBananasShowcase()
+		Endif
+	End
+	
+	
 	Public
 	
 	Method ShowProjectView()
@@ -783,6 +814,10 @@ Class MainWindowInstance Extends Window
 	
 	Method UpdateHelpTree()
 		_helpTree.Update()
+	End
+	
+	Method ShowBananasShowcase()
+		OpenDocument( Prefs.MonkeyRootPath+"bananas/!showcase/all.bananas" )
 	End
 	
 	Method ReadError( path:String )
@@ -893,9 +928,10 @@ Class MainWindowInstance Extends Window
 		SaveString( jobj.ToJson(),"bin/ted2.state.json" )
 	End
 
-	Method OpenDocument( path:String )
+	Method OpenDocument( path:String,lockIt:Bool=False )
 	
 		_docsManager.OpenDocument( path,True )
+		If lockIt Then _buildActions.LockBuildFile()
 	End
 	
 	Method GetActionFind:Action()
@@ -925,7 +961,16 @@ Class MainWindowInstance Extends Window
 			_inited=True
 			OnInit()
 		Endif
+		
 		Super.OnRender( canvas )
+		
+		If _resized
+			_resized=False
+			SizeChanged()
+		Endif
+		
+		Rendered()
+		Rendered=Null
 	End
 	
 	Method OnInit()
@@ -934,13 +979,32 @@ Class MainWindowInstance Extends Window
 		_docsTabView.EnsureVisibleCurrentTab()
 	End
 	
-	Method OnCloseApp()
+	Method OnAppClose()
 		
-		SaveState()
-		_enableSaving=False
-		OnForceStop() ' kill build process if started
-		ProcessReader.StopAll()
 		_fileActions.quit.Trigger()
+	End
+	
+	Method OnResized()
+		
+		' just set a flag here.
+		' SizeChanged event will be called inside of OnRender to take re-layout effect.
+		_resized=True
+	End
+	
+	Method SetupChatTab()
+		
+		If Not _ircView Return
+		
+		Local intro:=_ircView.introScreen
+		
+		If intro.IsConnected Return
+		
+		Local nick:=Prefs.IrcNickname
+		Local server:=Prefs.IrcServer
+		Local port:=Prefs.IrcPort
+		Local rooms:=Prefs.IrcRooms
+		intro.AddOnlyServer( nick,server,server,port,rooms )
+		
 	End
 	
 	Method LoadState( jobj:JsonObject )
@@ -1025,12 +1089,17 @@ Class MainWindowInstance Extends Window
 	Method OnWindowEvent( event:WindowEvent ) Override
 
 		Select event.Type
-		Case EventType.WindowClose
-			OnCloseApp()
-		Default
-			Super.OnWindowEvent( event )
+			
+			Case EventType.WindowClose
+				OnAppClose()
+			
+			Case EventType.WindowResized
+				OnResized()
+			
+			Default
+				Super.OnWindowEvent( event )
+			
 		End
-	
 	End
 	
 	
@@ -1050,6 +1119,7 @@ Class MainWindowInstance Extends Window
 	Field _helpActions:HelpActions
 	Field _viewActions:ViewActions
 	
+	Field _ircView:IRCView
 	Field _buildConsole:ConsoleExt
 	Field _outputConsole:ConsoleExt
 	Field _outputConsoleView:DockingView
@@ -1061,7 +1131,8 @@ Class MainWindowInstance Extends Window
 	Field _docBrowser:DockingView
 	Field _debugView:DebugView
 	Field _helpTree:HelpTreeView
-
+	
+	'Field _ircTabView:TabView
 	Field _docsTabView:TabViewExt
 	Field _consolesTabView:TabView
 	Field _browsersTabView:TabView
@@ -1100,9 +1171,9 @@ Class MainWindowInstance Extends Window
 	Field _consoleVisibleCounter:=0
 	Field _isTerminating:Bool
 	Field _enableSaving:Bool
+	Field _resized:Bool
 	Field _browsersSize:=0,_consolesSize:=0
-	
-	
+
 	
 	Method ToJson:JsonValue( rect:Recti )
 		Return New JsonArray( New JsonValue[]( New JsonNumber( rect.min.x ),New JsonNumber( rect.min.y ),New JsonNumber( rect.max.x ),New JsonNumber( rect.max.y ) ) )
