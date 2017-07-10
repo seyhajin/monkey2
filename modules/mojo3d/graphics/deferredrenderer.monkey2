@@ -5,7 +5,8 @@ Private
 
 Const WIDTH:=1920
 Const HEIGHT:=1080
-Const MRT_COLOR_FORMAT:=PixelFormat.RGBA8'RGBA32F
+'Const MRT_COLOR_FORMAT:=PixelFormat.RGBA8		'8 bit
+Const MRT_COLOR_FORMAT:=PixelFormat.RGBA32F		'32 bit float
 
 Public
 
