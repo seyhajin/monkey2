@@ -1,12 +1,18 @@
 
-Enum WindowFlags
-	HighDPI=1
-	Resizable=2
+#Import "test2"
+
+Internal
+
+Function InternalTest()
+	
+	print "Internal!"
+
 End
+
+Public
 
 Function Main()
 	
-	Local flags:=WindowFlags.HighDPI
-	
-	flags|=WindowFlags.Resizable
+	Test()
+
 End

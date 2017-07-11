@@ -149,17 +149,21 @@ Class Parser
 					flags=(flags & ~DECL_ACCESSMASK) | DECL_EXTERN
 					If CParse( "private" )
 						flags|=DECL_PRIVATE
+					Else If CParse( "internal" )
+						flags|=DECL_INTERNAL|DECL_PUBLIC
 					Else
 						CParse( "public" )
 						flags|=DECL_PUBLIC
 					Endif
 					ParseEol()
 					Continue
-				Case "public","private"
+				Case "public","private","internal"
 					flags&=~DECL_ACCESSMASK
 					If fileScope flags&=~DECL_EXTERN
 					If CParse( "private" )
 						flags|=DECL_PRIVATE
+					Else If CParse( "internal" )
+						flags|=DECL_INTERNAL|DECL_PUBLIC
 					Else
 						Parse( "public" )
 						flags|=DECL_PUBLIC
@@ -223,18 +227,20 @@ Class Parser
 		Return decls.ToArray()
 	End
 	
+	#rem
 	Method CParseAccess:Int( flags:Int )
 	
 		Select Toke
 		Case "public" flags=flags & ~(DECL_ACCESSMASK) | DECL_PUBLIC
 		Case "private" flags=flags & ~(DECL_ACCESSMASK) | DECL_PRIVATE
-		Case "protected" flags=flags & ~(DECL_ACCESSMASK) | DECL_PROTECTED
 		Case "internal" flags=flags & ~(DECL_ACCESSMASK) | DECL_INTERNAL
+		Case "protected" flags=flags & ~(DECL_ACCESSMASK) | DECL_PROTECTED
 		Default Return flags
 		End
 		Bump()
 		Return flags
 	End
+	#end
 	
 	Method ParseAliases( decls:Stack<Decl>,flags:Int )
 	
