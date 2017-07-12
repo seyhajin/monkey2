@@ -1,15 +1,5 @@
 
-#Import "test2"
-
-Internal
-
-Function InternalTest()
-	
-	print "Internal!"
-
-End
-
-Public
+#Import "test2
 
 Function Main()
 	

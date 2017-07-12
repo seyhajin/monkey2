@@ -25,7 +25,7 @@ Class ParseEx Extends ErrorEx
 		Self.srcfile=srcfile
 		Self.srcpos=srcpos
 		
-		Print ToString()
+		If srcfile Print ToString()
 	End
 	
 	Method ToString:String() Override
