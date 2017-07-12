@@ -9,7 +9,7 @@ Class DeferredRenderer Extends Renderer
 	
 	Method OnRender() Override
 		
-		Validate()
+		Init()
 		
 		_device.RenderTarget=_rpass0Target
 		_device.Viewport=New Recti( 0,0,_renderViewport.Size )
@@ -133,7 +133,7 @@ Class DeferredRenderer Extends Renderer
 	Field _rpass0Target:RenderTarget
 	Field _rpass2Target:RenderTarget
 	
-	Method Validate()
+	Method Init()
 		
 		Global _inited:=False
 		
