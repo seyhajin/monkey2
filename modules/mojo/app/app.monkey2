@@ -88,8 +88,10 @@ Class AppInstance
 		If Not config config=New StringMap<String>
 	
 		_config=config
-
+		
 		SDL_Init( SDL_INIT_VIDEO|SDL_INIT_JOYSTICK )
+		
+		SDL_SetHint( "SDL_MOUSE_FOCUS_CLICKTHROUGH","1" )
 
 		'possible fix for linux crashing at exit (can't reproduce myself).
 		'		
@@ -754,7 +756,7 @@ Class AppInstance
 			SendKeyEvent( EventType.KeyChar )
 			
 		Case SDL_MOUSEBUTTONDOWN
-		
+			
 			Local mevent:=Cast<SDL_MouseButtonEvent Ptr>( event )
 			
 			_window=Window.WindowForID( mevent->windowID )
@@ -792,7 +794,7 @@ Class AppInstance
 			Endif
 		
 		Case SDL_MOUSEBUTTONUP
-		
+			
 			Local mevent:=Cast<SDL_MouseButtonEvent Ptr>( event )
 			
 			_window=Window.WindowForID( mevent->windowID )
