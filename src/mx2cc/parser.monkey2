@@ -149,17 +149,21 @@ Class Parser
 					flags=(flags & ~DECL_ACCESSMASK) | DECL_EXTERN
 					If CParse( "private" )
 						flags|=DECL_PRIVATE
+					Else If CParse( "internal" )
+						flags|=DECL_INTERNAL|DECL_PUBLIC
 					Else
 						CParse( "public" )
 						flags|=DECL_PUBLIC
 					Endif
 					ParseEol()
 					Continue
-				Case "public","private"
+				Case "public","private","internal"
 					flags&=~DECL_ACCESSMASK
 					If fileScope flags&=~DECL_EXTERN
 					If CParse( "private" )
 						flags|=DECL_PRIVATE
+					Else If CParse( "internal" )
+						flags|=DECL_INTERNAL|DECL_PUBLIC
 					Else
 						Parse( "public" )
 						flags|=DECL_PUBLIC
@@ -223,18 +227,20 @@ Class Parser
 		Return decls.ToArray()
 	End
 	
+	#rem
 	Method CParseAccess:Int( flags:Int )
 	
 		Select Toke
 		Case "public" flags=flags & ~(DECL_ACCESSMASK) | DECL_PUBLIC
 		Case "private" flags=flags & ~(DECL_ACCESSMASK) | DECL_PRIVATE
-		Case "protected" flags=flags & ~(DECL_ACCESSMASK) | DECL_PROTECTED
 		Case "internal" flags=flags & ~(DECL_ACCESSMASK) | DECL_INTERNAL
+		Case "protected" flags=flags & ~(DECL_ACCESSMASK) | DECL_PROTECTED
 		Default Return flags
 		End
 		Bump()
 		Return flags
 	End
+	#end
 	
 	Method ParseAliases( decls:Stack<Decl>,flags:Int )
 	
@@ -2073,13 +2079,6 @@ Class Parser
 	
 	'***** Messy Preprocessor - FIXME! *****
 	
-	Class EvalEx Extends Throwable
-		Field msg:String
-		Method new( msg:String )
-			Self.msg=msg
-		End
-	End
-	
 	Field _ppsyms:StringMap<String>
 	
 	Field _cc:=New Stack<Int>
@@ -2097,12 +2096,7 @@ Class Parser
 		If v="false" Or v="~q~q" Return "false"
 		Return "true"
 	End
-	
-	Method EvalError( msg:String )
-		Throw New EvalEx( msg )
-'		Error( "Failed to evaluate preprocessor expression: "+msg )' toke='"+Toke+"'" )
-	End
-		
+
 	Method EvalPrimary:String()
 	
 		If CParse( "(" )
@@ -2115,13 +2109,14 @@ Class Parser
 		Case TOKE_IDENT
 			Local id:=Parse()
 			Local t:=_ppsyms[id]
-			If Not t EvalError( "symbol '"+id+"' not found" )
+			If Not t Error( "symbol '"+id+"' not found" )
 			Return t
 		Case TOKE_STRINGLIT
 			Return Parse()
 		End
 
-		EvalError( "unexpected token '"+Toke+"'" )
+		Error( "unexpected token '"+Toke+"'" )
+		
 		Return Null
 	End
 	
@@ -2142,9 +2137,11 @@ Class Parser
 				lhs=ToBool( lhs )
 				rhs=ToBool( rhs )
 			Endif
+			
 			If (lhs="~q"+HostOS+"~q" And rhs="~qdesktop~q") Or (lhs="~qdesktop~q" And rhs="~q"+HostOS+"~q" ) 
-				EvalError( "__TARGET__=~qdesktop~q no longer supported! Use boolean __DESKTOP_TARGET__ instead!" )
+				Error( "__TARGET__=~qdesktop~q no longer supported! Use boolean __DESKTOP_TARGET__ instead!" )
 			Endif
+			
 			Select op
 			Case "=" If lhs=rhs lhs="true" Else lhs="false"
 			Case "<>" If lhs<>rhs lhs="true" Else lhs="false"
@@ -2224,7 +2221,7 @@ Class Parser
 				
 			Case "end","endif"
 			
-				If _cc.Length=1 EvalError( "#end without matching #if or #rem" )
+				If _cc.Length=1 p.Error( "#end without matching #if or #rem" )
 			
 				If p.CParse( "end" )
 					p.CParse( "if" )
@@ -2254,7 +2251,10 @@ Class Parser
 				If _cc.Top=1
 
 					p.Bump()
+					
 					Local path:=p.ParseString()
+					
+					p.ParseEol()
 					
 					If path.StartsWith( "<" ) And path.EndsWith( ">" )
 					
@@ -2277,101 +2277,16 @@ Class Parser
 					Print p.Eval()
 				Endif
 				
+			Default
+				
+				If _cc.Top=1
+					p.Error( "Unrecognized preprocessor directive '"+p.Toke+"'" )
+				Endif
 			End
-		
-			#rem
-			Select p.Toke.ToLower()
-			Case "if"
-				
-				If _ccnest=_ifnest
-				
-					p.Bump()
-					If p.EvalBool() _ccnest+=1
-					
-				Endif
 			
-				_ifnest+=1
-				
-			Case "else","elseif"
+		Catch ex:ParseEx
 			
-				If _ccnest=_ifnest
-				
-					_ccnest|=$10000
-					
-				Else If _ccnest=_ifnest-1
-			
-					Local t:=True
-
-					If p.CParse( "else" )
-						If p.CParse( "if" ) t=p.EvalBool()
-					Else 
-						p.Bump()
-						t=p.EvalBool()
-					Endif
-					
-					If t _ccnest+=1
-					
-				Endif
-			
-			Case "end","endif"
-			
-				If p.CParse( "end" )
-					p.CParse( "if" )
-				Else
-					p.Bump()
-				End
-				
-				_doccing=False
-				
-				_ccnest&=~$10000
-
-				If _ccnest=_ifnest _ccnest-=1
-				
-				_ifnest-=1
-			
-			Case "rem"
-			
-				If p.Bump()="monkeydoc" And _ccnest=_ifnest
-					Local qhelp:=p._toker.Text.Slice( p._toker.TokePos+9 ).Trim()
-					_ccnest|=$10000
-					_doccing=True
-					_docs.Clear()
-					_docs.Push( qhelp )
-				Endif
-				
-				_ifnest+=1
-			
-			Case "import"
-			
-				If _ccnest=_ifnest 
-					p.Bump()
-					Local path:=p.ParseString()
-					
-					If path.StartsWith( "<" ) And path.EndsWith( ">" )
-					
-						If Not ExtractExt( path ) path=path.Slice( 0,-1 )+".monkey2>"
-						
-					Else If Not path.Contains( "@/" ) And Not path.EndsWith( "/" )
-					
-						If Not ExtractExt( path ) path+=".monkey2"
-						
-					Endif
-					_imports.Push( path )
-				Endif
-				
-			Case "print"
-			
-				If _ccnest=_ifnest
-					p.Bump()				
-					Print p.Eval()
-				Endif
-				
-			End
-			#end
-			
-		Catch ex:EvalEx
-		
-			Error( "Preprocessor error - "+ex.msg )
+			ErrorNx( ex.msg )
 		End
 		
 	End

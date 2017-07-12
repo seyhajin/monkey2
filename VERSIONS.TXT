@@ -1,4 +1,11 @@
 
+***** Monkey2 v1.1.05c *****
+
+* App no longer renders when minimized/inactive.
+
+* Added 'Internal' decl visibility to mx2cc, which means a decl is only visible to other decls within the same module.
+
+
 ***** Monkey2 v1.1.05b *****
 
 * Fixes a number of fairly critical GC bugs. GC is more aggressive now which has turned up a few 'lurkers'.

@@ -3,7 +3,7 @@
 
 uniform sampler2D m_SourceTexture;
 uniform vec2 m_SourceTextureSize;
-uniform vec2 m_SourceCoordScale;
+uniform vec2 m_SourceTextureScale;
 
 varying vec2 v_TexCoord0;
 
@@ -13,7 +13,7 @@ attribute vec2 a_Position;	//0...1 (1=viewport size)
 
 void main(){
 
-	v_TexCoord0=a_Position * m_SourceCoordScale;
+	v_TexCoord0=a_Position * m_SourceTextureScale;
 
 	gl_Position=vec4( a_Position * 2.0 - 1.0,-1.0,1.0 );
 }

@@ -84,6 +84,7 @@ Class AssignStmtExpr Extends StmtExpr
 			If etype
 				lhs=lhs.RemoveSideEffects( block )
 				Local t:=New BinaryopExpr( op.Slice( 0,-1 ),New ValueExpr( lhs,srcpos,endpos ),Self.rhs,srcpos,endpos )
+				t.srcfile=srcfile
 				rhs=t.Semant( block )
 				op="="
 			Endif

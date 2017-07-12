@@ -25,7 +25,7 @@ Const FORCE_MSVC:=False
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods -clean"
+'Const TestArgs:="mx2cc makemods"
 
 'Const TestArgs:="mx2cc makemods -clean monkey"
 

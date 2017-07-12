@@ -443,6 +443,8 @@ Class GraphicsDevice
 		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
 		If GL_read_buffer glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
 			
+		if GL_seamless_cube_map glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS )
+			
 		glCheck()
 	End
 	

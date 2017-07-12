@@ -532,7 +532,10 @@ Class DocsMaker
 	End
 	
 	Method DocsHidden:Bool( decl:Decl )
-		Return (Not decl.IsPublic And Not decl.docs) Or decl.docs.StartsWith( "@hidden" )
+		
+		If decl.docs Return decl.docs.StartsWith( "@hidden" )
+		
+		Return decl.IsPrivate Or decl.IsInternal
 	End
 	
 	Method DocsHidden:Bool( decl:Decl,access:Int )

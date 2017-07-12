@@ -1,44 +1,15 @@
 
 Namespace mojo3d.graphics
 
-Private
-
-Const WIDTH:=1920
-Const HEIGHT:=1080
-Const MRT_COLOR_FORMAT:=PixelFormat.RGBA8'RGBA32F
-
-Public
-
 #rem monkeydoc @hidden The DeferredRenderer class.
 #end
 Class DeferredRenderer Extends Renderer
 	
-	Method New()
-	
-		Local size:=New Vec2i( WIDTH,HEIGHT )
-	
-		_copyShader=Shader.Open( "copy" )
-		_plightShader=Shader.Open( "point-light" )
-		_dlightShader=Shader.Open( "directional-light" )
-		
-		_hdrTexture=New Texture( size.x,size.y,MRT_COLOR_FORMAT,TextureFlags.Filter|TextureFlags.Dynamic )			'output hdr image
-		_colorTexture=New Texture( size.x,size.y,MRT_COLOR_FORMAT,TextureFlags.Filter|TextureFlags.Dynamic )		'metalness in 'a'
-		_normalTexture=New Texture( size.x,size.y,MRT_COLOR_FORMAT,TextureFlags.Filter|TextureFlags.Dynamic )		'roughness in 'a'
-		_depthTexture=New Texture( size.x,size.y,PixelFormat.Depth32F,TextureFlags.Dynamic )
-		
-		_rpass0Target=New RenderTarget( New Texture[]( _hdrTexture,_colorTexture,_normalTexture ),_depthTexture )
-		_rpass2Target=New RenderTarget( New Texture[]( _hdrTexture ),Null )
-		
-		'_uniforms.SetTexture( "HdrTexture",_hdrTexture )
-		
-		_uniforms.SetTexture( "ColorBuffer",_colorTexture )
-		_uniforms.SetTexture( "NormalBuffer",_normalTexture )
-		_uniforms.SetTexture( "DepthBuffer",_depthTexture )
-	End
-
 	Protected
 	
 	Method OnRender() Override
+		
+		Init()
 		
 		_device.RenderTarget=_rpass0Target
 		_device.Viewport=New Recti( 0,0,_renderViewport.Size )
@@ -161,5 +132,48 @@ Class DeferredRenderer Extends Renderer
 	
 	Field _rpass0Target:RenderTarget
 	Field _rpass2Target:RenderTarget
+	
+	Method Init()
+		
+		Global _inited:=False
+		
+		If Not _inited
+			_copyShader=Shader.Open( "copy" )
+			_plightShader=Shader.Open( "point-light" )
+			_dlightShader=Shader.Open( "directional-light" )
+		Endif
+		
+		Local size:=_renderViewport.Size
+		size.x=Max( size.x,1920 )
+		size.y=Max( size.y,1080 )
+		
+		If Not _inited Or size.x>_hdrTexture.Size.x Or size.y>_hdrTexture.Size.y
+		
+			SafeDiscard( _hdrTexture )
+			SafeDiscard( _colorTexture )
+			SafeDiscard( _normalTexture )
+			SafeDiscard( _depthTexture )
+			SafeDiscard( _rpass0Target )
+			SafeDiscard( _rpass2Target )
+	
+			Const format:=PixelFormat.RGBA32F		'32 bit float
+			
+			_hdrTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )			'output hdr image
+			_colorTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'metalness in 'a'
+			_normalTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'roughness in 'a'
+			_depthTexture=New Texture( size.x,size.y,PixelFormat.Depth32F,TextureFlags.Dynamic )
+			
+			_rpass0Target=New RenderTarget( New Texture[]( _hdrTexture,_colorTexture,_normalTexture ),_depthTexture )
+			_rpass2Target=New RenderTarget( New Texture[]( _hdrTexture ),Null )
+			
+			_uniforms.SetTexture( "ColorBuffer",_colorTexture )
+			_uniforms.SetTexture( "NormalBuffer",_normalTexture )
+			_uniforms.SetTexture( "DepthBuffer",_depthTexture )
+		
+		Endif
+		
+		_inited=true
+		
+	End
 	
 End

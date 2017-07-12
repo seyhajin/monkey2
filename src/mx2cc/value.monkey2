@@ -76,18 +76,18 @@ Class Value Extends SNode
 	
 	Function CheckAccess( decl:Decl,scope:Scope,tscope:Scope )
 	
+		If decl.IsInternal
+			If scope.FindFile().fdecl.module=tscope.FindFile().fdecl.module Return
+
+			Throw New SemantEx( "Internal declaration '"+decl.ident+"' cannot be accessed from here." )
+		Endif
+			
 		If decl.IsPublic Return
-		
+
 		Local cscope:=Cast<ClassScope>( scope )
 		If cscope
-		
+			
 			If scope.FindFile()=tscope.FindFile() Return
-
-			If decl.IsInternal
-				If scope.FindFile().fdecl.module=tscope.FindFile().fdecl.module Return
-
-				Throw New SemantEx( "Internal member '"+decl.ident+"' cannot be accessed from different module" )
-			Endif
 
 			Local ctype:=cscope.ctype
 			Local ctype2:=tscope.FindClass()
@@ -96,7 +96,7 @@ Class Value Extends SNode
 			
 				If ctype=ctype2 Return
 				
-				Throw New SemantEx( "Private member '"+decl.ident+"' cannot be accessed from here" )
+				Throw New SemantEx( "Private member '"+decl.ident+"' cannot be accessed from here." )
 				
 			Else If decl.IsProtected
 			
@@ -105,7 +105,8 @@ Class Value Extends SNode
 					ctype2=ctype2.superType
 				Wend
 				
-				Throw New SemantEx( "Protected member '"+decl.ident+"' cannot be accessed from here" )
+				Throw New SemantEx( "Protected member '"+decl.ident+"' cannot be accessed from here." )
+
 			Endif
 
 		Endif

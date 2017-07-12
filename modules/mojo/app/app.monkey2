@@ -88,8 +88,10 @@ Class AppInstance
 		If Not config config=New StringMap<String>
 	
 		_config=config
-
+		
 		SDL_Init( SDL_INIT_VIDEO|SDL_INIT_JOYSTICK )
+		
+		SDL_SetHint( "SDL_MOUSE_FOCUS_CLICKTHROUGH","1" )
 
 		'possible fix for linux crashing at exit (can't reproduce myself).
 		'		
@@ -436,12 +438,19 @@ Class AppInstance
 	
 		_requestRender=True
 	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Property Renderable:Bool()
+		
+		Return _activeWindow And Not _activeWindow.Minimized And Not _frozen
+	End
 
 	#rem monkeydoc @hidden
 	#end
 	Method MainLoop()
-	
-		If Not _requestRender
+		
+		If Not _requestRender Or Not Renderable
 
 			SDL_WaitEvent( Null )
 			
@@ -475,9 +484,9 @@ Class AppInstance
 	#rem monkeydoc @hidden
 	#end	
 	Method UpdateWindows()
-	
-		If _frozen Return
-	
+		
+		if Not Renderable Return
+		
 		Local render:=_requestRender
 		_requestRender=False
 		
@@ -747,7 +756,7 @@ Class AppInstance
 			SendKeyEvent( EventType.KeyChar )
 			
 		Case SDL_MOUSEBUTTONDOWN
-		
+			
 			Local mevent:=Cast<SDL_MouseButtonEvent Ptr>( event )
 			
 			_window=Window.WindowForID( mevent->windowID )
@@ -785,7 +794,7 @@ Class AppInstance
 			Endif
 		
 		Case SDL_MOUSEBUTTONUP
-		
+			
 			Local mevent:=Cast<SDL_MouseButtonEvent Ptr>( event )
 			
 			_window=Window.WindowForID( mevent->windowID )

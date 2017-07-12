@@ -98,59 +98,43 @@ Class Scene
 		Return _current
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
+	Internal
+
 	Function SetCurrent( scene:Scene )
 		
 		_current=scene
 	End
-
-	'***** INTERNAL *****
-
-	#rem monkeydoc @hidden
-	#end		
+	
 	Property PostEffects:Stack<PostEffect>()
 		
 		Return _postEffects
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property RootEntities:Stack<Entity>()
 		
 		Return _rootEntities
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property Cameras:Stack<Camera>()
 		
 		Return _cameras
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property Lights:Stack<Light>()
 		
 		Return _lights
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property Models:Stack<Model>()
 		
 		Return _models
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property Terrains:Stack<Terrain>()
 		
 		Return _terrains
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property Sprites:Stack<Sprite>()
 		
 		Return _sprites

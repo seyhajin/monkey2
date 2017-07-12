@@ -1,6 +1,7 @@
 #pragma once
 #include <deque>
 #include <mutex>
+#include <algorithm>
 
 typedef double Sample;
 

@@ -1871,7 +1871,11 @@ Class Translator_CPP Extends Translator
 
 		If etype t="int("+t+")"
 		
-		t=op+t
+		If (op="+" Or op="-") And t.StartsWith( op )	'deal with -- and ++
+			t=op+"("+t+")"
+		Else
+			t=op+t
+		Endif
 		
 		If etype t=EnumName( etype )+"("+t+")"
 		
