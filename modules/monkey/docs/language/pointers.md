@@ -1,10 +1,10 @@
 
 ### Pointers
 
-Pointers are special variables containing a memory adress.
+Pointers are special variables containing a memory address.
 In Monkey2 pointers are mainly used with external C/C++ code.
-It is not advised to use pointers if not necessary. It can lead to bug if the pointed adress is not kept "alive". Pointer to globals are safe for example.  
-You must have acces to the memory you try to reach or you'll have a (fatal) memory acces violation.
+Try not to use pointers unless absolutely necessary. It can lead to bugs if the pointed address is not kept "alive". Pointers to globals are safe, for example.  
+You must have access to the memory you're trying to reach or you'll have a (fatal) memory access violation.
 
 A pointer can point to any kind of type, even garbage collected types. This can lead to bad things too as the garbage collector is not 'aware' of pointers.
 
@@ -42,8 +42,8 @@ Local myPtr:int Ptr
 myPtr=VarPtr i
 Print myPtr[0]
 ```
-Will print 1, the value of i.
-Note you can use pointer arythmetics with the index operator([]) but you have to be sure you have access to that part of the memory or you'll get a memory acces violation!
+Will print 1, the value of `i`.
+Note you can use pointer arythmetics with the index operator(`[]`) but you have to be sure you have access to that part of the memory or you'll get a memory access violation!
 
 #### Dereferencing with ->
 
@@ -62,13 +62,13 @@ Function Main()
    Print strPtr->i
 End
 ```
-will show the value of the struct's field i
+will show the value of the struct's field `i`
 
 #### Casting
 
 You can Cast a pointer and do some explicit conversions with the `Cast` operator.
 
-`Cast`<_Type_>(_adress_)
+`Cast`<_Type_>(_address_)
 
 An example with a useless conversion from Int to Void to Int:
 ```
@@ -83,5 +83,5 @@ Local myIntPtr:Int Ptr
 myIntPtr=Cast<Int Ptr>(myVoidPtr)
 j=myIntPtr[0]
 ```
-j receives to value of i but does not have the same adress.
-myIntPtr and myVoidPtr both points to the same adress(VarPtr i) but have different types.
+`j` receives the value of `i` but does not have the same address.
+`myIntPtr` and `myVoidPtr` both point to the same address (`VarPtr i`) but have different types.

@@ -105,4 +105,4 @@ If Collection is an object, it must implement the std.collections.Icontainer int
 
 #### Continue
 
-Continue can be used within `While`, `Repea`t and `For` loops to force the loop to abruptly skip to the next loop iteration, skipping over any statements that may be remaining in the current loop iteration.
+Continue can be used within `While`, `Repeat` and `For` loops to force the loop to abruptly skip to the next loop iteration, skipping over any statements that may be remaining in the current loop iteration.

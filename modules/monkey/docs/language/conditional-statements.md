@@ -28,7 +28,7 @@ There may be any number of `ElseIf` blocks, or none. The final `Else` block is o
 
 `End` or `End If` may be used instead of `EndIf`, and `Else` If may be used instead of `ElseIf`.
 
-In addtion, a simple one line version of `If` is also supported:
+In addition, a simple one line version of `If` is also supported:
 
 `If` _Expression_ [ `Then` ] _Statement_ [ `Else` _Statement_ ]
 
