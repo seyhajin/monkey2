@@ -47,7 +47,7 @@ Note you can use pointer arythmetics with the index operator(`[]`) but you have 
 
 #### Dereferencing with ->
 
-You can acces user defined types fields, methods,.. with the `->` operator. It is equivalent to `[0].`
+You can access user defined types fields, methods,.. with the `->` operator. It is equivalent to `[0].`
 
 ```
 Struct str
