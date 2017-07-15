@@ -1,7 +1,7 @@
 
 ### Preprocessor
 
-Monkey2 include a simple preprocessor that allows you to conditionally compile code depending on a number of build setttings.
+Monkey2 includes a simple preprocessor that allows you to conditionally compile code depending on a number of build setttings.
 
 The preprocessor supports the following statements: #If, #Else, #ElseIf, #EndIf, #Rem, #End. Preprocessor statements must begin on a new line.
 

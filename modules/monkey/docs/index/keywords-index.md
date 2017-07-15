@@ -56,8 +56,8 @@ Used to skip a loop.
 
 #### CString
 
-Reserved keyword
-C style String for external string parameters
+Reserved keyword.
+C style String for external string parameters.
 
 #### Default
 

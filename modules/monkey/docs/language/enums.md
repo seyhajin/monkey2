@@ -2,7 +2,7 @@
 
 `Enum` is a data type containing a set of UInt constants.
 
-By default the members will receive  values starting from zero and incemented by one for each new member. You can assign a chosen value to each member when declaring them.
+By default the members will receive values starting from zero and incemented by one for each new member. You can assign a chosen value to each member when declaring them.
 
 ```
 Enum myBasicEnum
