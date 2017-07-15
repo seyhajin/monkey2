@@ -15,5 +15,5 @@ Local i:=$A0F
 
 Inline comments can be done with the `'` character.
 ```
-Print "hello!" 'this line prints hello on the output console
+Print "hello!" 'this line prints hello! on the output console
 ```

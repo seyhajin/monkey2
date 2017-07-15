@@ -39,7 +39,7 @@ The syntax for `Repeat`/`Until` loops is:
 
 `Forever`
 
-`Exit` and `Continue` may be used within a While loop to abruptly terminate or continue loop execution.
+`Exit` and `Continue` may be used within a Repeat loop to abruptly terminate or continue loop execution.
 
 #### For (Numeric)
 
