@@ -4,7 +4,7 @@ Namespace myapp
 #Import "<std>"
 #Import "<mojo>"
 #Import "<mojo3d>"
-#Import "<mojo3d-assimp>"
+#Import "<mojo3d-loaders>"
 
 #Import "../mojo3d"
 
