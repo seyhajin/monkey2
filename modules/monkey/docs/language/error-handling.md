@@ -44,7 +44,7 @@ Class CustomException Extends Throwable
   	End
 End
 
-Function Main()
+Function Main:Void()
 	Local somethingWrong:=True
 	Try
 		If somethingWrong=True Then Throw New CustomException ("Custom Exception detected")
