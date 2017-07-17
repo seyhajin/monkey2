@@ -12,9 +12,9 @@ You can declare multiple exception classes to handle different types of exceptio
 
 After an exception is caught and handled, program flow exits the Try/Catch block and continues.
 
-When a Try block has multiple catch blocks and an exception is thrown, the first catch block capable of handling the exception is executed. If no suitable catch block can be found, the exception is passed to the next most recently executed try block, and so on.
+When a Try block has multiple Catch blocks and an exception is thrown, the first Catch block capable of handling the exception is executed. If no suitable Catch block can be found, the exception is passed to the next most recently executed Try block, and so on.
 
-If no catch block can be found to catch an exception, a runtime error occurs and the application is terminated.
+If no Catch block can be found to catch an exception, a runtime error occurs and the application is terminated.
 
 The Try/Catch method of error-handling allows code to be written without the need to manually check for errors at each step, provided an exception has been set up to handle any errors that are likely to be encountered.
 
