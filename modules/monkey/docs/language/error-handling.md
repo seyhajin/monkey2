@@ -12,7 +12,7 @@ You can declare multiple exception classes to handle different types of exceptio
 
 After an exception is caught and handled, program flow exits the Try/Catch block and continues.
 
-When a try block has multiple catch blocks and an exception is thrown, the first catch block capable of handling the exception is executed. If no suitable catch block can be found, the exception is passed to the next most recently executed try block, and so on.
+When a Try block has multiple catch blocks and an exception is thrown, the first catch block capable of handling the exception is executed. If no suitable catch block can be found, the exception is passed to the next most recently executed try block, and so on.
 
 If no catch block can be found to catch an exception, a runtime error occurs and the application is terminated.
 
@@ -36,19 +36,19 @@ Example code:
 #Import "<std>"
 Using std..
 
-Class custoEx Extends Throwable
+Class CustomException Extends Throwable
 	Field msg:String
 
-  Method New (mesag:String)
-   Self.msg = mesag
-  End
+  	Method New (message:String)
+   		Self.msg = message
+  	End
 End
 
 Function Main()
 	Local somethingWrong:=True
 	Try
-		If somethingWrong=True Then Throw New custoEx ("Custom Exception detected")
-	Catch err:custoEx
+		If somethingWrong=True Then Throw New CustomException ("Custom Exception detected")
+	Catch err:CustomException
 		Print err.msg
 	End
 End
