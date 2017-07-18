@@ -1,3 +1,4 @@
+
 Namespace myapp
 
 #Import "<std>"
@@ -56,6 +57,8 @@ Class MyWindow Extends Window
 	
 	Field _sphere:Model
 	
+	Field _collider:SphereCollider
+	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
@@ -97,6 +100,12 @@ Class MyWindow Extends Window
 		Local collider:Collider=New BoxCollider( groundBox )
 		
 		Local body:=New RigidBody( 0,collider,_ground )
+
+		_sphere=Model.CreateSphere( .5,24,12,New PbrMaterial( Color.White ) )
+		
+		_collider=New SphereCollider( .5 )
+		
+'		Return
 		
 		'create some meshes/colliders
 		
@@ -129,7 +138,6 @@ Class MyWindow Extends Window
 				
 				Local model:=New Model( mesh,material )
 				model.Move( x,10,z )
-'				model.RotateZ( Rnd(-.1,.1) )
 				
 				Local body:=New RigidBody( 1,colliders[i],model )
 				
@@ -140,16 +148,27 @@ Class MyWindow Extends Window
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
-	
+		
 		RequestRender()
 		
 		util.Fly( _camera,Self )
 		
+'		Local cresult:=World.GetDefault().ConvexSweep( _collider,_camera.Position,_camera.Position+_camera.Basis.k * 100 )
+
+		Local cresult:=World.GetDefault().ConvexSweep( _collider,_camera.Position+_camera.Basis.k * 2,_camera.Position+_camera.Basis.k * 100 )
+		
+		'Local cresult:=World.GetDefault().RayCast( _camera.Position,_camera.Position+_camera.Basis.k * 100 )
+		
+		If cresult 
+			Print "pos="+cresult.point
+			_sphere.Position=cresult.point'+cresult.normal
+		Endif
+			
 		World.GetDefault().Update()
 		
 		_scene.Render( canvas,_camera )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "Camera pos="+_camera.Position+", Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End

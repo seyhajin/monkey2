@@ -11,6 +11,15 @@ Function CreateInternalEdgeInfo( mesh:btBvhTriangleMeshShape )="bbBullet::create
 Public
 
 Class Collider
+	
+	Property Margin:Float()
+		
+		Return _btshape.getMargin()
+	
+	Setter( margin:Float )
+		
+		_btshape.setMargin( margin )
+	End
 
 	Property btShape:btCollisionShape()
 	
@@ -34,7 +43,11 @@ Protected
 	
 End
 
-Class BoxCollider Extends Collider
+Class ConvexCollider Extends Collider
+	
+End
+
+Class BoxCollider Extends ConvexCollider
 	
 	Method New( box:Boxf )
 	
@@ -45,7 +58,7 @@ Class BoxCollider Extends Collider
 	
 End
 
-Class SphereCollider Extends Collider
+Class SphereCollider Extends ConvexCollider
 	
 	Method New( radius:Float,origin:Vec3f=Null )
 		
@@ -56,7 +69,7 @@ Class SphereCollider Extends Collider
 	
 End
 
-Class CylinderCollider Extends Collider
+Class CylinderCollider Extends ConvexCollider
 	
 	Method New( radius:Float,length:Float,axis:Axis,origin:Vec3f=Null )
 		
@@ -76,7 +89,7 @@ Class CylinderCollider Extends Collider
 
 End
 
-Class CapsuleCollider Extends Collider
+Class CapsuleCollider Extends ConvexCollider
 	
 	Method New( radius:Float,length:Float,axis:Axis,origin:Vec3f=Null )
 		
@@ -96,7 +109,7 @@ Class CapsuleCollider Extends Collider
 	
 End
 
-Class ConeCollider Extends Collider
+Class ConeCollider Extends ConvexCollider
 	
 	Method New( radius:Float,length:Float,axis:Axis,origin:Vec3f=Null )
 		
@@ -116,7 +129,10 @@ Class ConeCollider Extends Collider
 
 End
 
-Class MeshCollider Extends Collider
+Class ConcaveCollider Extends Collider
+End
+
+Class MeshCollider Extends ConcaveCollider
 
 	Method New( mesh:Mesh )
 	
@@ -153,7 +169,7 @@ Class MeshCollider Extends Collider
 	
 End
 
-Class TerrainCollider Extends Collider
+Class TerrainCollider Extends ConcaveCollider
 
 	Method New( box:Boxf,data:Pixmap )
 	
