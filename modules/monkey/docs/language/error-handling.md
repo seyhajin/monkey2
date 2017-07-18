@@ -47,7 +47,7 @@ End
 Function Main:Void()
 	Local somethingWrong:=True
 	Try
-		If somethingWrong=True Then Throw New CustomException ("Custom Exception detected")
+		If somethingWrong Then Throw New CustomException ("Custom Exception detected")
 	Catch err:CustomException
 		Print err.msg
 	End
