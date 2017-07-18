@@ -1,8 +1,19 @@
 ### Miscellaneous
 
-#### Code lines splitting
+#### Line breaks in code
 
 Lines can currently only be split after ‘[‘, ‘(‘ or ‘,’ tokens.
+
+```
+Local myArray:Int[] = New Int[](
+    0,
+    1,
+    2)
+
+Local myarray2:String[,] = New String[
+    10,
+    10]
+```    
 
 #### $ Hexadecimal
 
