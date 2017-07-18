@@ -422,6 +422,8 @@ Class Entity
 		_parent=Null
 		
 		_scene=Null
+		
+		Destroyed()
 	End
 	
 	#rem monkeydoc Sets entity position in local or world space.
