@@ -71,8 +71,8 @@ public class SDLActivity extends Activity {
      */
     protected String[] getLibraries() {
 		return new String[] {
-				"mx2_main",
-				"openal"
+				"openal",
+				"mx2_main"
         };    
     }
 

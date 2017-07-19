@@ -115,6 +115,20 @@ Class Entity
 		Invalidate()
 	End
 	
+	#rem monkeydoc Number of child entities.
+	#end
+	Property NumChildren:Int()
+		
+		Return _children.Length
+	End
+	
+	#rem monkeydoc Array of child entities.
+	#end
+	Property Children:Entity[]()
+		
+		Return _children.ToArray()
+	End
+
 	#rem monkeydoc entity visibility flag.
 	#end
 	Property Visible:Bool()
@@ -422,6 +436,8 @@ Class Entity
 		_parent=Null
 		
 		_scene=Null
+		
+		Destroyed()
 	End
 	
 	#rem monkeydoc Sets entity position in local or world space.

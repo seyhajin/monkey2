@@ -36,12 +36,15 @@ Class RigidBody
 	
 	#rem monkeydoc Creates a new rigid body.
 	#end
-	Method New( mass:Float,collider:Collider,entity:Entity,kinematic:Bool=False )
+	Method New( mass:Float,collider:Collider,entity:Entity,kinematic:Bool=False,collGroup:Int=1,collMask:Int=1 )
 		
 		_mass=mass
 		_collider=collider
 		_entity=entity
 		_kinematic=kinematic
+		_collGroup=collGroup
+		_collMask=collMask
+		
 		_world=World.GetDefault()
 		
 		If _kinematic
@@ -53,7 +56,7 @@ Class RigidBody
 		Local inertia:btVector3=_collider ? _collider.btShape.calculateLocalInertia( _mass ) Else New btVector3( 0,0,0 )
 		
 		_btbody=New btRigidBody( _mass,_btmotion,_collider.btShape,inertia )
-			
+		
 		If _kinematic 
 			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_KINEMATIC_OBJECT )
 			_btbody.setActivationState( DISABLE_DEACTIVATION )
@@ -98,6 +101,16 @@ Class RigidBody
 		Return _collider
 	End
 	
+	Property CollisionGroup:Short()
+		
+		Return _collGroup
+	End
+	
+	Property CollisionMask:Short()
+		
+		Return _collMask
+	End
+	
 	Property Entity:Entity()
 	
 		Return _entity
@@ -139,7 +152,42 @@ Class RigidBody
 		_btbody.setRollingFriction( friction )
 	End
 	
-	'***** INTERNAL *****
+	Method ApplyForce( force:Vec3f,relativePos:Vec3f )
+		
+		_btbody.applyForce( force,relativePos )
+	End
+	
+	Method ApplyCentralForce( force:Vec3f )
+		
+		_btbody.applyCentralForce( force )
+	End
+	
+	Method ApplyTorque( torque:Vec3f )
+		
+		_btbody.applyTorque( torque )
+	End
+	
+	Method ApplyImpulse( impulse:Vec3f,relativePos:Vec3f )
+		
+		_btbody.applyImpulse( impulse,relativePos )
+	End
+	
+	Method ApplyTorqueImpulse( torque:Vec3f )
+		
+		_btbody.applyTorqueImpulse( torque )
+	End
+	
+	Method ApplyCentralImpulse( impulse:Vec3f )
+		
+		_btbody.applyCentralImpulse( impulse )
+	End
+	
+	Function Get:RigidBody( btobject:btCollisionObject )
+		
+		Return Cast<RigidBody>( handle_to_object( btobject.getUserPointer() ) )
+	End
+
+	Internal
 	
 	Property btBody:btRigidBody()
 	
@@ -167,13 +215,17 @@ Class RigidBody
 		
 		_seq=_entity.Seq
 	End
-
+	
 Private
+
+	Field _self:RigidBody
 
 	Field _mass:Float	
 	Field _collider:Collider
 	Field _entity:Entity
 	Field _kinematic:Bool
+	Field _collGroup:Int
+	Field _collMask:Int
 	Field _world:World
 	Field _seq:Int
 	

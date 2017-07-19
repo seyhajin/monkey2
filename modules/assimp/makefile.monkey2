@@ -89,6 +89,19 @@ Namespace assimp
 #Import "assimp/code/ColladaParser.cpp"
 #Import "assimp/code/ColladaExporter.cpp"
 
+#Import "assimp/code/PlyLoader.cpp"
+#Import "assimp/code/PlyParser.cpp"
+
+#Import "assimp/code/MDLLoader.cpp"
+#Import "assimp/code/MDLMaterialLoader.cpp"
+#Import "assimp/code/MD2Loader.cpp"
+#Import "assimp/code/MD3Loader.cpp"
+#Import "assimp/code/MD5Loader.cpp"
+#Import "assimp/code/MD5Loader.cpp"
+#Import "assimp/code/MD5Parser.cpp"
+
+#Import "assimp/code/MS3DLoader.cpp"
+
 #rem
 #Import "assimp/code/StepExporter.cpp"
 #Import "assimp/code/AMFImporter.cpp"
@@ -118,8 +131,6 @@ Namespace assimp
 #Import "assimp/code/MD5Loader.cpp"
 #Import "assimp/code/MD5Parser.cpp"
 #Import "assimp/code/MDCLoader.cpp"
-#Import "assimp/code/MDLLoader.cpp"
-#Import "assimp/code/MDLMaterialLoader.cpp"
 #Import "assimp/code/NFFLoader.cpp"
 #Import "assimp/code/NDOLoader.cpp"
 #Import "assimp/code/OFFLoader.cpp"

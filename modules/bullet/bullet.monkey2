@@ -92,7 +92,6 @@ Struct btTransform
 	Function getIdentity:btTransform()
 End
 
-
 Class btObject Extends Void
 	
 	Method destroy() Extension="delete"
@@ -130,7 +129,85 @@ Class btCollisionDispatcher Extends btDispatcher
 	Method New( collisionConfiguration:btCollisionConfiguration )
 End
 
+Class btBroadphaseProxy Extends btObject
+End
+
 Class btCollisionWorld Extends btObject
+	
+	Struct LocalShapeInfo
+		
+		Field m_shapePart:Int
+		Field m_triangleIndex:int
+	End
+	
+	Struct LocalRayResult
+		
+		Field m_collisionObject:btCollisionObject
+		Field m_localShapeInfo:LocalShapeInfo Ptr
+		Field m_hitNormalLocal:btVector3
+		Field m_hitFraction:btScalar
+	End
+
+	Struct RayResultCallback
+		
+		Field m_closestHitFraction:btScalar
+		Field m_collisionObject:btCollisionObject
+		Field m_collisionFilterGroup:Short
+		Field m_collisionFilterMask:Short
+		Field m_flags:UInt
+		
+		Method hasHit:Bool()
+'		Method needsCollision:Bool( proxy0:btBroadphaseProxy ) Virtual
+'		Method addSingleResult:btScalar( rayResult:LocalRayResult Ptr,normalInWorldSpace:Bool ) Virtual
+	End
+	
+	Struct ClosestRayResultCallback
+
+		Field m_closestHitFraction:btScalar
+		Field m_collisionObject:btCollisionObject
+		Field m_collisionFilterGroup:Short
+		Field m_collisionFilterMask:Short
+		Field m_flags:UInt
+		
+		Field m_rayFromWorld:btVector3
+  		Field m_rayToWorld:btVector3
+  		Field m_hitNormalWorld:btVector3
+		Field m_hitPointWorld:btVector3
+		
+		Method New( rayFromWorld:btVector3,rayToWorld:btVector3 )
+
+		Method hasHit:Bool()
+	End
+
+	Struct ConvexResultCallback
+		
+		Field m_closestHitFraction:btScalar
+		Field m_collisionFilterGroup:Short
+		Field m_collisionFilterMask:Short
+
+		Method hasHit:Bool()
+	End
+	
+	Struct ClosestConvexResultCallback
+
+		Field m_closestHitFraction:btScalar
+		Field m_collisionFilterGroup:Short
+		Field m_collisionFilterMask:Short
+		
+		Field m_convexFromWorld:btVector3
+		Field m_convexToWorld:btVector3
+		Field m_hitNormalWorld:btVector3
+		Field m_hitPointWorld:btVector3
+		Field m_hitCollisionObject:btCollisionObject
+		
+		Method New( castFrom:btVector3,castTo:btVector3 )
+
+		Method hasHit:Bool()
+	End
+			
+	Method rayTest( rayFromWorld:btVector3,rayToWorld:btVector3,resultCallback:RayResultCallback Ptr ) Extension="bbBullet::rayTest"
+	
+	Method convexSweepTest( castShape:btConvexShape,castFrom:btTransform,castTo:btTransform,resultCallback:ConvexResultCallback ptr,allowedCcdPenetration:btScalar=0 ) Extension="bbBullet::convexSweepTest"
 End
 
 Class btDynamicsWorld Extends btCollisionWorld
@@ -156,11 +233,19 @@ Class btDiscreteDynamicsWorld Extends btDynamicsWorld
 End
 
 Class btCollisionShape Extends btObject
-
+	
 	Method setLocalScaling( scaling:btVector3 )
 	
 	Method getLocalScaling:btVector3()
 	
+	Method setMargin( margin:btScalar )
+		
+	Method getMargin:btScalar()
+		
+	Method setUserPointer( p:Void Ptr )
+	
+	Method getUserPointer:Void Ptr()
+
 	Method calculateLocalInertia:btVector3( mass:btScalar ) Extension="bbBullet::calculateLocalInertia"
 End
 
@@ -334,7 +419,7 @@ Class btCollisionObject Extends btObject
 	Const CF_CHARACTER_OBJECT:Int="btCollisionObject::CF_CHARACTER_OBJECT"
 	Const CF_DISABLE_VISUALIZE_OBJECT:Int="btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT"
 	Const CF_DISABLE_SPU_COLLISION_PROCESSING:Int="btCollisionObject::CF_DISABLE_SPU_COLLISION_PROCESSING"
-
+	
 	Method setWorldTransform( transform:btTransform )
 	
 	Method getWorldTransform:btTransform()
@@ -367,6 +452,10 @@ Class btCollisionObject Extends btObject
 	
 	Method getActivationState:Int()
 		
+	Method setUserPointer( p:Void Ptr )
+		
+	Method getUserPointer:void ptr()
+
 End
 
 Struct btRigidBodyConstructionInfo
@@ -402,5 +491,18 @@ Class btRigidBody Extends btCollisionObject
 	Method setLinearVelocity( lin_vel:btVector3 )
 	
 	Method getLinearVelocity:btVector3()
+		
+	Method applyForce( force:btVector3,rel_pos:btVector3 )
+		
+	Method applyCentralForce( force:btVector3 )
+		
+	Method applyImpulse( impulse:btVector3,rel_pos:btVector3 )
+		
+	Method applyCentralImpulse( impulse:btVector3 )
+		
+	Method applyTorque( torque:btVector3 )
+		
+	Method applyTorqueImpulse( torque:btVector3 )
+		
 End
 

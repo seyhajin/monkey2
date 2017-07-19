@@ -702,11 +702,17 @@ Class AndroidBuildProduct Extends BuildProduct
 		buf.Push( "APP_OPTIM := "+opts.config )
 		
 		buf.Push( "APP_ABI := "+GetEnv( "MX2_ANDROID_APP_ABI","armeabi-v7a" ) )
+		
 		buf.Push( "APP_PLATFORM := "+GetEnv( "MX2_ANDROID_APP_PLATFORM","10" ) )
+		
 		buf.Push( "APP_CFLAGS += -std=gnu99" )
+		buf.Push( "APP_CFLAGS += -fno-stack-protector" )
+		
 		buf.Push( "APP_CPPFLAGS += -std=c++11" )
 		buf.Push( "APP_CPPFLAGS += -frtti" )
 		buf.Push( "APP_CPPFLAGS += -fexceptions" )
+		buf.Push( "APP_CPPFLAGS += -fno-stack-protector" )
+		
 		buf.Push( "APP_STL := c++_static" )
 		
 		CSaveString( buf.Join( "~n" ),jniDir+"Application.mk" )

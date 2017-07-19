@@ -94,8 +94,9 @@ Class AssimpLoader
 		Endif
 			
 		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
-		material.ColorFactor=New Color( aicolor.r,aicolor.g,aicolor.b,aicolor.a )
 		
+		material.ColorFactor=New Color( aicolor.r,aicolor.g,aicolor.b,aicolor.a )
+
 		Return material
 	End
 	
@@ -120,8 +121,6 @@ Class AssimpLoader
 			Local bones:=model.Bones,i0:=bones.Length
 		
 			bones=bones.Resize( i0+n )
-			
-			Print "numBones="+n
 			
 			For Local i:=0 Until n
 		
@@ -261,8 +260,6 @@ Class AssimpLoader
 			Local aichan:=aianim.mChannels[i]
 			
 			Local id:=_entityIds[ aichan.mNodeName.data ]
-			
-			Print "i="+i+", id="+id
 			
 			channels[id]=LoadAnimationChannel( aichan )
 		
