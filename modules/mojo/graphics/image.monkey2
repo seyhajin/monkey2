@@ -333,18 +333,14 @@ Class Image Extends Resource
 	`specular` can be null, in which case `specularScale` is used for the specular component. Otherwise, `specularScale` is used to modulate the red component of the specular texture.
 	
 	#end
-	Function LoadBump:Image( diffuse:String,normal:String,specular:String,specularScale:Float=1,flipNormalY:Bool=True,shader:Shader=Null )
+	Function LoadBump:Image( diffuse:String,normal:String,specular:String,specularScale:Float=1,flipNormalY:Bool=True,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 	
 		Local texture1:=graphics.Texture.LoadNormal( normal,Null,specular,specularScale,flipNormalY )
 		If Not texture1 Return Null
 		
-		Local texture0:=graphics.Texture.Load( diffuse,Null )
+		Local texture0:=graphics.Texture.Load( diffuse,textureFlags )
 		
-		If Not texture0
-			Local pdiff:=New Pixmap( texture1.Width,texture1.Height,PixelFormat.I8 )
-			pdiff.Clear( std.graphics.Color.White )
-			texture0=New graphics.Texture( pdiff,Null )
-		Endif
+		If Not texture0 texture0=graphics.Texture.ColorTexture( std.graphics.Color.White )
 		
 		If Not shader shader=graphics.Shader.GetShader( "bump" )
 		
@@ -357,7 +353,7 @@ Class Image Extends Resource
 
 	#rem monkeydoc Loads a light image from file.
 	#end
-	Function LoadLight:Image( path:String,shader:Shader=Null )
+	Function LoadLight:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 	
 		Local pixmap:=Pixmap.Load( path )
 		If Not pixmap Return Null
@@ -410,7 +406,7 @@ Class Image Extends Resource
 		
 		End
 		
-		Local texture:=New Texture( pixmap,Null )
+		Local texture:=New Texture( pixmap,textureFlags )
 		
 		Local image:=New Image( texture,shader )
 		
