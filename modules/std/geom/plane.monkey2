@@ -42,7 +42,7 @@ Struct Plane<T>
 		
 		Return n.Dot( p )+d
 	End
-
+	
 	Method Nearest:Vec3<T>( p:Vec3<T> )
 		
 		Return p-n*Distance( p )
@@ -56,6 +56,15 @@ Struct Plane<T>
 	Method Intersect:Vec3<T>( line:Line<T> )
 		
 		Return line * TIntersect( line )
+	End
+	
+	Method Intersect:Line<T>( p:Plane<T> )
+		
+		Local v:=n.Cross( p.n ).Normalize()
+
+		Local o:=p.Intersect( New Line<T>( n*-d,n.Cross( v ) ) )
+		
+		Return New Line<T>( o,v )
 	End
 	
 End
