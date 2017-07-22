@@ -488,9 +488,21 @@ Class btRigidBody Extends btCollisionObject
 
 	Method New( mass:btScalar,motionState:btMotionState,collisionShape:btCollisionShape,localInertia:btVector3=New btVector3( 0,0,0 ) )
 	
+	Method clearForces()
+		
+	Method setGravity( acceleration:btVector3 )
+		
+	Method getGravity:btVector3()
+		
+	Method proceedToTransform( newTrans:btTransform )
+		
 	Method setLinearVelocity( lin_vel:btVector3 )
+		
+	Method setAngularVelocity( ang_vel:btVector3 )
 	
 	Method getLinearVelocity:btVector3()
+		
+	Method getAngularVelocity:btVector3()
 		
 	Method applyForce( force:btVector3,rel_pos:btVector3 )
 		
