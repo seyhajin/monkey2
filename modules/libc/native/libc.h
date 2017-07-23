@@ -22,6 +22,11 @@ typedef int mode_t;
 #include <sys/time.h>
 #endif
 
+#if _WIN32
+#define PATH_MAX 260
+#define realpath(X,Y) _fullpath( (Y),(X),PATH_MAX )
+#endif
+
 typedef struct tm tm_t;
 
 typedef struct stat stat_t;
