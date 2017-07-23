@@ -27,6 +27,8 @@ Global StartDir:String
 
 Const TestArgs:="mx2cc makemods"
 
+'Const TestArgs:="mx2cc makedocs mojo3d"
+
 'Const TestArgs:="mx2cc makemods -clean monkey"
 
 'Const TestArgs:="mx2cc makemods -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
