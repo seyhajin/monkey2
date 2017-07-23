@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <limits.h>
 
 #if _MSC_VER
 #include <direct.h>
@@ -25,6 +26,8 @@ typedef int mode_t;
 #if _WIN32
 #define PATH_MAX 260
 #define realpath(X,Y) _fullpath( (Y),(X),PATH_MAX )
+#else
+#include <limits.h>
 #endif
 
 typedef struct tm tm_t;
