@@ -13,12 +13,10 @@
 #	error pushpack1.h must be included after poppack1.h
 #endif
 
-#ifdef _MSC_VER
-#	pragma pack(pop)
-#else
-#	pragma pack()
+// reset packing to the original value
+#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
+#	pragma pack( pop )
 #endif
-
 #undef PACK_STRUCT
 
 #undef AI_PUSHPACK_IS_DEFINED
