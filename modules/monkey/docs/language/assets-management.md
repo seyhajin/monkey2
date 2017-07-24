@@ -1,6 +1,6 @@
 ### Asset management
 
-Since each of the targets that Monkey2 supports have their own way of managing files, Monkey2 provides an simple system for managing assets. This allows you to import and use images, files, fonts, and sounds in a consistent way, regardless of the target platform you are deploying to.
+Monkey2 provides an simple system for managing assets. This allows you to import and use images, files, fonts, and sounds in a consistent way, regardless of the target platform you are deploying to.
 
 For the following examples, assume a project folder structure like this:
 
