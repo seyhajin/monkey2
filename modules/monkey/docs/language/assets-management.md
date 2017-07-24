@@ -97,7 +97,7 @@ Local image:Image = Image.Load("asset::data/image1.png")
 
 #### Supported File Types
 
-Each platform has it's own supported file types. Consult the tables below for your target platform.
+Each target platform supports different file types. Consult the tables below for your target platform.
 
 ##### Images
 
