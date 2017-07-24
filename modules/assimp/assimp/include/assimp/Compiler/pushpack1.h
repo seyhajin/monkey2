@@ -22,17 +22,12 @@
 #	error poppack1.h must be included after pushpack1.h
 #endif
 
-#if defined(_MSC_VER) ||  defined(__BORLANDC__) ||	defined (__BCPLUSPLUS__)
+#ifdef _MSC_VER
 #	pragma pack(push,1)
 #	define PACK_STRUCT
-#elif defined( __GNUC__ )
-#	if !defined(HOST_MINGW)
-#		define PACK_STRUCT	__attribute__((__packed__))
-#	else
-#		define PACK_STRUCT	__attribute__((gcc_struct, __packed__))
-#	endif
 #else
-#	error Compiler not supported
+#	pragma pack(1)
+#	define PACK_STRUCT
 #endif
 
 #if defined(_MSC_VER)

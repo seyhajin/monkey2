@@ -11,6 +11,8 @@ Namespace assimp
 #Import "<assimp/scene.h>"
 #Import "<assimp/postprocess.h>"
 
+Const AI_MATKEY_NAME:="?mat.name"
+
 Const AI_MATKEY_COLOR_DIFFUSE:="$clr.diffuse"
 Const AI_MATKEY_COLOR_AMBIENT:="$clr.ambient"
 Const AI_MATKEY_COLOR_SPECULAR:="$clr.specular"
@@ -202,6 +204,8 @@ Function aiImportFile:aiScene( pFile:CString,pFlags:UInt )
 Function aiImportFileFromMemory:aiScene( pBuffer:libc.char_t Ptr,pLength:UInt,pFlags:UInt,pHint:CString )
 
 Function aiReleaseImport( scene:aiScene )
+	
+Function aiGetMaterialString( pMat:aiMaterial,pKey:CString,type:UInt,index:UInt,pOut:aiString Ptr )
 	
 Function aiGetMaterialTextureCount:UInt( pMat:aiMaterial,type:UInt )
 	
