@@ -42,6 +42,30 @@ Returns true if successful.
 #end
 Function CopyFile:Bool( srcPath:String,dstPath:String )="bbFileSystem::copyFile"
 
+Private
+
+Function FixRoot:String( path:String )
+	
+	Local root:=ExtractRootDir( path )
+	
+	If Not root.EndsWith( "::" ) Return path
+	
+	path=path.Slice( root.Length )
+	
+	Select root
+	Case "asset::" return AssetsDir()+path
+	Case "desktop::" Return DesktopDir()+path
+	Case "home::" Return HomeDir()+path
+	End
+	
+	Return ""
+End
+
+Function FixFilePath:String( path:String )
+	
+	Return FixRoot( StripSlashes( path ) )
+End
+
 Public
 
 #rem monkeydoc FileType enumeration.
@@ -79,9 +103,33 @@ Const FILETYPE_DIR:=FileType.Directory
 #end
 Const FILETYPE_UNKNOWN:=FileType.Unknown
 
-#rem monkeydoc Gets the filesystem directory of the assets directory.
+#rem monkeydoc Gets an environment variable.
 
-Note that assets are only stored in the filesystem on the desktop and emscripten targets. Other targets will return an empty string.
+Returns the value of the given environment variable, or `defaultValue` if none was found.
+
+#end
+Function GetEnv:String( name:String,defaultValue:String="" )
+	
+	Local p:=getenv( name )
+	
+	If p Return String.FromCString( p )
+	
+	Return defaultValue
+End
+
+#rem monkeydoc Sets an environment variable.
+
+Sets the value of a given environment variable.
+
+#end
+Function SetEnv( name:String,value:String )
+	
+	setenv( name,value,1 )
+End
+
+#rem monkeydoc Gets the filesystem directory of the app's assets directory.
+
+Note that only the desktop and web targets have an assets directory. Other targets will return an empty string.
 
 @return The directory app assets are stored in.
 
@@ -89,14 +137,14 @@ Note that assets are only stored in the filesystem on the desktop and emscripten
 Function AssetsDir:String()
 #If __TARGET__="macos"
 	Return AppDir()+"../Resources/"
-#Else If __DESKTOP_TARGET__ Or __TARGET__="emscripten"
+#Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
 	Return AppDir()+"assets/"
 #Else
 	Return ""
 #Endif
 End
 
-#rem monkeydoc Gets the filesystem directory of the desktop directory.
+#rem monkeydoc Gets the filesystem directory of the user's desktop directory.
 
 Note that only the desktop targets have a desktop directory. Other targets will return an empty string.
 
@@ -105,11 +153,29 @@ Note that only the desktop targets have a desktop directory. Other targets will 
 #end
 Function DesktopDir:String()
 #If __TARGET__="windows"
-	Return (String.FromCString( getenv( "HOMEDRIVE" ) )+String.FromCString( getenv( "HOMEPATH" ) )).Replace( "\","/" )+"/Desktop/"
+	Return GetEnv( "USERPROFILE" )+"/Desktop/"
 #Else If __DESKTOP_TARGET__
-	Return String.FromCString( getenv( "HOME" ) )+"/Desktop/"
+ 	Return GetEnv( "HOME" )+"/Desktop/"
+ #Else
+ 	Return ""
 #Endif
+End
+
+#rem monkeydoc Gets the filesystem directory of the user's home directory.
+
+Note that only the desktop targets have a home directory. Other targets will return an empty string.
+
+@return The home directory.
+
+#end
+Function HomeDir:String()
+#If __DESKTOP_TARGET__
+	Return GetEnv( "USERPROFILE" )+"/"
+#Else if __DESKTOP_TARGET__
+	Return GetEnv( "HOME" )+"/"+
+#Else
 	Return ""
+#Endif
 End
 
 #rem monkeydoc Extracts the root directory from a file system path.
@@ -175,6 +241,56 @@ Function IsRootDir:Bool( path:String )
 	Return False
 End
 
+#rem monkeydoc Gets the process current directory.
+
+@return The current directory for the running process.
+
+#end
+Function CurrentDir:String()
+	
+	Local buf:=New char_t[PATH_MAX]
+	
+	getcwd( buf.Data,PATH_MAX )
+	
+	Local path:=String.FromCString( buf.Data )
+	
+#If __TARGET__="windows"	
+	path=path.Replace( "\","/" )
+#Endif
+
+	If path.EndsWith( "/" ) Return path
+
+	Return path+"/"
+End
+
+#rem monkeydoc Converts a path to a real path.
+
+If `path` is a relative path, it is first converted into an absolute path by prefixing the current directory.
+
+Then, any internal './' or '../' references in the path are collapsed.
+
+@param path The filesystem path.
+
+@return An absolute path with any './', '../' references collapsed.
+
+#end
+Function RealPath:String( path:String )
+	
+	path=FixRoot( path )
+	
+	Local buf:=New char_t[PATH_MAX]
+	
+	If Not libc.realpath( path,buf.Data ) Return ""
+	
+	Local rpath:=String.FromCString( buf.Data )
+	
+#If __TARGET__="windows"
+	rpath=rpath.Replace( "\","/" )
+#Endif
+
+	Return rpath
+End
+
 #rem monkeydoc Strips any trailing slashes from a filesystem path.
 
 This function will not strip slashes from a root directory path.
@@ -185,7 +301,9 @@ This function will not strip slashes from a root directory path.
 
 #end
 Function StripSlashes:String( path:String )
-
+	
+	path=path.Replace( "\","/" )
+	
 	If Not path.EndsWith( "/" ) Return path
 	
 	Local root:=ExtractRootDir( path )
@@ -289,45 +407,6 @@ Function StripExt:String( path:String )
 	Return path
 End
 
-#rem monkeydoc Converts a path to a real path.
-
-If `path` is a relative path, it is first converted into an absolute path by prefixing the current directory.
-
-Then, any internal './' or '../' references in the path are collapsed.
-
-@param path The filesystem path.
-
-@return An absolute path with any './', '../' references collapsed.
-
-#end
-Function RealPath:String( path:String )
-
-	Local rpath:=ExtractRootDir( path )
-	If rpath 
-		path=path.Slice( rpath.Length )
-	Else
-		rpath=CurrentDir()
-	Endif
-	
-	While path
-		Local i:=path.Find( "/" )
-		If i=-1 Return rpath+path
-		Local t:=path.Slice( 0,i )
-		path=path.Slice( i+1 )
-		Select t
-		Case ""
-		Case "."
-		Case ".."
-			If Not rpath rpath=CurrentDir()
-			rpath=ExtractDir( rpath )
-		Default
-			rpath+=t+"/"
-		End
-	Wend
-	
-	Return rpath
-End
-
 #rem monkeydoc Gets the type of the file at a filesystem path.
 
 @param path The filesystem path.
@@ -336,9 +415,11 @@ End
 
 #end
 Function GetFileType:FileType( path:String )
+	
+	path=FixFilePath( path )
 
 	Local st:stat_t
-	If stat( StripSlashes( path ),Varptr st )<0 Return FileType.None
+	If stat( path,Varptr st )<0 Return FileType.None
 	
 	Select st.st_mode & S_IFMT
 	Case S_IFREG Return FileType.File
@@ -356,9 +437,11 @@ End
 
 #end
 Function GetFileTime:Long( path:String )
+	
+	path=FixFilePath( path )
 
 	Local st:stat_t
-	If stat( StripSlashes( path ),Varptr st )<0 Return 0
+	If stat( path,Varptr st )<0 Return 0
 	
 	Return libc.tolong( st.st_mtime )
 End
@@ -372,30 +455,12 @@ End
 #end
 Function GetFileSize:Long( path:String )
 
-	path=StripSlashes( path )
+	path=FixFilePath( path )
 
 	Local st:stat_t
 	If stat( path,Varptr st )<0 Return 0
 
 	return st.st_size
-End
-
-#rem monkeydoc Gets the process current directory.
-
-@return The current directory for the running process.
-
-#end
-Function CurrentDir:String()
-
-	Local sz:=4096
-	Local buf:=Cast<char_t Ptr>( malloc( sz ) )
-	getcwd( buf,sz )
-	Local path:=String.FromCString( buf )
-	free( buf )
-	
-	path=path.Replace( "\","/" )
-	If path.EndsWith( "/" ) Return path
-	Return path+"/"
 End
 
 #rem monkeydoc Changes the process current directory.
@@ -405,7 +470,9 @@ End
 #end
 Function ChangeDir( path:String )
 
-	chdir( StripSlashes( path ) )
+	path=FixFilePath( path )
+
+	chdir( path )
 End
 
 #rem monkeydoc Loads a directory.
@@ -420,8 +487,8 @@ Does not return any '.' or '..' entries in a directory.
 
 #end
 Function LoadDir:String[]( path:String )
-
-	path=StripSlashes( path )
+	
+	path=FixFilePath( path )
 
 	Local dir:=opendir( path )
 	If Not dir Return Null
@@ -457,6 +524,8 @@ Returns true if successful.
 
 #end
 Function CreateFile:Bool( path:String,createDir:Bool=True )
+	
+	path=FixFilePath( path )
 
 	If createDir And Not CreateDir( ExtractDir( path ),True ) Return False
 	
@@ -479,10 +548,13 @@ End
 
 #end
 Function CreateDir:Bool( dir:String,recursive:Bool=True,clean:Bool=False )
-
+	
+	dir=FixFilePath( dir )
+	
 	If recursive
 	
 		Local parent:=ExtractDir( dir )
+	
 		If parent And Not IsRootDir( parent )
 		
 			Select GetFileType( parent )
@@ -497,8 +569,9 @@ Function CreateDir:Bool( dir:String,recursive:Bool=True,clean:Bool=False )
 	Endif
 	
 	If clean And Not DeleteDir( dir,True ) Return False
-
-	mkdir( StripSlashes( dir ),$1ff )
+	
+	mkdir( dir,$1ff )
+	
 	Return GetFileType( dir )=FileType.Directory
 End
 
@@ -512,8 +585,11 @@ Returns true if successful.
 
 #end
 Function DeleteFile:Bool( path:String )
+	
+	path=FixFilePath( path )
 
 	remove( path )
+	
 	Return GetFileType( path )=FileType.None
 End
 
@@ -531,6 +607,8 @@ Returns true if successful.
 
 #end
 Function DeleteDir:Bool( dir:String,recursive:Bool=False )
+	
+	dir=FixFilePath( dir )
 
 	If GetFileType( dir )=FileType.Directory
 
@@ -546,7 +624,7 @@ Function DeleteDir:Bool( dir:String,recursive:Bool=False )
 			Next
 		Endif
 		
-		rmdir( StripSlashes( dir ) )
+		rmdir( dir )
 	Endif
 	
 	Return GetFileType( dir )=FileType.None
@@ -571,6 +649,10 @@ Returns true if successful.
 
 #end
 Function CopyDir:Bool( srcDir:String,dstDir:String,recursive:Bool=True )
+	
+	srcDir=FixFilePath( srcDir )
+	
+	dstDir=FixFilePath( dstDir )
 
 	If GetFileType( srcDir )<>FileType.Directory Return False
 	

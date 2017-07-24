@@ -25,13 +25,15 @@ Const FORCE_MSVC:=False
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"
+
+'Const TestArgs:="mx2cc makedocs mojo3d"
 
 'Const TestArgs:="mx2cc makemods -clean monkey"
 
 'Const TestArgs:="mx2cc makemods -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
 
-Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '

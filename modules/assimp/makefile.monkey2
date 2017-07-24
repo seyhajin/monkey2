@@ -212,7 +212,7 @@ Namespace assimp
 #end
 
 'ConvertUTF
-#Import "assimp/contrib/ConvertUTF/ConvertUTF.c"
+'#Import "assimp/contrib/ConvertUTF/ConvertUTF.c"
 
 'irrXML
 #Import "assimp/contrib/irrXML/irrXML.cpp"

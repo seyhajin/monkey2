@@ -527,9 +527,8 @@ Class Stream Extends std.resource.Resource
 		
 		Local proto:=path.Slice( 0,i )
 		Local ipath:=path.Slice( i+2 )
-
+		
 		Return OpenFuncs[proto]( proto,ipath,mode )
-
 	End
 	
 	#rem monkeydoc @hidden

@@ -171,6 +171,8 @@ Class DocsMaker
 			slug=slug.Slice( 0,i )+slug.Slice( i2+1 )
 		Forever
 		
+		If decl.IsExtension slug+="+"
+		
 		Return slug
 	End
 	
@@ -212,6 +214,8 @@ Class DocsMaker
 	Method FixKeyword:String( ident:String )
 	
 		If KeyWords.Contains( ident.ToLower() ) Return "@"+ident.ToLower()
+		
+		If ident.EndsWith( "+" ) Return ident.Slice( 0,-1 )
 		
 		Return ident
 	End
@@ -544,6 +548,24 @@ Class DocsMaker
 		
 		Return True
 	End
+
+	Method EmitExtensions( nmspace:NamespaceScope )
+		
+		If Not nmspace.classexts.Length Return
+		
+		_md.EmitBr()
+		_md.Emit( "| Extensions | &nbsp; |" )
+		_md.Emit( "|:---|:---" )
+		
+		For Local ctype:=Eachin nmspace.classexts
+			
+			Local decl:=ctype.cdecl
+			
+			_md.Emit( "| "+DeclIdent( decl,ctype.scope.outer )+" | "+DeclDesc( decl )+" |" )
+		
+		Next
+		
+	End
 	
 	Method EmitMembers( kind:String,scope:Scope,access:Int,inherited:int )
 	
@@ -782,6 +804,15 @@ Class DocsMaker
 		EmitFuncs( scope,"function" )
 		EndNode()
 		
+		Local nmscope:=Cast<NamespaceScope>( scope )
+		If nmscope
+			BeginNode( "Extensions" )
+			For Local ctype:=Eachin nmscope.classexts
+				EmitClass( ctype )
+			Next
+			EndNode()
+		Endif
+		
 		EndNode()
 		
 	End
@@ -802,6 +833,8 @@ Class DocsMaker
 		EmitMembers( "const",nmspace,DECL_PUBLIC,-1 )
 		EmitMembers( "global",nmspace,DECL_PUBLIC,-1 )
 		EmitMembers( "function",nmspace,DECL_PUBLIC,-1 )
+		
+		EmitExtensions( nmspace )
 		
 		EmitDocs( docs )
 
@@ -900,19 +933,102 @@ Class DocsMaker
 	
 	End
 	
+	Method EmitClass( ctype:ClassType )
+		
+		Local decl:=ctype.cdecl
+		
+		_linkScope=ctype.scope
+			
+		EmitHeader( decl,ctype.scope.outer )
+		
+		If decl.IsExtension
+			
+			_md.Emit( "##### "+decl.kind.Capitalize()+" "+DeclIdent( decl,True )+" Extension" )
+			
+		Else
+			
+			Local xtends:=""
+			If ctype.superType
+				If ctype.superType<>Type.ObjectClass
+					xtends=" Extends "+TypeName( ctype.superType,ctype.scope.outer )
+				Endif
+			Else If ctype.extendsVoid
+				xtends=" Extends Void"
+			Endif
+			
+			Local implments:=""
+			If decl.ifaceTypes
+				Local ifaces:=""
+				For Local iface:=Eachin ctype.ifaceTypes
+					ifaces+=","+TypeName( iface,ctype.scope.outer )
+				Next
+				ifaces=ifaces.Slice( 1 )
+				If decl.kind="interface"
+					xtends=" Extends "+ifaces
+				Else
+					implments=" Implements "+ifaces
+				Endif
+			Endif
+			
+			Local mods:=""
+			If decl.IsVirtual
+				mods+=" Virtual"
+			Else If decl.IsAbstract
+				mods+=" Abstract"
+			Else If decl.IsFinal
+				mods+=" Final"
+			Endif
+			
+			_md.Emit( "##### "+decl.kind.Capitalize()+" "+DeclIdent( decl,True )+xtends+implments+mods )
+
+		Endif
+		
+		EmitDocs( decl )
+		
+		Local access:=DECL_PUBLIC
+		For Local acc:=0 Until 2
+		
+			Local inh:=False
+			
+			EmitMembers( "alias",ctype.scope,access,inh )
+			EmitMembers( "enum",ctype.scope,access,inh )
+			EmitMembers( "struct",ctype.scope,access,inh )
+			EmitMembers( "class",ctype.scope,access,inh )
+			EmitMembers( "interface",ctype.scope,access,inh )
+			EmitMembers( "const",ctype.scope,access,inh )
+			EmitMembers( "global",ctype.scope,access,inh )
+			EmitMembers( "field",ctype.scope,access,inh )
+			EmitMembers( "property",ctype.scope,access,inh )
+			EmitMembers( "constructor",ctype.scope,access,inh )
+			EmitMembers( "operator",ctype.scope,access,inh )
+			EmitMembers( "method",ctype.scope,access,inh )
+			EmitMembers( "function",ctype.scope,access,inh )
+			
+			access=DECL_PROTECTED
+		End
+
+		Local docs:=_md.Flush()
+
+		Local page:=DeclPath( ctype.cdecl,ctype.scope.outer )
+		SavePage( docs,page )
+		
+		EmitNode( ctype.cdecl,ctype.scope,page )
+		
+	End
+	
 	Method EmitClasses( scope:Scope,kind:String )
 	
 		For Local node:=Eachin scope.nodes
-	
+			
 			Local ctype:=Cast<ClassType>( node.Value )
 			If Not ctype Or ctype.transFile.module<>_module Continue
 			
 			Local decl:=ctype.cdecl
 			If decl.kind<>kind Or DocsHidden( decl ) Continue
 			
-			_linkScope=ctype.scope	'.outer
+			EmitClass( ctype )
 			
-			EmitHeader( decl,ctype.scope.outer )
+			#rem
 			
 			Local xtends:=""
 			If ctype.superType
@@ -978,6 +1094,9 @@ Class DocsMaker
 			SavePage( docs,page )
 			
 			EmitNode( ctype.cdecl,ctype.scope,page )
+			
+			#end
+			
 		Next
 	
 	End

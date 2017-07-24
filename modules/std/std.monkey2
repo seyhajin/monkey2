@@ -89,27 +89,32 @@ Function Main()
 	
 #If __DESKTOP_TARGET__
 
-	'Add 'process::' stream protocol
-	'
 	Stream.OpenFuncs["process"]=Lambda:Stream( proto:String,path:String,mode:String )
 
 		Return std.process.ProcessStream.Open( path,mode )
 	End
 	
+	Stream.OpenFuncs["desktop"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return FileStream.Open( filesystem.DesktopDir()+path,mode )
+	End
+
+	Stream.OpenFuncs["home"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return FileStream.Open( filesystem.HomeDir()+path,mode )
+	End
+
 #Endif
 	
-#If Not __MOBILE_TARGET__
+#If __DESKTOP_TARGET__ Or __WEB_TARGET__
 
-	'Add 'asset::' stream protocol
-	'	
-	'Note: "asset::" support for android/ios is in mojo, as it uses SDL_RWop and we don't want std to be dependant on SDL2...
-	'	
+	'note: ios and android asset proto is implemented using SDL and implemented in mojo...
+	'
 	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
-
-		Return FileStream.Open( filesystem.AssetsDir()+path,mode )
-
-	End
 	
-#endif
+		Return FileStream.Open( filesystem.AssetsDir()+path,mode )
+	End
+
+#Endif
 	
 End

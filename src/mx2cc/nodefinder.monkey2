@@ -17,14 +17,15 @@ Class NodeFinder
 	
 	Method Add( node:SNode )
 		
-		If Not node Return
+		If Not node Or node=Self.node Return
 		
 		If Not Self.node
 			Self.node=node
 			Return
 		Endif
-			
-		Local flist:=Cast<FuncList>( node )
+		
+		Local flist:FuncList
+		If Not Cast<PropertyList>( node ) flist=Cast<FuncList>( node )
 			
 		If Self.flist
 			
@@ -34,7 +35,9 @@ Class NodeFinder
 				
 		Else If flist
 			
-			Local src:=Cast<FuncList>( Self.node )
+			Local src:FuncList
+			If Not Cast<PropertyList>( Self.node ) src=Cast<FuncList>( Self.node )
+			
 			If Not src Throw New SemantEx( "Duplicate identifier '"+ident+"'" )
 				
 			Local dst:=New FuncList( ident,Null )
@@ -48,7 +51,6 @@ Class NodeFinder
 		Else
 	
 			Throw New SemantEx( "Duplicate identifier '"+ident+"'" )
-			
 		End
 	End
 

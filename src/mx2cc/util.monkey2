@@ -79,6 +79,7 @@ Function MungPath:String( path:String )
 	Return id
 End
 
+#rem now in std.filesystem
 Function GetEnv:String( name:String,defaultValue:String="" )
 	Local p:=getenv( name )
 	If p Return String.FromCString( p )
@@ -88,6 +89,7 @@ End
 Function SetEnv( name:String,value:String )
 	setenv( name,value,1 )
 End
+#end
 
 Function CSaveString( str:String,path:String )
 	Local t:=stringio.LoadString( path )
