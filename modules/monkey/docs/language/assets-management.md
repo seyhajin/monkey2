@@ -105,7 +105,7 @@ Each platform has it's own supported file types. Consult the tables below for yo
 | --- | --- | --- | --- |
 | png, jpg | png, jpg, bmp, gif | png, jpg, bmp, gif, tif | png, jpg |
 
-##### Sound
+##### Sounds
 
 | Desktop | Android | iOS | HTML5 |
 | --- | --- | --- | --- |
