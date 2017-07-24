@@ -29,8 +29,6 @@ Import assets for use in your project by using an Import directive.
 When importing entire folders, Make sure to include the trailing slash at the end to let the compiler know it's a folder.
 
 ```
-'main.monkey2
-
 'import the entire images subfolder
 
 #Import "images/"
@@ -71,23 +69,30 @@ If you want to maintain a folder structure when importing, you can specify a tar
 ```
 'imports image1.jpg into a subfolder called images
 
-#Import "imagess/image1.jpg@/images/"
+#Import "images/image1.jpg@/images/"
 ```
 
 `@/` also works when importing entire folders:
 
 ```
-'imports everything from images/ into a subfolder called images/
+'imports everything from images/ into a subfolder called data/
 
 #Import "images/@/images/"
+```
+
+The destination folder name doesn't have to be the same as the source folder name.
+```
+'imports everything from images/ into a subfolder called data/
+
+#Import "images/@/data/"
 ```
 
 When using the files in your code, make sure to add the target subfolder after `asset::`, for example:
 
 ```
-#Import "images/image1.png@images/"
+#Import "images/image1.png@data/"
 
-Local image:Image = Image.Load("asset::images/image1.png")
+Local image:Image = Image.Load("asset::data/image1.png")
 ```
 
 #### Supported File Types
