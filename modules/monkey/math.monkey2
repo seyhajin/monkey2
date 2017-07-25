@@ -69,16 +69,16 @@ Function ATan:Double( x:Double )="std::atan"
 
 #rem monkeydoc Computes the inverse tangent of a ratio.
 
-The function uses the signs of `x` and `y` to compute the correct sign for the result.
+Returns the inverse tangent of `y`/`x`, using the signs of the arguments to determine the quadrant of the result.
 
-@param `x` The numerator.
+@param `y` The numerator.
 
-@param `y` The denominator.
+@param `z` The denominator.
 
-@return The inverse tangent of `x`/`y`, in radians.
+@return The inverse tangent of `y`/`x`, in radians.
 
 #end
-Function ATan2:Double( x:Double,y:Double )="std::atan2"
+Function ATan2:Double( y:Double,x:Double )="std::atan2"
 
 #rem monkeydoc Computes the square root of a number.
 
