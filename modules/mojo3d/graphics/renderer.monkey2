@@ -346,60 +346,59 @@ Class Renderer
 		_device.DepthMask=True
 		_device.Clear( Null,1.0 )
 		
-		If light.ShadowsEnabled
+		_device.DepthFunc=DepthFunc.LessEqual
+		_device.BlendMode=BlendMode.Opaque
+		_device.CullMode=CullMode.Back
+		_device.RenderPass=2
+
+		Local invLightMatrix:=light.InverseWorldMatrix
+		Local viewLight:=invLightMatrix * _camera.WorldMatrix
 		
-			_device.DepthFunc=DepthFunc.LessEqual
-			_device.BlendMode=BlendMode.Opaque
-			_device.CullMode=CullMode.Back
-			_device.RenderPass=2
-	
-			Local invLightMatrix:=light.InverseWorldMatrix
-			Local viewLight:=invLightMatrix * _camera.WorldMatrix
+		For Local i:=0 Until _csmSplits.Length-1
 			
-			For Local i:=0 Until _csmSplits.Length-1
-				
-				Local znear:=_csmSplits[i]
-				Local zfar:=_csmSplits[i+1]
-				
-				Local splitProj:=Mat4f.Perspective( _camera.Fov,_camera.Aspect,znear,zfar )
-							
-				Local invSplitProj:=-splitProj
-				
-				Local bounds:=Boxf.EmptyBounds
-				
-				For Local z:=-1 To 1 Step 2
-					For Local y:=-1 To 1 Step 2
-						For Local x:=-1 To 1 Step 2
-							Local c:=New Vec3f( x,y,z )				'clip coords
-							Local v:=invSplitProj * c				'clip->view
-							Local l:=viewLight * v					'view->light
-							bounds|=l
-						Next
+			Local znear:=_csmSplits[i]
+			Local zfar:=_csmSplits[i+1]
+			
+			Local splitProj:=Mat4f.Perspective( _camera.Fov,_camera.Aspect,znear,zfar )
+						
+			Local invSplitProj:=-splitProj
+			
+			Local bounds:=Boxf.EmptyBounds
+			
+			For Local z:=-1 To 1 Step 2
+				For Local y:=-1 To 1 Step 2
+					For Local x:=-1 To 1 Step 2
+						Local c:=New Vec3f( x,y,z )				'clip coords
+						Local v:=invSplitProj * c				'clip->view
+						Local l:=viewLight * v					'view->light
+						bounds|=l
 					Next
 				Next
-				
-				bounds.min.z-=100
-				
-				Local lightProj:=Mat4f.Ortho( bounds.min.x,bounds.max.x,bounds.min.y,bounds.max.y,bounds.min.z,bounds.max.z )
-				
-				'set matrices for next pass...
-				_uniforms.SetMat4f( "ShadowMatrix"+i,lightProj * viewLight )
-				
-				Local size:=_csmTexture.Size,hsize:=size/2
-				
-				Select i
-				Case 0 _device.Viewport=New Recti( 0,0,hsize.x,hsize.y )
-				Case 1 _device.Viewport=New Recti( hsize.x,0,size.x,hsize.y )
-				Case 2 _device.Viewport=New Recti( 0,hsize.y,hsize.x,size.y )
-				Case 3 _device.Viewport=New Recti( hsize.x,hsize.y,size.x,size.y )
-				End
-				
-				_device.Scissor=_device.Viewport
-					
-				RenderRenderOps( _renderQueue.OpaqueOps,invLightMatrix,lightProj )
 			Next
 			
-		Endif
+			bounds.min.z-=100
+			
+			Local lightProj:=Mat4f.Ortho( bounds.min.x,bounds.max.x,bounds.min.y,bounds.max.y,bounds.min.z,bounds.max.z )
+			
+			'set matrices for next pass...
+			_uniforms.SetMat4f( "ShadowMatrix"+i,lightProj * viewLight )
+			
+			Local size:=_csmTexture.Size,hsize:=size/2
+			
+			Select i
+			Case 0 _device.Viewport=New Recti( 0,0,hsize.x,hsize.y )
+			Case 1 _device.Viewport=New Recti( hsize.x,0,size.x,hsize.y )
+			Case 2 _device.Viewport=New Recti( 0,hsize.y,hsize.x,size.y )
+			Case 3 _device.Viewport=New Recti( hsize.x,hsize.y,size.x,size.y )
+			End
+			
+			_device.Scissor=_device.Viewport
+				
+			If light.ShadowsEnabled
+				RenderRenderOps( _renderQueue.OpaqueOps,invLightMatrix,lightProj )
+			Endif
+			
+		Next
 		
 		_device.RenderTarget=t_rtarget
 		_device.Viewport=t_viewport

@@ -27,6 +27,8 @@ Using gles20..
 #Import "graphics/gltf2"
 #Import "graphics/gltf2loader"
 
+#Import "graphics/entityexts"
+
 #Import "graphics/animation"
 #Import "graphics/animator"
 

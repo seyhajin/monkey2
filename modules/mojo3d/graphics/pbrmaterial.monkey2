@@ -28,7 +28,7 @@ Class PbrMaterial Extends Material
 		EmissiveFactor=Color.Black
 	
 		MetalnessTexture=Texture.ColorTexture( Color.White )
-		MetalnessFactor=1.0
+		MetalnessFactor=0.0
 		
 		RoughnessTexture=Texture.ColorTexture( Color.White )
 		RoughnessFactor=1.0
@@ -39,6 +39,7 @@ Class PbrMaterial Extends Material
 	End
 	
 	Method New( material:PbrMaterial )
+		
 		Super.New( material )
 	End
 	

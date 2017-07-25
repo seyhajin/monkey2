@@ -33,7 +33,6 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( Pi/2 )	'aim directional light downwards - Pi/2=90 degrees.
 		
 		'create quad mesh
 		'
@@ -66,7 +65,7 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
-		_model.RotateY( .1 )
+		_model.RotateY( 1 )
 		
 		_scene.Render( canvas,_camera )
 

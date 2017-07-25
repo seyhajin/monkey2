@@ -47,21 +47,54 @@ Class AssimpLoader
 	
 	Method LoadMesh:Mesh()
 		
-		Local model:=New Model
+		Local mesh:=New Mesh
+		
+		Local materials:=New Stack<Material>
 		
 		For Local i:=0 Until _scene.mNumMeshes
 			
-			AddMesh( _scene.mMeshes[i],model )
+			Local aimesh:=_scene.mMeshes[i]
+			
+			LoadMesh( aimesh,mesh,Null,False )
 		Next
 		
-		model.Mesh.UpdateTangents()
+		mesh.UpdateTangents()
 		
-		Return model.Mesh
+		Return mesh
 	End
 	
 	Method LoadModel:Model()
 		
-		Local model:=LoadNode( _scene.mRootNode,Null )
+		Local mesh:=New Mesh
+		
+		Local materials:=New Stack<Material>
+		
+		For Local i:=0 Until _scene.mNumMeshes
+			
+			Local aimesh:=_scene.mMeshes[i]
+			
+			If i mesh.AddMaterials( 1 )
+				
+			LoadMesh( aimesh,mesh,Null,False )
+			
+			materials.Push( LoadMaterial( aimesh,false ) )
+		
+		Next
+		
+		Local model:=New Model
+		
+		If materials.Length
+			mesh.UpdateTangents()
+			model.Mesh=mesh
+			model.Materials=materials.ToArray()
+		Endif
+		
+		Return model
+	End
+	
+	Method LoadBonedModel:Model()
+		
+		Local model:=LoadNode( _scene.mRootNode,Null,True )
 		
 		model.Animator=LoadAnimator()
 		
@@ -74,34 +107,49 @@ Class AssimpLoader
 	Field _dir:String
 	
 	Field _materials:=New Stack<Material>
+	
 	Field _nodes:=New StringMap<Entity>
 	Field _entityIds:=New StringMap<Int>
 	Field _entities:=New Stack<Entity>
 	
-	Method LoadMaterial:Material( aimaterial:aiMaterial,boned:Bool=False )
+	Method LoadBones( aimesh:aiMesh,model:Model,vertices:Vertex3f[] )
 		
-		Local material:=New PbrMaterial( boned )
+		Local bones:=model.Bones,i0:=bones.Length
+	
+		bones=bones.Resize( i0+aimesh.mNumBones )
 		
-		Local aipath:aiString,path:String
-		Local aicolor:aiColor4D,color:Color
+		For Local i:=0 Until aimesh.mNumBones
+	
+			Local aibone:=aimesh.mBones[i]
 			
-		aiGetMaterialTexture( aimaterial,aiTextureType_DIFFUSE,0,Varptr aipath )
-		path=aipath.data
-		If path
-			path=_dir+StripDir( path )
-			Local texture:=Texture.Load( path,TextureFlags.FilterMipmap )
-			If texture material.ColorTexture=texture
-		Endif
-			
-		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
-		
-		material.ColorFactor=New Color( aicolor.r,aicolor.g,aicolor.b,aicolor.a )
+			For Local j:=0 Until aibone.mNumWeights
+				
+				Local aiweight:=aibone.mWeights[j]
+				
+				Local wp:=Cast<Float Ptr>( Varptr vertices[aiweight.mVertexId].weights )
+				Local bp:=Cast<UByte Ptr>( Varptr vertices[aiweight.mVertexId].bones )
+				
+				Local k:=0
+				For k=0 Until 4
+					If wp[k] Continue
+					wp[k]=aiweight.mWeight
+					bp[k]=i0+i
+					Exit
+				Next
+				If k=4 Print "Too many vertex weights"
 
-		Return material
+			Next
+		
+			bones[i0+i].entity=_entities[ _entityIds[ aibone.mName.data ] ]
+			
+			bones[i0+i].offset=Cast<AffineMat4f>( aibone.mOffsetMatrix )
+		Next
+		
+		model.Bones=bones
 	End
 	
-	Method AddMesh( aimesh:aiMesh,model:Model )
-
+	Method LoadMesh( aimesh:aiMesh,mesh:Mesh,model:Model,boned:bool )
+		
 		Local vertices:=New Vertex3f[ aimesh.mNumVertices ]
 		
 		Local vp:=aimesh.mVertices
@@ -114,48 +162,9 @@ Class AssimpLoader
 			If tp vertices[i].texCoord0=New Vec2f( tp[i].x,tp[i].y )
 		Next
 		
-		If aimesh.mNumBones
-
-			Local n:=aimesh.mNumBones
-			
-			Local bones:=model.Bones,i0:=bones.Length
-		
-			bones=bones.Resize( i0+n )
-			
-			For Local i:=0 Until n
-		
-				Local aibone:=aimesh.mBones[i]
-				
-				bones[i0+i].entity=_entities[ _entityIds[ aibone.mName.data ] ]
-				
-				bones[i0+i].offset=Cast<AffineMat4f>( aibone.mOffsetMatrix )
-				
-				For Local j:=0 Until aibone.mNumWeights
-					
-					Local aiweight:=aibone.mWeights[j]
-					
-					Local wp:=Cast<Float Ptr>( Varptr vertices[aiweight.mVertexId].weights )
-					Local bp:=Cast<UByte Ptr>( Varptr vertices[aiweight.mVertexId].bones )
-					
-					Local k:=0
-					For k=0 Until 4
-						If wp[k] Continue
-						wp[k]=aiweight.mWeight
-						bp[k]=i0+i
-						Exit
-					Next
-					If k=4 print "Too many vertex weights"
-						
-				Next
-			Next
-		
-			model.Bones=bones
-		
-		Endif
-
 		Local indices:=New UInt[ aimesh.mNumFaces*3 ]
 		
-		Local fp:=aimesh.mFaces,v0:=model.Mesh.NumVertices
+		Local fp:=aimesh.mFaces,v0:=mesh.NumVertices
 		
 		For Local i:=0 Until aimesh.mNumFaces
 			indices[i*3+0]=fp[i].mIndices[0]+v0
@@ -163,13 +172,57 @@ Class AssimpLoader
 			indices[i*3+2]=fp[i].mIndices[2]+v0
 		Next
 		
-		model.Mesh.AddVertices( vertices )
+		If model And boned And aimesh.mNumBones LoadBones( aimesh,model,vertices )
 		
-		model.Mesh.AddTriangles( indices )
-
+		mesh.AddVertices( vertices )
+		
+		mesh.AddTriangles( indices,mesh.NumMaterials-1 )
 	End
 	
-	Method LoadNode:Model( node:aiNode,parent:Model )
+	Method LoadMaterial:Material( aimesh:aiMesh,boned:bool )
+		
+		Local index:=aimesh.mMaterialIndex
+		
+		If index<_materials.Length And _materials[index] Return _materials[index]
+
+		If index>=_materials.Length _materials.Resize( index+1 )
+		
+		_materials[index]=LoadMaterial( _scene.mMaterials[index],boned )
+		
+		Return _materials[index]
+	End
+	
+	Method LoadMaterial:Material( aimaterial:aiMaterial,boned:Bool )
+		
+		Local ainame:aiString,name:String
+		aiGetMaterialString( aimaterial,AI_MATKEY_NAME,0,0,Varptr ainame )
+		name=ainame.data
+		
+		Local material:=New PbrMaterial( boned )'( Color.White,0,1 )
+		
+		Local diffuseTexture:Texture=Texture.ColorTexture( Color.White )
+		
+		Local diffuseColor:Color=Color.White
+		
+		Local aipath:aiString,path:String
+		aiGetMaterialTexture( aimaterial,aiTextureType_DIFFUSE,0,Varptr aipath )
+		path=aipath.data
+		If path
+			path=_dir+StripDir( path )
+			diffuseTexture=Texture.Load( path,TextureFlags.FilterMipmap|TextureFlags.WrapST )
+		Endif
+		
+		Local aicolor:aiColor4D
+		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
+		diffuseColor=New Color( Pow( aicolor.r,2.2 ),Pow( aicolor.g,2.2 ),Pow( aicolor.b,2.2 ),aicolor.a )
+
+		If diffuseTexture material.ColorTexture=diffuseTexture
+		material.ColorFactor=diffuseColor
+		
+		Return material
+	End
+	
+	Method LoadNode:Model( node:aiNode,parent:Model,boned:bool )
 		
 		Local model:=New Model( parent )
 		
@@ -191,30 +244,30 @@ Class AssimpLoader
 		
 		For Local i:=0 Until node.mNumChildren
 			
-			LoadNode( node.mChildren[i],model )
+			LoadNode( node.mChildren[i],model,boned )
 		Next
-
-		If node.mNumMeshes
 		
-			model.Mesh=New Mesh
-			
-			Local materials:=New Stack<Material>
+		Local mesh:=New Mesh
 		
-			For Local i:=0 Until node.mNumMeshes
-				
-				Local aimesh:=_scene.mMeshes[ node.mMeshes[i] ]
-					
-				AddMesh( aimesh,model )
-				
-				materials.Push( LoadMaterial( _scene.mMaterials[aimesh.mMaterialIndex],aimesh.mNumBones>0 ) )
-			Next
-						
-			model.Mesh.UpdateTangents()
+		Local materials:=New Stack<Material>
+	
+		For Local i:=0 Until node.mNumMeshes
 			
+			Local aimesh:=_scene.mMeshes[ node.mMeshes[i] ]
+			
+			If i mesh.AddMaterials( 1 )
+			
+			LoadMesh( aimesh,mesh,model,boned )
+			
+			materials.Push( LoadMaterial( aimesh,boned ) )
+		Next
+		
+		If materials.Length
+			mesh.UpdateTangents()
+			model.Mesh=mesh
 			model.Materials=materials.ToArray()
-			
 		Endif
-		
+			
 		Return model
 	End
 	
@@ -248,7 +301,6 @@ Class AssimpLoader
 		Next
 		
 		Return New AnimationChannel( posKeys,rotKeys,sclKeys )
-		
 	End
 	
 	Method LoadAnimation:Animation( aianim:aiAnimation )
@@ -266,7 +318,6 @@ Class AssimpLoader
 		Next
 		
 		Return New Animation( channels,aianim.mDuration,aianim.mTicksPerSecond )
-		
 	End
 	
 	Method LoadAnimator:Animator()
@@ -278,11 +329,9 @@ Class AssimpLoader
 		For Local i:=0 Until _scene.mNumAnimations
 			
 			animations[i]=LoadAnimation( _scene.mAnimations[i] )
-
 		Next
 		
 		Return New Animator( animations,_entities.ToArray() )
-
 	End
 
 End
@@ -308,6 +357,7 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		If Not scene Return Null
 		
 		Local loader:=New AssimpLoader( scene,ExtractDir( path ) )
+		
 		Local mesh:=loader.LoadMesh()
 		
 		Return mesh
@@ -320,12 +370,32 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
 		flags|=aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
 		flags|=aiProcess_Triangulate | aiProcess_GenSmoothNormals 
+		flags|=aiProcess_PreTransformVertices
 		
 		Local scene:=LoadScene( path,flags )
 		If Not scene Return Null
 		
 		Local loader:=New AssimpLoader( scene,ExtractDir( path ) )
+		
 		Local model:=loader.LoadModel()
+		
+		Return model
+	End
+	
+	Method LoadBonedModel:Model( path:String ) Override
+	
+		Local flags:UInt=0
+		
+		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
+		flags|=aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
+		flags|=aiProcess_Triangulate | aiProcess_GenSmoothNormals 
+		
+		Local scene:=LoadScene( path,flags )
+		If Not scene Return Null
+		
+		Local loader:=New AssimpLoader( scene,ExtractDir( path ) )
+		
+		Local model:=loader.LoadBonedModel()
 		
 		Return model
 	End
@@ -334,11 +404,17 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 
 	Function LoadScene:aiScene( path:String,flags:UInt )
 		
-		Local data:=DataBuffer.Load( path )
-
-		Local scene:=aiImportFileFromMemory( Cast<libc.char_t Ptr>( data.Data ),data.Length,flags,ExtractExt( path ).Slice( 1 ) )
+		path=RealPath( path )
 		
-		data.Discard()
+		Local scene:=aiImportFile( path,flags )
+		
+		If Not scene Print "aiImportFile failed: path="+path
+		
+'		Local data:=DataBuffer.Load( path )
+
+'		Local scene:=aiImportFileFromMemory( Cast<libc.char_t Ptr>( data.Data ),data.Length,flags,ExtractExt( path ).Slice( 1 ) )
+		
+'		data.Discard()
 		
 		Return scene
 	End

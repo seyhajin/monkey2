@@ -55,7 +55,7 @@ Class MyWindow Extends Window
 		
 		'create turtle
 		'		
-		_turtle=Model.Load( "asset::turtle1.b3d" )
+		_turtle=Model.LoadBoned( "asset::turtle1.b3d" )
 		
 '		_turtle.Mesh.FitVertices( New Boxf( -1,1 ) )
 '		_turtle.Move( 0,10,0 )
@@ -70,9 +70,10 @@ Class MyWindow Extends Window
 		
 		util.Fly( _camera,Self )
 		
-		If Keyboard.KeyDown( Key.Space ) time+=12.0/60.0
-			
-		_turtle.Animator.Animate( 0,time )
+		If Keyboard.KeyDown( Key.Space ) 
+			time+=12.0/60.0
+			_turtle.Animator.Animate( 0,time )
+		Endif
 		
 		_scene.Render( canvas,_camera )
 

@@ -50,7 +50,8 @@ float viewDepth( float depth ){
 
 float evalShadow(){
 
-	vec4 vpos=vec4( v_Position + v_Normal * .01,1.0 );
+	vec4 vpos=vec4( v_Position + v_Normal * .05,1.0 );
+//	vec4 vpos=vec4( v_Position,1.0 );
 	vec4 lpos;
 	vec2 off;
 	
@@ -70,7 +71,7 @@ float evalShadow(){
 	
 	vec3 spos=lpos.xyz/lpos.w * vec3( 0.25,0.25,0.5 ) + vec3( 0.25,0.25,0.5 );
 
-	spos.z*=0.99;
+//	spos.z*=0.999;
 	
 	float d=texture2D( r_ShadowTexture,spos.xy+off ).r;
 	

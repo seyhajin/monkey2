@@ -41,7 +41,8 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( Pi/2 )	'aim directional light 'down' - Pi/2=90 degrees.
+
+		_light.RotateX( 90 )
 		
 		'create donut - metallic silver...
 		
@@ -58,7 +59,7 @@ Class MyWindow Extends Window
 		
 		If Keyboard.KeyHit( Key.Space ) _donut.Visible=Not _donut.Visible
 		
-		_donut.Rotate( .01,.02,.03 )
+		_donut.Rotate( .1,.2,.3 )
 		
 		util.Fly( _camera,Self )
 		

@@ -47,7 +47,7 @@ Class MyWindow Extends Window
 		
 		'create ground
 		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,.5 ) )
+		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green ) )
 		
 		'create sprites
 		'
