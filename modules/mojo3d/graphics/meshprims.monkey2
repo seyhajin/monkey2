@@ -52,6 +52,8 @@ End
 
 Public
 
+#rem monkeydoc Extension methods for creating meshes.
+#end
 Class Mesh Extension
 	
 	Function CreateRect:Mesh( rect:Rectf )
@@ -487,6 +489,8 @@ Class Mesh Extension
 	
 End
 
+#rem monkeydoc Extension methods for creating models.
+#end
 Class Model Extension
 	
 	Function CreateBox:Model( box:Boxf,xsegs:Int,ysegs:Int,zsegs:Int,material:Material,parent:Entity=Null )

@@ -129,7 +129,7 @@ Class Entity
 		Return _children.ToArray()
 	End
 
-	#rem monkeydoc entity visibility flag.
+	#rem monkeydoc Visibility flag.
 	#end
 	Property Visible:Bool()
 		
@@ -140,7 +140,7 @@ Class Entity
 		If _visible Show() Else Hide()
 	End
 
-	#rem monkeydoc entity animator.
+	#rem monkeydoc Entity animator.
 	#end	
 	Property Animator:Animator()
 		
@@ -155,7 +155,7 @@ Class Entity
 
 	#rem monkeydoc Local transformation matrix.
 	
-	The local matrix combines the local position, rotation and scale of the entity into a single affine 4x4 matrix.
+	The local matrix combines the local position, orientation and scale of the entity into a single affine 4x4 matrix.
 	
 	#end
 	Property Matrix:AffineMat4f()
@@ -181,10 +181,10 @@ Class Entity
 		Invalidate()
 	End
 	
-	#rem monkeydoc Local rotation basis matrix.
+	#rem monkeydoc Local basis matrix.
 	
-	A basis matrix is a 3x3 matrix representation of a rotation.
-	
+	A basis matrix is a 3x3 matrix representation of an orientation.
+
 	A basis matrix is orthogonal (ie: the i,j,k members are perpendicular to each other) and normalized (ie: the i,j,k members all have unit length).
 	
 	#end
@@ -199,19 +199,6 @@ Class Entity
 		Invalidate()
 	End
 
-	#rem monkeydoc Local rotation in euler angles.
-	#end
-	Property Rotation:Vec3f()
-		
-		Return _r.GetRotation()
-	
-	Setter( rotation:Vec3f )
-		
-		_r=Mat3f.Rotation( rotation )
-		
-		Invalidate()
-	End
-	
 	#rem monkeydoc Local scale.
 	#end	
 	Property Scale:Vec3f()
@@ -225,50 +212,11 @@ Class Entity
 		Invalidate()
 	End
 	
-	#rem monkeydoc X coordinate of local position.
-	#end
-	Property X:Float()
-		
-		Return _t.x
-		
-	Setter( x:Float )
-		
-		_t.x=x
-		
-		Invalidate()
-	End
-	
-	#rem monkeydoc Y coordinate of local position.
-	#end
-	Property Y:Float()
-	
-		Return _t.y
-	
-	Setter( y:Float )
-		
-		_t.y=y
-		
-		Invalidate()
-	End
-
-	#rem monkeydoc Z coordinate of local position.
-	#end
-	Property Z:Float()
-	
-		Return _t.z
-	
-	Setter( z:Float )
-		
-		_t.z=z
-		
-		Invalidate()
-	End
-	
 	'***** World space properties *****
 	
 	#rem monkeydoc World transformation matrix.
 	
-	The world matrix combines the world position, rotation and scale of the entity into a single affine 4x4 matrix.
+	The world matrix combines the world position, basis matrix and scale of the entity into a single affine 4x4 matrix.
 	
 	#end
 	Property WorldMatrix:AffineMat4f()
@@ -306,9 +254,9 @@ Class Entity
 		Invalidate()
 	End
 	
-	#rem monkeydoc World basis rotation matrix.
+	#rem monkeydoc World basis matrix.
 
-	A basis matrix is a 3x3 matrix representation of a rotation.
+	A basis matrix is a 3x3 matrix representation of an orientation.
 	
 	A basis matrix is orthogonal (ie: the i,j,k members are perpendicular to each other) and normalized (ie: the i,j,k members all have unit length).
 	
@@ -324,17 +272,6 @@ Class Entity
 		Invalidate()
 	End
 	
-	#rem monkeydoc World rotation in euler angles.
-	#end
-	Property WorldRotation:Vec3f()
-		
-		Return WorldBasis.GetRotation()
-	
-	Setter( rotation:Vec3f )
-		
-		WorldBasis=Mat3f.Rotation( rotation )
-	End
-	
 	#rem monkeydoc World scale.
 	#end	
 	Property WorldScale:Vec3f()
@@ -346,42 +283,6 @@ Class Entity
 		_s=_parent ? scale / _parent.WorldScale Else scale
 		
 		Invalidate()
-	End
-	
-	#rem monkeydoc X coordinate of world position.
-	#end
-	Property WorldX:Float()
-		
-		Return WorldPosition.x
-		
-	Setter( x:Float )
-
-		Local v:=WorldPosition		
-		WorldPosition=New Vec3f( x,v.y,v.z )
-	End
-	
-	#rem monkeydoc Y coordinate of world position.
-	#end
-	Property WorldY:Float()
-	
-		Return WorldPosition.y
-	
-	Setter( y:Float )
-		
-		Local v:=WorldPosition		
-		WorldPosition=New Vec3f( v.x,y,v.z )
-	End
-
-	#rem monkeydoc Z coordinate of world position.
-	#end
-	Property WorldZ:Float()
-	
-		Return _t.z
-	
-	Setter( z:Float )
-		
-		Local v:=WorldPosition		
-		WorldPosition=New Vec3f( v.x,v.y,z )
 	End
 	
 	'***** Methods ******
@@ -438,148 +339,6 @@ Class Entity
 		_scene=Null
 		
 		Destroyed()
-	End
-	
-	#rem monkeydoc Sets entity position in local or world space.
-	#end
-	Method SetPosition( position:Vec3f,worldSpace:Bool=False )
-		
-		If worldSpace WorldPosition=position Else Position=position
-	End
-	
-	Method SetPosition( x:Float,y:Float,z:Float,worldSpace:Bool=False )
-		
-		SetPosition( x,y,z,worldSpace )
-	End
-	
-	#rem monkeydoc Gets entity position in local or world space.
-	#end
-	Method GetPostition:Vec3f( worldSpace:Bool=False )
-		
-		Return worldSpace ? WorldPosition Else Position
-	End
-	
-	#rem monkeydoc Sets entity rotation in euler angles in local or world space.
-	#end
-	Method SetRotation( rotation:Vec3f,worldSpace:Bool=False )
-		
-		If worldSpace WorldRotation=rotation Else Rotation=rotation
-	End
-	
-	Method SetRotation( rx:Float,ry:Float,rz:Float,worldSpace:Bool=False )
-		
-		SetRotation( New Vec3f( rx,ry,rz ),worldSpace )
-	End
-	
-	#rem monkeydoc Gets entity rotation in euler angles in local or world space.
-	#end
-	Method GetRotation:Vec3f( worldSpace:Bool=False )
-		
-		Return worldSpace ? WorldRotation Else Rotation
-	End
-	
-	#rem monkeydoc Sets entity scale in local or world space.
-	#end
-	Method SetScale( scale:Vec3f,worldSpace:Bool=False )
-		
-		If worldSpace WorldScale=scale Else Scale=scale
-	End
-	
-	Method SetScale( sx:Float,sy:Float,sz:Float,worldSpace:Bool=False )
-		
-		SetScale( New Vec3f( sx,sy,sz ),worldSpace )
-	End
-
-	#rem monkeydoc Gets entity scale in local or world space.
-	#end
-	Method GetScale:Vec3f( worldSpace:Bool=False )
-		
-		Return worldSpace ? WorldScale Else Scale
-	End
-	
-	#rem monkeydoc Moves the entity.
-	
-	Moves the entity relative to its current orientation.
-	
-	#end	
-	Method Move( tv:Vec3f )
-		
-		Position+=Basis * tv
-	End
-	
-	Method Move( tx:Float,ty:Float,tz:Float )
-		
-		Move( New Vec3f( tx,ty,tz ) )
-	End
-	
-	#rem monkeydoc Moves the entity on the X axis.
-	
-	Moves the entity relative to its current orientation.
-	
-	#end	
-	Method MoveX( tx:Float )
-		
-		Position+=Basis.i * tx
-	End
-	
-	#rem monkeydoc Moves the entity on the Y axis.
-	
-	Moves the entity relative to its current orientation.
-	
-	#end	
-	Method MoveY( ty:Float )
-
-		Position+=Basis.j * ty
-	End
-	
-	#rem monkeydoc Moves the entity on the Z axis.
-	
-	Moves the entity relative to its current orientation.
-	
-	#end	
-	Method MoveZ( tz:Float )
-
-		Position+=Basis.k * tz
-	End
-
-	#rem monkeydoc Rotates the entity.
-	
-	Rotates the entity.
-	
-	If `postRotate` is true, the rotation is applied after the entity's world rotation.
-		
-	If `postRotate` is false, the rotation is applied before the entity's local rotation.
-		
-	#end
-	Method Rotate( rv:Vec3f,postRotate:Bool=False )
-		
-		If postRotate WorldBasis=Mat3f.Rotation( rv )*WorldBasis Else Basis*=Mat3f.Rotation( rv )
-	End
-	
-	Method Rotate( rx:Float,ry:Float,rz:Float,postRotate:Bool=False )
-		
-		Rotate( New Vec3f( rx,ry,rz ),postRotate )
-	End
-	
-	#rem monkeydoc Rotates the entity around the X axis.
-	#end
-	Method RotateX( rx:Float,postRotate:Bool=False )
-		
-		If postRotate WorldBasis=Mat3f.Pitch( rx )*WorldBasis Else Basis*=Mat3f.Pitch( rx )
-	End
-
-	#rem monkeydoc Rotates the entity around the Y axis.
-	#end
-	Method RotateY( ry:Float,postRotate:Bool=False )
-		
-		If postRotate WorldBasis=Mat3f.Yaw( ry )*WorldBasis Else Basis*=Mat3f.Yaw( ry )
-	End
-
-	#rem monkeydoc Rotates the entity around the Z axis.
-	#end
-	Method RotateZ( rz:Float,postRotate:Bool=False )
-		
-		If postRotate WorldBasis=Mat3f.Roll( rz )*WorldBasis Else Basis*=Mat3f.Roll( rz )
 	End
 	
 Protected

@@ -63,7 +63,7 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( Pi/2 )	'aim directional light downwards - Pi/2=90 degrees.
+		_light.RotateX( 90 )	'aim directional light downwards
 		
 		'create ground
 		'
@@ -87,7 +87,7 @@ Class MyWindow Extends Window
 			
 				Local copy:=duck.Copy( root )
 				
-				copy.RotateY( i*TwoPi/360 )
+				copy.RotateY( i )
 				
 				copy.Move( 0,0,6+m*16 )
 				
@@ -120,7 +120,8 @@ Class MyWindow Extends Window
 		'_monochrome.Level=Sin( Now()*3 ) * .5 + .5
 		
 		For Local duck:=Eachin _ducks
-			duck.Rotate( 0,.01,0 )
+			
+			duck.Rotate( 0,1,0 )
 		Next
 		
 		util.Fly( _camera,Self )

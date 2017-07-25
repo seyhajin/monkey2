@@ -104,12 +104,40 @@ Class Model Extends Entity
 		For Local loader:=Eachin Mojo3dLoader.Instances
 		
 			Local model:=loader.LoadModel( path )
+			
 			If model Return model
-		
 		Next
 		
 		Return Null
 	
+	End
+
+	#rem monkeydoc Loads a boned model from a file path.
+	
+	On its own, mojo3d can only load gltf2 format mesh and model files.
+	
+	To add more formats, #import the mojo3d-assimp module into your app, eg:
+	
+	```
+	#Import "<mojo3d>"
+	#Import "<mojo3d-assimp>"
+	```
+	
+	This will allow you to load any format supported by the assimp module.
+	
+	However, importing the assimp module into your app will also increase its size.
+	
+	#end
+	Function LoadBoned:Model( path:String )
+	
+		For Local loader:=Eachin Mojo3dLoader.Instances
+		
+			Local model:=loader.LoadBonedModel( path )
+			
+			If model Return model
+		Next
+		
+		Return Null
 	End
 
 	#rem monkeydoc @hidden
@@ -121,19 +149,15 @@ Class Model Extends Entity
 		Local instance:=Self
 		
 		If _bones
-		
+
 			instance=Null
 		
 			If _boneMatrices.Length<>_bones.Length _boneMatrices=New Mat4f[ _bones.Length ]
 			
 			For Local i:=0 Until _bones.Length
-				
 				Local bone:=_bones[i]
-				
 				_boneMatrices[i]=New Mat4f( bone.entity.WorldMatrix * bone.offset )
-'				_boneMatrices[i]=New Mat4f( bone.offset * bone.entity.WorldMatrix )
 			Next
-		
 		End
 		
 		Local vbuffer:=_mesh.GetVertexBuffer()
@@ -143,8 +167,6 @@ Class Model Extends Entity
 		For Local i:=0 Until ibuffers.Length
 			
 			Local material:=i<_materials.Length And _materials[i] ? _materials[i] Else _material
-			
-			If Not material DebugStop()
 			
 			Local ibuffer:=ibuffers[i]
 			

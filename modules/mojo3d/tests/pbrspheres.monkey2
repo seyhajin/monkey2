@@ -43,7 +43,7 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( Pi/2 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.RotateX( 60 )	'aim directional light 'downish'.
 		
 		'create ground
 		'
