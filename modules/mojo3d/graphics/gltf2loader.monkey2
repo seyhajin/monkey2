@@ -225,13 +225,19 @@ Class Gltf2Loader
 					Next
 				Endif
 				
-				If materials And Not mesh.NumVertices mesh.AddMaterials( 1 )				
-				
 				mesh.AddVertices( vertices )
 				
-				mesh.AddTriangles( indices,mesh.NumMaterials-1 )
-				
-				If materials materials.Push( GetMaterial( prim.material ) )
+				If materials
+					
+					mesh.AddTriangles( indices,mesh.NumMaterials )
+
+					materials.Push( GetMaterial( prim.material ) )
+					
+				Else
+					
+					mesh.AddTriangles( indices,0 )
+					
+				Endif
 					
 				Print "Added "+vcount+" vertices, "+icount+" indices."
 				

@@ -156,7 +156,7 @@ Class Model Extends Entity
 			
 			For Local i:=0 Until _bones.Length
 				Local bone:=_bones[i]
-				_boneMatrices[i]=New Mat4f( bone.entity.WorldMatrix * bone.offset )
+				_boneMatrices[i]=New Mat4f( bone.entity.Matrix * bone.offset )
 			Next
 		End
 		

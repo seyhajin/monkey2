@@ -73,7 +73,6 @@ Class MyWindow Extends Window
 		'		
 		Local duck:=Model.Load( "asset::duck.gltf/Duck.gltf" )
 		duck.Mesh.FitVertices( New Boxf( -1,1 ) )
-		duck.Mesh.TransformVertices( Mat4f.Rotation( 0,Pi/2,0 ) )
 		
 		Local root:=duck.Copy()
 		root.Move( 0,10,0 )
@@ -90,6 +89,8 @@ Class MyWindow Extends Window
 				copy.RotateY( i )
 				
 				copy.Move( 0,0,6+m*16 )
+				
+				copy.Scale=New Vec3f( 1 )
 				
 				For Local j:=0 Until copy.Materials.Length
 				
@@ -121,7 +122,7 @@ Class MyWindow Extends Window
 		
 		For Local duck:=Eachin _ducks
 			
-			duck.Rotate( 0,1,0 )
+			duck.RotateY( 1 )
 		Next
 		
 		util.Fly( _camera,Self )
