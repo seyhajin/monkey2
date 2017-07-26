@@ -44,10 +44,9 @@ Function CopyFile:Bool( srcPath:String,dstPath:String )="bbFileSystem::copyFile"
 
 Private
 
-Function FixRoot:String( path:String )
+Function FixPath:String( path:String )
 	
 	Local root:=ExtractRootDir( path )
-	
 	If Not root.EndsWith( "::" ) Return path
 	
 	path=path.Slice( root.Length )
@@ -63,7 +62,7 @@ End
 
 Function FixFilePath:String( path:String )
 	
-	Return FixRoot( StripSlashes( path ) )
+	Return FixPath( StripSlashes( path ) )
 End
 
 Public
@@ -137,6 +136,7 @@ Note that only the desktop and web targets have an assets directory. Other targe
 Function AssetsDir:String()
 #If __TARGET__="macos"
 	Return AppDir()+"../Resources/"
+	'Return ExtractDir( AppDir() )+"/Resources/"	'enable me!
 #Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
 	Return AppDir()+"assets/"
 #Else
@@ -153,7 +153,7 @@ Note that only the desktop targets have a desktop directory. Other targets will 
 #end
 Function DesktopDir:String()
 #If __TARGET__="windows"
-	Return GetEnv( "USERPROFILE" )+"/Desktop/"
+	Return GetEnv( "USERPROFILE" ).Replace( "\","/" )+"/Desktop/"
 #Else If __DESKTOP_TARGET__
  	Return GetEnv( "HOME" )+"/Desktop/"
  #Else
@@ -169,8 +169,8 @@ Note that only the desktop targets have a home directory. Other targets will ret
 
 #end
 Function HomeDir:String()
-#If __DESKTOP_TARGET__
-	Return GetEnv( "USERPROFILE" )+"/"
+#If __TARGET__="windows"
+	Return GetEnv( "USERPROFILE" ).Replace( "\","/" )+"/"
 #Else if __DESKTOP_TARGET__
 	Return GetEnv( "HOME" )+"/"+
 #Else
@@ -276,7 +276,7 @@ Then, any internal './' or '../' references in the path are collapsed.
 #end
 Function RealPath:String( path:String )
 	
-	path=FixRoot( path )
+	path=FixPath( path )
 	
 	Local rpath:=ExtractRootDir( path )
 	If rpath 
@@ -305,7 +305,7 @@ Function RealPath:String( path:String )
 	
 	#rem Not working on macos!
 	
-	path=FixRoot( path )
+	path=FixPath( path )
 	
 	Local buf:=New char_t[PATH_MAX]
 	
@@ -331,8 +331,6 @@ This function will not strip slashes from a root directory path.
 
 #end
 Function StripSlashes:String( path:String )
-	
-	path=path.Replace( "\","/" )
 	
 	If Not path.EndsWith( "/" ) Return path
 	
