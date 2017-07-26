@@ -1,6 +1,8 @@
 
 echo off
 
+call common.bat
+
 echo.
 echo ***** Updating modules *****
 echo.
