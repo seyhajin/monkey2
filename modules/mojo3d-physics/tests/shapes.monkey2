@@ -14,37 +14,6 @@ Using std..
 Using mojo..
 Using mojo3d..
 
-Function Randomize( model:Model )
-	
-	Local vertices:=model.Mesh.GetVertices()
-	
-	Local indices:=model.Mesh.GetAllIndices()
-	
-	Local mesh:=New Mesh
-	
-	mesh.AddVertices( vertices )
-	
-	mesh.AddMaterials( 9 )
-	
-	Local materials:=New Material[10]
-	
-	For Local i:=0 Until 10
-
-		materials[i]=New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) )
-	
-	Next
-	
-	For Local i:=0 Until indices.Length Step 3
-		
-		mesh.AddTriangles( New UInt[]( indices[i],indices[i+1],indices[i+2] ),Rnd(10) )
-	
-	Next
-	
-	model.Mesh=mesh
-	
-	model.Materials=materials
-End
-
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
@@ -54,8 +23,6 @@ Class MyWindow Extends Window
 	Field _light:Light
 	
 	Field _ground:Model
-	
-	Field _sphere:Model
 	
 	Field _collider:SphereCollider
 	
@@ -74,8 +41,8 @@ Class MyWindow Extends Window
 		_camera.Far=60
 		_camera.Move( 0,10,-10 )
 		
-		New RigidBody( 0,New SphereCollider( 1 ),_camera,True )
-
+		New KinematicBody( New SphereCollider( 1 ),_camera )
+		
 		'create fog
 		'		
 		Local fog:=New FogEffect
@@ -86,7 +53,7 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( Pi/2 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.RotateX( 90 )	'aim directional light 'down'.
 		
 		'create ground
 		'
@@ -94,19 +61,10 @@ Class MyWindow Extends Window
 		
 		_ground=Model.CreateBox( groundBox,16,16,16,New PbrMaterial( Color.Green ) )
 		
-'		Randomize( _ground )
-		
-'		Local collider:Collider=New MeshCollider( _ground.Mesh )	'UGH - FIXME!
 		Local collider:Collider=New BoxCollider( groundBox )
 		
-		Local body:=New RigidBody( 0,collider,_ground )
+		Local body:=New StaticBody( collider,_ground )
 
-		_sphere=Model.CreateSphere( .5,24,12,New PbrMaterial( Color.White ) )
-		
-		_collider=New SphereCollider( .5 )
-		
-'		Return
-		
 		'create some meshes/colliders
 		
 		Local meshes:=New Mesh[5]
@@ -139,7 +97,7 @@ Class MyWindow Extends Window
 				Local model:=New Model( mesh,material )
 				model.Move( x,10,z )
 				
-				Local body:=New RigidBody( 1,colliders[i],model )
+				Local body:=New DynamicBody( colliders[i],model )
 				
 			Next
 		
@@ -152,17 +110,6 @@ Class MyWindow Extends Window
 		RequestRender()
 		
 		util.Fly( _camera,Self )
-		
-'		Local cresult:=World.GetDefault().ConvexSweep( _collider,_camera.Position,_camera.Position+_camera.Basis.k * 100 )
-
-		Local cresult:=World.GetDefault().ConvexSweep( _collider,_camera.Position+_camera.Basis.k * 2,_camera.Position+_camera.Basis.k * 100 )
-		
-		'Local cresult:=World.GetDefault().RayCast( _camera.Position,_camera.Position+_camera.Basis.k * 100 )
-		
-		If cresult 
-			Print "pos="+cresult.point
-			_sphere.Position=cresult.point'+cresult.normal
-		Endif
 			
 		World.GetDefault().Update()
 		
