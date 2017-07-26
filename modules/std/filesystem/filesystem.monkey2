@@ -278,6 +278,35 @@ Function RealPath:String( path:String )
 	
 	path=FixRoot( path )
 	
+	Local rpath:=ExtractRootDir( path )
+	If rpath 
+		path=path.Slice( rpath.Length )
+	Else
+		rpath=CurrentDir()
+	Endif
+	
+	While path
+		Local i:=path.Find( "/" )
+		If i=-1 Return rpath+path
+		Local t:=path.Slice( 0,i )
+		path=path.Slice( i+1 )
+		Select t
+		Case ""
+		Case "."
+		Case ".."
+			If Not rpath rpath=CurrentDir()
+			rpath=ExtractDir( rpath )
+		Default
+			rpath+=t+"/"
+		End
+	Wend
+	
+	Return rpath
+	
+	#rem Not working on macos!
+	
+	path=FixRoot( path )
+	
 	Local buf:=New char_t[PATH_MAX]
 	
 	If Not libc.realpath( path,buf.Data ) Return ""
@@ -289,6 +318,7 @@ Function RealPath:String( path:String )
 #Endif
 
 	Return rpath
+	#end
 End
 
 #rem monkeydoc Strips any trailing slashes from a filesystem path.
