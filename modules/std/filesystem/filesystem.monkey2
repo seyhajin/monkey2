@@ -172,7 +172,7 @@ Function HomeDir:String()
 #If __TARGET__="windows"
 	Return GetEnv( "USERPROFILE" ).Replace( "\","/" )+"/"
 #Else if __DESKTOP_TARGET__
-	Return GetEnv( "HOME" )+"/"+
+	Return GetEnv( "HOME" )+"/"
 #Else
 	Return ""
 #Endif
