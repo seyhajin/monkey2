@@ -9,6 +9,8 @@ Namespace myapp
 
 #Import "assets/"
 
+#Import "../../mojo3d/tests/assets/miramar-skybox.jpg"
+
 #Import "util"
 
 Using std..
@@ -55,7 +57,6 @@ Class MyWindow Extends Window
 		'create model
 		'		
 		_model=Model.Load( "asset::castle/CASTLE1.X" )
-'		_model=Model.Load( "asset::HOUSE.3DS" )
 '		_model=Model.Load( "desktop::Temple.3DS" )
 '		_model=Model.Load( "desktop::FairyHouse/FairyHouse.3DS" )
 		
@@ -92,6 +93,8 @@ Class MyWindow Extends Window
 End
 
 Function Main()
+	
+	Print RealPath( "desktop::hello.png" )
 
 	New AppInstance
 	

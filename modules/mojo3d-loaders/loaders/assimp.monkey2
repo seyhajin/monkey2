@@ -55,6 +55,8 @@ Class AssimpLoader
 			
 			Local aimesh:=_scene.mMeshes[i]
 			
+			If i=0 mesh.AddMaterials( 1 )
+			
 			LoadMesh( aimesh,mesh,Null,False )
 		Next
 		
@@ -73,7 +75,7 @@ Class AssimpLoader
 			
 			Local aimesh:=_scene.mMeshes[i]
 			
-			If i mesh.AddMaterials( 1 )
+			mesh.AddMaterials( 1 )
 				
 			LoadMesh( aimesh,mesh,Null,False )
 			
@@ -234,9 +236,9 @@ Class AssimpLoader
 		Local rot:=matrix.m.Scale( 1/scl.x,1/scl.y,1/scl.z )
 		Local pos:=matrix.t
 
-		model.Position=pos
-		model.Basis=rot
-		model.Scale=scl
+		model.LocalPosition=pos
+		model.LocalBasis=rot
+		model.LocalScale=scl
 		
 		_nodes[ node.mName.data ]=model
 		_entityIds[ node.mName.data ]=_entities.Length
@@ -255,7 +257,7 @@ Class AssimpLoader
 			
 			Local aimesh:=_scene.mMeshes[ node.mMeshes[i] ]
 			
-			If i mesh.AddMaterials( 1 )
+			mesh.AddMaterials( 1 )
 			
 			LoadMesh( aimesh,mesh,model,boned )
 			
