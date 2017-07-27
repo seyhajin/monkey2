@@ -20,7 +20,7 @@ Using std..
 Using mojo..
 Using mojo3d..
 
-Const GRAVITY:=50	'coz reality sux!
+Const GRAVITY:=30	'coz reality sux!
 
 Class Player
 	
@@ -152,7 +152,7 @@ Class MyWindow Extends Window
 		'
 		Local sz:=50
 		
-'		_castle=Model.Load( "asset::E1M1_clean.obj" )
+'		_castle=Model.Load( "asset::E1M1_clean.obj" )	'On the off chance you've got this...have no idea of license issues though.
 		_castle=Model.Load( "asset::castle/CASTLE1.X" )
 
 		_castle.Mesh.FitVertices( New Boxf( -sz,sz ),True )
