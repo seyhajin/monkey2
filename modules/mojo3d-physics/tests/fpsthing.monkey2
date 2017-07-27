@@ -18,6 +18,8 @@ Using std..
 Using mojo..
 Using mojo3d..
 
+Const GRAVITY:=50	'coz reality sux!
+
 Class Player
 	
 	Field _model:Model
@@ -57,7 +59,7 @@ Class Player
 		
 		If _onground _yvel=-_collider.Margin
 			
-		_yvel-=9.81/60.0/60.0
+		_yvel-=GRAVITY/60.0/60.0
 
 		_model.MoveY( _yvel )
 
@@ -74,11 +76,11 @@ Class Player
 		
 		If Keyboard.KeyDown( Key.Left )
 			
-			_model.RotateY( 2.5,True )
+			_model.RotateY( 2.5 )
 			
 		Else If Keyboard.KeyDown( Key.Right )
 			
-			_model.RotateY( -2.5,True )
+			_model.RotateY( -2.5 )
 		Endif
 
 		If _paused
@@ -96,11 +98,11 @@ Class Player
 		
 		If Keyboard.KeyDown( Key.A )
 			
-			_model.MoveZ( .25 )
+			_model.MoveZ( .15 )
 			
 		Else If Keyboard.KeyDown( Key.Z )
 			
-			_model.MoveZ( -.25 )
+			_model.MoveZ( -.15 )
 		Endif
 		
 		If Keyboard.KeyHit( Key.Space )
