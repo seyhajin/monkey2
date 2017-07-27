@@ -233,6 +233,16 @@ Class LiteralValue Extends Value
 	
 	Method New( type:Type,value:String )
 		Self.type=type
+		
+		Local ptype:=TCast<PrimType>( type )
+		If ptype And ptype.IsNumeric
+			If ptype.IsIntegral
+				value=String( ULong( value ) )
+			Else If ptype.IsReal
+				value=String( Double( value ) )
+			Endif
+		Endif
+
 		Self.value=value
 	End
 	
@@ -250,11 +260,9 @@ Class LiteralValue Extends Value
 		'upcast to...
 		Local ptype:=TCast<PrimType>( type )
 		If Not ptype Return New UpCastValue( type,Self )
-'		If Not ptype SemantError( "LiteralValue.UpCast()" )
 		
 		Local ptype2:=TCast<PrimType>( Self.type )
 		If Not ptype2 Return New UpCastValue( type,Self )
-'		If Not ptype2 SemantError( "LiteralValue.UpCast()" )
 		
 		Local result:=""
 		
