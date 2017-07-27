@@ -1,9 +1,18 @@
 
-***** Monkey2 v1.1.05c *****
+***** Monkey2 v1.1.06 *****
 
 * App no longer renders when minimized/inactive.
 
 * Added 'Internal' decl visibility to mx2cc, which means a decl is only visible to other decls within the same module.
+
+* Namespace mojo3d now uses degrees. Namespaces monkey.math and std.geom still use radians. Mojo 2d should probably be degrees too.
+
+* std.filesystem now uses libc 'realpath' for RealPath. Should help with links on macos/linux but not tested.
+
+* Mx2cc now tries to make docs for type extensions. No way to link to 'em yet. 
+
+* Entity Position, Basis, Scale, Matrix etc properties are now in *world* space. Use LocalPosition, LocalBasis etc for local space versions. Ditto SetPosition, Setbasis, SetScale etc methods.
+
 
 
 ***** Monkey2 v1.1.05b *****
