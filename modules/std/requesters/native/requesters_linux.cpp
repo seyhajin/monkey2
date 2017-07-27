@@ -38,7 +38,11 @@ bbString bbRequesters::RequestFile( bbString title,bbString exts,bbBool save,bbS
 
 	if( path=="" ) path=".";
 		
-	return tinyfd_openFileDialog( bbCString( title ),bbCString( path ),0,0,0,0 );
+	if( save ){
+		return tinyfd_saveFileDialog( bbCString( title ),bbCString( path ),0,0,0 );
+	}else{
+		return tinyfd_openFileDialog( bbCString( title ),bbCString( path ),0,0,0,0 );
+	}
 }
 
 bbString bbRequesters::RequestDir( bbString title,bbString dir ){
