@@ -13,6 +13,7 @@
 
 * Entity Position, Basis, Scale, Matrix etc properties are now in *world* space. Use LocalPosition, LocalBasis etc for local space versions. Ditto SetPosition, Setbasis, SetScale etc methods.
 
+* Added subclasses for RigidBody: StaticBody, DynamicBody and KinematicBody, use these with New instead of RigidBody.
 
 
 ***** Monkey2 v1.1.05b *****
