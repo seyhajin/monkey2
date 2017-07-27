@@ -10,6 +10,8 @@ Namespace myapp
 
 #Import "../../mojo3d/tests/assets/miramar-skybox.jpg"
 
+#Import "../../mojo3d-loaders/tests/assets/castle/@/castle"
+
 #Import "util"
 
 #Import "qcollide"
@@ -150,8 +152,8 @@ Class MyWindow Extends Window
 		'
 		Local sz:=50
 		
-'		_castle=Model.Load( "asset::castle/CASTLE1.X" )
-		_castle=Model.Load( "asset::E1M1_clean.obj" )
+'		_castle=Model.Load( "asset::E1M1_clean.obj" )
+		_castle=Model.Load( "asset::castle/CASTLE1.X" )
 
 		_castle.Mesh.FitVertices( New Boxf( -sz,sz ),True )
 		
@@ -199,7 +201,7 @@ Class MyWindow Extends Window
 End
 
 Function Main()
-
+	
 	New AppInstance
 	
 	New MyWindow
