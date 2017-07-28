@@ -5,9 +5,7 @@
 
 * Added 'Internal' decl visibility to mx2cc, which means a decl is only visible to other decls within the same module.
 
-* Namespace mojo3d now uses degrees. Namespaces monkey.math and std.geom still use radians. Mojo 2d should probably be degrees too.
-
-* std.filesystem now uses libc 'realpath' for RealPath. Should help with links on macos/linux but not tested.
+* Namespace mojo3d now uses degrees. Namespaces monkey.math and std.geom still use radians.
 
 * Mx2cc now tries to make docs for type extensions. No way to link to 'em yet. 
 
