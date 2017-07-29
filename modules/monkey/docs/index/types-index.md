@@ -1,4 +1,4 @@
-@manpage Primitive Types
+@manpage Types Index
 
 ####Void
 No type.
@@ -29,7 +29,7 @@ String of 16 bit characters.
 ####Array
 Array type.
 ####Enum
-32bit UInt Enumerated type.
+32 bit signed integer enumerated type.
 ####Object
 Object type.
 ####Ptr

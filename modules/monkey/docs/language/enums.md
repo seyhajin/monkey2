@@ -1,6 +1,6 @@
 ### Enums
 
-`Enum` is a data type containing a set of UInt constants.
+`Enum` is a data type containing a set of Int constants.
 
 By default the members will receive values starting from zero and incemented by one for each new member. You can assign a chosen value to each member when declaring them.
 
@@ -45,15 +45,12 @@ Enum Foo '(modifiers on 5th and 6th bit)
 End
 ```
 
-Some operations examples:
+For now enums don't accept negative number litterals. To assign a negative number you'll have to type a substraction until the bug is resolved.
 ```
-Local flags1:=Flags.A | Flags.B
-Local flags2:=flags1 | Flags.C
-Local flags3:=Flags.B & (flags1 ~ flags3.D)
+Enum Foo '(with a negative member)
+	Negative=0-1 'instead of -1
+	None=0
+	A=1,B,C,D,E,F,G,H,J,K,L,M
+End
 ```
 
-If needed, you can 'extract' the variable value by simply assigning your `Enum` variable to a `UInt`.
-
-```
-Local i:UInt=flags1
-```

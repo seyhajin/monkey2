@@ -3,8 +3,9 @@
 #### Abstract
 
 Used while declaring classes: class cannot be instantiated with `New`, it must be extended.
-
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#classes')" onclick="openDocsPage('monkey:user-types#classes')">See Classes.</a>
+&nbsp;
 
 #### Alias
 

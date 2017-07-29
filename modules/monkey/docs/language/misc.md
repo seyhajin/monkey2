@@ -22,6 +22,13 @@ Hexadecimal numbers can be entered using the $ symbol
 Local i:=$A0F
 ```
 
+#### 0 Octal
+
+Octal numbers can be entered using the 0 symbol
+```
+Local i:=010 'is decimal 9
+```
+
 #### Inline Code comments
 
 Inline comments can be done with the `'` character.
