@@ -12,48 +12,66 @@ Used while declaring classes: class cannot be instantiated with `New`, it must b
 Used for convenience types. For example `Vec2i` is a convenience type alias for `Vec2<Int>`.
 
 Used to import extern typedefs too.
+<br>
+<a href="javascript:void('monkey:user-types#extensions')" onclick="openDocsPage('monkey:user-types#extensions')">See Alias.</a>
+&nbsp;
+
 
 #### Array
 
 `Array` is not currently used but is reserved for future use.
 
-/linkto Arrays \linkto
+<br>
+<a href="javascript:void('monkey:arrays#arrays')" onclick="openDocsPage('monkey:arrays#arrays')">See arrays.</a>
+&nbsp;
 
 #### Case
 
 To be combined with with the `Select` statement.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#select')" onclick="openDocsPage('monkey:conditional-statements#select')">See Select.</a>
+&nbsp;
 
 #### Cast
 
 Allows you to cast custom pointers.
 
-/linkto Pointers \linkto
+<br>
+<a href="javascript:void('monkey:pointers#casting')" onclick="openDocsPage('monkey:pointers#casting')">See pointer casting.</a>
+&nbsp;
 
 #### Catch
 
 The `Catch` keyword is part of the Try/Catch exception-handling construct.
 
-/linkto Errors-handling \linkto
+<br>
+<a href="javascript:void('monkey:error-handling#error-handling')" onclick="openDocsPage('monkey:error-handling#error-handling')">See error handling.</a>
+&nbsp;
 
 #### Class
 
 Marks the start of a class object definition.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:arrays#arrays')" onclick="openDocsPage('monkey:arrays#arrays')">See Arrays.</a>
+&nbsp;
 
 #### Const
 
 Allows you to declare a constant.
 
-/linkto Variables \linkto
+<br>
+<a href="javascript:void('monkey:arrays#arrays')" onclick="openDocsPage('monkey:arrays#arrays')">See Arrays.</a>
+&nbsp;
 
 #### Continue
 
 Used to skip a loop.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#loop-statements')" onclick="openDocsPage('monkey:loop-statements#loop-statements')">See loops.</a>
+&nbsp;
 
 #### CString
 
@@ -64,7 +82,9 @@ C style String for external string parameters.
 
 Marks the start of the default code block of a `Select` statement.
 
-/linkto Conditional-statements.Select \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#select')" onclick="openDocsPage('monkey:conditional-statements#select')">See Select.</a>
+&nbsp;
 
 #### Delete
 
@@ -74,7 +94,9 @@ Marks the start of the default code block of a `Select` statement.
 
 Allows you to use `For` loop with collections.
 
-/linkto Loop-statements.For-(Eachin) \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#for--eachin')" onclick="openDocsPage('monkey:loop-statements#for--eachin')">See For(Eachin).</a>
+&nbsp;
 
 #### Else
 
