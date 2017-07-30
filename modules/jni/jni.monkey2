@@ -10,27 +10,30 @@ Extern
 
 Struct _jclass
 End
-
 Alias jclass:_jclass Ptr
 
 Struct _jobject
 End
-
 Alias jobject:_jobject Ptr
 
 Struct _jstring
 End
-
 Alias jstring:_jstring Ptr
+
+Struct _jarray
+End
+Alias jarray:_jarray Ptr
+
+Struct _jobjectArray
+End
+Alias jobjectArray:_jobjectArray Ptr
 
 Struct _jfieldID
 End
-
 Alias jfieldID:_jfieldID Ptr
 
 Struct _jmethodID
 End
-
 Alias jmethodID:_jmethodID Ptr
 
 Class JNIEnv Extends Void
@@ -48,8 +51,15 @@ Class JNIEnv Extends Void
 	'fields...
 	'
 	Method GetFieldID:jfieldID( clazz:jclass,name:CString,sig:CString )
-	
+		
+	Method GetBooleanField:Bool( obj:jobject,fieldID:jfieldID )
+		
+	Method GetIntField:Int( obj:jobject,fieldID:jfieldID )
+		
 	Method GetObjectField:jobject( obj:jobject,fieldID:jfieldID )
+
+	Method GetStringField:String( obj:jobject,fieldID:jfieldID ) Extension="bbJNI::GetStringField"
+		
 	
 	'static fields...
 	
@@ -65,10 +75,12 @@ Class JNIEnv Extends Void
 	
 	Method CallBooleanMethod:Bool( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallBooleanMethod"
 
-	Method CallStringMethod:String( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStringMethod"
+	Method CallIntMethod:Int( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallIntMethod"
 
 	Method CallObjectMethod:jobject( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallObjectMethod"
 	
+	Method CallStringMethod:String( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStringMethod"
+
 	'static methods...
 	'
 	Method GetStaticMethodID:jmethodID( clazz:jclass,name:CString,sig:CString )
@@ -76,6 +88,8 @@ Class JNIEnv Extends Void
 	Method CallStaticVoidMethod:Void( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticVoidMethod"
 
 	Method CallStaticBooleanMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
+
+	Method CallStaticIntMethod:int( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticIntMethod"
 
 	Method CallStaticStringMethod:String( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticStringMethod"
 	
@@ -86,6 +100,10 @@ Class JNIEnv Extends Void
 	Method AllocObject:jobject( clazz:jclass )
 		
 	Method NewObject:jobject( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::NewObject"
+		
+	Method NewObjectArray:jobjectArray( length:Int,clazz:jclass,init:jobject )
+		
+	Method SetObjectArrayElement( jarray:jobjectArray,index:Int,value:jobject )
 		
 	'refs...
 	'
