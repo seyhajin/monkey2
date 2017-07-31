@@ -45,7 +45,7 @@ Enum Foo '(modifiers on 5th and 6th bit)
 End
 ```
 
-For now enums don't accept negative number litterals. To assign a negative number you'll have to type a substraction until the bug is resolved.
+For now enums don't accept negative number literals. To assign a negative number you'll have to type a substraction until the bug is resolved.
 ```
 Enum Foo '(with a negative member)
 	Negative=0-1 'instead of -1
@@ -53,4 +53,3 @@ Enum Foo '(with a negative member)
 	A=1,B,C,D,E,F,G,H,J,K,L,M
 End
 ```
-
