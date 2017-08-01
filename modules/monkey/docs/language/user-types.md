@@ -231,3 +231,23 @@ Class Foo
 	Field _somePrivateThing:String
 End
 ```
+
+#### Alias
+
+An `Alias` allows you to create a synonym for a previously declared type.
+
+<div class=syntax>
+`Alias` _Identifier_ `:` _Type_
+</div>
+
+<br>
+You can use your newly declared `Alias` instead of the original type anywhere in your code. For example:
+
+
+```
+Alias FantasticNumber:Int
+Alias FantasticString:String
+
+Local myInt:FantasticNumber = 123
+Local myString:FantasticString = "abc"
+```
