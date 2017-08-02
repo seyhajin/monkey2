@@ -44,16 +44,20 @@ Function ReadWAV:AudioData( stream:std.stream.Stream )
 		Local tag:=stream.ReadInt()
 		Local size:=stream.ReadInt()
 		
+		Local aligned_size:=size+(size&1)	'chunk size *including* 2 byte alignment of next chunk.
+		
 		Select tag
 		Case $20746d66		'FMT
 			
 			Local fmt:=New FMT_Chunk
 			Local fmt_sz:=sizeof( fmt )
 			
-			If stream.Read( Varptr fmt,fmt_sz )<>fmt_sz Return Null
+			'read FMT chunk data
+			If fmt_sz>size Or stream.Read( Varptr fmt,fmt_sz )<>fmt_sz Return Null
 			
-			Local n:=size-fmt_sz
-			If n>0 And stream.Skip( n )<>n Return Null
+			'skip to next chunk
+			Local n:=aligned_size-fmt_sz
+			If n And stream.Skip( n )<>n Return Null
 			
 			If fmt.compType<>1 Return Null
 			
@@ -85,11 +89,12 @@ Function ReadWAV:AudioData( stream:std.stream.Stream )
 		
 		End
 		
-		stream.Skip( size )
+		'skip to next chunk
+		If stream.Skip( aligned_size )<>aligned_size Return Null
 		
 	Wend
 	
-	Return null
+	Return Null
 
 End
 
