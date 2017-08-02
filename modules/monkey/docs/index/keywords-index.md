@@ -13,7 +13,7 @@ Used for convenience types. For example `Vec2i` is a convenience type alias for 
 
 Used to import extern typedefs too.
 <br>
-<a href="javascript:void('monkey:user-types#extensions')" onclick="openDocsPage('monkey:user-types#extensions')">See Alias.</a>
+<a href="javascript:void('monkey:user-types#alias')" onclick="openDocsPage('monkey:user-types#alias')">See Alias.</a>
 &nbsp;
 
 
@@ -54,7 +54,7 @@ The `Catch` keyword is part of the Try/Catch exception-handling construct.
 Marks the start of a class object definition.
 
 <br>
-<a href="javascript:void('monkey:arrays#arrays')" onclick="openDocsPage('monkey:arrays#arrays')">See Arrays.</a>
+<a href="javascript:void('monkey:user-types#classes')" onclick="openDocsPage('monkey:user-types#classes')">See Classes.</a>
 &nbsp;
 
 #### Const
@@ -62,7 +62,7 @@ Marks the start of a class object definition.
 Allows you to declare a constant.
 
 <br>
-<a href="javascript:void('monkey:arrays#arrays')" onclick="openDocsPage('monkey:arrays#arrays')">See Arrays.</a>
+<a href="javascript:void('monkey:variables#consts')" onclick="openDocsPage('monkey:variables#consts')">See Consts.</a>
 &nbsp;
 
 #### Continue
@@ -70,7 +70,7 @@ Allows you to declare a constant.
 Used to skip a loop.
 
 <br>
-<a href="javascript:void('monkey:loop-statements#loop-statements')" onclick="openDocsPage('monkey:loop-statements#loop-statements')">See loops.</a>
+<a href="javascript:void('monkey:loop-statements#continue')" onclick="openDocsPage('monkey:loop-statements#continue')">See loops.</a>
 &nbsp;
 
 #### CString
@@ -102,13 +102,17 @@ Allows you to use `For` loop with collections.
 
 To be combined with the `If` statement.
 
-/linkto Conditional-statements.If \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#if')" onclick="openDocsPage('monkey:conditional-statements#if')">See If.</a>
+&nbsp;
 
 #### Elseif
 
 To be combined with the `If` statement.
 
-/linkto Conditional-statements.If \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#if')" onclick="openDocsPage('monkey:conditional-statements#if')">See If.</a>
+&nbsp;
 
 #### End
 
@@ -118,37 +122,48 @@ Ends all kind of declarations/statements
 
 Ends `If` statement.
 
-/linkto Conditional-statements.If \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#if')" onclick="openDocsPage('monkey:conditional-statements#if')">See If.</a>
+&nbsp;
 
 #### Enum
 
-??? not documented
+32 Bit integer Enumerated Type.
+<br>
+<a href="javascript:void('monkey:enums#enums')" onclick="openDocsPage('monkey:enums#enums')">See Enums.</a>
+&nbsp;
 
 #### Exit
 
 Used to terminate a loop.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#exit')" onclick="openDocsPage('monkey:loop-statements#exit')">See Exit.</a>
+&nbsp;
 
 #### Extends
 
 Used for class declaration.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#classes')" onclick="openDocsPage('monkey:user-types#classes')">See Classes.</a>
+&nbsp;
 
 #### Extension
 
 Used to add some features to an existing user defined type without inheritance.
 
-??? not documented
-
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#extensions')" onclick="openDocsPage('monkey:user-types#extensions')">See Extensions.</a>
+&nbsp;
 
 #### Extern
 
 Marks the start of definitions for C/C++ imports.
 
-/linkto Integration-with-native-code \linkto
+<br>
+<a href="javascript:void('monkey:native-code#integration-with-native-code')" onclick="openDocsPage('monkey:native-code#integration-with-native-code')">See extern native code.</a>
+&nbsp;
 
 #### False
 
@@ -158,25 +173,33 @@ Boolean False value
 
 Fields are variables that live inside the memory allocated for an instance of a class or struct.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#fields')" onclick="openDocsPage('monkey:user-types#fields')">See Fields.</a>
+&nbsp;
 
 #### Final
 
 Methods declared as `Final` are non-virtual and cannot be overridden by a subclass method.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#classes')" onclick="openDocsPage('monkey:user-types#classes')">See Classes.</a>
+&nbsp;
 
 #### For
 
-Merks the start of a `For` loop
+Marks the start of a `For` loop
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#for--numeric')" onclick="openDocsPage('monkey:loop-statements#for--numeric')">See For loops.</a>
+&nbsp;
 
 #### Forever
 
 Used at the end of a `Repeat` loop. The loop will loop forever unless `Exit` is called.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#repeat')" onclick="openDocsPage('monkey:loop-statements#repeat')">See Repeat loops.</a>
+&nbsp;
 
 #### Friend
 
@@ -186,9 +209,9 @@ Used at the end of a `Repeat` loop. The loop will loop forever unless `Exit` is 
 
 Used to declare a function within a struct, a class or at global scope.
 
-/linkto Functions \linkto
-
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:functions#global-functions')" onclick="openDocsPage('monkey:functions#global-functions')">See global Functions.</a>
+&nbsp;
 
 #### Getter
 
@@ -198,27 +221,37 @@ Used to declare a function within a struct, a class or at global scope.
 
 Global variables live in global memory and exist for the lifetime of the application.
 
-/linkto Variables \linkto
+<br>
+<a href="javascript:void('monkey:variables#global-variables')" onclick="openDocsPage('monkey:variables#global-variables')">See variables.</a>
+&nbsp;
 
 #### If
 
 The `If` statement allows you to conditionally execute a block of statements depending on the result of a series of boolean expressions.
 
-/linkto Conditional-statements \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#if')" onclick="openDocsPage('monkey:conditional-statements#if')">See If.</a>
+&nbsp;
 
 #### Implements
 
 Used to declare classes implementing an interface.
-`Implements` can also be combined with `where` to check type constrain on generics.
+`Implements` can also be combined with `where` to check generics type constrain.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#interfaces')" onclick="openDocsPage('monkey:user-types#interfaces')">See interfaces.</a>
+&nbsp;
 
 #### Import
 
 Assets and code files can be imported with 'Import'
 
-/linkto Modules-and-Applications \linkto
-/linkto ???Assets??? \linkto
+<br>
+<a href="javascript:void('monkey:modules#importing-modules')" onclick="openDocsPage('monkey:modules#importing-modules')">See modules.</a>
+&nbsp;
+<br>
+<a href="javascript:void('monkey:assets-management#importing-assets')" onclick="openDocsPage('monkey:assets-management#importing-assets')">See assets.</a>
+&nbsp;
 
 #### Inline
 
@@ -228,7 +261,9 @@ Assets and code files can be imported with 'Import'
 
 Interfaces are Class models definition. It's a pure abstract object to be implemented by a `Class`.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#interfaces')" onclick="openDocsPage('monkey:user-types#interfaces')">See interfaces.</a>
+&nbsp;
 
 #### Internal
 
@@ -238,25 +273,33 @@ Interfaces are Class models definition. It's a pure abstract object to be implem
 
 A lambda function is a special type of function that can be declared in the middle of an expression.
 
-/linkto Functions \linkto
+<br>
+<a href="javascript:void('monkey:functions#lambda-functions')" onclick="openDocsPage('monkey:functions#lambda-functions')">See Lambda functions.</a>
+&nbsp;
 
 #### Local
 
 Local variables live on the stack. They are lost once their scope is exited.
 
-/linkto Variables \linkto
+<br>
+<a href="javascript:void('monkey:variables#local-variables')" onclick="openDocsPage('monkey:variables#local-variables')">See variables.</a>
+&nbsp;
 
 #### Method
 
-A Method is special type of function that lives with a Class or a Struct. It can acces the object fields.
+A Method is special type of function associated with a Class or a Struct. It can acces the object fields.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#methods')" onclick="openDocsPage('monkey:user-types#methods')">See methods.</a>
+&nbsp;
 
 #### Namespace
 
 All identifiers declared in a monkey2 program file end up inside a 'namespace'.
 
-/linkto Namespaces-and-Using \linkto
+<br>
+<a href="javascript:void('monkey:namespaces#declaring-namespaces"')" onclick="openDocsPage('monkey:namespaces#declaring-namespaces"')">See Namspaces.</a>
+&nbsp;
 
 #### New
 
@@ -266,19 +309,27 @@ All identifiers declared in a monkey2 program file end up inside a 'namespace'.
 
 Used at the end of a `For` loop.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#for--numeric')" onclick="openDocsPage('monkey:loop-statements#for--numeric')">See For loops.</a>
+&nbsp;
 
 #### Operator
 
 `Operator` is used to declare special methods using a set of available expressions (+,-,/,<>,...)
 
-/linkto User-defined-types \linkto
-/linkto Expressions \linkto
+<br>
+<a href="javascript:void('monkey:expressions#operator-overloading')" onclick="openDocsPage('monkey:expressions#operator-overloading')">See Operator overloading.</a>
+&nbsp;
+<br>
+<a href="javascript:void('monkey:operator-overloading#operator-overloading')" onclick="openDocsPage('monkey:operator-overloading#operator-overloading')">See article on Operator overloading.</a>
+&nbsp;
 
 #### Override
 
 Used to override a virtual method when declaring a sub-Class.
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#classes')" onclick="openDocsPage('monkey:user-types#classes')">See Classes.</a>
+&nbsp;
 
 #### Print
 
@@ -288,19 +339,25 @@ Prints a String or a numeric Value to the output console.
 
 Sets the acces control of a Class or Struct members to "Private". Private members can only be accessed by the original class OR by any code within the same .monkey2 file.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#encapsulation')" onclick="openDocsPage('monkey:user-types#encapsulation')">See encapsulation.</a>
+&nbsp;
 
 #### Property
 
 Property is a special type of field that may include some getter/setter additionnal code if desired.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#properties')" onclick="openDocsPage('monkey:user-types#properties')">See Properties.</a>
+&nbsp;
 
 #### Protected
 
 Sets the acces control of a Class or Struct members to "Protected". Protected members can only be accessed by the original class and subclasses OR by any code within the same .monkey2 file.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#encapsulation')" onclick="openDocsPage('monkey:user-types#encapsulation')">See encapsulation.</a>
+&nbsp;
 
 #### Protocol
 
@@ -310,32 +367,38 @@ Sets the acces control of a Class or Struct members to "Protected". Protected me
 
 Sets the acces control of a Class or Struct members to "Public". Public members can be accessed from anywhere. It's the default level.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#encapsulation')" onclick="openDocsPage('monkey:user-types#encapsulation')">See encapsulation.</a>
+&nbsp;
 
 #### Repeat
 
 Used to start a `Repeat` loop
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#repeat')" onclick="openDocsPage('monkey:loop-statements#repeat')">See Repeat.</a>
+&nbsp;
 
 #### Return
 
-Used to end and send the expected value of a `Function`, `Method` or `Operator`
+Used to end and return the expected value of a `Function`, `Method` or `Operator`
 
-/linkto Functions \linkto
-/linkto User-defined-types \linkto
 
 #### Select
 
 The Select statement allows you to execute a block of statements depending on a series of comparisons. `Select` combines with `Case` and `Default`
 
-/linkto Conditional-statements.Select \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#select')" onclick="openDocsPage('monkey:conditional-statements#select')">See Select.</a>
+&nbsp;
 
 #### Setter
 
 Marks the start of a Property setter definition.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#properties')" onclick="openDocsPage('monkey:user-types#properties')">See Properties.</a>
+&nbsp;
 
 #### Static
 
@@ -345,61 +408,81 @@ Marks the start of a Property setter definition.
 
 Defines the incrementation step for `Next` loops.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#for--numeric')" onclick="openDocsPage('monkey:loop-statements#for--numeric')">See For loops.</a>
+&nbsp;
 
 #### Struct
 
 Used to declare a `Struct`
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#structs')" onclick="openDocsPage('monkey:user-types#structs')">See Structs.</a>
+&nbsp;
 
 #### Then
 
 Facultative keyword used in combination with the `If` keyword.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:conditional-statements#if')" onclick="openDocsPage('monkey:conditional-statements#if')">See If.</a>
+&nbsp;
 
 #### Throw
 
 The `Throw` keyword is part of the Try/Catch exception-handling construct.
 
-/linkto Error-handling \linkto
+<br>
+<a href="javascript:void('monkey:error-handling#error-handling')" onclick="openDocsPage('monkey:error-handling#error-handling')">See error handling.</a>
+&nbsp;
 
 #### Throwable
 
 The Throwable class must be extended by all classes that are intended to be used with `Throw`.
 
-/linkto Error-handling \linkto
+<br>
+<a href="javascript:void('monkey:error-handling#error-handling')" onclick="openDocsPage('monkey:error-handling#error-handling')">See error handling.</a>
+&nbsp;
 
 #### To
 
 Defines range of values to be assigned to the index variable in a For/Next loop.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#for--numeric')" onclick="openDocsPage('monkey:loop-statements#for--numeric')">See For loops.</a>
+&nbsp;
 
 #### Try
 
 Declares the start of a Try/Catch block.
 
-/linkto Error-handling \linkto
+<br>
+<a href="javascript:void('monkey:error-handling#error-handling')" onclick="openDocsPage('monkey:error-handling#error-handling')">See error handling.</a>
+&nbsp;
 
 #### TypeInfo
 
 Returns the type of a variable/object.
 
-/linkto Reflection \linkto
+<br>
+<a href="javascript:void('monkey:reflection#typeof-and-typeinfo')" onclick="openDocsPage('monkey:reflection#typeof-and-typeinfo')">See relfection.</a>
+&nbsp;
 
 #### Until
 
 Marks the end of a Repeat/Until loop. The `Until` keyword is also found as a modifier in For/Next loops.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#repeat')" onclick="openDocsPage('monkey:loop-statements#repeat')">See Repeat.</a>
+&nbsp;
 
 #### Using
 
 The `Using` directive provides a way to add namespace 'search paths' for locating identifiers.
 
-/linkto Namespaces-and-Using \linkto
+<br>
+<a href="javascript:void('monkey:namespaces#accessing-namespaces')" onclick="openDocsPage('monkey:namespaces#accessing-namespaces')">See Namespaces.</a>
+&nbsp;
 
 #### Var
 
@@ -409,34 +492,43 @@ The `Using` directive provides a way to add namespace 'search paths' for locatin
 
 The `Variant` type is a primitive type that can be used to 'box' values of any type.
 
-/linkto Variants \linkto
+<br>
+<a href="javascript:void('monkey:variants#variants')" onclick="openDocsPage('monkey:variants#variants')">See Variants.</a>
+&nbsp;
 
 #### Varptr
 
 `Varptr` is used to reference pointers.
 
-/linkto Pointers \linkto
+<br>
+<a href="javascript:void('monkey:pointers#referencing')" onclick="openDocsPage('monkey:pointers#referencing')">See Pointers.</a>
+&nbsp;
 
 #### Virtual
 
-`Virtual` is not currently used but is reserved for future use. A virtual method is a method that can be overriden.
+A virtual method is a method that can be overriden.
 
-/linkto User-defined-types \linkto
+<br>
+<a href="javascript:void('monkey:user-types#methods')" onclick="openDocsPage('monkey:user-types#methods')">See methods.</a>
+&nbsp;
 
 #### Wend
 
 Wend, short for While [loop] End, marks the end of a While loop.
 
-/linkto Loop-statements \linkto
+<br>
+monkey:loop-statements#while
+&nbsp;
 
 #### Where
 
 `Where` allows generic type constrains.
 
-/linkto Reflection \linkto
-
 #### While
 
 Marks the start of a While loop.
 
-/linkto Loop-statements \linkto
+<br>
+<a href="javascript:void('monkey:loop-statements#while')" onclick="openDocsPage('monkey:loop-statements#while')">See While.</a>
+&nbsp;
+

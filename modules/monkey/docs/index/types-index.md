@@ -1,4 +1,4 @@
-@manpage Types Index
+@manpage Types
 
 ####Void
 No type.

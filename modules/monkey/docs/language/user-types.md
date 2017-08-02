@@ -205,7 +205,7 @@ End
 
 #### Encapsulation
 
-There are three Levels of encapsulation for class and struct members:
+There are three levels of encapsulation for class and struct members:
 
 -`Public` members can be accessed from anywhere. It is the default encapsulation level.
 
