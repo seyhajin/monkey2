@@ -38,7 +38,7 @@ Class Player
 		
 		_model=Model.CreateCapsule( radius,height,Axis.Y,12,New PbrMaterial( Color.Sky ) )
 
-		_model.Move( 0,5,40 )
+'		_model.Move( 0,0,0 )
 		
 		_collider=New CapsuleCollider( radius,height,Axis.Y )
 		
@@ -195,7 +195,7 @@ Class MyWindow Extends Window
 		
 		_scene.Render( canvas,_camera )
 		
-		canvas.DrawText( "position="+_player._model.Position+", Rx="+_player._model.Rx+", Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+'		canvas.DrawText( "position="+_player._model.Position+", Rx="+_player._model.Rx+", Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End
