@@ -137,7 +137,7 @@ Class Entity
 	
 	Setter( visible:Bool )
 		
-		If _visible Show() Else Hide()
+		If visible Show() Else Hide()
 	End
 
 	#rem monkeydoc Entity animator.
@@ -301,7 +301,7 @@ Class Entity
 		Next
 	End
 	
-	#rem monkeydoc Hides the entity and all of its children
+	#rem monkeydoc Shows the entity and all of its children
 	#end
 	Method Show()
 		
@@ -324,8 +324,8 @@ Class Entity
 		Wend
 		
 		If _visible 
-			OnHide()
 			_visible=False
+			OnHide()
 		Endif
 
 		If _parent
