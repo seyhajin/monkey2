@@ -15,9 +15,15 @@ Ends an #if or #rem
 #### #Import
 Used to import modules, code or assets.
 
-/linkto Modules-and-Applications \linkto
-/linkto Assets-Management \linkto
-/linkto Articles-And-Tutorials/Multifile-projects-and-#Import \linkto
+<br>
+<a href="javascript:void('monkey:modules#importing-modules')" onclick="openDocsPage('monkey:modules#importing-modules')">See modules.</a>
+&nbsp;
+<br>
+<a href="javascript:void('monkey:assets-management#importing-assets')" onclick="openDocsPage('monkey:assets-management#importing-assets')">See assets.</a>
+&nbsp;
+<br>
+<a href="javascript:void('monkey:multifile-projects#multifile-projects-and--import')" onclick="openDocsPage('monkey:multifile-projects#multifile-projects-and--import')">See multifile projects.</a>
+&nbsp;
 #### __TARGET__
 Is set to one of the following values: “windows”, “macos”, “linux”, “emscripten”, “android” or “ios” – ie: the precise target.
 #### __DESKTOP_TARGET__
