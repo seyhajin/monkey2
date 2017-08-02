@@ -16,6 +16,7 @@ Const IGNORE:="
 src/c2mx2
 src/createrelease
 modules/admob
+modules/iap
 modules/linq
 modules/gles30
 bin/ted2.state.json
