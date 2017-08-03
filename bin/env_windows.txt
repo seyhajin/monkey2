@@ -37,11 +37,15 @@ MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG
 
 MX2_USE_MSVC=0
 
+'https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
+'
+MX2_WINDOWS_KIT=10.0.15063.0
+
 PATH=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\bin;${PATH}
 
-INCLUDE=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\INCLUDE;${ProgramFiles(x86)}\Windows Kits\10\include\10.0.10586.0\ucrt;${ProgramFiles(x86)}\Windows Kits\10\include\10.0.10586.0\um;${ProgramFiles(x86)}\Windows Kits\10\include\10.0.10586.0\shared;
+INCLUDE=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\INCLUDE;${ProgramFiles(x86)}\Windows Kits\10\include\${MX2_WINDOWS_KIT}\ucrt;${ProgramFiles(x86)}\Windows Kits\10\include\${MX2_WINDOWS_KIT}\um;${ProgramFiles(x86)}\Windows Kits\10\include\${MX2_WINDOWS_KIT}\shared;
 
-LIB=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\LIB;${ProgramFiles(x86)}\Windows Kits\10\lib\10.0.10586.0\ucrt\x86;${ProgramFiles(x86)}\Windows Kits\10\lib\10.0.10586.0\um\x86;
+LIB=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\LIB;${ProgramFiles(x86)}\Windows Kits\10\lib\${MX2_WINDOWS_KIT}\ucrt\x86;${ProgramFiles(x86)}\Windows Kits\10\lib\${MX2_WINDOWS_KIT}\um\x86;
 
 'Linker options
 MX2_LD_OPTS_MSVC=
@@ -99,7 +103,7 @@ MX2_ANDROID_APP_ABI=armeabi-v7a x86
 
 'Controls APP_PLATFORM in Application.mk for NDK
 '
-MX2_ANDROID_APP_PLATFORM=10
+MX2_ANDROID_APP_PLATFORM=android-14
 
 
 '***** RASPBIAN *****

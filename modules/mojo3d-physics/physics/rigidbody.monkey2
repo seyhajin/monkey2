@@ -22,10 +22,10 @@ Class KinematicMotionState Extends bbKinematicMotionState
 	
 	Method GetWorldTransform:btTransform() Override
 		
-		Return _entity.WorldMatrix
+		Return _entity.Matrix
 	End
 	
-	Private
+Private
 	
 	Field _entity:Entity
 End
@@ -34,35 +34,27 @@ End
 #end
 Class RigidBody
 	
-	#rem monkeydoc Creates a new rigid body.
-	#end
-	Method New( mass:Float,collider:Collider,entity:Entity,kinematic:Bool=False,collGroup:Int=1,collMask:Int=1 )
+	Method Init( collider:Collider,entity:Entity,mass:Float,collGroup:Int,collMask:Int,btmotion:btMotionState )
 		
-		_mass=mass
+		Local inertia:btVector3=collider ? collider.CalculateLocalInertia( mass ) Else Null
+
+		_world=World.GetDefault()
 		_collider=collider
 		_entity=entity
-		_kinematic=kinematic
+		_mass=mass
 		_collGroup=collGroup
 		_collMask=collMask
-		
-		_world=World.GetDefault()
-		
-		If _kinematic
-			_btmotion=New KinematicMotionState( _entity )
-		Else
-			_btmotion=New btDefaultMotionState( _entity.WorldMatrix )
-		Endif
+		_btmotion=btmotion
 
-		Local inertia:btVector3=_collider ? _collider.btShape.calculateLocalInertia( _mass ) Else New btVector3( 0,0,0 )
+		_btbody=New btRigidBody( mass,btmotion,collider.btShape,inertia )
 		
-		_btbody=New btRigidBody( _mass,_btmotion,_collider.btShape,inertia )
-		
-		If _kinematic 
-			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_KINEMATIC_OBJECT )
-			_btbody.setActivationState( DISABLE_DEACTIVATION )
-		Endif
-		
-		If Cast<MeshCollider>( _collider ) _btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+		_btbody.setFriction( 1 )
+		_btbody.setRollingFriction( 1 )
+		_btbody.setRestitution( 0 )
+
+		'If Cast<MeshCollider>( _collider ) _btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+			
+		If Not _entity Return
 
 		_entity.Shown+=Lambda()
 		
@@ -74,31 +66,17 @@ Class RigidBody
 			_world.Remove( Self )
 		End
 		
-		_entity.Copied+=Lambda( copy:Entity )
-		
-			Local body:=New RigidBody( Mass,Collider,copy )
-			
-			body.LinearVelocity=LinearVelocity
-			body.Restitution=Restitution
-			body.Friction=Friction
-			body.RollingFriction=RollingFriction
-		End
-		
 		If _entity.Visible _world.Add( Self )
-			
-		Restitution=0
-		Friction=1
-		RollingFriction=0
 	End
 
-	Property Mass:Float()
-		
-		Return _mass
-	End
-	
 	Property Collider:Collider()
 		
 		Return _collider
+	End
+	
+	Property Entity:Entity()
+	
+		Return _entity
 	End
 	
 	Property CollisionGroup:Short()
@@ -109,29 +87,6 @@ Class RigidBody
 	Property CollisionMask:Short()
 		
 		Return _collMask
-	End
-	
-	Property Entity:Entity()
-	
-		Return _entity
-	End
-	
-	Property LinearVelocity:Vec3f()
-	
-		Return _btbody.getLinearVelocity()
-	
-	Setter( velocity:Vec3f )
-	
-		_btbody.setLinearVelocity( velocity )
-	End
-	
-	Property Restitution:Float()
-	
-		Return _btbody.getRestitution()
-		
-	Setter( restitution:Float )
-	
-		_btbody.setRestitution( restitution )
 	End
 	
 	Property Friction:Float()
@@ -150,6 +105,165 @@ Class RigidBody
 	Setter( friction:Float )
 	
 		_btbody.setRollingFriction( friction )
+	End
+	
+	Property Restitution:Float()
+	
+		Return _btbody.getRestitution()
+		
+	Setter( restitution:Float )
+	
+		_btbody.setRestitution( restitution )
+	End
+	
+	Property btBody:btRigidBody()
+	
+		Return _btbody
+	End
+
+Protected
+
+	Field _world:World
+	Field _mass:Float	
+	Field _collider:Collider
+	Field _entity:Entity
+	Field _collGroup:Int
+	Field _collMask:Int
+	
+	Field _btmotion:btMotionState
+	Field _btbody:btRigidBody
+	Field _seq:Int
+	
+	Method OnValidate() Virtual
+	End
+	
+	Method OnUpdate() Virtual
+	End
+	
+Internal
+		
+	Method Validate()
+		
+		If _entity OnValidate()
+	End
+	
+	Method Update()
+		
+		If _entity OnUpdate()
+	End
+	
+End
+
+Class StaticBody Extends RigidBody
+	
+	Method New( collider:Collider,entity:Entity,collGroup:Int=1,collMask:Int=1 )
+		
+		Init( collider,entity,0,collGroup,collMask,Null )
+		
+		If entity entity.Copied+=Lambda( copy:Entity )
+		
+			Local body:=New StaticBody( collider,copy,collGroup,collMask )
+			
+			body.Friction=Friction
+			body.RollingFriction=RollingFriction
+			body.Restitution=Restitution
+		End
+		
+	End
+	
+Protected
+	
+	Method OnValidate() Override
+		
+		If _seq=_entity.Seq Return
+		
+		_btbody.setWorldTransform( _entity.Matrix )
+	End
+	
+	Method OnUpdate() Override
+		
+		_seq=_entity.Seq
+	End
+
+End
+
+Class KinematicBody Extends RigidBody
+	
+	Method New( collider:Collider,entity:Entity,collGroup:Int=1,collMask:Int=1 )
+
+		Init( collider,entity,0,collGroup,collMask,entity ? New KinematicMotionState( entity ) Else Null )
+
+		_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_KINEMATIC_OBJECT )
+		_btbody.setActivationState( DISABLE_DEACTIVATION )
+		
+		If entity entity.Copied+=Lambda( copy:Entity )
+		
+			Local body:=New KinematicBody( collider,copy,collGroup,collMask )
+
+			body.Friction=Friction
+			body.RollingFriction=RollingFriction
+			body.Restitution=Restitution
+		End
+
+	End
+	
+Protected
+	
+	Method OnValidate() Override
+	End
+	
+	Method OnUpdate() Override
+	End
+	
+End
+
+Class DynamicBody Extends RigidBody
+
+	Method New( collider:Collider,entity:Entity,mass:Float=1,collGroup:Int=1,collMask:Int=1 )
+		
+		Init( collider,entity,mass,collGroup,collMask,entity ? New btDefaultMotionState( entity.Matrix ) Else null )
+			
+		If entity entity.Copied+=Lambda( copy:Entity )
+		
+			Local body:=New DynamicBody( collider,copy,mass,collGroup,collMask )
+
+			body.Gravity=Gravity
+			body.Friction=Friction
+			body.RollingFriction=RollingFriction
+			body.Restitution=Restitution
+		End
+	End
+	
+	Property Mass:Float()
+		
+		Return _mass
+	End
+	
+	Property Gravity:Vec3f()
+		
+		Return _btbody.getGravity()
+	
+	Setter( gravity:Vec3f )
+		
+		_btbody.setGravity( gravity )
+	End
+	
+	Property LinearVelocity:Vec3f()
+	
+		Return _btbody.getLinearVelocity()
+	
+	Setter( velocity:Vec3f )
+	
+		_btbody.setLinearVelocity( velocity )
+	End
+	
+	Property AngularVelocity:Vec3f()
+		
+		Return _btbody.getAngularVelocity()
+	
+	Setter( velocity:Vec3f )
+		
+		_btbody.setAngularVelocity( velocity )
 	End
 	
 	Method ApplyForce( force:Vec3f,relativePos:Vec3f )
@@ -172,65 +286,42 @@ Class RigidBody
 		_btbody.applyImpulse( impulse,relativePos )
 	End
 	
-	Method ApplyTorqueImpulse( torque:Vec3f )
-		
-		_btbody.applyTorqueImpulse( torque )
-	End
-	
 	Method ApplyCentralImpulse( impulse:Vec3f )
 		
 		_btbody.applyCentralImpulse( impulse )
 	End
 	
-	Function Get:RigidBody( btobject:btCollisionObject )
+	Method ApplyTorqueImpulse( torque:Vec3f )
 		
-		Return Cast<RigidBody>( handle_to_object( btobject.getUserPointer() ) )
-	End
-
-	Internal
-	
-	Property btBody:btRigidBody()
-	
-		Return _btbody
+		_btbody.applyTorqueImpulse( torque )
 	End
 	
-	Method Validate()
+Protected
+	
+	Method OnValidate() Override
 		
-		If _kinematic Or _seq=_entity.Seq Return
+		If _seq=_entity.Seq Return
 		
-		_btbody.setWorldTransform( _entity.WorldMatrix )
+		_btbody.clearForces()
 		
-		_btmotion.setWorldTransform( _entity.WorldMatrix )
+		_btbody.setLinearVelocity( New Vec3f( 0 ) )
+		
+		_btbody.setAngularVelocity( New Vec3f( 0 ) )
+		
+		_btbody.setWorldTransform( _entity.Matrix )
+		
+		_btmotion.setWorldTransform( _entity.Matrix )
 	End
 	
-	Method Update()
+	Method OnUpdate() Override
 		
-		If _kinematic Return
-	
 		Local tform:=_btmotion.getWorldTransform()
 		
-		_entity.WorldPosition=tform.getOrigin()
+		_entity.Position=tform.getOrigin()
 		
-		_entity.WorldBasis=tform.getBasis()
+		_entity.Basis=tform.getBasis()
 		
 		_seq=_entity.Seq
 	End
-	
-Private
 
-	Field _self:RigidBody
-
-	Field _mass:Float	
-	Field _collider:Collider
-	Field _entity:Entity
-	Field _kinematic:Bool
-	Field _collGroup:Int
-	Field _collMask:Int
-	Field _world:World
-	Field _seq:Int
-	
-	Field _btmotion:btMotionState
-	Field _btbody:btRigidBody
-	
 End
-

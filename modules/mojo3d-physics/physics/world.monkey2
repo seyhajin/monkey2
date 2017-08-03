@@ -21,22 +21,22 @@ Class RaycastResult
 	Method New()
 	End
 	
-	Method New( btresult:btCollisionWorld.ClosestRayResultCallback )
-		time=btresult.m_closestHitFraction
-		body=Cast<RigidBody>( handle_to_object( btresult.m_collisionObject.getUserPointer() ) )
-		point=btresult.m_hitPointWorld
-		normal=btresult.m_hitNormalWorld
+	Method New( btresult:btCollisionWorld.ClosestRayResultCallback Ptr )
+		time=btresult->m_closestHitFraction
+		body=Cast<RigidBody>( handle_to_object( btresult->m_collisionObject.getUserPointer() ) )
+		point=btresult->m_hitPointWorld
+		normal=btresult->m_hitNormalWorld
 	End
 	
-	Method New( btresult:btCollisionWorld.ClosestConvexResultCallback )
+	Method New( btresult:btCollisionWorld.ClosestConvexResultCallback Ptr )
 		
-		Local castFrom:=Cast<Vec3f>( btresult.m_convexFromWorld )
-		Local castTo:=Cast<Vec3f>( btresult.m_convexToWorld )
+		Local castFrom:=Cast<Vec3f>( btresult->m_convexFromWorld )
+		Local castTo:=Cast<Vec3f>( btresult->m_convexToWorld )
 		
-		time=btresult.m_closestHitFraction
-		body=Cast<RigidBody>( handle_to_object( btresult.m_hitCollisionObject.getUserPointer() ) )
-		point=(castTo-castFrom) * btresult.m_closestHitFraction + castFrom
-		normal=btresult.m_hitNormalWorld
+		time=btresult->m_closestHitFraction
+		body=Cast<RigidBody>( handle_to_object( btresult->m_hitCollisionObject.getUserPointer() ) )
+		point=(castTo-castFrom) * btresult->m_closestHitFraction + castFrom
+		normal=btresult->m_hitNormalWorld
 	End
 	
 End
@@ -92,7 +92,7 @@ Class World
 		
 		If Not btresult.hasHit() Return Null
 		
-		Return New RaycastResult( btresult )
+		Return New RaycastResult( Varptr btresult )
 	End
 	
 	Method ConvexSweep:RaycastResult( collider:ConvexCollider,castFrom:AffineMat4f,castTo:AffineMat4f )
@@ -103,7 +103,7 @@ Class World
 		
 		If Not btresult.hasHit() Return Null
 		
-		Return New RaycastResult( btresult )
+		Return New RaycastResult( Varptr btresult )
 		
 	End
 	

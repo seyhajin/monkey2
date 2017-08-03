@@ -40,7 +40,7 @@
 		"textview-color4": "#6C71C4",	//numbers
 		"textview-color5": "#606060",	//comment
 		"textview-color6": "#E74C31",	//preproc
-		"textview-color7": "#FF00FF",	//When is this used?
+		"textview-color7": "#3298DB",
 		
 		"windowClearColor":"bright",
 		"menu-shortcut":"text-background",
@@ -111,8 +111,21 @@
 
 		"ToolButton":{
 			"extends":"Button",
+			"backgroundColor":"dark",
 			"padding":[ 2,0 ],
-			"margin":[ 2,0 ]
+			"margin":[ 2,0 ],
+
+			"states":{
+				"hover":{
+					"backgroundColor":"bright"
+				},
+				"active":{
+					"backgroundColor":"brighter"
+				},
+				"selected":{
+					"backgroundColor":"brighter"
+				}
+			}
 		},
 
 		"TabViewArrowPrev":{
@@ -180,21 +193,20 @@
 		"Button":{
 			"extends":"Label",
 			"padding":[4,2],
-			"skin":"prime_assets/square.png",
-			"skinColor":"darker",
+			"backgroundColor":"darker",
 			
 			"states":{
 				"hover":{
 					"textColor":"accent",
-					"skinColor":"dark"
+					"backgroundColor":"dark"
 				},
 				"active":{
 					"textColor":"accent",
-					"skinColor":"dark"
+					"backgroundColor":"dark"
 				},
 				"selected":{
 					"textColor":"accent",
-					"skinColor":"dark"
+					"backgroundColor":"dark"
 				}
 			}
 		},
@@ -222,22 +234,22 @@
 		},
 		
 		"ScrollKnob":{
-			"padding":[ 4 ],
+			"padding":[ 6 ],
 			"border":[ 0 ],
-			"skin":"prime_assets/square.png",
-			"skinColor":"brightest",
+			"backgroundColor":"brightest",
 			"states":{
 				"hover":{
-					"skinColor":"brighter"
+					"backgroundColor":"brighter"
 				},
 				"active":{
-					"skinColor":"brightest"
+					"backgroundColor":"brightest"
 				}
 			}
 		},
 		
 		"TextView":{
 			"font":"editor",
+			"textColor":"textview-color7",
 			"backgroundColor":"dark"
 		},
 		
@@ -247,10 +259,9 @@
 		
 		"TextField":{
 			"font":"normal",
-			"padding":[ 2 ],
+			"padding":[ 4 ],
 			"margin":[ 2 ],
-			"skin":"prime_assets/square.png",
-			"skinColor":"darker"
+			"backgroundColor":"darker"
 		},
 		
 		"DockingView":{
@@ -325,24 +336,22 @@
 		},
 		
 		"TabButton":{
-            "skinColor":"brighter",
+            "backgroundColor":"brighter",
 			"extends":"Button",
 			"font":"small",
 			"padding":[14,12,14,12],
 			"border":[0,0,0,4],
 			"borderColor":"accentDark",
-			"skin":"prime_assets/square.png",
 			"textColor":"text-background",
 			"states":{
 				"hover":{
-					"skinColor":"bright",
 					"textColor":"text-default"
 				},
 				"active":{
 					"textColor":"text-default"
 				},
 				"selected":{
-					"skinColor":"brightest",
+					"backgroundColor":"brightest",
 					"textColor":"text-highlight",
 					"borderColor":"accent"
 				}

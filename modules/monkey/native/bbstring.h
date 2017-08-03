@@ -252,9 +252,7 @@ class bbString{
 	void toWString( void *buf,int size )const;
 	
 #if __OBJC__	
-	NSString *ToNSString()const{
-		return [NSString stringWithUTF8String:c_str()];
-	}
+	NSString *ToNSString()const;
 #endif
 	
 	static bbString fromChar( int chr );

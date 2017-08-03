@@ -38,7 +38,7 @@ Class SpriteBuffer
 		Endif
 		
 		sprites.Sort( Lambda:Int( x:Sprite,y:Sprite )
-			Return camera.WorldPosition.Distance( y.WorldPosition ) <=> camera.WorldPosition.Distance( x.WorldPosition )
+			Return camera.Position.Distance( y.Position ) <=> camera.Position.Distance( x.Position )
 		End )
 		
 		Local cmaterial:=sprites[0].Material
@@ -53,7 +53,7 @@ Class SpriteBuffer
 				i0=i
 			Endif
 			
-			Local r:=camera.WorldBasis
+			Local r:=camera.Basis
 			
 			Select sprite.Mode
 			Case SpriteMode.Upright
@@ -61,7 +61,7 @@ Class SpriteBuffer
 				r.j=New Vec3f( 0,1,0 ) ; r.i=r.j.Cross( r.k ).Normalize()
 			End
 			
-			Local matrix:=New AffineMat4f( r.Scale( sprite.WorldScale ),sprite.WorldPosition )
+			Local matrix:=New AffineMat4f( r.Scale( sprite.Scale ),sprite.Position )
 			
 			Local handle:=sprite.Handle
 			

@@ -6,6 +6,7 @@ Namespace mojo.app
 Class Style
 
 	Method New()
+		_font=App.DefaultFont		
 	End
 	
 	Method New( style:Style )

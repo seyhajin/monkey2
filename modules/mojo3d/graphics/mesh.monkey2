@@ -7,7 +7,7 @@ Class Mesh Extends Resource
 	
 	#rem monkeydoc Creates a new mesh.
 	
-	Creates a new empty mesh with 1 logical material.
+	Creates a new empty mesh.
 	
 	Meshes don't actual contain instances of materials. Instead, mesh triangles are added to 'logical' materials which are effectively just integer indices.
 	
@@ -20,7 +20,6 @@ Class Mesh Extends Resource
 		_bounds=Boxf.EmptyBounds
 		_vbuffer=New VertexBuffer( Vertex3fFormat.Instance,0 )
 		_ibuffers=New Stack<IndexBuffer>
-		AddMaterials( 1 )
 	End
 	
 	Method New( mesh:Mesh )
@@ -135,10 +134,14 @@ Class Mesh Extends Resource
 	
 	#rem monkeydoc Adds triangles to the mesh.
 	
-	The `materialid` parameter must be greater than or equal to 0 and less than NumMaterials.
+	The `materialid` parameter must be greater than or equal to 0 and less or equal to [[NumMaterials]].
+	
+	If `materialid` is equal to NumMaterials, a new material is automatically added first.
 	
 	#end
 	Method AddTriangles( indices:UInt Ptr,count:Int,materialid:Int=0 )
+		
+		If materialid=_ibuffers.Length AddMaterials( 1 )
 		
 		Local p:=_ibuffers[materialid].AddIndices( count )
 		

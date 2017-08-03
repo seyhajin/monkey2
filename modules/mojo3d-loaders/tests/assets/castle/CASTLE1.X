@@ -11,7 +11,7 @@ Material x3ds_mat_castlestone {
 0.898039, 0.898039, 0.898039;;
 0.000000, 0.000000, 0.000000;;
 TextureFilename {
-"CASTLEST.JPG";
+"castlest.jpg";
 }
 }
 
@@ -21,7 +21,7 @@ Material x3ds_mat_Material__3 {
 0.898039, 0.898039, 0.898039;;
 0.000000, 0.000000, 0.000000;;
 TextureFilename {
-"OLDBRIC.JPG";
+"oldbric.jpg";
 }
 }
 
@@ -31,7 +31,7 @@ Material x3ds_mat_shingle {
 0.898039, 0.898039, 0.898039;;
 0.000000, 0.000000, 0.000000;;
 TextureFilename {
-"SHINGLE.JPG";
+"shingle.jpg";
 }
 }
 
@@ -41,7 +41,7 @@ Material x3ds_mat_Material__8 {
 0.898039, 0.898039, 0.898039;;
 0.000000, 0.000000, 0.000000;;
 TextureFilename {
-"GOTHIC3.JPG";
+"gothic3.jpg";
 }
 }
 

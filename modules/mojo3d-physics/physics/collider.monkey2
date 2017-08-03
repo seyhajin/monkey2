@@ -21,6 +21,11 @@ Class Collider
 		_btshape.setMargin( margin )
 	End
 
+	Method CalculateLocalInertia:Vec3f( mass:Float )
+		
+		Return _btshape.calculateLocalInertia( mass )
+	End
+
 	Property btShape:btCollisionShape()
 	
 		Return _btshape
@@ -155,7 +160,7 @@ Class MeshCollider Extends ConcaveCollider
 		
 		Local shape:=New btBvhTriangleMeshShape( _btmesh,True,True )
 		
-		CreateInternalEdgeInfo( shape )
+		'CreateInternalEdgeInfo( shape )
 		
 		_btshape=shape
 	End

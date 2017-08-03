@@ -39,9 +39,9 @@ Class Animator
 			Local channel:=animation.Channels[i]
 			If Not channel continue
 			
-			_entities[i].Position=channel.GetPosition( time )
-			_entities[i].Basis=New Mat3f( channel.GetRotation( time ) )
-			_entities[i].Scale=channel.GetScale( time )
+			_entities[i].LocalPosition=channel.GetPosition( time )
+			_entities[i].LocalBasis=New Mat3f( channel.GetRotation( time ) )
+			_entities[i].LocalScale=channel.GetScale( time )
 		End
 		
 	End

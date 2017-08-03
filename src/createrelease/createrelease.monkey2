@@ -5,9 +5,9 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.05"
+Const MX2CC_VERSION:="1.1.06"
 
-Const RELEASE_SUFFIX:="b"
+Const RELEASE_SUFFIX:=""
 
 Const OUTPUT:="Monkey2-v"+MX2CC_VERSION+RELEASE_SUFFIX
 
@@ -16,6 +16,7 @@ Const IGNORE:="
 src/c2mx2
 src/createrelease
 modules/admob
+modules/iap
 modules/linq
 modules/gles30
 bin/ted2.state.json

@@ -137,7 +137,7 @@ Class Entity
 	
 	Setter( visible:Bool )
 		
-		If _visible Show() Else Hide()
+		If visible Show() Else Hide()
 	End
 
 	#rem monkeydoc Entity animator.
@@ -151,14 +151,87 @@ Class Entity
 		_animator=animator
 	End
 	
+	'***** World space properties *****
+	
+	#rem monkeydoc World space transformation matrix.
+	
+	The world matrix combines the world position, basis matrix and scale of the entity into a single affine 4x4 matrix.
+	
+	#end
+	Property Matrix:AffineMat4f()
+		
+		If _dirty & Dirty.W
+			_W=_parent ? _parent.Matrix * LocalMatrix Else LocalMatrix
+			_dirty&=~Dirty.W
+		Endif
+		
+		Return _W
+	End
+	
+	#rem monkeydoc Inverse world space transformation matrix.
+	#end
+	Property InverseMatrix:AffineMat4f()
+		
+		If _dirty & Dirty.IW
+			_IW=-Matrix
+			_dirty&=~Dirty.IW
+		Endif
+		
+		Return _IW
+	End
+	
+	#rem monkeydoc World space position.
+	#end
+	Property Position:Vec3f()
+		
+		Return Matrix.t
+		
+	Setter( position:Vec3f )
+		
+		_t=_parent ? _parent.InverseMatrix * position Else position
+		
+		Invalidate()
+	End
+	
+	#rem monkeydoc World space basis matrix.
+
+	A basis matrix is a 3x3 matrix representation of an orientation.
+	
+	A basis matrix is orthogonal (ie: the i,j,k members are perpendicular to each other) and normalized (ie: the i,j,k members all have unit length).
+	
+	#end
+	Property Basis:Mat3f()
+		
+		Return _parent ? _parent.Basis * _r Else _r
+	
+	Setter( basis:Mat3f )
+		
+		_r=_parent ? ~_parent.Basis * basis Else basis
+		
+		Invalidate()
+	End
+	
+	#rem monkeydoc World space scale.
+	#end	
+	Property Scale:Vec3f()
+		
+		Return _parent ? _s * _parent.Scale Else _s
+	
+	Setter( scale:Vec3f )
+		
+		_s=_parent ? scale / _parent.Scale Else scale
+		
+		Invalidate()
+	End
+	
 	'***** Local space properties *****
 
-	#rem monkeydoc Local transformation matrix.
+	#rem monkeydoc Local space transformation matrix.
 	
 	The local matrix combines the local position, orientation and scale of the entity into a single affine 4x4 matrix.
 	
 	#end
-	Property Matrix:AffineMat4f()
+	Property LocalMatrix:AffineMat4f()
 		
 		If _dirty & Dirty.M
 			_M=New AffineMat4f( _r.Scale( _s ),_t )
@@ -168,9 +241,9 @@ Class Entity
 		Return _M
 	End
 
-	#rem monkeydoc Local position.
+	#rem monkeydoc Local space position.
 	#end
-	Property Position:Vec3f()
+	Property LocalPosition:Vec3f()
 
 		Return _t
 		
@@ -181,14 +254,14 @@ Class Entity
 		Invalidate()
 	End
 	
-	#rem monkeydoc Local basis matrix.
+	#rem monkeydoc Local space basis matrix.
 	
 	A basis matrix is a 3x3 matrix representation of an orientation.
 
 	A basis matrix is orthogonal (ie: the i,j,k members are perpendicular to each other) and normalized (ie: the i,j,k members all have unit length).
 	
 	#end
-	Property Basis:Mat3f()
+	Property LocalBasis:Mat3f()
 		
 		Return _r
 	
@@ -199,88 +272,15 @@ Class Entity
 		Invalidate()
 	End
 
-	#rem monkeydoc Local scale.
+	#rem monkeydoc Local space scale.
 	#end	
-	Property Scale:Vec3f()
+	Property LocalScale:Vec3f()
 		
 		Return _s
 	
 	Setter( scale:Vec3f )
 		
 		_s=scale
-		
-		Invalidate()
-	End
-	
-	'***** World space properties *****
-	
-	#rem monkeydoc World transformation matrix.
-	
-	The world matrix combines the world position, basis matrix and scale of the entity into a single affine 4x4 matrix.
-	
-	#end
-	Property WorldMatrix:AffineMat4f()
-		
-		If _dirty & Dirty.W
-			_W=_parent ? _parent.WorldMatrix * Matrix Else Matrix
-			_dirty&=~Dirty.W
-		Endif
-		
-		Return _W
-	End
-	
-	#rem monkeydoc Inverse world matrix.
-	#end
-	Property InverseWorldMatrix:AffineMat4f()
-		
-		If _dirty & Dirty.IW
-			_IW=-WorldMatrix
-			_dirty&=~Dirty.IW
-		Endif
-		
-		Return _IW
-	End
-	
-	#rem monkeydoc World position.
-	#end
-	Property WorldPosition:Vec3f()
-		
-		Return WorldMatrix.t
-		
-	Setter( position:Vec3f )
-		
-		_t=_parent ? _parent.InverseWorldMatrix * position Else position
-		
-		Invalidate()
-	End
-	
-	#rem monkeydoc World basis matrix.
-
-	A basis matrix is a 3x3 matrix representation of an orientation.
-	
-	A basis matrix is orthogonal (ie: the i,j,k members are perpendicular to each other) and normalized (ie: the i,j,k members all have unit length).
-	
-	#end
-	Property WorldBasis:Mat3f()
-		
-		Return _parent ? _parent.WorldBasis * _r Else _r
-	
-	Setter( basis:Mat3f )
-		
-		_r=_parent ? ~_parent.WorldBasis * basis Else basis
-		
-		Invalidate()
-	End
-	
-	#rem monkeydoc World scale.
-	#end	
-	Property WorldScale:Vec3f()
-		
-		Return _parent ? Scale * _parent.WorldScale Else _s
-	
-	Setter( scale:Vec3f )
-		
-		_s=_parent ? scale / _parent.WorldScale Else scale
 		
 		Invalidate()
 	End
@@ -301,7 +301,7 @@ Class Entity
 		Next
 	End
 	
-	#rem monkeydoc Hides the entity and all of its children
+	#rem monkeydoc Shows the entity and all of its children
 	#end
 	Method Show()
 		
@@ -324,8 +324,8 @@ Class Entity
 		Wend
 		
 		If _visible 
-			OnHide()
 			_visible=False
+			OnHide()
 		Endif
 
 		If _parent

@@ -257,8 +257,8 @@ Class Renderer
 	
 		_camera=camera
 		
-		Local envMat:=_camera.WorldMatrix.m
-		Local viewMat:=_camera.InverseWorldMatrix
+		Local envMat:=_camera.Matrix.m
+		Local viewMat:=_camera.InverseMatrix
 		Local projMat:=_camera.ProjectionMatrix
 		Local invProjMat:=-projMat
 			
@@ -314,7 +314,7 @@ Class Renderer
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.RenderPass=1
 		
-		RenderRenderOps( _renderQueue.OpaqueOps,_camera.InverseWorldMatrix,_camera.ProjectionMatrix )
+		RenderRenderOps( _renderQueue.OpaqueOps,_camera.InverseMatrix,_camera.ProjectionMatrix )
 	End
 	
 	'MX2_RENDERPASS 0
@@ -326,7 +326,7 @@ Class Renderer
 		_device.DepthFunc=DepthFunc.Always
 		_device.RenderPass=0
 
-		RenderRenderOps( _spriteQueue.OpaqueOps,_camera.InverseWorldMatrix,_camera.ProjectionMatrix )
+		RenderRenderOps( _spriteQueue.OpaqueOps,_camera.InverseMatrix,_camera.ProjectionMatrix )
 	End
 	
 	'MX2_RENDERPASS 2
@@ -351,8 +351,8 @@ Class Renderer
 		_device.CullMode=CullMode.Back
 		_device.RenderPass=2
 
-		Local invLightMatrix:=light.InverseWorldMatrix
-		Local viewLight:=invLightMatrix * _camera.WorldMatrix
+		Local invLightMatrix:=light.InverseMatrix
+		Local viewLight:=invLightMatrix * _camera.Matrix
 		
 		For Local i:=0 Until _csmSplits.Length-1
 			
@@ -428,7 +428,7 @@ Class Renderer
 			
 			Local model:=op.instance
 			
-			Local modelMat:= model ? model.WorldMatrix Else New AffineMat4f
+			Local modelMat:= model ? model.Matrix Else New AffineMat4f
 			Local modelViewMat:=viewMatrix * modelMat
 			Local modelViewProjMat:=projMatrix * modelViewMat
 			Local modelViewNormMat:=~-modelViewMat.m

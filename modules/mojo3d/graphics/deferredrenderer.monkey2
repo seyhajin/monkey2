@@ -43,7 +43,7 @@ Class DeferredRenderer Extends Renderer
 	
 		_uniforms.SetVec4f( "LightColor",light.Color )
 		_uniforms.SetFloat( "LightRange",light.Range )
-		_uniforms.SetMat4f( "LightViewMatrix",_camera.InverseWorldMatrix * light.WorldMatrix )
+		_uniforms.SetMat4f( "LightViewMatrix",_camera.InverseMatrix * light.Matrix )
 		
 		_uniforms.SetMat4f( "InverseProjectionMatrix",-_camera.ProjectionMatrix )
 		

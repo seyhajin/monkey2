@@ -3,30 +3,6 @@
 
 namespace bbJNI{
 
-	bbString JStringToString( JNIEnv *env,jstring jstr ){
-	
-		const char *cstr=env->GetStringUTFChars( jstr,0 );
-		
-		bbString str=bbString::fromCString( cstr );
-		
-		env->ReleaseStringUTFChars( jstr,cstr );
-		
-		return str;
-	}
-	
-	jstring StringToJString( JNIEnv *env,bbString str ){
-	
-		int n=str.utf8Length()+1;
-		
-		char *buf=new char[n];
-		
-		str.toCString( buf,n );
-		
-		jstring jstr=env->NewStringUTF( buf );
-		
-		return jstr;
-	}
-
 	jvalue *makeArgs( JNIEnv *env,bbArray<bbVariant> args ){
 	
 		jvalue *jargs=new jvalue[args.length()];
@@ -53,6 +29,12 @@ namespace bbJNI{
 				
 				jarg->i=val;
 			
+			}else if( type==bbGetType<jobject>() ){
+			
+				jobject jobj=arg.get<jobject>();
+			
+				jarg->l=jobj;
+			
 			}else if( type==bbGetType<bbString>() ){
 			
 				bbString str=arg.get<bbString>();
@@ -66,7 +48,39 @@ namespace bbJNI{
 				jstring jstr=env->NewStringUTF( buf );
 				
 				jarg->l=jstr;
+/*				
+			}else if( type==bbGetType<bbArray<bbBool>>() ){
 			
+				bbArray<bbBool> arr=arg.get<bbArray<bbBool>>();
+				
+				jbooleanArray jarr=env->NewBooleanArray( arr.length() );
+				
+				jboolean *jdata=env->GetBooleanArrayElements( jarr,0 );
+				
+				memcpy( jdata,arr.data(),arr.length()*sizeof(bbBool) );
+				
+				env->ReleaseBooleanArrayElements( jarr,jdata,0 );
+				
+				jarg->l=(jobject)jarr;
+				
+			}else if( type==bbGetType<bbArray<bbInt>>() ){
+
+				bbArray<bbInt> arr=arg.get<bbArray<bbInt>>();
+				
+				jintArray jarr=env->NewIntArray( arr.length() );
+				
+				jint *jdata=env->GetIntArrayElements( jarr,0 );
+				
+				memcpy( jdata,arr.data(),arr.length()*sizeof(bbInt) );
+				
+				env->ReleaseIntArrayElements( jarr,jdata,0 );
+				
+				jarg->l=(jobject)jarr;
+			
+			}else if( type==bbGetType<bbArray<jobject>>() ){
+			
+			}else if( type==bbGetType<bbArray<bbString>>() ){
+*/			
 			}else{
 			
 				bbRuntimeError( "Can't evaluate JNI method param of typ:"+type->toString() );
@@ -78,6 +92,37 @@ namespace bbJNI{
 		return jargs;
 	}
 	
+	bbString JStringToString( JNIEnv *env,jstring jstr ){
+	
+		const char *cstr=env->GetStringUTFChars( jstr,0 );
+		
+		bbString str=bbString::fromCString( cstr );
+		
+		env->ReleaseStringUTFChars( jstr,cstr );
+		
+		return str;
+	}
+	
+	jstring StringToJString( JNIEnv *env,bbString str ){
+	
+		int n=str.utf8Length()+1;
+		
+		char *buf=new char[n];
+		
+		str.toCString( buf,n );
+		
+		jstring jstr=env->NewStringUTF( buf );
+		
+		return jstr;
+	}
+	
+	bbString GetStringField( JNIEnv *env,jobject obj,jfieldID fieldID ){
+	
+		jstring jstr=(jstring)env->GetObjectField( obj,fieldID );
+		
+		return JStringToString( env,jstr );
+	}
+
 	void CallVoidMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );
@@ -92,6 +137,17 @@ namespace bbJNI{
 		jvalue *jargs=makeArgs( env,args );
 		
 		bbBool r=env->CallBooleanMethodA( obj,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
+	bbInt CallIntMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbInt r=env->CallIntMethodA( obj,methodID,jargs );
 		
 		delete[] jargs;
 		
@@ -140,6 +196,17 @@ namespace bbJNI{
 		return r;
 	}
 	
+	bbInt CallStaticIntMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbInt r=env->CallStaticIntMethodA( clazz,methodID,jargs );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+	
 	bbString CallStaticStringMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );
@@ -174,4 +241,3 @@ namespace bbJNI{
 	}
 	
 }
-
