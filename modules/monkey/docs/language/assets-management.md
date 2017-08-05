@@ -1,6 +1,6 @@
 ### Asset management
 
-Monkey2 provides an simple system for managing assets. This allows you to import and use images, files, fonts, and sounds in a consistent way, regardless of the target platform you are deploying to.
+Monkey2 provides a simple system for managing assets. This allows you to import and use images, files, fonts, and sounds in a consistent way, regardless of the target platform you are deploying to.
 
 For the following examples, assume a project folder structure like this:
 
@@ -43,7 +43,7 @@ These import directives can go anywhere in your source file, but standard practi
 #### Using Imported Assets
 
 Once you've imported your assets, you can reference them by prefixing the imported filename with `asset::`
-This allows you to use them with an function or method that asks for a String path to a file.
+This allows you to use them with a function or method that asks for a String path to a file.
 
 ```
 #Import "images/image1.png"
@@ -75,7 +75,7 @@ If you want to maintain a folder structure when importing, you can specify a tar
 `@/` also works when importing entire folders:
 
 ```
-'imports everything from images/ into a subfolder called data/
+'imports everything from images/ into a subfolder called images/
 
 #Import "images/@/images/"
 ```
@@ -94,19 +94,3 @@ When using the files in your code, make sure to add the target subfolder after `
 
 Local image:Image = Image.Load("asset::data/image1.png")
 ```
-
-#### Supported File Types
-
-Each target platform supports different file types. Consult the tables below for your target platform.
-
-##### Images
-
-| Desktop | Android | iOS | HTML5 |
-| --- | --- | --- | --- |
-| png, jpg | png, jpg, bmp, gif | png, jpg, bmp, gif, tif | png, jpg |
-
-##### Sounds
-
-| Desktop | Android | iOS | HTML5 |
-| --- | --- | --- | --- |
-| wav, ogg | wav, ogg, m4a, mp3 | wav, mp3, m4a, caf, aiff | wav, ogg, mp3, m4a |

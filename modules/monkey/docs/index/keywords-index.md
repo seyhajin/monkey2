@@ -333,7 +333,7 @@ Used to override a virtual method when declaring a sub-Class.
 
 #### Print
 
-Prints a String or a numeric Value to the output console.
+Prints a String or a numeric value to the output console.
 
 #### Private
 
@@ -531,4 +531,3 @@ Marks the start of a While loop.
 <br>
 <a href="javascript:void('monkey:loop-statements#while')" onclick="openDocsPage('monkey:loop-statements#while')">See While.</a>
 &nbsp;
-
