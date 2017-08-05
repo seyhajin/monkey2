@@ -20,7 +20,6 @@ The following primtive types are supported by monkey2:
 | `Float`	| 32 bit floating point.
 | `Double`	| 64 bit floating point.
 | `String`	| String of 16 bit characters.
-| `Enum`	| 32 bit UInt Enumerated type.
 
 #### Compound types
 
