@@ -1,4 +1,5 @@
 
+'test..
 Namespace mx2
 
 Class Translator_CPP Extends Translator
