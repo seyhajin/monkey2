@@ -446,23 +446,15 @@ Class Translator_CPP Extends Translator
 					
 					If Not func.IsMethod Continue
 					
-					Local superType:=ctype.superType
-					While superType
-						If func.scope=superType.scope exit
-						superType=superType.superType
-					Wend
-					If Not superType Continue
-						
-				'	If Not func.IsMethod Or func.scope<>ctype.superType.scope Continue
+					If func.cscope.ctype=ctype Continue
 					
-					Local superName:=ClassName( superType )
+					Local superName:=ClassName( func.cscope.ctype )
 					
 					Local sym:=superName+"::"+FuncName( func )
 					If done[sym] Continue
 					done[sym]=True
 					
 					Emit( "using "+sym+";" )
-'					Emit( "using "+superName+"::"+sym+";" )
 				Next
 			Next
 		Endif
