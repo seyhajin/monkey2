@@ -27,7 +27,7 @@ varying mat3 v_TanMatrix;
 
 //@vertex
 
-uniform mat4 r_BoneMatrices[64];
+uniform mat4 r_BoneMatrices[96];
 
 //vertex attribs....
 
