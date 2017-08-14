@@ -20,8 +20,6 @@ Namespace mojo
 #Import "app/window"
 #Import "app/glwindow"
 
-#Import "app/sdl_rwstream.monkey2"
-
 'core graphics stuff
 #Import "graphics/glexts/glexts"
 #Import "graphics/glutil"
@@ -81,21 +79,5 @@ Function Main()
 	
 		Return Stream.Open( "asset::themes/"+path,mode )
 	End
-	
-#if __TARGET__="android"
-
-	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return SDL_RWStream.Open( path,mode )
-	End
-
-#else if __TARGET__="ios"
-
-	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return SDL_RWStream.Open( "assets/"+path,mode )
-	End
-	
-#endif
 	
 End
