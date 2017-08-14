@@ -7,6 +7,13 @@ Namespace std
 #import "<stb-vorbis>"
 #Import "<miniz>"
 
+#If __MOBILE_TARGET__
+#Import "<sdl2>"
+#If __TARGET__="android"
+#Import "<jni>"
+#Endif
+#Endif
+
 #Import "collections/container"
 #Import "collections/stack"
 #Import "collections/list"
@@ -17,6 +24,10 @@ Namespace std
 
 #Import "stream/stream"
 #Import "stream/filestream"
+
+#If __MOBILE_TARGET__
+#Import "stream/sdl_rwstream.monkey2"
+#Endif
 
 #Import "memory/byteorder"
 #Import "memory/databuffer"
@@ -115,6 +126,20 @@ Function Main()
 		Return FileStream.Open( filesystem.AssetsDir()+path,mode )
 	End
 
+#Else If __TARGET__="android"
+
+	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return SDL_RWStream.Open( path,mode )
+	End
+
+#Else If __TARGET__="ios"
+
+	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return SDL_RWStream.Open( "assets/"+path,mode )
+	End
+	
 #Endif
 	
 End

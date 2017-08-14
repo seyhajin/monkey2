@@ -6,6 +6,10 @@ Using libc
 #Import "native/filesystem.h"
 #Import "native/filesystem.cpp"
 
+#If __TARGET__="android"
+#Import "native/Monkey2FileSystem.java"
+#endif
+
 Extern
 
 #rem monkeydoc Gets application directory.
@@ -176,6 +180,30 @@ Function HomeDir:String()
 #Else
 	Return ""
 #Endif
+End
+
+#rem monkeydoc Gets the filesystem directory of the app's internal storage directory.
+
+Note that only the mobile targets have an internal directory. Other targets will return an empty string.
+
+The internal directory is where your app should create and manage app specific files such as game saves, preferences, items purchased and so on.
+
+@return The app's internal directory.
+
+#end
+Function InternalDir:String()
+#If __TARGET__="android"
+	Local env:=sdl2.Android_JNI_GetEnv()
+	
+	Local cls:=env.FindClass( "com/monkey2/lib/Monkey2FileSystem" )
+	
+	Local mth:=env.GetStaticMethodID( cls,"getInternalDir","()Ljava/lang/String;" )
+	
+	Local dir:=env.CallStaticStringMethod( cls,mth,Null )
+	
+	Return dir
+#Endif
+	Return ""
 End
 
 #rem monkeydoc Extracts the root directory from a file system path.
