@@ -116,7 +116,7 @@ Function Main()
 	End
 
 #Endif
-	
+
 #If __DESKTOP_TARGET__ Or __WEB_TARGET__
 
 	'note: ios and android asset proto is implemented using SDL and implemented in mojo...
@@ -142,4 +142,13 @@ Function Main()
 	
 #Endif
 	
+#If __MOBILE_TARGET__
+
+	Stream.OpenFuncs["internal"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return FileStream.Open( filesystem.InternalDir()+path,mode )
+	End
+
+#Endif
+
 End
