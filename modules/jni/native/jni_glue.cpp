@@ -94,6 +94,8 @@ namespace bbJNI{
 	
 	bbString JStringToString( JNIEnv *env,jstring jstr ){
 	
+		if( !jstr ) return "";
+	
 		const char *cstr=env->GetStringUTFChars( jstr,0 );
 		
 		bbString str=bbString::fromCString( cstr );
