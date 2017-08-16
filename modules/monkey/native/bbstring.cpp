@@ -174,11 +174,6 @@ bbString::bbString( const wchar_t *data ):_rep( Rep::create( data ) ){
 bbString::bbString( const wchar_t *data,int length ):_rep( Rep::create( data,length ) ){
 }
 
-#if __OBJC__
-bbString::bbString( NSString *str ):_rep( Rep::create( str.UTF8String ) ){
-}
-#endif
-
 int bbString::utf8Length()const{
 
 	const bbChar *p=data();

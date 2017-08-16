@@ -75,7 +75,7 @@ class bbString{
 	bbString( const wchar_t *data,int length );
 	
 #if __OBJC__
-	bbString( NSString *str );
+	bbString( const NSString *str );
 #endif
 
 	explicit bbString( int n );
