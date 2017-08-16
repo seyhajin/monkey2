@@ -8,6 +8,8 @@ Using libc
 
 #If __TARGET__="android"
 #Import "native/Monkey2FileSystem.java"
+#Elseif __TARGET__="ios"
+#Import "native/filesystem.mm"
 #endif
 
 Extern
@@ -45,6 +47,14 @@ Returns true if successful.
 
 #end
 Function CopyFile:Bool( srcPath:String,dstPath:String )="bbFileSystem::copyFile"
+
+#If __TARGET__="ios"
+
+Extern Private
+
+Function getInternalDir:String()="bbFileSystem::getInternalDir"
+	
+#EndIf
 
 Private
 
@@ -202,7 +212,15 @@ Function InternalDir:String()
 	Local dir:=env.CallStaticStringMethod( cls,mth,Null )
 	
 	Return dir
+	
+#Elseif __TARGET__="ios"
+
+	local dir:=getInternalDir()
+	
+	Return dir
+	
 #Endif
+
 	Return ""
 End
 

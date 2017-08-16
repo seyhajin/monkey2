@@ -6,7 +6,7 @@ public class Monkey2FileSystem{
 
     private static final String TAG = "Monkey2FileSystem";
     
-    static public String getIntenalDir(){
+    public static String getInternalDir(){
     
 		//Log.v( TAG,"getInternalDir()" );
     
@@ -17,7 +17,7 @@ public class Monkey2FileSystem{
 	    return "";
     }
     
-    static public String getExternalDir(){
+    public static String getExternalDir(){
     
 		//Log.v( TAG,"getExternalDir()" );
     

@@ -13,6 +13,13 @@ namespace bbFileSystem{
 	bbArray<bbString> appArgs();
 	
 	bbBool copyFile( bbString srcPath,bbString dstPath );
+	
+#if BB_IOS
+	
+	bbString getInternalDir();
+	
+#endif
+
 }
 
 #endif
