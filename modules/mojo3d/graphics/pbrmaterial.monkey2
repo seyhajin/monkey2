@@ -18,10 +18,22 @@ Class PbrMaterial Extends Material
 	The above last 3 rules allow you to pack metalness, roughness and occlusion into a single texture.
 	
 	#end
-	Method New( boned:Bool=False )
-		Super.New( Shader.Open( boned ? "boned-material" Else "material" ) )
+	Method New( textured:Bool=True,bumpmapped:Bool=True,boned:Bool=False )
+		Super.New()	'WTF?
 		
-		ColorTexture=Texture.ColorTexture( Color.White )
+		Local defs:=""
+		
+		If textured
+			defs+="MX2_TEXTURED~n"
+			If bumpmapped
+				defs+="MX2_BUMPMAPPED~n"
+			Endif
+		Endif
+		If boned defs+="MX2_BONED~n"
+			
+		SetShader( Shader.Open( "material",defs ) )
+		
+		ColorTexture=Null'Textyure.ColorTexture( Color.White )
 		ColorFactor=Color.White
 		
 		EmissiveTexture=Texture.ColorTexture( Color.White )
@@ -35,21 +47,20 @@ Class PbrMaterial Extends Material
 		
 		OcclusionTexture=Texture.ColorTexture( Color.White )
 		
-		NormalTexture=Texture.ColorTexture( New Color( 0.5,0.5,1.0,0.0 ) )
+		NormalTexture=Null'Texture.ColorTexture( New Color( 0.5,0.5,1.0,0.0 ) )
+	End
+	
+	Method New( color:Color,metalness:Float=0.0,roughness:Float=1.0 )
+		Self.New( False,False,False )
+		
+		ColorFactor=color
+		MetalnessFactor=metalness
+		RoughnessFactor=roughness
 	End
 	
 	Method New( material:PbrMaterial )
 		
 		Super.New( material )
-	End
-	
-	Method New( color:Color,metalness:Float=0.0,roughness:Float=1.0 )
-	
-		Self.New()
-		
-		ColorFactor=color
-		MetalnessFactor=metalness
-		RoughnessFactor=roughness
 	End
 	
 	#rem monkeydoc Creates a copy of the pbr material.
@@ -161,46 +172,44 @@ Class PbrMaterial Extends Material
 	normal.png
 	
 	#end
-	Function Load:PbrMaterial( path:String )
-		
-		Local flags:TextureFlags=TextureFlags.WrapST|TextureFlags.FilterMipmap
-		
+	Function Load:PbrMaterial( path:String,textureFlags:TextureFlags=TextureFlags.WrapST|TextureFlags.FilterMipmap )
 		
 		Local material:=New PbrMaterial
 		
-		Local texture:=Texture.Load( path+"/color.png",flags )
+		Local texture:=Texture.Load( path+"/color.png",textureFlags )
 		If texture
 			material.ColorTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/emissive.png",flags )
+		texture=Texture.Load( path+"/emissive.png",textureFlags )
 		If texture
 			material.EmissiveTexture=texture
 			material.EmissiveFactor=Color.White
 		Endif
 		
-		texture=Texture.Load( path+"/metalness.png",flags )
+		texture=Texture.Load( path+"/metalness.png",textureFlags )
 		If texture
 			material.MetalnessTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/roughness.png",flags )
+		texture=Texture.Load( path+"/roughness.png",textureFlags )
 		If texture
 			material.RoughnessTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/occlusion.png",flags )
+		texture=Texture.Load( path+"/occlusion.png",textureFlags )
 		If texture
 			material.OcclusionTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/normal.png",flags )
-'		If Not texture texture=Texture.Load( path+"/unormal.png",flags|TextureFlags.InvertGreen )
+		texture=Texture.Load( path+"/normal.png",textureFlags )
+'		If Not texture texture=Texture.Load( path+"/unormal.png",textureFlags|TextureFlags.InvertGreen )
 		If texture
 			material.NormalTexture=texture
 		Endif
 		
 		Return material
 	End
+	
 	
 End

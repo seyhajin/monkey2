@@ -5,13 +5,11 @@ Namespace mojo3d.graphics
 
 Renderpasses:
 
-0 : render background.
+1 : opaque ambient
 
-1 : render deferred MRT.
+2 : opaque shadow depth
 
-2 : render shadow map.
-
-3 : render deferred light quad.
+3 : transparent
 
 #end
 
@@ -33,16 +31,45 @@ End
 Class RenderQueue
 	
 	Property OpaqueOps:Stack<RenderOp>()
+		
 		Return _opaqueOps
 	End
 	
 	Property TransparentOps:Stack<RenderOp>()
+	
 		Return _transparentOps
 	End
 	
+	Property ShadowOps:Stack<RenderOp>()
+		
+		Return _shadowOps
+	End
+	
+	Property AddShadowOps:Bool()
+		
+		Return _addShadowOps
+		
+	Setter( addShadowOps:Bool )
+		
+		_addShadowOps=addShadowOps
+	End
+	
 	Method Clear()
+		
 		_opaqueOps.Clear()
+		_shadowOps.Clear()
 		_transparentOps.Clear()
+	End
+	
+	Method AddRenderOp( op:RenderOp )
+		
+		If op.material.BlendMode<>BlendMode.Opaque
+			_transparentOps.Push( op )
+		Else
+			_opaqueOps.Push( op )
+		Endif
+		
+		If _addShadowOps _shadowOps.Push( op )
 	End
 	
 	Method AddRenderOp( material:Material,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
@@ -53,7 +80,7 @@ Class RenderQueue
 		op.order=order
 		op.count=count
 		op.first=first
-		_opaqueOps.Push( op )
+		AddRenderOp( op )
 	End
 	
 	Method AddRenderOp( material:Material,vbuffer:VertexBuffer,ibuffer:IndexBuffer,instance:Entity,order:Int,count:Int,first:Int )
@@ -65,7 +92,7 @@ Class RenderQueue
 		op.order=order
 		op.count=count
 		op.first=first
-		_opaqueOps.Push( op )
+		AddRenderOp( op )
 	End
 	
 	Method AddRenderOp( material:Material,vbuffer:VertexBuffer,ibuffer:IndexBuffer,instance:Entity,bones:Mat4f[],order:Int,count:Int,first:Int )
@@ -78,14 +105,16 @@ Class RenderQueue
 		op.order=order
 		op.count=count
 		op.first=first
-		_opaqueOps.Push( op )
+		AddRenderOp( op )
 	End
 	
 	Private
 	
 	Field _opaqueOps:=New Stack<RenderOp>
 	Field _transparentOps:=New Stack<RenderOp>
+	Field _shadowOps:=New Stack<RenderOp>
 	
+	Field _addShadowOps:Bool
 End
 
 #rem monkeydoc The Renderer class.
@@ -113,7 +142,10 @@ Class Renderer
 		_defaultEnv=Texture.Load( "asset::textures/env_default.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
 		_skyboxShader=Shader.Open( "skybox" )
-		
+		_plightShader=Shader.Open( "point-light" )
+		_dlightShader=Shader.Open( "directional-light" )
+		_copyShader=Shader.Open( "copy" )
+
 		For Local i:=0 Until _nullBones.Length
 			_nullBones[i]=New Mat4f
 		Next
@@ -155,7 +187,7 @@ Class Renderer
 	#end
 	Function GetCurrent:Renderer()
 		
-		Global _current:=New DeferredRenderer
+		Global _current:=New Renderer
 		
 		Return _current
 	End
@@ -164,76 +196,29 @@ Class Renderer
 	#end
 	Method Render( scene:Scene,camera:Camera,device:GraphicsDevice )
 		
-		Validate()
-	
 		_renderTarget=device.RenderTarget
 		_renderTargetSize=device.RenderTargetSize
 		_renderViewport=device.Viewport
 		
-		SetScene( scene )
+		ValidateSize( _renderViewport.Size )
 		
-		SetCamera( camera )
-		
-		OnRender()
-	End
-	
-	'***** INTERNAL *****
-	
-	Protected
+		_renderScene=scene
 
-	Field _csmSize:=4096
-	Field _csmSplits:=New Float[]( 1,20,60,180,1000 )
-	
-	Field _uniforms:UniformBlock
-	Field _device:GraphicsDevice
-	
-	Field _csmTexture:Texture
-	Field _csmTarget:RenderTarget
-	Field _quadVertices:VertexBuffer
-	Field _skyboxShader:Shader
-	Field _defaultEnv:Texture
-	
-	Field _renderQueue:=New RenderQueue
-	Field _spriteQueue:=New RenderQueue
-	Field _spriteBuffer:=New SpriteBuffer
-	
-	Field _nullBones:=New Mat4f[64]
-	
-	'Per render...
-	'
-	Field _renderTarget:RenderTarget
-	Field _renderTargetSize:Vec2i
-	Field _renderViewport:Recti
-	
-	Field _scene:Scene
-	Field _camera:Camera
-	
-'	Field _projectionMatrix:Mat4f
-'	Field _viewMatrix:AffineMat4f
-'	Field _viewProjectionMatrix:Mat4f
-	
-	Method OnRender() Virtual
-	End
-
-	Method SetScene( scene:Scene )
-	
-		_scene=scene
-		
 		_uniforms.SetFloat( "Time",Now() )
-		_uniforms.SetTexture( "SkyTexture",_scene.SkyTexture )
+		_uniforms.SetTexture( "SkyTexture",_renderScene.SkyTexture )
 		
-		_uniforms.SetVec4f( "ClearColor",_scene.ClearColor )
-		_uniforms.SetVec4f( "AmbientDiffuse",_scene.AmbientLight )
+		_uniforms.SetVec4f( "ClearColor",_renderScene.ClearColor )
+		_uniforms.SetVec4f( "AmbientDiffuse",_renderScene.AmbientLight )
 	
 		_uniforms.SetTexture( "ShadowTexture",_csmTexture )
 		_uniforms.SetVec4f( "ShadowSplits",New Vec4f( _csmSplits[1],_csmSplits[2],_csmSplits[3],_csmSplits[4] ) )
 		
 		Local env:Texture
 		
-		If _scene.SkyTexture
-			env=_scene.SkyTexture
-		Else If _scene.EnvTexture
-			env=_scene.EnvTexture
+		If _renderScene.SkyTexture
+			env=_renderScene.SkyTexture
+		Else If _renderScene.EnvTexture
+			env=_renderScene.EnvTexture
 		Else
 			env=_defaultEnv
 		Endif
@@ -242,42 +227,159 @@ Class Renderer
 		
 		_renderQueue.Clear()
 		
-		For Local model:=Eachin _scene.Models
+		For Local model:=Eachin _renderScene.Models
+			
+			_renderQueue.AddShadowOps=model.CastsShadow
 			
 			model.OnRender( _renderQueue )
 		Next
-		
-		For Local terrain:=Eachin _scene.Terrains
-			
-			terrain.OnRender( _renderQueue )
-		Next
-	End
 
-	Method SetCamera( camera:Camera )
-	
-		_camera=camera
-		
-		Local envMat:=_camera.Matrix.m
-		Local viewMat:=_camera.InverseMatrix
-		Local projMat:=_camera.ProjectionMatrix
+		_renderCamera=camera
+
+		Local envMat:=_renderCamera.Matrix.m
+		Local viewMat:=_renderCamera.InverseMatrix
+		Local projMat:=_renderCamera.ProjectionMatrix
 		Local invProjMat:=-projMat
 			
 		_uniforms.SetMat3f( "EnvMatrix",envMat )
 		_uniforms.SetMat4f( "ProjectionMatrix",projMat )
 		_uniforms.SetMat4f( "InverseProjectionMatrix",invProjMat )
-		_uniforms.SetFloat( "DepthNear",_camera.Near )
-		_uniforms.SetFloat( "DepthFar",_camera.Far )
+		_uniforms.SetFloat( "DepthNear",_renderCamera.Near )
+		_uniforms.SetFloat( "DepthFar",_renderCamera.Far )
 		
 		_spriteQueue.Clear()
 		
-		_spriteBuffer.AddSprites( _spriteQueue,_scene.Sprites,_camera )
+		_spriteBuffer.AddSprites( _spriteQueue,_renderScene.Sprites,_renderCamera )
+		
+		OnRender()
+		
+		_renderCamera=Null
+		
+		_renderScene=null
 	End
 	
-	'MX2_RENDERPASS 0
-	'
-	Method RenderBackground() Virtual
+	'***** INTERNAL *****
 	
-		If _scene.SkyTexture
+	Protected
+	
+	Field _device:GraphicsDevice
+	Field _uniforms:UniformBlock
+	
+	Field _csmSize:=4096
+	Field _csmSplits:=New Float[]( 1,20,60,180,1000 )
+	Field _csmTexture:Texture
+	Field _csmTarget:RenderTarget
+	Field _quadVertices:VertexBuffer
+	Field _skyboxShader:Shader
+	Field _plightShader:Shader
+	Field _dlightShader:Shader
+	Field _copyShader:Shader
+
+	Field _defaultEnv:Texture
+	
+	Field _hdrTexture:Texture		'contains output linear HDR color
+	Field _colorTexture:Texture		'contains surface color/M
+	Field _normalTexture:Texture	'contains surface normal/R
+	Field _depthTexture:Texture		'contains surface depth
+	Field _rpass0Target:RenderTarget
+	Field _rpass2Target:RenderTarget
+	
+	Field _renderQueue:=New RenderQueue
+	Field _spriteQueue:=New RenderQueue
+	Field _spriteBuffer:=New SpriteBuffer
+	
+	Field _nullBones:=New Mat4f[96]
+	
+	Field _renderTarget:RenderTarget
+	Field _renderTargetSize:Vec2i
+	Field _renderViewport:Recti
+	Field _renderScene:Scene
+	Field _renderCamera:Camera
+	Field _renderLight:Light
+
+	Method ValidateSize( size:Vec2i )
+		
+		size.x=Max( size.x,1920 )
+		size.y=Max( size.y,1080 )
+		
+		If Not _hdrTexture Or size.x>_hdrTexture.Size.x Or size.y>_hdrTexture.Size.y
+		
+			SafeDiscard( _hdrTexture )
+			SafeDiscard( _colorTexture )
+			SafeDiscard( _normalTexture )
+			SafeDiscard( _depthTexture )
+			SafeDiscard( _rpass0Target )
+			SafeDiscard( _rpass2Target )
+	
+			Const format:=PixelFormat.RGBA32F		'32 bit float
+			
+			_hdrTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'output hdr image
+			_colorTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'metalness in 'a'
+			_normalTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'roughness in 'a'
+			_depthTexture=New Texture( size.x,size.y,PixelFormat.Depth32F,TextureFlags.Dynamic )
+			
+			_rpass0Target=New RenderTarget( New Texture[]( _hdrTexture,_colorTexture,_normalTexture ),_depthTexture )
+			_rpass2Target=New RenderTarget( New Texture[]( _hdrTexture ),Null )
+			
+			_uniforms.SetTexture( "ColorBuffer",_colorTexture )
+			_uniforms.SetTexture( "NormalBuffer",_normalTexture )
+			_uniforms.SetTexture( "DepthBuffer",_depthTexture )
+		
+		Endif
+
+		If Not _csmTexture Or _csmSize<>_csmTexture.Size.x
+			
+			SafeDiscard( _csmTexture )
+			SafeDiscard( _csmTarget )
+			
+			_csmTexture=New Texture( _csmSize,_csmSize,PixelFormat.Depth32F,TextureFlags.Dynamic )
+			_csmTarget=New RenderTarget( Null,_csmTexture )
+			
+		Endif
+		
+	End
+
+	Method OnRender()
+		
+		_device.RenderTarget=_rpass0Target
+		_device.Viewport=New Recti( 0,0,_renderViewport.Size )
+		_device.Scissor=_device.Viewport
+
+		RenderBackground()
+		
+		RenderAmbient()
+
+		_device.RenderTarget=_rpass2Target
+		
+		_uniforms.SetVec2f( "BufferCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( _hdrTexture.Size ) )
+		
+		For Local light:=Eachin _renderScene.Lights
+			
+			If light.Type=LightType.Point Continue
+
+			_renderLight=light
+			
+			RenderCSMShadows()
+			
+			RenderLight()
+		Next
+		
+		_renderLight=null
+		
+		_device.RenderTarget=_rpass0Target
+		
+		RenderSprites()
+
+		_device.RenderTarget=_rpass2Target
+
+		RenderEffects()
+		
+		RenderCopy()
+	End
+	
+	Method RenderBackground()
+	
+		If _renderScene.SkyTexture
 		
 			_device.ColorMask=ColorMask.None
 			_device.DepthMask=True
@@ -299,39 +401,23 @@ Class Renderer
 			_device.ColorMask=ColorMask.All
 			_device.DepthMask=True
 		
-			_device.Clear( _scene.ClearColor,1.0 )
+			_device.Clear( _renderScene.ClearColor,1.0 )
 
 		Endif
 		
 	End
 	
-	'MX2_RNDERPASS 1
-	'
-	Method RenderAmbient() Virtual
+	Method RenderAmbient()
 		
 		_device.ColorMask=ColorMask.All
 		_device.DepthMask=True
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.RenderPass=1
 		
-		RenderRenderOps( _renderQueue.OpaqueOps,_camera.InverseMatrix,_camera.ProjectionMatrix )
+		RenderRenderOps( _renderQueue.OpaqueOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
 	End
 	
-	'MX2_RENDERPASS 0
-	'
-	Method RenderSprites()
-	
-		_device.ColorMask=ColorMask.All
-		_device.DepthMask=False
-		_device.DepthFunc=DepthFunc.Always
-		_device.RenderPass=0
-
-		RenderRenderOps( _spriteQueue.OpaqueOps,_camera.InverseMatrix,_camera.ProjectionMatrix )
-	End
-	
-	'MX2_RENDERPASS 2
-	'
-	Method RenderCSMShadows( light:Light )
+	Method RenderCSMShadows()
 	
 		'Perhaps use a different device for CSM...?
 		'
@@ -351,15 +437,15 @@ Class Renderer
 		_device.CullMode=CullMode.Back
 		_device.RenderPass=2
 
-		Local invLightMatrix:=light.InverseMatrix
-		Local viewLight:=invLightMatrix * _camera.Matrix
+		Local invLightMatrix:=_renderLight.InverseMatrix
+		Local viewLight:=invLightMatrix * _renderCamera.Matrix
 		
 		For Local i:=0 Until _csmSplits.Length-1
 			
 			Local znear:=_csmSplits[i]
 			Local zfar:=_csmSplits[i+1]
 			
-			Local splitProj:=Mat4f.Perspective( _camera.Fov,_camera.Aspect,znear,zfar )
+			Local splitProj:=Mat4f.Perspective( _renderCamera.Fov,_renderCamera.Aspect,znear,zfar )
 						
 			Local invSplitProj:=-splitProj
 			
@@ -394,8 +480,8 @@ Class Renderer
 			
 			_device.Scissor=_device.Viewport
 				
-			If light.ShadowsEnabled
-				RenderRenderOps( _renderQueue.OpaqueOps,invLightMatrix,lightProj )
+			If _renderLight.ShadowsEnabled
+				RenderRenderOps( _renderQueue.ShadowOps,invLightMatrix,lightProj )
 			Endif
 			
 		Next
@@ -404,18 +490,94 @@ Class Renderer
 		_device.Viewport=t_viewport
 		_device.Scissor=t_scissor
 	End
-
-	Method Validate()
+	
+	Method RenderLight()
+	
+		_uniforms.SetVec4f( "LightColor",_renderLight.Color )
+		_uniforms.SetFloat( "LightRange",_renderLight.Range )
+		_uniforms.SetMat4f( "LightViewMatrix",_renderCamera.InverseMatrix * _renderLight.Matrix )
 		
-		If Not _csmTexture Or _csmSize<>_csmTexture.Size.x
+		_uniforms.SetMat4f( "InverseProjectionMatrix",-_renderCamera.ProjectionMatrix )
+		
+		_device.ColorMask=ColorMask.All
+		_device.DepthMask=False
+		_device.DepthFunc=DepthFunc.Always
+		_device.BlendMode=BlendMode.Additive
+		_device.CullMode=CullMode.None
+		_device.RenderPass=3
+		
+		Select _renderLight.Type
+		Case LightType.Directional
+		
+			_device.Shader=_dlightShader
+			_device.VertexBuffer=_quadVertices
+			_device.Render( 4,1,0 )
+		
+		Case LightType.Point
+
+			_device.Shader=_plightShader
+			_device.VertexBuffer=_quadVertices
+			_device.Render( 4,1,0 )
+		End
+
+	End
+
+	Method RenderSprites()
+	
+		_device.ColorMask=ColorMask.All
+		_device.DepthMask=False
+		_device.DepthFunc=DepthFunc.LessEqual
+		_device.RenderPass=0
+
+		RenderRenderOps( _spriteQueue.TransparentOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
+	End
+	
+	Method RenderEffects()
+		
+		_device.ColorMask=ColorMask.All
+		_device.DepthMask=False
+		_device.DepthFunc=DepthFunc.Always
+		_device.CullMode=CullMode.None
+
+		_device.VertexBuffer=_quadVertices
+		
+		For Local effect:=Eachin _renderScene.PostEffects
 			
-			If _csmTexture _csmTexture.Discard()
-			If _csmTarget _csmTarget.Discard()
+			If Not effect.Enabled Continue
 			
-			_csmTexture=New Texture( _csmSize,_csmSize,PixelFormat.Depth32F,TextureFlags.Dynamic )
-			_csmTarget=New RenderTarget( Null,_csmTexture )
+			_device.BlendMode=BlendMode.Opaque
+			_device.RenderPass=0
 			
-		Endif
+			effect.Render( _device )
+		Next
+		
+	End
+	
+	Method RenderCopy()
+		
+		Local source:=_device.RenderTarget.GetColorTexture( 0 )
+		
+		_uniforms.SetTexture( "SourceTexture",source )
+		_uniforms.SetVec2f( "SourceCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( source.Size ) )
+
+		_device.RenderTarget=_renderTarget
+		_device.Resize( _renderTargetSize )
+		_device.Viewport=_renderViewport
+		_device.Scissor=_device.Viewport
+		_device.ColorMask=ColorMask.All
+		_device.DepthMask=False
+		_device.DepthFunc=DepthFunc.Always
+		_device.BlendMode=BlendMode.Opaque
+		_device.CullMode=CullMode.None
+		_device.RenderPass=0
+		
+		_device.VertexBuffer=_quadVertices
+		_device.Shader=_copyShader
+		
+		_device.Render( 4,1 )
+		
+		_device.RenderTarget=Null
+		_device.Resize( Null )
 	End
 	
 	Method RenderRenderOps( ops:Stack<RenderOp>,viewMatrix:AffineMat4f,projMatrix:Mat4f )

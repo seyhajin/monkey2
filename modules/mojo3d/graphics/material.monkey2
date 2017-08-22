@@ -7,7 +7,7 @@ Class Material Extends Resource
 	
 	#rem monkeydoc Creates a new material
 	#end
-	Method New( shader:Shader )
+	Method New( shader:Shader=Null )
 		_shader=shader
 		_uniforms=New UniformBlock( 2 )
 		_blendMode=BlendMode.Opaque
@@ -17,22 +17,16 @@ Class Material Extends Resource
 	
 	#rem monkeydoc Creates a copy of the material.
 	#end
-	Method Copy:Material() Virtual
-		
-		Return New Material( Self )
-	End
-
+	Method Copy:Material() abstract
+	
 	#rem monkeydoc The material shader.
 	#end
 	Property Shader:Shader()
 		
 		Return _shader
 		
-	Setter( shader:Shader )
-	
-		_shader=shader
 	End
-
+	
 	#Rem monkeydoc @hidden The material uniforms.
 	#End
 	Property Uniforms:UniformBlock()
@@ -105,9 +99,8 @@ Class Material Extends Resource
 	End
 
 	Protected
-	
 	#rem monkeydoc @hidden
-	#end	
+	#end
 	Method New( material:Material )
 		_shader=material._shader
 		_uniforms=New UniformBlock( material._uniforms )
@@ -116,10 +109,16 @@ Class Material Extends Resource
 		TextureMatrix=material.TextureMatrix
 	End
 	
-	Private
+	Method SetShader( shader:Shader )
+		
+		_shader=shader
+	End
 	
+	Private
+
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
 	Field _blendMode:BlendMode
 	Field _cullMode:CullMode
+
 End

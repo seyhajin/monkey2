@@ -23,6 +23,11 @@ Class WaterMaterial Extends Material
 		Velocities=New Vec2f[]( New Vec2f( 0,0 ),New Vec2f( 0,0 ) )
 	End
 	
+	Method New( material:WaterMaterial )
+		
+		Super.New( material )
+	End
+	
 	#rem monkeydoc Creates a copy of the water material.
 	#end
 	Method Copy:WaterMaterial() Override
@@ -86,14 +91,6 @@ Class WaterMaterial Extends Material
 		
 		Uniforms.SetVec2f( "Velocity0",velocities[0] )
 		Uniforms.SetVec2f( "Velocity1",velocities[1] )
-	End
-
-	Protected
-		
-	#rem monkeydoc @hidden
-	#end
-	Method New( material:WaterMaterial )
-		Super.New( material )
 	End
 	
 End
