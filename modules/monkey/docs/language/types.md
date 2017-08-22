@@ -21,7 +21,6 @@ The following primtive types are supported by monkey2:
 | `Double`	| 64 bit floating point.
 | `String`	| String of 16 bit characters.
 
-
 #### Compound types
 
 The following compound types are supported by monkey2:

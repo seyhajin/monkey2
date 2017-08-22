@@ -14,9 +14,9 @@ The syntax for declaring a class is:
 </div>
 
 _SuperClass_ defaults to `Object` if omitted.
- 
+
 _Interfaces_ is a comma separated list of interface types.
- 
+
 _Modifier_ can be one of:
 
 * `Abstract` - class cannot be instantiated with 'New', it must be extended.
@@ -62,7 +62,7 @@ To declare an interface:
 `End`
 </div>
 
-_Interfaces_ is a comma separated list of interface types. 
+_Interfaces_ is a comma separated list of interface types.
 
 An interface can contain consts, globals, fields, methods, functions and other user defined types.
 
@@ -141,8 +141,7 @@ To declare a write only property:
 
 #### Conversion Operators
 
-You can also add 'conversion operators' to classes and structs. These allow you to convert from a custom class or struct type to an
-unrelated type, such as another class or struct type, or a primitive type such as String.
+You can also add 'conversion operators' to classes and structs. These allow you to convert from a custom class or struct type to an unrelated type, such as another class or struct type, or a primitive type such as String.
 
 The syntax for declaring a conversion operator is:
 
@@ -154,13 +153,24 @@ The syntax for declaring a conversion operator is:
 
 Conversion operators cannot be used to convert a class type to a base class type, or from any type to bool.
 
-For example, we can add a string conversion operator to the above Vec2 class like this:
+For example, we can add a string conversion operator to a class like this:
 
 ```
 Struct Vec2
 
-	...as above...
-	
+	Field x:Float
+	Field y:Float
+
+	Method New( x:Float,y:Float )
+		Self.x=x
+		Self.y=y
+	End
+
+	Method ToString:String()
+		Return "Vec2("+x+","+y+")"
+	End
+
+	' The string conversion operator
 	Operator To:String()
 		Return "Vec2("+x+","+y+")"
 	End
@@ -175,5 +185,69 @@ Local v:=New Vec2
 Print v
 ```
 
-We no longer need to use '.ToString()' when printing the string. Since Print() takes a string argument, and Vec2 has
-a conversion operator that returns a string, the conversion  operator is automatically called for you.
+We no longer need to use '.ToString()' when printing the string. Since Print() takes a string argument, and Vec2 has a conversion operator that returns a string, the conversion operator is automatically called for you.
+
+#### Extensions
+
+Extensions allow you to add extra methods and functions to existing classes or structs. Fields cannot be added this way. Private members cannot be accessed by extensions.
+```
+Struct Foo
+	Field i:Int=0
+End
+```
+```
+Struct Foo Extension
+	Method Increment()
+		i+=1
+	End
+End
+```
+
+#### Encapsulation
+
+There are three levels of encapsulation for class and struct members:
+
+-`Public` members can be accessed from anywhere. It is the default encapsulation level.
+
+-`Protected` members can only be accessed by the base class and the derived ones or by class/struct extensions. Code existing in the same source file have acces to `Protected` members too.
+
+-`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
+
+example:
+```
+Class Foo
+	'public by default'
+	Field i:Int
+
+	Protected
+
+	Field someProtectedThing:Int
+	Method doSomething()
+		Print "Doing something"
+	End
+
+	Private
+
+	Field _somePrivateThing:String
+End
+```
+
+#### Alias
+
+An `Alias` allows you to create a synonym for a previously declared type.
+
+<div class=syntax>
+`Alias` _Identifier_ `:` _Type_
+</div>
+
+<br>
+You can use your newly declared `Alias` instead of the original type anywhere in your code. For example:
+
+
+```
+Alias FantasticNumber:Int
+Alias FantasticString:String
+
+Local myInt:FantasticNumber = 123
+Local myString:FantasticString = "abc"
+```

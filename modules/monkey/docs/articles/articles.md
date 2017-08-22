@@ -1,7 +1,7 @@
 
 @manpage Articles and tutorials
 
-# Articles and tutorials
+Articles and tutorials
 
 This section contains a number of articles and tutorials.
 
