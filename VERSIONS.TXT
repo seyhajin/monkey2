@@ -1,3 +1,7 @@
+***** Monkey2 v1.1.06b *****
+
+Android min-sdk now 14 for android projects.
+
 
 ***** Monkey2 v1.1.06 *****
 
