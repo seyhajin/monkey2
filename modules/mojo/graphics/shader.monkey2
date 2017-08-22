@@ -74,7 +74,6 @@ Class GLProgram
 			
 			Local i:=name.Find( "[" )
 			If i<>-1
-				Print "Uniform array name="+name
 				name=name.Slice( 0,i )
 			Endif
 				
@@ -196,11 +195,20 @@ Class Shader
 
 	#rem monkeydoc Creates a new shader.
 	#end
-	Method New( name:String,source:String )
+	Method New( name:String,source:String,defs:String )
 	
 		_name=name
-	
 		_source=source
+		
+		For Local def:=Eachin defs.Replace( ";","~n" ).Split( "~n" )
+		
+			def=def.Trim()
+			If Not def Continue
+			
+			if Not def.Contains( " " ) def+=" 1"
+			
+			_defs+="#define "+def+"~n"
+		Next
 		
 		EnumPasses()
 	End
@@ -249,31 +257,33 @@ Class Shader
 	
 	#rem monkeydoc @hidden
 	#end
-	Method ValidateUniforms( renderPass:Int,ublocks:UniformBlock[] )',textureFilter:TextureFilter )
+	Method ValidateUniforms( renderPass:Int,ublocks:UniformBlock[] )
 	
-		_programs[renderPass].ValidateUniforms( ublocks )',textureFilter )
+		_programs[renderPass].ValidateUniforms( ublocks )
 	End
 
 	#rem monkeydoc Gets a shader with a given name.
 	#end	
-	Function GetShader:Shader( name:String )
+	Function GetShader:Shader( name:String,defs:String="" )
 		
-		If _cache.Contains( name ) Return _cache[name]
+		Local tag:=name+";"+defs
+		
+		If _cache.Contains( tag ) Return _cache[tag]
 		
 		local source:=LoadString( "asset::shaders/"+name+".glsl" )
 		
-		Local shader:=source ? New Shader( name,source ) Else Null
+		Local shader:=source ? New Shader( name,source,defs ) Else Null
 		
-		_cache[name]=shader
+		_cache[tag]=shader
 		
 		Return shader
 	End
 	
 	#rem monkeydoc Gets a shader with a given name.
 	#end	
-	Function Open:Shader( name:String )
+	Function Open:Shader( name:String,defs:String="" )
 		
-		Return GetShader( name )
+		Return GetShader( name,defs )
 	End
 	
 	Private
@@ -282,6 +292,8 @@ Class Shader
 
 	Field _name:String	
 	Field _source:String
+	Field _defs:String
+	
 	Field _rpasses:Int[]
 	Field _rpassMask:Int
 	Field _programs:=New GLProgram[8]
@@ -312,49 +324,65 @@ Class Shader
 		
 	End
 	
+	'Find common/vertex/fragment chunks
+	'
+	Method SplitSource:String[]( source:String )
+		
+		Local i0:=_source.Find( "~n//@vertex" )
+		If i0=-1 
+			Print "Shader source:~n"+source
+			Assert( False,"Can't find //@vertex chunk" )
+		Endif
+		Local i1:=source.Find( "~n//@fragment" )
+		If i1=-1
+			Print "Shader source:~n"+source
+			Assert( False,"Can't find //@fragment chunk" )
+		Endif
+			
+		Local cs:=source.Slice( 0,i0 )+"~n"
+		Local vs:=source.Slice( i0,i1 )+"~n"
+		Local fs:=source.Slice( i1 )+"~n"
+		
+		Local chunks:=New String[3]
+		
+		#rem
+		'Find //@imports in common section
+		Repeat
+			Local i:=cs.Find( "~n//@import" )
+			If i=-1 Exit
+		
+			Local p:=cs.Slice( 10 ).Trim()
+			If Not p.StartsWith( "~q" ) Or Not p.EndsWith( "~q" )
+				Exit
+			Endif
+			p=p.Slice(1,-1)
+			Local s:=LoadString( "asset::shaders/"+p )
+			If Not s Exit
+		
+			Local tchunks:=SplitSource( s )
+			chunks[0]+=tchunks[0]
+			chunks[1]+=tchunks[1]
+			chunks[2]+=tchunks[2]
+			
+		Forever
+		#end
+		
+		chunks[0]+=cs
+		chunks[1]+=vs
+		chunks[2]+=fs
+		
+		Return chunks
+	End
+	
 	Method Rebuild()
 		
 		glCheck()
 		
-		'Get renderpasses
-		'
-		Local tag:="//@renderpasses"
-		Local tagi:=_source.Find( tag )
-		If tagi=-1
-			Print "Shader source:~n"+_source
-			RuntimeError( "Can't find '"+tag+"' tag" )
-		Endif
-		tagi+=tag.Length
-		Local tage:=_source.Find( "~n",tagi )
-		If tage=-1 tage=_source.Length
-		Local tagv:=_source.Slice( tagi,tage )
-		Local rpasses:=tagv.Split( "," )
-		If Not rpasses
-			Print "Shader source:~n"+_source
-			RuntimeError( "Invalid renderpasses value: '"+tagv+"'" )
-		Endif
-		_rpasses=New Int[rpasses.Length]
-		For Local i:=0 Until rpasses.Length
-			_rpasses[i]=Int( rpasses[i] )
-			_rpassMask|=(1 Shl _rpasses[i])
-		Next
+		Local chunks:=SplitSource( _source )
 		
-		'Find vertex/fragment chunks
-		'
-		Local i0:=_source.Find( "//@vertex" )
-		If i0=-1 
-			Print "Shader source:~n"+_source
-			Assert( False,"Can't find //@vertex chunk" )
-		Endif
-		Local i1:=_source.Find( "//@fragment" )
-		If i1=-1
-			Print "Shader source:~n"+_source
-			Assert( False,"Can't find //@fragment chunk" )
-		Endif
-			
-		Local cs:=_source.Slice( 0,i0 )+"~n"
-		Local vs:=cs+_source.Slice( i0,i1 )+"~n"
-		Local fs:=cs+_source.Slice( i1 )+"~n"
+		Local cs:=_defs+chunks[0]
+		Local vs:=cs+chunks[1]
+		Local fs:=cs+chunks[2]
 		
 		For Local rpass:=Eachin _rpasses
 		

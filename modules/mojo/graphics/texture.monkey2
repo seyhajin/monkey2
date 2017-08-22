@@ -176,7 +176,7 @@ Class Texture Extends Resource
 		
 		Local mask:=TextureFlags.WrapS|TextureFlags.WrapT|TextureFlags.Filter|TextureFlags.Mipmap
 		
-		_flags=(_flags & ~mask) | (Flags & mask)
+		_flags=(_flags & ~mask) | (flags & mask)
 		
 		_dirty|=Dirty.TexParams
 	End
