@@ -20,6 +20,10 @@ Const AI_MATKEY_COLOR_EMISSIVE:="$clr.emissive"
 Const AI_MATKEY_COLOR_TRANSPARENT:="$clr.transparent"
 Const AI_MATKEY_COLOR_REFLECTIVE:="$clr.reflective"
 
+Const AI_CONFIG_PP_SBP_REMOVE:="PP_SBP_REMOVE"
+Const AI_CONFIG_PP_FD_REMOVE:="PP_FD_REMOVE"
+Const AI_CONFIG_PP_SBBC_MAX_BONES:="PP_SBBC_MAX_BONES"
+
 Extern
 
 Const aiProcess_CalcTangentSpace:Uint
@@ -62,6 +66,11 @@ Const aiTextureType_DISPLACEMENT:UInt
 Const aiTextureType_LIGHTMAP:UInt
 Const aiTextureType_REFLECTION:UInt
 Const aiTextureType_UNKNOWN:UInt
+
+Const aiPrimitiveType_POINT:UInt
+Const aiPrimitiveType_LINE:Uint
+Const aiPrimitiveType_TRIANGLE:Uint
+Const aiPrimitiveType_POLYGON:Uint
 
 Struct aiVector3D
 	Field x:Float
@@ -199,7 +208,21 @@ Class aiScene Extends Void="const aiScene"
 	
 End
 
+Class aiPropertyStore Extends Void
+End
+
+Struct aiFileIO
+End
+
+Function aiCreatePropertyStore:aiPropertyStore()
+
+Function aiReleasePropertyStore( p:aiPropertyStore )
+	
 Function aiImportFile:aiScene( pFile:CString,pFlags:UInt )
+	
+Function aiImportFileEx:aiScene( pFile:CString,pFlags:UInt,pFS:aiFileIO Ptr )
+
+Function aiImportFileExWithProperties:aiScene( pFile:CString,pFlags:UInt,pFS:aiFileIO Ptr,pProps:aiPropertyStore )
 
 Function aiImportFileFromMemory:aiScene( pBuffer:libc.char_t Ptr,pLength:UInt,pFlags:UInt,pHint:CString )
 
@@ -212,3 +235,9 @@ Function aiGetMaterialTextureCount:UInt( pMat:aiMaterial,type:UInt )
 Function aiGetMaterialTexture( mat:aiMaterial,type:UInt,index:UInt,path:aiString Ptr )
 
 Function aiGetMaterialColor( pMat:aiMaterial,pKey:CString,type:UInt,index:UInt,pOut:aiColor4D Ptr )
+	
+Function aiSetImportPropertyFloat( store:aiPropertyStore,szName:CString,value:Float )
+
+Function aiSetImportPropertyInteger( store:aiPropertyStore,szName:CString,value:Int )
+
+Function aiSetImportPropertyString( store:aiPropertyStore,szName:CString,st:CString )
