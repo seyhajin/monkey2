@@ -1,6 +1,12 @@
 
 ### Reflection
 
+To use reflection in your code, you first need to import the reflection module.
+
+```
+#Import "<reflection>"
+```
+
 #### Typeof and TypeInfo
 
 The Typeof operator return a TypeInfo object, that contains various properties and methods for inspecting types at runtime. There are 2 ways to use Typeof:
@@ -108,11 +114,11 @@ Global MyGlobal:Int
 Function Main()
 
 	Local vdecl:=TypeInfo.GetType( "mynamespace" ).GetDecl( "MyGlobal" )
-	
+
 	vdecl.Set( Null,10 )
-	
+
 	Print MyGlobal
-	
+
 	Print Cast<Int>( vdecl.Get( Null ) )
 End
 ```
@@ -139,7 +145,7 @@ End
 Function Main()
 
 	Local fdecl:=TypeInfo.GetType( "mynamespace" ).GetDecl( "Test" )
-	
+
 	fdecl.Invoke( Null,New Variant[]( "Hello Test!" ) )
 End
 ```

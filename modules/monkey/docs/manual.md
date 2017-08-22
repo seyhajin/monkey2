@@ -19,3 +19,4 @@ Have fun!
 
 @import mx2cc.md
 
+@import index/index.md
