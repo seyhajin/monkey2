@@ -1,6 +1,23 @@
+
 ***** Monkey2 v1.1.06b *****
 
 Android min-sdk now 14 for android projects.
+
+Now only 1 Renderer class.
+
+Added Scene.DestroyAllEntities.
+
+Now have to use Scene.AddPostEffect.
+
+Added new 'instance' uniformblock type for better (not great yet) instancing.
+
+Enabled assimp FBX and BLEND loaders.
+
+Sprites now compare with depth buffer.
+
+Added Sprite.TextureRect:Rectf property for simple 3d sprite animation.
+
+Fixed Texture.Flags setter.
 
 
 ***** Monkey2 v1.1.06 *****
