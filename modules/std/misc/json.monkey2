@@ -19,6 +19,7 @@ Namespace std.json
 #rem monkeydoc JsonError class.
 #end
 Class JsonError Extends Throwable
+	
 End
 
 #rem monkeydoc JsonValue class.
@@ -1011,14 +1012,14 @@ Class JsonParser
 			Repeat
 				Local chr:=GetChar()
 				If chr=34 Exit
-				If chr=92 GetChar()
+				If chr=92 GetChar()	'\
 			Forever
 			_type=T_STRING
 		Else If chr=39
 			Repeat
 				Local chr:=GetChar()
 				If chr=39 Exit
-				If chr=92 GetChar()
+				If chr=92 GetChar()	'\
 			Forever
 			_type=T_STRING
 		Else If (chr>=48 And chr<=57) Or chr=45
@@ -1110,17 +1111,21 @@ Class JsonParser
 		If i<>-1
 			Local frags:=New StringStack,p:=0,esc:=""
 			Repeat
-				If i+1>=toke.Length Throw New JsonError()
+				If i+1>=toke.Length 
+					frags.Push( toke.Slice( p ) )
+					Exit
+				Endif
 				frags.Push( toke.Slice( p,i ) )
 				Select toke[i+1]
 				Case 34  esc="~q"					'\"
 				Case 92  esc="\"					'\\
 				Case 47  esc="/"					'\/
-				Case 98  esc=String.FromChar( 8 )	'\b
+				Case 98  esc=String.FromChar(  8 )	'\b
 				Case 102 esc=String.FromChar( 12 )	'\f
-				Case 114 esc=String.FromChar( 13 )	'\r
 				Case 110 esc=String.FromChar( 10 )	'\n
-				Case 117								'\uxxxx
+				Case 114 esc=String.FromChar( 13 )	'\r
+				Case 116 esc=String.FromChar(  9 )	'\t
+				Case 117							'\uxxxx
 					If i+6>toke.Length Throw New JsonError()
 					Local val:=0
 					For Local j:=2 Until 6
@@ -1137,8 +1142,8 @@ Class JsonParser
 					Next
 					esc=String.FromChar( val )
 					i+=4
-				Default 
-					Throw New JsonError()
+				Default
+					esc=toke.Slice( i,i+2 )
 				End
 				frags.Push( esc )
 				p=i+2

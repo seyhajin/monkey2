@@ -323,9 +323,9 @@ Class Entity
 			_children.Top.Destroy()
 		Wend
 		
-		If _visible 
+		If _visible
 			_visible=False
-			OnHide()
+			 OnHide()
 		Endif
 
 		If _parent
@@ -335,7 +335,6 @@ Class Entity
 		Endif
 		
 		_parent=Null
-		
 		_scene=Null
 		
 		Destroyed()

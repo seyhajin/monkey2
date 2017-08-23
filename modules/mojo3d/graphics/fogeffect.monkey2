@@ -14,7 +14,7 @@ Class FogEffect Extends PostEffect
 
 		_shader=Shader.Open( "fog" )
 		
-		_uniforms=New UniformBlock( 2 )
+		_uniforms=New UniformBlock( 3 )
 		
 		Color=color
 		Near=near

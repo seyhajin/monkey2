@@ -20,21 +20,13 @@ Class MyWindow Extends Window
 	
 	Field _light:Light
 	
-	Field _donut:Model
-	
-	Field _bloom:BloomEffect
-	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
 		_scene=Scene.GetCurrent()
 		
-		_scene.ClearColor=Color.Black
-		
-		_bloom=New BloomEffect
-		
-		_scene.AddPostEffect( _bloom )
+		_scene.ClearColor=Color.Sky
 		
 		'create camera
 		'
@@ -49,21 +41,26 @@ Class MyWindow Extends Window
 
 		_light.RotateX( 90 )
 		
-		Local material:=New PbrMaterial( Color.Black )
-		material.EmissiveFactor=New Color( 0,2,0 )
+		'Create donut - metallic silver...
+		'
+		Local cube:=Model.CreateBox( New Boxf( -1,1 ),1,1,1,New PbrMaterial( Color.White ) )
 		
-		_donut=Model.CreateTorus( 2,.5,48,24,material )
+		cube.CastsShadow=False
 		
-		_donut.Move( 0,10,0 )
+		For Local x:=-50.0 To 50.0 Step 2.5
+			For Local z:=-50.0 To 50.0 Step 2.5
+				Local copy:=cube.Copy()
+				copy.Move( x,0,z )
+			Next
+		Next
+		
+		cube.Destroy()
+		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 	
 		RequestRender()
-		
-		If Keyboard.KeyHit( Key.Space ) _donut.Visible=Not _donut.Visible
-		
-		_donut.Rotate( .1,.2,.3 )
 		
 		util.Fly( _camera,Self )
 		

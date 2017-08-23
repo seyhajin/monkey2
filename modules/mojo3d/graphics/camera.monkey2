@@ -134,12 +134,14 @@ Class Camera Extends Entity
 	#rem monkeydoc @hidden
 	#end	
 	Method OnShow() Override
+		
 		Scene.Cameras.Add( Self )
 	End
 	
 	#rem monkeydoc @hidden
 	#end	
 	Method OnHide() Override
+		
 		Scene.Cameras.Remove( Self )
 	End
 	

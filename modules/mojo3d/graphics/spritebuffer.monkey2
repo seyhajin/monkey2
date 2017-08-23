@@ -14,20 +14,12 @@ Class SpriteBuffer
 		_spriteIndices=New IndexBuffer( IndexFormat.UINT32,0 )
 	End
 	
-	Method AddSpriteops:Vertex3f ptr( vp:Vertex3f Ptr,rq:RenderQueue,sprites:Stack<Sprite>,camera:Camera )
-		
-		If Not sprites.Length Return vp
-		
-		
-		Return vp
-	end		
-	
 	Method AddSprites( rq:RenderQueue,sprites:Stack<Sprite>,camera:Camera )
 		
 		If sprites.Empty Return
 		
 		Local n:=sprites.Length
-
+		
 		_spriteVertices.Clear()
 		Local vp:=Cast<Vertex3f Ptr>( _spriteVertices.AddVertices( n*4 ) )
 		
@@ -73,9 +65,7 @@ Class SpriteBuffer
 			
 			Local matrix:=New AffineMat4f( r.Scale( sprite.Scale ),sprite.Position )
 			
-			Local texrect:=sprite.TextureRect
-			
-			Local handle:=sprite.Handle
+			Local texrect:=sprite.TextureRect,handle:=sprite.Handle
 			
 			vp[0].position=matrix * New Vec3f( -handle.x,1-handle.y,0 )
 			vp[0].texCoord0=New Vec2f( texrect.min.x,texrect.min.y )

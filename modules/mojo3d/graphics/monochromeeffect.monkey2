@@ -11,7 +11,7 @@ Class MonochromeEffect Extends PostEffect
 		
 		_shader=Shader.Open( "monochrome" )
 		
-		_uniforms=New UniformBlock( 2 )
+		_uniforms=New UniformBlock( 3 )
 		
 		Level=level
 	End

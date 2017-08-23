@@ -6,7 +6,7 @@ uniform mat3 m_TextureMatrix;
 
 //renderer uniforms...
 
-uniform mat4 r_ModelViewProjectionMatrix;
+uniform mat4 i_ModelViewProjectionMatrix;
 
 //varyings...
 
@@ -22,7 +22,7 @@ void main(){
 
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
 	
-	gl_Position=r_ModelViewProjectionMatrix * a_Position;
+	gl_Position=i_ModelViewProjectionMatrix * a_Position;
 }
 
 //@fragment

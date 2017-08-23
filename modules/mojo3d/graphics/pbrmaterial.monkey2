@@ -33,7 +33,7 @@ Class PbrMaterial Extends Material
 			
 		SetShader( Shader.Open( "material",defs ) )
 		
-		ColorTexture=Null'Textyure.ColorTexture( Color.White )
+		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.White
 		
 		EmissiveTexture=Texture.ColorTexture( Color.White )
@@ -47,7 +47,7 @@ Class PbrMaterial Extends Material
 		
 		OcclusionTexture=Texture.ColorTexture( Color.White )
 		
-		NormalTexture=Null'Texture.ColorTexture( New Color( 0.5,0.5,1.0,0.0 ) )
+		NormalTexture=Texture.ColorTexture( New Color( 0.5,0.5,1.0,0.0 ) )
 	End
 	
 	Method New( color:Color,metalness:Float=0.0,roughness:Float=1.0 )

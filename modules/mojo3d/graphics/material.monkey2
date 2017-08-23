@@ -9,7 +9,7 @@ Class Material Extends Resource
 	#end
 	Method New( shader:Shader=Null )
 		_shader=shader
-		_uniforms=New UniformBlock( 2 )
+		_uniforms=New UniformBlock( 3 )
 		_blendMode=BlendMode.Opaque
 		_cullMode=CullMode.Back
 		TextureMatrix=New AffineMat3f
@@ -24,7 +24,6 @@ Class Material Extends Resource
 	Property Shader:Shader()
 		
 		Return _shader
-		
 	End
 	
 	#Rem monkeydoc @hidden The material uniforms.

@@ -14,7 +14,7 @@ Class BloomEffect Extends PostEffect
 		
 		_shader=Shader.Open( "bloom" )
 		
-		_uniforms=New UniformBlock( 2 )
+		_uniforms=New UniformBlock( 3 )
 		
 		Passes=passes
 	End

@@ -109,7 +109,6 @@ Class MyWindow Extends Window
 		Next
 		
 		duck.Destroy()
-
 	End
 	
 	Method OnRender( canvas:Canvas ) Override

@@ -127,9 +127,11 @@ Class Renderer
 	
 		_device=New GraphicsDevice( 0,0 )
 		
-		_uniforms=New UniformBlock( 1 )
+		_runiforms=New UniformBlock( 1 )
+		_iuniforms=New UniformBlock( 2 )
 		
-		_device.BindUniformBlock( _uniforms )
+		_device.BindUniformBlock( _runiforms )
+		_device.BindUniformBlock( _iuniforms )
 
 		_csmSplits=New Float[]( 1,20,60,180,1000 )
 
@@ -204,14 +206,14 @@ Class Renderer
 		
 		_renderScene=scene
 
-		_uniforms.SetFloat( "Time",Now() )
-		_uniforms.SetTexture( "SkyTexture",_renderScene.SkyTexture )
+		_runiforms.SetFloat( "Time",Now() )
+		_runiforms.SetTexture( "SkyTexture",_renderScene.SkyTexture )
 		
-		_uniforms.SetVec4f( "ClearColor",_renderScene.ClearColor )
-		_uniforms.SetVec4f( "AmbientDiffuse",_renderScene.AmbientLight )
+		_runiforms.SetVec4f( "ClearColor",_renderScene.ClearColor )
+		_runiforms.SetVec4f( "AmbientDiffuse",_renderScene.AmbientLight )
 	
-		_uniforms.SetTexture( "ShadowTexture",_csmTexture )
-		_uniforms.SetVec4f( "ShadowSplits",New Vec4f( _csmSplits[1],_csmSplits[2],_csmSplits[3],_csmSplits[4] ) )
+		_runiforms.SetTexture( "ShadowTexture",_csmTexture )
+		_runiforms.SetVec4f( "ShadowSplits",New Vec4f( _csmSplits[1],_csmSplits[2],_csmSplits[3],_csmSplits[4] ) )
 		
 		Local env:Texture
 		
@@ -223,7 +225,7 @@ Class Renderer
 			env=_defaultEnv
 		Endif
 		
-		_uniforms.SetTexture( "EnvTexture",env )
+		_runiforms.SetTexture( "EnvTexture",env )
 		
 		_renderQueue.Clear()
 		
@@ -241,11 +243,11 @@ Class Renderer
 		Local projMat:=_renderCamera.ProjectionMatrix
 		Local invProjMat:=-projMat
 			
-		_uniforms.SetMat3f( "EnvMatrix",envMat )
-		_uniforms.SetMat4f( "ProjectionMatrix",projMat )
-		_uniforms.SetMat4f( "InverseProjectionMatrix",invProjMat )
-		_uniforms.SetFloat( "DepthNear",_renderCamera.Near )
-		_uniforms.SetFloat( "DepthFar",_renderCamera.Far )
+		_runiforms.SetMat3f( "EnvMatrix",envMat )
+		_runiforms.SetMat4f( "ProjectionMatrix",projMat )
+		_runiforms.SetMat4f( "InverseProjectionMatrix",invProjMat )
+		_runiforms.SetFloat( "DepthNear",_renderCamera.Near )
+		_runiforms.SetFloat( "DepthFar",_renderCamera.Far )
 		
 		_spriteQueue.Clear()
 		
@@ -263,7 +265,8 @@ Class Renderer
 	Protected
 	
 	Field _device:GraphicsDevice
-	Field _uniforms:UniformBlock
+	Field _runiforms:UniformBlock
+	Field _iuniforms:UniformBlock
 	
 	Field _csmSize:=4096
 	Field _csmSplits:=New Float[]( 1,20,60,180,1000 )
@@ -321,9 +324,9 @@ Class Renderer
 			_rpass0Target=New RenderTarget( New Texture[]( _hdrTexture,_colorTexture,_normalTexture ),_depthTexture )
 			_rpass2Target=New RenderTarget( New Texture[]( _hdrTexture ),Null )
 			
-			_uniforms.SetTexture( "ColorBuffer",_colorTexture )
-			_uniforms.SetTexture( "NormalBuffer",_normalTexture )
-			_uniforms.SetTexture( "DepthBuffer",_depthTexture )
+			_runiforms.SetTexture( "ColorBuffer",_colorTexture )
+			_runiforms.SetTexture( "NormalBuffer",_normalTexture )
+			_runiforms.SetTexture( "DepthBuffer",_depthTexture )
 		
 		Endif
 
@@ -351,7 +354,7 @@ Class Renderer
 
 		_device.RenderTarget=_rpass2Target
 		
-		_uniforms.SetVec2f( "BufferCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( _hdrTexture.Size ) )
+		_runiforms.SetVec2f( "BufferCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( _hdrTexture.Size ) )
 		
 		For Local light:=Eachin _renderScene.Lights
 			
@@ -467,7 +470,7 @@ Class Renderer
 			Local lightProj:=Mat4f.Ortho( bounds.min.x,bounds.max.x,bounds.min.y,bounds.max.y,bounds.min.z,bounds.max.z )
 			
 			'set matrices for next pass...
-			_uniforms.SetMat4f( "ShadowMatrix"+i,lightProj * viewLight )
+			_runiforms.SetMat4f( "ShadowMatrix"+i,lightProj * viewLight )
 			
 			Local size:=_csmTexture.Size,hsize:=size/2
 			
@@ -493,11 +496,11 @@ Class Renderer
 	
 	Method RenderLight()
 	
-		_uniforms.SetVec4f( "LightColor",_renderLight.Color )
-		_uniforms.SetFloat( "LightRange",_renderLight.Range )
-		_uniforms.SetMat4f( "LightViewMatrix",_renderCamera.InverseMatrix * _renderLight.Matrix )
+		_runiforms.SetVec4f( "LightColor",_renderLight.Color )
+		_runiforms.SetFloat( "LightRange",_renderLight.Range )
+		_runiforms.SetMat4f( "LightViewMatrix",_renderCamera.InverseMatrix * _renderLight.Matrix )
 		
-		_uniforms.SetMat4f( "InverseProjectionMatrix",-_renderCamera.ProjectionMatrix )
+		_runiforms.SetMat4f( "InverseProjectionMatrix",-_renderCamera.ProjectionMatrix )
 		
 		_device.ColorMask=ColorMask.All
 		_device.DepthMask=False
@@ -557,8 +560,8 @@ Class Renderer
 		
 		Local source:=_device.RenderTarget.GetColorTexture( 0 )
 		
-		_uniforms.SetTexture( "SourceTexture",source )
-		_uniforms.SetVec2f( "SourceCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( source.Size ) )
+		_runiforms.SetTexture( "SourceTexture",source )
+		_runiforms.SetVec2f( "SourceCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( source.Size ) )
 
 		_device.RenderTarget=_renderTarget
 		_device.Resize( _renderTargetSize )
@@ -582,36 +585,42 @@ Class Renderer
 	
 	Method RenderRenderOps( ops:Stack<RenderOp>,viewMatrix:AffineMat4f,projMatrix:Mat4f )
 		
-		_uniforms.SetMat4f( "ViewMatrix",viewMatrix )
-		_uniforms.SetMat4f( "ProjectionMatrix",projMatrix )
-		_uniforms.SetMat4f( "InverseProjectionMatrix",-projMatrix )
+		_runiforms.SetMat4f( "ViewMatrix",viewMatrix )
+		_runiforms.SetMat4f( "ProjectionMatrix",projMatrix )
+		_runiforms.SetMat4f( "InverseProjectionMatrix",-projMatrix )
+		
+		Local instance:Entity=_renderCamera
+		Local material:Material
 		
 		For Local op:=Eachin ops
 			
-			Local model:=op.instance
-			
-			Local modelMat:= model ? model.Matrix Else New AffineMat4f
-			Local modelViewMat:=viewMatrix * modelMat
-			Local modelViewProjMat:=projMatrix * modelViewMat
-			Local modelViewNormMat:=~-modelViewMat.m
+			If op.instance<>instance
 				
-			_uniforms.SetMat4f( "ModelMatrix",modelMat )
-			_uniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
-			_uniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
-			_uniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
+				instance=op.instance
+				
+				Local modelMat:= instance ? instance.Matrix Else New AffineMat4f
+				Local modelViewMat:=viewMatrix * modelMat
+				Local modelViewProjMat:=projMatrix * modelViewMat
+				Local modelViewNormMat:=~-modelViewMat.m
+					
+				_iuniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
+				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
+				_iuniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
+				If op.bones _iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
+				
+			Endif
 			
-			If op.bones
-				_uniforms.SetMat4fArray( "BoneMatrices",op.bones )
-			Else
-				_uniforms.SetMat4fArray( "BoneMatrices",_nullBones )
-			End
+			If op.material<>material
+				
+				material=op.material
+				
+				_device.Shader=material.Shader
+				_device.BindUniformBlock( material.Uniforms )
+				_device.BlendMode=material.BlendMode
+				_device.CullMode=material.CullMode
+				
+			Endif
 			
-			Local material:=op.material
-			
-			_device.Shader=material.Shader
-			_device.BindUniformBlock( material.Uniforms )
-			_device.BlendMode=material.BlendMode
-			_device.CullMode=material.CullMode
 			_device.VertexBuffer=op.vbuffer
 			_device.IndexBuffer=op.ibuffer
 			_device.RenderIndexed( op.order,op.count,op.first )

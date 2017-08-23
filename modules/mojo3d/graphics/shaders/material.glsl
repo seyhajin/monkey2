@@ -13,9 +13,9 @@ uniform mat3 m_TextureMatrix;
 
 //renderer uniforms...
 
-uniform mat4 r_ModelViewMatrix;
-uniform mat4 r_ModelViewProjectionMatrix;
-uniform mat3 r_ModelViewNormalMatrix;
+uniform mat4 i_ModelViewMatrix;
+uniform mat4 i_ModelViewProjectionMatrix;
+uniform mat3 i_ModelViewNormalMatrix;
 
 #if MX2_AMBIENTPASS
 
@@ -39,7 +39,7 @@ varying mat3 v_TanMatrix;
 //@vertex
 
 #ifdef MX2_BONED
-uniform mat4 r_BoneMatrices[96];
+uniform mat4 i_ModelBoneMatrices[96];
 #endif
 
 //vertex attribs....
@@ -66,10 +66,10 @@ attribute vec4 a_Tangent;
 
 void main(){
 
-	mat4 m0=r_BoneMatrices[ int( a_Bones.x ) ];
-	mat4 m1=r_BoneMatrices[ int( a_Bones.y ) ];
-	mat4 m2=r_BoneMatrices[ int( a_Bones.z ) ];
-	mat4 m3=r_BoneMatrices[ int( a_Bones.a ) ];
+	mat4 m0=i_ModelBoneMatrices[ int( a_Bones.x ) ];
+	mat4 m1=i_ModelBoneMatrices[ int( a_Bones.y ) ];
+	mat4 m2=i_ModelBoneMatrices[ int( a_Bones.z ) ];
+	mat4 m3=i_ModelBoneMatrices[ int( a_Bones.a ) ];
 	
 	vec4 b_Position=
 		m0 * a_Position * a_Weights.x +
@@ -99,10 +99,10 @@ void main(){
 #endif
 
 	// view space position
-	v_Position=( r_ModelViewMatrix * b_Position ).xyz;
+	v_Position=( i_ModelViewMatrix * b_Position ).xyz;
 
 	// viewspace normal
-	v_Normal=r_ModelViewNormalMatrix * b_Normal;
+	v_Normal=i_ModelViewNormalMatrix * b_Normal;
 	
 #ifdef MX2_TEXTURED
 	// texture coord0
@@ -110,14 +110,14 @@ void main(){
 #ifdef MX2_BUMPMAPPED
 	// viewspace tangent matrix
 	v_TanMatrix[2]=v_Normal;
-	v_TanMatrix[0]=r_ModelViewNormalMatrix * b_Tangent.xyz;
+	v_TanMatrix[0]=i_ModelViewNormalMatrix * b_Tangent.xyz;
 	v_TanMatrix[1]=cross( v_TanMatrix[0],v_TanMatrix[2] ) * b_Tangent.a;
 #endif
 #endif
 	
 #endif	//MX2_AMBIENTPASS
 	
-	gl_Position=r_ModelViewProjectionMatrix * b_Position;
+	gl_Position=i_ModelViewProjectionMatrix * b_Position;
 }
 
 #else	//MX2_BONED
@@ -127,10 +127,10 @@ void main(){
 #if MX2_AMBIENTPASS
 
 	// view space position
-	v_Position=( r_ModelViewMatrix * a_Position ).xyz;
+	v_Position=( i_ModelViewMatrix * a_Position ).xyz;
 
 	// viewspace normal
-	v_Normal=r_ModelViewNormalMatrix * a_Normal;
+	v_Normal=i_ModelViewNormalMatrix * a_Normal;
 	
 #ifdef MX2_TEXTURED
 	// texture coord0
@@ -138,14 +138,14 @@ void main(){
 #ifdef MX2_BUMPMAPPED
 	// viewspace tangent matrix
 	v_TanMatrix[2]=v_Normal;
-	v_TanMatrix[0]=r_ModelViewNormalMatrix * a_Tangent.xyz;
+	v_TanMatrix[0]=i_ModelViewNormalMatrix * a_Tangent.xyz;
 	v_TanMatrix[1]=cross( v_TanMatrix[0],v_TanMatrix[2] ) * a_Tangent.a;
 #endif
 #endif
 
 #endif	//MX2_AMBIENTPASS
 	
-	gl_Position=r_ModelViewProjectionMatrix * a_Position;
+	gl_Position=i_ModelViewProjectionMatrix * a_Position;
 }
 
 #endif	//MX2_BONED
