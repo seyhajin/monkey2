@@ -5,13 +5,6 @@ Namespace mojo3d.graphics
 #end
 Class PostEffect
 
-	#rem monkeydoc @hidden
-	#end
-	Method New()
-		
-		Scene.GetCurrent().PostEffects.Add( Self )
-	End
-	
 	#rem monkeydoc Enabled state.
 	
 	Set to true to enable this effect and false to disable.

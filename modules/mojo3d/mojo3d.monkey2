@@ -33,7 +33,6 @@ Using gles20..
 #Import "graphics/animator"
 
 #Import "graphics/renderer"
-#Import "graphics/deferredrenderer"
 
 #Import "graphics/posteffect"
 #Import "graphics/bloomeffect"
@@ -42,5 +41,5 @@ Using gles20..
 
 #Import "graphics/material"
 #Import "graphics/pbrmaterial"
-#Import "graphics/spritematerial"
 #Import "graphics/watermaterial"
+#Import "graphics/spritematerial"

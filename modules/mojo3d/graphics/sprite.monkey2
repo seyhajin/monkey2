@@ -56,6 +56,18 @@ Class Sprite Extends Entity
 		
 		_material=material
 	End
+
+	#rem monkeydoc Rect within texture to draw.
+	
+	#end	
+	Property TextureRect:Rectf()
+		
+		Return _textureRect
+	
+	Setter( textureRect:Rectf )
+		
+		_textureRect=textureRect
+	End
 	
 	#rem monkeydoc Sprite handle.
 	
@@ -116,6 +128,7 @@ Class Sprite Extends Entity
 	Private
 	
 	Field _material:Material
+	Field _textureRect:=New Rectf( 0,0,1,1 )
 	Field _handle:Vec2f=New Vec2f( .5,.5 )
 	Field _mode:SpriteMode=Null
 	

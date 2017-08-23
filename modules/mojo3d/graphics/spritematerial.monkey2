@@ -17,6 +17,11 @@ Class SpriteMaterial Extends Material
 		ColorFactor=Color.White
 	End
 	
+	Method New( material:SpriteMaterial )
+	
+		Super.New( material )
+	End
+	
 	#rem monkeydoc Creates a copy of the sprite material.
 	#end
 	Method Copy:SpriteMaterial() Override
@@ -44,24 +49,15 @@ Class SpriteMaterial Extends Material
 
 	#rem monkeydoc Loads a sprite material from an image file.
 	#end	
-	Function Load:SpriteMaterial( path:String )
+	Function Load:SpriteMaterial( path:String,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 		
-		Local texture:=Texture.Load( path,TextureFlags.FilterMipmap )
+		Local texture:=Texture.Load( path,textureFlags )
 		If Not texture texture=Texture.ColorTexture( Color.Magenta )
 		
 		Local material:=New SpriteMaterial
 		material.ColorTexture=texture
 		
 		Return material
-	End
-	
-	Protected
-	
-	#rem monkeydoc @hidden
-	#end
-	Method New( material:SpriteMaterial )
-	
-		Super.New( material )
 	End
 	
 End

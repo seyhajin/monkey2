@@ -265,7 +265,7 @@ Class UniformBlock Extends Resource
 	End
 	
 	Method GetFloatPtr:Float Ptr( id:Int,type:Type )
-		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+		DebugAssert( _uniforms[id].type=type,"Invalid uniform type "+Int(_uniforms[id].type)+" expecting "+Int(type) )
 		Return _uniforms[id].GetFloatPtr()
 	End
 	

@@ -102,6 +102,29 @@ Namespace assimp
 
 #Import "assimp/code/MS3DLoader.cpp"
 
+#Import "assimp/code/FBXImporter.cpp"
+#Import "assimp/code/FBXParser.cpp"
+#Import "assimp/code/FBXTokenizer.cpp"
+#Import "assimp/code/FBXConverter.cpp"
+#Import "assimp/code/FBXUtil.cpp"
+#Import "assimp/code/FBXDocument.cpp"
+#Import "assimp/code/FBXProperties.cpp"
+#Import "assimp/code/FBXMeshGeometry.cpp"
+#Import "assimp/code/FBXMaterial.cpp"
+#Import "assimp/code/FBXModel.cpp"
+#Import "assimp/code/FBXAnimation.cpp"
+#Import "assimp/code/FBXNodeAttribute.cpp"
+#Import "assimp/code/FBXDeformer.cpp"
+#Import "assimp/code/FBXBinaryTokenizer.cpp"
+#Import "assimp/code/FBXDocumentUtil.cpp"
+
+#Import "assimp/code/BlenderLoader.cpp"
+#Import "assimp/code/BlenderDNA.cpp"
+#Import "assimp/code/BlenderScene.cpp"
+#Import "assimp/code/BlenderModifier.cpp"
+#Import "assimp/code/BlenderBMesh.cpp"
+#Import "assimp/code/BlenderTessellator.cpp"
+
 #rem
 #Import "assimp/code/StepExporter.cpp"
 #Import "assimp/code/AMFImporter.cpp"

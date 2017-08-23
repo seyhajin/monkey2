@@ -43,7 +43,7 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( Pi/2 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.Rotate( 60,45,0 )	'aim directional light 'down' - Pi/2=90 degrees.
 		
 		'create ground
 		'
@@ -52,6 +52,8 @@ Class MyWindow Extends Window
 		'create sprites
 		'
 		Local material:=SpriteMaterial.Load( "asset::Acadia-Tree-Sprite.png" )
+		
+		material.ColorTexture.Flags=TextureFlags.None
 		
 		For Local i:=0 Until 1000
 			
@@ -67,6 +69,14 @@ Class MyWindow Extends Window
 
 			_sprites.Push( sprite )
 		Next
+		
+		For Local i:=0 Until 10
+			
+			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
+			
+			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
+
+		next			
 		
 	End
 	

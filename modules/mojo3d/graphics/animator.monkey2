@@ -6,15 +6,15 @@ Namespace mojo3d.graphics
 Class Animator
 	
 	Method New( animations:Animation[],entities:Entity[] )
-		
+
+#rem		
 		For Local i:=0 Until animations.Length
 			Print "anim["+i+"].Channels="+animations[i].Channels.Length
 			Print "anim["+i+"].Duration="+animations[i].Duration
 			Print "anim["+i+"].Hertz="+animations[i].Hertz
 		Next			
-		
 		Print "entities="+entities.Length
-		
+#end		
 		_animations=animations
 		
 		_entities=entities

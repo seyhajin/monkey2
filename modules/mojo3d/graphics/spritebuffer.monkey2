@@ -19,7 +19,7 @@ Class SpriteBuffer
 		If sprites.Empty Return
 		
 		Local n:=sprites.Length
-
+		
 		_spriteVertices.Clear()
 		Local vp:=Cast<Vertex3f Ptr>( _spriteVertices.AddVertices( n*4 ) )
 		
@@ -37,10 +37,12 @@ Class SpriteBuffer
 			Next
 		Endif
 		
+		'Sort sprites by distance from camera. Only really need to do this for transparent sprites, but meh...
+		'
 		sprites.Sort( Lambda:Int( x:Sprite,y:Sprite )
 			Return camera.Position.Distance( y.Position ) <=> camera.Position.Distance( x.Position )
 		End )
-		
+
 		Local cmaterial:=sprites[0].Material
 		Local i0:=0,i:=0
 		
@@ -48,7 +50,7 @@ Class SpriteBuffer
 			
 			Local material:=sprite.Material
 			If material<>cmaterial
-				rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,Null,3,(i-i0)*2,i0*6 )
+				rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,3,(i-i0)*2,i0*6 )
 				cmaterial=material
 				i0=i
 			Endif
@@ -63,25 +65,26 @@ Class SpriteBuffer
 			
 			Local matrix:=New AffineMat4f( r.Scale( sprite.Scale ),sprite.Position )
 			
-			Local handle:=sprite.Handle
+			Local texrect:=sprite.TextureRect,handle:=sprite.Handle
 			
 			vp[0].position=matrix * New Vec3f( -handle.x,1-handle.y,0 )
-			vp[0].texCoord0=New Vec2f( 0,0 )
+			vp[0].texCoord0=New Vec2f( texrect.min.x,texrect.min.y )
 			
 			vp[1].position=matrix * New Vec3f( 1-handle.x,1-handle.y,0 )
-			vp[1].texCoord0=New Vec2f( 1,0 )
+			vp[1].texCoord0=New Vec2f( texrect.max.x,texrect.min.y )
 
 			vp[2].position=matrix * New Vec3f( 1-handle.x,-handle.y,0 )
-			vp[2].texCoord0=New Vec2f( 1,1 )
+			vp[2].texCoord0=New Vec2f( texrect.max.x,texrect.max.y )
 			
 			vp[3].position=matrix * New Vec3f( -handle.x,-handle.y,0 )
-			vp[3].texCoord0=New Vec2f( 0,1 )
+			vp[3].texCoord0=New Vec2f( texrect.min.x,texrect.max.y )
 			
 			vp+=4
 			i+=1
 		Next
 		
-		rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,Null,3,(i-i0)*2,i0*6 )
+		rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,3,(i-i0)*2,i0*6 )
+		
 	End
 
 	Private

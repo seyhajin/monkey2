@@ -1,4 +1,5 @@
 
+'test..
 Namespace mx2
 
 Class Translator_CPP Extends Translator
@@ -443,13 +444,17 @@ Class Translator_CPP Extends Translator
 				
 					If func.IsGeneric Continue
 					
-					If Not func.IsMethod Or func.scope<>ctype.superType.scope Continue
+					If Not func.IsMethod Continue
 					
-					Local sym:=FuncName( func )
+					If func.cscope.ctype=ctype Continue
+					
+					Local superName:=ClassName( func.cscope.ctype )
+					
+					Local sym:=superName+"::"+FuncName( func )
 					If done[sym] Continue
 					done[sym]=True
 					
-					Emit( "using "+superName+"::"+sym+";" )
+					Emit( "using "+sym+";" )
 				Next
 			Next
 		Endif

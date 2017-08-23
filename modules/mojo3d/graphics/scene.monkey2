@@ -79,6 +79,24 @@ Class Scene
 		_ambientDiffuse=color
 	End
 	
+	#rem monkeydoc Adds a post effect to the scene.
+	#end
+	Method AddPostEffect( postEffect:PostEffect )
+		
+		_postEffects.Add( postEffect )
+	End
+	
+	#rem monkeydoc 	Destroys all entities in the scene.
+	
+	#end
+	Method DestroyAllEntities()
+		
+		For Local entity:=Eachin _rootEntities
+			
+			entity.Destroy()
+		Next
+	End
+	
 	#rem monkeydoc Renders the scene to	a canvas.
 	#end
 	Method Render( canvas:Canvas,camera:Camera )
@@ -88,6 +106,13 @@ Class Scene
 		canvas.Flush()
 		
 		Renderer.GetCurrent().Render( Self,camera,canvas.GraphicsDevice )
+	End
+
+	#rem monkeydoc Enumerates all entities in the scene with null parents.
+	#end
+	Method GetRootEntities:Entity[]()
+		
+		Return _rootEntities.ToArray()
 	End
 	
 	#rem monkeydoc Gets the current scene.
@@ -139,7 +164,7 @@ Class Scene
 		
 		Return _sprites
 	End
-
+	
 	Private
 	
 	Global _current:Scene

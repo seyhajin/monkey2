@@ -25,8 +25,6 @@ Namespace std.requesters
 
 #Elseif __TARGET__="android"
 
-	#Import "<sdl2>"
-	#Import "<jni>"
 	#Import "native/Monkey2Requesters.java"
 
 #Elseif __TARGET__="ios"

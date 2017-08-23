@@ -73,6 +73,7 @@ Class MyWindow Extends Window
 		'		
 		Local duck:=Model.Load( "asset::duck.gltf/Duck.gltf" )
 		duck.Mesh.FitVertices( New Boxf( -1,1 ) )
+		'duck.CastsShadow=false
 		
 		Local root:=duck.Copy()
 		root.Move( 0,10,0 )
@@ -108,7 +109,6 @@ Class MyWindow Extends Window
 		Next
 		
 		duck.Destroy()
-
 	End
 	
 	Method OnRender( canvas:Canvas ) Override

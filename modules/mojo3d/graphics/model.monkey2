@@ -83,6 +83,15 @@ Class Model Extends Entity
 		_bones=bones
 	End
 	
+	Property CastsShadow:Bool()
+		
+		Return _castsShadow
+		
+	Setter( castsShadow:Bool )
+	
+		_castsShadow=castsShadow
+	End
+	
 	#rem monkeydoc Loads a model from a file path.
 	
 	On its own, mojo3d can only load gltf2 format mesh and model files.
@@ -188,6 +197,8 @@ Class Model Extends Entity
 		
 		_materials=model._materials.Slice( 0 )
 		
+		_castsShadow=model._castsShadow
+		
 		Show()
 	End
 
@@ -213,5 +224,7 @@ Class Model Extends Entity
 
 	Field _bones:Bone[]
 	Field _boneMatrices:Mat4f[]
+	
+	Field _castsShadow:Bool=true
 	
 End
