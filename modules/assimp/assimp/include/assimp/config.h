@@ -106,12 +106,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ASSIMP_BUILD_NO_OPENGEX_IMPORTER 1
 #define ASSIMP_BUILD_NO_MS3D_IMPORTER 1
 #define ASSIMP_BUILD_NO_COB_IMPORTER 1
-#define ASSIMP_BUILD_NO_BLEND_IMPORTER 1
+//#define ASSIMP_BUILD_NO_BLEND_IMPORTER 1
 #define ASSIMP_BUILD_NO_Q3BSP_IMPORTER 1
 #define ASSIMP_BUILD_NO_NDO_IMPORTER 1
 #define ASSIMP_BUILD_NO_IFC_IMPORTER 1
 #define ASSIMP_BUILD_NO_XGL_IMPORTER 1
-#define ASSIMP_BUILD_NO_FBX_IMPORTER 1
+//#define ASSIMP_BUILD_NO_FBX_IMPORTER 1
 #define ASSIMP_BUILD_NO_ASSBIN_IMPORTER 1
 #define ASSIMP_BUILD_NO_GLTF_IMPORTER 1
 #define ASSIMP_BUILD_NO_3MF_IMPORTER 1
@@ -691,7 +691,16 @@ enum aiComponent
     "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES"
 
 
-
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will search for embedded loaded textures, where no embedded texture data is provided.
+*
+* The default value is false (0)
+* Property type: bool
+*/
+#define AI_CONFIG_IMPORT_FBX_SEARCH_EMBEDDED_TEXTURES \
+	"IMPORT_FBX_SEARCH_EMBEDDED_TEXTURES"
+	
+	
 // ---------------------------------------------------------------------------
 /** @brief  Set the vertex animation keyframe to be imported
  *
