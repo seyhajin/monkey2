@@ -50,7 +50,7 @@ Class SpriteBuffer
 			
 			Local material:=sprite.Material
 			If material<>cmaterial
-				rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,Null,3,(i-i0)*2,i0*6 )
+				rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,3,(i-i0)*2,i0*6 )
 				cmaterial=material
 				i0=i
 			Endif
@@ -83,7 +83,7 @@ Class SpriteBuffer
 			i+=1
 		Next
 		
-		rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,Null,3,(i-i0)*2,i0*6 )
+		rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,3,(i-i0)*2,i0*6 )
 		
 	End
 
