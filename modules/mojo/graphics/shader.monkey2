@@ -32,9 +32,12 @@ Class GLUniform
 		If name.StartsWith( "r_" )
 			name=name.Slice( 2 )
 			block=1
-		Else If name.StartsWith( "m_" )
+		Else If name.StartsWith( "i_" )
 			name=name.Slice( 2 )
 			block=2
+		Else If name.StartsWith( "m_" )
+			name=name.Slice( 2 )
+			block=3
 		Endif
 		
 		uniformId=UniformBlock.GetUniformId( name,block )
@@ -106,25 +109,15 @@ Class GLProgram
 
 	Method ValidateUniforms( ublocks:UniformBlock[] )
 		
-		#rem
-		If _glRetroSeq<>glRetroSeq
-			For Local i:=0 Until _ublockSeqs.Length
-				_ublockSeqs[i]=0
-			Next
-			_glRetroSeq=glRetroSeq
-		Endif
-		#end
-		
-'		For Local i:=0 Until 8
-'			glActiveTexture( GL_TEXTURE0+i )
-'			glBindTexture( GL_TEXTURE_2D,0 )
-'		Next
-
 		For Local i:=0 Until 4
 
 			Local ublock:=ublocks[ i ]
 			
-			If Not ublock Or ublock.Seq=_ublockSeqs[i] Continue
+			If Not ublock Continue
+			
+			If ublock.Name<>i Print "OOOPS!"
+			
+			If ublock.Seq=_ublockSeqs[i] Continue
 			
 			_ublockSeqs[i]=ublock.Seq
 			
@@ -165,6 +158,8 @@ Class GLProgram
 		Next
 		
 		For Local i:=0 Until 4
+			
+'			If Not ublocks[i] continue
 		
 			If Not _textures[i] Continue
 			

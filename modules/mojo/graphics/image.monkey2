@@ -454,7 +454,7 @@ Class Image Extends Resource
 	
 		_rect=rect
 		_shader=shader
-		_uniforms=New UniformBlock( 2 )
+		_uniforms=New UniformBlock( 3 )
 		
 		SetTexture( 0,texture )
 		
