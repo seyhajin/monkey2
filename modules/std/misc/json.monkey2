@@ -318,6 +318,7 @@ Class JsonString Extends JsonValue
 		Local data:=_data
 		data=data.Replace( "\","\\" )
 		data=data.Replace( "~q","\~q" )
+		data=data.Replace( "~n","\n" ).Replace( "~r","\r" ).Replace( "~t","\t" )
 		Return "~q"+data+"~q"
 	End
 
