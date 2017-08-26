@@ -19,21 +19,17 @@ Using libc..
 Using std..
 Using mx2..
 
-#If __CONFIG__="debug"
-Const FORCE_MSVC:=False
-#Endif
-
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"
+
+'Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
 
 'Const TestArgs:="mx2cc makemods -clean monkey"
 
 'Const TestArgs:="mx2cc makemods -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
-
-Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '
@@ -69,10 +65,6 @@ Function Main()
 	If GetFileType( env )<>FILETYPE_FILE Fail( "Unable to locate mx2cc 'bin' directory" )
 
 	LoadEnv( env )
-	
-#If __CONFIG__="debug"
-	If FORCE_MSVC libc.setenv( "MX2_USE_MSVC","1",1 )
-#Endif
 	
 	Local args:=AppArgs()
 	
@@ -121,7 +113,7 @@ Function Main()
 	Endif
 	
 	Local ok:=False
-	
+
 	Try
 	
 		Local cmd:=args[1]
@@ -164,7 +156,11 @@ Function MakeApp:Bool( args:String[] )
 	
 	Local cd:=CurrentDir()
 	ChangeDir( StartDir )
+	
+	'DebugStop()
+	
 	Local srcPath:=RealPath( args[0].Replace( "\","/" ) )
+	
 	ChangeDir( cd )
 	
 	opts.mainSource=srcPath
