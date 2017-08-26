@@ -215,20 +215,56 @@ Class Mesh Extends Resource
 	End
 	
 	#rem monkeydoc Updates mesh normals.
-
-	TODO!
 	
-	Recalculates all vertex normals based on positions.
-
+	Recalculates all vertex normals based on triangle and vertex positions.
+	
 	#end
 	Method UpdateNormals()
+
+		Local vcount:=_vbuffer.Length
+		
+		Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Data )
+		
+		For Local i:=0 Until vcount
+			
+			vertices[i].normal=New Vec3f(0)
+		Next
+		
+		For Local ibuffer:=Eachin _ibuffers
+			
+			Local icount:=ibuffer.Length
+			Local indices:=Cast<UInt Ptr>( ibuffer.Data )
+		
+			For Local i:=0 Until icount Step 3
+				
+				Local i1:=indices[i+0]
+				Local i2:=indices[i+1]
+				Local i3:=indices[i+2]
+				
+				Local v1:=vertices[i1].position
+				Local v2:=vertices[i2].position
+				Local v3:=vertices[i3].position
+				
+				Local n:=(v2-v1).Cross(v3-v1).Normalize()
+				
+				vertices[i1].normal+=n
+				vertices[i2].normal+=n
+				vertices[i3].normal+=n
+			
+			Next
+		
+		Next
+		
+		For Local i:=0 Until vcount
+			
+			vertices[i].normal=vertices[i].normal.Normalize()
+		Next
 	
-		RuntimeError( "TODO!" )
 	End
 
 	#rem monkeydoc Updates mesh tangents.
 	
-	Recalculates all vertex tangents based on normals and texcoords.
+	Recalculates all vertex tangents based on triangles, vertex normals and vertex texcoord0.
 	
 	#end
 	Method UpdateTangents()
