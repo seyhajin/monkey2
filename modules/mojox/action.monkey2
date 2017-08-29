@@ -84,7 +84,10 @@ Class Action
 	
 	Setter( async:Bool )
 
+#If Not __WEB_TARGET__
 		_async=async
+#endif
+
 	End
 	
 	#rem monkeydoc Hotkey for the action.
@@ -133,19 +136,12 @@ Class Action
 	#rem monkeydoc Triggers the action.
 	#end	
 	Method Trigger()
-	
-#if __TARGET__<>"emscripten"
-	
+		
 		If _async
 			New Fiber( Triggered )
 		Else
 			Triggered()
 		Endif
-
-#else
-
-		Triggered()
-#endif
 		
 	End
 	
@@ -156,7 +152,11 @@ Class Action
 	Field _icon:Image
 	Field _hotKey:Key
 	Field _hotKeyMods:Modifier
+#If __DESKTOP_TARGET__
 	Field _async:Bool=True
+#Else
+	Field _async:Bool=False
+#Endif
 	
 	Global _hotKeys:Map<Key,Stack<Action>>
 	
