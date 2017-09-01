@@ -3,6 +3,7 @@
 #define BB_FILESYSTEM_H
 
 #include <bbmonkey.h>
+#include <bbplatform.h>
 
 namespace bbFileSystem{
 

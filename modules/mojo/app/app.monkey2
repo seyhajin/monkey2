@@ -443,7 +443,7 @@ Class AppInstance
 	#end
 	Property Renderable:Bool()
 		
-		Return _activeWindow And Not _activeWindow.Minimized And Not _frozen
+		Return _activeWindow And Not _activeWindow.Minimized And Not _renderingSuspended
 	End
 
 	#rem monkeydoc @hidden
@@ -548,6 +548,21 @@ Class AppInstance
 	
 	End
 
+	#rem monkeydoc @hidden
+	#end
+	Method SuspendRendering()
+		
+		_renderingSuspended+=1
+	end
+	
+	#rem monkeydoc @hidden
+	#end
+	Method ResumeRendering()
+		
+		_renderingSuspended=Max( _renderingSuspended-1,0 )
+	End
+	
+
 	Private
 	
 	Field _config:StringMap<String>
@@ -561,9 +576,9 @@ Class AppInstance
 
 	Field _active:Bool
 	Field _activeWindow:Window
-
-	Field _frozen:Bool
 	
+	Field _renderingSuspended:int
+
 	Field _keyView:View
 	Field _hoverView:View
 	Field _mouseView:View
@@ -1023,8 +1038,10 @@ Class AppInstance
 		Case SDL_APP_WILLENTERBACKGROUND
 			'Prepare your app to go into the background. Stop loops, etc.
 			'This gets called when the user hits the home button, or gets a call.
+
 			'Print "SDL_APP_WILLENTERBACKGROUND"
-			_frozen=True
+		
+			SuspendRendering()
 
 		Case SDL_APP_DIDENTERBACKGROUND
 			'This will get called if the user accepted whatever sent your app to the background.
@@ -1039,9 +1056,12 @@ Class AppInstance
 		Case SDL_APP_DIDENTERFOREGROUND
 			'Restart your loops here.
 			'Your app is interactive and getting CPU again.
+
 			'Print "SDL_APP_DIDENTERFOREGROUND"
+
+			ResumeRendering()
+
 			RequestRender()
-			_frozen=False
 #Endif
      
 		End

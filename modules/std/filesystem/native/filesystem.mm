@@ -3,7 +3,7 @@
 
 #include <UIKit/UIKit.h>
 
-bbString bbFileSystem::getInteralDir(){
+bbString bbFileSystem::getInternalDir(){
 
 	NSString *docs=[@"~/Documents" stringByExpandingTildeInPath];
 
