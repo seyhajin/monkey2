@@ -25,7 +25,7 @@ Function EvalUnaryop:LiteralValue( type:Type,op:String,arg:LiteralValue )
 			
 		Else If ptype.IsSignedIntegral
 			
-			Local r:Int,r0:=Cast<Long>( arg.value )
+			Local r:Long,r0:=Cast<Long>( arg.value )
 			Select op
 			Case "+" r=r0
 			Case "-" r=-r0
@@ -37,7 +37,7 @@ Function EvalUnaryop:LiteralValue( type:Type,op:String,arg:LiteralValue )
 			
 		Else If ptype.IsUnsignedIntegral
 	
-			Local r:Int,r0:=Cast<ULong>( arg.value )
+			Local r:ULong,r0:=Cast<ULong>( arg.value )
 			Select op
 			Case "+" r=r0
 			Case "~" r=~r0
@@ -48,7 +48,7 @@ Function EvalUnaryop:LiteralValue( type:Type,op:String,arg:LiteralValue )
 	
 		Else If ptype.IsReal
 			
-			Local r:Int,r0:=Cast<Double>( arg.value )
+			Local r:Double,r0:=Cast<Double>( arg.value )
 			
 			Select op
 			Case "+" r=r0
