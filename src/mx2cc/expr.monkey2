@@ -315,7 +315,10 @@ Class NewObjectExpr Extends Expr
 		Local ctype:=TCast<ClassType>( type )
 		If Not ctype Throw New SemantEx( "Type '"+type.Name+"' is not a class type" )
 		
-		If ctype.IsGeneric Return New LiteralValue( ctype,"" )
+		If ctype.IsGeneric 
+			Throw New SemantEx( "Type '"+type.ToString()+"' is generic" )
+'			Return New LiteralValue( ctype,"" )
+		Endif
 		
 		'hmmm...
 '		ctype.SemantMembers()

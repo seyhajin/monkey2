@@ -217,8 +217,12 @@ Class ClassType Extends Type
 		Endif
 		
 		If scope.IsGeneric Or cdecl.IsExtern
-		
-			Builder.semantMembers.AddLast( Self )
+			
+			If Not scope.IsGeneric 
+				
+				Builder.semantMembers.AddLast( Self )
+			
+			endif
 			
 		Else
 		

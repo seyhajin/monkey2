@@ -1,7 +1,7 @@
 
 Function Main()
 	
-	Local t:=x+y
+	Local t:=-.1
 	
 	Print t
 

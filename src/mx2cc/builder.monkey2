@@ -323,7 +323,7 @@ Class BuilderInstance
 			Repeat
 			
 				If Not semantMembers.Empty
-				
+					
 					Local ctype:=semantMembers.RemoveFirst()
 					
 					PNode.semanting.Push( ctype.cdecl )

@@ -21,9 +21,9 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+'Const TestArgs:="mx2cc makemods"
 
-'Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
 
