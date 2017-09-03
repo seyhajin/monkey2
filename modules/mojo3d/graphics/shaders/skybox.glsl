@@ -28,5 +28,11 @@ void main(){
 
 	vec3 tv=r_EnvMatrix * (clip.xyz/clip.w);
 	
-	gl_FragColor=vec4( pow( textureCube( r_SkyTexture,tv ).rgb,vec3( 2.2 ) ),1.0 );
+	vec3 color=textureCube( r_SkyTexture,tv ).rgb;
+	
+#if !defined( MX2_SRGBOUTPUT )
+	gl_FragColor=vec4( pow( color,vec3( 2.2 ) ),1.0 );
+#else
+	gl_FragColor=vec4( color,1.0 );
+#endif
 }

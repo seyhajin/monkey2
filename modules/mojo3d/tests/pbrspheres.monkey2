@@ -76,7 +76,12 @@ End
 
 Function Main()
 
-	New AppInstance
+	Local config:=New StringMap<String>
+
+	config["mojo3d_renderer"]="forward"
+	config["GL_depth_buffer_enabled"]=1
+
+	New AppInstance( config )
 	
 	New MyWindow
 	

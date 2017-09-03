@@ -1,9 +1,8 @@
 
-//@renderpasses 1,2,3
+//@renderpasses 1,4
 
 #define MX2_AMBIENTPASS (MX2_RENDERPASS==1)
-#define MX2_CASTSHADOWPASS (MX2_RENDERPASS==2)
-#define MX2_TRANSPARENTPASS (MX2_RENDERPASS==3)
+#define MX2_CASTSHADOWPASS (MX2_RENDERPASS==4)
  
 //material uniforms
 
@@ -223,7 +222,7 @@ void main(){
 	vec3 normal=texture2D( m_NormalTexture,v_TexCoord0 ).xyz * 2.0 - 1.0;
 	normal=normalize( v_TanMatrix * normal );
 #else
-	vec3 normal=v_Normal;
+	vec3 normal=normalize( v_Normal );
 #endif
 	
 #else
@@ -233,7 +232,7 @@ void main(){
 	float metalness=m_MetalnessFactor;
 	float roughness=m_RoughnessFactor;
 	float occlusion=1.0;
-	vec3 normal=v_Normal;
+	vec3 normal=normalize( v_Normal );
 
 #endif
 

@@ -44,12 +44,8 @@ Class MyWindow Extends Window
 		_fog=New FogEffect
 		_fog.Color=Color.Sky
 		_fog.Near=0
-		_fog.Far=100
-		
-		'monochrome effect - hit space to toggle
-		'
-		_monochrome=New MonochromeEffect
-		_monochrome.Enabled=False
+		_fog.Far=20
+		_scene.AddPostEffect( _fog )
 		
 		'_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
@@ -64,7 +60,7 @@ Class MyWindow Extends Window
 		'
 		_light=New Light
 		_light.RotateX( 90 )	'aim directional light downwards
-		
+
 		'create ground
 		'
 		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,1 ) )
@@ -73,7 +69,7 @@ Class MyWindow Extends Window
 		'		
 		Local duck:=Model.Load( "asset::duck.gltf/Duck.gltf" )
 		duck.Mesh.FitVertices( New Boxf( -1,1 ) )
-		'duck.CastsShadow=false
+'		duck.CastsShadow=False
 		
 		Local root:=duck.Copy()
 		root.Move( 0,10,0 )
@@ -120,9 +116,11 @@ Class MyWindow Extends Window
 			
 		'_monochrome.Level=Sin( Now()*3 ) * .5 + .5
 		
+		_ducks[0].RotateY( 1 )
+		
 		For Local duck:=Eachin _ducks
 			
-			duck.RotateY( 1 )
+			'duck.RotateY( 1 )
 		Next
 		
 		util.Fly( _camera,Self )
@@ -137,8 +135,13 @@ Class MyWindow Extends Window
 End
 
 Function Main()
+	
+	Local config:=New StringMap<String>
 
-	New AppInstance
+	config["GL_depth_buffer_enabled"]=1
+	config["mojo3d_renderer"]="forward"
+
+	New AppInstance( config )
 	
 	New MyWindow
 	

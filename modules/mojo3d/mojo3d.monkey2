@@ -29,10 +29,13 @@ Using gles20..
 
 #Import "graphics/entityexts"
 
+#Import "graphics/renderqueue"
+#Import "graphics/renderer"
+#Import "graphics/deferredrenderer"
+#Import "graphics/forwardrenderer"
+
 #Import "graphics/animation"
 #Import "graphics/animator"
-
-#Import "graphics/renderer"
 
 #Import "graphics/posteffect"
 #Import "graphics/bloomeffect"

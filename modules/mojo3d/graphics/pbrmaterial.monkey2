@@ -31,7 +31,14 @@ Class PbrMaterial Extends Material
 		Endif
 		If boned defs+="MX2_BONED~n"
 			
-		SetShader( Shader.Open( "material",defs ) )
+		Local shader:="material-pbr-deferred"
+		defs+=Renderer.GetCurrent().ShaderDefs
+			
+		If Cast<ForwardRenderer>( Renderer.GetCurrent() )
+			shader="material-pbr-forward"
+		Endif
+			
+		SetShader( Shader.Open( shader,defs ) )
 		
 		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.White

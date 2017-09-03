@@ -507,7 +507,7 @@ Class Gltf2Asset
 		If Not asset Return False
 		
 		Local version:=asset.GetString( "version" )
-		Print "Gtf2 version="+version
+'		Print "Gltf2 version="+version
 		
 		If Not LoadBuffers() Return False
 		If Not LoadBufferViews() Return False

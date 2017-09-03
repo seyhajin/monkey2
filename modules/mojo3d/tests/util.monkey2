@@ -34,9 +34,9 @@ Function Fly( entity:Entity,view:View )
 	Endif
 	
 	If Keyboard.KeyDown( Key.A )
-		entity.MoveZ( .1 )	'( New Vec3f( 0,0,.1 ) )
+		entity.MoveZ( .1 )
 	Else If Keyboard.KeyDown( Key.Z )
-		entity.MoveZ( -.1 )	'( New Vec3f( 0,0,-.1 ) )
+		entity.MoveZ( -.1 )
 	Endif
 		
 End

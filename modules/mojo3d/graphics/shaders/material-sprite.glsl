@@ -37,5 +37,9 @@ void main(){
 	
 	float alpha=texture2D( m_ColorTexture,v_TexCoord0 ).a * m_ColorFactor.a;
 	
+#if defined( MX2_SRGBOUTPUT )
+	gl_FragColor=vec4( pow( color,vec3( 1.0/2.2 ) ),alpha );
+#else
 	gl_FragColor=vec4( color,alpha );
+#endif
 }

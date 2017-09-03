@@ -8,7 +8,10 @@ Class SpriteMaterial Extends Material
 	#rem monkeydoc Creates a new sprite material.
 	#end	
 	Method New()
-		Super.New( Shader.Open( "sprite3d" ) )
+		
+		Local shader:="material-sprite",defs:=Renderer.GetCurrent().ShaderDefs
+			
+		SetShader( Shader.Open( shader,defs ) )
 		
 		BlendMode=BlendMode.Alpha
 		CullMode=CullMode.None

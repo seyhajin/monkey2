@@ -86,8 +86,21 @@ Class Scene
 		_postEffects.Add( postEffect )
 	End
 	
-	#rem monkeydoc 	Destroys all entities in the scene.
+	#rem monkeydoc Removes a post effect from the scene
+	#end
+	Method RemovePostEffect( postEffect:PostEffect )
+		
+		_postEffects.Remove( postEffect )
+	End
 	
+	#rem monkeydocs Get all post effect that have been added to the scene
+	#end
+	Method GetPostEffects:PostEffect[]()
+		
+		Return _postEffects.ToArray()
+	End
+	
+	#rem monkeydoc Destroys all entities in the scene.
 	#end
 	Method DestroyAllEntities()
 		

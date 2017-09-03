@@ -89,7 +89,7 @@ Class Gltf2Loader
 		
 		Local tex:=Texture.Load( _dir+texture.source.uri,flags )
 		
-		Print "Opened texture:"+_dir+texture.source.uri
+'		Print "Opened texture:"+_dir+texture.source.uri
 		
 		_textureCache[texture]=tex
 		Return tex
@@ -148,7 +148,7 @@ Class Gltf2Loader
 		
 		If node.mesh
 			
-			Print "mesh="+node.mesh.name
+'			Print "mesh="+node.mesh.name
 			
 			Local matrix:=Cast<AffineMat4f>( GetMatrix( node ) )
 
@@ -239,7 +239,7 @@ Class Gltf2Loader
 					
 				Endif
 					
-				Print "Added "+vcount+" vertices, "+icount+" indices."
+'				Print "Added "+vcount+" vertices, "+icount+" indices."
 				
 			Next
 			

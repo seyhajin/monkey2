@@ -1,5 +1,5 @@
 
-//@renderpasses 1,2
+//@renderpasses 1
 
 //material uniforms
 
@@ -10,8 +10,6 @@ uniform mat3 m_TextureMatrix;
 uniform mat4 i_ModelViewMatrix;
 uniform mat4 i_ModelViewProjectionMatrix;
 uniform mat3 i_ModelViewNormalMatrix;
-
-#if MX2_RENDERPASS==1
 
 uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_EnvTexture;
@@ -24,25 +22,17 @@ varying vec2 v_TexCoord0;
 varying vec3 v_Normal;
 varying mat3 v_TanMatrix;
 
-#endif
-
 //@vertex
 
 //vertex attribs....
 
 attribute vec4 a_Position;
 
-#if MX2_RENDERPASS==1 
-
 attribute vec2 a_TexCoord0;
 attribute vec3 a_Normal;
 attribute vec4 a_Tangent;
 
-#endif
-
 void main(){
-
-#if MX2_RENDERPASS==1
 
 	// texture coord0
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
@@ -58,14 +48,10 @@ void main(){
 	v_TanMatrix[0]=i_ModelViewNormalMatrix * a_Tangent.xyz;
 	v_TanMatrix[1]=cross( v_TanMatrix[0],v_TanMatrix[2] ) * a_Tangent.a;
 	
-#endif
-	
 	gl_Position=i_ModelViewProjectionMatrix * a_Position;
 }
 
 //@fragment
-
-#if MX2_RENDERPASS==1
 
 void main0( vec3 color,vec3 emissive,float metalness,float roughness,float occlusion,vec3 normal ){
 
@@ -102,10 +88,6 @@ void main0( vec3 color,vec3 emissive,float metalness,float roughness,float occlu
 	gl_FragData[2]=vec4( normal * 0.5 + 0.5,roughness );
 }
 
-#endif
-
-#if MX2_RENDERPASS==1
-
 uniform float r_Time;
 
 uniform sampler2D m_ColorTexture;
@@ -120,11 +102,7 @@ uniform sampler2D m_NormalTexture1;
 uniform vec2 m_Velocity0;
 uniform vec2 m_Velocity1;
 
-#endif
-
 void main(){
-
-#if MX2_RENDERPASS==1
 
 	vec3 color=pow( texture2D( m_ColorTexture,v_TexCoord0 ).rgb,vec3( 2.2 ) ) * m_ColorFactor.rgb;
 
@@ -143,11 +121,5 @@ void main(){
 	float occlusion=1.0;
 
 	main0( color,emissive,metalness,roughness,occlusion,normal );
-	
-#else
-
-	gl_FragColor=vec4( vec3( gl_FragCoord.z ),1.0 );
-
-#endif
 
 }
