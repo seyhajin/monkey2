@@ -59,35 +59,47 @@ Class AudioData Extends Resource
 		Return BytesPerSample( _format ) * _length
 	End
 	
+	#rem monkeydoc Sets a sample at a given sample index.
+
+	@index must be in the range [0,Length).
+	
+	#end
+	Method SetSample( index:Int,sample:Float,channel:Int=0 )
+		DebugAssert( index>=0 And index<_length )
+		Select _format
+		Case AudioFormat.Mono8
+			_data[index]=Clamp( sample * 128.0 + 128.0,0.0,255.0 )
+		Case AudioFormat.Stereo8
+			_data[index*2+(channel&1)]=Clamp( sample * 128.0 + 128.0,0.0,255.0 )
+		Case AudioFormat.Mono16
+			Cast<Short Ptr>( _data )[index]=Clamp( sample * 32768.0,-32768.0,32767.0 )
+		Case AudioFormat.Stereo16
+			Cast<Short Ptr>( _data )[index*2+(channel&1)]=Clamp( sample * 32768.0,-32768.0,32767.0 )
+		End
+	End
+	
 	#rem monkeydoc Gets a sample at a given sample index.
 	
 	@index must be in the range [0,Length).
 	
 	#end
 	Method GetSample:Float( index:Int,channel:Int=0 )
+		
+		'Ok, note that this never returns quite +1.0 as there is one less int above 0 than below
+		'eg: range of signed ints is [-128,+127]
+		'
 		DebugAssert( index>=0 And index<_length )
 		Select _format
 		Case AudioFormat.Mono8
-			Return _data[index]/128.0-1
+			Return ( _data[index] - 128.0 ) / 128.0
 		Case AudioFormat.Stereo8
-			Return _data[index*2+(channel&1)]/128.0-1
+			Return ( _data[index*2+(channel&1)] - 128.0 ) / 128.0
 		Case AudioFormat.Mono16
-			Return Cast<Short Ptr>( _data )[index]/32767.0
+			Return Cast<Short Ptr>( _data )[index]/32768.0
 		Case AudioFormat.Stereo16
-			Return Cast<Short Ptr>( _data )[index*2+(channel&1)]/32767.0
+			Return Cast<Short Ptr>( _data )[index*2+(channel&1)]/32768.0
 		End
 		Return 0
-	End
-	
-	#rem monkeydoc @hidden Sets a sample at a given sample index.
-
-	@index must be in the range [0,Length).
-	
-	#end
-	Method SetSample( index:Int,channel:Int=0,sample:Float )
-		DebugAssert( index>=0 And index<_length )
-		
-		RuntimeError( "TODO!" )
 	End
 	
 	#rem monkey Loads audio data from a file.
