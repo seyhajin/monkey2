@@ -124,6 +124,10 @@ Class GLProgram
 			For Local u:=Eachin _uniforms[i]
 			
 				Select u.type
+				Case GL_INT
+				
+					glUniform1i( u.location,ublock.GetInt( u.uniformId ) )
+					
 				Case GL_FLOAT
 				
 					glUniform1f( u.location,ublock.GetFloat( u.uniformId ) )
