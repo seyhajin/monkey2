@@ -64,12 +64,11 @@ When evaluating an operator's operands, it is sometimes necessary to adjust the 
 
 When evaluating the operands of arithemetic or comparison operators, the following rules are used:
 
-* If either operator String, the other is converted to String.
+* If either operator is String, the other is converted to String.
 * Else If either operand is Double, the other is converted to Double.
 * Else if either operand is Float, the other is converted to Float.
 * Else if either operand is ULong, the other is converted to ULong.
 * Else if either operand is Long, the other is converted to Long.
-* Else if either operand is UInt, the other is converted to UInt.
 * Else if either operand is unsigned, both are converted to UInt.
 * Else both operands are converted to Int.
 
@@ -77,7 +76,6 @@ When evaluating the operands of the `&`, `|` and `^` integer operators, both ope
 
 * If either operand is ULong, the other is converted to ULong.
 * Else if either operand is Long, the other is converted to Long.
-* Else if either operand is UInt, the other is converted to UInt.
 * Else if either operand is unsigned, both are converted to UInt.
 * Else both operands are converted to Int.
 
