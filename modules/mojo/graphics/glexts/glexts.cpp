@@ -22,6 +22,10 @@ namespace bbGLexts{
 	
 	void init(){
 	
+		static bool done;
+		if( done ) return;
+		done=true;
+		
 		#if __EMSCRIPTEN__
 
 		if( GL_draw_buffers=SDL_GL_ExtensionSupported( "GL_WEBGL_draw_buffers" ) ){
@@ -29,7 +33,7 @@ namespace bbGLexts{
 			// Don't actually call this, will crash emscripten...extension is 'just there'!
 			//
 			// glDrawBuffers=(void(*)(int,const GLenum*)) SDL_GL_GetProcAddress( "glDrawBuffersWEBGL" );
-				
+			
 			glDrawBuffers=::glDrawBuffers;
 		}
 		

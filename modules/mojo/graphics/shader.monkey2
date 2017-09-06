@@ -291,7 +291,7 @@ Class Shader
 	
 	Field _rpasses:Int[]
 	Field _rpassMask:Int
-	Field _programs:=New GLProgram[8]
+	Field _programs:=New GLProgram[32]
 	Field _glSeq:Int
 	
 	Method EnumPasses()

@@ -436,8 +436,6 @@ Class GraphicsDevice
 		'Print "GL_RENDERER="+glGetString( GL_VENDOR )
 		'#Endif
 			
-		InitGLexts()
-		
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
 		
 		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )

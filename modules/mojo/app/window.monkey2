@@ -514,6 +514,8 @@ Class Window Extends View
 		Endif
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
 		
+		InitGLexts()
+		
 		_allWindows.Push( Self )
 		_windowsByID[SDL_GetWindowID( _sdlWindow )]=Self
 		If Not (flags & WindowFlags.Hidden) _visibleWindows.Push( Self )

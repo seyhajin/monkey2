@@ -9,10 +9,10 @@ Class RenderTarget Extends Resource
 		
 		_depthTexture=depthTexture
 		
-		_drawBufs=New GLenum[_colorTextures.Length]
+		_glDrawBufs=New GLenum[_colorTextures.Length]
 		
 		For Local i:=0 Until _colorTextures.Length
-			_drawBufs[i]=_colorTextures[i] ? GL_COLOR_ATTACHMENT0+i Else GL_NONE
+			_glDrawBufs[i]=_colorTextures[i] ? GL_COLOR_ATTACHMENT0+i Else GL_NONE
 		Next
 	End
 	
@@ -72,11 +72,11 @@ Class RenderTarget Extends Resource
 		glBindFramebuffer( GL_FRAMEBUFFER,ValidateGLFramebuffer() )
 
 		If glexts.GL_draw_buffers 
-			glDrawBuffers( _drawBufs.Length,_drawBufs.Data )
+			glDrawBuffers( _glDrawBufs.Length,_glDrawBufs.Data )
 		Endif
 
 		If glexts.GL_read_buffer
-			glReadBuffer( _drawBufs ? _drawBufs[0] Else GL_NONE )
+			glReadBuffer( _glDrawBufs ? _glDrawBufs[0] Else GL_NONE )
 		Endif
 
 		CheckStatus()
@@ -92,7 +92,8 @@ Class RenderTarget Extends Resource
 			
 		_colorTextures=Null
 		_depthTexture=Null
-		_glSeq=0
+		
+		_glSeq=-1
 	End
 	
 	#rem monkeydoc @hidden
@@ -106,8 +107,7 @@ Class RenderTarget Extends Resource
 	
 	Field _colorTextures:Texture[]
 	Field _depthTexture:Texture
-	
-	Field _drawBufs:GLenum[]
+	Field _glDrawBufs:GLenum[]
 	
 	Field _glFramebuffer:GLuint
 	Field _glSeq:Int
@@ -126,14 +126,14 @@ Class RenderTarget Extends Resource
 			
 			Local texture:=_colorTextures[i]
 			
-			If texture glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,GL_TEXTURE_2D,texture.ValidateGLTexture(),0 )
+			If texture glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,texture.GLTarget,texture.ValidateGLTexture(),0 )
 
 		Next
 		
 		If _depthTexture
 			
-			glFramebufferTexture2D( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,_depthTexture.ValidateGLTexture(),0 )
-			
+			glFramebufferTexture2D( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,_depthTexture.GLTarget,_depthTexture.ValidateGLTexture(),0 )
+		
 		Endif
 		
 		_glSeq=glGraphicsSeq
