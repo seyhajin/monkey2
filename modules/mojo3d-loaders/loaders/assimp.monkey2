@@ -435,18 +435,15 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 			
 		path=RealPath( path )
 		
-'		Local scene:=aiImportFile( path,flags )
 		Local scene:=aiImportFileExWithProperties( path,flags,Null,props )
 		
 		aiReleasePropertyStore( props )
 		
-		If Not scene Print "aiImportFile failed: path="+path
-		
-'		Local data:=DataBuffer.Load( path )
-
-'		Local scene:=aiImportFileFromMemory( Cast<libc.char_t Ptr>( data.Data ),data.Length,flags,ExtractExt( path ).Slice( 1 ) )
-		
-'		data.Discard()
+		If Not scene 
+			Print "aiImportFile failed: path="+path
+			Print "error="+aiGetErrorString()
+			Return Null
+		Endif
 		
 		Return scene
 	End
