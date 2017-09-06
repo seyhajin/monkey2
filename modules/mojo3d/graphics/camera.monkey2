@@ -11,9 +11,9 @@ Class Camera Extends Entity
 		Super.New( parent )
 		
 		Viewport=New Recti( 0,0,640,480 )
-		Fov=90
 		Near=1
 		Far=1000
+		FOV=90
 		
 		Show()
 	End
@@ -56,10 +56,10 @@ Class Camera Extends Entity
 	
 	#rem monkeydoc Vertical field of view in degrees.
 	
-	Defaults to 90.0
+	Defaults to 90.0.
 	
 	#end
-	Property Fov:Float()
+	Property FOV:Float()
 	
 		Return _fovy
 		
@@ -124,9 +124,9 @@ Class Camera Extends Entity
 		Super.New( camera,parent )
 		
 		Viewport=camera.Viewport
-		Fov=camera.Fov
 		Near=camera.Near
 		Far=camera.Far
+		FOV=camera.FOV
 		
 		Show()
 	End

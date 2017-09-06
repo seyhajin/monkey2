@@ -22,8 +22,7 @@ Class DeferredRenderer Extends Renderer
 		
 		Print "Creating DeferredRenderer"
 	
-		_dlightShader=Shader.Open( "light-directional-deferred" )
-		_plightShader=Shader.Open( "light-point-deferred" )
+		_lightShader=Shader.Open( "lighting-deferred",ShaderDefs )
 		_copyShader=Shader.Open( "copy" )
 		
 	End
@@ -81,12 +80,31 @@ Class DeferredRenderer Extends Renderer
 		
 		_runiforms.SetVec2f( "BufferCoordScale",Cast<Vec2f>( _renderViewport.Size )/Cast<Vec2f>( _hdrTexture.Size ) )
 		
+		'directional with shadows
 		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Directional Or Not light.ShadowsEnabled Continue
 			
-			If light.Type=LightType.Point Continue
+			RenderLight( light,camera )
+		Next
+		
+		'point with shadows (not supported yet)
+		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Point Or Not light.ShadowsEnabled Continue
+			
+			RenderLight( light,camera )
+		Next
+		
+		'directional without  shadows
+		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Directional Or light.ShadowsEnabled Continue
 
-			RenderCSMShadows( light )
-			
+			RenderLight( light,camera )
+		Next
+		
+		'point without shadows
+		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Point Or light.ShadowsEnabled Continue
+
 			RenderLight( light,camera )
 		Next
 		
@@ -108,8 +126,7 @@ Class DeferredRenderer Extends Renderer
 		
 	Private
 	
-	Field _plightShader:Shader
-	Field _dlightShader:Shader
+	Field _lightShader:Shader
 	Field _copyShader:Shader
 	
 	Field _hdrTexture:Texture		'contains output linear HDR color
@@ -131,7 +148,7 @@ Class DeferredRenderer Extends Renderer
 		_device.DepthMask=True
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.BlendMode=BlendMode.Opaque
-		_device.RenderPass=1
+		_device.RenderPass=0
 
 		Super.RenderOpaqueOps()
 	End
@@ -147,6 +164,16 @@ Class DeferredRenderer Extends Renderer
 	End
 	
 	Method RenderLight( light:Light,camera:Camera )
+		
+		Local pass:=0
+		
+		Select light.Type
+		Case LightType.Directional
+			If light.ShadowsEnabled RenderCSMShadows( light ) ; pass|=2
+		Case LightType.Point
+			If light.ShadowsEnabled RenderPointShadows( light ) ; pass|=2
+			pass|=1
+		End
 	
 		_runiforms.SetVec4f( "LightColor",light.Color )
 		_runiforms.SetFloat( "LightRange",light.Range )
@@ -159,21 +186,9 @@ Class DeferredRenderer Extends Renderer
 		_device.DepthFunc=DepthFunc.Always
 		_device.BlendMode=BlendMode.Additive
 		_device.CullMode=CullMode.None
-		_device.RenderPass=3
-		
-		Select light.Type
-		Case LightType.Directional
-		
-			_device.Shader=_dlightShader
-			
-			RenderQuad()
-		
-		Case LightType.Point
-
-			_device.Shader=_plightShader
-			
-			RenderQuad()
-		End
+		_device.Shader=_lightShader
+		_device.RenderPass=pass
+		RenderQuad()
 
 	End
 

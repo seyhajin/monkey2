@@ -1,8 +1,13 @@
 
-//@renderpasses 1,4
+//@renderpasses 0,16,17
 
-#define MX2_AMBIENTPASS (MX2_RENDERPASS==1)
-#define MX2_CASTSHADOWPASS (MX2_RENDERPASS==4)
+//renderpasses:
+//
+// 0 = ambient + gbuffers.
+// 16 = directional light shadowcasters.
+// 17 = point light shadowcasters.
+
+#define MX2_COLORPASS (MX2_RENDERPASS==0)
  
 //material uniforms
 
@@ -16,7 +21,7 @@ uniform mat4 i_ModelViewMatrix;
 uniform mat4 i_ModelViewProjectionMatrix;
 uniform mat3 i_ModelViewNormalMatrix;
 
-#if MX2_AMBIENTPASS
+#if MX2_COLORPASS
 
 uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_EnvTexture;
@@ -33,7 +38,15 @@ varying mat3 v_TanMatrix;
 #endif
 #endif
 
-#endif	//MX2_AMBIENTPASS
+#else	//MX2_COLORPASS
+
+#if MX2_RENDERPASS==17
+uniform float r_LightRange;
+#endif
+
+varying vec3 v_Position;
+
+#endif	//MX2_COLORPASS
 
 //@vertex
 
@@ -49,7 +62,7 @@ attribute vec4 a_Weights;
 attribute vec4 a_Bones;
 #endif
 
-#if MX2_AMBIENTPASS
+#if MX2_COLORPASS
 
 attribute vec3 a_Normal;
 #ifdef MX2_TEXTURED
@@ -59,7 +72,7 @@ attribute vec4 a_Tangent;
 #endif
 #endif
 
-#endif	//MX2_AMBIENTPASS
+#endif	//MX2_COLORPASS
 
 #ifdef MX2_BONED
 
@@ -76,7 +89,10 @@ void main(){
 		m2 * a_Position * a_Weights.z +
 		m3 * a_Position * a_Weights.a;
 		
-#if MX2_AMBIENTPASS
+	// view space position
+	v_Position=( i_ModelViewMatrix * b_Position ).xyz;
+
+#if MX2_COLORPASS
 
 	mat3 n0=mat3( m0[0].xyz,m0[1].xyz,m0[2].xyz );
 	mat3 n1=mat3( m1[0].xyz,m1[1].xyz,m1[2].xyz );
@@ -97,9 +113,6 @@ void main(){
 		n3 * a_Tangent.xyz * a_Weights.a ),a_Tangent.w );
 #endif
 
-	// view space position
-	v_Position=( i_ModelViewMatrix * b_Position ).xyz;
-
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * b_Normal;
 	
@@ -114,7 +127,7 @@ void main(){
 #endif
 #endif
 	
-#endif	//MX2_AMBIENTPASS
+#endif	//MX2_COLORPASS
 	
 	gl_Position=i_ModelViewProjectionMatrix * b_Position;
 }
@@ -123,10 +136,10 @@ void main(){
 
 void main(){
 
-#if MX2_AMBIENTPASS
-
 	// view space position
 	v_Position=( i_ModelViewMatrix * a_Position ).xyz;
+
+#if MX2_COLORPASS
 
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * a_Normal;
@@ -142,7 +155,7 @@ void main(){
 #endif
 #endif
 
-#endif	//MX2_AMBIENTPASS
+#endif	//MX2_COLORPASS
 	
 	gl_Position=i_ModelViewProjectionMatrix * a_Position;
 }
@@ -151,14 +164,29 @@ void main(){
 
 //@fragment
 
-#if MX2_AMBIENTPASS
+vec4 FloatToRGBA( float value ){
 
-void pbr_WriteFragData( vec3 color,vec3 emissive,float metalness,float roughness,float occlusion,vec3 normal ){
+	const float MaxFloat=0.9999999;
 
+	value=clamp( value,0.0,MaxFloat );
+
+	vec4 rgba=fract( vec4( 1.0, 255.0, 65025.0, 16581375.0 ) * value );
+	
+	return rgba-rgba.yzww * vec4( 1.0/255.0, 1.0/255.0, 1.0/255.0, 0.0 );
+}
+
+float RGBAToFloat( vec4 rgba ){
+
+	return dot( rgba,vec4( 1.0, 1.0/255.0, 1.0/65025.0, 1.0/16581375.0 ) );
+}
+
+#if MX2_COLORPASS
+
+void pbrWriteFragData( vec3 color,vec3 emissive,float metalness,float roughness,float occlusion,vec3 normal ){
+
+	float glosiness=1.0-roughness;
 	vec3 color0=vec3( 0.04,0.04,0.04 );
-	
 	vec3 diffuse=color * (1.0-metalness);
-	
 	vec3 specular=(color-color0) * metalness + color0;
 	
 	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
@@ -173,22 +201,25 @@ void pbr_WriteFragData( vec3 color,vec3 emissive,float metalness,float roughness
 	
 	float ndotv=max( dot( normal,vvec ),0.0 );
 	
-	vec3 fschlick=specular + (1.0-specular) * pow( 1.0-ndotv,5.0 ) * (1.0-roughness);
+	vec3 fschlick=specular + (1.0-specular) * pow( 1.0-ndotv,5.0 ) * glosiness;
 
 	vec3 ambdiff=diffuse * r_AmbientDiffuse.rgb;
 		
 	vec3 ambspec=env * fschlick;
 
+	//write ambient
 	gl_FragData[0]=vec4( min( (ambdiff+ambspec) * occlusion + emissive,8.0 ),1.0 );
-
+	
+	//write color/metalness
 	gl_FragData[1]=vec4( color,metalness );
 	
+	//write normal/roughness
 	gl_FragData[2]=vec4( normal * 0.5 + 0.5,roughness );
 }
 
 #endif
 
-#if MX2_AMBIENTPASS
+#if MX2_COLORPASS
 
 #ifdef MX2_TEXTURED
 uniform sampler2D m_ColorTexture;
@@ -204,11 +235,7 @@ uniform vec4 m_EmissiveFactor;
 uniform float m_MetalnessFactor;
 uniform float m_RoughnessFactor;
 
-#endif
-
 void main(){
-
-#if MX2_AMBIENTPASS
 
 #ifdef MX2_TEXTURED
 
@@ -236,11 +263,21 @@ void main(){
 
 #endif
 
-	pbr_WriteFragData( color,emissive,metalness,roughness,occlusion,normal );
+	pbrWriteFragData( color,emissive,metalness,roughness,occlusion,normal );
+}
 	
-#else
+#else	//MX2_COLORPASS
 
+void main(){
+
+#if MX2_RENDERPASS==17
+	gl_FragColor=FloatToRGBA( length( v_Position )/r_LightRange );
+#elif defined( MX2_RGBADEPTHTEXTURES )
+	gl_FragColor=FloatToRGBA( gl_FragCoord.z );
+#else
 	gl_FragColor=vec4( vec3( gl_FragCoord.z ),1.0 );
+#endif
+
+}
 
 #endif
-}

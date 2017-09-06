@@ -12,9 +12,9 @@ Note: Only directional lights are currently fully supported.
 | `Spot`		| Spot light.
 #end
 Enum LightType
-	Directional=0
-	Point=1
-	Spot=2
+	Directional=1
+	Point=2
+	Spot=3
 End
 
 #rem monkeydoc The Light class.

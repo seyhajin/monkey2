@@ -21,21 +21,21 @@ Class ForwardRenderer Extends Renderer
 
 	#rem monkeydoc @hidden
 	#end
-	Method New( deferred:Bool )
-		Super.New( deferred ? "MX2_LINEAROUTPUT" Else "MX2_SRGBOUTPUT" )
+	Method New( direct:Bool )
+		Super.New( direct ? "MX2_SRGBOUTPUT" Else "MX2_LINEAROUTPUT" )
 		
-		_deferred=deferred
+		_direct=direct
 		
-		Print "Creating ForwardRenderer, deferred="+Int( _deferred )
+		Print "Creating ForwardRenderer, direct="+Int( _direct )
 		
-		If _deferred _copyShader=Shader.Open( "copy" )
+		If Not _direct _copyShader=Shader.Open( "copy" )
 	End
 	
 	Protected
 	
 	Method OnValidateSize( size:Vec2i ) Override 
 		
-		If Not _deferred Return
+		If _direct Return
 
 		If Not _colorBuffer Or size.x>_colorBuffer.Size.x Or size.y>_colorBuffer.Size.y
 			
@@ -64,7 +64,7 @@ Class ForwardRenderer Extends Renderer
 		_device=Device
 		_runiforms=RenderUniforms
 		
-		If _deferred
+		If Not _direct
 			_renderTarget=device.RenderTarget
 			_renderTargetSize=device.RenderTargetSize
 			_renderViewport=device.Viewport
@@ -81,33 +81,40 @@ Class ForwardRenderer Extends Renderer
 				
 		RenderBackground()
 		
-		Local rambient:=False
+		_ambientRendered=False
 		
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Directional Continue
+			If light.Type<>LightType.Directional Or Not light.ShadowsEnabled Continue
 			
-			RenderCSMShadows( light )
-
-			_runiforms.SetVec4f( "LightColor",light.Color )
-			_runiforms.SetFloat( "LightRange",light.Range )
-			_runiforms.SetMat4f( "LightViewMatrix",camera.InverseMatrix * light.Matrix )
-			
-			If rambient
-				RenderOpaque( BlendMode.Additive,2 )
-			Else
-				RenderOpaque( BlendMode.Opaque,3 )
-				rambient=True
-			Endif
-			
+			RenderOpaque( light,camera )
 		Next
 		
-		If Not rambient
-			RenderOpaque( BlendMode.Opaque,1 )
+		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Point Or Not light.ShadowsEnabled Continue
+			
+			RenderOpaque( light,camera )
+		Next
+		
+		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Directional Or light.ShadowsEnabled Continue
+			
+			RenderOpaque( light,camera )
+		Next
+		
+		For Local light:=Eachin scene.Lights
+			If light.Type<>LightType.Point Or light.ShadowsEnabled Continue
+			
+			RenderOpaque( light,camera )
+		Next
+		
+		If Not _ambientRendered
+			
+			RenderOpaque( Null,camera )
 		Endif
 		
 		RenderSprites()
 		
-		If _deferred
+		If Not _direct
 		
 			_device.RenderTarget=_colorTarget1
 			RenderEffects( scene )
@@ -123,7 +130,7 @@ Class ForwardRenderer Extends Renderer
 	
 	Private
 	
-	Field _deferred:bool
+	Field _direct:Bool
 	
 	Field _copyShader:Shader
 	Field _colorBuffer:Texture
@@ -138,15 +145,35 @@ Class ForwardRenderer Extends Renderer
 	Field _device:GraphicsDevice
 	Field _runiforms:UniformBlock
 	
-	Method RenderOpaque( blendMode:BlendMode,renderPass:Int )
+	Field _ambientRendered:Bool
+	
+	Method RenderOpaque( light:Light,camera:Camera )
+		
+		Local pass:Int=_ambientRendered ? 0 Else 1
+		
+		If light
+			Select light.Type
+			Case LightType.Directional			
+				if light.ShadowsEnabled RenderCSMShadows( light ) ; pass|=4
+			Case LightType.Point
+				if light.ShadowsEnabled RenderPointShadows( light ) ; pass|=4
+				pass|=8
+			End
+			_runiforms.SetVec4f( "LightColor",light.Color )
+			_runiforms.SetFloat( "LightRange",light.Range )
+			_runiforms.SetMat4f( "LightViewMatrix",camera.InverseMatrix * light.Matrix )
+			pass|=2
+		Endif
 		
 		_device.ColorMask=ColorMask.All
 		_device.DepthMask=True
 		_device.DepthFunc=DepthFunc.LessEqual
-		_device.BlendMode=blendMode
-		_device.RenderPass=renderPass
-
+		_device.BlendMode=_ambientRendered ? BlendMode.Additive Else BlendMode.Opaque
+		_device.RenderPass=pass
+		
 		Super.RenderOpaqueOps()
+		
+		_ambientRendered=True
 	End
 	
 	Method RenderSprites()

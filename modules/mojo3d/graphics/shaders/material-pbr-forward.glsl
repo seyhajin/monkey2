@@ -1,9 +1,20 @@
 
-//@renderpasses 1,2,3,4
+//@renderpasses 1,2,3,6,7,10,11,14,15,16,17
 
-#define MX2_COLORPASS (MX2_RENDERPASS&3)
+//render passes:
+//
+// 1  = ambient.
+// 2  = lighting.
+// 4  = shadowed.
+// 8  = light type - 0=directional, 1=point
+// 16 = directional shadow casters.
+// 17 = point shadow casters.
+
+#define MX2_COLORPASS ((MX2_RENDERPASS&16)==0)
 #define MX2_AMBIENTPASS (MX2_RENDERPASS&1)
 #define MX2_LIGHTINGPASS (MX2_RENDERPASS&2)
+#define MX2_SHADOWEDPASS (MX2_RENDERPASS&4)
+#define MX2_DIRECTIONALLIGHT ((MX2_RENDERPASS&8)==0)
  
 //instance uniforms
 //
@@ -12,17 +23,13 @@ uniform mat4 i_ModelViewProjectionMatrix;
 uniform mat3 i_ModelViewNormalMatrix;
 
 #if defined( MX2_BONED )
-
 uniform mat4 i_ModelBoneMatrices[96];
-
 #endif
 
 //material uniforms
 
 #if MX2_COLORPASS && defined( MX2_TEXTURED )
-
 uniform mat3 m_TextureMatrix;
-
 #endif
 
 #if MX2_AMBIENTPASS
@@ -37,17 +44,30 @@ uniform mat3 r_EnvMatrix;
 
 #if MX2_LIGHTINGPASS
 
-uniform sampler2D r_ShadowTexture;
-uniform mat4 r_ShadowMatrix0;
-uniform mat4 r_ShadowMatrix1;
-uniform mat4 r_ShadowMatrix2;
-uniform mat4 r_ShadowMatrix3;
-uniform vec4 r_ShadowSplits;
-
 uniform mat4 r_LightViewMatrix;
 uniform vec4 r_LightColor;
 uniform float r_LightRange;
 
+#if MX2_SHADOWEDPASS
+
+#if MX2_DIRECTIONALLIGHT
+uniform sampler2D r_ShadowCSMTexture;
+uniform vec4 r_ShadowCSMSplits;
+uniform mat4 r_ShadowMatrix0;
+uniform mat4 r_ShadowMatrix1;
+uniform mat4 r_ShadowMatrix2;
+uniform mat4 r_ShadowMatrix3;
+#else
+uniform samplerCube r_ShadowCubeTexture;
+uniform mat4 r_ShadowMatrix0;
+#endif
+
+#endif	//MX2_SHADOWEDPASS
+
+#endif	//MX2_LIGHTINGPASS
+
+#if MX2_RENDERPASS==17
+uniform float r_LightRange;
 #endif
 
 //pbr varyings...
@@ -93,6 +113,9 @@ void main(){
 		m2 * a_Position * a_Weights.z +
 		m3 * a_Position * a_Weights.a;
 		
+	// view space position
+	v_Position=( i_ModelViewMatrix * b_Position ).xyz;
+
 #if MX2_COLORPASS
 
 	mat3 n0=mat3( m0[0].xyz,m0[1].xyz,m0[2].xyz );
@@ -113,9 +136,6 @@ void main(){
 		n2 * a_Tangent.xyz * a_Weights.z +
 		n3 * a_Tangent.xyz * a_Weights.a ),a_Tangent.w );
 #endif
-
-	// view space position
-	v_Position=( i_ModelViewMatrix * b_Position ).xyz;
 
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * b_Normal;
@@ -141,7 +161,7 @@ void main(){
 void main(){
 
 	// view space position
-	v_Position=( i_ModelViewMatrix * a_Position ).xyz;
+	v_Position=(i_ModelViewMatrix * a_Position).xyz;
 
 #if MX2_COLORPASS
 
@@ -168,22 +188,41 @@ void main(){
 
 //@fragment
 
-#if MX2_LIGHTINGPASS
+vec4 FloatToRGBA( float value ){
 
-float shadow_color( vec3 normal ){
+	const float MaxFloat=0.9999999;
+
+	value=clamp( value,0.0,MaxFloat );
+
+	vec4 rgba=fract( vec4( 1.0, 255.0, 65025.0, 16581375.0 ) * value );
+	
+	return rgba-rgba.yzww * vec4( 1.0/255.0, 1.0/255.0, 1.0/255.0, 0.0 );
+}
+
+float RGBAToFloat( vec4 rgba ){
+
+	return dot( rgba,vec4( 1.0, 1.0/255.0, 1.0/65025.0, 1.0/16581375.0 ) );
+}
+
+#if MX2_COLORPASS
+
+#if MX2_SHADOWEDPASS
+
+#if MX2_DIRECTIONALLIGHT
+
+float shadowColor( vec3 normal ){
 
 	vec4 vpos=vec4( v_Position + normal * .05,1.0 );
-//	vec4 vpos=vec4( v_Position,1.0 );
 	vec4 lpos;
 	vec2 off;
 	
-	if( vpos.z<r_ShadowSplits.x ){
+	if( vpos.z<r_ShadowCSMSplits.x ){
 		lpos=r_ShadowMatrix0 * vpos;
 		off=vec2( 0.0,0.0 );
-	}else if( vpos.z<r_ShadowSplits.y ){
+	}else if( vpos.z<r_ShadowCSMSplits.y ){
 		lpos=r_ShadowMatrix1 * vpos;
 		off=vec2( 0.5,0.0 );
-	}else if( vpos.z<r_ShadowSplits.z ){
+	}else if( vpos.z<r_ShadowCSMSplits.z ){
 		lpos=r_ShadowMatrix2 * vpos;
 		off=vec2( 0.0,0.5 );
 	}else{
@@ -194,19 +233,38 @@ float shadow_color( vec3 normal ){
 	vec3 spos=lpos.xyz/lpos.w * vec3( 0.25,0.25,0.5 ) + vec3( 0.25,0.25,0.5 );
 
 //	spos.z*=0.999;
-	
-	float d=texture2D( r_ShadowTexture,spos.xy+off ).r;
+
+#if defined( MX2_RGBADEPTHTEXTURES )
+	float d=RGBAToFloat( texture2D( r_ShadowCSMTexture,spos.xy+off ) );
+#else
+	float d=texture2D( r_ShadowCSMTexture,spos.xy+off ).r;
+#endif
 	
 	if( spos.z>d ) return 0.0;
 	
 	return 1.0;
 }
 
-#endif
+#else	//MX2_DIRECTIONALLIGHT
 
-#if MX2_COLORPASS
+float shadowColor( vec3 normal ){
 
-vec3 pbr_linear_frag_color( vec3 color,vec3 emissive,float metalness,float roughness,float occlusion,vec3 normal ){
+	vec4 vpos=vec4( v_Position + normal * .05,1.0 );
+	
+	vec3 lpos=(r_ShadowMatrix0 * vpos).xyz;
+	
+	float d=RGBAToFloat( textureCube( r_ShadowCubeTexture,lpos ) );
+	
+	if( length(lpos) > d * r_LightRange ) return 0.0;
+	
+	return 1.0;
+}
+
+#endif	//MX2_DIRECTIONALLIGHT
+
+#endif	//MX2_SHADOWEDPASS
+
+vec3 fragColor( vec3 color,vec3 emissive,float metalness,float roughness,float occlusion,vec3 normal ){
 
 	float glosiness=1.0-roughness;
 	vec3 color0=vec3( 0.04,0.04,0.04 );
@@ -214,7 +272,7 @@ vec3 pbr_linear_frag_color( vec3 color,vec3 emissive,float metalness,float rough
 	vec3 specular=(color-color0) * metalness + color0;
 	vec3 vvec=normalize( -v_Position );
 	
-	vec3 frag_color=vec3( 0.0 );
+	vec3 frag=vec3( 0.0 );
 
 #if MX2_AMBIENTPASS
 	
@@ -231,9 +289,9 @@ vec3 pbr_linear_frag_color( vec3 color,vec3 emissive,float metalness,float rough
 
 	vec3 ambdiff=diffuse * r_AmbientDiffuse.rgb;
 	vec3 ambspec=ambenv * fschlick1;
-	frag_color+=(ambdiff+ambspec) * occlusion + emissive;
+	frag+=(ambdiff+ambspec) * occlusion + emissive;
 
-#endif
+#endif	//MX2_AMBIENTPASS
 
 #if MX2_LIGHTINGPASS
 
@@ -241,8 +299,17 @@ vec3 pbr_linear_frag_color( vec3 color,vec3 emissive,float metalness,float rough
 	
 	float spow=pow( 2.0,glosiness * 12.0 );				//specular power
 	float fnorm=(spow+2.0)/8.0;							//normalization factor
+	float atten=1.0;
 	
-	vec3 lvec=normalize( -r_LightViewMatrix[2].xyz );	//vector to light
+#if MX2_DIRECTIONALLIGHT
+	vec3 lvec=normalize( -r_LightViewMatrix[2].xyz );
+#else
+	vec3 lvec=r_LightViewMatrix[3].xyz-v_Position;
+	float ldist=length( lvec );
+    lvec/=ldist;
+	atten=max( 1.0-(ldist/r_LightRange),0.0 );
+#endif
+	
 	vec3 hvec=normalize( lvec+vvec );					//halfway vector
 
 	float hdotl=max( dot( hvec,lvec ),0.0 );
@@ -254,21 +321,21 @@ vec3 pbr_linear_frag_color( vec3 color,vec3 emissive,float metalness,float rough
 	
 	vec3 lightspec=pow( ndoth,spow ) * fschlick2 * fnorm;
 	
-	vec3 light=(diffuse+lightspec) * r_LightColor.rgb * ndotl;
+	vec3 light=(diffuse+lightspec) * r_LightColor.rgb * ndotl * atten;
 
-	float shadow=shadow_color( normal );
-
-	frag_color+=light*shadow;
+#if MX2_SHADOWEDPASS
+	float shadow=shadowColor( normal );
 	
+	light*=shadow;
 #endif
 
-	return frag_color;
+	frag+=light;
+	
+#endif	//MX2_LIGHTINGPASS
+
+	return frag;
 }
 
-#endif
-
-#if MX2_COLORPASS
- 
 #if defined( MX2_TEXTURED)
 uniform sampler2D m_ColorTexture;
 uniform sampler2D m_EmissiveTexture;
@@ -308,12 +375,12 @@ void main(){
 	vec3 normal=normalize( v_Normal );
 #endif
 
-	vec3 frag_color=pbr_linear_frag_color( color,emissive,metalness,roughness,occlusion,normal );
+	vec3 frag=fragColor( color,emissive,metalness,roughness,occlusion,normal );
 	
 #if defined( MX2_SRGBOUTPUT )
-	gl_FragColor=vec4( pow( frag_color,vec3( 1.0/2.2 ) ),1.0 );
+	gl_FragColor=vec4( pow( frag,vec3( 1.0/2.2 ) ),1.0 );
 #else
-	gl_FragColor=vec4( frag_color,1.0 );
+	gl_FragColor=vec4( frag,1.0 );
 #endif
 }
 
@@ -321,10 +388,14 @@ void main(){
 
 void main(){
 
+#if MX2_RENDERPASS==17
+	gl_FragColor=FloatToRGBA( min( length( v_Position )/r_LightRange,1.0 ) );
+#elif defined( MX2_RGBADEPTHTEXTURES )
+	gl_FragColor=FloatToRGBA( gl_FragCoord.z ),1.0 );
+#else
 	gl_FragColor=vec4( vec3( gl_FragCoord.z ),1.0 );
+#endif
 
 }
 
 #endif	//MX2_COLORPASS
-
-

@@ -58,7 +58,7 @@ Class RenderQueue
 		Endif
 		
 		If _addShadowOps 
-			If (op.material.Shader.RenderPassMask & 16) _shadowOps.Push( op )
+			If (op.material.Shader.RenderPassMask & $10000) _shadowOps.Push( op )
 		Endif
 		
 	End
