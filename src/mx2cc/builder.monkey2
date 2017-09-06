@@ -31,8 +31,6 @@ Class BuildOpts
 	
 	Field reflection:Bool
 	
-	Field wasm:Bool
-	
 End
 
 Class BuilderInstance
@@ -89,10 +87,10 @@ Class BuilderInstance
 		
 			SetEnv( "PATH",GetEnv( "MX2_RASPBIAN_TOOLS" )+";"+GetEnv( "PATH" ) )
 			
-		Else If opts.target="wasm"
+'		Else If opts.target="wasm"
 		
-			opts.target="emscripten"
-			opts.wasm=True
+'			opts.target="emscripten"
+'			opts.wasm=True
 			
 		Endif
 		

@@ -14,6 +14,11 @@ Class MainWindowInstance Extends Window
 		
 		MainWindow=Self
 		
+		If Not App.Theme.Load( jobj.GetString( "theme" ) )
+			jobj.SetString( "theme","ted2-default" )
+			App.Theme.Load( "ted2-default" )
+		Endif
+		
 		_tmp=RealPath( "tmp/" )
 		
 #If __TARGET__="macos"
@@ -630,7 +635,11 @@ Class MainWindowInstance Extends Window
 			Local value:=it.Value.ToString()
 			menu.AddAction( name ).Triggered=Lambda()
 				_theme=value
-				App.Theme.Load( _theme,New Vec2f( _themeScale ) )
+				If Not App.Theme.Load( _theme,New Vec2f( _themeScale ) )
+					If Not App.Theme.Load( "ted2-default" )
+					Endif
+					_theme="ted2-default"
+				Endif
 				SaveState()
 			End
 		Next

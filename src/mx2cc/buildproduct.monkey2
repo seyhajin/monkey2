@@ -557,7 +557,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 			cmd+=" --preload-file ~q"+assetsDir+"@/assets~q"
 			
-			If opts.wasm cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
+			If opts.appType.StartsWith( "wasm" ) cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
 		End
 		
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."
@@ -595,6 +595,12 @@ Class GccBuildProduct Extends BuildProduct
 		CopyDlls( dllsDir )
 		
 		Exec( cmd )
+		
+		If opts.target="emscripten"
+			If opts.appType="wasm"
+				DeleteFile( StripExt( outputFile )+".asm.js" )
+			Endif
+		Endif
 
 	End
 	

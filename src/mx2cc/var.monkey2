@@ -73,12 +73,6 @@ Class VarValue Extends Value
 	
 	Method OnSemant:SNode() Override
 		
-		Select vdecl.ident
-		Case "B","D"
-			Print "Semanting "+vdecl.ident
-			Print "scope="+Cast<ClassScope>( scope ).ctype.ToString()
-		End
-	
 		Scope.semanting.Push( scope )
 		
 		If vdecl.type

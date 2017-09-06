@@ -23,7 +23,7 @@ Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods"
 
-Const TestArgs:="mx2cc makeapp -target=desktop -apptype=console -run src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp -target=emscripten -apptype=wasm+asmjs src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
 
@@ -381,18 +381,13 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		Case "-product"
 			opts.product=path
 		Case "-apptype"
-			Select val
-			Case "gui","console"
-				opts.appType=val
-			Default
-				Fail( "Invalid value for 'apptype' option: '"+val+"' - must be 'gui' or 'console'" )
-			End
+			opts.appType=val
 		Case "-target"
 			Select val
-			Case "desktop","windows","macos","linux","raspbian","emscripten","wasm","android","ios"
+			Case "desktop","windows","macos","linux","raspbian","emscripten","android","ios"
 				opts.target=val
 			Default
-				Fail( "Invalid value for 'target' option: '"+val+"' - must be 'desktop', 'raspbian', 'emscripten', 'wasm', 'android' or 'ios'" )
+				Fail( "Invalid value for 'target' option: '"+val+"' - must be 'desktop', 'raspbian', 'emscripten', 'android' or 'ios'" )
 			End
 		Case "-config"
 			Select val
@@ -414,6 +409,19 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 	
 	Next
 	
+	Select opts.appType
+	Case "console","gui"
+		Select opts.target
+		Case "desktop","windows","macos","linux","raspbian"
+		Default
+			Fail( "apptype '"+opts.appType+"' may ponly be used with desktop targets" )
+		End
+	case "wasm","asmjs","wasm+asmjs"
+		If opts.target<>"emscripten" Fail( "apptype '"+opts.appType+"' is only valid for emscripten target" )
+	Default
+		Fail( "Unrecognized apptype '"+opts.appType+"'" )
+	End
+		
 	Return Null
 End
 
