@@ -136,13 +136,15 @@ Class Action
 	#rem monkeydoc Triggers the action.
 	#end	
 	Method Trigger()
-		
+#If Not __WEB_TARGET__		
 		If _async
 			New Fiber( Triggered )
 		Else
 			Triggered()
 		Endif
-		
+#Else
+		Triggered()
+#Endif
 	End
 	
 	Private
