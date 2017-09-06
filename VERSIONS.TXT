@@ -1,5 +1,5 @@
 
-***** Monkey2 v1.1.06b *****
+***** Monkey2 v1.1.07 *****
 
 Android min-sdk now 14 for android projects.
 
@@ -18,6 +18,8 @@ Sprites now compare with depth buffer.
 Added Sprite.TextureRect:Rectf property for simple 3d sprite animation.
 
 Fixed Texture.Flags setter.
+
+Added simple outline drawing to Canvas, see: Canvas.OutlineMode, Canvas.OutlineColor and Canvas.OutlineWidth. See chimpmunkdebugger.monkey2 in hellochipmunk banana for demo.
 
 
 ***** Monkey2 v1.1.06 *****
