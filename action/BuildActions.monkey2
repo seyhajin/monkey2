@@ -49,6 +49,7 @@ Class BuildActions Implements IModuleBuilder
 	
 	Field PreBuild:Void()
 	Field PreSemant:Void()
+	Field PreBuildModules:Void()
 	Field ErrorsOccured:Void(errors:BuildError[])
 	
 	Method New( docs:DocumentManager,console:ConsoleExt,debugView:DebugView )
@@ -143,9 +144,6 @@ Class BuildActions Implements IModuleBuilder
 		_emscriptenTarget=New CheckButton( "Emscripten",,group )
 		_emscriptenTarget.Layout="fill-x"
 		
-		_wasmTarget=New CheckButton( "Wasm",,group )
-		_wasmTarget.Layout="fill-x"
-		
 		_androidTarget=New CheckButton( "Android",,group )
 		_androidTarget.Layout="fill-x"
 		
@@ -158,7 +156,6 @@ Class BuildActions Implements IModuleBuilder
 		targetMenu.AddSeparator()
 		targetMenu.AddView( _desktopTarget )
 		targetMenu.AddView( _emscriptenTarget )
-		targetMenu.AddView( _wasmTarget )
 		targetMenu.AddView( _androidTarget )
 		targetMenu.AddView( _iosTarget )
 		targetMenu.AddSeparator()
@@ -184,14 +181,6 @@ Class BuildActions Implements IModuleBuilder
 			End
 		Else
 			_emscriptenTarget.Enabled=False
-		Endif
-
-		If _validTargets.Contains( "wasm" )
-			_wasmTarget.Clicked+=Lambda()
-				_buildTarget="wasm"
-			End
-		Else
-			_wasmTarget.Enabled=False
 		Endif
 
 		If _validTargets.Contains( "android" )
@@ -262,8 +251,6 @@ Class BuildActions Implements IModuleBuilder
 					_desktopTarget.Checked=True
 				Case "emscripten"
 					_emscriptenTarget.Checked=True
-				Case "wasm"
-					_wasmTarget.Checked=True
 				Case "android"
 					_androidTarget.Checked=True
 				Case "ios"
@@ -305,6 +292,7 @@ Class BuildActions Implements IModuleBuilder
 		
 		Local targets:=dialog.SelectedTargets
 		modules=dialog.SelectedModules
+		
 		clean=dialog.NeedClean
 		configs=dialog.SelectedConfigs
 		
@@ -359,7 +347,6 @@ Class BuildActions Implements IModuleBuilder
 	Field _releaseConfig:CheckButton
 	Field _desktopTarget:CheckButton
 	Field _emscriptenTarget:CheckButton
-	Field _wasmTarget:CheckButton
 	Field _androidTarget:CheckButton
 	Field _iosTarget:CheckButton
 	
@@ -488,6 +475,8 @@ Class BuildActions Implements IModuleBuilder
 
 	Method BuildModules:Bool( clean:Bool,target:String,modules:String,configs:String="debug release" )
 		
+		PreBuildModules()
+		
 		Local msg:=(clean ? "Rebuilding ~ " Else "Updating ~ ")+target
 		
 		Local arr:=configs.Split( " " )
@@ -558,7 +547,7 @@ Class BuildActions Implements IModuleBuilder
 			
 			_debugView.DebugApp( exeFile,config )
 
-		Case "emscripten","wasm"
+		Case "emscripten"
 		
 			Local mserver:=GetEnv( "MX2_MSERVER" )
 			If mserver _console.Run( mserver+" ~q"+exeFile+"~q" )
@@ -644,7 +633,7 @@ Class BuildActions Implements IModuleBuilder
 	End
 	
 	Method OnUpdateModules()
-	
+		
 		If _console.Running Return
 	
 		BuildModules( False )
