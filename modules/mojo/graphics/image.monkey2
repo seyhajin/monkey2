@@ -202,26 +202,22 @@ Class Image Extends Resource
 	#end	
 	Property Color:Color()
 	
-		Return _color
+		Return _uniforms.GetColor( "ImageColor" )
 	
 	Setter( color:Color )
 	
-		_color=color
-		
-		_uniforms.SetVec4f( "ImageColor",_color )
+		_uniforms.SetColor( "ImageColor",color )
 	End
 
 	#rem monkeydoc The image light depth.
 	#end
 	Property LightDepth:Float()
 	
-		Return _lightDepth
+		Return _uniforms.GetFloat( "LightDepth" )
 	
 	Setter( depth:Float )
 	
-		_lightDepth=depth
-		
-		_uniforms.SetFloat( "LightDepth",_lightDepth )
+		_uniforms.SetFloat( "LightDepth",depth )
 	End
 
 	#rem monkeydoc Shadow caster attached to image.
@@ -273,6 +269,10 @@ Class Image Extends Resource
 	Property Shader:Shader()
 	
 		Return _shader
+		
+	Setter( shader:Shader )
+	
+		_shader=shader
 	End
 	
 	#rem monkeydoc Image material.
@@ -430,8 +430,6 @@ Class Image Extends Resource
 	Field _uniforms:UniformBlock
 	Field _textures:=New Texture[4]
 	Field _blendMode:BlendMode
-	Field _color:Color
-	Field _lightDepth:Float
 	Field _shadowCaster:ShadowCaster
 	
 	Field _rect:Recti
