@@ -70,7 +70,7 @@ Class JsonDocumentType Extends Ted2DocumentType
 	Method New()
 		AddPlugin( Self )
 		
-		Extensions=New String[]( ".json",".gltf" )
+		Extensions=New String[]( ".json" )
 	End
 	
 	Method OnCreateDocument:Ted2Document( path:String ) Override
