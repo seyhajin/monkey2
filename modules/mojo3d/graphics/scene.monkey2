@@ -104,10 +104,10 @@ Class Scene
 	#end
 	Method DestroyAllEntities()
 		
-		For Local entity:=Eachin _rootEntities
-			
-			entity.Destroy()
-		Next
+		While Not _rootEntities.Empty
+
+			_rootEntities.Top.Destroy()
+		Wend
 	End
 	
 	#rem monkeydoc Renders the scene to	a canvas.
@@ -128,9 +128,17 @@ Class Scene
 		Return _rootEntities.ToArray()
 	End
 	
+	#rem monkeydoc Sets the current scene.
+	#end
+	Function SetCurrent( scene:Scene )
+		
+		_current=scene
+	End
+	
 	#rem monkeydoc Gets the current scene.
 	#end
 	Function GetCurrent:Scene()
+
 		If Not _current _current=New Scene
 			
 		Return _current
@@ -138,11 +146,6 @@ Class Scene
 	
 	Internal
 
-	Function SetCurrent( scene:Scene )
-		
-		_current=scene
-	End
-	
 	Property PostEffects:Stack<PostEffect>()
 		
 		Return _postEffects
