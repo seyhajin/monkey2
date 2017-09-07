@@ -34,8 +34,7 @@
 #import "audiodocument"
 #import "jsondocument"
 #import "xmldocument"
-
-'#Import "scenedocument"
+#Import "scenedocument"
 
 #import "textviewkeyeventfilter"
 
