@@ -85,14 +85,17 @@ Class BuilderInstance
 		
 			opts.target=HostOS
 			
+			If Not opts.appType opts.appType="gui"
+			
 		Else If HostOS="windows" And opts.target="raspbian"
 		
 			SetEnv( "PATH",GetEnv( "MX2_RASPBIAN_TOOLS" )+";"+GetEnv( "PATH" ) )
-			
-'		Else If opts.target="wasm"
 		
-'			opts.target="emscripten"
-'			opts.wasm=True
+			If Not opts.appType opts.appType="gui"
+			
+		Else If opts.target="emscripten"
+		
+			If Not opts.appType opts.appType="wasm"
 			
 		Endif
 		
