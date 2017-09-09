@@ -23,6 +23,8 @@ Using mojo3d..
 Const GRAVITY:=30	'coz reality sux!
 
 Class Player
+
+	Field _scene:Scene
 	
 	Field _model:Model
 	
@@ -136,10 +138,10 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		
 		Print New Vec3f( 0,1,0 ).Cross( New Vec3f( 0,1,0 ) )
 		
 		_scene=Scene.GetCurrent()
+		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
 		'create light
@@ -161,6 +163,7 @@ Class MyWindow Extends Window
 		
 		Local body:=New StaticBody( collider,_castle,1,1 )
 		
+	
 		'create player
 		'
 		_player=New Player( .75,.5 )
@@ -183,7 +186,7 @@ Class MyWindow Extends Window
 		
 		_player.Update()
 
-		World.GetDefault().Update()
+		_scene.World.Update()
 		
 		Local src:=_player._model.Matrix * New Vec3f( 0,1,0 )
 		

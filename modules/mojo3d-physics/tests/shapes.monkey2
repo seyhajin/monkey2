@@ -111,7 +111,7 @@ Class MyWindow Extends Window
 		
 		util.Fly( _camera,Self )
 			
-		World.GetDefault().Update()
+		_scene.World.Update()
 		
 		_scene.Render( canvas,_camera )
 		

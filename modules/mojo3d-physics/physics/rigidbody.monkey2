@@ -30,15 +30,23 @@ Private
 	Field _entity:Entity
 End
 
+Class Entity Extension
+
+	Property RigidBody:RigidBody()
+	
+		Return GetDynamicProperty<RigidBody>( "$rigidBody" )
+	End
+	
+End
+
 #rem monkeydoc The RigidBody class.
 #end
 Class RigidBody
 	
 	Method Init( collider:Collider,entity:Entity,mass:Float,collGroup:Int,collMask:Int,btmotion:btMotionState )
-		
+	
 		Local inertia:btVector3=collider ? collider.CalculateLocalInertia( mass ) Else Null
 
-		_world=World.GetDefault()
 		_collider=collider
 		_entity=entity
 		_mass=mass
@@ -55,18 +63,22 @@ Class RigidBody
 		'If Cast<MeshCollider>( _collider ) _btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
 			
 		If Not _entity Return
+		
+		_entity.SetDynamicProperty( "$rigidBody",Self )
 
+		Local world:=entity.Scene.World
+		
 		_entity.Shown+=Lambda()
 		
-			_world.Add( Self )
+			world.Add( Self )
 		End
 		
 		_entity.Hidden+=Lambda()
 		
-			_world.Remove( Self )
+			world.Remove( Self )
 		End
 		
-		If _entity.Visible _world.Add( Self )
+		If _entity.Visible world.Add( Self )
 	End
 
 	Property Collider:Collider()
@@ -120,10 +132,9 @@ Class RigidBody
 	
 		Return _btbody
 	End
-
+	
 Protected
 
-	Field _world:World
 	Field _mass:Float	
 	Field _collider:Collider
 	Field _entity:Entity

@@ -11,6 +11,20 @@ Function handle_to_object:Object( handle:Void Ptr )="bb_handle_to_object"
 
 Public
 
+Class Scene Extension
+
+	Property World:World()
+	
+		Local world:=GetDynamicProperty<World>( "$world" )
+		If Not world
+			world=New World( Self )
+			SetDynamicProperty( "$world",world )
+		Endif
+		Return world
+	End
+
+End
+
 Class RaycastResult
 
 	Field time:Float
@@ -43,7 +57,9 @@ End
 
 Class World
 	
-	Method New()
+	Method New( scene:Scene )
+	
+		_scene=scene
 		
 		Local broadphase:=New btDbvtBroadphase()
 		
@@ -57,6 +73,11 @@ Class World
 
 		Gravity=New Vec3f( 0,-9.81,0 )
 		
+	End
+	
+	Property Scene:Scene()
+	
+		Return _scene
 	End
 
 	Property Gravity:Vec3f()
@@ -104,22 +125,13 @@ Class World
 		If Not btresult.hasHit() Return Null
 		
 		Return New RaycastResult( Varptr btresult )
-		
 	End
 	
 	Method ConvexSweep:RaycastResult( collider:ConvexCollider,castFrom:Vec3f,castTo:Vec3f )
 		
 		Return ConvexSweep( collider,AffineMat4f.Translation( castFrom ),AffineMat4f.Translation( castTo ) )
-
 	End
 	
-	Function GetDefault:World()
-	
-		Global _default:=New World
-		
-		Return _default
-	End
-
 	Internal
 	
 	Method Add( body:RigidBody )
@@ -141,6 +153,8 @@ Class World
 	End
 	
 	Private
+	
+	Field _scene:Scene
 	
 	Field _btworld:btDynamicsWorld
 	
