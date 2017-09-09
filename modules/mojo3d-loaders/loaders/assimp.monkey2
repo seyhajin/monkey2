@@ -382,7 +382,8 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
 		'flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_SortByPType
 		flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SortByPType
-		flags|=aiProcess_GenSmoothNormals |aiProcess_FixInfacingNormals | aiProcess_Triangulate
+'		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
+		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
 		flags|=aiProcess_PreTransformVertices
 		flags|=aiProcess_FindInvalidData
 		flags|=aiProcess_OptimizeMeshes
@@ -404,7 +405,8 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
 		'flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_SortByPType
 		flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SortByPType
-		flags|=aiProcess_GenSmoothNormals |aiProcess_FixInfacingNormals | aiProcess_Triangulate
+'		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
+		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
 '		flags|=aiProcess_SplitByBoneCount
 		flags|=aiProcess_LimitBoneWeights
 		flags|=aiProcess_FindInvalidData
