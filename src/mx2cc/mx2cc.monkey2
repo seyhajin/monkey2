@@ -23,7 +23,7 @@ Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods"
 
-Const TestArgs:="mx2cc makeapp -target=emscripten -apptype=wasm+asmjs src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
 
@@ -268,6 +268,7 @@ Function MakeDocs:Bool( args:String[] )
 	opts.fast=True
 	opts.verbose=0
 	opts.passes=2
+	opts.makedocs=true
 	
 	args=ParseOpts( opts,args )
 	

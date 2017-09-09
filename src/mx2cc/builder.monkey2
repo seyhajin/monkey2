@@ -31,6 +31,8 @@ Class BuildOpts
 	
 	Field reflection:Bool
 	
+	Field makedocs:bool
+	
 End
 
 Class BuilderInstance

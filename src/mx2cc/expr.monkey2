@@ -316,8 +316,8 @@ Class NewObjectExpr Extends Expr
 		If Not ctype Throw New SemantEx( "Type '"+type.Name+"' is not a class type" )
 		
 		If ctype.IsGeneric 
+			If Builder.opts.makedocs Return New LiteralValue( ctype,"" )
 			Throw New SemantEx( "Type '"+type.ToString()+"' is generic" )
-'			Return New LiteralValue( ctype,"" )
 		Endif
 		
 		'hmmm...

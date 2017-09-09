@@ -1,6 +1,14 @@
 
-Function Main()
+Class Box<T>
+
+	Const Min:=New Box
 	
-	Print "Hello World!"
+End
+
+Function Main()
+
+	Local box:=New Box<Int>
+	
+	Print "Bye!"
 
 End

@@ -217,12 +217,12 @@ Class ClassType Extends Type
 		Endif
 		
 		If scope.IsGeneric Or cdecl.IsExtern
-			
-			If Not scope.IsGeneric 
+		
+			If Not scope.IsGeneric Or Builder.opts.makedocs
 				
 				Builder.semantMembers.AddLast( Self )
 			
-			endif
+			Endif
 			
 		Else
 		
