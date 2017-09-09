@@ -408,7 +408,7 @@ Class GraphicsDevice
 	Field _retroMode:Bool
 	Field _vertexBuffer:VertexBuffer
 	Field _indexBuffer:IndexBuffer
-	Field _ublocks:=New UniformBlock[4]
+	Field _ublocks:=New UniformBlock[8]
 	Field _shader:Shader
 	Field _rpass:Int
 	
