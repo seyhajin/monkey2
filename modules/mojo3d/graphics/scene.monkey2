@@ -3,7 +3,7 @@ Namespace mojo3d.graphics
 
 #rem monkeydoc The Scene class.
 #end
-Class Scene
+Class Scene Extends DynamicObject
 
 	#rem monkeydoc Creates a new scene.
 	#end
@@ -181,6 +181,11 @@ Class Scene
 		Return _sprites
 	End
 	
+	Property ParticleSystems:Stack<ParticleSystem>()
+	
+		Return _psystems
+	End
+	
 	Private
 	
 	Global _current:Scene
@@ -200,5 +205,6 @@ Class Scene
 	Field _models:=New Stack<Model>
 	Field _terrains:=New Stack<Terrain>
 	Field _sprites:=New Stack<Sprite>
+	Field _psystems:=New Stack<ParticleSystem>
 			
 End

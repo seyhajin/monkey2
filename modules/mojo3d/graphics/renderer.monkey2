@@ -110,8 +110,10 @@ Class Renderer
 			_csmSplitDepths[i]=camera.Near+_csmSplits[i-1]*(camera.Far-camera.Near)
 		Next
 		_csmSplitDepths[4]=camera.Far
+		
+		Local time:=Float( Now() )
 
-		_runiforms.SetFloat( "Time",Now() )
+		_runiforms.SetFloat( "Time",time )
 		
 		_runiforms.SetTexture( "ShadowCSMTexture",_csmTexture )
 		_runiforms.SetVec4f( "ShadowCSMSplits",New Vec4f( _csmSplitDepths[1],_csmSplitDepths[2],_csmSplitDepths[3],_csmSplitDepths[4] ) )
@@ -141,12 +143,23 @@ Class Renderer
 		
 		_renderQueue.Clear()
 		
+		_renderQueue.Time=time
+		
 		For Local model:=Eachin _renderScene.Models
 			
 			_renderQueue.AddShadowOps=model.CastsShadow
 			
 			model.OnRender( _renderQueue )
 		Next
+		
+		_spriteQueue.Clear()
+		
+		_spriteQueue.Time=time
+		
+		For Local psystem:=Eachin _renderScene.ParticleSystems
+		
+			psystem.OnRender( _spriteQueue )
+		End
 		
 		'***** Set render camera *****
 
@@ -162,8 +175,6 @@ Class Renderer
 		_runiforms.SetMat4f( "InverseProjectionMatrix",invProjMat )
 		_runiforms.SetFloat( "DepthNear",_renderCamera.Near )
 		_runiforms.SetFloat( "DepthFar",_renderCamera.Far )
-		
-		_spriteQueue.Clear()
 		
 		_spriteBuffer.AddSprites( _spriteQueue,_renderScene.Sprites,_renderCamera )
 		
@@ -519,6 +530,7 @@ Class Renderer
 		
 		_runiforms.SetMat4f( "ViewMatrix",viewMatrix )
 		_runiforms.SetMat4f( "ProjectionMatrix",projMatrix )
+		_runiforms.SetMat4f( "ViewProjectionMatrix",projMatrix * viewMatrix )
 		_runiforms.SetMat4f( "InverseProjectionMatrix",-projMatrix )
 		
 		Local instance:Entity=_renderCamera
@@ -535,6 +547,7 @@ Class Renderer
 				Local modelViewProjMat:=projMatrix * modelViewMat
 				Local modelViewNormMat:=~-modelViewMat.m
 					
+				_iuniforms.SetMat4f( "ModelMatrix",modelMat )
 				_iuniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
 				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
 				_iuniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
@@ -548,14 +561,22 @@ Class Renderer
 				
 				_device.Shader=material.Shader
 				_device.BindUniformBlock( material.Uniforms )
-				If material.BlendMode<>BlendMode.Opaque _device.BlendMode=material.BlendMode
+				If material.BlendMode<>BlendMode.Opaque
+					_device.BlendMode=material.BlendMode
+				Endif
 				_device.CullMode=material.CullMode
 				
 			Endif
 			
+			If op.uniforms _device.BindUniformBlock( op.uniforms )
+						
 			_device.VertexBuffer=op.vbuffer
-			_device.IndexBuffer=op.ibuffer
-			_device.RenderIndexed( op.order,op.count,op.first )
+			If op.ibuffer
+				_device.IndexBuffer=op.ibuffer
+				_device.RenderIndexed( op.order,op.count,op.first )
+			Else
+				_device.Render( op.order,op.count,op.first )
+			Endif
 			
 		Next
 	End

@@ -5,6 +5,7 @@ Namespace mojo3d.graphics
 #end
 Class RenderOp
 	Field material:Material
+	Field uniforms:UniformBlock
 	Field vbuffer:VertexBuffer
 	Field ibuffer:IndexBuffer
 	Field instance:Entity
@@ -17,6 +18,15 @@ End
 #rem monkeydoc @hidden
 #end
 Class RenderQueue
+
+	Property Time:Float()
+	
+		Return _time
+		
+	Setter( time:Float )
+	
+		_time=time
+	End
 	
 	Property OpaqueOps:Stack<RenderOp>()
 		
@@ -62,6 +72,19 @@ Class RenderQueue
 		Endif
 		
 	End
+
+	Method AddRenderOp( material:Material,uniforms:UniformBlock,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
+		Local op:=New RenderOp
+		op.material=material
+		op.uniforms=uniforms
+		op.instance=instance
+		op.vbuffer=vbuffer
+		op.ibuffer=ibuffer
+		op.order=order
+		op.count=count
+		op.first=first
+		AddRenderOp( op )
+	End
 	
 	Method AddRenderOp( material:Material,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
@@ -100,7 +123,8 @@ Class RenderQueue
 	End
 	
 	Private
-	
+
+	Field _time:float	
 	Field _opaqueOps:=New Stack<RenderOp>
 	Field _transparentOps:=New Stack<RenderOp>
 	Field _shadowOps:=New Stack<RenderOp>

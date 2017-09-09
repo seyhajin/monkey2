@@ -40,6 +40,6 @@ void main(){
 #if defined( MX2_SRGBOUTPUT )
 	gl_FragColor=vec4( pow( color,vec3( 1.0/2.2 ) ),alpha );
 #else
-	gl_FragColor=vec4( color,alpha );
+	gl_FragColor=vec4( color * alpha,alpha );
 #endif
 }

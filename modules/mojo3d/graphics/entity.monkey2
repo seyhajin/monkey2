@@ -3,7 +3,7 @@ Namespace mojo3d.graphics
 
 #rem monkeydoc The Entity class.
 #end
-Class Entity
+Class Entity Extends DynamicObject
 	
 	#rem monkeydoc Copied signal.
 	
@@ -285,8 +285,6 @@ Class Entity
 		Invalidate()
 	End
 	
-	'***** Methods ******
-
 	#rem monkeydoc Hides the entity and all of its children
 	#end
 	Method Hide()

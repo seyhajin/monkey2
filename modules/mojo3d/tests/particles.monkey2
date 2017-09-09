@@ -1,4 +1,3 @@
-
 Namespace myapp
 
 #Import "<std>"
@@ -23,7 +22,7 @@ Class MyWindow Extends Window
 	
 	Field _ground:Model
 	
-	Field _sprites:=New Stack<Sprite>
+	Field _particles:ParticleSystem
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
@@ -38,45 +37,46 @@ Class MyWindow Extends Window
 		_camera=New Camera
 		_camera.Near=.1
 		_camera.Far=100
-		_camera.Move( 0,10,-10 )
+		_camera.Move( 0,1,-1 )
 		
 		'create light
 		'
 		_light=New Light
 		_light.Rotate( 60,45,0 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.ShadowsEnabled=false
 		
 		'create ground
 		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green ) )
+		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.DarkGrey ) )
 		
-		'create sprites
-		'
-		Local material:=SpriteMaterial.Load( "asset::Acadia-Tree-Sprite.png" )
+		_particles=New ParticleSystem( 15000 )
+		_particles.RotateX( -90 )	'point upwards!
 		
-		material.ColorTexture.Flags=TextureFlags.None
+		Local pbuffer:=_particles.ParticleBuffer
+		pbuffer.Gravity=New Vec3f( 0,-9.81,0 )	'gravity in world space in m/s^2.
+		pbuffer.Duration=2.5		'how long a single particle lasts in seconds.
+		pbuffer.Fade=0.0			'how long before paticle starts fading out in seconds.
+		pbuffer.Colors=New Color[]( Color.White,Color.Yellow,Color.Orange,Color.Red )
+		pbuffer.ConeAngle=30		'angle of particle emission cone.
+		pbuffer.MinVelocity=10.0		'min particle velocity.
+		pbuffer.MaxVelocity=10.0		'max particle velocity.
+		pbuffer.MinSize=16.0			'min particle size.
+		pbuffer.MaxSize=16.0		'max particle size.
 		
-		For Local i:=0 Until 1000
+		For Local an:=0 Until 360 Step 45
+			Local pivot:=New Entity
+			pivot.RotateY( an )
+			pivot.MoveZ( 20 )
 			
-			Local sprite:=New Sprite( material )
-			
-			sprite.Move( Rnd(-50,50),0,Rnd(-50,50) )
-			
-			sprite.Scale=New Vec3f( Rnd(2,3),Rnd(3,5),1 )
-			
-			sprite.Handle=New Vec2f( .5,0 )
-			
-			sprite.Mode=SpriteMode.Upright
-
-			_sprites.Push( sprite )
+			_particles.Copy( pivot )
 		Next
 		
-		For Local i:=0 Until 10
-			
-			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
-			
-			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
-
-		next			
+		_particles.SetDynamicProperty( "blah",New IntStack )
+		
+		_particles.GetDynamicProperty<IntStack>( "blah" ).Push( 10 )
+		
+		
+		'particles.AddParticles( 5000 )
 		
 	End
 	
