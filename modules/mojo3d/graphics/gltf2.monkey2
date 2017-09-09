@@ -403,6 +403,8 @@ Class Gltf2Asset
 				Endif
 				If jprim.Contains( "mode" )
 					prim.mode=jprim.GetNumber( "mode" )
+				Else
+					prim.mode=4
 				Endif
 			
 			Next

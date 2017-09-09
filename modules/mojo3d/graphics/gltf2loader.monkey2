@@ -127,7 +127,18 @@ Class Gltf2Loader
 		If colorTexture mat.ColorTexture=colorTexture
 		If metallicRoughnessTexture mat.MetalnessTexture=metallicRoughnessTexture ; mat.RoughnessTexture=metallicRoughnessTexture
 		If occlusionTexture mat.OcclusionTexture=occlusionTexture
-		If emissiveTexture mat.EmissiveTexture=emissiveTexture ; mat.EmissiveFactor=New Color( material.emissiveFactor.x,material.emissiveFactor.y,material.emissiveFactor.z )
+		If emissiveTexture 
+			mat.EmissiveTexture=emissiveTexture
+ 			If material.emissiveFactor<>Null
+				mat.EmissiveFactor=New Color( material.emissiveFactor.x,material.emissiveFactor.y,material.emissiveFactor.z )
+			Else
+				mat.EmissiveFactor=Color.White
+			Endif
+		Else If material.emissiveFactor<>Null
+			mat.EmissiveTexture=Texture.ColorTexture( Color.White )
+			mat.EmissiveFactor=New Color( material.emissiveFactor.x,material.emissiveFactor.y,material.emissiveFactor.z )
+		Endif
+		
 		If normalTexture mat.NormalTexture=normalTexture
 			
 		_materialCache[material]=mat
