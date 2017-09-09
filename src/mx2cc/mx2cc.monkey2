@@ -418,6 +418,7 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		End
 	case "wasm","asmjs","wasm+asmjs"
 		If opts.target<>"emscripten" Fail( "apptype '"+opts.appType+"' is only valid for emscripten target" )
+	case ""
 	Default
 		Fail( "Unrecognized apptype '"+opts.appType+"'" )
 	End
