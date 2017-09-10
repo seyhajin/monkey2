@@ -211,8 +211,6 @@ Class Gltf2Loader
 				
 				Local vcount:=prim.POSITION.count
 				
-				Print "gltf vcount="+vcount
-				
 				Local vertices:=New Vertex3f[vcount],dstvp:=vertices.Data
 				
 				For Local i:=0 Until vcount
@@ -276,8 +274,6 @@ Class Gltf2Loader
 					
 				Endif
 					
-'				Print "Added "+vcount+" vertices, "+icount+" indices."
-				
 			Next
 			
 		Endif
@@ -288,101 +284,6 @@ Class Gltf2Loader
 		Next
 		
 	End
-	
-	#rem
-	Method AddMeshes( node:Gltf2Node )
-		
-		If node.mesh
-			
-			Print "mesh="+node.mesh.name
-			
-			For Local prim:=Eachin node.mesh.primitives
-				
-				'some sanity checking!
-				'
-				If prim.mode<>4 Continue
-				
-				If Not prim.POSITION Or prim.POSITION.componentType<>5126 Or prim.POSITION.type<>"VEC3" DebugStop()
-				If Not prim.NORMAL Or prim.NORMAL.componentType<>5126 Or prim.NORMAL.type<>"VEC3" DebugStop()
-				If Not prim.TEXCOORD_0 Or prim.TEXCOORD_0.componentType<>5126 Or prim.TEXCOORD_0.type<>"VEC2" DebugStop()
-				If Not prim.indices Or (prim.indices.componentType<>5123 And prim.indices.componentType<>5125) Or prim.indices.type<>"SCALAR" DebugStop()
-				
-				Local pp:=GetData( prim.POSITION )
-				Local pstride:=prim.POSITION.bufferView.byteStride
-				If Not pstride pstride=12
-				
-				Local np:=GetData( prim.NORMAL )
-				Local nstride:=prim.NORMAL.bufferView.byteStride
-				If Not nstride nstride=12
-				
-				Local tp:=GetData( prim.TEXCOORD_0 )
-				Local tstride:=prim.TEXCOORD_0.bufferView.byteStride
-				If Not tstride tstride=8
-					
-				Local vcount:=prim.POSITION.count
-				
-				Local vertices:=New Vertex3f[vcount],dstvp:=vertices.Data
-				
-				For Local i:=0 Until vcount
-					dstvp[i].position=Cast<Vec3f Ptr>( pp )[0]
-					dstvp[i].normal=Cast<Vec3f Ptr>( np )[0]
-					dstvp[i].texCoord0=Cast<Vec2f Ptr>( tp )[0]
-					'dstvp[i].position.x=-dstvp[i].position.x
-					'dstvp[i].position.y=-dstvp[i].position.y
-					dstvp[i].position.z=-dstvp[i].position.z
-					dstvp[i].normal.z=-dstvp[i].normal.z
-					pp+=pstride
-					np+=nstride
-					tp+=tstride
-				Next
-				
-				Local icount:=prim.indices.count
-				
-				Local indices:=New IndexType[icount],dstip:=indices.Data
-
-				Local ip:=GetData( prim.indices )
-				Local istride:=prim.indices.bufferView.byteStride
-				
-				Local v0:=_loadedMesh.NumVertices
-				
-				If prim.indices.componentType=5123
-					If Not istride istride=2
-					For Local i:=0 Until icount Step 3
-						dstip[i+0]=Cast<UShort Ptr>( ip )[0] + v0
-						dstip[i+2]=Cast<UShort Ptr>( ip )[1] + v0
-						dstip[i+1]=Cast<UShort Ptr>( ip )[2] + v0
-						ip+=istride*3
-					Next
-				Else
-					If Not istride istride=4
-					For Local i:=0 Until icount Step 3
-						dstip[i+0]=Cast<UInt Ptr>( ip )[0] + v0
-						dstip[i+2]=Cast<UInt Ptr>( ip )[1] + v0
-						dstip[i+1]=Cast<UInt Ptr>( ip )[2] + v0
-						ip+=istride*3
-					Next
-				Endif
-				
-				_loadedMesh.AddVertices( vertices )
-				
-				_loadedMesh.AddTriangles( indices )
-					
-				_loadedMaterials.Push( GetMaterial( prim.material ) )
-				
-				Print "Added "+vcount+" vertices, "+icount+" indices."
-				
-			Next
-			
-		Endif
-		
-		For Local child:=Eachin node.children
-			
-			AddMeshes( child )
-		Next
-		
-	End
-	
-	#end
 	
 End
 
