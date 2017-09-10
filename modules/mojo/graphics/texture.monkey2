@@ -11,7 +11,7 @@ Function IsPow2:Bool( w:Int,h:Int )
 End
 
 Function IsDepth:Bool( format:PixelFormat )
-	Return format=PixelFormat.Depth32F
+	Return format=PixelFormat.Depth32
 End
 
 Function glInternalFormat:GLenum( format:PixelFormat )
@@ -23,7 +23,7 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_RGBA
 	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
-	Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
+	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
@@ -38,7 +38,7 @@ Function glFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_RGBA
 	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
-	Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
+	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
@@ -53,7 +53,7 @@ Function glType:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
 	Case PixelFormat.RGBA32F Return GL_FLOAT
-	Case PixelFormat.Depth32F Return GL_UNSIGNED_INT
+	Case PixelFormat.Depth32 Return GL_UNSIGNED_INT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_UNSIGNED_BYTE

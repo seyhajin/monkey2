@@ -64,6 +64,9 @@ Class RenderTarget Extends Resource
 			err="GL_FRAMEBUFFER_?????"
 		End
 		
+		Print "ColorTexture0 format="+(_colorTextures ? Cast<Int>( _colorTextures[0].Format ) Else 0)
+		Print "DepthTexture format="+(_depthTexture ? Cast<Int>( _depthTexture.Format ) Else 0)
+		
 		RuntimeError( "Framebuffer incomplete: status="+err )
 	End
 	
