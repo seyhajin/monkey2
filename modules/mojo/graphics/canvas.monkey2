@@ -1296,7 +1296,7 @@ Class Canvas
 		RenderDrawOps( 0 )
 		
 		If _lighting
-
+		
 			'render diffuse gbuffer
 			'
 			_device.RenderTarget=_gbrtargets[0]
