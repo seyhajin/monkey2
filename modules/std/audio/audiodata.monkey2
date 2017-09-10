@@ -61,7 +61,7 @@ Class AudioData Extends Resource
 	
 	#rem monkeydoc Sets a sample at a given sample index.
 
-	@index must be in the range [0,Length).
+	`index` must be in the range [0,Length).
 	
 	#end
 	Method SetSample( index:Int,sample:Float,channel:Int=0 )
@@ -80,7 +80,7 @@ Class AudioData Extends Resource
 	
 	#rem monkeydoc Gets a sample at a given sample index.
 	
-	@index must be in the range [0,Length).
+	`index` must be in the range [0,Length).
 	
 	#end
 	Method GetSample:Float( index:Int,channel:Int=0 )
