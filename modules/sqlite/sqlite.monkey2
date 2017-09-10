@@ -3,7 +3,7 @@ Namespace sqlite
 
 #Import "sqlite_extern.monkey2"
 
-#Import "sqlite-amalgamation-3150000/sqlite3.c"
+#Import "sqlite-amalgamation/sqlite3.c"
 
 Const SQLITE_OK:=           0   '/* Successful result */
 
