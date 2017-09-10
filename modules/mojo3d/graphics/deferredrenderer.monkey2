@@ -40,12 +40,19 @@ Class DeferredRenderer Extends Renderer
 			SafeDiscard( _rpass0Target )
 			SafeDiscard( _rpass2Target )
 		
-			Const format:=PixelFormat.RGBA32F		'32 bit float
+			'look at this again later - surely we can rgba32f on some mobile targets, eg: nvidia shield?
+			#If Not __MOBILE_TARGET__
+			Const color_format:=PixelFormat.RGBA32F
+			Const depth_format:=PixelFormat.Depth32
+			#Else
+			Const color_format:=PixelFormat.RGBA8
+			Const depth_format:=PixelFormat.Depth32
+			#Endif
 				
-			_hdrTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'output hdr image
-			_colorTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'metalness in 'a'
-			_normalTexture=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )		'roughness in 'a'
-			_depthTexture=New Texture( size.x,size.y,PixelFormat.Depth32F,TextureFlags.Dynamic )
+			_hdrTexture=New Texture( size.x,size.y,color_format,TextureFlags.Filter|TextureFlags.Dynamic )		'output hdr image
+			_colorTexture=New Texture( size.x,size.y,color_format,TextureFlags.Filter|TextureFlags.Dynamic )		'metalness in 'a'
+			_normalTexture=New Texture( size.x,size.y,color_format,TextureFlags.Filter|TextureFlags.Dynamic )		'roughness in 'a'
+			_depthTexture=New Texture( size.x,size.y,depth_format,TextureFlags.Dynamic )
 				
 			_rpass0Target=New RenderTarget( New Texture[]( _hdrTexture,_colorTexture,_normalTexture ),_depthTexture )
 			_rpass2Target=New RenderTarget( New Texture[]( _hdrTexture ),Null )

@@ -43,11 +43,18 @@ Class ForwardRenderer Extends Renderer
 			SafeDiscard( _depthBuffer )
 			SafeDiscard( _colorTarget0 )
 			SafeDiscard( _colorTarget1 )
-			
-			Const format:=PixelFormat.RGBA32F
+
+			'look again at this - surely we can rgb32f on some mobile target?
+			#If Not __MOBILE_TARGET__
+			Const color_format:=PixelFormat.RGBA32F
+			Const depth_format:=PixelFormat.Depth32
+			#Else
+			Const color_format:=PixelFormat.RGBA8
+			Const depth_format:=PixelFormat.Depth32
+			#Endif
 				
-			_colorBuffer=New Texture( size.x,size.y,format,TextureFlags.Filter|TextureFlags.Dynamic )
-			_depthBuffer=New Texture( size.x,size.y,PixelFormat.Depth32F,TextureFlags.Dynamic )
+			_colorBuffer=New Texture( size.x,size.y,color_format,TextureFlags.Filter|TextureFlags.Dynamic )
+			_depthBuffer=New Texture( size.x,size.y,depth_format,TextureFlags.Dynamic )
 			_colorTarget0=New RenderTarget( New Texture[]( _colorBuffer ),_depthBuffer )
 			_colorTarget1=New RenderTarget( New Texture[]( _colorBuffer ),Null )
 			

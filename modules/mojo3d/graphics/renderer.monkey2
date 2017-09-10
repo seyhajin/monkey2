@@ -489,13 +489,16 @@ Class Renderer
 			SafeDiscard( _csmTarget )
 			SafeDiscard( _csmTexture )
 			SafeDiscard( _csmDepth )
+
+			const color_format:=PixelFormat.RGBA8
+			const depth_format:=PixelFormat.Depth32
 			
 			If _rgbaDepthTextures
-				_csmTexture=New Texture( _csmSize,_csmSize,PixelFormat.RGBA8,TextureFlags.Dynamic )
-				_csmDepth=New Texture( _csmSize,_csmSize,PixelFormat.Depth32F,TextureFlags.Dynamic )
+				_csmTexture=New Texture( _csmSize,_csmSize,color_format,TextureFlags.Dynamic )
+				_csmDepth=New Texture( _csmSize,_csmSize,depth_format,TextureFlags.Dynamic )
 				_csmTarget=New RenderTarget( New Texture[]( _csmTexture ),_csmDepth )
 			Else
-				_csmTexture=New Texture( _csmSize,_csmSize,PixelFormat.Depth32F,TextureFlags.Dynamic )
+				_csmTexture=New Texture( _csmSize,_csmSize,depth_format,TextureFlags.Dynamic )
 				_csmTarget=New RenderTarget( Null,_csmTexture )
 				_csmDepth=Null
 			Endif
@@ -511,10 +514,12 @@ Class Renderer
 			Next
 			
 			Local size:=_psmSize*2
+
+			const color_format:=PixelFormat.RGBA8
+			const depth_format:=PixelFormat.Depth32
 			
-			_psmTexture=New Texture( size,size,PixelFormat.RGBA8,TextureFlags.Cubemap|TextureFlags.Dynamic )
-'			_psmTexture=New Texture( size,size,PixelFormat.Depth32F,TextureFlags.Cubemap|TextureFlags.Dynamic )
-			_psmDepth=New Texture( size,size,PixelFormat.Depth32F,TextureFlags.Dynamic )
+			_psmTexture=New Texture( size,size,color_format,TextureFlags.Cubemap|TextureFlags.Dynamic )
+			_psmDepth=New Texture( size,size,depth_format,TextureFlags.Dynamic )
 			For Local i:=0 Until 6
 				Local face:=_psmTexture.GetCubeFace( Cast<CubeFace>( i ) )
 				_psmTargets[i]=New RenderTarget( New Texture[]( face ),_psmDepth )
