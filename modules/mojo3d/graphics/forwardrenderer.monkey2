@@ -91,25 +91,25 @@ Class ForwardRenderer Extends Renderer
 		_ambientRendered=False
 		
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Directional Or Not light.ShadowsEnabled Continue
+			If light.Type<>LightType.Directional Or Not light.CastsShadow Continue
 			
 			RenderOpaque( light,camera )
 		Next
 		
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Point Or Not light.ShadowsEnabled Continue
+			If light.Type<>LightType.Point Or Not light.CastsShadow Continue
 			
 			RenderOpaque( light,camera )
 		Next
 		
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Directional Or light.ShadowsEnabled Continue
+			If light.Type<>LightType.Directional Or light.CastsShadow Continue
 			
 			RenderOpaque( light,camera )
 		Next
 		
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Point Or light.ShadowsEnabled Continue
+			If light.Type<>LightType.Point Or light.CastsShadow Continue
 			
 			RenderOpaque( light,camera )
 		Next
@@ -161,9 +161,9 @@ Class ForwardRenderer Extends Renderer
 		If light
 			Select light.Type
 			Case LightType.Directional			
-				if light.ShadowsEnabled RenderCSMShadows( light ) ; pass|=4
+				if light.CastsShadow RenderCSMShadows( light ) ; pass|=4
 			Case LightType.Point
-				if light.ShadowsEnabled RenderPointShadows( light ) ; pass|=4
+				if light.CastsShadow RenderPointShadows( light ) ; pass|=4
 				pass|=8
 			End
 			_runiforms.SetVec4f( "LightColor",light.Color )

@@ -89,28 +89,28 @@ Class DeferredRenderer Extends Renderer
 		
 		'directional with shadows
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Directional Or Not light.ShadowsEnabled Continue
+			If light.Type<>LightType.Directional Or Not light.CastsShadow Continue
 			
 			RenderLight( light,camera )
 		Next
 		
 		'point with shadows (not supported yet)
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Point Or Not light.ShadowsEnabled Continue
+			If light.Type<>LightType.Point Or Not light.CastsShadow Continue
 			
 			RenderLight( light,camera )
 		Next
 		
 		'directional without  shadows
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Directional Or light.ShadowsEnabled Continue
+			If light.Type<>LightType.Directional Or light.CastsShadow Continue
 
 			RenderLight( light,camera )
 		Next
 		
 		'point without shadows
 		For Local light:=Eachin scene.Lights
-			If light.Type<>LightType.Point Or light.ShadowsEnabled Continue
+			If light.Type<>LightType.Point Or light.CastsShadow Continue
 
 			RenderLight( light,camera )
 		Next
@@ -176,9 +176,9 @@ Class DeferredRenderer Extends Renderer
 		
 		Select light.Type
 		Case LightType.Directional
-			If light.ShadowsEnabled RenderCSMShadows( light ) ; pass|=2
+			If light.CastsShadow RenderCSMShadows( light ) ; pass|=2
 		Case LightType.Point
-			If light.ShadowsEnabled RenderPointShadows( light ) ; pass|=2
+			If light.CastsShadow RenderPointShadows( light ) ; pass|=2
 			pass|=1
 		End
 	
