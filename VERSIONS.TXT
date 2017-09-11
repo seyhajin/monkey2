@@ -21,6 +21,12 @@ Fixed Texture.Flags setter.
 
 Added simple outline drawing to Canvas, see: Canvas.OutlineMode, Canvas.OutlineColor and Canvas.OutlineWidth. See chimpmunkdebugger.monkey2 in hellochipmunk banana for demo.
 
+Implemented point light shadows using rgba depth cube texturing for webgl compatibility. Slow, needs to do some culling.
+
+Added ParticleSystem entity subclass. A ParticleSystem contains a ParticleBuffer and a ParticleMaterial, so you can creating multiple instances of the same ParticleBuffer with different materials. See mojo3d particles test.
+
+Added LinearColors property to UniformBlock and Renderer. Material color properties now always in sRGB space. Changed Color.Gold etc.
+to compensate (they were linear colors).
 
 ***** Monkey2 v1.1.06 *****
 
