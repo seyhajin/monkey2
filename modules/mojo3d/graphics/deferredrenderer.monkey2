@@ -18,7 +18,7 @@ Class DeferredRenderer Extends Renderer
 	#rem monkeydoc @hidden
 	#end
 	Method New()
-		Super.New( "MX2_LINEAROUTPUT" )
+		Super.New( True )
 		
 		Print "Creating DeferredRenderer"
 	
@@ -182,7 +182,7 @@ Class DeferredRenderer Extends Renderer
 			pass|=1
 		End
 	
-		_runiforms.SetVec4f( "LightColor",light.Color )
+		_runiforms.SetColor( "LightColor",light.Color )
 		_runiforms.SetFloat( "LightRange",light.Range )
 		_runiforms.SetMat4f( "LightViewMatrix",camera.InverseMatrix * light.Matrix )
 		

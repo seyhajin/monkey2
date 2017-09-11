@@ -5,13 +5,6 @@ Namespace mojo3d.graphics
 #end
 Class Renderer
 	
-	#rem monkeydoc @hidden
-	#end
-	Property ShaderDefs:String()
-		
-		Return _shaderDefs
-	End
-
 	#rem monkeydoc Size of the cascaded shadow map texture.
 	
 	Must be a power of 2 size. Defaults to 1024.
@@ -126,8 +119,8 @@ Class Renderer
 
 		_runiforms.SetTexture( "SkyTexture",_renderScene.SkyTexture )
 		
-		_runiforms.SetVec4f( "ClearColor",_renderScene.ClearColor )
-		_runiforms.SetVec4f( "AmbientDiffuse",_renderScene.AmbientLight )
+		_runiforms.SetColor( "ClearColor",_renderScene.ClearColor )
+		_runiforms.SetColor( "AmbientDiffuse",_renderScene.AmbientLight )
 	
 		Local env:Texture
 		
@@ -193,22 +186,22 @@ Class Renderer
 	Method OnRender( scene:Scene,camera:Camera,device:GraphicsDevice ) Virtual
 	End
 
-	Method New( shaderDefs:String )
+	Method New( linearOutput:Bool )
 		
-		_shaderDefs=shaderDefs
+		_linearOutput=linearOutput
 
-		_rgbaDepthTextures=False	'True'	Not glexts.GL_depth_texture
+		_rgbaDepthTextures=False
 		
-'		If Int( App.GetConfig( "mojod3_rgba_depth_textures","" ) ) _rgbaDepthTextures=True
-			
-		Print "RGBA depth textures="+Int( _rgbaDepthTextures )
+		_shaderDefs+=_linearOutput ? "MX2_LINEAROUTPUT~n" Else "MX2_SRGBOUTPUT~n"
 		
-		If _rgbaDepthTextures _shaderDefs+="~nMX2_RGBADEPTHTEXTURES"
+		If _rgbaDepthTextures _shaderDefs+="MX2_RGBADEPTHTEXTURES~n"
+		
+		Print "Renderer.ShaderDefs="+ShaderDefs
 		
 		_device=New GraphicsDevice( 0,0 )
 		
-		_runiforms=New UniformBlock( 1 )
-		_iuniforms=New UniformBlock( 2 )
+		_runiforms=New UniformBlock( 1,True )
+		_iuniforms=New UniformBlock( 2,True )
 		
 		_device.BindUniformBlock( _runiforms )
 		_device.BindUniformBlock( _iuniforms )
@@ -288,8 +281,15 @@ Class Renderer
 		Else
 			_device.ColorMask=ColorMask.All
 			_device.DepthMask=True
+			
+			Local color:=_renderScene.ClearColor
+			If _linearOutput
+				color.r=Pow( color.r,2.2 )
+				color.g=Pow( color.g,2.2 )
+				color.b=Pow( color.b,2.2 )
+			Endif
 		
-			_device.Clear( _renderScene.ClearColor,1.0 )
+			_device.Clear( color,1.0 )
 
 		Endif
 		
@@ -447,11 +447,26 @@ Class Renderer
 		_device.Scissor=t_scissor
 	End
 
+	Internal
+	
+	Property ShaderDefs:String()
+		
+		Return _shaderDefs
+	End
+	
+	Property LinearOutput:Bool()
+	
+		Return _linearOutput
+	
+	End
+
 	Private
 	
 	Field _rgbaDepthTextures:=False
 	
 	Field _shaderDefs:String
+	
+	Field _linearOutput:bool
 	
 	Field _device:GraphicsDevice
 	Field _runiforms:UniformBlock

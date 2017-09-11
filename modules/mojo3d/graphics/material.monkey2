@@ -6,9 +6,11 @@ Namespace mojo3d.graphics
 Class Material Extends Resource
 	
 	Method New()
+	
+		_uniforms=New UniformBlock( 3,True )
 		_blendMode=BlendMode.Opaque
 		_cullMode=CullMode.Back
-		_uniforms=New UniformBlock( 3 )
+		
 		TextureMatrix=New AffineMat3f
 	End		
 	
@@ -105,10 +107,13 @@ Class Material Extends Resource
 	#rem monkeydoc @hidden
 	#end
 	Method New( material:Material )
+
 		_shader=material._shader
 		_uniforms=New UniformBlock( material._uniforms )
+
 		_blendMode=material._blendMode
 		_cullMode=material._cullMode
+
 		TextureMatrix=material.TextureMatrix
 	End
 	

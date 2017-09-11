@@ -30,7 +30,7 @@ void main(){
 	
 	vec3 color=textureCube( r_SkyTexture,tv ).rgb;
 	
-#if !defined( MX2_SRGBOUTPUT )
+#if defined( MX2_LINEAROUTPUT )
 	gl_FragColor=vec4( pow( color,vec3( 2.2 ) ),1.0 );
 #else
 	gl_FragColor=vec4( color,1.0 );

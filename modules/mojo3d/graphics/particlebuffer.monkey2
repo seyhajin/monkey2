@@ -9,7 +9,7 @@ Class ParticleBuffer
 
 		_vbuffer=New VertexBuffer( Vertex3fFormat.Instance,_length )
 		
-		_uniforms=New UniformBlock( 4 )
+		_uniforms=New UniformBlock( 4,true )
 		
 		Local vertices:=_vbuffer.AddVertices( _length )
 		
@@ -76,6 +76,7 @@ Class ParticleBuffer
 		Return _coneAngle
 	
 	Setter( angle:Float )
+		Assert( angle>0 And angle<180,"Cone angle must be in the range (0,180)" )
 	
 		_coneAngle=angle
 	End
@@ -168,10 +169,24 @@ Class ParticleBuffer
 
 	Method AddParticle( time:Float )
 	
+		Local r:=Rnd( -Pi,Pi )
+		Local d:=Rnd( 0,Tan( _coneAngle*.5*TwoPi/360.0 ) )
+		
+		Local velocity:=New Vec3f( Cos( r ) * d,Sin( r ) * d,1.0 ).Normalize() * Rnd( _minVelocity,_maxVelocity )
+
+		#rem	
+		Local rx:=Sin( Rnd( -_coneAngle*.5,_coneAngle*.5 )*TwoPi/360.0 )
+		Local ry:=Sin( Rnd( -_coneAngle*.5,_coneAngle*.5 )*TwoPi/360.0 )
+		
+		Local velocity:=Mat3f.Rotation( rx,ry,0 ) * New Vec3f( 0,0,Rnd( _minVelocity,_maxVelocity ) )
+		#end
+		
+		#rem
 		Local vx:=Sin( Rnd( -_coneAngle*.5,_coneAngle*.5 )*TwoPi/360.0 )
 		Local vy:=Sin( Rnd( -_coneAngle*.5,_coneAngle*.5 )*TwoPi/360.0 )
 		Local sp:=Float( Rnd( _minVelocity,_maxVelocity ) )
-		Local velocity:=New Vec3f( vx,vy,1.0 ).Normalize() * sp
+		Local velocity:=New Vec3f( vx,vy,1.0 ) * sp '.Normalize() * sp
+		#end
 			
 		Local vertex:=Cast<Vertex3f Ptr>( _vbuffer.Data )+_index
 		

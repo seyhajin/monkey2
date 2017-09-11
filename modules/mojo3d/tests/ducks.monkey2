@@ -40,14 +40,15 @@ Class MyWindow Extends Window
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
+		_scene.ClearColor=Color.Sky
 
 		'add fog effect to scene
 		'		
-		_fog=New FogEffect
-		_fog.Color=Color.Sky
-		_fog.Near=0
-		_fog.Far=50
-		_scene.AddPostEffect( _fog )
+'		_fog=New FogEffect
+'		_fog.Color=Color.Sky
+'		_fog.Near=0
+'		_fog.Far=50
+'		_scene.AddPostEffect( _fog )
 		
 		'create camera
 		'
@@ -59,15 +60,11 @@ Class MyWindow Extends Window
 		
 		'create light
 		'
-'		_light=New Light
-'		_light.Type=LightType.Directional
-'		_light.RotateX( 75 )	'aim directional light downwards
-		
-		_light2=New Light
-		_light2.Type=LightType.Point
-		_light2.Move( 0,20,0 )
-		_light2.Range=40
-		_light2.ShadowsEnabled=True
+		_light=New Light
+		_light.Type=LightType.Point
+		_light.Move( 0,20,0 )
+		_light.Range=40
+		_light.CastsShadow=True
 
 		'create ground
 		'
@@ -140,7 +137,7 @@ Function Main()
 	
 	Local config:=New StringMap<String>
 
-	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
+'	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
 
 '	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
 '	config["GL_depth_buffer_enabled"]=1

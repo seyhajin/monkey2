@@ -9,7 +9,8 @@ Class ParticleMaterial Extends Material
 	#end	
 	Method New()
 
-		Local shader:="material-particle",defs:=Renderer.GetCurrent().ShaderDefs
+		Local shader:="material-particle"
+		Local defs:=Renderer.GetCurrent().ShaderDefs
 			
 		SetShader( Shader.Open( shader,defs ) )
 		

@@ -12,8 +12,8 @@ Class WaterMaterial Extends Material
 		
 		SetShader( Shader.Open( "material-water" ) )
 		
-		ColorTexture=Texture.ColorTexture( Color.SeaGreen )
-		ColorFactor=Color.White
+		ColorTexture=Texture.ColorTexture( Color.White )
+		ColorFactor=Color.SeaGreen
 		
 		Metalness=0
 		Roughness=0
@@ -51,7 +51,7 @@ Class WaterMaterial Extends Material
 		Return Uniforms.GetColor( "ColorFactor" )
 	
 	Setter( factor:Color )
-		
+	
 		Uniforms.SetColor( "ColorFactor",factor )
 	End
 	

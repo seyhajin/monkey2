@@ -22,7 +22,7 @@ Class ForwardRenderer Extends Renderer
 	#rem monkeydoc @hidden
 	#end
 	Method New( direct:Bool )
-		Super.New( direct ? "MX2_SRGBOUTPUT" Else "MX2_LINEAROUTPUT" )
+		Super.New( Not direct )
 		
 		_direct=direct
 		
@@ -166,7 +166,7 @@ Class ForwardRenderer Extends Renderer
 				if light.CastsShadow RenderPointShadows( light ) ; pass|=4
 				pass|=8
 			End
-			_runiforms.SetVec4f( "LightColor",light.Color )
+			_runiforms.SetColor( "LightColor",light.Color )
 			_runiforms.SetFloat( "LightRange",light.Range )
 			_runiforms.SetMat4f( "LightViewMatrix",camera.InverseMatrix * light.Matrix )
 			pass|=2

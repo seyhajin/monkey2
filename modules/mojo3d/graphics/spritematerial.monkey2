@@ -9,7 +9,8 @@ Class SpriteMaterial Extends Material
 	#end	
 	Method New()
 		
-		Local shader:="material-sprite",defs:=Renderer.GetCurrent().ShaderDefs
+		Local shader:="material-sprite"
+		Local defs:=Renderer.GetCurrent().ShaderDefs
 			
 		SetShader( Shader.Open( shader,defs ) )
 		

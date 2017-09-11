@@ -43,14 +43,16 @@ Class MyWindow Extends Window
 		'
 		_light=New Light
 		_light.Rotate( 60,45,0 )	'aim directional light 'down' - Pi/2=90 degrees.
-		_light.ShadowsEnabled=false
 		
 		'create ground
 		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.DarkGrey ) )
+		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Brown*.5 ) )
 		
 		_particles=New ParticleSystem( 15000 )
 		_particles.RotateX( -90 )	'point upwards!
+		
+		Local pmaterial:=_particles.Material
+		pmaterial.ColorTexture=Texture.Load( "asset::bluspark.png",TextureFlags.FilterMipmap )
 		
 		Local pbuffer:=_particles.ParticleBuffer
 		pbuffer.Gravity=New Vec3f( 0,-9.81,0 )	'gravity in world space in m/s^2.
@@ -58,10 +60,11 @@ Class MyWindow Extends Window
 		pbuffer.Fade=0.0			'how long before paticle starts fading out in seconds.
 		pbuffer.Colors=New Color[]( Color.White,Color.Yellow,Color.Orange,Color.Red )
 		pbuffer.ConeAngle=30		'angle of particle emission cone.
-		pbuffer.MinVelocity=10.0		'min particle velocity.
-		pbuffer.MaxVelocity=10.0		'max particle velocity.
-		pbuffer.MinSize=16.0			'min particle size.
-		pbuffer.MaxSize=16.0		'max particle size.
+		pbuffer.MinVelocity=10.0	'min particle velocity.
+		pbuffer.MaxVelocity=10.0	'max particle velocity.
+		pbuffer.MinSize=24.0		'min particle size.
+		pbuffer.MaxSize=32.0		'max particle size.
+		
 		
 		For Local an:=0 Until 360 Step 45
 			Local pivot:=New Entity
@@ -97,9 +100,13 @@ Function Main()
 	
 	Local config:=New StringMap<String>
 
-'	config["mojo3d_renderer"]="forward"
+'	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
+
+'	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
 '	config["GL_depth_buffer_enabled"]=1
 
+	config["mojo3d_renderer"]="forward"
+		
 	New AppInstance( config )
 	
 	New MyWindow
