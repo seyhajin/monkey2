@@ -187,6 +187,11 @@ Class UniformBlock Extends Resource
 		Return _uniforms[id].arrayData
 	End
 
+	Method GetMat4fArray:Mat4f[]( id:Int )
+		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalidate uniform type" )
+		Return _uniforms[id].arrayData
+	End
+
 	'***** Texture *****
 	'
 	Method SetTexture( uniform:String,value:Texture )

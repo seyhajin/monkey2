@@ -148,6 +148,10 @@ Class GLProgram
 					glUniformMatrix3fv( u.location,1,False,ublock.GetMat3fv( u.uniformId ) )
 					
 				Case GL_FLOAT_MAT4
+				
+					Local size:=u.size
+					
+					If size>1 size=ublock.GetMat4fArray( u.uniformId ).Length
 					
 					glUniformMatrix4fv( u.location,u.size,False,ublock.GetMat4fv( u.uniformId ) )
 					
