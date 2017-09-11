@@ -383,16 +383,10 @@ Class FuncValue Extends Value
 	End
 	
 	Method SemantStmts()
-	
+
 		If block.IsGeneric SemantError( "FuncValue.SemantStmts(1)" )
 	
-		Try
-		
-			SemantParams()
-			
-		Catch ex:SemantEx
-		
-		End
+		SemantParams()
 		
 		If Not fdecl.IsAbstract
 			
@@ -403,10 +397,7 @@ Class FuncValue Extends Value
 				Local superType:=cscope.ctype.superType
 				If superType And Not superType.hasDefaultCtor
 				
-					Try
-						Throw New SemantEx( "Super class '"+superType.Name+"' has no default constructor",pnode )
-					Catch ex:SemantEx
-					End
+					New SemantEx( "Super class '"+superType.Name+"' has no default constructor",pnode )
 					
 				Endif
 			
@@ -432,7 +423,7 @@ Class FuncValue Extends Value
 				module.main=Self
 			Endif
 			
-			If instanceOf Or IsExtension
+			If instanceOf Or IsExtension Or (cscope And cscope.ctype.instanceOf)
 			
 				Local module:=Builder.semantingModule
 				module.genInstances.Push( Self )
@@ -457,7 +448,7 @@ Class FuncValue Extends Value
 	
 	Method TryGenInstance:FuncValue( types:Type[] )
 		If AnyTypeGeneric( types ) SemantError( "FuncValue.GenInstance()" )
-
+		
 		If types.Length<>Self.types.Length Return Null
 		
 		If Not instances instances=New Stack<FuncValue>

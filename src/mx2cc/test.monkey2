@@ -1,14 +1,12 @@
+#Import "<std>"
 
-Class Box<T>
-
-	Const Min:=New Box
-	
-End
+Using std..
 
 Function Main()
 
-	Local box:=New Box<Int>
+	Local m:=Mat3<Double>.Scaling( 0,0,0 )
 	
-	Print "Bye!"
+	Local m2:=New Mat3<Double>
 
 End
+
