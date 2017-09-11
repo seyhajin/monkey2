@@ -128,7 +128,7 @@ Class AssimpLoader
 				
 				Local aiweight:=aibone.mWeights[j]
 				
-				If aiweight.mWeight<.00001 continue
+				If aiweight.mWeight<.00001 Continue
 				
 				Local wp:=Cast<Float Ptr>( Varptr vertices[aiweight.mVertexId].weights )
 				Local bp:=Cast<UByte Ptr>( Varptr vertices[aiweight.mVertexId].bones )
@@ -315,6 +315,8 @@ Class AssimpLoader
 	Method LoadAnimation:Animation( aianim:aiAnimation )
 		
 		Local channels:=New AnimationChannel[ _entities.Length ]
+		
+'		Print "Num anim channels="+aianim.mNumChannels
 		
 		For Local i:=0 Until aianim.mNumChannels
 			
