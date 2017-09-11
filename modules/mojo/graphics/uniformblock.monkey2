@@ -5,21 +5,36 @@ Namespace mojo.graphics
 #end
 Class UniformBlock Extends Resource
 
-	Method New( name:Int )
+	Method New( name:Int,linearColors:Bool=False )
+	
 		_name=name
+		
+		_linearColors=linearColors
 	End
 	
 	Method New( uniforms:UniformBlock )
-		Self.New( uniforms._name )
-		
+	
 		_name=uniforms._name
+		
+		_linearColors=uniforms._linearColors
+		
 		For Local i:=0 Until _uniforms.Length
 			_uniforms[i]=uniforms._uniforms[i]
 		Next
 	End
 	
 	Property Name:Int()
+	
 		Return _name
+	End
+	
+	Property LinearColors:Bool()
+	
+		Return _linearColors
+	
+	Setter( linearColors:Bool )
+	
+		_linearColors=linearColors
 	End
 	
 	Function GetUniformId:Int( name:String,block:Int )
@@ -119,11 +134,22 @@ Class UniformBlock Extends Resource
 	'***** Color (really just Vec4f) *****
 	'
 	Method SetColor( uniform:String,value:Color )
+		If _linearColors
+			value.r=Pow(value.r,2.2 )
+			value.g=Pow(value.g,2.2 )
+			value.b=Pow(value.b,2.2 )
+		Endif
 		SetData( uniform,value,Type.Vec4f )
 	End
 
 	Method GetColor:Color( uniform:String )
-		Return GetData<Color>( uniform,Type.Vec4f )
+		Local value:=GetData<Color>( uniform,Type.Vec4f )
+		If _linearColors
+			value.r=Pow(value.r,1.0/2.2 )
+			value.g=Pow(value.g,1.0/2.2 )
+			value.b=Pow(value.b,1.0/2.2 )
+		Endif
+		Return value
 	End
 	
 	'***** Mat3f *****
@@ -255,6 +281,7 @@ Class UniformBlock Extends Resource
 
 	Field _name:Int
 	Field _seq:Int
+	Field _linearColors:bool
 	Field _uniforms:=New Uniform[64]
 	
 	Method SetData<T>( uniform:String,data:T,type:Type )
