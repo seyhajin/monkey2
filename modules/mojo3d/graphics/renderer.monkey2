@@ -556,7 +556,8 @@ Class Renderer
 				_iuniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
 				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
 				_iuniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
-				If op.bones _iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
+				
+				_iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
 				
 			Endif
 			

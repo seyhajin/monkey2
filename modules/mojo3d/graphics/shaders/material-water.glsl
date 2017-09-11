@@ -1,5 +1,5 @@
 
-//@renderpasses 1
+//@renderpasses 0
 
 //material uniforms
 
