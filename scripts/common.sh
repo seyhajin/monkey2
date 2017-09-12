@@ -35,7 +35,7 @@ else
 	
 	ted2="../bin/ted2_macos.app"
 	ted2_new="../src/ted2/ted2.buildv1.1.07/macos_release/ted2.app"
-	ted2go_new="../src/ted2go/Ted2.buildv1.1.07/macos_release/ted2.app"
+	ted2go_new="../src/ted2go/Ted2.buildv1.1.07/macos_release/Ted2.app"
 	
 	launcher="../Monkey2 (Macos).app"
 	launcher_new="../src/launcher/launcher.buildv1.1.07/macos_release/launcher.app"
