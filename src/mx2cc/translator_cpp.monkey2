@@ -1815,9 +1815,9 @@ Class Translator_CPP Extends Translator
 		Endif
 		
 		If ctype.IsStruct
-			If Not value.args Return cname+"(bbNullCtor)"
-			If value.args[0].type.Equals( ctype ) Return cname+"("+TransArgs( value.args )+",bbNullCtor)"
-			Return cname+"("+TransArgs( value.args )+")"
+			If Not value.args Return cname+"{bbNullCtor}"
+			If value.args[0].type.Equals( ctype ) Return cname+"{"+TransArgs( value.args )+",bbNullCtor}"
+			Return cname+"{"+TransArgs( value.args )+"}"
 		Endif
 		
 		Return "bbGCNew<"+cname+">("+TransArgs( value.args )+")"
