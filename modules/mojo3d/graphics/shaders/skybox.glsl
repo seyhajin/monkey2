@@ -11,7 +11,7 @@ void main(){
 
 	v_ClipPosition=a_Position * 2.0 - 1.0;
 
-	gl_Position=vec4( v_ClipPosition,0.0,1.0 );
+	gl_Position=vec4( v_ClipPosition,1.0,1.0 );
 }
 
 //@fragment
@@ -24,7 +24,7 @@ uniform mat4 r_InverseProjectionMatrix;
 
 void main(){
 
-	vec4 clip=r_InverseProjectionMatrix * vec4( v_ClipPosition,0.0,1.0 );
+	vec4 clip=r_InverseProjectionMatrix * vec4( v_ClipPosition,1.0,1.0 );
 
 	vec3 tv=r_EnvMatrix * (clip.xyz/clip.w);
 	
