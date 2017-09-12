@@ -44,12 +44,14 @@ __MANPAGES__/
 /modules/timelinefx
 /modules/admob
 /modules/iap
+/modules/win32
 
 /modules/module-manager/backups
 
 Monkey2 (Windows).exe
 Monkey2 (Macos).app
 Monkey2 (Linux)
+Mollusk.exe
 
 /src/c2mx2/LLVM
 /src/mx23d
