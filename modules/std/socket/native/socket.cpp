@@ -307,7 +307,7 @@ namespace bbSocket{
 	
 		int n=-1;
 		
-		if( bbFiber::getCurrentFiber() && cansend( socket )<size ){
+		if( bbFiber::getCurrentFiber() && cansend( socket )==0 ){//<size ){
 			
 			Future future;
 				
@@ -337,7 +337,7 @@ namespace bbSocket{
 	
 		int n=-1;
 		
-		if( bbFiber::getCurrentFiber() && cansend( socket )<size  ){
+		if( bbFiber::getCurrentFiber() && cansend( socket )==0 ){//<size  ){
 			
 			Future future;
 				
@@ -367,7 +367,7 @@ namespace bbSocket{
 	
 		int n=-1;
 	
-		if( bbFiber::getCurrentFiber() && canrecv( socket )<size ){
+		if( bbFiber::getCurrentFiber() && canrecv( socket )==0 ){//<size ){
 		
 			Future future;
 			
@@ -397,7 +397,7 @@ namespace bbSocket{
 	
 		int n=-1;
 
-		if( bbFiber::getCurrentFiber() && canrecv( socket )<size ){
+		if( bbFiber::getCurrentFiber() && canrecv( socket )==0 ){//<size ){
 		
 			Future future;
 			
