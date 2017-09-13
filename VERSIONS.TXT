@@ -3,11 +3,7 @@
 
 Android min-sdk now 14 for android projects.
 
-Now only 1 Renderer class.
-
 Added Scene.DestroyAllEntities.
-
-Now have to use Scene.AddPostEffect.
 
 Added new 'instance' uniformblock type for better (not great yet) instancing.
 

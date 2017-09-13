@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.06"
+Const MX2CC_VERSION:="1.1.07"
 
 Const RELEASE_SUFFIX:=""
 
@@ -17,6 +17,7 @@ src/c2mx2
 src/createrelease
 modules/admob
 modules/iap
+modules/win32
 modules/linq
 modules/gles30
 bin/ted2.state.json
