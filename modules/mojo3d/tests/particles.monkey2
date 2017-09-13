@@ -41,8 +41,8 @@ Class MyWindow Extends Window
 		
 		'create light
 		'
-		_light=New Light
-		_light.Rotate( 60,45,0 )	'aim directional light 'down' - Pi/2=90 degrees.
+		'_light=New Light
+		'_light.Rotate( 60,45,0 )	'aim directional light 'down' - Pi/2=90 degrees.
 		
 		'create ground
 		'
@@ -102,8 +102,8 @@ Function Main()
 
 '	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
 
-'	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
-'	config["GL_depth_buffer_enabled"]=1
+	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
+	config["GL_depth_buffer_enabled"]=1
 
 '	config["mojo3d_renderer"]="forward"
 		
