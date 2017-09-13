@@ -105,7 +105,7 @@ Function Main()
 '	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
 '	config["GL_depth_buffer_enabled"]=1
 
-	config["mojo3d_renderer"]="forward"
+'	config["mojo3d_renderer"]="forward"
 		
 	New AppInstance( config )
 	
