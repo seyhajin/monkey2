@@ -29,7 +29,6 @@ __MANPAGES__/
 /modules/module-manager/downloads/*.zip
 
 #/src/ted2go
-/bananas/ted2go-showcase
 
 /modules/cmark
 /modules/lua
