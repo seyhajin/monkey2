@@ -21,8 +21,10 @@ Implemented point light shadows using rgba depth cube texturing for webgl compat
 
 Added ParticleSystem entity subclass. A ParticleSystem contains a ParticleBuffer and a ParticleMaterial, so you can creating multiple instances of the same ParticleBuffer with different materials. See mojo3d particles test.
 
-Added LinearColors property to UniformBlock and Renderer. Material color properties now always in sRGB space. Changed Color.Gold etc.
-to compensate (they were linear colors).
+Added LinearColors property to UniformBlock and Renderer. Material color properties now always in sRGB space. Changed Color.Gold etc. to compensate (they were linear colors).
+
+Added bananas showcase files. See Help->Bananas showcase.
+
 
 ***** Monkey2 v1.1.06 *****
 
