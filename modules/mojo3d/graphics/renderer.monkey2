@@ -124,10 +124,10 @@ Class Renderer
 	
 		Local env:Texture
 		
-		If _renderScene.SkyTexture
-			env=_renderScene.SkyTexture
-		Else If _renderScene.EnvTexture
+		If _renderScene.EnvTexture
 			env=_renderScene.EnvTexture
+		ElseIf _renderScene.SkyTexture
+			env=_renderScene.SkyTexture
 		Else
 			env=_defaultEnv
 		Endif
