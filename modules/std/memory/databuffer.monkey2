@@ -275,18 +275,19 @@ Class DataBuffer Extends std.resource.Resource
 		Return String.FromCString( _data+offset,count )
 	End
 	
-	#rem monkeydoc Reads a null terminated utf8 CString from the databuffer.
+	#rem monkeydoc Reads a null terminated CString from the databuffer.
 	#end
 	Method PeekCString:String( offset:Int )
 		DebugAssert( offset>=0 And offset<=_length )
 		
-		For Local i:=offset Until _length
-			If Not _data[i] Exit
-		End
+		Local i:=offset
+		While i<_length And _data[i]
+			i+=1
+		Wend
 		
-		Return String.FromCString( _data+offset,_length-offset )
+		Return PeekString( offset,i-offset )
 	End
-	
+		
 	#rem monkeydoc Writes a byte to the databuffer.
 	
 	In debug builds, a runtime error will occur if `offset` is outside the range of the databuffer.
@@ -428,6 +429,8 @@ Class DataBuffer Extends std.resource.Resource
 	#rem monkeydoc Write a string to the databuffer.
 
 	If there is not enough room in the data buffer, the string data is truncated.
+		
+	The string is written in utf8 format, but no null terminator is written. Use [[PokeCString]] to write a null terminated string.
 	
 	@param offset Byte offset to write the string.
 	
@@ -442,23 +445,14 @@ Class DataBuffer Extends std.resource.Resource
 		value.ToCString( _data+offset,count )
 	End
 	
-	#rem monkeydoc Writes a utf8 CString to the databuffer.
-	
-	If there is not enough room in the data buffer, the string data is truncated.
-	
-	A null terminator is appended to the string if there is room in the data buffer.
-
-	@param offset Byte offset to write the string.
-	
-	@param value The string to write.
-	
-	#end	
+	#rem monkeydoc Writes a null terminated CString to the data buffer.
+	#end
 	Method PokeCString( offset:Int,value:String )
 		DebugAssert( offset>=0 And offset<=_length )
 		
 		value.ToCString( _data+offset,_length-offset )
 	End
-
+	
 	#rem monkeydoc Creates a slice of the databuffer.
 	#end
 	Method Slice:DataBuffer( from:Int=0 )
