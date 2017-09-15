@@ -419,7 +419,7 @@ Class AppInstance
 	#rem monkeydoc @hidden
 	#end
 	Method EndModal()
-	
+		
 		_modalView=_modalStack.Pop()
 		
 		RequestRender()
@@ -589,6 +589,7 @@ Class AppInstance
 	Field _fpsMillis:Int
 
 	Field _window:Window
+	Field _keyDownView:View
 	Field _key:Key
 	Field _rawKey:Key
 	Field _keyChar:String
@@ -648,9 +649,24 @@ Class AppInstance
 		
 		KeyEventFilter( event )
 		
-		If event.Eaten Return
+		If event.Eaten Or Not view
+			_keyDownView=Null
+			Return
+		Endif
 		
-		If view view.SendKeyEvent( event )
+		Select type
+		Case EventType.KeyDown
+			_keyDownView=view
+		Case EventType.KeyUp
+			If view<>_keyDownView
+				_keyDownView=Null
+				Return
+			Endif
+		Default
+			_keyDownView=Null
+		End
+		
+		view.SendKeyEvent( event )
 	End
 	
 	Method SendMouseEvent( type:EventType,view:View )
