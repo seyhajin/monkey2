@@ -645,26 +645,18 @@ Class AppInstance
 	
 		Local view:=KeyView
 		
-		Local event:=New KeyEvent( type,view,_key,_rawKey,_modifiers,_keyChar )
-		
-		KeyEventFilter( event )
-		
-		If event.Eaten Or Not view
-			_keyDownView=Null
-			Return
-		Endif
-		
 		Select type
 		Case EventType.KeyDown
 			_keyDownView=view
 		Case EventType.KeyUp
-			If view<>_keyDownView
-				_keyDownView=Null
-				Return
-			Endif
-		Default
-			_keyDownView=Null
+			If view<>_keyDownView Return
 		End
+		
+		Local event:=New KeyEvent( type,view,_key,_rawKey,_modifiers,_keyChar )
+		
+		KeyEventFilter( event )
+		
+		If event.Eaten Or Not view Return
 		
 		view.SendKeyEvent( event )
 	End
