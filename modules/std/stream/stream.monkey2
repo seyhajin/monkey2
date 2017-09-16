@@ -91,7 +91,7 @@ Class Stream Extends std.resource.Resource
 
 	#rem monkeydoc The byte order of the stream.
 	
-	The default byte order is ByteOrder.BigEndian.
+	The default byte order is ByteOrder.LittleEndian.
 	
 	#end
 	Property ByteOrder:ByteOrder()
@@ -100,7 +100,7 @@ Class Stream Extends std.resource.Resource
 		
 	Setter( byteOrder:ByteOrder )
 		
-		_tmpbuf=byteOrder=ByteOrder.BigEndian ? _BEbuf Else _LEbuf
+		_tmpbuf=(byteOrder=ByteOrder.BigEndian ? _BEbuf Else _LEbuf)
 	End
 	
 	#rem monkeydoc Reads as many bytes as possible from a stream into memory.
@@ -554,7 +554,7 @@ Class Stream Extends std.resource.Resource
 	
 	Field _tmpbuf:DataBuffer
 	
-	Global _BEbuf:=New DataBuffer( 8,std.memory.ByteOrder.LittleEndian )
-	Global _LEbuf:=New DataBuffer( 8,std.memory.ByteOrder.BigEndian )
+	Global _BEbuf:=New DataBuffer( 8,std.memory.ByteOrder.BigEndian )
+	Global _LEbuf:=New DataBuffer( 8,std.memory.ByteOrder.LittleEndian )
 
 End
