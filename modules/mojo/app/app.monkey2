@@ -514,6 +514,16 @@ Class AppInstance
 		
 	End
 	
+	#rem monkeydoc Resets polled mouse and keyboard devices.
+	
+	Clears the keyboard character queue and clears the pressed and released states for all keys and mouse buttons.
+	
+	#end
+	Method ResetPolledInput()
+		Keyboard.Reset()
+		Mouse.Reset()
+	End
+	
 	#rem monkeydoc @hidden
 	#end
 	Function EmscriptenMainLoop()
