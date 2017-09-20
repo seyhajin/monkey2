@@ -1,5 +1,5 @@
 
-Namespace mojo3d
+Namespace mojo3d.graphics
 
 Class ParticleSystem Extends Entity
 
