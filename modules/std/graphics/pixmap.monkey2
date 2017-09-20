@@ -12,7 +12,7 @@ Class Pixmap Extends Resource
 
 	#rem monkeydoc Creates a new pixmap.
 	
-	When you have finished with the pixmap, you should call its inherited [[Resource.Discard]] method.
+	When you have finished with the pixmap, you should call its inherited [[resource.Resource.Discard]] method.
 
 	@param width The width of the pixmap in pixels.
 	
@@ -147,7 +147,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method SetPixel( x:Int,y:Int,color:Color )
-		DebugAssert( x>=0 And y>=0 And x<_width And y<_height )
+		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 		
 		Local p:=PixelPtr( x,y )
 		Select _format
@@ -186,7 +186,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method GetPixel:Color( x:Int,y:Int )
-		DebugAssert( x>=0 And y>=0 And x<_width And y<_height )
+		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 	
 		Local p:=PixelPtr( x,y )
 		Select _format
@@ -222,7 +222,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method SetPixelARGB( x:Int,y:Int,color:UInt )
-		DebugAssert( x>=0 And y>=0 And x<_width And y<_height )
+		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 	
 		Local p:=PixelPtr( x,y )
 		Select _format
@@ -259,7 +259,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method GetPixelARGB:UInt( x:Int,y:Int )
-		DebugAssert( x>=0 And y>=0 And x<_width And y<_height )
+		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 	
 		Local p:=PixelPtr( x,y )
 		Select _format
