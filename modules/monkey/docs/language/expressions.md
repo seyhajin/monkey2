@@ -17,7 +17,8 @@
 | _identifier_		| Identifier				|
 | _literal_			| Literal value				|
 | | |
-| `.`				| Postfix member acccess	| 2
+| `?.`				| Safe postfix member access | 2
+| `.`				| Postfix member acccess	| 
 | `( )`				| Postfix Invoke			|
 | `[ ]`				| Postfix Index				|
 | `< >`				| Postfix Generic instance	|
@@ -57,6 +58,11 @@
 | `Or`				| Boolean or				| 13
 | | |
 | `?` `Else`		| If-then-else				| 14
+| `?Else`			| 'Elvis operator' 			|
+
+The safe member access operator allows you to safely access members of a possibly null object. Accessing a field, property or method of a null object using the plain '.' operator will cause a 'null object runtime error' in debug mode - in release it will likely just crash the program. However, using '?.' instead will cause a null value of the expected type to be returned instead, preventing the runtime error occuring. Note however that this involves some overhead as it means the object must be checked before it is accessed.
+
+The 'Elvis operator' is a binary operator that returns its left hand argument if it is non-null, otherwise it returns its right hand argument. It is similar to 'X<>Null ? X Else Null' except that 'X' is only evaluted once.
 
 #### Type balancing
 

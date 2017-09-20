@@ -27,7 +27,7 @@ The following compound types are supported by monkey2:
 
 | Type						| Description
 |:--------------------------|:-----------
-| _Type_ `[` [,...] `]`				| Array type
+| _Type_ `[` [,...] `]`		| Array type
 | _Type_ `Ptr`				| Pointer type
 | _Type_ `(` _Types_ `)`	| Function type
 
@@ -46,12 +46,15 @@ These type conversions are performed automatically:
 | Any pointer type				| `Void Ptr`
 | Any enum type					| Any integral type
 | Class or interface type		| Base class type or implemented interface type
+| Class, interface or struct type | `Bool`
 
 When numeric values are converted to bool, the result will be true if the value is not equal to 0.
 
 When strings and arrays are converted to bool, the result will be true if the length of the string or array is not 0.
 
 When class or interface instances are converted to bool, the result will be true if the instance is not equal to null.
+
+When struct values are converted, the result will be true if the struct value is not equal to null.
 
 When floating point values are converted to integral values, the fractional part of the floating point value is simply chopped off - no rounding is performed.
 
