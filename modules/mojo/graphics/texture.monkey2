@@ -91,8 +91,6 @@ Enum CubeFace
 	NegativeZ
 End
 
-#rem monkeydoc @hidden
-#end
 Class Texture Extends Resource
 	
 	Private
@@ -413,20 +411,32 @@ Class Texture Extends Resource
 			If _retroMode
 				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
 				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
-			Else If _flags & TextureFlags.Mipmap
-				If _flags & TextureFlags.Filter
+			Else
+				 If _flags & TextureFlags.Mipmap
+					If _flags & TextureFlags.Filter
+						glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
+						glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR )
+					Else
+						glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
+						glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST )
+					Endif
+				Else If _flags & TextureFlags.Filter
 					glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
-					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR )
+					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR )
 				Else
 					glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
-					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST )
+					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
 				Endif
-			Else If _flags & TextureFlags.Filter
-				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
-				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR )
-			Else
-				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
-				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
+				
+				If _flags & TextureFlags.FilterMipmap
+					If glexts.GL_texture_filter_anisotropic
+						Local max:Int=0
+						glGetIntegerv( GL_MAX_TEXTURE_MAX_ANISOTROPY,Varptr max )
+						Local n:=Min( Int(App.GetConfig( "GL_texture_max_anisotropy",max )),max )
+						glTexParameteri( _glTarget,GL_TEXTURE_MAX_ANISOTROPY,n )
+					Endif
+				Endif
+								
 			Endif
 			
 			glCheck()

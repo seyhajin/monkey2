@@ -17,6 +17,7 @@ namespace bbGLexts{
 	bool GL_texture_half_float;
 	bool GL_depth_texture;
 	bool GL_seamless_cube_map;
+	bool GL_texture_filter_anisotropic;
 	
 	PFNGLDRAWBUFFERSPROC glDrawBuffers;
 	
@@ -67,6 +68,8 @@ namespace bbGLexts{
 		
 		GL_seamless_cube_map=SDL_GL_ExtensionSupported( "GL_ARB_seamless_cube_map" );
 			
+		GL_texture_filter_anisotropic=SDL_GL_ExtensionSupported( "GL_EXT_texture_filter_anisotropic" );
+	
 //		bb_printf( "GL_draw_buffers=%i\n",int( GL_draw_buffers ) );
 //		bb_printf( "GL_texture_float=%i\n",int( GL_texture_float ) );
 //		bb_printf( "GL_texture_half_float=%i\n",int( GL_texture_half_float ) );
