@@ -86,8 +86,16 @@ Function BalanceBinaryopTypes:Type( op:String,lhs:Type,rhs:Type,argTypes:Type[] 
 	Case "-"
 	
 		If TCast<PointerType>( lhs )
-			type=lhs
-			rtype=BalanceIntegralTypes( prhs,prhs )
+			If TCast<PointerType>( rhs )
+				If Not lhs.Equals( rhs ) Throw New SemantEx( "Pointers are of different type" )
+				type=Type.IntType
+				ltype=lhs
+				rtype=rhs
+			Else
+				type=lhs
+				ltype=type
+				rtype=BalanceIntegralTypes( prhs,prhs )
+			Endif
 		Else
 			type=BalanceNumericTypes( plhs,prhs )
 		Endif
