@@ -134,10 +134,14 @@ Class Renderer
 		
 		_runiforms.SetTexture( "EnvTexture",env )
 		
+		_runiforms.SetColor( "EnvColor",_renderScene.EnvColor )
+		
 		_renderQueue.Clear()
 		
 		_renderQueue.Time=time
 		
+		_renderQueue.AddShadowOps=False
+			
 		For Local model:=Eachin _renderScene.Models
 			
 			_renderQueue.AddShadowOps=model.CastsShadow
@@ -162,10 +166,13 @@ Class Renderer
 		Local viewMat:=_renderCamera.InverseMatrix
 		Local projMat:=_renderCamera.ProjectionMatrix
 		Local invProjMat:=-projMat
+		
 			
 		_runiforms.SetMat3f( "EnvMatrix",envMat )
 		_runiforms.SetMat4f( "ProjectionMatrix",projMat )
 		_runiforms.SetMat4f( "InverseProjectionMatrix",invProjMat )
+		_runiforms.SetMat4f( "ViewMatrix",_renderCamera.InverseMatrix )
+		_runiforms.SetMat4f( "CameraMatrix",_renderCamera.Matrix )
 		_runiforms.SetFloat( "DepthNear",_renderCamera.Near )
 		_runiforms.SetFloat( "DepthFar",_renderCamera.Far )
 		

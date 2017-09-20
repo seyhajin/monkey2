@@ -25,11 +25,11 @@ Class Scene Extends DynamicObject
 	#end
 	Property SkyTexture:Texture()
 		
-		Return _skytex
+		Return _skyTexture
 	
-	Setter( skytex:Texture )
+	Setter( texture:Texture )
 		
-		_skytex=skytex
+		_skyTexture=texture
 	End
 	
 	#rem monkeydoc The environment texture.
@@ -45,11 +45,23 @@ Class Scene Extends DynamicObject
 	#end
 	Property EnvTexture:Texture()
 		
-		Return _envtex
+		Return _envTexture
 	
-	Setter( envtex:Texture )
+	Setter( texture:Texture )
 		
-		_envtex=envtex
+		_envTexture=texture
+	End
+	
+	#rem monkey The environment color.
+	
+	#end
+	Property EnvColor:Color()
+		
+		Return _envColor
+	
+	Setter( color:Color )
+		
+		_envColor=color
 	End
 	
 	#rem monkeydoc The clear color.
@@ -171,11 +183,6 @@ Class Scene Extends DynamicObject
 		Return _models
 	End
 	
-	Property Terrains:Stack<Terrain>()
-		
-		Return _terrains
-	End
-	
 	Property Sprites:Stack<Sprite>()
 		
 		Return _sprites
@@ -192,8 +199,11 @@ Class Scene Extends DynamicObject
 	
 	Global _defaultEnv:Texture
 	
-	Field _skytex:Texture
-	Field _envtex:Texture
+	Field _skyTexture:Texture
+	
+	Field _envTexture:Texture
+	Field _envColor:Color
+	
 	Field _clearColor:Color
 	Field _ambientDiffuse:Color
 	Field _postEffects:=New Stack<PostEffect>
@@ -203,7 +213,6 @@ Class Scene Extends DynamicObject
 	Field _cameras:=New Stack<Camera>
 	Field _lights:=New Stack<Light>
 	Field _models:=New Stack<Model>
-	Field _terrains:=New Stack<Terrain>
 	Field _sprites:=New Stack<Sprite>
 	Field _psystems:=New Stack<ParticleSystem>
 			
