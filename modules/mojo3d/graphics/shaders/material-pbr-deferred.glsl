@@ -25,6 +25,7 @@ uniform mat3 i_ModelViewNormalMatrix;
 
 uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_EnvTexture;
+uniform vec4 r_EnvColor;
 uniform mat3 r_EnvMatrix;
 
 //pbr varyings...
@@ -195,7 +196,7 @@ void pbrWriteFragData( vec3 color,vec3 emissive,float metalness,float roughness,
 	
 	if( lod>0.0 ) lod=textureCube( r_EnvTexture,rvec ).a * 255.0;
 	
-	vec3 env=pow( textureCube( r_EnvTexture,rvec,max( roughness*10.0-lod,0.0 ) ).rgb,vec3( 2.2 ) );
+	vec3 env=pow( textureCube( r_EnvTexture,rvec,max( roughness*10.0-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 
 	vec3 vvec=normalize( -v_Position );
 	
@@ -244,6 +245,8 @@ void main(){
 	float metalness=texture2D( m_MetalnessTexture,v_TexCoord0 ).b * m_MetalnessFactor;
 	float roughness=texture2D( m_RoughnessTexture,v_TexCoord0 ).g * m_RoughnessFactor;
 	float occlusion=texture2D( m_OcclusionTexture,v_TexCoord0 ).r;
+	
+//	emissive=vec3( 1.0,1.0,0.0 );
 	
 #ifdef MX2_BUMPMAPPED
 	vec3 normal=texture2D( m_NormalTexture,v_TexCoord0 ).xyz * 2.0 - 1.0;
