@@ -85,6 +85,7 @@ Class DataBuffer Extends std.resource.Resource
 		Local data:=Cast<UByte Ptr>( GCMalloc( length ) )
 		libc.memcpy( data,_data,Min( length,_length ) )
 		GCFree( _data )
+		_length=length
 		_data=data
 	End
 	
