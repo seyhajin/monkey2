@@ -19,10 +19,11 @@
 /docs/docs.html
 /docs/modules.html
 /docs/manuals.html
+/docs/modules/
 
 __PAGES__/
 __MANPAGES__/
-
+__NEWPAGES__/
 /tmp/*
 !/tmp/.gitignore
 
