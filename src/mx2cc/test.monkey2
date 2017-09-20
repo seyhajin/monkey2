@@ -1,12 +1,14 @@
+
 #Import "<std>"
 
 Using std..
 
 Function Main()
-
-	Local m:=Mat3<Double>.Scaling( 0,0,0 )
 	
-	Local m2:=New Mat3<Double>
-
+	Local idata:=New Int[10],ip:=idata.Data,i0:=ip
+	
+	ip+=10
+	
+	Print ip-i0
+	
 End
-

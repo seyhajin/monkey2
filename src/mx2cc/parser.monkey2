@@ -1606,6 +1606,15 @@ Class Parser
 			Local srcpos:=SrcPos
 			
 			Select Toke
+			Case "?."
+				Bump()
+				Local ident:=ParseIdent()
+				If Toke="("
+					Local args:=ParseInvokeArgs()
+					expr=New SafeInvokeExpr( expr,ident,args,srcpos,EndPos )
+				Else
+					expr=New SafeMemberExpr( expr,ident,srcpos,EndPos )
+				Endif
 			Case "."
 				Bump()
 				Local ident:String
@@ -1851,6 +1860,10 @@ Class Parser
 
 		Local expr:Expr=ParseOrExpr()
 		If Not CParse( "?" ) Return expr
+		
+		If CParse( "else" )
+			Return New ElvisExpr( expr,ParseOrExpr(),srcpos,EndPos )
+		Endif
 		
 		Local thenExpr:=ParseIfThenElseExpr()
 

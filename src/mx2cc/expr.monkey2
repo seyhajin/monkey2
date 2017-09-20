@@ -220,6 +220,35 @@ Class MemberExpr Extends Expr
 	
 End
 
+Class SafeMemberExpr Extends Expr
+
+	Field expr:Expr
+	Field ident:String
+	
+	Method New( expr:Expr,ident:String,srcpos:Int,endpos:Int )
+		Super.New( srcpos,endpos )
+		Self.expr=expr
+		Self.ident=ident
+	End
+	
+	Method OnSemant:Value( scope:Scope ) Override
+	
+		Local block:=Cast<Block>( scope )
+		If Not block SemantError( "SafeMemberExpr.OnSemant" )
+		
+		Local value:=Self.expr.SemantRValue( scope ).RemoveSideEffects( block )
+
+		Local thenValue:=value.FindValue( ident ).ToRValue()
+		If Not thenValue Throw New SemantEx( "Value of type '"+value.type.Name+"' has no member named '"+ident+"'" )
+		
+		Local ifValue:=value.UpCast( Type.BoolType )
+		
+		Local elseValue:=New LiteralValue( thenValue.type,"" )
+		
+		Return New IfThenElseValue( thenValue.type,ifValue,thenValue,elseValue )
+	End
+End
+
 Class InvokeExpr Extends Expr
 
 	Field expr:Expr
@@ -246,6 +275,43 @@ Class InvokeExpr Extends Expr
 	
 		Return expr.ToString()+"("+Join( args )+")"
 	End
+End
+
+Class SafeInvokeExpr Extends Expr
+	
+	Field expr:Expr
+	Field ident:String
+	Field args:Expr[]
+
+	Method New( expr:Expr,ident:String,args:Expr[],srcpos:Int,endpos:Int )
+		Super.New( srcpos,endpos )
+		Self.expr=expr
+		Self.ident=ident
+		Self.args=args
+	End
+	
+	Method OnSemant:Value( scope:Scope ) Override
+
+		Local block:=Cast<Block>( scope )
+		If Not block SemantError( "SafeInvokeExpr.OnSemant" )
+		
+		Local value:=Self.expr.Semant( scope ).RemoveSideEffects( block )
+		
+		Local vexpr:=New ValueExpr( value,srcpos,endpos )
+		
+		Local mexpr:=New MemberExpr( vexpr,ident,srcpos,endpos )
+
+		Local iexpr:=New InvokeExpr( mexpr,args,srcpos,endpos )
+		
+		Local ifValue:=value.UpCast( Type.BoolType )
+		
+		Local thenValue:=iexpr.Semant( scope )
+		
+		Local elseValue:=New LiteralValue( thenValue.type,"" )
+		
+		Return New IfThenElseValue( thenValue.type,ifValue,thenValue,elseValue )
+	End
+	
 End
 
 Class GenericExpr Extends Expr
@@ -735,6 +801,34 @@ Class BinaryopExpr Extends Expr
 		Return "("+lhs.ToString()+op+rhs.ToString()+")"
 	End
 End
+
+Class ElvisExpr Extends Expr
+	
+	Field expr:Expr
+	Field elseExpr:Expr
+
+	Method New( expr:Expr,elseExpr:Expr,srcpos:Int,endpos:Int )
+		Super.New( srcpos,endpos )
+		Self.expr=expr
+		Self.elseExpr=elseExpr
+	End
+	
+	Method OnSemant:Value( scope:Scope ) Override
+		
+		Local block:=Cast<Block>( scope )
+		If Not block SemantError( "ElvisExpr.OnSemant" )
+		
+		Local value:=Self.expr.SemantRValue( scope ).RemoveSideEffects( block )
+		
+		Local ifValue:=value.UpCast( Type.BoolType )
+		
+		Local elseValue:=Self.elseExpr.SemantRValue( scope,value.type )
+		
+		Return New IfThenElseValue( value.type,ifValue,value,elseValue )
+	End
+	
+End
+	
 
 Class IfThenElseExpr Extends Expr
 

@@ -1419,7 +1419,8 @@ Class Translator_CPP Extends Translator
 	
 	Method EmitStmt( stmt:SelectStmt )
 	
-		Local tvalue:=Trans( stmt.value ),head:=True
+		'Local tvalue:=Trans( stmt.value ),head:=True
+		Local head:=True
 		
 		For Local cstmt:=Eachin stmt.cases
 		
@@ -1427,7 +1428,7 @@ Class Translator_CPP Extends Translator
 				Local cmps:=""
 				For Local value:=Eachin cstmt.values
 					If cmps cmps+="||"
-					cmps+=tvalue+"=="+Trans( value )
+					cmps+=Trans( value )
 				Next
 				cmps="if("+cmps+"){"
 				If Not head cmps="}else "+cmps
@@ -1891,6 +1892,9 @@ Class Translator_CPP Extends Translator
 		Local op:=value.op
 		Select op
 		Case "<=>"
+			
+			Uses( value.lhs.type )
+			Uses( value.rhs.type )
  
 			Return "bbCompare("+Trans( value.lhs )+","+Trans( value.rhs )+")"
 			
@@ -1902,6 +1906,10 @@ Class Translator_CPP Extends Translator
 			Local ftype:=TCast<FuncType>( value.lhs.type )
 			
 			If (ctype And ctype.IsStruct) Or (ftype And op<>"==" And op<>"!=" )
+				
+				Uses( value.lhs.type )
+				Uses( value.rhs.type )
+			
 				Return "(bbCompare("+Trans( value.lhs )+","+Trans( value.rhs )+")"+op+"0)"
 			Endif
 			

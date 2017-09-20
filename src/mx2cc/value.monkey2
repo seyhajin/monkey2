@@ -71,6 +71,30 @@ Class Value Extends SNode
 		Return New AssignStmt( pnode,op,Self,value.UpCast( rtype ) )
 	End
 	
+	Method Compare:Value( op:String,rhs:Value )
+		
+		Local rvalue:=ToRValue()
+		rhs=rhs.ToRValue()
+		
+		If Not type.Equals( rhs.type ) SemantError( "Value.Compare" )
+			
+		Local ctype:=TCast<ClassType>( rvalue.type )
+		
+		If ctype And ctype.IsStruct
+			Local node:=rvalue.FindValue( op )
+			If node
+				Return node.Invoke( New Value[]( rhs ) )
+			Endif
+			node=rvalue.FindValue( "<=>" )
+			If node
+				Local cmp:=node.Invoke( New Value[]( rhs ) )
+				Return New BinaryopValue( Type.BoolType,op,cmp,LiteralValue.NullValue( cmp.type ) )
+			Endif
+		Endif
+		
+		Return New BinaryopValue( Type.BoolType,op,rvalue,rhs )
+	End
+	
 	Method CheckAccess( tscope:Scope ) Virtual
 	End
 	
@@ -326,7 +350,11 @@ Class LiteralValue Extends Value
 
 	Function IntValue:LiteralValue( value:Int )
 		Return New LiteralValue( Type.IntType,String( value ) )
-	End	
+	End
+	
+	Function NullValue:LiteralValue( type:Type )
+		Return New LiteralValue( type,"" )
+	end
 End
 
 Class NullValue Extends Value

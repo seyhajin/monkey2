@@ -495,7 +495,8 @@ Class ClassType Extends Type
 		If type=Self Return 0
 		
 		'no struct->bool as yet.
-		If type=BoolType Return (IsClass Or IsInterface) ? MAX_DISTANCE Else -1
+		If type=BoolType Return MAX_DISTANCE
+'		If type=BoolType Return (IsClass Or IsInterface) ? MAX_DISTANCE Else -1
 		
 		If type=VariantType Return MAX_DISTANCE
 
@@ -532,6 +533,9 @@ Class ClassType Extends Type
 	
 		'instance->bool
 		If type=BoolType
+			
+			If IsStruct Return rvalue.Compare( "<>",LiteralValue.NullValue( rvalue.type ) )
+			
 			If IsClass Or IsInterface Return New UpCastValue( type,rvalue )
 		Else
 			'Operator To:

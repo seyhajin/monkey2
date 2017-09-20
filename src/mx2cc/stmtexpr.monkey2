@@ -529,7 +529,7 @@ Class SelectStmtExpr Extends StmtExpr
 			Local values:=New Value[cexpr.exprs.Length]
 			
 			For Local i:=0 Until values.Length
-				values[i]=cexpr.exprs[i].SemantRValue( block,value.type )
+				values[i]=value.Compare( "=",cexpr.exprs[i].SemantRValue( block,value.type ) )
 			Next
 			
 			Local iblock:=New Block( block )

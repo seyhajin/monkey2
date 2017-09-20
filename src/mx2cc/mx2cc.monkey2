@@ -7,11 +7,16 @@ Using mx2.docs
 
 #Import "mx2"
 
+#If __CONFIG__="debug"
+#Import "docs/newdocs"
+#Import "docs/newmarkdown"
+#Else
 #Import "docs/docsmaker"
 #Import "docs/jsonbuffer"
 #Import "docs/minimarkdown"
 #Import "docs/markdownbuffer"
 #Import "docs/manpage"
+#endif
 
 #Import "geninfo/geninfo"
 
@@ -21,7 +26,7 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makedocs monkey libc miniz stb-image stb-image-write stb-vorbis std"
 
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
@@ -258,6 +263,8 @@ Function MakeMods:Bool( args:String[] )
 	Return errs=0
 End
 
+#If __CONFIG__="release"
+
 Function MakeDocs:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
@@ -275,7 +282,7 @@ Function MakeDocs:Bool( args:String[] )
 	opts.clean=False
 	
 	If Not args args=EnumModules()
-	
+
 	Local docsMaker:=New DocsMaker
 	
 	Local errs:=0
@@ -298,8 +305,9 @@ Function MakeDocs:Bool( args:String[] )
 		
 		Builder.Semant()
 		If Builder.errors.Length errs+=1;Continue
-		
+
 		docsMaker.MakeDocs( Builder.modules.Top )
+
 	Next
 	
 	Local api_indices:=New StringStack
@@ -323,18 +331,84 @@ Function MakeDocs:Bool( args:String[] )
 	page=page.Replace( "${DOCS_TREE}",tree )
 	SaveString( page,"docs/docs.html" )
 	
-	#rem
-	Local page:=LoadString( "docs/modules_template.html" )
-	page=page.Replace( "${API_INDEX}",api_indices.Join( "," ) )
-	SaveString( page,"docs/modules.html" )
-	
-	page=LoadString( "docs/manuals_template.html" )
-	page=page.Replace( "${MAN_INDEX}",man_indices.Join( "," ) )
-	SaveString( page,"docs/manuals.html" )
-	#end
-		
 	Return True
 End
+
+#Else
+
+Function MakeDocs:Bool( args:String[] )
+
+	Local opts:=New BuildOpts
+	opts.productType="module"
+	opts.target="desktop"
+	opts.config="debug"
+	opts.clean=False
+	opts.fast=True
+	opts.verbose=0
+	opts.passes=2
+	opts.makedocs=true
+	
+	args=ParseOpts( opts,args )
+	
+	opts.clean=False
+	
+	If Not args args=EnumModules()
+
+	Local docsDir:=RealPath( "docs" )+"/"
+	
+	Local pageTemplate:=LoadString( "docs/new_docs_page_template.html" )
+	
+	Local docsMaker:=New DocsMaker( docsDir,pageTemplate )
+
+	Local errs:=0
+	
+	For Local modid:=Eachin args
+
+		Local path:="modules/"+modid+"/"+modid+".monkey2"
+		If GetFileType( path )<>FILETYPE_FILE Fail( "Module file '"+path+"' not found" )
+	
+		Print ""
+		Print "***** Doccing module '"+modid+"' *****"
+		Print ""
+		
+		opts.mainSource=RealPath( path )
+		
+		New BuilderInstance( opts )
+
+		Builder.Parse()
+		If Builder.errors.Length errs+=1;Continue
+		
+		Builder.Semant()
+		If Builder.errors.Length errs+=1;Continue
+
+		Local module:=Builder.modules.Top
+		
+		docsMaker.CreateModuleDocs( module,Null )
+		
+	Next
+	
+	Local buf:=New StringStack
+	
+	For Local modid:=Eachin EnumModules()
+
+		Local index:=LoadString( "docs/modules/"+modid+"/index.js" )
+		If Not index continue
+		
+		If buf.Length buf.Add( "," )
+		
+		buf.Push( index )
+	Next
+	
+	Local tree:=buf.Join( "" )
+	
+	Local page:=LoadString( "docs/new_docs_template.html" )
+	page=page.Replace( "${DOCS_TREE}",tree )
+	SaveString( page,"docs/docs.html" )
+	
+	Return True
+End
+
+#Endif
 
 Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 
