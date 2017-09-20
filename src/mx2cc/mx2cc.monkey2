@@ -26,7 +26,7 @@ Using mx2..
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makedocs monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makedocs mojo3d"	' monkey libc miniz stb-image stb-image-write stb-vorbis std"
 
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 

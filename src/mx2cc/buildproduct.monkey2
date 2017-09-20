@@ -116,10 +116,6 @@ Class BuildProduct
 	
 		If Not assetsDir.EndsWith( "/" ) assetsDir+="/"
 		
-		DeleteDir( assetsDir,True )
-		
-		CreateDir( assetsDir )
-		
 		Local assetFiles:=New StringMap<String>
 		
 		For Local src:=Eachin ASSET_FILES
@@ -146,6 +142,12 @@ Class BuildProduct
 			End
 			
 		Next
+		
+		If assetFiles.Empty Return
+		
+		DeleteDir( assetsDir,True )
+		
+		CreateDir( assetsDir )
 		
 		CopyAssetFiles( assetFiles )
 	End
@@ -489,9 +491,11 @@ Class GccBuildProduct Extends BuildProduct
 		outputFile=opts.product
 		If Not outputFile outputFile=module.outputDir+module.name
 		
-		Local assetsDir:=ExtractDir( outputFile )+"assets/"
+		Local productDir:=ExtractDir( outputFile )
 		
-		Local dllsDir:=ExtractDir( outputFile )
+		Local assetsDir:=productDir+"assets/"
+		
+		Local dllsDir:=productDir
 
 		Local cmd:=LD_CMD+LD_OPTS
 		
@@ -590,6 +594,8 @@ Class GccBuildProduct Extends BuildProduct
 #Else
 		cmd+=lnkFiles
 #Endif
+		CreateDir( productDir,True )
+		
 		CopyAssets( assetsDir )
 		
 		CopyDlls( dllsDir )
