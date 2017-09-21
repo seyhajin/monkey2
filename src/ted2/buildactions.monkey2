@@ -429,6 +429,10 @@ Class BuildActions
 	End
 	
 	Method BuildApp:Bool( config:String,target:String,action:String )
+
+		If _console.Running Return False
+
+		_debugView.KillApp()
 	
 		Local buildDoc:=BuildDoc()
 		If Not buildDoc Return False
@@ -472,21 +476,15 @@ Class BuildActions
 	
 	Method OnBuildAndRun()
 
-		If _console.Running Return
-	
 		BuildApp( _buildConfig,_buildTarget,"run" )
 	End
 	
 	Method OnBuild()
 	
-		If _console.Running Return
-	
 		BuildApp( _buildConfig,_buildTarget,"build" )
 	End
 	
 	Method OnSemant()
-	
-		If _console.Running Return
 	
 		BuildApp( _buildConfig,_buildTarget,"semant" )
 	End
