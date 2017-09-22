@@ -115,10 +115,7 @@ Class Gltf2Loader
 			normalTexture=GetTexture( material.normalTexture )
 		Endif
 			
-		local bumpmapped:=normalTexture<>Null
-		Local boned:=False
-
-		Local mat:=New PbrMaterial( textured,bumpmapped,boned )
+		Local mat:=New PbrMaterial
 
 		mat.ColorFactor=New Color( material.baseColorFactor.x,material.baseColorFactor.y,material.baseColorFactor.z )
 		mat.MetalnessFactor=material.metallicFactor

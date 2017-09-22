@@ -61,6 +61,8 @@ Class RenderQueue
 	
 	Method AddRenderOp( op:RenderOp )
 		
+		op.material.ValidateShader()
+		
 		If op.material.BlendMode<>BlendMode.Opaque
 			_transparentOps.Push( op )
 		Else

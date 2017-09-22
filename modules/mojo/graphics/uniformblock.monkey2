@@ -220,8 +220,25 @@ Class UniformBlock Extends Resource
 
 	'***** Texture *****
 	'
+	Property NumTextures:Int()
+		
+		Return _ntextures
+	End
+	
+	Property DefaultTexture:Texture()
+		
+		Return _defaultTexture
+	
+	Setter( texture:Texture )
+		
+		_defaultTexture=texture
+	End
+	
 	Method SetTexture( uniform:String,value:Texture )
 		Local id:=GetUniformId( uniform )
+		If (value<>Null)<>(_uniforms[id].texture<>Null)
+			If value _ntextures+=1 Else _ntextures-=1
+		End
 		_uniforms[id].texture=value
 		_uniforms[id].type=Type.Texture
 		_seq=_gseq
@@ -236,7 +253,8 @@ Class UniformBlock Extends Resource
 	
 	Method GetTexture:Texture( id:Int )
 		DebugAssert( _uniforms[id].type=Type.Texture,"Invalid uniform type" )
-		Return _uniforms[id].texture
+		Local texture:=_uniforms[id].texture
+		Return texture ? texture Else _defaultTexture
 	End
 	
 	#rem monkeydoc @hidden
@@ -283,6 +301,8 @@ Class UniformBlock Extends Resource
 	Field _seq:Int
 	Field _linearColors:bool
 	Field _uniforms:=New Uniform[64]
+	Field _ntextures:Int
+	Field _defaultTexture:Texture
 	
 	Method SetData<T>( uniform:String,data:T,type:Type )
 		Local id:=GetUniformId( uniform )

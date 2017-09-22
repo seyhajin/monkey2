@@ -587,7 +587,7 @@ Class Renderer
 				
 				material=op.material
 				
-				_device.Shader=material.Shader
+				_device.Shader=material.ValidateShader()
 				_device.BindUniformBlock( material.Uniforms )
 				If material.BlendMode<>BlendMode.Opaque
 					_device.BlendMode=material.BlendMode

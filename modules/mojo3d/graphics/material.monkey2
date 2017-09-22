@@ -6,7 +6,8 @@ Namespace mojo3d.graphics
 Class Material Extends Resource
 	
 	Method New()
-	
+
+		_shader=Null	
 		_uniforms=New UniformBlock( 3,True )
 		_blendMode=BlendMode.Opaque
 		_cullMode=CullMode.Back
@@ -17,7 +18,8 @@ Class Material Extends Resource
 	#rem monkeydoc Creates a new material
 	#end
 	Method New( shader:Shader )
-		Self.New()
+		Self.new()
+		
 		_shader=shader
 	End
 	
@@ -102,10 +104,33 @@ Class Material Extends Resource
 		
 		TextureMatrix=TextureMatrix.Scale( sx,sy )
 	End
+	
+	Method ValidateShader:Shader()
+		
+		If Not _shader _shader=OnValidateShader()
+			
+		Return _shader
+	End
 
 	Protected
-	#rem monkeydoc @hidden
-	#end
+	
+	Method OnValidateShader:Shader() Virtual
+		
+		RuntimeError( "Material.OnValidateShader unimplemented" )
+		
+		Return Null
+	End
+	
+	Method InvalidateShader()
+		
+		_shader=Null
+	End
+	
+	Method SetShader( shader:Shader )
+		
+		_shader=shader
+	End
+	
 	Method New( material:Material )
 
 		_shader=material._shader
@@ -115,11 +140,6 @@ Class Material Extends Resource
 		_cullMode=material._cullMode
 
 		TextureMatrix=material.TextureMatrix
-	End
-	
-	Method SetShader( shader:Shader )
-		
-		_shader=shader
 	End
 	
 	Private

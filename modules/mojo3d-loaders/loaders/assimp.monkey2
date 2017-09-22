@@ -221,9 +221,7 @@ Class AssimpLoader
 		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
 		diffuseColor=New Color( Pow( aicolor.r,2.2 ),Pow( aicolor.g,2.2 ),Pow( aicolor.b,2.2 ),aicolor.a )
 
-		Local textured:=diffuseTexture<>Null
-
-		Local material:=New PbrMaterial( textured,False,boned )
+		Local material:=New PbrMaterial( boned )
 		
 		If diffuseTexture material.ColorTexture=diffuseTexture
 		material.ColorFactor=diffuseColor
