@@ -415,7 +415,7 @@ Class Socket Extends std.resource.Resource
 	@return A new socket.
 	
 	#end	
-	Function Connect:Socket( hostname:String,service:String,type:SocketType )
+	Function Connect:Socket( hostname:String,service:String,type:SocketType=SocketType.Stream )
 
 		Local socket:=socket_connect( hostname,service,type,0 )
 		If socket=-1 Return Null
@@ -439,6 +439,15 @@ Class Socket Extends std.resource.Resource
 		
 		Return New Socket( socket )
 	End
+	
+	Function Bind:Socket( hostname:String,service:String )
+		
+		Local socket:=socket_bind( "",service,1 )
+		If socket=-1 Return Null
+		
+		Return New Socket( socket )
+	End
+		
 
 	#rem monkeydoc Creates a stream server socket and listens on it.
 	
@@ -452,6 +461,14 @@ Class Socket Extends std.resource.Resource
 	Function Listen:Socket( service:String,backlog:Int=32,loopback:bool=False )
 
 		Local socket:=socket_listen( "",service,backlog,loopback ? 0 Else 1 )
+		If socket=-1 Return Null
+		
+		Return New Socket( socket )
+	End
+
+	Function Listen:Socket( hostname:String,service:String,backlog:Int=128 )
+		
+		Local socket:=socket_listen( "",service,backlog,1 )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
