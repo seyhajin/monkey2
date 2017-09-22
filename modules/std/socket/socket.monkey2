@@ -12,15 +12,15 @@ Extern private
 
 #rem monkeydoc @hidden
 #end
-Function socket_connect:Int( hostname:CString,service:CString,type:Int )="bbSocket::connect"
+Function socket_connect:Int( hostname:CString,service:CString,type:Int,flags:int)="bbSocket::connect"
 
 #rem monkeydoc @hidden
 #end
-Function socket_bind:Int( hostname:CString,service:CString )="bbSocket::bind"
+Function socket_bind:Int( hostname:CString,service:CString,flags:int )="bbSocket::bind"
 
 #rem monkeydoc @hidden
 #end
-Function socket_listen:Int( hostname:CString,service:CString,queue:Int )="bbSocket::listen"
+Function socket_listen:Int( hostname:CString,service:CString,backlog:Int,flags:int )="bbSocket::listen"
 
 #rem monkeydoc @hidden
 #end
@@ -85,12 +85,25 @@ Public
 | SocketType	| Description
 |:--------------|:-----------
 | `Stream`		| Reliable stream, eg: TCP.
-| `Datagram`	| Unreliable datagram, eg: UDP.
+| `Datagram`	| Unreliable datagrams, eg: UDP.
 
 #end
 Enum SocketType
 	Stream=0
 	Datagram=1
+End
+
+#rem monkeydoc The SocketFlags enum.
+
+| SocketFlags	| Description
+|:--------------|:-----------
+| `Passive`		| for Bind and Listen only. Indicates socket accepts connections from any address. If not set, socket accepts loopback connections only.
+| `NumericHost`	| Socket name does not need to be looked up. Faster.
+
+#end
+Enum SocketFlags
+	Passive=1
+	NumericHost=2
 End
 
 #rem monkeydoc The SocketAddress class.
@@ -402,9 +415,9 @@ Class Socket Extends std.resource.Resource
 	@return A new socket.
 	
 	#end	
-	Function Connect:Socket( hostname:String,service:String,type:SocketType=SocketType.Stream )
+	Function Connect:Socket( hostname:String,service:String,type:SocketType )
 
-		Local socket:=socket_connect( hostname,service,type )
+		Local socket:=socket_connect( hostname,service,type,0 )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
@@ -412,16 +425,16 @@ Class Socket Extends std.resource.Resource
 
 	#rem monkeydoc Creates a datagram server socket.
 	
-	Returns a new datagram server socket that can be connected to by datagram clients.
+	Returns a new datagram server socket listening at 'service' if successful.
 	
 	Returns null upon failure.
 
 	@return A new socket.
 	
 	#end
-	Function Bind:Socket( hostname:String,service:String )
-	
-		Local socket:=socket_bind( hostname,service )
+	Function Bind:Socket( service:String,loopback:bool=False )
+
+		Local socket:=socket_bind( "",service,loopback ? 0 Else 1 )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
@@ -436,9 +449,9 @@ Class Socket Extends std.resource.Resource
 	@return A new socket.
 	
 	#end
-	Function Listen:Socket( hostname:String,service:String,queue:Int=128 )
-	
-		Local socket:=socket_listen( hostname,service,queue )
+	Function Listen:Socket( service:String,backlog:Int=32,loopback:bool=False )
+
+		Local socket:=socket_listen( "",service,backlog,loopback ? 0 Else 1 )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )

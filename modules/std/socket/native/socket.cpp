@@ -85,7 +85,7 @@ namespace bbSocket{
 #endif
 	}
 	
-	int _connect( const char *hostname,const char *service,int type ){
+	int _connect( const char *hostname,const char *service,int type,int flags ){
 	
 		init();
 		
@@ -94,6 +94,8 @@ namespace bbSocket{
 
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
+		hints.ai_flags=((flags&1) ? AI_PASSIVE : 0) | ((flags&2) ? AI_NUMERICHOST : 0);
+		if( hostname && !hostname[0] ) hostname=0;
 
 		addrinfo *pres=0;
 		if( getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
@@ -117,7 +119,7 @@ namespace bbSocket{
 		return sock;
 	}
 	
-	int _bind( const char *hostname,const char *service,int type ){
+	int _bind( const char *hostname,const char *service,int type,int flags ){
 	
 		init();
 		
@@ -126,7 +128,8 @@ namespace bbSocket{
 		
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
-		hints.ai_flags=AI_PASSIVE;
+		hints.ai_flags=((flags&1) ? AI_PASSIVE : 0) | ((flags&2) ? AI_NUMERICHOST : 0);
+		if( hostname && !hostname[0] ) hostname=0;
 		
 		addrinfo *pres=0;
 		if( getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
@@ -150,16 +153,16 @@ namespace bbSocket{
 		return sock;
 	}
 	
-	int _listen( const char *hostname,const char *service,int queue,int type ){
+	int _listen( const char *hostname,const char *service,int backlog,int flags ){
 
-		int sock=_bind( hostname,service,type );
+		int sock=_bind( hostname,service,2,flags );
 			
-		if( sock!=-1 ) ::listen( sock,queue );
+		if( sock!=-1 ) ::listen( sock,backlog );
 		
 		return sock;
 	}
 	
-	int connect( const char *hostname,const char *service,int type ){
+	int connect( const char *hostname,const char *service,int type,int flags ){
 
 		int sock=-1;
 		
@@ -169,7 +172,7 @@ namespace bbSocket{
 			
 			std::thread thread( [=,&future](){
 
-				future.set( _connect( hostname,service,type ) );
+				future.set( _connect( hostname,service,type,flags ) );
 	
 			} );
 			
@@ -179,13 +182,13 @@ namespace bbSocket{
 
 		}else{
 		
-			sock=_connect( hostname,service,type );
+			sock=_connect( hostname,service,type,flags );
 		}
 		
 		return sock;
 	}
 	
-	int bind( const char *hostname,const char *service ){
+	int bind( const char *hostname,const char *service,int flags ){
 	
 		int sock=-1;
 		
@@ -195,7 +198,7 @@ namespace bbSocket{
 			
 			std::thread thread( [=,&future](){
 			
-				future.set( _bind( hostname,service,1 ) );
+				future.set( _bind( hostname,service,1,flags ) );
 	
 			} );
 			
@@ -205,13 +208,13 @@ namespace bbSocket{
 			
 		}else{
 		
-			sock=_bind( hostname,service,1 );
+			sock=_bind( hostname,service,1,flags );
 		}
 		
 		return sock;
 	}
 	
-	int listen( const char *hostname,const char *service,int queue ){
+	int listen( const char *hostname,const char *service,int backlog,int flags ){
 	
 		int sock=-1;
 		
@@ -221,7 +224,7 @@ namespace bbSocket{
 			
 			std::thread thread( [=,&future](){
 			
-				future.set( _listen( hostname,service,queue,0 ) );
+				future.set( _listen( hostname,service,backlog,flags ) );
 	
 			} );
 			
@@ -231,7 +234,7 @@ namespace bbSocket{
 			
 		}else{
 		
-			sock=_listen( hostname,service,queue,0 );
+			sock=_listen( hostname,service,backlog,flags );
 		}
 		
 		return sock;
