@@ -46,6 +46,7 @@ Class PropertyList Extends FuncList
 				getFunc=New FuncValue( pdecl.getFunc,scope,Null,Null )
 				getFunc.Semant()
 				type=getFunc.ftype.retType
+				If type.Equals( Type.VoidType ) Throw New SemantEx( "Property '"+pdecl.ident+"' getter has void type" )
 				PushFunc( getFunc )
 			Catch ex:SemantEx
 			End

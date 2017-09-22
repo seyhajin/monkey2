@@ -79,13 +79,21 @@ Class Translator_CPP Extends Translator
 				Uses( ctype )
 				
 				Local cname:=ClassName( ctype )
+				Local rname:=""
 				
-				Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
-				Emit( "return &bbObjectTypeInfo::instance;" )
+				If ctype.IsStruct
+					Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
+					rname="bbVoidTypeInfo"
+				Else
+					Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
+					rname="bbObjectTypeInfo"
+				Endif
+								
+				Emit( "return &"+rname+"::instance;" )
 				Emit( "}" )
 				
 				Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
-				Emit( "return &bbObjectTypeInfo::instance;" )
+				Emit( "return &"+rname+"::instance;" )
 				Emit( "}" )
 				
 			Next
@@ -579,7 +587,11 @@ Class Translator_CPP Extends Translator
 		Emit( "};" )
 		
 		If GenTypeInfo( ctype )
-			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+			If ctype.IsStruct
+				Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
+			Else
+				Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+			Endif
 		Endif
 		
 		If _debug
@@ -1011,14 +1023,39 @@ Class Translator_CPP Extends Translator
 		Emit( rcname+"::decls_t "+rcname+"::decls;" )
 		
 		EmitBr()
+
+		If ctype.IsStruct
+			Emit( "bbTypeInfo *bbGetType( "+cname+" const& ){" )
+		Else
+			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
+		Endif
+
+		Emit( "return &"+rcname+"::instance;" )
+		Emit( "}" )
+
 		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
 		Emit( "return &"+rcname+"::instance;" )
 		Emit( "}" )
 		
-		EmitBr()
-		Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
-		Emit( "return &"+rcname+"::instance;" )
-		Emit( "}" )
+		#rem
+		If ctype.IsStruct
+			EmitBr()
+			Emit( "bbTypeInfo *bbGetType( "+cname+" const& ){" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+		Else
+			EmitBr()
+			Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+			
+			EmitBr()
+			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+		Endif
+		#end
+		
 	End
 
 	'For later...
@@ -2200,7 +2237,7 @@ Function GenTypeInfo:Bool( vvar:VarValue )
 
 	If vvar.vdecl.kind<>"field" And vvar.vdecl.kind="global" And vvar.vdecl.kind="const" Return False
 	
-	Return True	'GenTypeInfo( vvar.type )
+	Return True
 End
 
 Function GenTypeInfo:Bool( func:FuncValue )
@@ -2209,17 +2246,21 @@ Function GenTypeInfo:Bool( func:FuncValue )
 
 	If func.IsExtension Return False
 	
-	Return True	'GenTypeInfo( func.ftype )
+	Return True
 End
 
 Function GenTypeInfo:Bool( ctype:ClassType )
 
-	If ctype.IsStruct Return False
-
-	'This 'sort of' works, but no generics just yet!
+	'disable generic instances
 	If ctype.types Or ctype.scope.IsInstanceOf Return False
+
+	'disable structs
+	'If ctype.IsStruct Return False
+
+	'disable native types
+	If ctype.ExtendsVoid Return False
 	
-	'No extensions yet either
+	'disable type extensions
 	If ctype.cdecl.IsExtension Return False
 	
 	Return True

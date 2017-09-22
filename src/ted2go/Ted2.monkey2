@@ -13,7 +13,7 @@
 
 '----------------------------
 
-'#Import "<reflection>"
+#Import "<reflection>"
 
 #Import "<std>"
 #Import "<mojo>"
@@ -71,7 +71,7 @@
 #Import "syntax/CodeFormatter"
 #Import "syntax/Monkey2Formatter"
 
-#Import "testing/ParserTests"
+'#Import "testing/ParserTests"
 
 #Import "utils/JsonUtils"
 #Import "utils/Utils"

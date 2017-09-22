@@ -1,14 +1,19 @@
 
-#Import "<std>"
+#Import "<reflection>"
 
-Using std..
+Struct S
+	Field x:int
+
+End
+
+Function F:S Ptr()
+	Return null
+End
+
+Function F2:Int ptr()
+	Return Null
+End
 
 Function Main()
-	
-	Local idata:=New Int[10],ip:=idata.Data,i0:=ip
-	
-	ip+=10
-	
-	Print ip-i0
 	
 End

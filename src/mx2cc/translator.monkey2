@@ -340,7 +340,11 @@ Class Translator
 				
 				If GenTypeInfo( ctype ) 
 					Emit( "#ifdef BB_REFLECTION" )
-					Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+					If ctype.IsStruct 
+						Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
+					Else
+						Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+					Endif
 					Emit( "#endif" )
 				Endif
 				

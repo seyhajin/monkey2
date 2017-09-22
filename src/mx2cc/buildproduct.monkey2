@@ -332,7 +332,8 @@ Class GccBuildProduct Extends BuildProduct
 			
 		Local rfile:=src.EndsWith( "/_r.cpp" )
 
-		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
+'		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
+		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
 		If rfile And opts.reflection obj+="_r"
 			
 		obj+=toolchain="msvc" ? ".obj" Else ".o"
@@ -773,7 +774,8 @@ Class AndroidBuildProduct Extends BuildProduct
 		buf.Push( "LOCAL_SRC_FILES := \" )
 		
 		For Local src:=Eachin srcs
-			buf.Push( MakeRelativePath( src,jniDir )+" \" )
+'			buf.Push( MakeRelativePath( src,jniDir )+" \" )
+			buf.Push( MakeRelativePath( src,module.cfileDir )+" \" )
 		Next
 		
 		buf.Push( "" )

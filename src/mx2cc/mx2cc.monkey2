@@ -24,11 +24,13 @@ Using libc..
 Using std..
 Using mx2..
 
+Const MX2CC_VERSION_EXT:=""
+
 Global StartDir:String
 
-Const TestArgs:="mx2cc makedocs mojo3d"	' monkey libc miniz stb-image stb-image-write stb-vorbis std"
+'Const TestArgs:="mx2cc makedocs monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
 
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
 
@@ -54,7 +56,7 @@ Function Main()
 	GCSetTrigger( 64*1024*1024 )
 
 	Print ""
-	Print "Mx2cc version "+MX2CC_VERSION
+	Print "Mx2cc version "+MX2CC_VERSION+MX2CC_VERSION_EXT
 	
 	StartDir=CurrentDir()
 	
