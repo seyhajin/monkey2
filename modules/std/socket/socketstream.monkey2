@@ -29,7 +29,7 @@ Class SocketStream Extends std.stream.Stream
 	#end
 	Property Eof:Bool() Override
 
-		Return _socket.Closed
+		Return Not _socket.Connected
 	End
 
 	#rem monkeydoc Always 0.

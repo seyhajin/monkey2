@@ -74,6 +74,10 @@ Function socket_getpeeraddr:Int( socket:Int,addr:Void Ptr,addrlen:Int Ptr )="bbS
 #end
 Function socket_sockaddrname:Int( addr:Void Ptr,addrlen:Int,host:libc.char_t Ptr,service:libc.char_t Ptr )="bbSocket::sockaddrname"
 
+#rem monkeydoc @hidden
+#end
+Function socket_select:Int( n_read:Int,r_socks:Int ptr,n_write:Int,w_socks:Int Ptr,n_except:Int,e_socks:Int Ptr,millis:Int )="bbSocket::select"
+	
 Public
 
 #rem monkeydoc The SocketType enum.
@@ -222,10 +226,24 @@ Class Socket Extends std.resource.Resource
 	End
 	#end
 	
-	#rem  monkeydoc True if socket has been closed
+	#rem  monkeydoc True if socket has been closed.
 	#end
 	Property Closed:Bool()
 		Return _socket=-1
+	End
+
+	#rem monkeydoc True if socket is connected to peer.
+	#end
+	Property Connected:bool()
+		If _socket=-1 Return False
+
+		Local read:=_socket
+		
+		Local r:=socket_select( 1,Varptr read,0,Null,0,Null,0 )
+		
+		If r=1 Return socket_canrecv( _socket )<>0
+		
+		Return r=0
 	End
 	
 	#rem monkeydoc The number of bytes that can be received from the socket without blocking.
@@ -298,7 +316,7 @@ Class Socket Extends std.resource.Resource
 	
 	Returns the number of bytes actually written.
 	
-	Can return less than `sizet` if the socket has been closed by the peer or if an error occured.
+	Can return less than `size` if the socket has been closed by the peer or if an error occured.
 	
 	@param buf The memory buffer to write data from.
 	

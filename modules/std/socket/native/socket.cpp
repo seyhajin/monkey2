@@ -436,6 +436,8 @@ namespace bbSocket{
 			setsockopt( socket,SOL_SOCKET,SO_SNDTIMEO,ip,sz );
 		}else if( name=="SO_RCVTIMEO" ){
 			setsockopt( socket,SOL_SOCKET,SO_RCVTIMEO,ip,sz );
+		}else if( name=="SO_BROADCAST" ){
+			setsockopt( socket,SOL_SOCKET,SO_BROADCAST,ip,sz );
 		}
 	}
 	
@@ -454,6 +456,8 @@ namespace bbSocket{
 			getsockopt( socket,SOL_SOCKET,SO_SNDTIMEO,ip,(socklen_t*)&sz );
 		}else if( name=="SO_RCVTIMEO" ){
 			getsockopt( socket,SOL_SOCKET,SO_RCVTIMEO,ip,(socklen_t*)&sz );
+		}else if( name=="SO_BROADCAST" ){
+			getsockopt( socket,SOL_SOCKET,SO_BROADCAST,ip,(socklen_t*)&sz );
 		}
 		
 		return value;
@@ -472,6 +476,54 @@ namespace bbSocket{
 	int sockaddrname( const void *addr,int addrlen,char *host,char *service ){
 	
 		return getnameinfo( (const sockaddr*)addr,addrlen,host,1023,service,79,0 );
+	}
+	
+	int select( int n_read,int *r_socks,int n_write,int *w_socks,int n_except,int *e_socks,int millis ){
+	
+		fd_set r_set,w_set,e_set;
+		
+		int n=-1;
+		
+		FD_ZERO( &r_set );
+		for( int i=0;i<n_read;++i ){
+			FD_SET( r_socks[i],&r_set );
+			if( r_socks[i]>n ) n=r_socks[i];
+		}
+		FD_ZERO( &w_set );
+		for( int i=0;i<n_write;++i ){
+			FD_SET( w_socks[i],&w_set );
+			if( w_socks[i]>n ) n=w_socks[i];
+		}
+		FD_ZERO( &e_set );
+		for( int i=0;i<n_except;++i ){
+			FD_SET( e_socks[i],&e_set );
+			if( e_socks[i]>n ) n=e_socks[i];
+		}
+		
+		struct timeval tv,*tvp;
+			
+		if( millis<0 ){
+			tvp=0;
+		}else{
+			tv.tv_sec=millis/1000;
+			tv.tv_usec=(millis%1000)*1000;
+			tvp=&tv;
+		}
+		
+		int r=select( n+1,&r_set,&w_set,&e_set,tvp );
+		if( r<0 ) return r;
+		
+		for( int i=0;i<n_read;++i ){
+			if( !FD_ISSET(r_socks[i],&r_set) ) r_socks[i]=0;
+		}
+		for( int i=0;i<n_write;++i ){
+			if( !FD_ISSET(w_socks[i],&w_set) ) w_socks[i]=0;
+		}
+		for( int i=0;i<n_except;++i ){
+			if( !FD_ISSET(e_socks[i],&e_set) ) e_socks[i]=0;
+		}
+		
+		return r;
 	}
 	
 }
