@@ -557,7 +557,7 @@ Class DeclInfo Extends Void="bbDeclInfo"
 	
 	#rem monkeydoc Declaration kind.
 	
-	This will be one of: Field, Global, Method, Function.
+	This will be one of: Const, Field, Global, Property, Method, Function, Constructor.
 	
 	#end
 	Property Kind:String()="getKind"
