@@ -46,6 +46,7 @@ __NEWPAGES__/
 /modules/admob
 /modules/iap
 /modules/win32
+/modules/tinyaes
 
 /modules/module-manager/backups
 
