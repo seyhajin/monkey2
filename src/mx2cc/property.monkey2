@@ -39,7 +39,7 @@ Class PropertyList Extends FuncList
 	
 	Method OnSemant:SNode() Override
 	
-		type=Type.VoidType
+		type=Null
 		
 		If pdecl.getFunc
 			Try
@@ -56,11 +56,14 @@ Class PropertyList Extends FuncList
 			Try
 				setFunc=New FuncValue( pdecl.setFunc,scope,Null,Null )
 				setFunc.Semant()
-				If type=Type.VoidType type=setFunc.ftype.argTypes[0]
+				If type And Not type.Equals( setFunc.ftype.argTypes[0] ) Throw New SemantEx( "Property '"+pdecl.ident+"' getter and setter have different types" )
+				If Not type type=setFunc.ftype.argTypes[0]
 				PushFunc( setFunc )
 			Catch ex:SemantEx
 			End
 		Endif
+		
+		If Not type SemantError( "PropertyList.OnSemant()" )
 		
 		Return Self
 	End

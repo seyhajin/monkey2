@@ -1,19 +1,10 @@
 
 #Import "<reflection>"
 
-Struct S
-	Field x:int
-
-End
-
-Function F:S Ptr()
-	Return null
-End
-
-Function F2:Int ptr()
-	Return Null
+Class C
+	Property Update( value:Int )
+	End
 End
 
 Function Main()
-	
 End
