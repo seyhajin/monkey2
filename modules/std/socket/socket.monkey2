@@ -98,12 +98,10 @@ End
 | SocketFlags	| Description
 |:--------------|:-----------
 | `Passive`		| for Bind and Listen only. Indicates socket accepts connections from any address. If not set, socket accepts loopback connections only.
-| `NumericHost`	| Socket name does not need to be looked up. Faster.
 
 #end
 Enum SocketFlags
 	Passive=1
-	NumericHost=2
 End
 
 #rem monkeydoc The SocketAddress class.
@@ -425,21 +423,25 @@ Class Socket Extends std.resource.Resource
 
 	#rem monkeydoc Creates a datagram server socket.
 	
-	Returns a new datagram server socket listening at 'service' if successful.
+	Returns a new datagram server socket bound to 'service' if successful.
+	
+	`service` can also be an integer port number.
 	
 	Returns null upon failure.
 
 	@return A new socket.
 	
 	#end
-	Function Bind:Socket( service:String,loopback:bool=False )
+	Function Bind:Socket( service:String,flags:SocketFlags=SocketFlags.Passive )
 
-		Local socket:=socket_bind( "",service,loopback ? 0 Else 1 )
+		Local socket:=socket_bind( "",service,flags )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
 	End
 	
+	#rem monkey @deprecated
+	#end
 	Function Bind:Socket( hostname:String,service:String )
 		
 		Local socket:=socket_bind( "",service,1 )
@@ -453,19 +455,23 @@ Class Socket Extends std.resource.Resource
 	
 	Returns a new stream server socket listening at `service` if successful.
 	
+	`service` can also be an integer port number.
+	
 	Returns null upon failure.
 
 	@return A new socket.
 	
 	#end
-	Function Listen:Socket( service:String,backlog:Int=32,loopback:bool=False )
+	Function Listen:Socket( service:String,backlog:Int=32,flags:SocketFlags=SocketFlags.Passive )
 
-		Local socket:=socket_listen( "",service,backlog,loopback ? 0 Else 1 )
+		Local socket:=socket_listen( "",service,backlog,flags )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
 	End
 
+	#rem monkey @deprecated
+	#end
 	Function Listen:Socket( hostname:String,service:String,backlog:Int=128 )
 		
 		Local socket:=socket_listen( "",service,backlog,1 )

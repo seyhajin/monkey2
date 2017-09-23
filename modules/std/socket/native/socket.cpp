@@ -94,7 +94,7 @@ namespace bbSocket{
 
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
-		hints.ai_flags=((flags&1) ? AI_PASSIVE : 0) | ((flags&2) ? AI_NUMERICHOST : 0);
+//		hints.ai_flags=(flags&1) ? AI_PASSIVE : 0;
 		if( hostname && !hostname[0] ) hostname=0;
 
 		addrinfo *pres=0;
@@ -128,7 +128,7 @@ namespace bbSocket{
 		
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
-		hints.ai_flags=((flags&1) ? AI_PASSIVE : 0) | ((flags&2) ? AI_NUMERICHOST : 0);
+		hints.ai_flags=(flags&1) ? AI_PASSIVE : 0;
 		if( hostname && !hostname[0] ) hostname=0;
 		
 		addrinfo *pres=0;
