@@ -1,4 +1,17 @@
 
+***** Monkey2 v1.1.08 *****
+
+Language additions: objects can now by cast to/from void ptr using the Cast operator.
+
+Language additions: Elvis operator '&Else' and safe member access '?.'.
+
+Structs now reflected.
+
+Mojo3d anisotropic texture filtering enabled, see anisotropic test.
+
+Mojo3d Scene.EnvColor added.
+
+
 ***** Monkey2 v1.1.07 *****
 
 Android min-sdk now 14 for android projects.

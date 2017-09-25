@@ -41,6 +41,7 @@ __NEWPAGES__/
 /modules/pyro-framework
 /modules/pyro-gui
 /modules/pyro-scenegraph
+/modules/pyro-tiled
 /modules/gles30
 /modules/timelinefx
 /modules/admob
