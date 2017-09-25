@@ -12,6 +12,8 @@ Class Scene Extends DynamicObject
 		_clearColor=Color.Sky
 
 		_ambientDiffuse=Color.DarkGrey
+		
+		_envColor=Color.White
 	End
 	
 	#rem monkeydoc The sky texture.

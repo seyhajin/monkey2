@@ -33,8 +33,6 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		SwapInterval=0
-		
 		Print gles20.glGetString( gles20.GL_EXTENSIONS ).Replace( " ","~n" )
 		
 		'create scene
@@ -120,7 +118,7 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
-		_ducks[0].RotateY( 1 )
+		'_ducks[0].RotateY( 1 )
 
 		util.Fly( _camera,Self )
 		
@@ -142,7 +140,7 @@ Function Main()
 '	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
 '	config["GL_depth_buffer_enabled"]=1
 
-'	config["mojo3d_renderer"]="forward"
+	config["mojo3d_renderer"]="forward"
 		
 	New AppInstance( config )
 	

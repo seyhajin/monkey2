@@ -66,7 +66,12 @@ Public
 | TextureFlags	| Description
 |:--------------|:-----------
 | Dynamic		| Texture is frequently updated. This flag should be set if the texture contents are regularly updated and don't need to be preserved.
-
+| WrapS			| Wrap S texture coordinates
+| WrapT			| Wrap T texture coordinates
+| Filter		| Enable magnification filtering
+| Mipmap		| Enable minification mipmapping, and minification filtering if Filter enabled.
+| WrapST		| Enable WrapS and WrapT.
+| FilterMipmap	| Enable Filter and Mipmap.
 #end
 Enum TextureFlags
 	None=			$0000
@@ -82,6 +87,8 @@ Enum TextureFlags
 	FilterMipmap=	Filter|Mipmap
 End
 
+#rem monketdoc @hidden
+#end
 Enum CubeFace
 	PositiveX
 	NegativeX
@@ -91,6 +98,8 @@ Enum CubeFace
 	NegativeZ
 End
 
+#Rem monkeydoc The Texture class.
+#end
 Class Texture Extends Resource
 	
 	Private
@@ -428,7 +437,7 @@ Class Texture Extends Resource
 					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
 				Endif
 				
-				If _flags & TextureFlags.FilterMipmap
+				If _flags & TextureFlags.Mipmap And Not (_flags & TextureFlags.Cubemap)
 					If glexts.GL_texture_filter_anisotropic
 						Local max:Int=0
 						glGetIntegerv( GL_MAX_TEXTURE_MAX_ANISOTROPY,Varptr max )

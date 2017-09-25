@@ -13,7 +13,7 @@ Using std..
 Using mojo..
 Using mojo3d..
 
-Const MaxAnisotropy:=0			'set to 0 to use use HW default (usually 16) 1 to for lowest.
+Const MaxAnisotropy:=0			'set to 0 to use use HW max (usually 16) 1 for min/off.
 
 Class MyWindow Extends Window
 	
@@ -34,6 +34,7 @@ Class MyWindow Extends Window
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
+		
 		_scene.EnvColor=Color.Black
 		_scene.ClearColor=Color.Black
 		_scene.AmbientLight=Color.Black
@@ -62,7 +63,7 @@ Class MyWindow Extends Window
 		
 		'create material
 		'
-		Local material:=New PbrMaterial( Color.Black,0,1 )
+		Local material:=New PbrMaterial( Color.Black )
 		material.EmissiveTexture=texture
 		material.EmissiveFactor=Color.Red
 

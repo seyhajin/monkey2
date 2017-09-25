@@ -25,6 +25,7 @@ uniform mat3 i_ModelViewNormalMatrix;
 
 uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_EnvTexture;
+uniform float r_EnvTextureMaxLod;
 uniform vec4 r_EnvColor;
 uniform mat3 r_EnvMatrix;
 
@@ -192,11 +193,11 @@ void pbrWriteFragData( vec3 color,vec3 emissive,float metalness,float roughness,
 	
 	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
 	
-	float lod=textureCube( r_EnvTexture,rvec,10.0 ).a * 255.0 - 10.0;
+	float lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 	
 	if( lod>0.0 ) lod=textureCube( r_EnvTexture,rvec ).a * 255.0;
 	
-	vec3 env=pow( textureCube( r_EnvTexture,rvec,max( roughness*10.0-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+	vec3 env=pow( textureCube( r_EnvTexture,rvec,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 
 	vec3 vvec=normalize( -v_Position );
 	

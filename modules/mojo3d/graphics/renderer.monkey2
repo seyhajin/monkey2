@@ -118,7 +118,6 @@ Class Renderer
 		_renderScene=scene
 
 		_runiforms.SetTexture( "SkyTexture",_renderScene.SkyTexture )
-		
 		_runiforms.SetColor( "ClearColor",_renderScene.ClearColor )
 		_runiforms.SetColor( "AmbientDiffuse",_renderScene.AmbientLight )
 	
@@ -133,7 +132,7 @@ Class Renderer
 		Endif
 		
 		_runiforms.SetTexture( "EnvTexture",env )
-		
+		_runiforms.SetFloat( "EnvTextureMaxLod",Log2( env.Size.x ) )
 		_runiforms.SetColor( "EnvColor",_renderScene.EnvColor )
 		
 		_renderQueue.Clear()

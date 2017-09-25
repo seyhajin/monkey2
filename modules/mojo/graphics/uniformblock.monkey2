@@ -15,8 +15,9 @@ Class UniformBlock Extends Resource
 	Method New( uniforms:UniformBlock )
 	
 		_name=uniforms._name
-		
 		_linearColors=uniforms._linearColors
+		_defaultTexture=uniforms._defaultTexture
+		_ntextures=uniforms._ntextures
 		
 		For Local i:=0 Until _uniforms.Length
 			_uniforms[i]=uniforms._uniforms[i]
@@ -298,11 +299,12 @@ Class UniformBlock Extends Resource
 	End
 
 	Field _name:Int
-	Field _seq:Int
 	Field _linearColors:bool
-	Field _uniforms:=New Uniform[64]
-	Field _ntextures:Int
 	Field _defaultTexture:Texture
+	Field _ntextures:Int
+
+	Field _uniforms:=New Uniform[64]
+	Field _seq:Int
 	
 	Method SetData<T>( uniform:String,data:T,type:Type )
 		Local id:=GetUniformId( uniform )

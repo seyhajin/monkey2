@@ -227,7 +227,7 @@ Class PbrMaterial Extends Material
 	
 	Method OnValidateShader:Shader() Override
 		
-		_textured=False
+		_textured=True'False
 		_bumpmapped=False
 		
 		If Uniforms.NumTextures

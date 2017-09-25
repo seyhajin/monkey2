@@ -1,16 +1,6 @@
 
 Namespace mojo3d.physics
 
-#Import "native/objecthandle.h"
-
-Extern
-
-Function object_to_handle:Void Ptr( obj:Object )="bb_object_to_handle"
-
-Function handle_to_object:Object( handle:Void Ptr )="bb_handle_to_object"
-
-Public
-
 Class Scene Extension
 
 	Property World:World()
@@ -37,7 +27,7 @@ Class RaycastResult
 	
 	Method New( btresult:btCollisionWorld.ClosestRayResultCallback Ptr )
 		time=btresult->m_closestHitFraction
-		body=Cast<RigidBody>( handle_to_object( btresult->m_collisionObject.getUserPointer() ) )
+		body=Cast<RigidBody>( btresult->m_collisionObject.getUserPointer() )
 		point=btresult->m_hitPointWorld
 		normal=btresult->m_hitNormalWorld
 	End
@@ -48,7 +38,7 @@ Class RaycastResult
 		Local castTo:=Cast<Vec3f>( btresult->m_convexToWorld )
 		
 		time=btresult->m_closestHitFraction
-		body=Cast<RigidBody>( handle_to_object( btresult->m_hitCollisionObject.getUserPointer() ) )
+		body=Cast<RigidBody>( btresult->m_hitCollisionObject.getUserPointer() )
 		point=(castTo-castFrom) * btresult->m_closestHitFraction + castFrom
 		normal=btresult->m_hitNormalWorld
 	End
@@ -140,7 +130,7 @@ Class World
 		
 		_btworld.addRigidBody( body.btBody,body.CollisionGroup,body.CollisionMask )
 		
-		body.btBody.setUserPointer( object_to_handle( body ) )
+		body.btBody.setUserPointer( Cast<Void Ptr>( body ) )
 	End
 	
 	Method Remove( body:RigidBody )

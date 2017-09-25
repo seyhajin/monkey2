@@ -148,7 +148,8 @@ Class MyWindow Extends Window
 		'
 		_light=New Light
 		_light.Rotate( 60,60,0 )	'aim directional light 'down' - Pi/2=90 degrees.
-		'_light.ShadowsEnabled=False
+		
+		_light.CastsShadow=True
 		
 		'Load castle
 		'

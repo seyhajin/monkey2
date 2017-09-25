@@ -38,6 +38,7 @@ uniform mat3 m_TextureMatrix;
 //
 uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_EnvTexture;
+uniform float r_EnvTextureMaxLod;
 uniform vec4 r_EnvColor;
 uniform mat3 r_EnvMatrix;
 
@@ -280,10 +281,11 @@ vec3 fragColor( vec3 color,vec3 emissive,float metalness,float roughness,float o
 	
 	//ambient color
 	
+	
 	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
-	float lod=textureCube( r_EnvTexture,rvec,10.0 ).a * 255.0 - 10.0;
+	float lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 	if( lod>0.0 ) lod=textureCube( r_EnvTexture,rvec ).a * 255.0;
-	vec3 ambenv=pow( textureCube( r_EnvTexture,rvec,max( roughness*10.0-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+	vec3 ambenv=pow( textureCube( r_EnvTexture,rvec,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 	
 	float ndotv=max( dot( normal,vvec ),0.0 );
 
