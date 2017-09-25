@@ -554,6 +554,10 @@ Class ClassType Extends Type
 	End
 	
 	Method CanCastToType:Bool( type:Type ) Override
+
+		'explicit cast to void ptr.
+		Local ptype:=TCast<PointerType>( type )
+		If ptype Return cdecl.kind<>"struct" and ptype.elemType.Equals( VoidType )
 	
 		Local ctype:=TCast<ClassType>( type )
 		If Not ctype Return False

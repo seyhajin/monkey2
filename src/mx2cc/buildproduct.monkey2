@@ -774,8 +774,8 @@ Class AndroidBuildProduct Extends BuildProduct
 		buf.Push( "LOCAL_SRC_FILES := \" )
 		
 		For Local src:=Eachin srcs
-'			buf.Push( MakeRelativePath( src,jniDir )+" \" )
-			buf.Push( MakeRelativePath( src,module.cfileDir )+" \" )
+			buf.Push( MakeRelativePath( src,jniDir )+" \" )
+'			buf.Push( MakeRelativePath( src,module.cfileDir )+" \" )
 		Next
 		
 		buf.Push( "" )

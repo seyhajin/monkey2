@@ -1323,8 +1323,7 @@ Class Translator_CPP Extends Translator
 		Local printStmt:=Cast<PrintStmt>( stmt )
 		If printStmt EmitStmt( printStmt ) ; Return
 		
-'		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt '"+String.FromCString( stmt.typeName() )+"' not recognized" )
-		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt not recognized" )
+		TransError( "Translator.EmitSmt" )
 	End
 	
 	Method EmitStmt( stmt:PrintStmt )
@@ -1651,8 +1650,9 @@ Class Translator_CPP Extends Translator
 		Local typeofTypeValue:=Cast<TypeofTypeValue>( value )
 		If typeofTypeValue Return Trans( typeofTypeValue )
 		
-'		Return "{* "+value.ToString()+" "+String.FromCString( value.typeName() )+" *}"
-		Return "{* "+value.ToString()+" *}"
+		TransError( "Translator.Trans()" )
+		
+		Return ""
 	End
 	
 	Method Trans:String( value:UpCastValue )
@@ -1681,9 +1681,10 @@ Class Translator_CPP Extends Translator
 		If value.value.type=Type.VariantType Return src+".get<"+TransType( value.type )+">()"
 		
 		If IsCValueType( value.type ) Return TransType( value.type )+src
-		
+
+		'obj->obj		
 		Local ctype:=TCast<ClassType>( value.type )
-		If ctype Return "bb_object_cast<"+ClassName( ctype )+"*>"+src
+		If ctype And TCast<ClassType>( value.value.type ) Return "bb_object_cast<"+ClassName( ctype )+"*>"+src
 		
 		Return "(("+TransType( value.type )+")"+src+")"
 	End
@@ -1982,7 +1983,7 @@ Class Translator_CPP Extends Translator
 	
 	Method Trans:String( value:PointerValue )
 		
-		Return "(&"+Trans( value.value )+")"
+		Return "(&"+TransRef( value.value )+")"
 	End
 	
 	Method Trans:String( value:VarValue )

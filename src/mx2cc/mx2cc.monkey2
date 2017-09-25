@@ -28,8 +28,10 @@ Const MX2CC_VERSION_EXT:=""
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makedocs monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
+'Const TestArgs:="mx2cc makemods -target=android monkey"
 
+'Const TestArgs:="mx2cc makedocs std mojo"' monkey std"	'monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
+ 
 Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
@@ -365,7 +367,7 @@ Function MakeDocs:Bool( args:String[] )
 	Local errs:=0
 	
 	For Local modid:=Eachin args
-
+		
 		Local path:="modules/"+modid+"/"+modid+".monkey2"
 		If GetFileType( path )<>FILETYPE_FILE Fail( "Module file '"+path+"' not found" )
 	
@@ -385,7 +387,7 @@ Function MakeDocs:Bool( args:String[] )
 
 		Local module:=Builder.modules.Top
 		
-		docsMaker.CreateModuleDocs( module,Null )
+		docsMaker.CreateModuleDocs( module,Null,null )
 		
 	Next
 	
@@ -393,12 +395,17 @@ Function MakeDocs:Bool( args:String[] )
 	
 	For Local modid:=Eachin EnumModules()
 
-		Local index:=LoadString( "docs/modules/"+modid+"/index.js" )
-		If Not index continue
+		Local index:=LoadString( "docs/modules/"+modid+"/manual/index.js" )
+		If index
+			If buf.Length buf.Add( "," )
+			buf.Push( index )
+		Endif
 		
-		If buf.Length buf.Add( "," )
-		
-		buf.Push( index )
+		index=LoadString( "docs/modules/"+modid+"/module/index.js" )
+		If index
+			If buf.Length buf.Add( "," )
+			buf.Push( index )
+		Endif
 	Next
 	
 	Local tree:=buf.Join( "" )

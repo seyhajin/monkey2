@@ -344,8 +344,10 @@ Class MarkdownConvertor
 			If line[i]<>CHAR_HASH Exit
 			i+=1
 		Wend
-				
-		Emit( "<h"+i+" cls="+_cls+">" )
+		
+		Local arg:=line.Slice( i ).Trim()
+		
+		Emit( "<h"+i+" class="+_cls+">" )
 		Emit( Escape( line.Slice( i ).TrimStart() ) )
 		Emit( "</h"+i+">" )
 	End

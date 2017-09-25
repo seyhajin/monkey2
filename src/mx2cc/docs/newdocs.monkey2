@@ -13,6 +13,15 @@ Class DocsNode
 		If _parent _parent._children.Add( Self )
 	End
 	
+	Property Hash:Bool()
+		
+		Return _hash
+	
+	Setter( hash:Bool )
+		
+		_hash=hash
+	End
+	
 	Property Ident:String()
 	
 		Return _ident
@@ -35,7 +44,7 @@ Class DocsNode
 		Return _nav
 	End
 	
-	property Children:DocsNode[]()
+	Property Children:DocsNode[]()
 	
 		Return _children.ToArray()
 	End
@@ -60,7 +69,7 @@ Class DocsNode
 		
 		Local path:=_parent ? _parent.Path Else ""
 		
-		Return path ? path+"."+_ident Else _ident
+		Return path ? path+(_hash ? "#" Else ".")+_ident Else _ident
 	End
 	
 	Property PathLink:String()
@@ -79,50 +88,107 @@ Class DocsNode
 		Return Path.Replace( ".","-" )
 	End
 	
-	Method FindChild:DocsNode( path:String )
+	Method FindAll:DocsNode( path:String )
+		
+'		If path="AppInstance" Print "_ident="+_ident
 	
 		If Not _nav
-		
-			Local i:=path.Find( "." )
-			If i=-1 Return path=_ident ? Self Else Null
 			
-			Local ident:=path.Slice( 0,i )
-			If ident<>_ident Return Null
-
-			path=path.Slice( i+1 )
+			If path=_ident Return Self
 			
+			If path.Contains( "." ) And path.StartsWith( _ident+"." )
+				
+				path=path.Slice( _ident.Length+1 )
+				
+			Else
+				
+				Return Null
+				
+			Endif
+						
 		Endif
 		
 		For Local child:=Eachin _children
-			Local docs:=child.FindChild( path )
+			
+			Local docs:=child.FindAll( path )
+			
 			If docs Return docs
 		Next
 
 		Return Null
 	End
 	
-	Method Find:DocsNode( path:String )
-	
+	Method FindStart:DocsNode( path:String )
+
 		If Not _nav
-		
+
 			If path=_ident Return Self
 			
-			If path.StartsWith( _ident+"." ) path=path.Slice( _ident.Length+1 )
-		
-			For Local child:=Eachin _children
-				Local docs:=child.FindChild( path )
-				If docs Return docs
-			Next
-		
+			If path.Contains( "." ) And path.StartsWith( _ident+"." ) Return Self
+
 		Endif
 		
-		Return _parent ? _parent.Find( path ) Else Null
+		For Local child:=Eachin _children
+			
+			Local docs:=child.FindStart( path )
+			
+			If docs Return docs
+		Next
+		
+		Return Null
 	End
 	
+	Method Find:DocsNode( path:String )
+		
+		For Local child:=Eachin _children
+			
+			Local docs:=child.FindAll( path )
+			If docs Return docs
+	
+		Next
+		
+		Local docs:=FindAll( path )
+		If docs Return docs
+		
+		If _parent Return _parent.Find( path )
+		
+		Return Null
+	End
+	#rem
+		Local docs:=FindStart( path )
+		If docs 
+			docs=docs.FindAll( path )
+			If docs Return docs
+		Endif
+		
+		If _parent Return _parent.Find( path )
+		
+		Return Null
+	End
+	#end
+	
 	Method Remove()
+		
 		If Not _parent Return
+		
+		For Local child:=Eachin _children
+			_parent._children.Add( child )
+			child._parent=_parent
+		Next
+		
 		_parent._children.Remove( Self )
 		_parent=Null
+	End
+	
+	Method Clean()
+		
+		For Local child:=Eachin Children
+			child.Clean()
+		Next
+		
+		If _ident Return
+		
+		Remove()
 	End
 
 	Method Debug()
@@ -133,22 +199,41 @@ Class DocsNode
 	End
 	
 	Private
-	
+
+	Field _hash:bool
 	Field _ident:String
 	Field _label:String
 	Field _parent:DocsNode
 	Field _nav:Bool
 	Field _children:=New Stack<DocsNode>
-	
 	Field _markdown:String
 	
 End
 
 Class DocsBuffer
 	
+	Method New()
+		
+	End
+	
+	Method New( docs:DocsNode,baseDir:String )
+		
+		_docs=docs
+		
+		_baseDir=baseDir
+		
+	End
+	
 	Method EmitBr()
 		
 		EmitLine( "" )
+	End
+	
+	Method Emit( docs:String )
+	
+		Local lines:=docs.Split( "~n" )
+
+		EmitLines( lines )
 	End
 	
 	Method EmitLine( line:String )
@@ -160,29 +245,13 @@ Class DocsBuffer
 		_lines.Push( line )
 	End
 	
-	Method Emit( docs:String )
-	
-		Local lines:=docs.Split( "~n" )
-
-		Local indent:=10000
-		For Local i:=0 Until lines.Length
-			Local line:=lines[i],j:=0
-			While j<line.Length
-				If line[j]>32 Exit
-				j+=1
-			Wend
-			indent=Min( indent,j )
-		Next
-		If indent=10000 indent=0
-		For Local i:=0 Until lines.Length
-			lines[i]=lines[i].Slice( indent ).TrimEnd()
-		Next
-		
+	Method EmitLines( lines:String[] )
+				
 		Local i:=0
 		
 		While i<lines.Length
 		
-			Local line:=lines[i]
+			Local line:=lines[i].Trim()
 			i+=1
 			
 			If Not line.StartsWith( "@" )
@@ -194,9 +263,13 @@ Class DocsBuffer
 			If j=-1 j=line.Length
 			
 			Local tag:=line.Slice( 1,j )
-			Local arg:=line.Slice( j )
-				
+			Local arg:=line.Slice( j+1 ).Trim()
+			
 			Select tag
+			Case "deprecated"
+				
+				Emit( "(Deprecated: "+arg+")" )
+				
 			Case "label"
 			
 				_label=arg
@@ -208,30 +281,103 @@ Class DocsBuffer
 			Case "return"
 			
 				_return=arg
+				
+			Case "import"
+				
+				Local path:=_baseDir+arg
+				
+				Local src:=LoadString( path )
+				
+				If src
+'					Print "Importing "+path
+					
+					Local docs:=New DocsNode( "","",_docs,True )
+					
+					Local buf:=New DocsBuffer( docs,ExtractDir( path ) )
+					
+					buf.Emit( src )
+					
+					docs.Markdown=buf.Flush()
+				Else
+					Print "DocsBuffer: Can't @import file '"+path+"'"
+				Endif
 			
 			Case "example"
 
 				EmitLine( "```" )
-
+				
+				Local i0:=i
 				While i<lines.Length And lines[i].Trim()<>"@end"
+					
 					EmitLine( lines[i] )
 					i+=1
 				Wend
+				
+'				FixIndent( i0,i )
 
 				EmitLine( "```" )
 
 				If i<lines.Length i+=1
+					
+			Case "#","##","###","####","#####"
+				
+				Local label:=arg
+				Local ident:=label.Replace( " ","_" )
+				
+				Local docs:=New DocsNode( ident,label,_docs,False )'True )
+				
+				docs.Hash=True
+				
+				EmitLine( "<a name='"+ident+"'></a>" )
+				
+				EmitLine( tag+" "+arg )
+				
+			Case "manpage"
+				
+				Local label:=arg
+				Local ident:=label.Replace( " ","_" )
+				
+				Local docs:=New DocsNode( ident,label,_docs,False )
+				
+				Local buf:=New DocsBuffer( docs,_baseDir )
+				
+				buf.EmitLines( lines.Slice( i ) )
+				
+				docs.Markdown=buf.Flush()
+				
+				i=lines.Length
+				
+			Case "import"
+				
+				Local path:=_baseDir+arg
+				
+				Local src:=LoadString( path )
+				
+				If src
+'					Print "Importing "+path
+					
+					Local docs:=New DocsNode( "","",_docs,True )
+					
+					Local buf:=New DocsBuffer( docs,ExtractDir( path ) )
+					
+					buf.Emit( src )
+					
+					docs.Markdown=buf.Flush()
+				Else
+					Print "DocsBuffer: Can't @import file '"+path+"'"
+				Endif
 				
 			Default
 			
-				Print "DocsBuffer error: '"+lines[i-1]+"'"
+				Print "DocsBuffer error: tag='"+tag+"' line='"+lines[i-1]+"'"
 			
 			End
+			
 			
 		Wend
 	End
 	
-	Method Flush:String( docs:DocsNode )
+	Method Flush:String()
 	
 		If _params.Length	
 		
@@ -266,14 +412,34 @@ Class DocsBuffer
 	
 	Private
 	
+	Field _docs:DocsNode
+	field _baseDir:String
 	Field _lines:=New StringStack
-	
 	Field _label:String
-	
 	Field _params:=New StringStack
-	
 	Field _return:String
-
+	
+	
+	Method FixIndent( i0:Int,i1:Int )
+		
+		Local indent:=10000
+		
+		For Local i:=i0 Until i1
+			Local line:=_lines[i],j:=0
+			While j<line.Length
+				If line[j]>32 Exit
+				j+=1
+			Wend
+			indent=Min( indent,j )
+		Next
+		
+		If indent=10000 indent=0
+			
+		For Local i:=i0 Until i1
+			_lines[i]=_lines[i].Slice( indent )
+		Next
+	
+	End
 End
 
 Class DocsMaker
@@ -285,15 +451,47 @@ Class DocsMaker
 		_pageTemplate=pageTemplate
 	End
 
-	Method CreateModuleDocs( module:Module,parent:DocsNode )
+	Method CreateModuleDocs( module:Module,parent:DocsNode,manParent:DocsNode )
 	
 		_module=module
 		
-		_baseDir=_docsDir+"modules/"+_module.name+"/"
+		local docDir:=_docsDir+"modules/"+_module.name+"/"
+		DeleteDir( docDir,true )
+		CreateDir( docDir,True )
 		
-		DeleteDir( _baseDir,True )
-		CreateDir( _baseDir,True )
+		Local manDir:=docDir+"manual/"
+		CreateDir( manDir,True )
+		
+		Local modDir:=docDir+"module/"
+		CreateDir( modDir,True )
 
+		_convertor=New MarkdownConvertor( ResolveHtmlLink )
+		
+		'manual
+		Local manpath:=module.baseDir+"newdocs/manual.md"
+		
+		If GetFileType( manpath )=FileType.File
+			
+			Print "Making manual docs"
+			
+			Local src:=LoadString( manpath )
+			
+			Local docs:=New DocsNode( "","",manParent,True )
+			
+			Local buf:=New DocsBuffer( docs,ExtractDir( manpath ) )
+
+			buf.Emit( src )
+			
+			buf.Flush()
+			
+			_baseDir=manDir
+			_navPrefix=_module.name+":manual/"+docs.Path
+			
+			CreateHtmlPages( docs )
+			
+			CreateJSNavTree( docs )
+		Endif
+		
 		Local docs:=New DocsNode( _module.name,"",parent,True )
 		
 		Local done:=New Map<NamespaceScope,Bool>
@@ -313,26 +511,12 @@ Class DocsMaker
 		Next
 		
 		'Convert to HTML
+		_baseDir=modDir
+		_navPrefix=_module.name+":module/"+docs.Path
 
-		_convertor=New MarkdownConvertor( ResolveHtmlLink )
-		
 		CreateHtmlPages( docs )
 		
-		_convertor=Null
-		
-		'Create NAV tree 
-		
-		Local buf:=New StringStack
-		
-		CreateJSNavTree( docs,buf,"" )
-
-		Local tree:=buf.Join( "" )		
-		
-		SaveString( tree,_baseDir+"index.js" )
-		
-		_baseDir=""
-		
-		_module=Null
+		CreateJSNavTree( docs )
 	End
 	
 	Private
@@ -345,17 +529,38 @@ Class DocsMaker
 	
 	Field _baseDir:String	'monkey2/docs/modules/themodule/
 	
+	Field _navPrefix:String
+	
 	Field _convertor:MarkdownConvertor
 	
 	Field _converting:DocsNode
 	
+	Method CreateJSNavTree( docs:DocsNode )
+		
+		Local buf:=New StringStack
+		
+		docs.Clean()
+		
+		If docs.Ident
+			CreateJSNavTree( docs,buf,"" )
+		Else
+			For Local child:=Eachin docs.Children
+				CreateJSNavTree( child,buf,"" )
+			Next
+		Endif
+
+		Local tree:=buf.Join( "" )		
+		
+		SaveString( tree,_baseDir+"index.js" )
+	End
+		
 	Method CreateJSNavTree( docs:DocsNode,buf:StringStack,indent:String )
-	
+		
 		buf.Add( "{text:'"+docs.Label+"'" )
 		
 		If Not docs.Nav
 		
-			Local page:=_module.name+":"+docs.Path
+			Local page:=_navPrefix+docs.Path
 		
 			buf.Add( ",data:{page:'"+page+"'}")
 		
@@ -424,7 +629,8 @@ Class DocsMaker
 		If i<>-1
 			Local modname:=link.Slice( 0,i )
 			Local slug:=link.Slice( i+1 ).Replace( ".","-" )
-			Local url:="file://d:/dev/monkey2/modules/"+modname+"/docs/__NEWPAGES__/"+slug+".html"
+'			Local url:="file://"+_docsDir+"modules/"+modname+"/module/"+slug+".html"
+			Local url:="../../"+modname+"/module/"+slug+".html"
 			Local anchor:="<a href='"+url+"'>"+name+"</a>"
 			Return anchor
 		Endif
@@ -437,7 +643,8 @@ Class DocsMaker
 			Return name
 		Endif
 		
-		Local url:="file://"+_baseDir+docs.Slug+".html"
+'		Local url:="file://"+_baseDir+docs.Slug+".html"
+		Local url:=docs.Slug+".html"
 		Local anchor:="<a href='"+url+"'>"+name+"</a>"
 		Return anchor
 	End
@@ -555,6 +762,11 @@ Class DocsMaker
 		
 		Local cdecl:=Cast<ClassDecl>( decl )
 		If cdecl And cdecl.genArgs label+="<"+",".Join( cdecl.genArgs )+">"
+			
+		label=label.Replace( "_","\_" )
+'		label=label.Replace( "<","\<" )
+'		label=label.Replace( ">","\>" )
+		
 		
 		Return label
 	End
@@ -576,7 +788,6 @@ Class DocsMaker
 			Local arg:=desc.Slice( 11 ).Trim()
 			
 			desc="(Deprecated: "+arg+")"
-			
 		Endif
 		
 		Local pdecl:=Cast<PropertyDecl>( decl )
@@ -808,7 +1019,7 @@ Class DocsMaker
 			Return Null
 		Endif
 		
-		docs.Markdown=buf.Flush( docs )
+		docs.Markdown=buf.Flush()
 
 		Return docs
 	End
@@ -827,7 +1038,7 @@ Class DocsMaker
 		
 		buf.Emit( decl.docs )
 				
-		docs.Markdown=buf.Flush( docs )
+		docs.Markdown=buf.Flush()
 		
 		Return docs
 	End
@@ -899,7 +1110,19 @@ Class DocsMaker
 		MakeMemberDocs( scope,"method",DECL_PUBLIC,docs,buf )
 		MakeMemberDocs( scope,"function",DECL_PUBLIC,docs,buf )
 		
-		docs.Markdown=buf.Flush( docs )
+		MakeMemberDocs( scope,"alias",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"enum",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"interface",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"struct",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"class",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"const",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"field",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"constructor",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"property",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"method",DECL_PROTECTED,docs,buf )
+		MakeMemberDocs( scope,"function",DECL_PROTECTED,docs,buf )
+		
+		docs.Markdown=buf.Flush()
 		
 		Return docs
 	End
@@ -918,7 +1141,16 @@ Class DocsMaker
 		
 		buf.Emit( decl.docs )
 	
-		docs.Markdown=buf.Flush( docs )
+		docs.Markdown=buf.Flush()
+		
+		For Local node:=Eachin etype.scope.nodes
+			
+			local val:=Cast<LiteralValue>( node.Value )
+			If Not val Continue
+			
+			Local edocs:=New DocsNode( node.Key,node.Key,docs )',True )
+
+		Next
 		
 		Return docs
 	End
@@ -937,7 +1169,7 @@ Class DocsMaker
 		
 		buf.Emit( decl.docs )
 	
-		docs.Markdown=buf.Flush( docs )
+		docs.Markdown=buf.Flush()
 		
 		Return docs
 	End
@@ -957,6 +1189,8 @@ Class DocsMaker
 			For Local func:=Eachin flist.funcs
 			
 				Local decl:=func.fdecl
+				
+				If Not DocsVisible( decl,~0 ) continue
 				
 				If pass=0
 				
@@ -989,7 +1223,7 @@ Class DocsMaker
 			
 		Next
 		
-		docs.Markdown=buf.Flush( docs )
+		docs.Markdown=buf.Flush()
 		
 		Return docs
 	End
@@ -1008,289 +1242,9 @@ Class DocsMaker
 	
 		buf.Emit( decl.docs )
 		
-		docs.Markdown=buf.Flush( docs )
+		docs.Markdown=buf.Flush()
 		
 		Return docs
 	End
-
-	#rem
-	Method EmitScopeMembers( buf:DocsBuffer,scope:Scope,kind:String,access:int )
-		
-		Local tag:=""
-		If access & DECL_PUBLIC
-			tag="Public "
-		Else If access & DECL_PROTECTED
-			tag="Protected "
-		Else If access & DECL_PRIVATE
-			tag="Private "
-		Endif
-		
-		Local first:=True
-		
-		For Local node:=Eachin scope.nodes
-			
-			Local vvar:=Cast<VarValue>( node.Value )
-			If vvar
-
-				Local decl:=vvar.vdecl
-				
-				If decl.kind<>kind Or Not (decl.flags & access) Continue
-				
-				If first
-					first=False
-					buf.EmitBr()
-					buf.Emit( "| "+tag+kind.Capitalize()+"s | |" )
-					buf.Emit( "|:---|:---|" )
-				Endif
-
-				buf.Emit( "| "+DeclLink( decl,scope )+" | "+DeclDesc( decl )+" |" )
-				
-				Continue
-			Endif
-
-			Local ctype:=Cast<ClassType>( node.Value )
-			If ctype
-				
-				Local decl:=ctype.cdecl
-				
-				If decl.kind<>kind Or Not (decl.flags & access) continue
-				
-				If first
-					first=False
-					Local kinds:=kind.Capitalize() + (kind="class" ? "es" Else "s")
-					buf.EmitBr()
-					buf.Emit( "| "+tag+kinds+" | |" )
-					buf.Emit( "|:---|:---|" )
-				Endif
-				
-				buf.Emit( "| "+DeclLink( decl,scope )+" | "+DeclDesc( decl )+" |" )
-				
-				Continue
-			Endif
-			
-			Local plist:=Cast<PropertyList>( node.Value )
-			If plist
-			
-				Local decl:=plist.pdecl
-				
-				If decl.kind<>kind Or Not (decl.flags & access) continue
-
-				If first
-					first=False
-					Local kinds:="Properties"
-					buf.EmitBr()
-					buf.Emit( "| "+tag+kinds+" | |" )
-					buf.Emit( "|:---|:---|" )
-				Endif
-
-				buf.Emit( "| "+DeclLink( decl,scope )+" | "+DeclDesc( decl )+" |" )
-				
-				Continue
-			Endif
-			
-			Local flist:=Cast<FuncList>( node.Value )
-			If flist
-				
-				Local decl:FuncDecl
-				For Local func:=Eachin flist.funcs
-					Local fdecl:=func.fdecl
-					If fdecl.kind<>kind Or Not (fdecl.flags & access) Continue
-					decl=fdecl
-					Exit
-				Next
-				If Not decl Continue
-				
-				If first
-					first=False
-					buf.EmitBr()
-					buf.Emit( "| "+tag+kind.Capitalize()+"s | |" )
-					buf.Emit( "|:---|:---|" )
-				Endif
-				
-				Print "decl.docs="+decl.docs
-				
-				buf.Emit( "| "+DeclLink( decl,scope )+" | "+DeclDesc( decl )+" |" )
-				
-				Continue
-			Endif
-		Next
-	End
-	
-	Method MakeMemberDocs( scope:Scope,parent:DocsNode )
-		
-		For Local node:=Eachin scope.nodes
-			
-			Local vvar:=Cast<VarValue>( node.Value )
-			If vvar
-
-				Local decl:=vvar.vdecl
-				If Not decl.IsPublic And Not decl.docs Continue
-				
-				MakeVarDocs( vvar,parent )
-				
-				Continue
-			Endif
-
-			Local ctype:=TCast<ClassType>( node.Value )
-			If ctype
-				
-				Local decl:=ctype.cdecl
-				If Not decl.IsPublic And Not decl.docs Continue
-				
-				MakeClassDocs( ctype,parent )
-				
-				Continue
-			Endif
-			
-			Local plist:=Cast<PropertyList>( node.Value )
-			If plist
-			
-				Local decl:=plist.pdecl
-				If Not decl.IsPublic And Not decl.docs Continue
-				
-				MakePropertyDocs( plist,parent )
-				
-				Continue
-			Endif
-			
-			Local flist:=Cast<FuncList>( node.Value )
-			If flist
-			
-				MakeFuncDocs( flist,parent )
-				
-				Continue
-			Endif
-			
-		Next
-		
-	End
-	#end
-		
-	#rem
-	Method MakeClassDocs:DocsNode( ctype:ClassType,parent:DocsNode )
-		
-		Local decl:=ctype.cdecl
-		Local scope:=ctype.scope
-		
-		Local buf:=New DocsBuffer
-		
-		EmitHeader( buf,decl.ident,parent )
-		
-		If decl.IsExtension
-			
-			buf.Emit( "##### "+decl.kind.Capitalize()+" "+decl.ident+" Extension" )
-			
-		Else
-			
-			Local xtends:=""
-			If ctype.superType
-				If ctype.superType<>Type.ObjectClass
-					xtends=" Extends "+TypeName( ctype.superType )
-				Endif
-			Else If ctype.extendsVoid
-				xtends=" Extends Void"
-			Endif
-			
-			Local implments:=""
-			If decl.ifaceTypes
-				Local ifaces:=""
-				For Local iface:=Eachin ctype.ifaceTypes
-					ifaces+=","+TypeName( iface )
-				Next
-				ifaces=ifaces.Slice( 1 )
-				If decl.kind="interface"
-					xtends=" Extends "+ifaces
-				Else
-					implments=" Implements "+ifaces
-				Endif
-			Endif
-			
-			Local mods:=""
-			If decl.IsVirtual
-				mods+=" Virtual"
-			Else If decl.IsAbstract
-				mods+=" Abstract"
-			Else If decl.IsFinal
-				mods+=" Final"
-			Endif
-			
-			buf.Emit( "##### "+decl.kind.Capitalize()+" "+decl.ident+xtends+implments+mods )
-
-		Endif
-		
-		buf.Emit( decl.docs )
-		
-		EmitScopeMembers( buf,"property",scope,DECL_PUBLIC )
-		EmitScopeMembers( buf,"method",scope,DECL_PUBLIC )
-		
-'		EmitScopeMembers( buf,"alias",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"enum",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"struct",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"class",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"interface",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"const",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"global",scope,DECL_PUBLIC )
-'		EmitScopeMembers( buf,"function",scope,DECL_PUBLIC )
-		
-		Local docs:=New DocsNode( decl.ident,parent )
-		
-		docs.Markdown=buf.Flush( docs )
-		
-		MakeMemberDocs( ctype.scope,docs )
-	
-		Return docs
-	End
-	#end
-	
-	#rem	
-	Method MakeFuncDocs:DocsNode( flist:FuncList,parent:DocsNode )
-	
-		Local buf:DocsBuffer
-
-		Local scope:=flist.scope
-		
-		For Local func:=Eachin flist.funcs
-
-			Local decl:=func.fdecl
-			If Not decl.IsPublic And Not decl.docs Continue
-			
-			If Not buf
-				buf=New DocsBuffer
-				
-				EmitHeader( buf,decl.ident,parent )
-			Endif
-			
-			buf.Emit( decl.docs )
-		Next
-		
-		If Not buf Return Null
-
-		Local docs:=New DocsNode( flist.ident,parent )
-		
-		docs.Markdown=buf.Flush( docs )
-		
-		Return docs
-	End
-	
-	Method MakeVarDocs:DocsNode( vvar:VarValue,parent:DocsNode )
-		
-		Local decl:=vvar.vdecl
-		Local scope:=vvar.scope
-		
-		Local buf:=New DocsBuffer
-		
-		EmitHeader( buf,decl.ident,parent )
-		
-		buf.Emit( "##### "+decl.kind.Capitalize()+" "+decl.ident+":"+TypeName( vvar.type ) )
-		
-		buf.Emit( decl.docs )
-		
-		Local docs:=New DocsNode( decl.ident,parent )
-		
-		docs.Markdown=buf.Flush( docs )
-		
-		Return docs
-	End
-	#end
 	
 End
