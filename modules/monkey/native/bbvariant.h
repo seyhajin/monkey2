@@ -111,6 +111,13 @@ struct bbVariant{
 		return _rep->getType();
 	}
 	
+	bbTypeInfo *getDynamicType()const{
+	
+		if( bbObject *obj=_rep->getObject() ) return obj->typeof();
+		
+		return _rep->getType();
+	}
+	
 	operator bool()const{
 		
 		return _rep!=&_null;
