@@ -3,8 +3,6 @@ Namespace mojo.app
 
 Using std.resource
 
-#rem monkeydoc @hidden
-#end
 Class Skin Extends Resource
 
 	Property Image:Image()

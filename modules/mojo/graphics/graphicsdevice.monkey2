@@ -450,7 +450,10 @@ Class GraphicsDevice
 		_modified=False
 		If _rtarget And _rtarget.NumColorTextures
 			Validate()
-			_rtarget.GetColorTexture(0).Modified( _viewport & _scissor )
+			For Local i:=0 Until _rtarget.NumColorTextures
+				Local texture:=_rtarget.GetColorTexture( i )
+				texture.Modified( _viewport & _scissor )
+			Next
 		Endif
 	End
 	

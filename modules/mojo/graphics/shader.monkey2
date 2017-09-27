@@ -3,6 +3,8 @@ Namespace mojo.graphics
 
 #Import "shaders/@/shaders"
 
+Internal
+
 Const A_POSITION:=0
 Const A_TEXCOORD0:=1
 Const A_TEXCOORD1:=2
@@ -11,6 +13,8 @@ Const A_NORMAL:=4
 Const A_TANGENT:=5
 Const A_WEIGHTS:=6
 Const A_BONES:=7
+
+Private
 
 Class GLUniform
 

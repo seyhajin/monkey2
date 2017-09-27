@@ -29,7 +29,7 @@ Class Theme
 	
 	#rem monkeydoc Gets a font from the theme.
 	
-	If no font named `name` is found, [[App.DefaultFont]] is returned.
+	If no font named `name` is found, [[AppInstance.DefaultFont|App.DefaultFont]] is returned.
 
 	#end
 	Method GetFont:Font( name:String )
@@ -42,7 +42,7 @@ Class Theme
 	
 	#rem monkeydoc Gets a color from the theme.
 	
-	If no color named `name` is found, [[Color.Grey]] is returned.
+	If no color named `name` is found, [[std:std.graphics.Color.Grey|Color.Grey]] is returned.
 	
 	#end
 	Method GetColor:Color( name:String )

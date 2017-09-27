@@ -25,18 +25,16 @@ End
 
 Public
 
-#rem monkeydoc Global instance of the AudioDevice class.
+#rem monkeydoc @hidden Global instance of the AudioDevice class.
 #end
 Const Audio:=New AudioDevice
 
-#rem monkeydoc The AudioDevice class.
+#rem monkeydoc @hidden The AudioDevice class.
 #end
 Class AudioDevice
 
-	'***** Internal *****
+	Internal
 	
-	#rem monkeydoc @hidden
-	#end
 	Method Init()
 	
 		Local error:=""
@@ -139,8 +137,6 @@ Class Sound Extends Resource
 	
 	Protected
 	
-	#rem monkeydoc @hidden
-	#end
 	Method OnDiscard() Override
 		
 		If _alBuffer alDeleteBuffers( 1,Varptr _alBuffer )
@@ -148,8 +144,6 @@ Class Sound Extends Resource
 		_alBuffer=0
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method OnFinalize() Override
 		
 		If _alBuffer alDeleteBuffers( 1,Varptr _alBuffer )

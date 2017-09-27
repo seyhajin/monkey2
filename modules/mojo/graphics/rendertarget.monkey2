@@ -8,6 +8,8 @@ Class RenderTarget Extends Resource
 		_colorTextures=colorTextures.Slice( 0 )
 		
 		_depthTexture=depthTexture
+
+		_size=_colorTextures ? _colorTextures[0].Size Else _depthTexture.Size
 		
 		_glDrawBufs=New GLenum[_colorTextures.Length]
 		
@@ -21,68 +23,24 @@ Class RenderTarget Extends Resource
 		Return _colorTextures.Length
 	End
 	
-	Property HasDepthTexture:Bool()
+	Property ColorTextures:Texture[]()
+		
+		Return _colorTextures.Slice( 0 )
+	End
+	
+	Property DepthTexture:Texture()
 		
 		Return _depthTexture
 	End
 	
 	Property Size:Vec2i()
 		
-		Return _colorTextures ? _colorTextures[0].Size Else _depthTexture.Size
+		Return _size
 	End
 	
 	Method GetColorTexture:Texture( index:Int )
 		
 		Return index>=0 And index<_colorTextures.Length ? _colorTextures[index] Else Null
-	End
-	
-	Method GetDepthTexture:Texture()
-		
-		Return _depthTexture
-	End
-	
-	'***** INTERNAL *****
-	
-	Method CheckStatus()
-		
-		Local status:=gles20.glCheckFramebufferStatus( GL_FRAMEBUFFER )
-		
-		If status=GL_FRAMEBUFFER_COMPLETE Return
-		
-		Local err:=""
-		
-		Select status
-		Case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-			err="GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"
-		Case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-			err="GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"
-'		Case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
-'			err="GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS"
-		Case GL_FRAMEBUFFER_UNSUPPORTED
-			err="GL_FRAMEBUFFER_UNSUPPORTED"
-		Default
-			err="GL_FRAMEBUFFER_?????"
-		End
-		
-		Print "ColorTexture0 format="+(_colorTextures ? Cast<Int>( _colorTextures[0].Format ) Else 0)
-		Print "DepthTexture format="+(_depthTexture ? Cast<Int>( _depthTexture.Format ) Else 0)
-		
-		RuntimeError( "Framebuffer incomplete: status="+err )
-	End
-	
-	Method Bind()
-	
-		glBindFramebuffer( GL_FRAMEBUFFER,ValidateGLFramebuffer() )
-
-		If glexts.GL_draw_buffers 
-			glDrawBuffers( _glDrawBufs.Length,_glDrawBufs.Data )
-		Endif
-
-		If glexts.GL_read_buffer
-			glReadBuffer( _glDrawBufs ? _glDrawBufs[0] Else GL_NONE )
-		Endif
-
-		CheckStatus()
 	End
 	
 	Protected
@@ -106,10 +64,29 @@ Class RenderTarget Extends Resource
 		If _glSeq=glGraphicsSeq glDeleteFramebuffers( 1,Varptr _glFramebuffer )
 	End
 	
+	Internal
+	
+	Method Bind()
+	
+		glBindFramebuffer( GL_FRAMEBUFFER,ValidateGLFramebuffer() )
+
+		If glexts.GL_draw_buffers 
+			glDrawBuffers( _glDrawBufs.Length,_glDrawBufs.Data )
+		Endif
+
+		If glexts.GL_read_buffer
+			glReadBuffer( _glDrawBufs ? _glDrawBufs[0] Else GL_NONE )
+		Endif
+
+		CheckStatus()
+	End
+	
 	Private
 	
 	Field _colorTextures:Texture[]
 	Field _depthTexture:Texture
+	Field _size:Vec2i
+	
 	Field _glDrawBufs:GLenum[]
 	
 	Field _glFramebuffer:GLuint
@@ -146,6 +123,33 @@ Class RenderTarget Extends Resource
 		glCheck()
 		
 		Return _glFramebuffer
+	End
+	
+	Method CheckStatus()
+		
+		Local status:=gles20.glCheckFramebufferStatus( GL_FRAMEBUFFER )
+		
+		If status=GL_FRAMEBUFFER_COMPLETE Return
+		
+		Local err:=""
+		
+		Select status
+		Case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+			err="GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"
+		Case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+			err="GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"
+'		Case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
+'			err="GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS"
+		Case GL_FRAMEBUFFER_UNSUPPORTED
+			err="GL_FRAMEBUFFER_UNSUPPORTED"
+		Default
+			err="GL_FRAMEBUFFER_?????"
+		End
+		
+		Print "ColorTexture0 format="+(_colorTextures ? Cast<Int>( _colorTextures[0].Format ) Else 0)
+		Print "DepthTexture format="+(_depthTexture ? Cast<Int>( _depthTexture.Format ) Else 0)
+		
+		RuntimeError( "Framebuffer incomplete: status="+err )
 	End
 	
 End

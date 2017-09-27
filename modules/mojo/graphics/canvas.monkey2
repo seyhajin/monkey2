@@ -21,7 +21,7 @@ End
 
 #rem monkeydoc The Canvas class.
 
-Canvas objects are used to perform rendering to either a mojo [[app.View]] or an 'off screen' [[mojo.graphics.Image]].
+Canvas objects are used to perform rendering to either a mojo [[View]] or an 'off screen' [[Image]].
 
 To draw to a canvas, use one of the 'Draw' methods. Drawing is affected by a number of draw states, including:
 

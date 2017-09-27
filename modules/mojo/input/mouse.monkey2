@@ -60,7 +60,7 @@ End
 
 To access the mouse device, use the global [[Mouse]] constant.
 
-The mouse device should only used after a new [[app.AppInstance]] is created.
+The mouse device should only used after a new [[AppInstance]] is created.
 
 #end
 Class MouseDevice Extends InputDevice

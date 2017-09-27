@@ -25,7 +25,7 @@ Const Keyboard:=New KeyboardDevice
 
 To access the keyboard device, use the global [[Keyboard]] constant.
 
-The keyboard device should only used after a new [[app.AppInstance]] is created.
+The keyboard device should only used after a new [[AppInstance]] is created.
 
 All methods that take a `key` parameter can also be combined with 'raw' keys.
 
@@ -173,7 +173,7 @@ Class KeyboardDevice Extends InputDevice
 	
 	Removes all queued characters in the character queue.
 	
-	Note that [[app.App.ResetPolledInput]] also flushes the character queue.
+	Note that [[AppInstance.ResetPolledInput|App.ResetPolledInput]] also flushes the character queue.
 	
 	#end
 	Method FlushChars()
