@@ -1,14 +1,21 @@
 
 Namespace mx2.docs
 
+Enum DocsType
+	Root=0
+	Decl=1
+	Dir=2
+	Nav=3
+End
+
 Class DocsNode
 	
-	Method New( ident:String,label:String,parent:DocsNode,nav:Bool=False )
+	Method New( ident:String,label:String,parent:DocsNode,type:DocsType )
 
 		_ident=ident
 		_label=label ? label Else ident
 		_parent=parent
-		_nav=nav
+		_type=type
 
 		If _parent _parent._children.Add( Self )
 	End
@@ -34,14 +41,9 @@ Class DocsNode
 	
 	Property Parent:DocsNode()
 	
-		If _nav Return _parent ? _parent.Parent Else Null
+'		If _type=DocsType.Nav Return _parent ? _parent.Parent Else Null
 	
 		Return _parent
-	End
-	
-	Property Nav:Bool()
-	
-		Return _nav
 	End
 	
 	Property Children:DocsNode[]()
@@ -54,6 +56,11 @@ Class DocsNode
 		Return _children.Length
 	End
 	
+	Property Type:DocsType()
+		
+		Return _type
+	End
+	
 	Property Markdown:String()
 	
 		Return _markdown
@@ -63,36 +70,94 @@ Class DocsNode
 		_markdown=markdown
 	End
 	
+	#rem
 	Property Path:String()
-	
-		If _nav Return _parent ? _parent.Path Else ""
+		
+		If _type=DocsType.Dir Return ""
+		
+		If _type=DocsType.Nav Return _parent ? _parent.Path Else ""
 		
 		Local path:=_parent ? _parent.Path Else ""
 		
 		Return path ? path+(_hash ? "#" Else ".")+_ident Else _ident
 	End
+	#end
 	
-	Property PathLink:String()
-	
-		If _nav Return _parent ? _parent.PathLink Else ""
+	'eg: module/
+	Property FilePath:String()
 		
-		Local link:=_parent ? _parent.PathLink Else ""
+		Local path:=_parent ? _parent.FilePath Else ""
 		
-		If link link+="."
+		Select _type
+		Case DocsType.Root
+			
+			Return _ident
+			
+		Case DocsType.Decl
+			
+			If path And Not path.EndsWith( "/" ) path+="-"
+			
+			Return path+_ident.Replace( ".","-" )
+
+		Case DocsType.Dir
+			
+			If path And Not path.EndsWith( "/" ) path+="/"
+				
+			Return path+_ident+"/"
 		
-		Return link+"[["+Path+"|"+_label+"]]"
+		Case DocsType.Nav
+			
+			Return path
+			
+		End
+		
+		Return ""
 	End
 	
-	Property Slug:String()
-	
-		Return Path.Replace( ".","-" )
+	Property DeclPath:String()
+
+		Local path:=_parent ? _parent.DeclPath Else ""
+		
+		Select _type
+			
+		Case DocsType.Decl
+			
+			If path path+="."
+				
+			Return path+_ident
+		
+		Case DocsType.Nav
+			
+			Return path
+		End
+		
+		Return ""
+		
 	End
 	
-	Method FindAll:DocsNode( path:String )
+	Property DeclLink:String()
 		
-'		If path="AppInstance" Print "_ident="+_ident
+		Local path:=_parent ? _parent.DeclLink Else ""
+		
+		Select _type
+			
+		Case DocsType.Decl
+			
+			If path path+="."
+				
+			Return path+"[["+DeclPath+"|"+_label+"]]"
+		
+		Case DocsType.Nav
+			
+			Return path
+		End
+		
+		Return ""
+	End
 	
-		If Not _nav
+	Method FindChild:DocsNode( path:String,found:Bool )
+	
+		If _type<>DocsType.Nav
 			
 			If path=_ident Return Self
 			
@@ -100,7 +165,9 @@ Class DocsNode
 				
 				path=path.Slice( _ident.Length+1 )
 				
-			Else
+				found=True
+				
+			Else If found
 				
 				Return Null
 				
@@ -110,7 +177,7 @@ Class DocsNode
 		
 		For Local child:=Eachin _children
 			
-			Local docs:=child.FindAll( path )
+			Local docs:=child.FindChild( path,found )
 			
 			If docs Return docs
 		Next
@@ -118,54 +185,25 @@ Class DocsNode
 		Return Null
 	End
 	
-	Method FindStart:DocsNode( path:String )
-
-		If Not _nav
-
-			If path=_ident Return Self
-			
-			If path.Contains( "." ) And path.StartsWith( _ident+"." ) Return Self
-
-		Endif
+	Method Find:DocsNode( path:String,done:Map<DocsNode,Bool> =null )	
 		
 		For Local child:=Eachin _children
+			If done And done.Contains( child ) Continue
 			
-			Local docs:=child.FindStart( path )
-			
-			If docs Return docs
-		Next
-		
-		Return Null
-	End
-	
-	Method Find:DocsNode( path:String )
-		
-		For Local child:=Eachin _children
-			
-			Local docs:=child.FindAll( path )
+			Local docs:=child.FindChild( path,False )
 			If docs Return docs
 	
 		Next
 		
-		Local docs:=FindAll( path )
+		Local docs:=FindChild( path,false )
 		If docs Return docs
 		
-		If _parent Return _parent.Find( path )
+		If Not done done=New Map<DocsNode,Bool>
+		
+		If _parent Return _parent.Find( path,done )
 		
 		Return Null
 	End
-	#rem
-		Local docs:=FindStart( path )
-		If docs 
-			docs=docs.FindAll( path )
-			If docs Return docs
-		Endif
-		
-		If _parent Return _parent.Find( path )
-		
-		Return Null
-	End
-	#end
 	
 	Method Remove()
 		
@@ -186,13 +224,13 @@ Class DocsNode
 			child.Clean()
 		Next
 		
-		If _ident Return
-		
-		Remove()
+		If Not _ident
+			Remove()
+		Endif
 	End
 
 	Method Debug()
-		Print Path
+		Print FilePath
 		For Local child:=Eachin _children
 			child.Debug()
 		Next
@@ -204,7 +242,8 @@ Class DocsNode
 	Field _ident:String
 	Field _label:String
 	Field _parent:DocsNode
-	Field _nav:Bool
+	Field _type:DocsType
+	
 	Field _children:=New Stack<DocsNode>
 	Field _markdown:String
 	
@@ -291,7 +330,7 @@ Class DocsBuffer
 				If src
 '					Print "Importing "+path
 					
-					Local docs:=New DocsNode( "","",_docs,True )
+					Local docs:=New DocsNode( "","",_docs,DocsType.Nav )
 					
 					Local buf:=New DocsBuffer( docs,ExtractDir( path ) )
 					
@@ -324,20 +363,20 @@ Class DocsBuffer
 				Local label:=arg
 				Local ident:=label.Replace( " ","_" )
 				
-				Local docs:=New DocsNode( ident,label,_docs,False )'True )
-				
-				docs.Hash=True
-				
 				EmitLine( "<a name='"+ident+"'></a>" )
 				
 				EmitLine( tag+" "+arg )
+				
+				Local docs:=New DocsNode( ident,label,_docs,DocsType.Decl )
+				
+				docs.Hash=True
 				
 			Case "manpage"
 				
 				Local label:=arg
 				Local ident:=label.Replace( " ","_" )
 				
-				Local docs:=New DocsNode( ident,label,_docs,False )
+				Local docs:=New DocsNode( ident,label,_docs,DocsType.Decl )
 				
 				Local buf:=New DocsBuffer( docs,_baseDir )
 				
@@ -356,7 +395,7 @@ Class DocsBuffer
 				If src
 '					Print "Importing "+path
 					
-					Local docs:=New DocsNode( "","",_docs,True )
+					Local docs:=New DocsNode( "","",_docs,DocsType.Nav )
 					
 					Local buf:=New DocsBuffer( docs,ExtractDir( path ) )
 					
@@ -419,7 +458,6 @@ Class DocsBuffer
 	Field _params:=New StringStack
 	Field _return:String
 	
-	
 	Method FixIndent( i0:Int,i1:Int )
 		
 		Local indent:=10000
@@ -451,24 +489,22 @@ Class DocsMaker
 		_pageTemplate=pageTemplate
 	End
 
-	Method CreateModuleDocs( module:Module,parent:DocsNode,manParent:DocsNode )
+	Method CreateModuleDocs( module:Module )
 	
 		_module=module
-		
-		local docDir:=_docsDir+"modules/"+_module.name+"/"
-		DeleteDir( docDir,true )
-		CreateDir( docDir,True )
-		
-		Local manDir:=docDir+"manual/"
-		CreateDir( manDir,True )
-		
-		Local modDir:=docDir+"module/"
-		CreateDir( modDir,True )
+
+		local docsDir:=_docsDir+"modules/"+_module.name+"/"
+		DeleteDir( docsDir,true )
+		CreateDir( docsDir,True )
+
+		Local root:=New DocsNode( "","",null,DocsType.Root )
 
 		_convertor=New MarkdownConvertor( ResolveHtmlLink )
 		
 		'manual
 		Local manpath:=module.baseDir+"newdocs/manual.md"
+		
+		Local manDocs:DocsNode
 		
 		If GetFileType( manpath )=FileType.File
 			
@@ -476,23 +512,16 @@ Class DocsMaker
 			
 			Local src:=LoadString( manpath )
 			
-			Local docs:=New DocsNode( "","",manParent,True )
+			manDocs=New DocsNode( "manual","",root,DocsType.Dir )
 			
-			Local buf:=New DocsBuffer( docs,ExtractDir( manpath ) )
+			Local buf:=New DocsBuffer( manDocs,ExtractDir( manpath ) )
 
 			buf.Emit( src )
 			
 			buf.Flush()
-			
-			_baseDir=manDir
-			_navPrefix=_module.name+":manual/"+docs.Path
-			
-			CreateHtmlPages( docs )
-			
-			CreateJSNavTree( docs )
 		Endif
 		
-		Local docs:=New DocsNode( _module.name,"",parent,True )
+		Local modDocs:=New DocsNode( "module","",root,DocsType.Dir )
 		
 		Local done:=New Map<NamespaceScope,Bool>
 		
@@ -505,18 +534,17 @@ Class DocsMaker
 			
 			If done[scope] Continue
 			
-			MakeNamespaceDocs( scope,docs )
+			MakeNamespaceDocs( scope,modDocs )
 			
 			done[scope]=True
 		Next
 		
-		'Convert to HTML
-		_baseDir=modDir
-		_navPrefix=_module.name+":module/"+docs.Path
-
-		CreateHtmlPages( docs )
+		CreateHtmlPages( root,docsDir )
 		
-		CreateJSNavTree( docs )
+		If manDocs CreateJSNavTree( manDocs,docsDir+"manual/" )
+			
+		If modDocs CreateJSNavTree( modDocs,docsDir+"module/" )
+		
 	End
 	
 	Private
@@ -527,72 +555,70 @@ Class DocsMaker
 	
 	Field _module:Module
 	
-	Field _baseDir:String	'monkey2/docs/modules/themodule/
-	
-	Field _navPrefix:String
-	
 	Field _convertor:MarkdownConvertor
 	
 	Field _converting:DocsNode
 	
-	Method CreateJSNavTree( docs:DocsNode )
-		
-		Local buf:=New StringStack
+	Method CreateJSNavTree( docs:DocsNode,dir:String )
 		
 		docs.Clean()
 		
-		If docs.Ident
-			CreateJSNavTree( docs,buf,"" )
-		Else
-			For Local child:=Eachin docs.Children
-				CreateJSNavTree( child,buf,"" )
-			Next
-		Endif
+		Local buf:=New StringStack
+		
+		buf.Push( "~n" )
+		
+		Local first:=True
+		For Local child:=Eachin docs.Children
+			If Not first buf.Push( "," )
+			CreateJSNavTree( child,buf,"","modules/"+_module.name+"/" )
+			first=False
+		Next
 
 		Local tree:=buf.Join( "" )		
 		
-		SaveString( tree,_baseDir+"index.js" )
+		SaveString( tree,dir+"index.js" )
 	End
 		
-	Method CreateJSNavTree( docs:DocsNode,buf:StringStack,indent:String )
+	Method CreateJSNavTree( docs:DocsNode,buf:StringStack,indent:String,dir:String )
 		
-		buf.Add( "{text:'"+docs.Label+"'" )
+		buf.Add( indent+"{text:'"+docs.Label+"'" )
 		
-		If Not docs.Nav
+		Select docs.Type
+			
+		Case DocsType.Decl
+			
+			Local url:=dir+docs.FilePath+".html"
 		
-			Local page:=_navPrefix+docs.Path
+			buf.Add( ",data:{page:'"+url+"'}")
 		
-			buf.Add( ",data:{page:'"+page+"'}")
-		
-		Endif
+		End
 		
 		Local children:=docs.Children
 		
 		If children
 		
-			buf.Add( ",children:[" )
-			
-			Local first:=True
-			
+			buf.Add( ",children:[~n" )
+
+			local first:=True			
 			For Local child:=Eachin children
-				If Not first buf.Add( "," )
-				CreateJSNavTree( child,buf,indent+"  " )
+				If Not first buf.Add( ",~n" )
+				CreateJSNavTree( child,buf,indent+"  ",dir )
 				first=False
 			Next
 			
-			buf.Push( "]" )
+			buf.Add( indent+"]~n" )
 		
 		Endif
 
-		buf.Add( "}~n" )
+		buf.Add( indent+"}" )
 		
 	End
 	
-	Method CreateHtmlPages( docs:DocsNode )
-	
-		If Not docs.Nav
+	Method CreateHtmlPages( docs:DocsNode,dir:String )
 		
-			Local path:=_baseDir+docs.Slug+".html"
+		Select docs.Type
+			
+		Case DocsType.Decl
 			
 			_converting=docs
 			
@@ -602,12 +628,21 @@ Class DocsMaker
 			
 			If _pageTemplate html=_pageTemplate.Replace( "${CONTENT}",html )
 	
+			Local path:=dir+docs.FilePath+".html"
+			
 			SaveString( html,path )
-		Endif
+			
+		Case DocsType.Dir
+			
+			Local path:=dir+docs.FilePath
+			
+			CreateDir( path )
+			
+		End
 		
 		For Local child:=Eachin docs.Children
 		
-			CreateHtmlPages( child )
+			CreateHtmlPages( child,dir )
 		Next
 	End
 	
@@ -637,14 +672,13 @@ Class DocsMaker
 		
 		Const monkeyTypes:="inumeric,iintegral,ireal,bool,byte,ubyte,short,ushort,int,uint,long,ulong,float,double,string,cstring,ovariant,typeinfo,declinfo,array,object,throwable"
 		
-		Local docs:=_converting.Find( link )	'find module local link
+		Local docs:=_converting.Find( link )
 		If Not docs
-			Print "Link not found:"+link+" while converting:"+_converting.Path
+			Print "Link not found:"+link+" while converting docs:"+_converting.FilePath
 			Return name
 		Endif
 		
-'		Local url:="file://"+_baseDir+docs.Slug+".html"
-		Local url:=docs.Slug+".html"
+		Local url:="../"+docs.FilePath+".html"
 		Local anchor:="<a href='"+url+"'>"+name+"</a>"
 		Return anchor
 	End
@@ -668,7 +702,8 @@ Class DocsMaker
 		If ptype 
 			Local ctype:=ptype.ctype
 			If Not name name=ctype.Name
-			Return "[[monkey:monkey.types."+ctype.Name+"|"+name+"]]"
+			Local cname:=DeclIdent( ctype.cdecl )'ctype.Name.ToLower()
+			return "[[monkey.types."+cname+"|"+name+"]]"
 		Endif
 	
 		Local atype:=Cast<ArrayType>( type )
@@ -708,14 +743,13 @@ Class DocsMaker
 			Local path:=type.Name
 			Local i:=path.Find( "<" )
 			If i<>-1 path=path.Slice( 0,i )
-			
+				
 			If Not name 
 				name=path
 				If _module=ctype.transFile.module
 					Local i:=name.FindLast( "." )
 					If i<>-1 name=name.Slice( i+1 )
 				Endif
-				
 			Endif
 			
 			Return "[["+module.name+":"+path+"|"+name+"]]"+types
@@ -732,6 +766,7 @@ Class DocsMaker
 	Method DeclIdent:String( decl:Decl )
 
 		Local ident:=decl.ident.Replace( "@","" )
+		
 		If Not IsIdent( ident[0] ) ident="Op"+OpSym( ident ).Slice( 1 ).Capitalize()
 	
 		Return ident
@@ -805,8 +840,8 @@ Class DocsMaker
 	End
 	
 	Method EmitHeader( buf:DocsBuffer,decl:Decl,parent:DocsNode )
-
-		buf.Emit( "_"+_module.name+":"+parent.PathLink+"."+DeclLabel( decl )+"_" )
+		
+		buf.Emit( "_"+_module.name+":"+parent.DeclLink+"."+DeclLabel( decl )+"_" )
 	End
 	
 	Method DocsVisible:Bool( decl:Decl,access:int )
@@ -815,6 +850,8 @@ Class DocsMaker
 	
 		If decl.docs.StartsWith( "@hidden" ) Return False
 		
+		If decl.IsInternal Return False
+		
 		If decl.IsPublic Return True
 		
 		Return decl.docs<>Null
@@ -822,21 +859,29 @@ Class DocsMaker
 	
 	Method MakeMemberDocs:DocsNode( scope:Scope,kind:String,access:Int,parent:DocsNode,buf:DocsBuffer )
 
-		Local tag:=""
-		If access & DECL_PUBLIC
-			tag="Public "
-		Else If access & DECL_PROTECTED
-			tag="Protected "
-		Else If access & DECL_PRIVATE
-			tag="Private "
-		Endif
-		
 		Local kinds:=kind+"s"
 		If kind.EndsWith( "s" )
 			kinds=kind+"es"
 		Else If kind.EndsWith( "y" )
 			kinds=kind.Slice( 0,-1 )+"ies"
 		Endif
+
+		Local tag:=""
+		If access & DECL_PUBLIC
+			kinds=kinds.Capitalize()
+'			tag="Public "
+		Else If access & DECL_PROTECTED
+			tag="Protected "
+		Else If access & DECL_PRIVATE
+			tag="Private "
+		Endif
+		
+'		Local kinds:=kind+"s"
+'		If kind.EndsWith( "s" )
+'			kinds=kind+"es"
+'		Else If kind.EndsWith( "y" )
+'			kinds=kind.Slice( 0,-1 )+"ies"
+'		Endif
 		
 		Local first:=True,docs:DocsNode
 
@@ -855,7 +900,7 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,true )
+					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -880,7 +925,7 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,true )
+					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 				
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -903,7 +948,7 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,true )
+					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 				
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -927,7 +972,7 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,true )
+					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -951,7 +996,7 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,true )
+					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -976,7 +1021,7 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,true )
+					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -997,13 +1042,12 @@ Class DocsMaker
 
 		Local buf:=New DocsBuffer
 
-		Local docs:=New DocsNode( scope.Name,"",parent )
+		Local docs:=New DocsNode( scope.Name,"",parent,DocsType.Decl )
 		
 		'EmitHeader
 		buf.Emit( "_"+_module.name+":"+scope.Name+"_" )
 		
 		buf.Emit( "##### Namespace "+scope.Name )
-		
 
 		MakeMemberDocs( scope,"alias",DECL_PUBLIC,docs,buf )
 		MakeMemberDocs( scope,"enum",DECL_PUBLIC,docs,buf )
@@ -1030,7 +1074,7 @@ Class DocsMaker
 		
 		Local buf:=New DocsBuffer
 		
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent )
+		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 
 		EmitHeader( buf,decl,parent )
 		
@@ -1050,7 +1094,7 @@ Class DocsMaker
 		
 		Local buf:=New DocsBuffer
 		
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent )
+		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		EmitHeader( buf,decl,parent )
 		
@@ -1131,7 +1175,7 @@ Class DocsMaker
 	
 		Local decl:=etype.edecl
 
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent )
+		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		Local buf:=New DocsBuffer
 		
@@ -1148,7 +1192,7 @@ Class DocsMaker
 			local val:=Cast<LiteralValue>( node.Value )
 			If Not val Continue
 			
-			Local edocs:=New DocsNode( node.Key,node.Key,docs )',True )
+			Local edocs:=New DocsNode( node.Key,node.Key,docs,DocsType.Decl )
 
 		Next
 		
@@ -1159,7 +1203,7 @@ Class DocsMaker
 	
 		Local decl:=plist.pdecl
 
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent )
+		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		Local buf:=New DocsBuffer
 		
@@ -1178,7 +1222,7 @@ Class DocsMaker
 	
 		Local decl:=flist.funcs[0].fdecl
 	
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent )
+		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 	
 		Local buf:=New DocsBuffer
 		
@@ -1232,7 +1276,7 @@ Class DocsMaker
 	
 		Local decl:=vvar.vdecl
 	
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent )
+		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		Local buf:=New DocsBuffer
 		

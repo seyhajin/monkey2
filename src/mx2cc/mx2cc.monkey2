@@ -30,9 +30,9 @@ Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods -target=android monkey"
 
-'Const TestArgs:="mx2cc makedocs std mojo"' monkey std"	'monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
+Const TestArgs:="mx2cc makedocs mojo"	'monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
  
-Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makedocs mojo3d"
 
@@ -387,7 +387,7 @@ Function MakeDocs:Bool( args:String[] )
 
 		Local module:=Builder.modules.Top
 		
-		docsMaker.CreateModuleDocs( module,Null,null )
+		docsMaker.CreateModuleDocs( module )
 		
 	Next
 	
