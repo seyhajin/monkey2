@@ -1,21 +1,32 @@
 
 Namespace mx2cc
 
-Using mx2.docs
 
 #Import "<std>"
 
 #Import "mx2"
 
 #If __CONFIG__="debug"
-#Import "docs/newdocs"
-#Import "docs/newmarkdown"
+
+'Use newdocs in debug!
+#Import "newdocs/docsnode"
+#Import "newdocs/docsbuffer"
+#Import "newdocs/docsmaker"
+#Import "newdocs/markdown"
+
+Using mx2.newdocs
+
 #Else
+
+'Use olddocs in release!
 #Import "docs/docsmaker"
 #Import "docs/jsonbuffer"
 #Import "docs/minimarkdown"
 #Import "docs/markdownbuffer"
 #Import "docs/manpage"
+
+Using mx2.docs
+
 #endif
 
 #Import "geninfo/geninfo"
@@ -412,7 +423,7 @@ Function MakeDocs:Bool( args:String[] )
 	
 	Local page:=LoadString( "docs/new_docs_template.html" )
 	page=page.Replace( "${DOCS_TREE}",tree )
-	SaveString( page,"docs/docs.html" )
+	SaveString( page,"docs/newdocs.html" )
 	
 	Return True
 End
