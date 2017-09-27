@@ -20,10 +20,45 @@ Class CodeTextView Extends TextView
 		CursorMoved += OnCursorMoved
 		Document.TextChanged += TextChanged
 		
+'		Document.LinesModified += Lambda( first:Int,removed:Int,inserted:Int )
+'			
+'			If _extraSelStart=-1 Return
+'			If first>=_extraSelEnd Print "ret" ; Return
+'			
+'			Print "LinesModified: "+first+", "+removed+", "+inserted
+'			
+'			If inserted>0
+'				
+'				If first<_extraSelStart
+'					Print "if 1-1"
+'					_extraSelStart+=inserted
+'				Endif
+'				_extraSelEnd+=inserted
+'				
+'			Else
+'				
+'				If first<=_extraSelStart And first+removed>=_extraSelEnd
+'					ResetExtraSelection()
+'					Print "reset"
+'					Return
+'				Endif
+'				
+'				If first<_extraSelStart
+'					Print "if 2-1"
+'					_extraSelStart-=removed
+'					_extraSelEnd-=removed
+'				Else
+'					Print "if 2-2"
+'					_extraSelEnd-=Min( removed,_extraSelEnd-first )
+'				Endif
+'				
+'			Endif
+'		End
+		
 		UpdateThemeColors()
 	End
 	
-	Method IsCursorAtTheEndOfLine:Bool()
+	Property IsCursorAtTheEndOfLine:Bool()
 		
 		Local line:=Document.FindLine( Cursor )
 		Local pos:=Document.EndOfLine( line )
@@ -77,7 +112,31 @@ Class CodeTextView Extends TextView
 		Return ident
 	End
 	
-	Method FullIdentAtCursor:String()
+	Property WordAtCursor:String()
+		
+		Local text:=Text
+		Local cur:=Cursor
+		Local n:=Cursor-1
+		Local line:=Document.FindLine( Cursor )
+		Local start:=Document.StartOfLine( line )
+		Local ends:=Document.EndOfLine( line )
+		
+		While n >= start
+			If Not IsIdent( text[n] ) Exit
+			n-=1
+		Wend
+		Local p1:=n+1
+		n=cur
+		While n < ends And IsIdent( text[n] )
+			n+=1
+		Wend
+		Local p2:=n
+		Local ident:=(p1 < cur Or p2 > cur) ? text.Slice( p1,p2 ) Else ""
+		
+		Return ident
+	End
+		
+	Property FullIdentAtCursor:String()
 		
 		Local text:=Text
 		Local cur:=Cursor
@@ -148,11 +207,12 @@ Class CodeTextView Extends TextView
 	
 		If pos.y = 0
 			GotoLine( pos.x )
-			Return
+		Else
+			Local dest:=Document.StartOfLine( pos.x )+pos.y
+			SelectText( dest,dest )
 		Endif
 		
-		Local dest:=Document.StartOfLine( pos.x )+pos.y
-		SelectText( dest,dest )
+		MakeCentered()
 	End
 	
 	Property LineTextAtCursor:String()
@@ -192,6 +252,48 @@ Class CodeTextView Extends TextView
 		_showWhiteSpaces=value
 	End
 	
+	Property OverwriteMode:Bool()
+	
+		Return _overwriteMode
+	
+	Setter( value:Bool )
+	
+		_overwriteMode=value
+		
+		BlockCursor=_overwriteMode
+	End
+	
+	Method MarkSelectionAsExtraSelection()
+		
+		_extraSelStart=Anchor
+		_extraSelEnd=Cursor
+		RequestRender()
+	End
+	
+	Method ResetExtraSelection()
+		
+		_extraSelStart=-1
+		_extraSelEnd=-1
+		RequestRender()
+	End
+	
+	Property ExtraSelectionStart:Int()
+		Return _extraSelStart
+	Setter( value:Int )
+		_extraSelStart=value
+		RequestRender()
+	End
+	
+	Property ExtraSelectionEnd:Int()
+		Return _extraSelEnd
+	Setter( value:Int )
+		_extraSelEnd=value
+		RequestRender()
+	End
+	
+	Property HasExtraSelection:Bool()
+		Return _extraSelStart>=0
+	End
 	
 	Protected
 	
@@ -206,8 +308,19 @@ Class CodeTextView Extends TextView
 			
 			Case EventType.MouseDown 'prevent selection by dragging with right-button
 				
-				If event.Button = MouseButton.Right Return
-				
+				If event.Button = MouseButton.Right
+					If Not CanCopy
+						Local cur:=CharAtPoint( event.Location )
+						SelectText( cur,cur )
+					Else
+						Local r:=CursorRect | CharRect( Anchor )
+						If Not r.Contains( event.Location )
+							Local cur:=CharAtPoint( event.Location )
+							SelectText( cur,cur )
+						Endif
+					Endif
+					Return
+				Endif
 				
 			Case EventType.MouseUp
 				
@@ -216,11 +329,22 @@ Class CodeTextView Extends TextView
 					MainWindow.ShowEditorMenu( Self )
 					Return
 				Endif
+			
+			Case EventType.MouseEnter
+				
+				Mouse.Cursor=MouseCursor.IBeam
+				
+			Case EventType.MouseLeave
+				
+				Mouse.Cursor=MouseCursor.Arrow
 				
 		End
-
+		
+		' correct click position for beam cursor
+		event=event.Copy( event.Location+New Vec2i( 6,3 ) ) 'magic offset
+		
 		Super.OnContentMouseEvent( event )
-					
+		
 	End
 	
 	Method OnKeyEvent(event:KeyEvent) Override
@@ -235,8 +359,8 @@ Class CodeTextView Extends TextView
 					If _typing Then DoFormat( False )
 				Endif
 				
-				' select next char in override mode
-				If Cursor=Anchor And MainWindow.OverwriteTextMode
+				' select next char in overwrite mode
+				If Cursor=Anchor And _overwriteMode
 				
 					' don't select new-line-char ~n
 					If Cursor < Text.Length And Text[Cursor]<>10
@@ -427,10 +551,32 @@ Class CodeTextView Extends TextView
 	Method UpdateThemeColors() Virtual
 	
 		_whitespacesColor=App.Theme.GetColor( "textview-whitespaces" )
+		_extraSelColor=App.Theme.GetColor( "textview-extra-selection" )
+	End
+	
+	Method OnRenderContent( canvas:Canvas,clip:Recti ) Override
+		
+		' extra selection
+		If _extraSelStart<>-1
+			Local min:=CharRect( Min( _extraSelStart,_extraSelEnd ) )
+			Local max:=CharRect( Max( _extraSelStart,_extraSelEnd ) )
+			
+			canvas.Color=_extraSelColor
+			
+			If min.Y=max.Y
+				canvas.DrawRect( min.Left,min.Top,max.Left-min.Left,min.Height )
+			Else
+				canvas.DrawRect( min.Left,min.Top,(clip.Right-min.Left),min.Height )
+				canvas.DrawRect( 0,min.Bottom,clip.Right,max.Top-min.Bottom )
+				canvas.DrawRect( 0,max.Top,max.Left,max.Height )
+			Endif
+		Endif
+		
+		Super.OnRenderContent( canvas,clip )
 	End
 	
 	Method OnRenderLine( canvas:Canvas,line:Int ) Override
-	
+		
 		Super.OnRenderLine( canvas,line )
 	
 		' draw whitespaces
@@ -439,30 +585,50 @@ Class CodeTextView Extends TextView
 		Local text:=Document.Text
 		Local colors:=Document.Colors
 		Local r:Recti
-	
+		Local start:=Document.StartOfLine( line )
+		
 		For Local word:=Eachin WordIterator.ForLine( Self,line )
-	
+			
 			If text[word.Index]=9 ' tab
-	
+				
+				Local ind:=word.Index-1
+				Local cnt:=0
+				' ckeck tab width
+				While ind>=start
+					If text[ind]=9 Exit
+					cnt+=1
+					ind-=1
+				Wend
+				
+				cnt = cnt Mod TabStop
+				
 				canvas.Color=_whitespacesColor
-	
+				
 				Local len:=word.Length
-	
+				
 				r=word.Rect
 				Local x0:=r.Left,y0:=r.Top+1,y1:=y0+r.Height
-				Local ww:=r.Width/len
-				Local xx:=x0+ww
-	
+				
+				Local xx:=x0 + (cnt=0 ? _tabw Else Float(TabStop-cnt)/Float(TabStop)*_tabw)
+				
 				Local after:=word.Index+len
 				If after < text.Length And text[after] > 32 Then len-=1
-	
+				
 				For Local i:=0 Until len
 					canvas.DrawLine( xx,y0,xx,y1 )
-					xx+=ww
+					xx+=_tabw
 				Next
 			Endif
 		Next
 	
+	End
+	
+	Method OnValidateStyle() Override
+		
+		Super.OnValidateStyle()
+		
+		Local style:=RenderStyle
+		_tabw=style.Font.TextWidth( "X" )*TabStop
 	End
 	
 	
@@ -471,11 +637,10 @@ Class CodeTextView Extends TextView
 	Field _line:Int
 	Field _whitespacesColor:Color
 	Field _showWhiteSpaces:Bool
-	Field _font:Font
-	Field _charw:Int
-	Field _charh:Int
 	Field _tabw:Int
-	
+	Field _overwriteMode:Bool
+	Field _extraSelStart:Int=-1,_extraSelEnd:Int
+	Field _extraSelColor:Color=Color.DarkGrey
 	
 	Method OnCursorMoved()
 		
@@ -490,5 +655,13 @@ Class CodeTextView Extends TextView
 		
 	End
 	
+End
+
+
+Class MouseEvent Extension
 	
+	Method Copy:MouseEvent( location:Vec2i )
+		
+		Return New MouseEvent( Self.Type,Self.View,location,Self.Button,Self.Wheel,Self.Modifiers,Self.Clicks )
+	End
 End

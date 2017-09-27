@@ -2,6 +2,36 @@
 Namespace ted2go
 
 
+Enum CodeItemKind
+	Undefine_,
+	Class_,
+	Interface_,
+	Enum_,
+	EnumMember_,
+	Struct_,
+	Field_,
+	Global_,
+	Const_,
+	Method_,
+	Function_,
+	Property_,
+	Param_,
+	Lambda_,
+	Local_,
+	Operator_,
+	Inner_,
+	Alias_,
+	Inherited_
+End
+
+
+Enum AccessMode
+	Private_,
+	Protected_,
+	Public_
+End
+
+
 Class CodeItem
 	
 	Method New( ident:String )
@@ -87,9 +117,9 @@ Class CodeItem
 		
 	End
 	
-	Property Children:List<CodeItem>()
+	Property Children:Stack<CodeItem>()
 		Return _children
-	Setter( value:List<CodeItem> )
+	Setter( value:Stack<CodeItem> )
 		_children=value
 	End
 	
@@ -152,10 +182,11 @@ Class CodeItem
 	End
 	
 	Method SetParent( parent:CodeItem )
-		If Parent <> Null Then Parent.Children.Remove( Self )
+		
+		If Parent Then Parent.Children.Remove( Self )
 		_parent=parent
-		If _parent.Children = Null Then _parent.Children = New List<CodeItem>
-		_parent.Children.AddLast( Self )
+		If Not _parent.Children Then _parent.Children = New Stack<CodeItem>
+		_parent.Children.Add( Self )
 	End
 	
 	Method AddChild( item:CodeItem )
@@ -186,6 +217,12 @@ Class CodeItem
 			Return True
 		End
 		Return False
+	End
+	
+	Property IsExtension:Bool()
+		Return _isExtension
+	Setter( value:Bool )
+		_isExtension=value
 	End
 	
 	Method AddSuperType( type:CodeType )
@@ -261,7 +298,7 @@ Class CodeItem
 	Field _access:=AccessMode.Public_
 	Field _text:String
 	Field _parent:CodeItem
-	Field _children:List<CodeItem>
+	Field _children:Stack<CodeItem>
 	Field _namespace:String
 	Field _filePath:String
 	Field _scopeStartPos:Vec2i=New Vec2i,_scopeEndPos:Vec2i=New Vec2i
@@ -269,6 +306,7 @@ Class CodeItem
 	Field _params:CodeParam[]
 	Field _paramsStr:String
 	Field _isModuleMember:=-1
+	Field _isExtension:Bool
 	
 	
 	Private
@@ -289,8 +327,11 @@ Class CodeItem
 					s+="()"
 				Endif
 		
-			Case CodeItemKind.Class_,CodeItemKind.Interface_,CodeItemKind.Struct_,CodeItemKind.Enum_
-				' nothing
+			Case CodeItemKind.Class_,CodeItemKind.Interface_,CodeItemKind.Struct_,CodeItemKind.Enum_,CodeItemKind.Alias_
+				
+				If _isExtension
+					s+=" (ext)"
+				Endif
 		
 			Case CodeItemKind.Inner_,CodeItemKind.EnumMember_
 				' nothing
@@ -452,7 +493,7 @@ End
 Struct CodeItemsSorter Final
 	
 	
-	Function SortByType( list:List<CodeItem>,inverse:Bool=False,checkIdent:Bool=False )
+	Function SortByType( list:Stack<CodeItem>,inverse:Bool=False,checkIdent:Bool=False )
 		
 		_checkIdent=checkIdent
 		
@@ -475,7 +516,7 @@ Struct CodeItemsSorter Final
 		list.Sort( _sorterByType )
 	End
 	
-	Function SortByPosition( list:List<CodeItem> )
+	Function SortByPosition( list:Stack<CodeItem> )
 	
 		If _sorterByPosition = Null
 			_sorterByPosition=Lambda:Int( lhs:CodeItem,rhs:CodeItem )
@@ -521,6 +562,8 @@ Struct CodeItemsSorter Final
 		Local len:=etalon.Length
 		Local power:=0
 		Local ch:=etalon[0],index:=0
+		Local eqFirstChar:=False
+		
 		For Local i:=0 Until ident.Length
 			Local s:=ident.Slice( i,i+1 )
 			Local eq1:=(s[0]=ch)
@@ -532,6 +575,7 @@ Struct CodeItemsSorter Final
 				index+=1
 				ch = index>=len ? -1 Else etalon[index]
 				If ch=-1 Exit
+				If i=0 Then eqFirstChar=True
 			Endif
 		Next
 		
@@ -539,7 +583,13 @@ Struct CodeItemsSorter Final
 		If Prefs.AcStrongFirstChar
 			Local lower1:=IsLowercacedFirstChar( ident )
 			Local lower2:=IsLowercacedFirstChar( etalon )
-			If lower1 <> lower2 Then power-=10000
+			If lower1 <> lower2 ' if first chars cases aren't equals
+				If Not eqFirstChar ' and letters are different
+					power-=10000
+				Else
+					power-=100
+				Endif
+			Endif
 		End
 		
 		Return power

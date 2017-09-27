@@ -6,21 +6,22 @@ Class FindDialog Extends DialogExt
 
 	Method New( actions:FindActions )
 	
-		_findField=New TextField
+		_findField=New TextFieldExt
 		
-		_replaceField=New TextField
+		_replaceField=New TextFieldExt
 		
 		_findField.Entered+=Lambda()
 			actions.findNext.Trigger()
 		End
 		_findField.TextChanged+=Lambda(  )
-			
+			#Rem
 			Local t:=_findField.Text
 			If t.Length > 1
-				If Not Prefs.SiblyMode			
+				If Not Prefs.SiblyMode
 					actions.FindByTextChanged( EntireProject )
 				Endif
 			Endif
+			#End
 		End
 
 		_findField.Tabbed+=_replaceField.MakeKeyView
@@ -102,8 +103,8 @@ Endif
 	
 	Private
 	
-	Field _findField:TextField
-	Field _replaceField:TextField
+	Field _findField:TextFieldExt
+	Field _replaceField:TextFieldExt
 	Field _caseSensitive:CheckButton
 	Field _entireProject:CheckButton
 

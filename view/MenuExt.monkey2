@@ -77,11 +77,7 @@ Class MenuExt Extends DockingView
 		_subs[button]=menu
 		
 		button.Clicked=Lambda()
-			If menu.Visible
-				If Not Prefs.SiblyMode
-					menu.Close()
-				Endif
-			Else
+			If Not menu.Visible
 				Local location:=New Vec2i( button.Bounds.Right,button.Bounds.Top )
 				menu.Open( location,button,Self )
 			Endif
@@ -113,11 +109,22 @@ Class MenuExt Extends DockingView
 		Endif
 		
 		Local window:=view.Window
-		location=view.TransformPointToView( location,window )
 		
 		window.AddChildView( Self )
-		Offset=location
 		Visible=True
+		
+		location=view.TransformPointToView( location,window )
+		
+		' fit into window area
+		Local size:=MeasureLayoutSize()
+		If location.x+size.x>window.Bounds.Right
+			location=location-New Vec2i( size.x,0 )
+		Endif
+		If location.y+size.y>window.Bounds.Bottom
+			location=location-New Vec2i( 0,size.y )
+		Endif
+		
+		Offset=location
 		
 		_owner=owner
 
@@ -155,6 +162,7 @@ Class MenuExt Extends DockingView
 	Global _hovered:View
 	Global _timer:Timer
 	Global _sub:MenuExt
+	Global _seq:Int
 	
 	Global _open:=New Stack<MenuExt>
 	
@@ -185,31 +193,32 @@ Class MenuExt Extends DockingView
 					
 					Local sub:=menu._subs[view]
 					
-					If Not Prefs.SiblyMode
-						If _sub And menu<>_sub
-							_sub.Close()
-							_sub=Null
-						Endif
-					Endif
-					
-					If sub
-						_timer=New Timer( 1.8,Lambda()
-							Local location:=New Vec2i( view.Bounds.Right,view.Bounds.Top )
-							
-							If Prefs.SiblyMode
-								If _sub And menu<>_sub
-									_sub.Close()
-									_sub=Null
-								Endif
+					_seq=0
+					_timer=New Timer( 4,Lambda()
+						
+						' close previous
+						If _seq=0
+							If _sub And menu<>_sub
+								_sub.Close()
+								_sub=Null
 							Endif
+							_seq+=1
+							Return
+						Endif
+						
+						' open submenu
+						If sub
+							Local location:=New Vec2i( view.Bounds.Right,view.Bounds.Top )
 							
 							If sub.Visible Then sub.Close()
 							sub.Open( location,view,menu )
 							_sub=sub
-							_timer.Cancel()
-							_timer=Null
-						End )
-					Endif
+						Endif
+						
+						_timer.Cancel()
+						_timer=Null
+						
+					End )
 				Endif
 				
 				Return

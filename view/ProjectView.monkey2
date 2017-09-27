@@ -38,6 +38,18 @@ Class ProjectView Extends ScrollView
 		Return projs.ToArray()
 	End
 	
+	Function FindProjectByFile:String( filePath:String )
+		
+		If Not filePath Return ""
+		
+		For Local p:=Eachin _projects.Keys
+			If filePath.StartsWith( p )
+				Return p
+			Endif
+		End
+		Return ""
+	End
+	
 	Method OpenProject:Bool( dir:String )
 	
 		dir=StripSlashes( dir )
@@ -48,17 +60,16 @@ Class ProjectView Extends ScrollView
 	
 		Local browser:=New ProjectBrowserView( dir )
 		
-		browser.FileClicked+=Lambda( path:String )
+		browser.RequestedDelete+=Lambda( path:String )
 		
-			'OnOpenDocument( path )
-			
+			DeleteItem( browser,path )
 		End
 		
 		If Prefs.SiblyMode
 		
 			browser.FileClicked+=Lambda( path:String )
 			
-				OnOpenDocument( path )
+				OnOpenDocument( path,False )
 			End
 		
 		Else 
@@ -72,7 +83,7 @@ Class ProjectView Extends ScrollView
 		
 		browser.FileRightClicked+=Lambda( path:String )
 		
-			Local menu:=New Menu
+			Local menu:=New MenuExt
 		
 			Select GetFileType( path )
 			Case FileType.Directory
@@ -134,14 +145,7 @@ Class ProjectView Extends ScrollView
 				
 				menu.AddAction( "Delete" ).Triggered=Lambda()
 
-					If Not RequestOkay( "Really delete folder '"+path+"'?" ) Return
-					
-					If DeleteDir( path,True )
-						browser.Refresh()
-						Return
-					Endif
-					
-					Alert( "Failed to delete folder '"+path+"'" )
+					DeleteItem( browser,path )
 				End
 				
 				menu.AddSeparator()
@@ -252,20 +256,8 @@ Class ProjectView Extends ScrollView
 				menu.AddSeparator()
 			
 				menu.AddAction( "Delete" ).Triggered=Lambda()
-				
-					If Not RequestOkay( "Really delete file '"+path+"'?" ) return
-				
-					If DeleteFile( path )
 					
-						Local doc:=_docs.FindDocument( path )
-						
-						If doc doc.Close()
-					
-						browser.Refresh()
-						Return
-					Endif
-					
-					Alert( "Failed to delete file: '"+path+"'" )
+					DeleteItem( browser,path )
 				End
 				
 			Default
@@ -342,9 +334,47 @@ Class ProjectView Extends ScrollView
 	
 	Field _docs:DocumentManager
 	Field _docker:=New DockingView
-	Field _projects:=New StringMap<FileBrowserExt>
+	Global _projects:=New StringMap<FileBrowserExt>
 	Field _builder:IModuleBuilder
-
+	
+	Method DeleteItem( browser:ProjectBrowserView,path:String )
+		
+		Local work:=Lambda()
+			
+			If DirectoryExists( path )
+			
+				If Not RequestOkay( "Really delete folder '"+path+"'?" ) Return
+				
+				If DeleteDir( path,True )
+					browser.Refresh()
+					Return
+				Endif
+				
+				Alert( "Failed to delete folder '"+path+"'" )
+				
+			Else
+				
+				If Not RequestOkay( "Really delete file '"+path+"'?" ) Print "1111" ; Return
+				
+				If DeleteFile( path )
+				
+					Local doc:=_docs.FindDocument( path )
+				
+					If doc doc.Close()
+				
+					browser.Refresh()
+					Return
+				Endif
+				
+				Alert( "Failed to delete file: '"+path+"'" )
+				
+			Endif
+			
+		End
+		
+		New Fiber( work )
+	End
+	
 	Method OnOpenProject()
 	
 		Local dir:=MainWindow.RequestDir( "Select Project Directory...","" )
@@ -353,12 +383,29 @@ Class ProjectView Extends ScrollView
 		OpenProject( dir )
 	End
 	
-	Method OnOpenDocument( path:String )
+	Method OnOpenDocument( path:String,runExec:Bool=True )
 		
 		If GetFileType( path )=FileType.File
-		
+			
 			New Fiber( Lambda()
+				
+				Local ext:=ExtractExt( path )
+				Local exe:=(ext=".exe")
+				If runExec
+					If exe Or ext=".bat" Or ext=".sh"
+						Local s:="Do you want to execute this file?"
+						If Not exe s+="~nPress 'Cancel' to open file in editor."
+						If RequestOkay( s,StripDir( path ) )
+							OpenUrl( path )
+							Return
+						Endif
+					Endif
+				Endif
+				
+				If exe Return 'never open .exe
+				
 				_docs.OpenDocument( path,True )
+				
 			End )
 		
 		Endif

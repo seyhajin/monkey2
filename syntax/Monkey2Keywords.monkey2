@@ -38,5 +38,5 @@ Class Monkey2Keywords Extends KeywordsPlugin
 		s+="Typeof;Array"
 		Return s
 	End
-		
+	
 End
