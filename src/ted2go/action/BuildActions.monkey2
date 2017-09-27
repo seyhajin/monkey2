@@ -99,7 +99,6 @@ Class BuildActions Implements IModuleBuilder
 #Endif
 		semant.Triggered=OnSemant
 		
-		
 		buildSettings=New Action( "Product settings..." )
 		buildSettings.Triggered=OnBuildFileSettings
 		
@@ -108,7 +107,7 @@ Class BuildActions Implements IModuleBuilder
 		nextError.HotKey=Key.F4
 		
 		lockBuildFile=New Action( "Lock build file" )
-		lockBuildFile.Triggered=OnLockBuildFile
+		lockBuildFile.Triggered=LockBuildFile
 		lockBuildFile.HotKey=Key.L
 		lockBuildFile.HotKeyModifiers=Modifier.Menu
 		
@@ -207,7 +206,8 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method LockBuildFile()
 		
-		OnLockBuildFile()
+		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
+		OnLockBuildFile( doc )
 	End
 	
 	Method SaveState( jobj:JsonObject )
@@ -224,7 +224,7 @@ Class BuildActions Implements IModuleBuilder
 		If jobj.Contains( "lockedDocument" )
 			Local path:=jobj["lockedDocument"].ToString()
 			_locked=Cast<CodeDocument>( _docs.FindDocument( path ) )
-			If _locked _locked.State="+"
+			If _locked Then SetLockedState( _locked,True )
 		Endif
 		
 		If jobj.Contains( "buildConfig" )
@@ -321,12 +321,12 @@ Class BuildActions Implements IModuleBuilder
 		Local doc:=Cast<CodeDocument>( _docs.OpenDocument( err.path,True ) )
 		If Not doc Return
 	
-		Local tv := doc.TextView
+		Local tv := doc.CodeView
 		If Not tv Return
 	
 		MainWindow.UpdateWindow( False )
 	
-		tv.GotoLine( err.line )
+		tv.GotoPosition( New Vec2i( err.line,0 ) )
 	End
 	
 	
@@ -361,9 +361,13 @@ Class BuildActions Implements IModuleBuilder
 		Return _locked
 	End
 	
-	Method SaveAll:Bool()
-	
+	Method SaveAll:Bool( buildFile:String )
+		
+		Local proj:=ProjectView.FindProjectByFile( buildFile )
+		
 		For Local doc:=Eachin _docs.OpenDocuments
+			' save docs only for built project
+			If proj And Not doc.Path.StartsWith( proj ) Continue
 			If Not doc.Save() Return False
 		Next
 		
@@ -381,7 +385,7 @@ Class BuildActions Implements IModuleBuilder
 
 	End
 
-	Method BuildMx2:Bool( cmd:String,progressText:String,action:String="build",showElapsedTime:Bool=False )
+	Method BuildMx2:Bool( cmd:String,progressText:String,action:String="build",buildFile:String="",showElapsedTime:Bool=False )
 	
 		ClearErrors()
 		
@@ -391,7 +395,7 @@ Class BuildActions Implements IModuleBuilder
 		
 		MainWindow.ShowBuildConsole()
 		
-		If Not SaveAll() Return False
+		If Not SaveAll( buildFile ) Return False
 		
 		_timing=Millisecs()
 		
@@ -500,7 +504,7 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method MakeDocs:Bool()
 	
-		Return BuildMx2( MainWindow.Mx2ccPath+" makedocs","Rebuilding documentation...","build",True )
+		Return BuildMx2( MainWindow.Mx2ccPath+" makedocs","Rebuilding documentation...","build","",True )
 	End
 	
 	Method BuildApp:Bool( config:String,target:String,sourceAction:String )
@@ -526,7 +530,7 @@ Class BuildActions Implements IModuleBuilder
 		Local title := sourceAction="build" ? "Building" Else (sourceAction="run" ? "Running" Else "Checking")
 		Local msg:=title+" ~ "+target+" ~ "+config+" ~ "+StripDir( buildDoc.Path )
 		
-		If Not BuildMx2( cmd,msg,sourceAction,True ) Return False
+		If Not BuildMx2( cmd,msg,sourceAction,buildDoc.Path,True ) Return False
 		
 		_console.Write("~nDone.")
 		
@@ -606,13 +610,11 @@ Class BuildActions Implements IModuleBuilder
 		GotoError( _errors.First )
 	End
 	
-	Method OnLockBuildFile()
+	Method OnLockBuildFile( doc:CodeDocument )
 	
-		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
-		
 		If Not doc Return
 		
-		If _locked _locked.State=""
+		If _locked Then SetLockedState( _locked,False )
 		
 		If doc=_locked
 			_locked=Null
@@ -620,8 +622,14 @@ Class BuildActions Implements IModuleBuilder
 		Endif
 		
 		_locked=doc
-		_locked.State="+"
+		SetLockedState( _locked,True )
+	End
+	
+	Method SetLockedState( doc:CodeDocument,locked:Bool )
 		
+		doc.State=locked ? "+" Else ""
+		Local tab:=_docs.FindTab( doc.View )
+		If tab Then tab.SetLockedState( locked )
 	End
 	
 	Method OnBuildFileSettings()

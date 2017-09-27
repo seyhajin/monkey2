@@ -25,13 +25,27 @@ Class CodeTreeView Extends TreeViewExt
 		node.Expanded=True
 		node.RemoveAllChildren()
 		
+		_stack.Clear()
+		
+		' extract all items in file
 		Local list:=parser.ItemsMap[path]
-		If list = Null Return
+		If list Then _stack.AddAll( list )
+		
+		' extensions are here too
+		For Local lst:=Eachin parser.ExtraItemsMap.Values.All()
+			For Local i:=Eachin lst
+				If i.FilePath=path
+					If Not _stack.Contains( i.Parent ) Then _stack.Add( i.Parent )
+				Endif
+			Next
+		Next
+		
+		If _stack.Empty Return
 		
 		' sorting
-		SortItems( list )
+		SortItems( _stack )
 		
-		For Local i:=Eachin list
+		For Local i:=Eachin _stack
 			AddTreeItem( i,node,parser )
 		Next
 		
@@ -52,7 +66,7 @@ Class CodeTreeView Extends TreeViewExt
 	Private
 	
 	Field _expander:TreeViewExpander
-	
+	Field _stack:=New Stack<CodeItem>
 	
 	Method FindNode:TreeView.Node( treeNode:TreeView.Node,item:CodeItem )
 	
@@ -80,7 +94,7 @@ Class CodeTreeView Extends TreeViewExt
 		
 		If item.Children = Null And Not ShowInherited Return
 		
-		Local list:=New List<CodeItem>
+		Local list:=New Stack<CodeItem>
 		
 		If item.Children<>Null Then list.AddAll( item.Children )
 		
@@ -92,13 +106,13 @@ Class CodeTreeView Extends TreeViewExt
 			SortItems( list )
 			
 			If ShowInherited
-				Local lst:=New List<CodeItem>
+				Local lst:=New Stack<CodeItem>
 				GetInherited( item,parser,lst )
 				If lst<>Null And Not lst.Empty
 					inherRoot=New CodeItem( "[ Inherited members ]" )
 					inherRoot.Children=lst
 					inherRoot.KindStr="inherited"
-					list.AddFirst( inherRoot )
+					list.Insert( 0,inherRoot )
 					'For Local i:=Eachin lst
 					'	Local children:=i.Children
 					'	
@@ -120,7 +134,7 @@ Class CodeTreeView Extends TreeViewExt
 		
 	End
 	
-	Method SortItems( list:List<CodeItem> )
+	Method SortItems( list:Stack<CodeItem> )
 	
 		If SortByType
 			CodeItemsSorter.SortByType( list,False,True )
@@ -129,7 +143,7 @@ Class CodeTreeView Extends TreeViewExt
 		End
 	End
 	
-	Method GetInherited:List<CodeItem>( item:CodeItem,parser:ICodeParser,result:List<CodeItem> )
+	Method GetInherited:Stack<CodeItem>( item:CodeItem,parser:ICodeParser,result:Stack<CodeItem> )
 	
 		If item.SuperTypesStr=Null Return Null
 	

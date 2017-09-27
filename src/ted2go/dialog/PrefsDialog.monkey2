@@ -47,7 +47,8 @@ Class PrefsDialog Extends DialogExt
 		
 		Deactivated+=MainWindow.UpdateKeyView
 		
-		MinSize=New Vec2i( 300,500 )
+		MinSize=New Vec2i( 550,500 )
+		MaxSize=New Vec2i( 550,600 )
 	End
 	
 	
@@ -61,28 +62,29 @@ Class PrefsDialog Extends DialogExt
 	Field _acUseDot:CheckButton
 	Field _acNewLineByEnter:CheckButton
 	Field _acKeywordsOnly:CheckButton
-	Field _acShowAfter:TextField
+	Field _acShowAfter:TextFieldExt
 	Field _acUseLiveTemplates:CheckButton
 	
 	Field _editorToolBarVisible:CheckButton
 	Field _editorGutterVisible:CheckButton
 	Field _editorShowWhiteSpaces:CheckButton
-	Field _editorFontPath:TextField
-	Field _editorFontSize:TextField
+	Field _editorFontPath:TextFieldExt
+	Field _editorFontSize:TextFieldExt
 	Field _editorShowEvery10LineNumber:CheckButton
 	Field _editorCodeMapVisible:CheckButton
 	Field _editorAutoIndent:CheckButton
+	Field _editorAutoPairs:CheckButton
+	Field _editorSurround:CheckButton
 	
 	Field _mainToolBarVisible:CheckButton
-	Field _mainProjectTabsRight:CheckButton
 	Field _mainProjectIcons:CheckButton
 	
-	Field _monkeyRootPath:TextField
+	Field _monkeyRootPath:TextFieldExt
 	
-	Field _chatNick:TextField
-	Field _chatServer:TextField
-	Field _chatPort:TextField
-	Field _chatRooms:TextField
+	Field _chatNick:TextFieldExt
+	Field _chatServer:TextFieldExt
+	Field _chatPort:TextFieldExt
+	Field _chatRooms:TextFieldExt
 	Field _chatAutoConnect:CheckButton
 	
 	Field _codeView:Ted2CodeTextView
@@ -113,9 +115,10 @@ Class PrefsDialog Extends DialogExt
 		Prefs.EditorShowEvery10LineNumber=_editorShowEvery10LineNumber.Checked
 		Prefs.EditorCodeMapVisible=_editorCodeMapVisible.Checked
 		Prefs.EditorAutoIndent=_editorAutoIndent.Checked
+		Prefs.EditorAutoPairs=_editorAutoPairs.Checked
+		Prefs.EditorSurroundSelection=_editorSurround.Checked
 		
 		Prefs.MainToolBarVisible=_mainToolBarVisible.Checked
-		Prefs.MainProjectTabsRight=_mainProjectTabsRight.Checked
 		Prefs.MainProjectIcons=_mainProjectIcons.Checked
 		
 		Prefs.IrcNickname=_chatNick.Text
@@ -139,13 +142,10 @@ Class PrefsDialog Extends DialogExt
 		_mainToolBarVisible=New CheckButton( "ToolBar visible" )
 		_mainToolBarVisible.Checked=Prefs.MainToolBarVisible
 		
-		_mainProjectTabsRight=New CheckButton( "Project tabs on the right side" )
-		_mainProjectTabsRight.Checked=Prefs.MainProjectTabsRight
-		
 		_mainProjectIcons=New CheckButton( "Project file type icons" )
 		_mainProjectIcons.Checked=Prefs.MainProjectIcons
 		
-		_monkeyRootPath=New TextField( Prefs.MonkeyRootPath )
+		_monkeyRootPath=New TextFieldExt( Prefs.MonkeyRootPath )
 		_monkeyRootPath.Enabled=False
 		Local chooseMonkeyPath:=New Action( "..." )
 		chooseMonkeyPath.Triggered+=Lambda()
@@ -180,7 +180,6 @@ Class PrefsDialog Extends DialogExt
 		docker.AddView( monkeyPathDock,"top" )
 		
 		docker.AddView( New Label( " " ),"top" )
-		docker.AddView( _mainProjectTabsRight,"top" )
 		docker.AddView( _mainProjectIcons,"top" )
 		docker.AddView( _mainToolBarVisible,"top" )
 		docker.AddView( New Label( " " ),"top" )
@@ -208,15 +207,21 @@ Class PrefsDialog Extends DialogExt
 		_editorAutoIndent=New CheckButton( "Auto indentation" )
 		_editorAutoIndent.Checked=Prefs.EditorAutoIndent
 		
+		_editorAutoPairs=New CheckButton( "Auto pair quotes and brackets: ~q~q, (), []" )
+		_editorAutoPairs.Checked=Prefs.EditorAutoPairs
+		
+		_editorSurround=New CheckButton( "Surround selected text with ~q~q, (), []" )
+		_editorSurround.Checked=Prefs.EditorSurroundSelection
+		
 		Local path:=Prefs.EditorFontPath
 		If Not path Then path=_defaultFont
-		_editorFontPath=New TextField( "" )
+		_editorFontPath=New TextFieldExt( "" )
 		_editorFontPath.TextChanged+=Lambda()
 		
 			Local enabled:=(_editorFontPath.Text<>_defaultFont)
 			_editorFontSize.Enabled=enabled
 		End
-		_editorFontSize=New TextField( ""+Prefs.EditorFontSize )
+		_editorFontSize=New TextFieldExt( ""+Prefs.EditorFontSize )
 		_editorFontPath.Text=path
 		_editorFontPath.ReadOnly=True
 		
@@ -258,6 +263,8 @@ Class PrefsDialog Extends DialogExt
 		docker.AddView( _editorShowEvery10LineNumber,"top" )
 		docker.AddView( _editorCodeMapVisible,"top" )
 		docker.AddView( _editorAutoIndent,"top" )
+		docker.AddView( _editorAutoPairs,"top" )
+		docker.AddView( _editorSurround,"top" )
 		docker.AddView( New Label( " " ),"top" )
 		
 		Return docker
@@ -265,7 +272,7 @@ Class PrefsDialog Extends DialogExt
 	
 	Method GetCompletionDock:DockingView()
 		
-		_acShowAfter=New TextField( ""+Prefs.AcShowAfter )
+		_acShowAfter=New TextFieldExt( ""+Prefs.AcShowAfter )
 		
 		Local after:=New DockingView
 		after.AddView( New Label( "Show after" ),"left" )
@@ -314,10 +321,10 @@ Class PrefsDialog Extends DialogExt
 	Method GetChatDock:DockingView()
 		
 		Local chatTable:=New TableView( 2,6 )
-		_chatNick=New TextField( Prefs.IrcNickname )
-		_chatServer=New TextField( Prefs.IrcServer )
-		_chatPort=New TextField( ""+Prefs.IrcPort )
-		_chatRooms=New TextField( Prefs.IrcRooms )
+		_chatNick=New TextFieldExt( Prefs.IrcNickname )
+		_chatServer=New TextFieldExt( Prefs.IrcServer )
+		_chatPort=New TextFieldExt( ""+Prefs.IrcPort )
+		_chatRooms=New TextFieldExt( Prefs.IrcRooms )
 		_chatAutoConnect=New CheckButton( "Auto connect at start" )
 		_chatAutoConnect.Checked=Prefs.IrcConnect
 		chatTable[0,0]=New Label( "Nickname" )

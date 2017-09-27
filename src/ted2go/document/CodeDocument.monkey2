@@ -35,8 +35,6 @@ Class CodeDocumentView Extends Ted2CodeTextView
 	
 		_doc=doc
 		
-		Document=_doc.TextDocument
-		
 		ContentView.Style.Border=New Recti( -4,-4,4,4 )
 		
 		'very important to set FileType for init
@@ -62,7 +60,16 @@ Class CodeDocumentView Extends Ted2CodeTextView
 					Local bySpace:=result.bySpace
 					
 					text=_doc.PrepareForInsert( ident,text,Not bySpace,LineTextAtCursor,PosInLineAtCursor,item )
-					SelectText( Cursor,Cursor-AutoComplete.LastIdentPart.Length )
+					Local i1:=Cursor-AutoComplete.LastIdentPart.Length
+					Local i2:=Cursor
+					If result.byTab
+						Local i:=Cursor
+						While i<Text.Length And IsIdent( Text[i] )
+							i+=1
+						Wend
+						i2=i
+					Endif
+					SelectText( i1,i2 )
 					ReplaceText( text )
 				Endif
 			Endif
@@ -190,7 +197,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 			Select key
 			
 				Case Key.Space
-					If event.Modifiers & Modifier.Control
+					If ctrl
 						Return
 					'Else
 					'	if AutoComplete.IsOpened And Prefs.AcUseSpace Return
@@ -199,6 +206,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 				Case Key.Backspace
 					
 					If AutoComplete.IsOpened
+						
 						Local ident:=IdentBeforeCursor()
 						ident=ident.Slice( 0,ident.Length-1 )
 						If ident.Length > 0
@@ -329,16 +337,16 @@ Class CodeDocumentView Extends Ted2CodeTextView
 					Return
 			
 				#If __TARGET__="macos"
-				Case Key.Left 'smart Home behaviour
+				Case Key.A 'smart Home behaviour
 			
-					If event.Modifiers & Modifier.Menu
+					If ctrl
 						SmartHome( shift )
 						Return
 					Endif
 			
-				Case Key.Right
+				Case Key.E
 			
-					If event.Modifiers & Modifier.Menu
+					If ctrl
 						SmartEnd( shift )
 						Return
 					Endif
@@ -476,39 +484,8 @@ Class CodeDocumentView Extends Ted2CodeTextView
 					Endif
 			
 			
-				Case Key.Insert
-			
-					If CanPaste And shift
-						SmartPaste()
-						Return
-					Endif
-			
-				Case Key.KeyDelete
-			
-					If shift
-						OnCut()
-						Return
-					Endif
-			
 				#If __TARGET__="macos"
-				'smart Home behaviour
-				Case Key.Left
-			
-					If event.Modifiers & Modifier.Menu
-						SmartHome( True )
-			
-						Return
-					Endif
-			
-			
-				Case Key.Right
-			
-					If event.Modifiers & Modifier.Menu
-						SmartHome( False )
-			
-						Return
-					Endif
-			
+				
 				Case Key.Z
 			
 					If event.Modifiers & Modifier.Menu
@@ -525,15 +502,98 @@ Class CodeDocumentView Extends Ted2CodeTextView
 			
 			End
 			
-				
+			
 		Case EventType.KeyChar
 			
-			If event.Key = Key.Space And event.Modifiers & Modifier.Control
+			If event.Key = Key.Space And ctrl
 				If _doc.CanShowAutocomplete()
 					Local ident:=IdentBeforeCursor()
 					If ident Then _doc.ShowAutocomplete( ident,True )
 				Endif
 				Return
+			Endif
+			
+			If CanCopy And Prefs.EditorSurroundSelection
+				' surround selection 
+				Local txt:=event.Text
+				
+				Local k1:=(txt="~q")
+				Local k2:=(txt="(")
+				Local k3:=(txt="[")
+				
+				If k1 Or k2 Or k3
+					Local ins:=k1 ? "~q" Else (k2 ? ")" Else "]")
+					Local i1:=Min( Anchor,Cursor )
+					Local i2:=Max( Anchor,Cursor )
+					ReplaceText( txt + Text.Slice( i1,i2 ) + ins )
+					Return
+				Endif
+				
+			Endif
+			
+			' try to auto-pair chars
+			If Prefs.EditorAutoPairs
+				
+				Local txt:=event.Text
+				
+				Local k1:=(txt="~q")
+				Local k2:=(txt="(")
+				Local k3:=(txt="[")
+				Local k21:=(txt=")")
+				Local k31:=(txt="]")
+				
+				If k1 Or k2 Or k3 Or k21 Or k31
+					
+					Local s:=LineTextAtCursor
+					Local p:=PosInLineAtAnchor
+					
+					' skip if this char is already right after cursor
+					If p<s.Length
+						If (k1 And s[p]=Chars.DOUBLE_QUOTE) Or (k21 And s[p]=Chars.CLOSED_ROUND_BRACKET) Or (k31 And s[p]=Chars.CLOSED_SQUARE_BRACKET)
+							SelectText( Cursor+1,Cursor+1 )
+							Return
+						Endif
+					Endif
+					
+					' just insert our char
+					ReplaceText( txt )
+					
+					If k21 Or k31 Return
+					
+					Local skip:=False
+					If k1
+						skip=_doc.Parser.IsPosInsideOfQuotes( s,p )
+					ElseIf k2
+						'skip=p<s.Length And s[p]=Chars.CLOSED_ROUND_BRACKET
+						skip=Not IsCursorAtTheEndOfLine
+					Elseif k3
+						skip=p<s.Length And s[p]=Chars.CLOSED_SQUARE_BRACKET
+					Endif
+					If Not skip ' auto-pair it
+						Local ins:=k1 ? "~q" Else (k2 ? ")" Else "]")
+						ReplaceText( ins )
+						SelectText( Cursor-1,Cursor-1 )
+					Endif
+					
+					Return
+					
+				Else
+'					
+'					
+'					Local skip:=False
+'					If k21
+'						skip=p<s.Length And s[p]=Chars.CLOSED_ROUND_BRACKET
+'					If k3
+'						skip=p<s.Length And s[p]=Chars.CLOSED_SQUARE_BRACKET
+'					Endif
+'					If Not skip ' auto-pair it
+'						Local ins:=k1 ? "~q" Else (k2 ? ")" Else "]")
+'						ReplaceText( ins )
+'						SelectText( Cursor-1,Cursor-1 )
+'					Endif
+					
+				Endif
+			
 			Endif
 			
 		End
@@ -579,7 +639,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 		Endif
 		
 		' text overwrite mode
-		If event.Key=Key.Insert And Not (shift Or ctrl Or alt)
+		If event.Type=EventType.KeyDown And event.Key=Key.Insert And Not (shift Or ctrl Or alt)
 			
 			MainWindow.OverwriteTextMode=Not MainWindow.OverwriteTextMode
 		Endif
@@ -703,8 +763,11 @@ Class CodeDocumentView Extends Ted2CodeTextView
 	Method DeleteLineAtCursor()
 		
 		Local line:=Document.FindLine( Cursor )
+		Local pos:=Cursor
 		SelectText( Document.StartOfLine( line ),Document.EndOfLine( line )+1 )
 		ReplaceText( "" )
+		pos=Min( pos,Document.EndOfLine( line ) )
+		SelectText( pos,pos )
 	End
 	
 End
@@ -716,7 +779,13 @@ Class CodeDocument Extends Ted2Document
 		
 		Super.New( path )
 	
-		_doc=New TextDocument
+		_view=New DockingView
+		
+		' Editor
+		_codeView=New CodeDocumentView( Self )
+		_codeView.LineChanged += OnLineChanged
+		
+		_doc=_codeView.Document
 		
 		_doc.LinesModified+=Lambda( first:Int,removed:Int,inserted:Int )
 		
@@ -734,18 +803,12 @@ Class CodeDocument Extends Ted2Document
 				put+=1
 			Next
 			_errors.Resize( put )
-			
+		
 			' also move debug line
 			If _debugLine>=first
 				_debugLine+=(inserted-removed)
 			Endif
 		End
-
-		_view=New DockingView
-		
-		' Editor
-		_codeView=New CodeDocumentView( Self )
-		_codeView.LineChanged += OnLineChanged
 		
 		_doc.TextChanged+=Lambda()
 			Dirty=True
@@ -1003,12 +1066,11 @@ Class CodeDocument Extends Ted2Document
 	
 	Method GotoDeclaration()
 	
-		Local ident:=_codeView.FullIdentAtCursor()
+		Local ident:=_codeView.FullIdentAtCursor
 		Local line:=TextDocument.FindLine( _codeView.Cursor )
 		Local item:=_parser.ItemAtScope( ident,Path,line )
-		Print "go decl: "+ident
+		
 		If item
-			Print "item found"
 			Local pos:=item.ScopeStartPos
 			JumpToPosition( item.FilePath,pos )
 		Endif
@@ -1017,7 +1079,10 @@ Class CodeDocument Extends Ted2Document
 	Method JumpToPosition( filePath:String,pos:Vec2i )
 		
 		Local cur:=_codeView.CursorPos
-		If pos=cur Return
+		If pos=cur
+			_codeView.MakeKeyView()
+			Return
+		Endif
 		
 		' store navOp
 		Local nav:=New NavCode
@@ -1104,13 +1169,13 @@ Class CodeDocument Extends Ted2Document
 	
 	Method Comment()
 	
-		Local event:=New KeyEvent( EventType.KeyDown,_codeView,Key.Apostrophe,Key.Apostrophe,Modifier.Control,"" )
+		Local event:=New KeyEvent( EventType.KeyChar,_codeView,Key.Apostrophe,Key.Apostrophe,Modifier.Control,"'" )
 		_codeView.OnKeyEvent( event )
 	End
 	
 	Method Uncomment()
 	
-		Local event:=New KeyEvent( EventType.KeyDown,_codeView,Key.Apostrophe,Key.Apostrophe,Modifier.Control|Modifier.Shift,"" )
+		Local event:=New KeyEvent( EventType.KeyChar,_codeView,Key.Apostrophe,Key.Apostrophe,Modifier.Control|Modifier.Shift,"'" )
 		_codeView.OnKeyEvent( event )
 	End
 	
@@ -1336,7 +1401,7 @@ Class CodeDocument Extends Ted2Document
 		
 		If _timer _timer.Cancel()
 		
-		_timer=New Timer( 1,Lambda()
+		_timer=New Timer( 0.5,Lambda()
 		
 			If _parsing Return
 			

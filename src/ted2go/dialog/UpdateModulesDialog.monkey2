@@ -112,6 +112,8 @@ Class UpdateModulesDialog Extends DialogExt
 		
 		ContentView=dock
 		
+		SetKeyAction( Key.Enter,actUpdate )
+		SetKeyAction( Key.Escape,actCancel )
 	End
 	
 	Property SelectedModules:String()

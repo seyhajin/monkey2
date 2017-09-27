@@ -18,7 +18,6 @@ Class PrefsInstance
 	Field AcUseLiveTemplates:=True
 	'
 	Field MainToolBarVisible:=True
-	Field MainProjectTabsRight:=True
 	Field MainProjectIcons:=True
 	'
 	Field IrcNickname:String
@@ -35,6 +34,8 @@ Class PrefsInstance
 	Field EditorShowEvery10LineNumber:=True
 	Field EditorCodeMapVisible:=True
 	Field EditorAutoIndent:=True
+	Field EditorAutoPairs:=True
+	Field EditorSurroundSelection:=True
 	'
 	Field SourceSortByType:=True
 	Field SourceShowInherited:=False
@@ -69,7 +70,6 @@ Class PrefsInstance
 			
 			Local j2:=json["main"].ToObject()
 			MainToolBarVisible=Json_GetBool( j2,"toolBarVisible",MainToolBarVisible )
-			MainProjectTabsRight=Json_GetBool( j2,"tabsRight",MainProjectTabsRight )
 			MainProjectIcons=Json_GetBool( j2,"projectIcons",MainProjectIcons )
       
 		Endif
@@ -100,6 +100,8 @@ Class PrefsInstance
 			EditorShowEvery10LineNumber=Json_GetBool( j2,"showEvery10",EditorShowEvery10LineNumber )
 			EditorCodeMapVisible=Json_GetBool( j2,"codeMapVisible",EditorCodeMapVisible )
 			EditorAutoIndent=Json_GetBool( j2,"autoIndent",EditorAutoIndent )
+			EditorAutoPairs=Json_GetBool( j2,"autoPairs",EditorAutoPairs )
+			EditorSurroundSelection=Json_GetBool( j2,"surroundSelection",EditorSurroundSelection )
 			
 		Endif
 		
@@ -123,7 +125,6 @@ Class PrefsInstance
 		Local j:=New JsonObject
 		json["main"]=j
 		j["toolBarVisible"]=New JsonBool( MainToolBarVisible )
-		j["tabsRight"]=New JsonBool( MainProjectTabsRight )
 		j["projectIcons"]=New JsonBool( MainProjectIcons )
 		
 		j=New JsonObject
@@ -156,13 +157,15 @@ Class PrefsInstance
 		j["showEvery10"]=New JsonBool( EditorShowEvery10LineNumber )
 		j["codeMapVisible"]=New JsonBool( EditorCodeMapVisible )
 		j["autoIndent"]=New JsonBool( EditorAutoIndent )
+		j["autoPairs"]=New JsonBool( EditorAutoPairs )
+		j["surroundSelection"]=New JsonBool( EditorSurroundSelection )
 		
 		j=New JsonObject
 		json["source"]=j
 		j["sortByType"]=New JsonBool( SourceSortByType )
 		j["showInherited"]=New JsonBool( SourceShowInherited )
 		
-		If SiblyMode json["siblyMode"]=JsonBool.TrueValue
+		If "SiblyMode" json["siblyMode"]=JsonBool.TrueValue
 		
 	End
 	

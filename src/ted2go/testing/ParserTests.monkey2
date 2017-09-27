@@ -1,16 +1,25 @@
 
-Namespace ted2go
+Namespace test2go
 
+
+Struct Vec2i Extension
+	
+	Const One := New Vec2i( 1,1 )
+End
 
 Private
+
+Function vTest( v:Vec2i,e:Entity )
+	
+	v*=Vec2i.One
+End
 
 
 Interface ITest
 
 	Method abs()
-	Property bpp()
+	Property bpp:Bool()
 	
-		
 End
 
 
@@ -74,6 +83,11 @@ Class AAA Extends TestClass
 	Method TestArray( arr2:String[] )
 		
 		'arr2[i].start
+	End
+	
+	Function TestParentFunc()
+		
+		
 	End
 	
 	Method anstrMethod() Abstract
