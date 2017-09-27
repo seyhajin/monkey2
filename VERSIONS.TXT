@@ -11,6 +11,8 @@ Mojo3d anisotropic texture filtering enabled, see anisotropic test.
 
 Mojo3d Scene.EnvColor added.
 
+Mojo3d Light.ShadowsEnabled renamed to Light.CastsShadow.
+
 
 ***** Monkey2 v1.1.07 *****
 
