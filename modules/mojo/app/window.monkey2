@@ -146,6 +146,7 @@ Class Window Extends View
 	
 	#end	
 	Method BeginFullscreen()
+		
 		SDL_SetWindowFullscreen( _sdlWindow,SDL_WINDOW_FULLSCREEN_DESKTOP )
 	End
 	
@@ -155,6 +156,7 @@ Class Window Extends View
 	
 	#end
 	Method BeginFullscreen( width:Int,height:Int,hertz:Int )
+		
 		Local mode:SDL_DisplayMode
 		mode.w=width
 		mode.h=height
@@ -168,24 +170,28 @@ Class Window Extends View
 	#rem monkeydoc Ends fullscreen mode.
 	#end
 	Method EndFullscreen()
+		
 		SDL_SetWindowFullscreen( _sdlWindow,0 )
 	End
 
 	#rem monkeydoc Maximizes the window.
 	#end	
 	Method Maximize()
+		
 		SDL_MaximizeWindow( _sdlWindow )
 	End
 	
 	#rem monkeydoc Minimizes the window.
 	#end	
 	Method Minimize()
+		
 		SDL_MinimizeWindow( _sdlWindow )
 	End
 	
 	#rem monkeydoc Restores the window.
 	#end	
 	Method Restore()
+		
 		SDL_RestoreWindow( _sdlWindow )
 	End
 	
@@ -217,6 +223,7 @@ Class Window Extends View
 	#rem monkeydoc @hidden The internal SDL_GLContext used by this window.
 	#end	
 	Property SDLGLContext:SDL_GLContext()
+		
 		Return _sdlGLContext
 	End
 
@@ -433,7 +440,7 @@ Class Window Extends View
 	#rem monkeydoc @hidden
 	#end
 	Method RenderWindow()
-	
+		
 		If _maxfudge
 			_maxfudge-=1
 			App.RequestRender()
@@ -463,10 +470,13 @@ Class Window Extends View
 		_canvas.EndRender()
 		
 		SDL_GL_SwapWindow( _sdlWindow )
+		
 	End
 	
 	Method Init( title:String,rect:Recti,flags:WindowFlags )
 		Style=GetStyle( "Window" )
+		
+		If flags & WindowFlags.Hidden Visible=False
 	
 		Local x:=(flags & WindowFlags.CenterX) ? SDL_WINDOWPOS_CENTERED Else rect.X
 		Local y:=(flags & WindowFlags.CenterY) ? SDL_WINDOWPOS_CENTERED Else rect.Y
@@ -490,7 +500,7 @@ Class Window Extends View
 		Endif
 		
 		If flags & WindowFlags.Hidden sdlFlags|=SDL_WINDOW_HIDDEN
-		
+			
 		If flags & WindowFlags.Resizable sdlFlags|=SDL_WINDOW_RESIZABLE
 		
 		If flags & WindowFlags.Borderless sdlFlags|=SDL_WINDOW_BORDERLESS
@@ -551,5 +561,19 @@ Class Window Extends View
 		UpdateActive()
 
 		LayoutWindow()
+
+		Activated+=Lambda()
+			Local flags:=Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) )
+			If (flags & SDL_WINDOW_HIDDEN)
+				SDL_ShowWindow( _sdlWindow )
+				SDL_RaiseWindow( _sdlWindow )
+				_visibleWindows.Push( Self )
+			Endif
+		End
+		
+		Deactivated+=Lambda()
+			RuntimeError( "Windows cannot be deactivated" )
+		End
+
 	End
 End

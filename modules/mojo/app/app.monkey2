@@ -181,6 +181,12 @@ Class AppInstance
 			
 			UpdateWindows()
 		End
+
+#if __DESKTOP_TARGET__ 
+		SDL_AddEventWatch( _EventFilter,Null )
+#Endif
+		RequestRender()
+	
 	End
 	
 	#rem monkeydoc Fallback font.
@@ -450,10 +456,10 @@ Class AppInstance
 	#end
 	Method MainLoop()
 		
-		If Not _requestRender Or Not Renderable
+		If (Not _requestRender Or Not Renderable) And Idle=Null
 
 			SDL_WaitEvent( Null )
-			
+
 		Endif
 		
 		UpdateEvents()
@@ -489,7 +495,7 @@ Class AppInstance
 		
 		Local render:=_requestRender
 		_requestRender=False
-		
+
 		If render UpdateFPS()
 		
 		For Local window:=Eachin Window.VisibleWindows()
@@ -520,7 +526,9 @@ Class AppInstance
 	
 	#end
 	Method ResetPolledInput()
+		
 		Keyboard.Reset()
+		
 		Mouse.Reset()
 	End
 	
@@ -528,7 +536,7 @@ Class AppInstance
 	#end
 	Function EmscriptenMainLoop()
 
-		App._requestRender=True
+		App.RequestRender()
 		
 		App.MainLoop()
 	End
@@ -536,14 +544,7 @@ Class AppInstance
 	#rem monkeydoc Run the app.
 	#end
 	Method Run()
-	
-#if __DESKTOP_TARGET__ 
-	
-		SDL_AddEventWatch( _EventFilter,Null )
 
-#endif
-		RequestRender()
-		
 #If __TARGET__="emscripten"
 
 		emscripten_set_main_loop( EmscriptenMainLoop,0,1 )
@@ -571,7 +572,36 @@ Class AppInstance
 		
 		_renderingSuspended=Max( _renderingSuspended-1,0 )
 	End
+
+	Internal
 	
+	Method DispatchEvents()
+		
+		Local event:SDL_Event
+
+		While SDL_PollEvent( Varptr event )
+		
+			DispatchEvent( Varptr event )
+			
+		Wend
+		
+	End
+	
+	Method UpdateEvents()
+	
+		Keyboard.Update()
+		
+		Mouse.Update()
+		
+		Touch.Update()
+		
+		DispatchEvents()
+		
+		Local idle:=Idle
+		Idle=Null
+		idle()
+		
+	End
 
 	Private
 	
@@ -627,28 +657,6 @@ Class AppInstance
 			_fpsFrames=0
 		Endif
 
-	End
-	
-	Method UpdateEvents()
-	
-		Keyboard.Update()
-		
-		Mouse.Update()
-		
-		Touch.Update()
-		
-		Local event:SDL_Event
-
-		While SDL_PollEvent( Varptr event )
-		
-			DispatchEvent( Varptr event )
-			
-		Wend
-		
-		Local idle:=Idle
-		Idle=Null
-		idle()
-		
 	End
 	
 	Method SendKeyEvent( type:EventType )
@@ -968,7 +976,7 @@ Class AppInstance
 				
 			Case SDL_WINDOWEVENT_FOCUS_GAINED
 			
-				'Print "SDL_WINDOWEVENT_FOCUS_GAINED"
+				Print "SDL_WINDOWEVENT_FOCUS_GAINED"
 			
 				Local active:=_active
 				_activeWindow=_window
@@ -980,7 +988,7 @@ Class AppInstance
 				
 			Case SDL_WINDOWEVENT_FOCUS_LOST
 			
-				'Print "SDL_WINDOWEVENT_FOCUS_LOST"
+				Print "SDL_WINDOWEVENT_FOCUS_LOST"
 			
 				Local active:=_active
 				_active=False
@@ -1010,7 +1018,7 @@ Class AppInstance
 					SendMouseEvent( EventType.MouseLeave,_hoverView )
 					_hoverView=Null
 				Endif
-				
+
 			End
 			
 		Case SDL_USEREVENT
@@ -1105,6 +1113,8 @@ Class AppInstance
 			
 			Case SDL_WINDOWEVENT_MOVED
 			
+				Print "SDL_WINDOWEVENT_MOVED"
+			
 				SdlEventFilter( event )
 	
 				SendWindowEvent( EventType.WindowMoved )
@@ -1112,6 +1122,8 @@ Class AppInstance
 				Return 0
 					
 			Case SDL_WINDOWEVENT_RESIZED
+				
+				Print "SDL_WINDOWEVENT_RESIZED"
 			
 				SdlEventFilter( event )
 	
@@ -1120,7 +1132,6 @@ Class AppInstance
 				UpdateWindows()
 			
 				Return 0
-
 			End
 
 		End
