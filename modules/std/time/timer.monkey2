@@ -35,6 +35,8 @@ Class Timer
 					Continue
 				Endif
 				
+				If _cancelled Exit
+				
 				If Not _suspended fired()
 
 				timeout+=period
