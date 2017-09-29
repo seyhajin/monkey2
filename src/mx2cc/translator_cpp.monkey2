@@ -1827,7 +1827,17 @@ Class Translator_CPP Extends Translator
 
 		Local cname:=ClassName( ctype )
 		
-		Return "bbMethod(("+cname+"*)("+Trans( value.instance )+"),&"+cname+"::"+Trans( value.member )+")"
+		Local func:=value.member
+		
+		Local args:="<"+cname+","+TransType( func.ftype.retType )
+		For Local ty:=Eachin func.ftype.argTypes
+			args+=","+TransType( ty )
+		Next
+		args+=">"
+		
+'		Print "args="+args
+		
+		Return "bbMethod"+args+"(("+cname+"*)("+Trans( value.instance )+"),&"+cname+"::"+Trans( value.member )+")"
 	End
 	
 	Method Trans:String( value:FuncValue )

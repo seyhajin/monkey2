@@ -1,37 +1,37 @@
 
 #Import "<std>"
+#Import "<mojo>"
 
 Using std..
+Using mojo..
+
+Global f:void()
+
+Function Test2()
+End
+
+Function Test2( x:Int )
+End
 
 Class C
 	
-	Field x:Int
-	
-	Field c:C
-	
 	Method New()
-		
-		Local p:=Varptr( c )
+		f=Test
 	End
-		
+	
+	Method Test()
+		print "Here!"
+	End
+	
+	Method Test( x:Int )
+	End
 End
 
 Function Main()
 	
-	Local c:=New C
+	New C
 	
-	c.x=10
+	f()
 	
-	GCSuspend()
-	
-	Local p:=Cast<Void Ptr>( c )
-
-	Print Hex( ulong( p ) )
-	
-	c=Cast<C>( p )
-	
-	GCResume()
-	
-	Print c.x
 	
 End

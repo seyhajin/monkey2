@@ -39,17 +39,9 @@ Const MX2CC_VERSION_EXT:=""
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods -target=android monkey"
-
-Const TestArgs:="mx2cc makedocs mojo"	'monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
+'Const TestArgs:="mx2cc makedocs mojo"	'monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
  
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
-
-'Const TestArgs:="mx2cc makedocs mojo3d"
-
-'Const TestArgs:="mx2cc makemods -clean monkey"
-
-'Const TestArgs:="mx2cc makemods -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '
