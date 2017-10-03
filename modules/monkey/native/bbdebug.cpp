@@ -20,7 +20,8 @@ namespace bbDB{
 	
 #if !_WIN32
 	void breakHandler( int sig ){
-		currentContext->stopped=0x10000000;
+	
+		currentContext->stopped=1;
 	}
 #endif
 
@@ -65,7 +66,7 @@ namespace bbDB{
 		    	for( ;; ){
 		    		WaitForSingleObject( breakEvent,INFINITE );
 //	    			bb_printf( "Break event!\n" );fflush( stdout );
-		    		currentContext->stopped=0x10000000;
+					currentContext->stopped=1;
 		    	}
 		    } ).detach();
 		}
@@ -74,8 +75,7 @@ namespace bbDB{
 #endif
 
 #endif
-
-	}
+}
 	
 	void emitVar( bbDBVar *v ){
 		bbString id=v->name;
@@ -101,8 +101,9 @@ namespace bbDB{
 	}
 	
 	void stop(){
-
-		currentContext->stopped=0;
+		stopped();
+//		stepMode=0;
+//		stepnext=1;
 	}
 	
 	void emit( const char *e ){
@@ -120,7 +121,7 @@ namespace bbDB{
 	}
 	
 	void stopped(){
-
+	
 		bb_printf( "{{!DEBUG!}}\n" );
 		
 		emitStack();
@@ -135,10 +136,10 @@ namespace bbDB{
 			if( !e ) exit( -1 );
 			
 			switch( e[0] ){
-			case 's':currentContext->stopped=0;return;
-			case 'e':currentContext->stopped=1;return;
-			case 'l':currentContext->stopped=-1;return;
-			case 'r':currentContext->stopped=-0x10000000;return;
+			case 'r':currentContext->stopped=0;currentContext->stepMode=0;return;
+			case 'e':currentContext->stopped=1;currentContext->stepMode=0;return;
+			case 's':currentContext->stopped=1;currentContext->stepMode='s';return;
+			case 'l':currentContext->stopped=0;currentContext->stepMode='l';return;
 			case '@':emit( e+1 );continue;
 			case 'q':exit( 0 );return;
 			}
@@ -150,8 +151,8 @@ namespace bbDB{
 	void error( bbString msg ){
 		
 		bb_printf( "\n%s\n",msg.c_str() );
+		
 		stopped();
-
 	}
 	
 	bbArray<bbString> stack(){

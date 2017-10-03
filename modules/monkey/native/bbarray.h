@@ -34,6 +34,15 @@ template<class T,int D> struct bbArray{
 		virtual void gcMark(){
 			for( int i=0;i<_sizes[D-1];++i ) bbGCMark( _data[i] );
 		}
+		
+		virtual void dbEmit(){
+			int n=_sizes[D-1];if( n>100 ) n=100;
+			for( int i=0;i<n;++i ){
+				char buf[16];
+				sprintf( buf,"[%i]",i );
+				bbDBEmit( buf,&_data[i] );
+			}
+		}
 	};
 	
 	Rep *_rep=nullptr;
@@ -219,7 +228,7 @@ template<class T,int D> bbString bbDBType( bbArray<T,D> *p ){
 template<class T,int D> bbString bbDBValue( bbArray<T,D> *p ){
 	char buf[64];
 	sprintf( buf,"@%p",*(void**)(&p->_rep) );
-	return buf;
+	return bbString( buf )+"["+bbString( p->length() )+"]";
 }
 
 template<class T,int D> void bbGCMark( bbArray<T,D> arr ){
