@@ -7,11 +7,13 @@ Class Translator_CPP Extends Translator
 	Field _module:Module
 	Field _lambdaId:Int
 	Field _gctmps:=0
+	Field _dbline:=-1
 	
 	Method Reset() Override
 		Super.Reset()
 		_lambdaId=0
 		_gctmps=0
+		_dbline=-1
 	End
 	
 	Method TranslateModule:Bool( module:Module )
@@ -148,7 +150,10 @@ Class Translator_CPP Extends Translator
 
 		EmitBr()
 		For Local etype:=Eachin fdecl.enums
-			Emit( "enum class "+EnumName( etype )+";" )
+			Local ename:=EnumName( etype )
+			Emit( "enum class "+ename+";" )
+			Emit( "bbString bbDBType("+ename+"*);" )
+			Emit( "bbString bbDBValue("+ename+"*);" )
 		Next
 		
 		EmitBr()
@@ -184,7 +189,6 @@ Class Translator_CPP Extends Translator
 			EmitClassProto( ctype,fdecl,emitted )
 		Next
 		
-		
 		EmitBr()		
 		Emit( "#endif" )
 		EmitBr()
@@ -198,6 +202,21 @@ Class Translator_CPP Extends Translator
 		EmitBr()
 		Emit( "#include ~q"+MakeIncludePath( fdecl.hfile,ExtractDir( fdecl.cfile ) )+"~q" )
 		EmitBr()
+
+		'debug enums!		
+		EmitBr()
+		For Local etype:=Eachin fdecl.enums
+			
+			Local ename:=EnumName( etype )
+			
+			Emit( "bbString bbDBType("+ename+"*p){" )
+			Emit( "~treturn ~q"+etype.Name+"~q;" )
+			Emit( "}" )
+			Emit( "bbString bbDBValue("+ename+"*p){" )
+			Emit( "~treturn bbString( *(int*)p );" )
+			Emit( "}" )
+		Next
+		
 		
 		BeginDeps()
 		
@@ -1201,15 +1220,35 @@ Class Translator_CPP Extends Translator
 	
 	'***** Block *****
 	
+	Method DebugInfo:String( stmt:Stmt )
+		
+		If _debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
+		
+		Return ""
+	End
+	
+	Method EmitDebugInfo( stmt:Stmt )
+		
+		Local db:=DebugInfo( stmt )
+		If Not db Return
+		
+		If stmt.pnode.srcpos Shr 12=_dbline Return 
+
+		_dbline=stmt.pnode.srcpos Shr 12
+		
+		Emit( db+";" )
+	End
+	
 	Method BeginBlock()
 
 		BeginGCFrame()
+		
 		If _debug Emit( "bbDBBlock db_blk;" )
 
 	End
 	
 	Method EmitStmts( block:Block )
-
+		
 		For Local stmt:=Eachin block.stmts
 			EmitStmt( stmt )
 			FreeGCTmps()
@@ -1265,16 +1304,6 @@ Class Translator_CPP Extends Translator
 	
 	'***** Stmt *****
 	
-	Method DebugInfo:String( stmt:Stmt )
-		If _debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
-		Return ""
-	End
-	
-	Method EmitDebugInfo( stmt:Stmt )
-		Local db:=DebugInfo( stmt )
-		If db Emit( db+";" )
-	End
-	
 	Method EmitStmt( stmt:Stmt )
 	
 		If Not stmt Return
@@ -1302,6 +1331,9 @@ Class Translator_CPP Extends Translator
 		Local ifStmt:=Cast<IfStmt>( stmt )
 		If ifStmt EmitStmt( ifStmt ) ; Return
 		
+		Local forStmt:=Cast<ForStmt>( stmt )
+		If forStmt EmitStmt( forStmt ) ; Return
+		
 		Local whileStmt:=Cast<WhileStmt>( stmt )
 		If whileStmt EmitStmt( whileStmt ) ; Return
 		
@@ -1310,9 +1342,6 @@ Class Translator_CPP Extends Translator
 		
 		Local selectStmt:=Cast<SelectStmt>( stmt )
 		If selectStmt EmitStmt( selectStmt ) ; Return
-		
-		Local forStmt:=Cast<ForStmt>( stmt )
-		If forStmt EmitStmt( forStmt ) ; Return
 		
 		Local tryStmt:=Cast<TryStmt>( stmt )
 		If tryStmt EmitStmt( tryStmt ) ; Return

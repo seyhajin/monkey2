@@ -227,9 +227,10 @@ Class ClassType Extends Type
 		Else
 		
 			If IsGenInstance
+				
 				SemantMembers()
-				Local module:=Builder.semantingModule 
-				module.genInstances.Push( Self )
+				
+				Builder.semantingModule.genInstances.Push( Self )
 			Else
 				Builder.semantMembers.AddLast( Self )
 			Endif

@@ -1,7 +1,6 @@
 
 Namespace mx2cc
 
-
 #Import "<std>"
 
 #Import "mx2"

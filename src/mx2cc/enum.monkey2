@@ -74,8 +74,10 @@ Class EnumType Extends Type
 		Next
 		
 		If Not edecl.IsExtern And Not scope.IsGeneric
+			
+			If scope.IsInstanceOf Builder.semantingModule.genInstances.Add( Self )
 	
-			scope.FindFile().fdecl.enums.Push( Self )
+			transFile.enums.Push( Self )
 		
 		Endif
 		

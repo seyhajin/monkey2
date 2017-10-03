@@ -409,15 +409,14 @@ Class FuncValue Extends Value
 		
 		If fdecl.kind="function" Or IsExtension
 		
-			transFile.functions.Push( Self )
-			
 			If fdecl.kind="function" And Not cscope And fdecl.ident="Main"
 			
 				If Not TCast<VoidType>( ftype.retType ) Or ftype.argTypes
 					Throw New SemantEx( "Function 'Main' must be of type Void()" )
 				Endif
 
-				Local module:=scope.FindFile().fdecl.module
+				Local module:=transFile.module'.FindFile().fdecl.module
+				
 				If module.main Throw New SemantEx( "Duplicate declaration of 'Main'" )
 				
 				module.main=Self
@@ -425,11 +424,12 @@ Class FuncValue Extends Value
 			
 			If instanceOf Or IsExtension Or (cscope And cscope.ctype.instanceOf)
 			
-				Local module:=Builder.semantingModule
-				module.genInstances.Push( Self )
+				Builder.semantingModule.genInstances.Push( Self )
 				
 			Endif
 
+			transFile.functions.Push( Self )
+			
 		Else
 		
 			If IsCtor Or IsMethod

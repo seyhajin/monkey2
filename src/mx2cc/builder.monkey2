@@ -393,6 +393,7 @@ Class BuilderInstance
 				Local vvar:=Cast<VarValue>( inst )
 				Local func:=Cast<FuncValue>( inst )
 				Local ctype:=TCast<ClassType>( inst )
+				Local etype:=TCast<EnumType>( inst )
 				
 				If vvar
 					transFile=vvar.transFile
@@ -400,6 +401,8 @@ Class BuilderInstance
 					transFile=func.transFile
 				Else If ctype
 					transFile=ctype.transFile
+				Else If etype
+					transFile=etype.transFile
 				Endif
 				
 				If Not transFile Or transFile.module=module Continue
@@ -441,6 +444,9 @@ Class BuilderInstance
 				Else If ctype
 					ctype.transFile=transFile
 					transFile.classes.Push( ctype )
+				Else If etype
+					etype.transFile=transFile
+					transFile.enums.Push( etype )
 				Endif
 				
 			Next

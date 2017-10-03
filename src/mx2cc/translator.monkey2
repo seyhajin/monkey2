@@ -360,10 +360,12 @@ Class Translator
 			
 			Local etype:=TCast<EnumType>( type )
 			If etype
-			
 				If Included( etype.transFile ) Continue
 				
-				Emit( "enum class "+EnumName( etype )+";" )
+				Local ename:=EnumName( etype )
+				Emit( "enum class "+ename+";" )
+				Emit( "bbString bbDBType("+ename+"*);" )
+				Emit( "bbString bbDBValue("+ename+"*);" )
 				
 				Continue
 			Endif
