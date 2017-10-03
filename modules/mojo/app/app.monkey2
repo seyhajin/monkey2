@@ -976,7 +976,7 @@ Class AppInstance
 				
 			Case SDL_WINDOWEVENT_FOCUS_GAINED
 			
-				Print "SDL_WINDOWEVENT_FOCUS_GAINED"
+'				Print "SDL_WINDOWEVENT_FOCUS_GAINED"
 			
 				Local active:=_active
 				_activeWindow=_window
@@ -988,7 +988,7 @@ Class AppInstance
 				
 			Case SDL_WINDOWEVENT_FOCUS_LOST
 			
-				Print "SDL_WINDOWEVENT_FOCUS_LOST"
+'				Print "SDL_WINDOWEVENT_FOCUS_LOST"
 			
 				Local active:=_active
 				_active=False
@@ -1113,7 +1113,7 @@ Class AppInstance
 			
 			Case SDL_WINDOWEVENT_MOVED
 			
-				Print "SDL_WINDOWEVENT_MOVED"
+'				Print "SDL_WINDOWEVENT_MOVED"
 			
 				SdlEventFilter( event )
 	
@@ -1123,7 +1123,7 @@ Class AppInstance
 					
 			Case SDL_WINDOWEVENT_RESIZED
 				
-				Print "SDL_WINDOWEVENT_RESIZED"
+'				Print "SDL_WINDOWEVENT_RESIZED"
 			
 				SdlEventFilter( event )
 	

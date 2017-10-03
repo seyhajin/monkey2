@@ -305,6 +305,11 @@ Class Renderer
 
 		RenderRenderOps( _renderQueue.OpaqueOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
 	End
+	
+	Method RenderTransparentOps()
+		
+		RenderRenderOps( _renderQueue.TransparentOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
+	End
 
 	Method RenderSpriteOps()
 

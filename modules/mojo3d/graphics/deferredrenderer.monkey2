@@ -117,6 +117,8 @@ Class DeferredRenderer Extends Renderer
 		
 		_device.RenderTarget=_rpass0Target
 		
+		RenderTransparent()
+		
 		RenderSprites()
 
 		_device.RenderTarget=_rpass2Target
@@ -158,6 +160,16 @@ Class DeferredRenderer Extends Renderer
 		_device.RenderPass=0
 
 		Super.RenderOpaqueOps()
+	End
+	
+	Method RenderTransparent()
+		
+		_device.ColorMask=ColorMask.All
+		_device.DepthMask=false
+		_device.DepthFunc=DepthFunc.LessEqual
+		_device.RenderPass=0
+
+		Super.RenderTransparentOps()
 	End
 	
 	Method RenderSprites()
