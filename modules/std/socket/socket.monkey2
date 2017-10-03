@@ -12,7 +12,7 @@ Extern private
 
 #rem monkeydoc @hidden
 #end
-Function socket_connect:Int( hostname:CString,service:CString,type:Int,flags:int)="bbSocket::connect"
+Function socket_connect:Int( hostname:CString,service:CString,type:Int,flags:int )="bbSocket::connect"
 
 #rem monkeydoc @hidden
 #end
@@ -97,11 +97,15 @@ End
 
 | SocketFlags	| Description
 |:--------------|:-----------
-| `Passive`		| for Bind and Listen only. Indicates socket accepts connections from any address. If not set, socket accepts loopback connections only.
+| `Passive`		| for Bind and Listen. Indicates socket accepts connections from any address. If not set, socket accepts loopback connections only.
+| `Ipv4`		| for Connect, Bind and Listen. Socket can be an ip4 socket.
+| `Ipv6`		| for Connect, Bind and Listen. Socket can be an ip6 socket.
 
 #end
 Enum SocketFlags
 	Passive=1
+	Ipv4=2
+	Ipv6=4
 End
 
 #rem monkeydoc The SocketAddress class.
@@ -413,9 +417,9 @@ Class Socket Extends std.resource.Resource
 	@return A new socket.
 	
 	#end	
-	Function Connect:Socket( hostname:String,service:String,type:SocketType=SocketType.Stream )
+	Function Connect:Socket( hostname:String,service:String,type:SocketType=SocketType.Stream,flags:SocketFlags=Null )
 
-		Local socket:=socket_connect( hostname,service,type,0 )
+		Local socket:=socket_connect( hostname,service,type,flags )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
@@ -433,7 +437,7 @@ Class Socket Extends std.resource.Resource
 	
 	#end
 	Function Bind:Socket( service:String,flags:SocketFlags=SocketFlags.Passive )
-
+	
 		Local socket:=socket_bind( "",service,flags )
 		If socket=-1 Return Null
 		

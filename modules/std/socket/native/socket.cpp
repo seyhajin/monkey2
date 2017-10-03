@@ -30,10 +30,13 @@ namespace bbSocket{
 		
 		int fiber;
 		int result=-1;
+		int waiting=0;
 				
 		Future():fiber( bbFiber::getCurrentFiber() ){}
 				
 		void dispatch(){
+		
+			if( !waiting ) {printf( "NOT WAITING!\n" );fflush( stdout );}
 				
 			bbFiber::resumeFiber( fiber );
 		}
@@ -47,6 +50,7 @@ namespace bbSocket{
 		
 		int get(){
 		
+			waiting=1;
 			bbFiber::suspendCurrentFiber();
 			
 			return result;
@@ -87,29 +91,35 @@ namespace bbSocket{
 	
 	int _connect( const char *hostname,const char *service,int type,int flags ){
 	
-		init();
-		
 		addrinfo hints;
 		memset( &hints,0,sizeof( hints ) );
 
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
-//		hints.ai_flags=(flags&1) ? AI_PASSIVE : 0;
+		hints.ai_protocol=(type==1) ? IPPROTO_UDP : IPPROTO_TCP;
+		if( (flags&1)==1 ) hints.ai_flags=AI_PASSIVE;
+		if( (flags&6)==2 ) hints.ai_family=AF_INET;
+		if( (flags&6)==4 ) hints.ai_family=AF_INET6;
 		if( hostname && !hostname[0] ) hostname=0;
 
 		addrinfo *pres=0;
-		if( getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
+		if( ::getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
 		
 		int sock=-1;
 		
 		for( addrinfo *res=pres;res;res=res->ai_next ){
 		
-			sock=socket( res->ai_family,res->ai_socktype,res->ai_protocol );
-
+			sock=::socket( res->ai_family,res->ai_socktype,res->ai_protocol );
 			if( sock==-1 ) continue;
-			
+#if _WIN32		
+			if( res->ai_family==AF_INET6 ){
+				int value=0,sz=sizeof( value );	
+				const char *ip=(const char*)&value;
+				::setsockopt( sock,IPPROTO_IPV6,IPV6_V6ONLY,ip,sz );
+			}
+#endif
 			if( !connect( sock,res->ai_addr,res->ai_addrlen ) ) break;
-				
+		
 			::closesocket( sock );
 			sock=-1;
 		}
@@ -121,27 +131,33 @@ namespace bbSocket{
 	
 	int _bind( const char *hostname,const char *service,int type,int flags ){
 	
-		init();
-		
 		addrinfo hints;
 		memset( &hints,0,sizeof( hints ) );
 		
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
-		hints.ai_flags=(flags&1) ? AI_PASSIVE : 0;
+		hints.ai_protocol=(type==1) ? IPPROTO_UDP : IPPROTO_TCP;
+		if( (flags&1)==1 ) hints.ai_flags=AI_PASSIVE;
+		if( (flags&6)==2 ) hints.ai_family=AF_INET;
+		if( (flags&6)==4 ) hints.ai_family=AF_INET6;
 		if( hostname && !hostname[0] ) hostname=0;
 		
 		addrinfo *pres=0;
-		if( getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
+		if( ::getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
 		
 		int sock=-1;
 		
 		for( addrinfo *res=pres;res;res=res->ai_next ){
 		
-			sock=socket( res->ai_family,res->ai_socktype,res->ai_protocol );
-
+			sock=::socket( res->ai_family,res->ai_socktype,res->ai_protocol );
 			if( sock==-1 ) continue;
-
+#if _WIN32		
+			if( res->ai_family==AF_INET6 ){
+				int value=0,sz=sizeof( value );	
+				const char *ip=(const char*)&value;
+				::setsockopt( sock,IPPROTO_IPV6,IPV6_V6ONLY,ip,sz );
+			}
+#endif
 			if( !::bind( sock,res->ai_addr,res->ai_addrlen ) ) break;
 				
 			::closesocket( sock );
@@ -163,6 +179,8 @@ namespace bbSocket{
 	}
 	
 	int connect( const char *hostname,const char *service,int type,int flags ){
+	
+		init();
 
 		int sock=-1;
 		
@@ -190,6 +208,8 @@ namespace bbSocket{
 	
 	int bind( const char *hostname,const char *service,int flags ){
 	
+		init();
+	
 		int sock=-1;
 		
 		if( bbFiber::getCurrentFiber() ){
@@ -215,6 +235,8 @@ namespace bbSocket{
 	}
 	
 	int listen( const char *hostname,const char *service,int backlog,int flags ){
+	
+		init();
 	
 		int sock=-1;
 		
