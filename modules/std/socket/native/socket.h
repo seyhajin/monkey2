@@ -6,6 +6,8 @@
 
 namespace bbSocket{
 
+	int init();
+
 	int connect( const char *hostname,const char *service,int type,int flags );
 	
 	int bind( const char *hostname,const char *service,int flags );

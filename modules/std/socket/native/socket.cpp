@@ -30,14 +30,11 @@ namespace bbSocket{
 		
 		int fiber;
 		int result=-1;
-		int waiting=0;
 				
 		Future():fiber( bbFiber::getCurrentFiber() ){}
 				
 		void dispatch(){
 		
-			if( !waiting ) {printf( "NOT WAITING!\n" );fflush( stdout );}
-				
 			bbFiber::resumeFiber( fiber );
 		}
 		
@@ -50,7 +47,6 @@ namespace bbSocket{
 		
 		int get(){
 		
-			waiting=1;
 			bbFiber::suspendCurrentFiber();
 			
 			return result;
@@ -65,14 +61,15 @@ namespace bbSocket{
 #endif
 	}
 	
-	void init(){
+	int init(){
 		static bool done;
-		if( done ) return;
+		if( done ) return 1;
 		done=true;
 #if _WIN32	
 		WSADATA wsa;
 		WSAStartup( MAKEWORD(2,2),&wsa );
 #endif
+		return 1;
 	}
 
 	void dontBlock( int sock ){
@@ -97,7 +94,7 @@ namespace bbSocket{
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol=(type==1) ? IPPROTO_UDP : IPPROTO_TCP;
-		if( (flags&1)==1 ) hints.ai_flags=AI_PASSIVE;
+		if( (flags&1)==1 ) hints.ai_flags|=AI_PASSIVE;
 		if( (flags&6)==2 ) hints.ai_family=AF_INET;
 		if( (flags&6)==4 ) hints.ai_family=AF_INET6;
 		if( hostname && !hostname[0] ) hostname=0;
@@ -137,7 +134,7 @@ namespace bbSocket{
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol=(type==1) ? IPPROTO_UDP : IPPROTO_TCP;
-		if( (flags&1)==1 ) hints.ai_flags=AI_PASSIVE;
+		if( (flags&1)==1 ) hints.ai_flags|=AI_PASSIVE;
 		if( (flags&6)==2 ) hints.ai_family=AF_INET;
 		if( (flags&6)==4 ) hints.ai_family=AF_INET6;
 		if( hostname && !hostname[0] ) hostname=0;
@@ -151,6 +148,7 @@ namespace bbSocket{
 		
 			sock=::socket( res->ai_family,res->ai_socktype,res->ai_protocol );
 			if( sock==-1 ) continue;
+			
 #if _WIN32		
 			if( res->ai_family==AF_INET6 ){
 				int value=0,sz=sizeof( value );	
@@ -180,8 +178,6 @@ namespace bbSocket{
 	
 	int connect( const char *hostname,const char *service,int type,int flags ){
 	
-		init();
-
 		int sock=-1;
 		
 		if( bbFiber::getCurrentFiber() ){
@@ -208,8 +204,6 @@ namespace bbSocket{
 	
 	int bind( const char *hostname,const char *service,int flags ){
 	
-		init();
-	
 		int sock=-1;
 		
 		if( bbFiber::getCurrentFiber() ){
@@ -235,8 +229,6 @@ namespace bbSocket{
 	}
 	
 	int listen( const char *hostname,const char *service,int backlog,int flags ){
-	
-		init();
 	
 		int sock=-1;
 		
@@ -341,7 +333,7 @@ namespace bbSocket{
 				future.set( ::send( socket,(const char*)data,size,0 ) );
 					
 			} );
-				
+
 			n=future.get();
 				
 			thread.join();
@@ -391,7 +383,7 @@ namespace bbSocket{
 	int recv( int socket,void *data,int size ){
 	
 		int n=-1;
-	
+		
 		if( bbFiber::getCurrentFiber() && canrecv( socket )==0 ){//<size ){
 		
 			Future future;
@@ -500,7 +492,9 @@ namespace bbSocket{
 	
 	int sockaddrname( const void *addr,int addrlen,char *host,char *service ){
 	
-		return getnameinfo( (const sockaddr*)addr,addrlen,host,1023,service,79,0 );
+		int flags=0;//NI_NUMERICHOST|NI_NUMERICSERV;
+	
+		return getnameinfo( (const sockaddr*)addr,addrlen,host,1023,service,79,flags );
 	}
 	
 	int select( int n_read,int *r_socks,int n_write,int *w_socks,int n_except,int *e_socks,int millis ){

@@ -12,6 +12,10 @@ Extern private
 
 #rem monkeydoc @hidden
 #end
+Function socket_init:int()="bbSocket::init"
+
+#rem monkeydoc @hidden
+#end
 Function socket_connect:Int( hostname:CString,service:CString,type:Int,flags:int )="bbSocket::connect"
 
 #rem monkeydoc @hidden
@@ -77,7 +81,11 @@ Function socket_sockaddrname:Int( addr:Void Ptr,addrlen:Int,host:libc.char_t Ptr
 #rem monkeydoc @hidden
 #end
 Function socket_select:Int( n_read:Int,r_socks:Int ptr,n_write:Int,w_socks:Int Ptr,n_except:Int,e_socks:Int Ptr,millis:Int )="bbSocket::select"
-	
+
+Private
+
+Global _init:=socket_init()
+
 Public
 
 #rem monkeydoc The SocketType enum.
