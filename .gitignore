@@ -29,7 +29,8 @@ __NEWPAGES__/
 
 /modules/module-manager/downloads/*.zip
 
-#/src/ted2go
+/src/ted2go-v*
+/src/ted2go-dev
 
 /modules/cmark
 /modules/lua
