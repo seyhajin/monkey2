@@ -1,8 +1,8 @@
 
 Namespace mojo3d.graphics
 
-#rem monkeydoc @hidden
-#end
+Internal
+
 Class RenderOp
 	Field material:Material
 	Field uniforms:UniformBlock
@@ -15,8 +15,8 @@ Class RenderOp
 	Field first:Int
 End
 
-#rem monkeydoc @hidden
-#end
+Public
+
 Class RenderQueue
 
 	Property Time:Float()
@@ -28,41 +28,6 @@ Class RenderQueue
 		_time=time
 	End
 	
-	Property OpaqueOps:Stack<RenderOp>()
-		
-		Return _opaqueOps
-	End
-	
-	Property TransparentOps:Stack<RenderOp>()
-	
-		Return _transparentOps
-	End
-	
-	Property SpriteOps:Stack<RenderOp>()
-	
-		Return _spriteOps
-	End
-	
-	Property ShadowOps:Stack<RenderOp>()
-		
-		Return _shadowOps
-	End
-
-	'bit of a hack for now, but renderqueue should be able to handle sprites...	
-	Property Sprites:Stack<Sprite>()
-	
-		Return _sprites
-	End
-	
-	Property AddShadowOps:Bool()
-		
-		Return _addShadowOps
-		
-	Setter( addShadowOps:Bool )
-		
-		_addShadowOps=addShadowOps
-	End
-	
 	Method Clear()
 	
 		_sprites.Clear()	
@@ -71,22 +36,6 @@ Class RenderQueue
 		_transparentOps.Clear()
 	End
 	
-	Method AddRenderOp( op:RenderOp )
-		
-		op.material.ValidateShader()
-		
-		If op.material.BlendMode<>BlendMode.Opaque
-			_transparentOps.Push( op )
-		Else
-			_opaqueOps.Push( op )
-		Endif
-		
-		If _addShadowOps 
-			If (op.material.Shader.RenderPassMask & $10000) _shadowOps.Push( op )
-		Endif
-		
-	End
-
 	Method AddRenderOp( material:Material,uniforms:UniformBlock,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
 		op.material=material
@@ -135,6 +84,59 @@ Class RenderQueue
 		AddRenderOp( op )
 	End
 	
+	Internal
+	
+	Method AddRenderOp( op:RenderOp )
+		
+		op.material.ValidateShader()
+		
+		If op.material.BlendMode<>BlendMode.Opaque
+			_transparentOps.Push( op )
+		Else
+			_opaqueOps.Push( op )
+		Endif
+		
+		If _addShadowOps 
+			If (op.material.Shader.RenderPassMask & $10000) _shadowOps.Push( op )
+		Endif
+		
+	End
+	
+	Property AddShadowOps:Bool()
+		
+		Return _addShadowOps
+		
+	Setter( addShadowOps:Bool )
+		
+		_addShadowOps=addShadowOps
+	End
+	
+	Property OpaqueOps:Stack<RenderOp>()
+		
+		Return _opaqueOps
+	End
+	
+	Property TransparentOps:Stack<RenderOp>()
+	
+		Return _transparentOps
+	End
+	
+	Property SpriteOps:Stack<RenderOp>()
+	
+		Return _spriteOps
+	End
+	
+	Property ShadowOps:Stack<RenderOp>()
+		
+		Return _shadowOps
+	End
+	
+	'bit of a hack for now, but renderqueue should be able to handle sprites...	
+	Property Sprites:Stack<Sprite>()
+	
+		Return _sprites
+	End
+	
 	Method AddSpriteOp( material:Material,uniforms:UniformBlock,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
 		op.material=material
@@ -164,4 +166,6 @@ Class RenderQueue
 	Field _sprites:=New Stack<Sprite>
 	
 	Field _addShadowOps:Bool
+	
+
 End

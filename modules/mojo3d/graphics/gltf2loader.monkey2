@@ -155,7 +155,7 @@ Class Gltf2Loader
 			
 '			Print "mesh="+node.mesh.name
 			
-			Local matrix:=Cast<AffineMat4f>( GetMatrix( node ) )
+			Local matrix:=New AffineMat4f( GetMatrix( node ) )
 
 			Local cofactor:=matrix.m.Cofactor()
 			
