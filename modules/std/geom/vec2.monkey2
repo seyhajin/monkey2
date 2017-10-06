@@ -9,7 +9,12 @@ Alias Vec2i:Vec2<Int>
 #end
 Alias Vec2f:Vec2<Float>
 
-#rem monkeydoc The Vec2 type provides support for 2 component vectors.
+#rem monkeydoc The generic Vec2 type provides support for 2 component vectors.
+
+Unless otherwise noted, methods and operators always return a new vec2 containing the result, without modifying any parameters or 'self'.
+
+This allows you to chain operators together easily just like 'real' expressions.
+
 #end
 Struct Vec2<T>
 
@@ -34,14 +39,12 @@ Struct Vec2<T>
 		Self.x=x;Self.y=y
 	End
 	
-	#rem monkeydoc Converts the vector to a vector of a different type.
+	#rem monkeydoc Converts the vector to a vector of a different type or a printable string.
 	#end
 	Operator To<C>:Vec2<C>()
 		Return New Vec2<C>( x,y )
 	End
 
-	#rem monkeydoc Converts the vector to a printable string.
-	#end
 	Operator To:String()
 		Return "Vec2("+x+","+y+")"
 	End
@@ -62,55 +65,55 @@ Struct Vec2<T>
 		Self.y=y
 	End
 	
-	#rem monkeydoc Negates the vector components and returns the result.
+	#rem monkeydoc Negates the vector.
 	#end
 	Operator-:Vec2()
 		Return New Vec2( -x,-y )
 	End
 	
-	#rem monkeydoc Multiplies the vector by another vector and returns the result.
+	#rem monkeydoc Multiplies the vector by another vector.
 	#end
 	Operator*:Vec2( v:Vec2 )
 		Return New Vec2( x*v.x,y*v.y )
 	End
 
-	#rem monkeydoc Divides the vector by another vector and returns the result.
+	#rem monkeydoc Divides the vector by another vector.
 	#end	
 	Operator/:Vec2( v:Vec2 )
 		Return New Vec2( x/v.x,y/v.y )
 	End
 
-	#rem monkeydoc Adds another vector to the vector and returns the result.
+	#rem monkeydoc Adds another vector to the vector.
 	#end	
 	Operator+:Vec2( v:Vec2 )
 		Return New Vec2( x+v.x,y+v.y )
 	End
 	
-	#rem monkeydoc Subtracts another vector from the vector and returns the result.
+	#rem monkeydoc Subtracts another vector from the vector.
 	#end
 	Operator-:Vec2( v:Vec2 )
 		Return New Vec2( x-v.x,y-v.y )
 	End
 	
-	#rem monkeydoc Scales the vector by a value and returns the result.
+	#rem monkeydoc Multiplies the vector by a scalar.
 	#end
 	Operator*:Vec2( s:Double )
 		Return New Vec2( x*s,y*s )
 	End
 	
-	#rem monkeydoc Inverse scales the vector by a value and returns the result.
+	#rem monkeydoc Divides the vector by a scalar.
 	#end
 	Operator/:Vec2( s:Double )
 		Return New Vec2( x/s,y/s )
 	End
 	
-	#rem monkeydoc Adds a value to the vector components and returns the result.
+	#rem monkeydoc Adds a scalar to the vector.
 	#end
 	Operator+:Vec2( s:T )
 		Return New Vec2( x+s,y+s )
 	End
 	
-	#rem monkeydoc Subtracts a value from the vector components and returns the result.
+	#rem monkeydoc Subtracts a scalar from the vector.
 	#end
 	Operator-:Vec2( s:T )
 		Return New Vec2( x-s,y-s )
@@ -122,42 +125,36 @@ Struct Vec2<T>
 		Return Sqrt( x*x+y*y )
 	End
 
-	#rem monkeydoc Computes the distance from this vector to another.
-	#end
-	Method Distance:Double( v:Vec2 )
-		Return (v-Self).Length
-	End
-	
-	#rem monkeydoc Normalizes the vector and returns the result.
-	#end
-	Method Normalize:Vec2()
-		Return Self/Length
-	End
-	
 	#rem monkeydoc The normal to the vector.
 	#end	
 	Property Normal:Vec2()
 		Return New Vec2( -y,x )
 	End
 
+	#rem monkeydoc Computes the distance from this vector to another.
+	#end
+	Method Distance:Double( v:Vec2 )
+		Return (v-Self).Length
+	End
+	
+	#rem monkeydoc Normalizes the vector.
+	#end
+	Method Normalize:Vec2()
+		Return Self/Length
+	End
+	
 	#rem monkeydoc Computes the dot product of the vector with another vector.
 	#end
 	Method Dot:T( v:Vec2 )
 		Return x*v.x+y*v.y
 	End
 	
-	#rem monkeydoc Blends the vector with another vector and returns the result.
+	#rem monkeydoc Blends the vector with another vector.
 	#end
 	Method Blend:Vec2( v:Vec2,alpha:Double )
 		Return New Vec2( (v.x-x)*alpha+x,(v.y-y)*alpha+y )
 	End
 	
-	#rem monkeydoc Gets a string representation for the vector.
-	#end
-	Method ToString:String()
-		Return Self
-	End
-
 End
 
 #rem monkeydoc Transforms a Vec2\<Int\> by an AffineMat3.

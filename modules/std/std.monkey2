@@ -83,6 +83,8 @@ Namespace std
 
 #Import "requesters/requesters"
 
+#Import "permissions/permissions"
+
 Private
 
 Function Main()

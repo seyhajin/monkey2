@@ -1,11 +1,11 @@
 
 Namespace std.geom
 
-#rem monkeydoc @hidden Convenience type alias for AffineMat4\<Float\>
+#rem monkeydoc Convenience type alias for AffineMat4\<Float\>
 #end
 Alias AffineMat4f:AffineMat4<Float>
 
-#rem monkeydoc @hidden Affine 4x4 matrix class.
+#rem monkeydoc Affine 4x4 matrix class.
 
 An affine 4x4 matrix is a 4x4 matrix whose right hand column is always 0,0,0,1.
 
@@ -21,16 +21,16 @@ Struct AffineMat4<T>
 		m.i.x=1; m.j.y=1; m.k.z=1
 	End
 	
-	Method New( m:Mat3<T>,t:Vec3<T> )
-		Self.m=m; Self.t=t
-	End
-	
 	Method New( m:Mat3<T> )
 		Self.m=m
 	End
 	
 	Method New( t:Vec3<T> )
 		m.i.x=1; m.j.y=1; m.k.z=1 ; Self.t=t
+	End
+	
+	Method New( m:Mat3<T>,t:Vec3<T> )
+		Self.m=m; Self.t=t
 	End
 	
 	Method New( i:Vec3<T>,j:Vec3<T>,k:Vec3<T>,t:Vec3<T> )
@@ -44,11 +44,25 @@ Struct AffineMat4<T>
 		t.x=vx; t.y=vy; t.z=vz
 	End
 	
+	Method new( m:AffineMat3<T> )
+		Self.m.i=New Vec3<T>( m.i,0 )
+		Self.m.j=New Vec3<T>( m.j,0 )
+		Self.m.k=New Vec3<T>( 0,0,1 )
+		Self.t=  New Vec3<T>( m.t,1 )
+	End
+	
+	Method New( m:Mat4<T> )
+		Self.m.i=m.i.XYZ
+		Self.m.j=m.j.XYZ
+		Self.m.k=m.k.XYZ
+		Self.t=m.t.XYZ
+	End
+	
 	#rem monkeydoc Converts the matrix to a matrix of a different type.
 	#end
 	Operator To<C>:AffineMat4<C>()
 		Return New AffineMat4<C>( m,t )
-	End 
+	End
 	
 	#rem monkeydoc Converts the matrix to a printable string.
 	#end
@@ -105,8 +119,8 @@ Struct AffineMat4<T>
 		Return Self * Rotation( rv )
 	End
 	
-	Method Rotate:AffineMat4( quat:Quat<T> )
-		Return Self * Rotation( quat )
+	Method Rotate:AffineMat4( q:Quat<T> )
+		Return Self * Rotation( q )
 	End
 	
 	#rem monkeydoc Applies a scaling transformation to the matrix and returns the result.
@@ -133,7 +147,7 @@ Struct AffineMat4<T>
 		Return New AffineMat4( New Vec3<T>( tx,ty,tz ) )
 	End
 
-	#rem monkeydoc Creates a rotation matrix from euler angles or a quaternion.
+	#rem monkeydoc Creates a rotation matrix from euler angles.
 	
 	Order of rotation is Yaw * Pitch * Roll.
 	
@@ -146,8 +160,8 @@ Struct AffineMat4<T>
 		Return New AffineMat4( Mat3<T>.Rotation( rx,ry,rz ) )
 	End
 	
-	Function Rotation:AffineMat4( quat:Quat<T> )
-		Return New AffineMat4( Mat3<T>.Rotation( quat ) )
+	Function Rotation:AffineMat4( q:Quat<T> )
+		Return New AffineMat4( q )
 	End
 	
 	#rem monkeydoc Creates a scaling matrix.

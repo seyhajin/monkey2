@@ -1,11 +1,12 @@
 
 Namespace std.geom
 
-#rem monkeydoc @hidden
+#rem monkeydoc Convenience type alias for Mat3\<Float\>.
 #end
 Alias Mat3f:Mat3<Float>
 
-#rem monkeydoc @hidden
+#rem monkeydoc The Mat3 class provides support for 3x3 matrices.
+
 #end
 Struct Mat3<T>
 
@@ -21,16 +22,16 @@ Struct Mat3<T>
 		i.x=ix; j.y=jy; k.z=kz
 	End
 	
-	Method New( i:Vec3<T>,j:Vec3<T>,k:Vec3<T> )
-		Self.i=i; Self.j=j; Self.k=k
-	End
-	
 	Method New( ix:T,iy:T,iz:T,jx:T,jy:T,jz:T,kx:T,ky:T,kz:T )
 		i.x=ix; i.y=iy; i.z=iz
 		j.x=jx; j.y=jy; j.z=jz
 		k.x=kx; k.y=ky; k.z=kz
 	End
 
+	Method New( i:Vec3<T>,j:Vec3<T>,k:Vec3<T> )
+		Self.i=i; Self.j=j; Self.k=k
+	End
+	
 	Method New( quat:Quat<T> )
 		Local xx:=quat.v.x*quat.v.x , yy:=quat.v.y*quat.v.y , zz:=quat.v.z*quat.v.z
 		Local xy:=quat.v.x*quat.v.y , xz:=quat.v.x*quat.v.z , yz:=quat.v.y*quat.v.z
@@ -42,6 +43,10 @@ Struct Mat3<T>
 	
 	Operator To<C>:Mat3<C>()
 		Return New Mat3<C>( i,j,k )
+	End
+	
+	Operator To:Quat<T>()
+		Return New Quat<T>( Self )
 	End
 	
 	Operator To:String()
@@ -110,38 +115,6 @@ Struct Mat3<T>
 		Return New Vec3<T>( GetPitch(),GetYaw(),GetRoll() )
 	End
 	
-	Method GetQuat:Quat<T>()
-		Local r:Quat<T>
-		Local m:=Orthogonalize()
-		Local t:=m.i.x+m.j.y+m.k.z
-		If t>EPSILON
-			t=Sqrt( t+1 )*2
-			r.v.x=(m.k.y-m.j.z)/t
-			r.v.y=(m.i.z-m.k.x)/t
-			r.v.z=(m.j.x-m.i.y)/t
-			r.w=t/4
-		Else If m.i.x>m.j.y And m.i.x>m.k.z
-			t=Sqrt( m.i.x-m.j.y-m.k.z+1 )*2
-			r.v.x=t/4
-			r.v.y=(m.j.x+m.i.y)/t
-			r.v.z=(m.i.z+m.k.x)/t
-			r.w=(m.k.y-m.j.z)/t
-		Else If m.j.y>m.k.z
-			t=Sqrt( m.j.y-m.k.z-m.i.x+1 )*2
-			r.v.x=(m.j.x+m.i.y)/t
-			r.v.y=t/4
-			r.v.z=(m.k.y+m.j.z)/t
-			r.w=(m.i.z-m.k.x)/t
-		Else
-			t=Sqrt( m.k.z-m.j.y-m.i.x+1 )*2
-			r.v.x=(m.i.z+m.k.x)/t
-			r.v.y=(m.k.y+m.j.z)/t
-			r.v.z=t/4
-			r.w=(m.j.x-m.i.y)/t
-		Endif
-		Return r
-	End
-	
 	Method GetScaling:Vec3<T>()
 		Return New Vec3<T>( i.Length,j.Length,k.Length )
 	End
@@ -154,8 +127,8 @@ Struct Mat3<T>
 		Return Self * Rotation( rx,ry,rz )
 	End
 	
-	Method Rotate:Mat3( quat:Quat<T> )
-		Return Self * Rotation( quat )
+	Method Rotate:Mat3( q:Quat<T> )
+		Return Self * Rotation( q )
 	End
 	
 	Method Scale:Mat3( rv:Vec3<T> )
@@ -175,28 +148,40 @@ Struct Mat3<T>
 		Return New Mat3( j.Cross( k ).Normalize(),k.Cross( i ).Normalize(),k )
 	End
 	
-	#rem monkeydoc Creates a rotation matrix from euler angles.
+	#rem monkeydoc Creates a yaw rotation matrix.
+	
+	Returns a matrix representing a rotation around the Y axis of `angle` radians.
+	
 	#end
-	Function Yaw:Mat3( an:Double )
-		Local sin:=Sin(an),cos:=Cos(an)
+	Function Yaw:Mat3( angle:Double )
+		Local sin:=Sin(angle),cos:=Cos(angle)
 		Return New Mat3( cos,0,sin, 0,1,0, -sin,0,cos )
 	End
 	
-	#rem monkeydoc Creates a rotation matrix from euler angles.
+	#rem monkeydoc Creates a pitch rotation matrix.
+	
+	Returns a matrix representing a rotation around the X axis of `angle` radians.
+	
 	#end
-	Function Pitch:Mat3( an:Double )
-		Local sin:=Sin(an),cos:=Cos(an)
+	Function Pitch:Mat3( angle:Double )
+		Local sin:=Sin(angle),cos:=Cos(angle)
 		return New Mat3( 1,0,0, 0,cos,sin, 0,-sin,cos )
 	End
 	
-	#rem monkeydoc Creates a rotation matrix from euler angles.
+	#rem monkeydoc Creates a yaw rotation matrix.
+	
+	Returns a matrix representing a rotation around the Y axis of `an` radians.
+	
 	#end
-	Function Roll:Mat3( an:Double )
-		Local sin:=Sin(an),cos:=Cos(an)
+	Function Roll:Mat3( angle:Double )
+		Local sin:=Sin(angle),cos:=Cos(angle)
 		Return New Mat3( cos,sin,0, -sin,cos,0, 0,0,1 )
 	End
 	
-	#rem monkeydoc Creates a rotation matrix from euler angles or a quaternion.
+	#rem monkeydoc Creates a rotation matrix from euler angles or a quat.
+	
+	For euler angles, the order of rotation is Yaw * Pitch * Roll.
+	
 	#end
 	Function Rotation:Mat3( rv:Vec3<Double> )
 		Return Yaw( rv.y ) * Pitch( rv.x ) * Roll( rv.z )
@@ -205,23 +190,11 @@ Struct Mat3<T>
 	Function Rotation:Mat3( rx:Double,ry:Double,rz:Double )
 		Return Yaw( ry ) * Pitch( rx ) * Roll( rz )
 	End
-
-	Function Rotation:Mat3( quat:Quat<T> )
-		Local r:Mat3
-		Local xx:=quat.v.x*quat.v.x , yy:=quat.v.y*quat.v.y , zz:=quat.v.z*quat.v.z
-		Local xy:=quat.v.x*quat.v.y , xz:=quat.v.x*quat.v.z , yz:=quat.v.y*quat.v.z
-		Local wx:=quat.w*quat.v.x   , wy:=quat.w*quat.v.y   , wz:=quat.w*quat.v.z
-		r.i.x=1-2*(yy+zz) ; r.i.y=  2*(xy-wz) ; r.i.z=  2*(xz+wy)
-		r.j.x=  2*(xy+wz) ; r.j.y=1-2*(xx+zz) ; r.j.z=  2*(yz-wx)
-		r.k.x=  2*(xz-wy) ; r.k.y=  2*(yz+wx) ; r.k.z=1-2*(xx+yy)
-		Return r
+	
+	Function Rotation:Mat3( q:Quat<T> )
+		Return New Mat3( q )
 	End
-	
-	#rem monkeydoc Creates a rotation matrix from euler angles.
-	
-	Order of rotation is Yaw * Pitch * Roll.
-	
-	#end
+
 	#rem monkeydoc Creates a scaling matrix.
 	#end
 	Function Scaling:Mat3( sv:Vec3<T> )
