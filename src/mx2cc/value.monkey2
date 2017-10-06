@@ -171,6 +171,7 @@ Class UpCastValue Extends Value
 	Method New( type:Type,value:Value )
 		Self.type=type
 		Self.value=value
+
 	End
 	
 	Method ToString:String() Override
@@ -263,7 +264,7 @@ Class LiteralValue Extends Value
 			If ptype.IsSignedIntegral
 				value=String( Cast<Long>( value ) )
 			Else If ptype.IsUnsignedIntegral
-				value=String( Cast<ulong>( value ) )
+				value=String( Cast<ULong>( value ) )
 			Else If ptype.IsReal
 				value=String( Cast<Double>( value ) )
 			Else

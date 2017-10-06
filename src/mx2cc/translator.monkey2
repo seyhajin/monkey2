@@ -475,7 +475,12 @@ Class Translator
 		
 		Local atype:=TCast<ArrayType>( type )
 		If atype
-			Refs( atype.elemType )
+			Local ctype:=TCast<ClassType>( atype.elemType )
+			If ctype And ctype.IsStruct
+				Uses( ctype )
+			Else
+				Refs( atype.elemType )
+			Endif
 			Return
 		Endif
 		
@@ -546,7 +551,6 @@ Class Translator
 		UsesRefInfo( vvar.type )
 	
 		Uses( vvar.transFile )
-		
 	End
 	
 	Method UsesRefInfo( func:FuncValue )

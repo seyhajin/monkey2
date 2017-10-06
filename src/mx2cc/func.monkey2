@@ -210,7 +210,19 @@ Class FuncValue Extends Value
 		'
 		If IsCtor
 		
-			If cscope.ctype.cdecl.kind="struct"
+			If cscope.ctype.cdecl.kind="class"
+			
+				Local isdefault:=True
+				
+				For Local p:=Eachin pdecls
+					If p.init Continue
+					isdefault=False
+					Exit
+				Next
+				
+				If isdefault cscope.ctype.defaultCtor=Self
+		
+			Else If cscope.ctype.cdecl.kind="struct"
 			
 				If ftype.argTypes.Length And ftype.argTypes[0].Equals( cscope.ctype )
 					Local ok:=False
@@ -221,7 +233,7 @@ Class FuncValue Extends Value
 					Next
 					If Not ok Throw New SemantEx( "Illegal struct constructor - 'copy constructors' are automatically generated and cannot be redefined" )
 				Endif
-			
+						
 			Endif
 		
 		Else If IsMethod
@@ -395,10 +407,16 @@ Class FuncValue Extends Value
 			If fdecl.ident="new" And Not invokeNew
 			
 				Local superType:=cscope.ctype.superType
-				If superType And Not superType.hasDefaultCtor
-				
-					New SemantEx( "Super class '"+superType.Name+"' has no default constructor",pnode )
-					
+				If superType
+					If superType.cdecl.hasDefaultCtor
+						Local ctor:=superType.FindNode( "new" )
+						If ctor
+							Local invoke:=Cast<InvokeValue>( ctor.ToValue( Null ).Invoke( null ) )
+							invokeNew=New InvokeNewValue( superType,invoke.args )
+						Endif
+					Else
+						New SemantEx( "Super class '"+superType.Name+"' has no default constructor!!!!",pnode )
+					Endif
 				Endif
 			
 			Endif

@@ -1747,28 +1747,43 @@ Class Translator_CPP Extends Translator
 		If Not value.value Return TransNull( value.type )
 		
 		Local ptype:=TCast<PrimType>( value.type )
-		Select ptype
-		Case Type.FloatType,Type.DoubleType
-		
-			Local t:=value.value
-			If t.Find( "." )=-1 And t.Find( "e" )=-1 And t.Find( "E" )=-1 t+=".0"
+		If ptype
 			
-			If ptype=Type.FloatType Return t+"f"
-			Return t
-			
-		Case Type.StringType
+			If ptype.IsIntegral
+				    
+				If value.value="0" Return TransType( value.type )+"(0)"
+				
+				Select value.type
+				Case Type.IntType  Return value.value
+				Case Type.UIntType Return value.value+"u"
+				Case Type.LongType Return value.value+"l"
+				Case Type.ULongType Return value.value+"ul"
+				End
+				
+				Return TransType( value.type )+"("+value.value+")"
+				
+			Else If ptype.IsReal
+
+				Local t:=value.value
+				If t.Find( "." )=-1 And t.Find( "e" )=-1 And t.Find( "E" )=-1 t+=".0"
+				
+				If ptype=Type.FloatType Return t+"f"
+				Return t
+
+			Else If ptype=Type.StringType
+
+				Local str:=value.value
+				If str.Length Return "bbString("+EnquoteCppString( str )+","+str.Length+")"
+				Return "bbString()"
+				
+			Endif
 		
-			Local str:=value.value
-			If str.Length Return "bbString("+EnquoteCppString( str )+","+str.Length+")"
-			Return "bbString()"
-		End
+		Endif
 		
 		Refs( value.type )
 		
 		Local etype:=TCast<EnumType>( value.type )
 		If etype Return EnumValueName( etype,value.value )
-		
-		If value.value="0" Return TransType( value.type )+"(0)"
 		
 		Return value.value
 	End

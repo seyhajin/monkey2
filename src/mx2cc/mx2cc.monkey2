@@ -38,7 +38,7 @@ Const MX2CC_VERSION_EXT:=""
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makedocs mojo"	'monkey libc miniz stb-image stb-image-write stb-vorbis std mojo mojo3d"
+'Const TestArgs:="mx2cc makemods"
  
 Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
