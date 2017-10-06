@@ -2,48 +2,27 @@
 Namespace mojo.graphics
 
 Enum IndexFormat
-	UINT16=1
-	UINT32=2
+	UINT8=1
+	UINT16=2
+	UINT32=4
 End
 
-#rem monkeydoc @hidden
-#end	
-Class IndexBuffer
-
-	Method New( format:IndexFormat,capacity:Int )
-
-		_format=format
-		_capacity=capacity
-		_pitch=_format=IndexFormat.UINT16 ? 2 Else 4
-		_data=New UByte[_capacity*_pitch]
-	End
+Class IndexBuffer Extends Resource
 	
-	Method New( indices:IndexBuffer )
-
-		_format=indices._format
-		_capacity=indices._capacity
-		_pitch=indices._pitch
-		_length=indices._length
-		_data=indices._data.Slice( 0 )
-	End
-	
-	Method New( indices:UInt[] )
+	Method New( format:IndexFormat,length:Int=0 )
 		
+		_format=format
+		_length=length
+		_pitch=Int( _format )
+		_managed=New UByte[_length*_pitch]
+		_dirtyMin=_length
+		_dirtyMax=0
+	End
+
+	Method New( indices:UInt[] )
 		Self.New( IndexFormat.UINT32,indices.Length )
 		
-		If _capacity libc.memcpy( AddIndices( _capacity ),indices.Data,_capacity*_pitch )
-	End
-	
-	Method New( indices:UShort[] )
-		
-		Self.New( IndexFormat.UINT16,indices.Length )
-		
-		If _capacity libc.memcpy( AddIndices( _capacity ),indices.Data,_capacity*_pitch )
-	End
-	
-	Property Data:UByte Ptr()
-		
-		Return _data.Data
+		SetIndices( indices.Data,0,indices.Length )
 	End
 	
 	Property Format:IndexFormat()
@@ -51,97 +30,156 @@ Class IndexBuffer
 		Return _format
 	End
 	
-	Property Capacity:Int()
-	
-		Return _capacity
+	Property Length:Int()
+		
+		Return _length
 	End
-
+	
 	Property Pitch:Int()
 		
 		Return _pitch
 	End
 	
-	Property Length:Int()
-	
-		Return _length
+	#rem monkeydoc Resizes the index buffer.
+	#end
+	Method Resize( length:Int )
+
+		If length=_length Return
+		
+		Local managed:=New UByte[length*_pitch]
+		
+		Local n:=Min( length,_length )
+		
+		If n libc.memcpy( managed.Data,_managed.Data,n*_pitch )
+			
+		_managed=managed
+		
+		_length=length
+		
+		If _glSeq=glGraphicsSeq glDeleteBuffers( 1,Varptr _glBuffer )
+			
+		_glSeq=0
 	End
 	
-	Method Clear()
+	#rem monkeydoc Sets a range of indices.
+	#end
+	Method SetIndices( indices:Void Ptr,first:Int,count:Int )
+
+		DebugAssert( Not _locked,"IndexBuffer is locked" )
+
+		DebugAssert( first>=0 And count>=0 And first<=_length And first+count<=_length,"Invalid index range" )
 		
-		_length=0
-		_clean=0
+		libc.memcpy( _managed.Data+first*_pitch,indices,count*_pitch )
+		
+		Invalidate( first,count )
+	End
+	
+	#rem monkeydoc Locks indices.
+	
+	Make sure to invalidate any indices you modify by using [[Invalidate]].
+	
+	#end
+	Method Lock:UByte ptr()
+		
+		DebugAssert( Not _locked,"IndexBuffer is already locked" )
+		
+		_locked=_managed.Data
+		
+		Return _locked
+	End
+	
+	#rem onkeydoc Invalidates indices.
+	
+	You should use this method to invalidate any indices you have modified by writing to a locked index buffer.
+	
+	#End
+	Method Invalidate( first:Int,count:Int )
+		
+'		DebugAssert( _locked,"Index buffer is not locked" )
+		
+		DebugAssert( first>=0 And count>=0 And first<=_length And first+count<=_length,"Invalid index range" )
+		
+		_dirtyMin=Min( _dirtyMin,first )
+		
+		_dirtyMax=Max( _dirtyMax,first+count )
 	End
 	
 	Method Invalidate()
 		
-		_clean=0
+		Invalidate( 0,_length )
 	End
 	
-	Method AddIndices:UByte Ptr( count:Int )
+	#rem monkeydoc Unlocks indices.
+	#end
+	Method Unlock:Void()
 		
-		Reserve( _length+count )
+		DebugAssert( _locked,"Index buffer is not locked" )
 		
-		Local p:=_data.Data+_length*_pitch
-		
-		_length+=count
-		
-		Return p
+		_locked=Null
 	End
 	
-	'***** INTERNAL *****
+	Protected
+	
+	Method OnDiscard() Override
+		
+		If _glSeq=glGraphicsSeq glDeleteBuffers( 1,Varptr _glBuffer )
+			
+		_glSeq=-1
+	End
+	
+	Method OnFinalize() Override
+
+		If _glSeq=glGraphicsSeq glDeleteBuffers( 1,Varptr _glBuffer )
+	End
+	
+	Internal
 	
 	Method Bind()
-	
+		
+		DebugAssert( Not _locked,"IndexBuffer.Bind() failed, IndexBuffer is locked" )
+		
 		If _glSeq<>glGraphicsSeq
 			
 			glGenBuffers( 1,Varptr _glBuffer )
 			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,_glBuffer )
 			
-			glBufferData( GL_ELEMENT_ARRAY_BUFFER,_capacity*_pitch,Null,GL_DYNAMIC_DRAW )
-'			Print "bound ib "+_glBuffer
-		
-			_glSeq=glGraphicsSeq
-			_clean=0
-		Else
-			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,_glBuffer )
-'			Print "bound ib "+_glBuffer
-		Endif
+			glBufferData( GL_ELEMENT_ARRAY_BUFFER,_length*_pitch,_managed.Data,GL_DYNAMIC_DRAW )
+			_dirtyMin=_length
+			_dirtyMax=0
 
+			_glSeq=glGraphicsSeq
+			
+		Else
+
+			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,_glBuffer )
+		Endif
+	
 	End
 	
 	Method Validate()
 		
-		If _length=_clean Return
-		
-		glBufferData( GL_ELEMENT_ARRAY_BUFFER,_length*_pitch,_data.Data,GL_DYNAMIC_DRAW )
-'		Print "updated ib "+_glBuffer
-		
-		_clean=_length
+		If _dirtyMax>_dirtyMin
+			
+			glBufferSubData( GL_ELEMENT_ARRAY_BUFFER,_dirtyMin*_pitch,(_dirtyMax-_dirtyMin)*_pitch,_managed.Data )
+			
+			_dirtyMin=_length
+			_dirtyMax=0
+		Endif
 	End
-		
+	
 	Private
 	
 	Field _format:IndexFormat
-	Field _capacity:Int
-	Field _pitch:Int
 	Field _length:Int
-	Field _clean:Int
-	Field _data:UByte[]
-
+	Field _pitch:Int
+	
+	Field _managed:UByte[]
+	Field _dirtyMin:Int
+	Field _dirtyMax:Int
+	
+	Field _locked:UByte Ptr
+	
 	Field _glSeq:Int
 	Field _glBuffer:GLuint
-
-	Method Reserve( capacity:Int )
-		
-		If _capacity>=capacity Return
-		
-		_capacity=Max( _length*2+_length,capacity )
-		
-		Local data:=New UByte[_capacity*_pitch]
-		
-		If _length libc.memcpy( data.Data,_data.Data,_length*_pitch )
-		
-		_data=data
-	End
-
+	
 End

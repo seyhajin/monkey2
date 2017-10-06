@@ -32,10 +32,6 @@ End
 #end
 Class Window Extends View
 
-	Method New()
-		Init( "Window",New Recti( 0,0,640,480 ),WindowFlags.Center )
-	End
-	
 	Method New( title:String="Window",width:Int=640,height:Int=480,flags:WindowFlags=Null )
 		Init( title,New Recti( 0,0,width,height ),flags|WindowFlags.Center )
 	End

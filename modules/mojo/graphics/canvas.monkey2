@@ -1142,17 +1142,19 @@ Class Canvas
 		DebugAssert( _lighting,"Canvas.AddLight() can only be used while lighting" )
 		If Not _lighting Return
 		
+		If _lightNV+4>_lightVB.Length Return
+		
 		Local lx:=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		Local ly:=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
 		
-		_vp=Cast<Vertex2f Ptr>( _lightVB.AddVertices( 4 ) )
-		If Not _vp Return
-
 		Local op:=New LightOp
 		op.light=light
 		op.lightPos=New Vec2f( lx,ly )
-		op.primOffset=_lightVB.Length-4
+		op.primOffset=_lightNV
 		_lightOps.Push( op )
+
+		_vp=_lightVP0+_lightNV
+		_lightNV+=4
 		
 		Local vs:=light.Vertices
 		Local ts:=light.TexCoords
@@ -1291,6 +1293,10 @@ Class Canvas
 		
 		If _drawOps.Empty Return
 		
+		_drawVB.Invalidate( 0,_drawNV )
+		
+		_drawVB.Unlock()
+		
 		'Render ambient
 		'		
 		RenderDrawOps( 0 )
@@ -1312,9 +1318,11 @@ Class Canvas
 			'back to rendertarget
 			'			
 			_device.RenderTarget=_rtarget
+			
 		Endif
 		
-		_drawVB.Clear()
+		_drawVP0=Cast<Vertex2f Ptr>( _drawVB.Lock() )
+		_drawNV=0
 		_drawOps.Clear()
 		_drawOp=New DrawOp
 	End
@@ -1397,9 +1405,14 @@ Class Canvas
 		
 		Flush()
 		
+		_lightVB.Invalidate( 0,_lightNV )
+		
+		_lightVB.Unlock()
+		
 		RenderLighting()
 	
-		_lightVB.Clear()
+		_lightVP0=Cast<Vertex2f Ptr>( _lightVB.Lock() )
+		_lightNV=0
 		_lightOps.Clear()
 		
 		_shadowOps.Clear()
@@ -1516,10 +1529,14 @@ Class Canvas
 	Field _vp:Vertex2f Ptr
 
 	Field _drawVB:VertexBuffer
+	Field _drawVP0:Vertex2f Ptr
+	Field _drawNV:Int
 	Field _drawOps:=New Stack<DrawOp>
 	Field _drawOp:=New DrawOp
 
 	Field _lightVB:VertexBuffer
+	Field _lightVP0:Vertex2f Ptr
+	Field _lightNV:Int
 	Field _lightOps:=New Stack<LightOp>
 	
 	Field _shadowOps:=New Stack<ShadowOp>
@@ -1535,8 +1552,11 @@ Class Canvas
 		inited=True
 
 		Local nquads:=MaxVertices/4
+		
 		_quadIndices=New IndexBuffer( IndexFormat.UINT16,nquads*6 )
-		Local ip:=Cast<UShort Ptr>( _quadIndices.AddIndices( nquads*6 ) )
+		
+		Local ip:=Cast<UShort Ptr>( _quadIndices.Lock() )
+		
 		For Local i:=0 Until nquads*4 Step 4
 			ip[0]=i
 			ip[1]=i+1
@@ -1546,8 +1566,12 @@ Class Canvas
 			ip[5]=i+3
 			ip+=6
 		Next
+
+		_quadIndices.Invalidate( 0,nquads*6 )
 		
-		_shadowVB=New VertexBuffer( Vertex2fFormat.Instance,MaxShadowVertices )
+		_quadIndices.Unlock()
+		
+		_shadowVB=New VertexBuffer( Vertex2f.Format,MaxShadowVertices )
 
 		_defaultFont=mojo.graphics.Font.Load( "font::DejaVuSans.ttf",16 )
 	End
@@ -1567,9 +1591,15 @@ Class Canvas
 		_uniforms=New UniformBlock( 1 )
 		_device.BindUniformBlock( _uniforms )
 
-		_drawVB=New VertexBuffer( Vertex2fFormat.Instance,MaxVertices )
-		_lightVB=New VertexBuffer( Vertex2fFormat.Instance,MaxLights*4 )
-		_shadowVB=New VertexBuffer( Vertex2fFormat.Instance,65536 )
+		_drawVB=New VertexBuffer( Vertex2f.Format,MaxVertices )
+		_drawVP0=Cast<Vertex2f Ptr>( _drawVB.Lock() )
+		_drawNV=0
+		
+		_lightVB=New VertexBuffer( Vertex2f.Format,MaxLights*4 )
+		_lightVP0=Cast<Vertex2f Ptr>( _lightVB.Lock() )
+		_lightNV=0
+		
+		_shadowVB=New VertexBuffer( Vertex2f.Format,65536 )
 		
 		_device.IndexBuffer=_quadIndices
 
@@ -1656,8 +1686,8 @@ Class Canvas
 	'Drawing
 	'	
 	Method AddDrawOp( shader:Shader,material:UniformBlock,blendMode:BlendMode,primOrder:int,primCount:Int )
-	
-		If _drawVB.Length+primCount*primOrder>_drawVB.Capacity
+
+		If _drawNV+primCount*primOrder>_drawVB.Length
 			Flush()
 		Endif
 		
@@ -1666,8 +1696,8 @@ Class Canvas
 		If shader<>_drawOp.shader Or material<>_drawOp.material Or blendMode<>_drawOp.blendMode Or primOrder<>_drawOp.primOrder
 		
 			'pad quads so primOffset always on a 4 vert boundary
-			If primOrder=4 And _drawVB.Length & 3 
-				_drawVB.AddVertices( 4-(_drawVB.Length&3) )
+			If primOrder=4 And _drawNV & 3
+				_drawNV+=4-(_drawNV&3)
 			Endif
 			
 			_drawOp=New DrawOp
@@ -1676,13 +1706,14 @@ Class Canvas
 			_drawOp.blendMode=blendMode
 			_drawOp.primOrder=primOrder
 			_drawOp.primCount=primCount
-			_drawOp.primOffset=_drawVB.Length
+			_drawOp.primOffset=_drawNV
 			_drawOps.Push( _drawOp )
 		Else
 			_drawOp.primCount+=primCount
 		Endif
 		
-		_vp=Cast<Vertex2f Ptr>( _drawVB.AddVertices( primOrder*primCount ) )
+		_vp=_drawVP0+_drawNV
+		_drawNV+=primCount*primOrder
 	End
 	
 	Method Validate()
@@ -1766,7 +1797,8 @@ Class Canvas
 		
 		Local lv:=lightOp.lightPos
 
-		_shadowVB.Clear()
+		Local vp0:=Cast<Vertex2f Ptr>( _shadowVB.Lock() )
+		Local n:=0
 		
 		For Local op:=Eachin _shadowOps
 		
@@ -1787,8 +1819,9 @@ Class Canvas
 				Local d:=lv.Dot( nv )+pd
 				If d<0 Continue
 				
-				Local tp:=Cast<Vertex2f Ptr>( _shadowVB.AddVertices( 9 ) )
-				If Not tp Exit
+				If n+9>_shadowVB.Length Exit
+				Local tp:=vp0+n
+				n+=9
 			
 				Local hv:=(pv+tv)/2
 				
@@ -1805,6 +1838,8 @@ Class Canvas
 			
 		Next
 		
+		_shadowVB.Unlock()
+		
 	End
 		
 	'Lighting
@@ -1812,6 +1847,7 @@ Class Canvas
 	Method RenderLighting()
 	
 		_device.BlendMode=BlendMode.Additive
+		
 		_device.VertexBuffer=_lightVB
 		
 		For Local op:=Eachin _lightOps

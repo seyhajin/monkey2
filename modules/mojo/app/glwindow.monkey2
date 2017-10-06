@@ -3,10 +3,6 @@ Namespace mojo.app
 
 Class GLWindow Extends Window
 
-	Method New()
-		Init()
-	End
-	
 	Method New( title:String="Window",width:Int=640,height:Int=480,flags:WindowFlags=Null )
 		Super.New( title,width,height,flags )
 		Init()
