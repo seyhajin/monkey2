@@ -129,7 +129,7 @@ Class Mesh Extends Resource
 		
 		DebugAssert( first>=0 And count>=0 And first<=_vertices.Length And first+count<=_vertices.Length,"Invalid vertex range" )
 		
-		libc.memcpy( _vertices.Data.Data+first*Vertex3f.Pitch,vertices,count*Vertex3f.Pitch )
+		libc.memcpy( _vertices.Data.Data+first,vertices,count*Vertex3f.Pitch )
 
 		InvalidateVertices( first,count )
 	End
@@ -160,7 +160,7 @@ Class Mesh Extends Resource
 		
 		_vertices.Resize( first+count )
 		
-		libc.memcpy( _vertices.Data.Data+first*Vertex3f.Pitch,vertices,count * Vertex3f.Pitch )
+		libc.memcpy( _vertices.Data.Data+first,vertices,count*Vertex3f.Pitch )
 		
 		InvalidateVertices( first,count )
 	End
@@ -208,7 +208,7 @@ Class Mesh Extends Resource
 
 		DebugAssert( first>=0 And count>=0 And first<=mindices.Length And first+count<=mindices.Length,"Invalid range" )
 		
-		libc.memcpy( mindices.Data.Data+first*4,indices,count*4 )
+		libc.memcpy( mindices.Data.Data+first,indices,count*IndexPitch )
 	End
 	
 	Method SetTriangles( indices:UInt[],materialid:Int=0 )
@@ -246,7 +246,7 @@ Class Mesh Extends Resource
 		
 		mindices.Resize( mindices.Length+count )
 		
-		libc.memcpy( mindices.Data.Data+first*4,indices,count*4 )
+		libc.memcpy( mindices.Data.Data+first,indices,count*IndexPitch )
 	End
 	
 	Method AddTriangles( indices:UInt[],materialid:Int=0 )
@@ -280,7 +280,7 @@ Class Mesh Extends Resource
 		
 		For Local material:=Eachin _materials
 			Local mindices:=material.indices
-			libc.memcpy( ip,mindices.Data.Data,mindices.Length*4 )
+			libc.memcpy( ip,mindices.Data.Data,mindices.Length*IndexPitch )
 			ip+=mindices.Length
 		Next
 		
@@ -564,6 +564,8 @@ Class Mesh Extends Resource
 		Field dirty:Dirty=Dirty.IndexBuffer
 		Field ibuffer:IndexBuffer
 	End
+	
+	Const IndexPitch:=4
 	
 	Field _vertices:=New Stack<Vertex3f>
 	Field _materials:=New Stack<MaterialID>
