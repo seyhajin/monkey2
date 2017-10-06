@@ -38,8 +38,9 @@ Class MyWindow Extends Window
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
+		
 		_scene.ClearColor=Color.Sky
-
+		
 		'add fog effect to scene
 		'		
 '		_fog=New FogEffect
@@ -66,7 +67,7 @@ Class MyWindow Extends Window
 
 		'create ground
 		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),10,10,10,New PbrMaterial( Color.Green,0,1 ) )
+		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,1 ) )
 		_ground.CastsShadow=False
 		
 		'create ducks
@@ -126,7 +127,7 @@ Class MyWindow Extends Window
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		'canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End
@@ -140,7 +141,7 @@ Function Main()
 '	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
 '	config["GL_depth_buffer_enabled"]=1
 
-	config["mojo3d_renderer"]="forward"
+'	config["mojo3d_renderer"]="forward"
 		
 	New AppInstance( config )
 	

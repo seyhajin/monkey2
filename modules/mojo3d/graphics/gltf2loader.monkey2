@@ -172,7 +172,6 @@ Class Gltf2Loader
 					Print "Gltf mesh has no indices"
 					Continue
 				Endif
-				
 
 				If prim.POSITION.componentType<>5126 Or prim.POSITION.type<>"VEC3"
 					Print "Gltf invalid nesh POSITION data"

@@ -4,15 +4,48 @@ Namespace mojo3d.graphics
 Class Renderable Extends Entity Abstract
 
 	Method New( parent:Entity=Null )
+	
 		Super.New( parent )
+		
+		Show()
 	End
+	
+	Property CastsShadow:bool()
+	
+		Return _castsShadow
+	
+	Setter( castsShadow:Bool )
+	
+		_castsShadow=castsShadow
+	End
+	
+	Protected
 	
 	Method New( renderable:Renderable,parent:Entity )
+	
 		Super.New( renderable,parent )
+		
+		_castsShadow=renderable.CastsShadow
+		
+		Show()
 	End
 	
-	'***** INTERNAL *****
+	Method OnShow() Override
+		
+		Scene.Renderables.Add( Self )
+	End
 	
-	Method OnRender( device:GraphicsDevice ) Abstract
+	Method OnHide() Override
+		
+		Scene.Renderables.Remove( Self )
+	End
+	
+	Internal
+	
+	Method OnRender( rq:RenderQueue ) Abstract
+	
+	Private
+	
+	Field _castsShadow:bool
 	
 End

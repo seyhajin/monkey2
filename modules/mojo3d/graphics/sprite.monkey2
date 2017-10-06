@@ -16,14 +16,12 @@ End
 
 #rem monkeydoc The Sprite class.
 #end
-Class Sprite Extends Entity
+Class Sprite Extends Renderable
 	
 	#rem monkeydoc Creates a new sprite.
 	#end
 	Method New( parent:Entity=Null )
 		Super.New( parent )
-
-		Show()
 	End
 
 	Method New( material:Material,parent:Entity=Null )
@@ -99,30 +97,17 @@ Class Sprite Extends Entity
 	
 	Protected
 
-	#rem monkeydoc @hidden
-	#End		
 	Method New( sprite:Sprite,parent:Entity )
 		Super.New( sprite,parent )
 		
 		_material=sprite._material
 		_handle=sprite._handle
 		_mode=sprite._mode
-		
-		Show()
 	End
 	
-	#rem monkeydoc @hidden
-	#End		
-	Method OnShow() Override
-		
-		Scene.Sprites.Add( Self )
-	End
+	Method OnRender( rq:RenderQueue ) Override
 	
-	#rem monkeydoc @hidden
-	#End		
-	Method OnHide() Override
-		
-		Scene.Sprites.Remove( Self )
+		rq.AddSprite( Self )
 	End
 	
 	Private

@@ -1,7 +1,7 @@
 
 Namespace mojo3d.graphics
 
-Class ParticleSystem Extends Entity
+Class ParticleSystem Extends Renderable
 
 	#rem monkeydoc Creates a new particle system.
 	#end
@@ -11,8 +11,6 @@ Class ParticleSystem Extends Entity
 		_pbuffer=New ParticleBuffer( particleCount )
 		
 		_material=New ParticleMaterial
-
-		Show()
 	End
 
 	Method New( particleBuffer:ParticleBuffer,material:ParticleMaterial,parent:Entity=Null )
@@ -21,8 +19,6 @@ Class ParticleSystem Extends Entity
 		_pbuffer=particleBuffer
 		
 		_material=material
-		
-		Show()
 	End
 
 	#rem monkeydoc Copies the particle system.
@@ -69,27 +65,11 @@ Class ParticleSystem Extends Entity
 		_pbuffer=psystem._pbuffer
 		
 		_material=psystem._material
-		
-		Show()
-	End
-	
-	#rem monkeydoc @hidden
-	#End		
-	Method OnShow() Override
-		
-		Scene.ParticleSystems.Add( Self )
-	End
-	
-	#rem monkeydoc @hidden
-	#End		
-	Method OnHide() Override
-		
-		Scene.ParticleSystems.Remove( Self )
 	End
 	
 	Internal
 	
-	Method OnRender( rq:RenderQueue )
+	Method OnRender( rq:RenderQueue ) override
 	
 		_pbuffer.OnRender( rq,_material,Self )
 	End

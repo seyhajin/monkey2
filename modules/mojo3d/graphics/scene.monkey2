@@ -180,19 +180,9 @@ Class Scene Extends DynamicObject
 		Return _lights
 	End
 	
-	Property Models:Stack<Model>()
-		
-		Return _models
-	End
+	Property Renderables:Stack<Renderable>()
 	
-	Property Sprites:Stack<Sprite>()
-		
-		Return _sprites
-	End
-	
-	Property ParticleSystems:Stack<ParticleSystem>()
-	
-		Return _psystems
+		Return _renderables
 	End
 	
 	Private
@@ -214,8 +204,6 @@ Class Scene Extends DynamicObject
 	
 	Field _cameras:=New Stack<Camera>
 	Field _lights:=New Stack<Light>
-	Field _models:=New Stack<Model>
-	Field _sprites:=New Stack<Sprite>
-	Field _psystems:=New Stack<ParticleSystem>
+	Field _renderables:=New Stack<Renderable>()
 			
 End

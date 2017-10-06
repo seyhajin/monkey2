@@ -15,27 +15,48 @@ Class Mesh Extends Resource
 	
 	#end
 	Method New()
-		
+	
 		_dirty=Null
 		_bounds=Boxf.EmptyBounds
-		_vbuffer=New VertexBuffer( Vertex3fFormat.Instance,0 )
-		_ibuffers=New Stack<IndexBuffer>
+		_vertices=New Stack<Vertex3f>
+		_materials=New Stack<MaterialID>
+'		AddMaterials( 1 )
 	End
 	
-	Method New( mesh:Mesh )
-		_dirty=mesh._dirty
-		_bounds=mesh._bounds
-		_vbuffer=New VertexBuffer( mesh._vbuffer )
-		For Local ibuffer:=Eachin mesh._ibuffers
-			_ibuffers.Push( New IndexBuffer( ibuffer ) )
-		Next
-	End
-	
-	Method New( vertices:Vertex3f[],triangles:UInt[] )
+	Method New( vertices:Vertex3f[],indices:UInt[] )
 		Self.New()
-		
 		AddVertices( vertices )
-		AddTriangles( triangles )
+		AddTriangles( indices )
+	End
+		
+	#rem monkeydoc Number of vertices.
+	#end
+	Property NumVertices:Int()
+		
+		Return _vertices.Length
+	End
+	
+	#rem monkeydoc Total number of indices.
+	#end
+	Property NumIndices:int()
+		
+		Local n:=0
+	
+		For Local material:=Eachin _materials
+			n+=material.indices.Length
+		Next
+		
+		Return n
+	End
+		
+	#rem monkeydoc Number of materials.
+	
+	This will always be at least one.
+	
+	#end
+	Property NumMaterials:Int()
+		
+		Return _materials.Length
 	End
 
 	#rem monkeydoc Mesh bounding box.
@@ -44,35 +65,16 @@ Class Mesh Extends Resource
 		
 		If _dirty & Dirty.Bounds
 			
-			Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Data )
-			
 			_bounds=Boxf.EmptyBounds
 			
-			For Local i:=0 Until _vbuffer.Length
-				_bounds|=vertices[i].position
+			For Local i:=0 Until _vertices.Length
+				_bounds|=_vertices[i].position
 			Next
 			
 			_dirty&=~Dirty.Bounds
 		Endif
 		
 		Return _bounds
-	End
-	
-	#rem monkeydoc Number of vertices.
-	#end
-	Property NumVertices:Int()
-		
-		Return _vbuffer.Length
-	End
-	
-	#rem monkeydoc Number of materials.
-	
-	This will always be at least one.
-	
-	#end
-	Property NumMaterials:Int()
-		
-		Return _ibuffers.Length
 	End
 	
 	#rem monkeydoc Clears the mesh.
@@ -82,15 +84,26 @@ Class Mesh Extends Resource
 	#end
 	Method Clear()
 		
-		_vbuffer.Clear()
+		_dirty=Null
+		_bounds=Boxf.EmptyBounds
+		_vertices.Clear()
+		_materials.Clear()
 		
-		For Local ibuffer:=Eachin _ibuffers
-			ibuffer.Clear()
-		Next
-		
-		_ibuffers.Resize( 1 )
+		InvalidateVertices()
 	End
+	
+	Method ClearVertices()
+		
+		ResizeVertices( 0 )
+	End
+	
+	Method ResizeVertices( length:Int )
+		
+		_vertices.Resize( length )
 
+		InvalidateVertices()
+	End
+#rem
 	#rem monkeydoc @hidden
 	#end	
 	Method AddMesh( mesh:Mesh )
@@ -108,82 +121,199 @@ Class Mesh Extends Resource
 			AddTriangles( Cast<UInt Ptr>( ibuffer.Data ),ibuffer.Length )
 		Next
 	End
-	
-	#rem monkeydoc Adds vertices to the mesh.
-	#end
-	Method AddVertices( vertices:Vertex3f Ptr,count:Int )
+#end
 
-		Local p:=_vbuffer.AddVertices( count )
+	#rem monkeydoc Sets a range of vertices.
+	#end
+	Method SetVertices( vertices:Vertex3f Ptr,first:Int,count:Int )
 		
-		libc.memcpy( p,vertices,count * _vbuffer.Pitch )
+		DebugAssert( first>=0 And count>=0 And first<=_vertices.Length And first+count<=_vertices.Length,"Invalid vertex range" )
 		
-		_dirty|=Dirty.Bounds
+		libc.memcpy( _vertices.Data.Data+first*Vertex3f.Pitch,vertices,count*Vertex3f.Pitch )
+
+		InvalidateVertices( first,count )
 	End
 	
+	Method SetVertices( vertices:Vertex3f[] )
+		
+		_vertices.Resize( vertices.Length )
+		
+		SetVertices( vertices.Data,0,vertices.Length )
+	End
+	
+	#rem monkeydoc Sets a single vertex.
+	#end
+	Method SetVertex( index:Int,vertex:Vertex3f )
+		
+		DebugAssert( index>=0 And index<_vertices.Length,"Vertex index out of range" )
+		
+		_vertices[index]=vertex
+		
+		InvalidateVertices( index,1 )
+	End
+	
+	#rem monkeydoc Adds vertices.
+	#end
+	Method AddVertices( vertices:Vertex3f Ptr,count:Int )
+		
+		Local first:=_vertices.Length
+		
+		_vertices.Resize( first+count )
+		
+		libc.memcpy( _vertices.Data.Data+first*Vertex3f.Pitch,vertices,count * Vertex3f.Pitch )
+		
+		InvalidateVertices( first,count )
+	End
+
 	Method AddVertices( vertices:Vertex3f[] )
 	
 		AddVertices( vertices.Data,vertices.Length )
 	End
 	
-	#rem monkeydoc Adds a single vertex to the mesh
+	#rem monkeydoc Adds a single vertex.
 	#end
 	Method AddVertex( vertex:Vertex3f )
 		
 		AddVertices( Varptr vertex,1 )
 	End
 	
-	#rem monkeydoc Adds triangles to the mesh.
+	#rem monkeydoc Gets all vertices as an array.
+	#end	
+	Method GetVertices:Vertex3f[]()
+		
+		Return _vertices.ToArray()
+	End
 	
-	The `materialid` parameter must be greater than or equal to 0 and less or equal to [[NumMaterials]].
+	#rem monkeydoc Gets a single vertex.
+	#end
+	Method GetVertex:Vertex3f( index:Int )
+		
+		DebugAssert( index>=0 And index<_vertices.Length,"Vertex index out of range" )
+		
+		Return _vertices[index]
+	End		
+	
+	#rem monkeydoc Sets tthe triangles for a material in the mesh.
+	
+	`materialid` must be a valid material id in the range 0 to [[NumMaterials]] inclusive.
+	
+	#end
+	Method SetTriangles( indices:UInt Ptr,first:Int,count:Int,materialid:Int=0 )
+		
+		DebugAssert( first Mod 3=0,"First must be a multiple of 3" )
+
+		DebugAssert( count Mod 3=0,"Count must be a multiple of 3" )
+		
+		Local mindices:=GetMaterial( materialid ).indices
+
+		DebugAssert( first>=0 And count>=0 And first<=mindices.Length And first+count<=mindices.Length,"Invalid range" )
+		
+		libc.memcpy( mindices.Data.Data+first*4,indices,count*4 )
+	End
+	
+	Method SetTriangles( indices:UInt[],materialid:Int=0 )
+		
+		SetTriangles( indices.Data,indices.Length,materialid )
+	End
+	
+	Method SetTriangle( index:Int,i0:Int,i1:Int,i2:Int,materialid:Int=0 )
+		
+		DebugAssert( index Mod 3=0,"Index must be a multiple of 3" )
+		
+		Local mindices:=GetMaterial( materialid ).indices
+		
+		DebugAssert( index>=0 And index+3<=mindices.Length,"Triangle index out of range" )
+		
+		mindices[index]=i0;mindices[index+1]=i1;mindices[index+2]=i2
+	End
+	
+	#rem monkeydoc Adds triangles to the mesh.
+
+	`count` is the number of indices to add and must be a multiple of 3.
+	
+	`materialid` must be a valid material id in the range 0 to [[NumMaterials]] inclusive.
 	
 	If `materialid` is equal to NumMaterials, a new material is automatically added first.
 	
 	#end
 	Method AddTriangles( indices:UInt Ptr,count:Int,materialid:Int=0 )
 		
-		If materialid=_ibuffers.Length AddMaterials( 1 )
+		DebugAssert( count Mod 3=0,"Count must be a multiple of 3" )
 		
-		Local p:=_ibuffers[materialid].AddIndices( count )
+		Local mindices:=GetMaterial( materialid ).indices
 		
-		libc.memcpy( p,indices,count*4 )
+		Local first:=mindices.Length
+		
+		mindices.Resize( mindices.Length+count )
+		
+		libc.memcpy( mindices.Data.Data+first*4,indices,count*4 )
 	End
 	
 	Method AddTriangles( indices:UInt[],materialid:Int=0 )
-	
+		
 		AddTriangles( indices.Data,indices.Length,materialid )
 	End
 
-	#rem  monkeydoc Adds a single triangle the mesh.
+	#rem monkeydoc Adds a single triangle the mesh.
 	#end	
 	Method AddTriangle( i0:UInt,i1:UInt,i2:UInt,materialid:Int=0 )
 		
-		AddTriangles( New UInt[]( i0,i1,i2 ),materialid )
+		Local indices:=GetMaterial( materialid ).indices
+		
+		indices.Add( i0 )
+		indices.Add( i1 )
+		indices.Add( i2 )
 	End
 	
+	#rem monkeydoc Get indices for a material id.
+	#end
+	Method GetIndices:UInt[]( materialid:Int=0 )
+		
+		DebugAssert( materialid>=0 And materialid<_materials.Length,"Material id out of range" )
+		
+		Return _materials[materialid].indices.ToArray()
+	End
+	
+	Method GetAllIndices:Uint[]()
+		
+		Local indices:=New Uint[NumIndices],ip:=indices.Data
+		
+		For Local material:=Eachin _materials
+			Local mindices:=material.indices
+			libc.memcpy( ip,mindices.Data.Data,mindices.Length*4 )
+			ip+=mindices.Length
+		Next
+		
+		Return indices
+	End
+
 	#rem monkeydoc Adds materials to the mesh.
 	
 	Adds `count` logical materials to the mesh.
 	
-	WIP! Eventually want to be able to add lines, points etc to meshes, probably via this method...
+	Returns the first material id of the newly added materials.
 	
 	#end
-	Method AddMaterials( count:Int )
+	Method AddMaterials:Int( count:Int )
+		
+		Local first:=_materials.Length
 		
 		For Local i:=0 Until count
-			
-			_ibuffers.Push( New IndexBuffer( IndexFormat.UINT32,0 ) )
-		End
+			_materials.Push( New MaterialID )
+		Next
+		
+		Return first
 	End
 	
 	#rem monkeydoc Transforms all vertices in the mesh.
 	#end
 	Method TransformVertices( matrix:AffineMat4f )
 		
-		Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Data )
+		Local vertices:=_vertices.Data
 		
 		Local cofactor:=matrix.m.Cofactor()
 		
-		For Local i:=0 Until _vbuffer.Length
+		For Local i:=0 Until _vertices.Length
 		
 			vertices[i].position=matrix * vertices[i].position
 			
@@ -192,9 +322,7 @@ Class Mesh Extends Resource
 			vertices[i].tangent.XYZ=(cofactor * vertices[i].tangent.XYZ).Normalize()
 		Next
 		
-		_vbuffer.Invalidate()
-		
-		_dirty|=Dirty.Bounds
+		InvalidateVertices()
 	End
 	
 	#rem monkeydoc Fits all vertices in the mesh to a box.
@@ -221,21 +349,18 @@ Class Mesh Extends Resource
 	#end
 	Method UpdateNormals()
 
-		Local vcount:=_vbuffer.Length
+		Local vertices:=_vertices.Data
 		
-		Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Data )
-		
-		For Local i:=0 Until vcount
+		For Local i:=0 Until _vertices.Length
 			
 			vertices[i].normal=New Vec3f(0)
 		Next
 		
-		For Local ibuffer:=Eachin _ibuffers
+		For Local material:=Eachin _materials
 			
-			Local icount:=ibuffer.Length
-			Local indices:=Cast<UInt Ptr>( ibuffer.Data )
+			Local indices:=material.indices.Data
 		
-			For Local i:=0 Until icount Step 3
+			For Local i:=0 Until material.indices.Length
 				
 				Local i1:=indices[i+0]
 				Local i2:=indices[i+1]
@@ -255,11 +380,12 @@ Class Mesh Extends Resource
 		
 		Next
 		
-		For Local i:=0 Until vcount
+		For Local i:=0 Until _vertices.Length
 			
 			vertices[i].normal=vertices[i].normal.Normalize()
 		Next
-	
+
+		InvalidateVertices()
 	End
 
 	#rem monkeydoc Updates mesh tangents.
@@ -269,19 +395,16 @@ Class Mesh Extends Resource
 	#end
 	Method UpdateTangents()
 		
-		Local vcount:=_vbuffer.Length
+		Local vertices:=_vertices.Data.Data
 		
-		Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Data )
+		Local tan1:=New Vec3f[_vertices.Length]
+		Local tan2:=New Vec3f[_vertices.Length]
 		
-		Local tan1:=New Vec3f[vcount]
-		Local tan2:=New Vec3f[vcount]
-		
-		For Local ibuffer:=Eachin _ibuffers
+		For Local material:=Eachin _materials
 			
-			Local icount:=ibuffer.Length
-			Local indices:=Cast<UInt Ptr>( ibuffer.Data )
+			Local indices:=material.indices.Data
 		
-			For Local i:=0 Until icount Step 3
+			For Local i:=0 Until material.indices.Length Step 3
 				
 				Local i1:=indices[i+0]
 				Local i2:=indices[i+1]
@@ -316,9 +439,10 @@ Class Mesh Extends Resource
 				tan2[i2]+=tdir
 				tan2[i3]+=tdir
 			Next
+			
 		Next
 	
-		For Local i:=0 Until vcount
+		For Local i:=0 Until _vertices.Length
 			
 			Local v:=vertices+i
 	
@@ -329,24 +453,24 @@ Class Mesh Extends Resource
 			v->tangent.w=n.Cross( t ).Dot( tan2[i] ) < 0 ? -1 Else 1
 		Next
 		
-		_vbuffer.Invalidate()
+		InvalidateVertices()
 	End
 	
 	#rem monkeydoc Flips all triangles.
 	#end
 	Method FlipTriangles()
 		
-		For Local ibuffer:=Eachin _ibuffers
+		For Local material:=Eachin _materials
 			
-			Local indices:=Cast<UInt Ptr>( ibuffer.Data )
-			
-			For Local i:=0 Until ibuffer.Length Step 3
+			Local indices:=material.indices.Data
+		
+			For Local i:=0 Until material.indices.Length Step 3
 				Local t:=indices[i]
 				indices[i]=indices[i+1]
 				indices[i+1]=t
 			Next
 			
-			ibuffer.Invalidate()
+			material.dirty|=Dirty.IndexBuffer
 		Next
 		
 	End
@@ -355,61 +479,16 @@ Class Mesh Extends Resource
 	#end
 	Method ScaleTexCoords( scale:Vec2f )
 		
-		Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Data )
+		Local vertices:=_vertices.Data
 		
-		For Local i:=0 Until _vbuffer.Length
+		For Local i:=0 Until _vertices.Length
 		
 			vertices[i].texCoord0*=scale
 		Next
 		
-		_vbuffer.Invalidate()
+		InvalidateVertices()
 	End
 
-	#rem monkeydoc Gets all vertices in the mesh.
-	#end	
-	Method GetVertices:Vertex3f[]()
-		
-		Local vertices:=New Vertex3f[ _vbuffer.Length ]
-		
-		libc.memcpy( vertices.Data,_vbuffer.Data,_vbuffer.Length*_vbuffer.Pitch )
-		
-		Return vertices
-	End
-	
-	#rem monkeydoc Get indices for a material id.
-	#end
-	Method GetIndices:UInt[]( materialid:Int )
-	
-		Local ibuffer:=_ibuffers[materialid]
-		
-		Local indices:=New UInt[ ibuffer.Length ]
-		
-		libc.memcpy( indices.Data,ibuffer.Data,ibuffer.Length*4 )
-		
-		Return indices
-	End
-
-	#rem monkeydoc Gets all indices in the mesh.
-	#end	
-	Method GetAllIndices:UInt[]()
-	
-		Local n:=0
-		For Local ibuffer:=Eachin _ibuffers
-			n+=ibuffer.Length
-		Next
-		
-		Local indices:=New UInt[ n ],p:=indices.Data
-		
-		For Local ibuffer:=Eachin _ibuffers
-			
-			libc.memcpy( p,ibuffer.Data,ibuffer.Length*4 )
-		
-			p+=ibuffer.Length
-		Next
-		
-		Return indices
-	End
-	
 	#rem monkeydoc Loads a mesh from a file.
 	
 	On its own, mojo3d can only load gltf2 format mesh and model files.
@@ -438,31 +517,87 @@ Class Mesh Extends Resource
 		Return Null
 	End
 	
-	'***** INTERNAL *****
+	Internal
 	
-	#rem monkeydoc @hidden
-	#end
 	Method GetVertexBuffer:VertexBuffer()
+		
+		If _dirty & Dirty.VertexBuffer
+			
+			_vbuffer=New VertexBuffer( Vertex3f.Format,_vertices.Length )
+			
+			_vbuffer.SetVertices( _vertices.Data.Data,0,_vertices.Length )
+			
+			_dirty&=~Dirty.VertexBuffer
+		End
 		
 		Return _vbuffer
 	End
 	
-	#rem monkeydoc @hidden
-	#end
-	Method GetIndexBuffers:Stack<IndexBuffer>()
+	Method GetIndexBuffer:IndexBuffer( materialid:Int )
 		
-		Return _ibuffers
+		Local material:=_materials[materialid]
+		
+		If material.dirty & Dirty.IndexBuffer
+			
+			Local indices:=material.indices
+			
+			material.ibuffer=New IndexBuffer( IndexFormat.UINT32,indices.Length )
+			
+			material.ibuffer.SetIndices( indices.Data.Data,0,indices.Length )
+			
+			material.dirty&=~Dirty.IndexBuffer
+		End
+		
+		Return material.ibuffer
 	End
 	
 	Private
 	
 	Enum Dirty
 		Bounds=1
+		VertexBuffer=2
+		IndexBuffer=4
 	End
 	
-	Field _dirty:Dirty
-	Field _bounds:Boxf
+	class MaterialID
+		Field indices:=New Stack<UInt>
+		Field dirty:Dirty=Dirty.IndexBuffer
+		Field ibuffer:IndexBuffer
+	End
+	
+	Field _vertices:=New Stack<Vertex3f>
+	Field _materials:=New Stack<MaterialID>
+	
+	Field _dirty:Dirty=Null
+	Field _bounds:Boxf=Boxf.EmptyBounds
 	Field _vbuffer:VertexBuffer
-	Field _ibuffers:Stack<IndexBuffer>
+	Field _minDirty:Int
+	Field _maxDirty:Int
+	
+	Method InvalidateVertices( first:Int,count:Int )
+		
+		_minDirty=Min( _minDirty,first )
+		_maxDirty=Max( _maxDirty,first+count )
+		
+		_dirty|=Dirty.Bounds|Dirty.VertexBuffer
+	End
+	
+	Method InvalidateVertices()
+		
+		InvalidateVertices( 0,_vertices.Length )
+	End
+	
+	Method GetMaterial:MaterialID( materialid:Int,dirty:Dirty=Dirty.IndexBuffer )
+		
+		DebugAssert( materialid>=0 And materialid<=_materials.Length,"Materialid out of range" )
+		
+		If materialid=_materials.Length AddMaterials( 1 )
+			
+		Local material:=_materials[materialid]
+		
+		material.dirty|=dirty
+
+		Return material
+	End
 	
 End

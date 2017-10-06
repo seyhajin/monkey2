@@ -140,22 +140,13 @@ Class Renderer
 		_renderQueue.Time=time
 		
 		_renderQueue.AddShadowOps=False
+		
+		For Local r:=Eachin _renderScene.Renderables
+		
+			_renderQueue.AddShadowOps=r.CastsShadow
 			
-		For Local model:=Eachin _renderScene.Models
-			
-			_renderQueue.AddShadowOps=model.CastsShadow
-			
-			model.OnRender( _renderQueue )
+			r.OnRender( _renderQueue )
 		Next
-		
-		_spriteQueue.Clear()
-		
-		_spriteQueue.Time=time
-		
-		For Local psystem:=Eachin _renderScene.ParticleSystems
-		
-			psystem.OnRender( _spriteQueue )
-		End
 		
 		'***** Set render camera *****
 
@@ -165,7 +156,6 @@ Class Renderer
 		Local viewMat:=_renderCamera.InverseMatrix
 		Local projMat:=_renderCamera.ProjectionMatrix
 		Local invProjMat:=-projMat
-		
 			
 		_runiforms.SetMat3f( "EnvMatrix",envMat )
 		_runiforms.SetMat4f( "ProjectionMatrix",projMat )
@@ -175,7 +165,7 @@ Class Renderer
 		_runiforms.SetFloat( "DepthNear",_renderCamera.Near )
 		_runiforms.SetFloat( "DepthFar",_renderCamera.Far )
 		
-		_spriteBuffer.AddSprites( _spriteQueue,_renderScene.Sprites,_renderCamera )
+		_spriteBuffer.AddSprites( _renderQueue,_renderCamera )
 		
 		OnRender( scene,camera,device )
 		
@@ -252,7 +242,7 @@ Class Renderer
 	Method RenderQuad()
 
 		Global _vertices:VertexBuffer
-	
+		
 		If Not _vertices
 			_vertices=New VertexBuffer( New Vertex3f[](
 			New Vertex3f( 0,1,0 ),
@@ -313,7 +303,7 @@ Class Renderer
 
 	Method RenderSpriteOps()
 
-		RenderRenderOps( _spriteQueue.TransparentOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
+		RenderRenderOps( _renderQueue.SpriteOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
 	End
 	
 	#rem

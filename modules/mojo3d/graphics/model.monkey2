@@ -3,7 +3,7 @@ Namespace mojo3d.graphics
 
 #rem monkeydoc The Model class.
 #end
-Class Model Extends Entity
+Class Model Extends Renderable
 	
 	#rem monkeydoc @hidden
 	#end
@@ -83,15 +83,6 @@ Class Model Extends Entity
 		_bones=bones
 	End
 	
-	Property CastsShadow:Bool()
-		
-		Return _castsShadow
-		
-	Setter( castsShadow:Bool )
-	
-		_castsShadow=castsShadow
-	End
-	
 	#rem monkeydoc Loads a model from a file path.
 	
 	On its own, mojo3d can only load gltf2 format mesh and model files.
@@ -148,19 +139,27 @@ Class Model Extends Entity
 		
 		Return Null
 	End
+	
+	Protected
 
-	#rem monkeydoc @hidden
-	#end	
-	Method OnRender( rq:RenderQueue )
+	Method New( model:Model,parent:Entity )
+		Super.New( model,parent )
+		
+		_mesh=model._mesh
+		
+		_material=model._material
+		
+		_materials=model._materials.Slice( 0 )
+	End
+	
+	Internal
+
+	Method OnRender( rq:RenderQueue ) Override
 		
 		If Not _mesh Return
 		
-		Local instance:=Self
-		
 		If _bones
 
-			instance=Null
-		
 			If _boneMatrices.Length<>_bones.Length _boneMatrices=New Mat4f[ _bones.Length ]
 			
 			For Local i:=0 Until _bones.Length
@@ -171,49 +170,19 @@ Class Model Extends Entity
 		
 		Local vbuffer:=_mesh.GetVertexBuffer()
 		
-		Local ibuffers:=_mesh.GetIndexBuffers()
-		
-		For Local i:=0 Until ibuffers.Length
-			
+		For Local i:=0 Until _mesh.NumMaterials
+
+			Local ibuffer:=_mesh.GetIndexBuffer( i )
+
 			Local material:=i<_materials.Length And _materials[i] ? _materials[i] Else _material
 			
-			Local ibuffer:=ibuffers[i]
-			
-			rq.AddRenderOp( material,vbuffer,ibuffer,instance,_boneMatrices,3,ibuffer.Length/3,0 )
+			If _bones
+				rq.AddRenderOp( material,_boneMatrices,vbuffer,ibuffer,3,ibuffer.Length/3,0 )
+			Else
+				rq.AddRenderOp( material,Self,vbuffer,ibuffer,3,ibuffer.Length/3,0 )
+			Endif
 			
 		Next
-	End
-	
-	Protected
-
-	#rem monkeydoc @hidden
-	#end
-	Method New( model:Model,parent:Entity )
-		Super.New( model,parent )
-		
-		_mesh=model._mesh
-		
-		_material=model._material
-		
-		_materials=model._materials.Slice( 0 )
-		
-		_castsShadow=model._castsShadow
-		
-		Show()
-	End
-
-	#rem monkeydoc @hidden
-	#end	
-	Method OnShow() Override
-		
-		Scene.Models.Add( Self )
-	End
-	
-	#rem monkeydoc @hidden
-	#end	
-	Method OnHide() Override
-		
-		Scene.Models.Remove( Self )
 	End
 	
 	Private
@@ -224,7 +193,5 @@ Class Model Extends Entity
 
 	Field _bones:Bone[]
 	Field _boneMatrices:Mat4f[]
-	
-	Field _castsShadow:Bool=true
 	
 End

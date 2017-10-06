@@ -6,36 +6,41 @@ Namespace mojo3d.graphics
 Class SpriteBuffer
 	
 	Method New()
+		_vbuffer=New VertexBuffer( Vertex3f.Format,0 )
 		
-		If _spriteVertices Return
-		
-		_spriteVertices=New VertexBuffer( Vertex3fFormat.Instance,0 )
-		
-		_spriteIndices=New IndexBuffer( IndexFormat.UINT32,0 )
+		_ibuffer=New IndexBuffer( IndexFormat.UINT32,0 )
 	End
 	
-	Method AddSprites( rq:RenderQueue,sprites:Stack<Sprite>,camera:Camera )
+	Method AddSprites( rq:RenderQueue,camera:Camera )
+	
+		Local sprites:=rq.Sprites
 		
 		If sprites.Empty Return
 		
 		Local n:=sprites.Length
 		
-		_spriteVertices.Clear()
-		Local vp:=Cast<Vertex3f Ptr>( _spriteVertices.AddVertices( n*4 ) )
+		If n*4>_vbuffer.Length
+			_vbuffer.Resize( Max( _vbuffer.Length*3/2,n*4 ) )
+		Endif
 		
-		If n>_spriteIndices.Length/6
-			Local i:=_spriteIndices.Length/6
-			Local ip:=Cast<UInt Ptr>( _spriteIndices.AddIndices( (n-i)*6 ) )
-			For Local j:=i Until n
-				ip[0]=j*4
-				ip[1]=j*4+1
-				ip[2]=j*4+2
-				ip[3]=j*4
-				ip[4]=j*4+2
-				ip[5]=j*4+3
+		If n*6>_ibuffer.Length
+			Local i0:=_ibuffer.Length/6
+			_ibuffer.Resize( Max( _ibuffer.Length*3/2,n*6 ) )
+			Local ip:=Cast<UInt Ptr>( _ibuffer.Lock() )+i0*6
+			For Local i:=i0 Until n
+				ip[0]=i*4
+				ip[1]=i*4+1
+				ip[2]=i*4+2
+				ip[3]=i*4
+				ip[4]=i*4+2
+				ip[5]=i*4+3
 				ip+=6
 			Next
+			_ibuffer.Invalidate( i0*6,(n-i0)*6 )
+			_ibuffer.Unlock()
 		Endif
+		
+		Local vp:=Cast<Vertex3f Ptr>( _vbuffer.Lock() )
 		
 		'Sort sprites by distance from camera. Only really need to do this for transparent sprites, but meh...
 		'
@@ -50,7 +55,7 @@ Class SpriteBuffer
 			
 			Local material:=sprite.Material
 			If material<>cmaterial
-				rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,3,(i-i0)*2,i0*6 )
+				rq.AddSpriteOp( cmaterial,Null,Null,_vbuffer,_ibuffer,3,(i-i0)*2,i0*6 )
 				cmaterial=material
 				i0=i
 			Endif
@@ -83,14 +88,17 @@ Class SpriteBuffer
 			i+=1
 		Next
 		
-		rq.AddRenderOp( cmaterial,_spriteVertices,_spriteIndices,3,(i-i0)*2,i0*6 )
+		rq.AddSpriteOp( cmaterial,Null,Null,_vbuffer,_ibuffer,3,(i-i0)*2,i0*6 )
 		
+		_vbuffer.Invalidate()
+		
+		_vbuffer.Unlock()
 	End
 
 	Private
 	
-	Field _spriteVertices:VertexBuffer
+	Field _vbuffer:VertexBuffer
 	
-	Field _spriteIndices:IndexBuffer
+	Field _ibuffer:IndexBuffer
 	
 End

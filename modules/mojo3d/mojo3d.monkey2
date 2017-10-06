@@ -42,6 +42,7 @@ Using gles20..
 #Import "graphics/entityexts"
 
 #Import "graphics/renderqueue"
+#Import "graphics/renderable"
 #Import "graphics/renderer"
 #Import "graphics/deferredrenderer"
 #Import "graphics/forwardrenderer"

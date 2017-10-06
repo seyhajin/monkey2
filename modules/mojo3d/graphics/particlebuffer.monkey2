@@ -7,13 +7,14 @@ Class ParticleBuffer
 	
 		_length=length
 
-		_vbuffer=New VertexBuffer( Vertex3fFormat.Instance,_length )
+		_vbuffer=New VertexBuffer( Vertex3f.Format,_length )
 		
 		_uniforms=New UniformBlock( 4,true )
 		
-		Local vertices:=_vbuffer.AddVertices( _length )
-		
-		libc.memset( vertices,0,_vbuffer.Pitch*_length )
+		Local vertices:=_vbuffer.Lock()
+		libc.memset( vertices,0,_vbuffer.Length*_vbuffer.Pitch)
+		_vbuffer.Invalidate()
+		_vbuffer.Unlock()
 
 		Gravity=New Vec3f( 0,-9.81,0 )
 		Duration=5.0
@@ -137,17 +138,23 @@ Class ParticleBuffer
 			
 			local timeStep:=frames * (1.0/60.0) / n
 			
+			Local vertices:=Cast<Vertex3f Ptr>( _vbuffer.Lock() )
+			
 			For Local i:=0 Until n
 			
-				AddParticle( _time )
+				AddParticle( vertices,_time )
 				
 				_time+=timeStep
 				
 			Next
+			
+			_vbuffer.Unlock()
+			
+			_vbuffer.Invalidate()
 
 		Endif
 		
-		rq.AddRenderOp( material,_uniforms,instance,_vbuffer,Null,1,_length,0 )
+		rq.AddSpriteOp( material,_uniforms,instance,_vbuffer,Null,1,_length,0 )
 	End		
 	
 	Private
@@ -167,7 +174,7 @@ Class ParticleBuffer
 	Field _time:Float
 	Field _index:Int
 
-	Method AddParticle( time:Float )
+	Method AddParticle( vertices:Vertex3f Ptr,time:Float )
 	
 		Local r:=Rnd( -Pi,Pi )
 		Local d:=Rnd( 0,Tan( _coneAngle*.5*TwoPi/360.0 ) )
@@ -188,7 +195,7 @@ Class ParticleBuffer
 		Local velocity:=New Vec3f( vx,vy,1.0 ) * sp '.Normalize() * sp
 		#end
 			
-		Local vertex:=Cast<Vertex3f Ptr>( _vbuffer.Data )+_index
+		Local vertex:=vertices+_index
 		
 		_index+=1 
 		
