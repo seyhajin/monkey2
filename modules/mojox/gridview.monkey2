@@ -98,7 +98,7 @@ Class GridView Extends View
 			Local x0:=cell.x * Width / _gridw
 			Local x1:=(cell.x+cell.w) * Width / _gridw
 
-			Local y0:=cell.y * Height / _gridw
+			Local y0:=cell.y * Height / _gridh
 			Local y1:=(cell.y+cell.h) * Height / _gridh
 			
 			cell.view.Frame=New Recti( x0,y0,x1,y1 )
