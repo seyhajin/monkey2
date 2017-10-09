@@ -11,11 +11,13 @@ Class BBResource="bbResource"
 	
 	Protected
 	
-	Method InternalDiscard()="discard"
-		
 	Method OnDiscard() Virtual="onDiscard"
 	
 	Method OnFinalize() Virtual="onFinalize"
+	
+	Internal
+
+	Method InternalDiscard()="discard"
 	
 End
 
@@ -25,10 +27,10 @@ Public
 
 The resource class helps with managing finite OS resources in a garbage collected environment.
 
-To implement a resource object, you should extend the Resource class and override the OnDiscard and/or OnFinalize methods.
+To implement a resource object, you should extend the Resource class and override the [[OnDiscard]] and/or [[OnFinalize]] methods.
 
-Code to actually discard the resource should be placed in [[OnDiscard]]. Discarding a resource might involve closing a file, deleting 
-a texture handle or other similar actions. 'Last chance' cleanup code should be placed in [[OnFinalize]].
+Code to actually discard the resource should be placed in OnDiscard. Discarding a resource might involve closing a file, deleting 
+a texture handle or other similar actions. 'Last chance' cleanup code should be placed in OnFinalize.
 
 IMPORTANT! There are a number of restrictions on code that may be placed in OnFinalize, please refer to the documentation for [[OnFinalize]]
 for more information.
@@ -52,7 +54,7 @@ Class Resource Extends BBResource
 	
 	Protected
 	
-	#rem monkeyoc The OnDiscard method.
+	#rem monkeydoc The OnDiscard method.
 	
 	This is where subclasses should place their actual discard code.
 	
@@ -138,6 +140,11 @@ Class ResourceManager Extends Resource
 	Field _retained:=New StringMap<Resource>
 End
 
+#rem monkeydoc Safely discards a resource.
+
+Invoke [[Resource.Discard]] on the given resource `r` only if `r` is non-null.
+
+#end
 Function SafeDiscard( r:Resource )
 	
 	If r r.Discard()

@@ -1,9 +1,11 @@
 
 Namespace std.graphics
 
-	#rem monkeydoc The Color type provides support for manipulating red, green blue, alpha colors.
-	#end
-	Struct Color
+using std.geom
+
+#rem monkeydoc The Color type provides support for manipulating red, green blue, alpha colors.
+#end
+Struct Color
 		
 	#rem monkeydoc Transparent black.
 	#end
@@ -141,44 +143,6 @@ Namespace std.graphics
 	#end
 	Const Platinum:=New Color( 0.83493408973507777,0.81484503266020314,0.78399912482207756 )
 	
-#rem	
-	#rem monkeydoc Silver.
-	#end
-	Const Silver:=New Color( .971519,.959915,.915324,1 )
-	
-	#rem monkeydoc Aluminum.
-	#end
-	Const Aluminum:=New Color( .913183,.921494,.924524,1 )
-	
-	#rem monkeydoc Gold.
-	#end
-	Const Gold:=New Color( 1,.765557,.336057,1 )
-	
-	#rem monkeydoc Copper.
-	#end
-	Const Copper:=New Color( .955008,.637427,.538163,1 )
-	
-	#rem monkeydoc Chromium.
-	#end
-	Const Chromium:=New Color( .549585,.556114,.554256,1 )
-	
-	#rem monkeydoc Nickel.
-	#end
-	Const Nickel:=New Color( .659777,.608679,.525649,1 )
-	
-	#rem monkeydoc Titanium.
-	#end
-	Const Titanium:=New Color( .541931,.496791,.449419,1 )
-	
-	#rem monkeydoc Cobalt.
-	#end
-	Const Cobalt:=New Color( .662124,.654864,.633732,1 )
-	
-	#rem monkeydoc Platinum.
-	#end
-	Const Platinum:=New Color( .672411,.637331,.585456,1 )
-#end
-
 	#rem monkeydoc Red component of color.
 	#end
 	Field r:Float

@@ -5,15 +5,24 @@ Namespace std.geom
 #end
 Alias Mat3f:Mat3<Float>
 
-#rem monkeydoc The Mat3 class provides support for 3x3 matrices.
-
+#rem monkeydoc The generic Mat3 class provides support for 3x3 matrices.
 #end
 Struct Mat3<T>
 
+	#rem monkeydoc The first row of the matrix.
+	#end
 	Field i:Vec3<T>
+	
+	#rem monkeydoc The second row of the matrix.
+	#end
 	Field j:Vec3<T>
+	
+	#rem monkeydoc The third row of the matrix.
+	#end
 	Field k:Vec3<T>
 	
+	#rem monkeydoc Creates a new Matrix.
+	#end
 	Method New()
 		i.x=1;j.y=1;k.z=1
 	End
@@ -41,6 +50,8 @@ Struct Mat3<T>
 		k.x=  2*(xz-wy) ; k.y=  2*(yz+wx) ; k.z=1-2*(xx+yy)
 	End
 	
+	#rem monkeydoc Converts the matrix to a matrix of another type, or to a quaternion or printable string.
+	#end
 	Operator To<C>:Mat3<C>()
 		Return New Mat3<C>( i,j,k )
 	End
@@ -53,14 +64,20 @@ Struct Mat3<T>
 		Return "Mat3("+i+","+j+","+k+")"
 	End
 	
+	#rem monkeydoc The determinant of the matrix.
+	#end
 	Property Determinant:T()
 		Return i.x*(j.y*k.z-j.z*k.y )-i.y*(j.x*k.z-j.z*k.x )+i.z*(j.x*k.y-j.y*k.x )
 	End
 	
+	#rem monkeydoc Computes the transpose of the matrix.
+	#end
 	Operator~:Mat3()
 		Return New Mat3( i.x,j.x,k.x, i.y,j.y,k.y, i.z,j.z,k.z )
 	End
 	
+	#rem monkeydoc Computes the inverse of the matrix.
+	#end
 	Operator-:Mat3()
 		Local t:=1.0/Determinant
 		Return New Mat3(
@@ -69,6 +86,8 @@ Struct Mat3<T>
 			 t*(j.x*k.y-j.y*k.x),-t*(i.x*k.y-i.y*k.x), t*(i.x*j.y-i.y*j.x) )
 	End
 	
+	#rem monkeydoc Multiplies the matrix by another matrix.
+	#end
 	Operator*:Mat3( m:Mat3 )
 		Return New Mat3(
 			i.x*m.i.x+j.x*m.i.y+k.x*m.i.z, i.y*m.i.x+j.y*m.i.y+k.y*m.i.z, i.z*m.i.x+j.z*m.i.y+k.z*m.i.z,
@@ -76,22 +95,26 @@ Struct Mat3<T>
 			i.x*m.k.x+j.x*m.k.y+k.x*m.k.z, i.y*m.k.x+j.y*m.k.y+k.y*m.k.z, i.z*m.k.x+j.z*m.k.y+k.z*m.k.z )
 	End
 	
-'	Operator*:Mat3( q:Quat<T> )
-'		Return Self * New Mat3( q )
-'	End
-	
+	#rem monkeydoc Multiplies a vector by the matrix.
+	#end
 	Operator*:Vec3<T>( v:Vec3<T> )
 		Return New Vec3<T>( i.x*v.x+j.x*v.y+k.x*v.z,i.y*v.x+j.y*v.y+k.y*v.z,i.z*v.x+j.z*v.y+k.z*v.z )
 	End
 	
+	#rem monkeydoc Gets a row of the matrix.
+	#end
 	Method GetRow:Vec3<T>( row:Int )
 		Return row=0 ? i Else (row=1 ? j Else k)
 	End
 	
+	#rem monkeydoc Gets a column of the matrix.
+	#end
 	Method GetColumn:Vec3<T>( col:Int )
 		Return col=0 ? New Vec3<T>( i.x,j.x,k.x ) Else (col=1 ? New Vec3<T>( i.y,j.y,k.y ) Else New Vec3<T>( i.z,j.z,k.z ))
 	End
 	
+	#rem monkeydocs Computes the cofactor matrix.
+	#end
 	Method Cofactor:Mat3()
 		Return New Mat3(
 			 (j.y*k.z-j.z*k.y),-(j.x*k.z-j.z*k.x), (j.x*k.y-j.y*k.x),
@@ -99,26 +122,47 @@ Struct Mat3<T>
 			 (i.y*j.z-i.z*j.y),-(i.x*j.z-i.z*j.x), (i.x*j.y-i.y*j.x) )
 	End
 	
+	#rem monkeydocs Computes the pitch of the matrix in radians.
+	
+	Pitch is the angle of rotation around the X axis.
+	
+	#end
 	Method GetPitch:Double()
 		Return k.Pitch
 	End
 	
+	#rem monkeydocs Computes the yaw of the matrix in radians.
+
+	Yaw is the angle of rotation around the Y axis.
+	
+	#end
 	Method GetYaw:Double()
 		Return k.Yaw
 	End
 	
+	#rem monkeydocs Computes the roll of the matrix in radians.
+	
+	Roll is the angle of rotation around the Z axis.
+	
+	#end
 	Method GetRoll:Double()
 		Return ATan2( i.y,j.y )
 	End
 	
+	#rem monkeydoc Computes the pitch, yaw and roll angles of rotation in radians.
+	#end
 	Method GetRotation:Vec3<T>()
 		Return New Vec3<T>( GetPitch(),GetYaw(),GetRoll() )
 	End
 	
+	#rem monkeydoc Computes the scaling term of the matrix.
+	#end
 	Method GetScaling:Vec3<T>()
 		Return New Vec3<T>( i.Length,j.Length,k.Length )
 	End
 	
+	#rem monkeydoc Rotates the matrix by euler angles or a quaternion.
+	#end
 	Method Rotate:Mat3( rv:Vec3<T> )
 		Return Self * Rotation( rv )
 	End
@@ -131,6 +175,8 @@ Struct Mat3<T>
 		Return Self * Rotation( q )
 	End
 	
+	#rem monkeydoc Scales the matrix.
+	#end
 	Method Scale:Mat3( rv:Vec3<T> )
 		Return Self * Scaling( rv )
 	End
@@ -142,7 +188,9 @@ Struct Mat3<T>
 	Method Scale:Mat3( t:T )
 		Return Self * Scaling( t )
 	End
-
+	
+	#rem monkeydoc Orthogonalizes the matrix.
+	#end
 	Method Orthogonalize:Mat3()
 		Local k:=Self.k.Normalize()
 		Return New Mat3( j.Cross( k ).Normalize(),k.Cross( i ).Normalize(),k )
@@ -150,7 +198,7 @@ Struct Mat3<T>
 	
 	#rem monkeydoc Creates a yaw rotation matrix.
 	
-	Returns a matrix representing a rotation around the Y axis of `angle` radians.
+	Returns a matrix representing a rotation of `angle` radians around the Y axis.
 	
 	#end
 	Function Yaw:Mat3( angle:Double )
@@ -160,7 +208,7 @@ Struct Mat3<T>
 	
 	#rem monkeydoc Creates a pitch rotation matrix.
 	
-	Returns a matrix representing a rotation around the X axis of `angle` radians.
+	Returns a matrix representing a rotation of `angle` radians around the X axis.
 	
 	#end
 	Function Pitch:Mat3( angle:Double )
@@ -170,7 +218,7 @@ Struct Mat3<T>
 	
 	#rem monkeydoc Creates a yaw rotation matrix.
 	
-	Returns a matrix representing a rotation around the Y axis of `an` radians.
+	Returns a matrix representing a rotation of `angle` radians around the Y axis.
 	
 	#end
 	Function Roll:Mat3( angle:Double )

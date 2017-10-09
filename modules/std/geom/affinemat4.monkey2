@@ -5,18 +5,29 @@ Namespace std.geom
 #end
 Alias AffineMat4f:AffineMat4<Float>
 
-#rem monkeydoc Affine 4x4 matrix class.
+#rem monkeydoc The generic AffineMat4f class provides support for affine 4x4 matrices.
 
 An affine 4x4 matrix is a 4x4 matrix whose right hand column is always 0,0,0,1.
 
 Affine 4x4 matrices are often used for 3d transformations such as scaling, rotation and translation.
 
+Unless otherwise noted, methods and operators always return a new vec3 containing the result, without modifying any parameters or 'self'.
+
+This allows you to chain operators together easily just like 'real' expressions.
+
 #end
 Struct AffineMat4<T>
 
+	#rem monkeydoc The matrix component of the matrix.
+	#end
 	Field m:Mat3<T>
+
+	#rem monkeydoc The translation component of the matrix.
+	#end
 	Field t:Vec3<T>
 	
+	#rem monkeydoc Creates a new matrix.
+	#end
 	Method New()
 		m.i.x=1; m.j.y=1; m.k.z=1
 	End
@@ -58,39 +69,40 @@ Struct AffineMat4<T>
 		Self.t=m.t.XYZ
 	End
 	
-	#rem monkeydoc Converts the matrix to a matrix of a different type.
+	#rem monkeydoc Converts the matrix to a matrix of a different type, or a printable string.
 	#end
 	Operator To<C>:AffineMat4<C>()
 		Return New AffineMat4<C>( m,t )
 	End
 	
-	#rem monkeydoc Converts the matrix to a printable string.
-	#end
 	Operator To:String()
 		Return "AffineMat4("+m+","+t+")"
 	End
 	
-	#rem monkeydoc Returns the transpose of the matrix.
+	#rem monkeydoc Transposes the matrix.
+	
+	Transposing a matrix swaps rows and columns.
+	
 	#End
 	Operator~:AffineMat4()
 		Local i:=~m
 		Return New AffineMat4( i,i*-t )
 	End
 	
-	#rem monkeydoc Returns the inverse of the matrix.
+	#rem monkeydoc Inverts the matrix.
 	#end
 	Operator-:AffineMat4()
 		Local i:=-m
 		Return New AffineMat4( i,i*-t )
 	End
 	
-	#rem monkeydoc Multiplies the matrix by another matrix and returns the result.
+	#rem monkeydoc Multiplies the matrix by another matrix.
 	#end
 	Operator*:AffineMat4( q:AffineMat4 )
 		Return New AffineMat4( m*q.m,m*q.t+t )
 	End
 	
-	#rem monkeydoc Multiplies a vector by the matrix and returns the result.
+	#rem monkeydoc Multiplies a vector by the matrix.
 	#end
 	Operator*:Vec3<T>( v:Vec3<T> )
 		Return New Vec3<T>( 
@@ -99,7 +111,7 @@ Struct AffineMat4<T>
 			m.i.z*v.x+m.j.z*v.y+m.k.z*v.z+t.z )
 	End
 
-	#rem monkeydoc Applies a translation transformation to the matrix and returns the result.
+	#rem monkeydoc Applies a translation transformation to the matrix.
 	#end
 	Method Translate:AffineMat4( tx:T,ty:T,tz:T )
 		Return Self * Translation( tx,ty,tz )
@@ -109,7 +121,7 @@ Struct AffineMat4<T>
 		Return Self * Translation( tv )
 	End
 
-	#rem monkeydoc Applies a rotation transformation to the matrix and returns the result.
+	#rem monkeydoc Applies a rotation transformation to the matrix.
 	#end
 	Method Rotate:AffineMat4( rx:Double,ry:Double,rz:Double )
 		Return Self * Rotation( rx,ry,rz )
@@ -123,7 +135,7 @@ Struct AffineMat4<T>
 		Return Self * Rotation( q )
 	End
 	
-	#rem monkeydoc Applies a scaling transformation to the matrix and returns the result.
+	#rem monkeydoc Applies a scaling transformation to the matrix.
 	#end
 	Method Scale:AffineMat4( sx:T,sy:T,sz:T )
 		Return Self * Scaling( sx,sy,sz )
@@ -137,7 +149,7 @@ Struct AffineMat4<T>
 		Return Self * Scaling( scaling )
 	End
 	
-	#rem monkeydoc Creates a translation matrix.
+	#rem monkeydoc Creates a matrix representing a translation.
 	#end
 	Function Translation:AffineMat4( tv:Vec3<T> )
 		Return New AffineMat4( tv )
@@ -147,9 +159,11 @@ Struct AffineMat4<T>
 		Return New AffineMat4( New Vec3<T>( tx,ty,tz ) )
 	End
 
-	#rem monkeydoc Creates a rotation matrix from euler angles.
+	#rem monkeydoc Creates a matrix repsenting a rotation form eular angles or a quat.
 	
 	Order of rotation is Yaw * Pitch * Roll.
+	
+	The `rotation` angle  is in radians.
 	
 	#end
 	Function Rotation:AffineMat4( rv:Vec3<Double> )
@@ -164,7 +178,7 @@ Struct AffineMat4<T>
 		Return New AffineMat4( q )
 	End
 	
-	#rem monkeydoc Creates a scaling matrix.
+	#rem monkeydoc Creates a matrix representing a scaling.
 	#end
 	Function Scaling:AffineMat4( sv:Vec3<T> )
 		Return New AffineMat4( Mat3<T>.Scaling( sv ) )

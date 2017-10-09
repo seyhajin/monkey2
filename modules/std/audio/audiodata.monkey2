@@ -102,7 +102,10 @@ Class AudioData Extends Resource
 		Return 0
 	End
 	
-	#rem monkey Loads audio data from a file.
+	#rem monkeydoc Loads audio data from a file.
+	
+	The file must be in "wav" or ".ogg" format.
+	
 	#end
 	Function Load:AudioData( path:String )
 	

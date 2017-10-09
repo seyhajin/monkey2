@@ -5,6 +5,8 @@ Namespace std.geom
 #end
 Alias Mat4f:Mat4<Float>
 
+#rem monkeydoc The generic Mat3 class provides support for 4x4 matrices.
+#end
 Struct Mat4<T>
 
 	Field i:Vec4<T>
