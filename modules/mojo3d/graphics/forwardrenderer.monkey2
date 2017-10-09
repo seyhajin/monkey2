@@ -39,10 +39,10 @@ Class ForwardRenderer Extends Renderer
 
 		If Not _colorBuffer Or size.x>_colorBuffer.Size.x Or size.y>_colorBuffer.Size.y
 			
-			SafeDiscard( _colorBuffer )
-			SafeDiscard( _depthBuffer )
-			SafeDiscard( _colorTarget0 )
-			SafeDiscard( _colorTarget1 )
+			_colorBuffer?.Discard()
+			_depthBuffer?.Discard() 
+			_colorTarget0?.Discard()
+			_colorTarget1?.Discard()
 
 			'look again at this - surely we can rgb32f on some mobile target?
 			#If Not __MOBILE_TARGET__

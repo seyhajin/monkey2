@@ -33,12 +33,12 @@ Class DeferredRenderer Extends Renderer
 		
 		If Not _hdrTexture Or size.x>_hdrTexture.Size.x Or size.y>_hdrTexture.Size.y
 		
-			SafeDiscard( _hdrTexture )
-			SafeDiscard( _colorTexture )
-			SafeDiscard( _normalTexture )
-			SafeDiscard( _depthTexture )
-			SafeDiscard( _rpass0Target )
-			SafeDiscard( _rpass2Target )
+			_hdrTexture?.Discard()
+			_colorTexture?.Discard()
+			_normalTexture?.Discard()
+			_depthTexture?.Discard()
+			_rpass0Target?.Discard()
+			_rpass2Target?.Discard()
 		
 			'look at this again later - surely we can rgba32f on some mobile targets, eg: nvidia shield?
 			#If Not __MOBILE_TARGET__

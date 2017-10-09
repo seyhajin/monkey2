@@ -502,9 +502,9 @@ Class Renderer
 		
 		If Not _csmTexture Or _csmSize<>_csmTexture.Size.x
 			
-			SafeDiscard( _csmTarget )
-			SafeDiscard( _csmTexture )
-			SafeDiscard( _csmDepth )
+			_csmTarget?.Discard()
+			_csmTexture?.Discard()
+			_csmDepth?.Discard()
 
 			const color_format:=PixelFormat.RGBA8
 			const depth_format:=PixelFormat.Depth32
@@ -523,10 +523,10 @@ Class Renderer
 		
 		If Not _psmTexture Or _psmSize*2>_psmTexture.Size.x
 			
-			SafeDiscard( _psmTexture )
-			SafeDiscard( _psmDepth )
+			_psmTexture?.Discard()
+			_psmDepth?.Discard()
 			For Local i:=0 Until 6
-				SafeDiscard( _psmTargets[i] )
+				_psmTargets[i]?.Discard()
 			Next
 			
 			Local size:=_psmSize*2

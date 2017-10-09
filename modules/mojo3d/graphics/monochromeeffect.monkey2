@@ -42,10 +42,10 @@ Class MonochromeEffect Extends PostEffect
 		
 		If Not _target Or rsize.x>_target.Size.x Or rsize.y>_target.Size.y
 			
-			SafeDiscard( _target ) ; SafeDiscard( _texture )
+			_target?.Discard()
+			_texture?.Discard()
 			
 			_texture=New Texture( rsize.x,rsize.y,rtexture.Format,Null )
-			
 			_target=New RenderTarget( New Texture[]( _texture ),Null )
 		End
 					
