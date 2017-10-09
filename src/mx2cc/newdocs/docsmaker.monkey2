@@ -44,6 +44,8 @@ Class DocsMaker
 		
 		Local modDocs:=New DocsNode( "module","",root,DocsType.Dir )
 		
+		Local modNav:=New DocsNode( _module.name,_module.name,modDocs,DocsType.Nav )
+		
 		Local done:=New Map<NamespaceScope,Bool>
 		
 		'Create docs tree
@@ -55,7 +57,7 @@ Class DocsMaker
 			
 			If done[scope] Continue
 			
-			MakeNamespaceDocs( scope,modDocs )
+			MakeNamespaceDocs( scope,modNav )
 			
 			done[scope]=True
 		Next
@@ -106,12 +108,12 @@ Class DocsMaker
 		
 		Select docs.Type
 			
-		Case DocsType.Decl
+		Case DocsType.Decl,DocsType.Hash
 			
-			Local url:=dir+docs.FilePath+".html"
+			Local url:=dir+docs.FilePathUrl
 		
 			buf.Add( ",data:{page:'"+url+"'}")
-		
+			
 		End
 		
 		Local children:=docs.Children
@@ -149,13 +151,17 @@ Class DocsMaker
 			
 			If _pageTemplate html=_pageTemplate.Replace( "${CONTENT}",html )
 	
-			Local path:=dir+docs.FilePath+".html"
+			Local url:=dir+docs.FilePathUrl
 			
-			SaveString( html,path )
+'			Print "Creating decl: "+docs.DeclPath
+			
+			SaveString( html,url )
 			
 		Case DocsType.Dir
 			
 			Local path:=dir+docs.FilePath
+			
+'			Print "Creating dir:"+dir
 			
 			CreateDir( path )
 			
@@ -184,14 +190,23 @@ Class DocsMaker
 		i=link.Find( ":" )				'absolute link?
 		If i<>-1
 			Local modname:=link.Slice( 0,i )
+			
 			Local slug:=link.Slice( i+1 ).Replace( ".","-" )
-'			Local url:="file://"+_docsDir+"modules/"+modname+"/module/"+slug+".html"
-			Local url:="../../"+modname+"/module/"+slug+".html"
+			
+			Local url:="../../"+modname+"/module/"+slug
+			
+			Local i:=url.Find( "#" )
+			If i<>-1
+				url=url.Slice( 0,i )+".html"+url.Slice( i )
+			Else
+				url+=".html"
+			Endif
+			
 			Local anchor:="<a href='"+url+"'>"+name+"</a>"
 			Return anchor
 		Endif
 		
-		Const monkeyTypes:="inumeric,iintegral,ireal,bool,byte,ubyte,short,ushort,int,uint,long,ulong,float,double,string,cstring,ovariant,typeinfo,declinfo,array,object,throwable"
+'		Const monkeyTypes:="inumeric,iintegral,ireal,bool,byte,ubyte,short,ushort,int,uint,long,ulong,float,double,string,cstring,ovariant,typeinfo,declinfo,array,object,throwable"
 		
 		Local docs:=_converting.Find( link )
 		If Not docs
@@ -199,7 +214,7 @@ Class DocsMaker
 			Return name
 		Endif
 		
-		Local url:="../"+docs.FilePath+".html"
+		Local url:="../"+docs.FilePathUrl
 		Local anchor:="<a href='"+url+"'>"+name+"</a>"
 		Return anchor
 	End
@@ -223,8 +238,8 @@ Class DocsMaker
 		If ptype 
 			Local ctype:=ptype.ctype
 			If Not name name=ctype.Name
-			Local cname:=DeclIdent( ctype.cdecl )'ctype.Name.ToLower()
-			return "[[monkey.types."+cname+"|"+name+"]]"
+			Local cname:=DeclIdent( ctype.cdecl )
+			return "[[monkey:monkey.types."+cname+"|"+name+"]]"
 		Endif
 	
 		Local atype:=Cast<ArrayType>( type )
@@ -286,7 +301,19 @@ Class DocsMaker
 	
 	Method DeclIdent:String( decl:Decl )
 
-		Local ident:=decl.ident.Replace( "@","" )
+		Local ident:=decl.ident
+		If ident.StartsWith( "@" )
+			If ident.StartsWith( "@u" )
+				ident="U"+ident.Slice( 2 ).Capitalize()
+			Else
+				ident=ident.Slice( 1 ).Capitalize()
+				If ident="Cstring" ident="CString"
+			Endif
+		Else
+			If ident="new" ident="New"
+		Endif
+
+'		Local ident:=decl.ident.Replace( "@","" )
 		
 		If Not IsIdent( ident[0] ) ident="Op"+OpSym( ident ).Slice( 1 ).Capitalize()
 	
@@ -295,6 +322,17 @@ Class DocsMaker
 	
 	Method DeclLabel:String( decl:Decl )
 	
+		Local label:=decl.ident
+
+		Local fdecl:=Cast<FuncDecl>( decl )
+		If fdecl And fdecl.IsOperator
+			If label="to" label="To"
+			label="Operator "+label
+		Else
+			label=DeclIdent( decl )
+		Endif
+	
+	#rem
 		Local label:=decl.ident
 		If label.StartsWith( "@" )
 			If label.StartsWith( "@u" )
@@ -312,6 +350,7 @@ Class DocsMaker
 			If label="to" label=" To"
 			 label="Operator"+label
 		Endif
+	#end
 		
 		Local xdecl:=Cast<AliasDecl>( decl )
 		If xdecl And xdecl.genArgs label+="<"+",".Join( xdecl.genArgs )+">"

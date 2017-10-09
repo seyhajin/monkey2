@@ -630,6 +630,10 @@ Class IfThenElseValue Extends Value
 		Self.thenValue=thenValue
 		Self.elseValue=elseValue
 	End
+	
+	Property HasSideEffects:Bool() Override
+		Return thenValue.HasSideEffects Or elseValue.HasSideEffects
+	End
 
 End
 

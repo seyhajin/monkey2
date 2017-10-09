@@ -113,20 +113,19 @@ Class DocsBuffer
 			Case "#","##","###","####","#####"
 				
 				Local label:=arg
-				Local ident:=label.Replace( " ","_" )
+				Local ident:=label.Replace( " ","-" ).ToLower()
+				
+				Local docs:=New DocsNode( ident,label,_docs,DocsType.Hash )
 				
 				EmitLine( "<a name='"+ident+"'></a>" )
 				
 				EmitLine( tag+" "+arg )
 				
-				Local docs:=New DocsNode( ident,label,_docs,DocsType.Decl )
-				
-				docs.Hash=True
 				
 			Case "manpage"
 				
 				Local label:=arg
-				Local ident:=label.Replace( " ","_" )
+				Local ident:=label.Replace( " ","-" ).ToLower()
 				
 				Local docs:=New DocsNode( ident,label,_docs,DocsType.Decl )
 				

@@ -4,8 +4,9 @@ Namespace mx2.newdocs
 Enum DocsType
 	Root=0
 	Decl=1
-	Dir=2
-	Nav=3
+	Hash=2
+	Dir=3
+	Nav=4
 End
 
 Class DocsNode
@@ -18,15 +19,6 @@ Class DocsNode
 		_type=type
 
 		If _parent _parent._children.Add( Self )
-	End
-	
-	Property Hash:Bool()
-		
-		Return _hash
-	
-	Setter( hash:Bool )
-		
-		_hash=hash
 	End
 	
 	Property Ident:String()
@@ -93,12 +85,12 @@ Class DocsNode
 			
 			Return _ident
 			
-		Case DocsType.Decl
+		Case DocsType.Decl,DocsType.Hash
 			
-			If path And Not path.EndsWith( "/" ) path+="-"
+			If path And Not path.EndsWith( "/" ) path+=_type=DocsType.Decl ? "-" else "#"
 			
 			Return path+_ident.Replace( ".","-" )
-
+			
 		Case DocsType.Dir
 			
 			If path And Not path.EndsWith( "/" ) path+="/"
@@ -114,13 +106,27 @@ Class DocsNode
 		Return ""
 	End
 	
+	Property FilePathUrl:String()
+	
+		Local url:=FilePath
+			
+		Local i:=url.Find( "#" )
+		If i<>-1
+			url=url.Slice( 0,i )+".html"+url.Slice( i )
+		Else
+			url+=".html"
+		Endif
+		
+		Return url
+	End
+	
 	Property DeclPath:String()
 
 		Local path:=_parent ? _parent.DeclPath Else ""
 		
 		Select _type
 			
-		Case DocsType.Decl
+		Case DocsType.Decl,DocsType.Hash
 			
 			If path path+="."
 				
@@ -155,50 +161,31 @@ Class DocsNode
 		Return ""
 	End
 	
-	Method FindChild:DocsNode( path:String,found:Bool )
+	Method Find:DocsNode( path:String,done:Map<DocsNode,Bool> =null )
 	
-		If _type<>DocsType.Nav
+ 		For Local child:=Eachin _children
+ 		
+ 			If done And done[child] Continue
+ 		
+ 			Local docs:=child.Find( path,done )
+ 			
+ 			If docs Return docs
+ 		Next
+ 		
+ 		Select _type
+ 		
+ 		Case DocsType.Decl,DocsType.Hash
+		
+			Local declPath:=DeclPath
 			
-			If path=_ident Return Self
-			
-			If path.Contains( "." ) And path.StartsWith( _ident+"." )
-				
-				path=path.Slice( _ident.Length+1 )
-				
-				found=True
-				
-			Else If found
-				
-				Return Null
-				
+			If declPath=path Or declPath.EndsWith( "."+path ) 
+				Return Self
 			Endif
-						
-		Endif
 		
-		For Local child:=Eachin _children
-			
-			Local docs:=child.FindChild( path,found )
-			
-			If docs Return docs
-		Next
-
-		Return Null
-	End
-	
-	Method Find:DocsNode( path:String,done:Map<DocsNode,Bool> =null )	
-		
-		For Local child:=Eachin _children
-			If done And done.Contains( child ) Continue
-			
-			Local docs:=child.FindChild( path,False )
-			If docs Return docs
-	
-		Next
-		
-		Local docs:=FindChild( path,false )
-		If docs Return docs
+		End
 		
 		If Not done done=New Map<DocsNode,Bool>
+		done[self]=True
 		
 		If _parent Return _parent.Find( path,done )
 		
@@ -238,7 +225,6 @@ Class DocsNode
 	
 	Private
 
-	Field _hash:bool
 	Field _ident:String
 	Field _label:String
 	Field _parent:DocsNode

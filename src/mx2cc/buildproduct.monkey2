@@ -790,7 +790,7 @@ Class AndroidBuildProduct Extends BuildProduct
 			For Local imp:=Eachin imports
 				If imp=module Continue
 				
-				If imp.name="sdl2" Or imp.name="admob" 
+				If imp.name="sdl2" 'Or imp.name="admob" 'Or imp.name="std"
 					whole_libs+=" mx2_"+imp.name
 					Continue
 				Endif
