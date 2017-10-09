@@ -38,6 +38,7 @@ namespace bbAsync{
 	};
 	
 	void setPostEventFilter( void(*filter)(Event*) );
+	
 }
 
 #endif
