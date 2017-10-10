@@ -456,7 +456,7 @@ Class AppInstance
 	#end
 	Method MainLoop()
 		
-		If (Not _requestRender Or Not Renderable) And Idle=Null
+		If Not _requestRender Or Not Renderable
 
 			SDL_WaitEvent( Null )
 

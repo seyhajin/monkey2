@@ -1,0 +1,5 @@
+
+@manpage Graphics
+
+### Graphics
+
