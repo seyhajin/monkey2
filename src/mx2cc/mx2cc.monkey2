@@ -38,9 +38,9 @@ Const MX2CC_VERSION_EXT:=""
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makedocs monkey std"
+'Const TestArgs:="mx2cc makedocs monkey std mojo"
  
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '
@@ -394,23 +394,20 @@ Function MakeDocs:Bool( args:String[] )
 	Next
 	
 	Local buf:=New StringStack
+	Local modsbuf:=New StringStack
 	
 	For Local modid:=Eachin EnumModules()
 
 		Local index:=LoadString( "docs/modules/"+modid+"/manual/index.js" )
-		If index
-			If buf.Length buf.Add( "," )
-			buf.Push( index )
-		Endif
+		If index buf.Push( index )
 		
 		index=LoadString( "docs/modules/"+modid+"/module/index.js" )
-		If index
-			If buf.Length buf.Add( "," )
-			buf.Push( index )
-		Endif
+		If index modsbuf.Push( index )
 	Next
 	
-	Local tree:=buf.Join( "" )
+	buf.Add( "{text:'Modules reference',children:[~n"+modsbuf.Join( "," )+"]}~n" )
+	
+	Local tree:=buf.Join( "," )
 	
 	Local page:=LoadString( "docs/new_docs_template.html" )
 	page=page.Replace( "${DOCS_TREE}",tree )

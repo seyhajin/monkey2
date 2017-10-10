@@ -449,15 +449,21 @@ Class FuncValue Extends Value
 			transFile.functions.Push( Self )
 			
 		Else
-		
-			If IsCtor Or IsMethod
 			
-				If fdecl.ident="new"
-					cscope.ctype.ctors.Push( Self )
-				Else
-					cscope.ctype.methods.Push( Self )
-				Endif
+			If IsCtor
+				cscope.ctype.ctors.Push( Self )
+			Elseif IsMethod
+				cscope.ctype.methods.Push( Self )
 			Endif
+		
+'			If IsCtor Or IsMethod
+			
+'				If fdecl.ident="new"
+'					cscope.ctype.ctors.Push( Self )
+'				Else
+'					cscope.ctype.methods.Push( Self )
+'				Endif
+'			Endif
 		
 			scope.transMembers.Push( Self )
 

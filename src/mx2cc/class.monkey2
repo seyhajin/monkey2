@@ -451,7 +451,7 @@ Class ClassType Extends Type
 		
 		Return node
 	End
-		
+	
 	Method FindType:Type( ident:String ) Override
 	
 		Local type:=FindType2( ident )

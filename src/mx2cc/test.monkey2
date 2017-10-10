@@ -1,22 +1,38 @@
+Class Type
+	Method M()
+		Print "HEY!"
+	End
+End
 
-#Import "test2"
+Class Comp
+	
+	Const type:=New Type
+End
 
-Class B
-
-	Method New( t:Int=0 )
-		Print "B.New"
+Class Entity
+	
+	Property P<T>:Int()
+		
+		Local t:=T.type
+		
+		t.M()
+		
+		Return 0
+		
+	Setter( t:Int )
+		
+		T.type.M()
+		
 	End
 	
 End
-
-Class C Extends B
-
-	Method New()
-		Print "C.New"
-	End
-End
-
+	
 Function Main()
-
-	Local c:=New C
+	
+	Local e:=New Entity
+	
+	e.P<Comp> =10
+	
+	Print e.P<Comp>
+	
 End

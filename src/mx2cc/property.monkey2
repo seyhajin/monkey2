@@ -3,12 +3,18 @@ Namespace mx2
 
 Class PropertyDecl Extends Decl
 
+	Field genArgs:String[]
 	Field getFunc:FuncDecl
 	Field setFunc:FuncDecl
 	
 	Method ToNode:SNode( scope:Scope ) Override
+		
+		Local types:=New Type[genArgs.Length]
+		For Local i:=0 Until types.Length
+			types[i]=New GenArgType( i,genArgs[i] )
+		Next
 	
-		Return New PropertyList( Self,scope )
+		Return New PropertyList( Self,scope,types,Null )
 	End
 
 End
@@ -24,12 +30,18 @@ Class PropertyList Extends FuncList
 	
 	Field type:Type
 	
-	Method New( pdecl:PropertyDecl,scope:Scope )
+	Field types:Type[]
+	Field instanceof:PropertyList
+	Field instances:Stack<PropertyList>
+	
+	Method New( pdecl:PropertyDecl,scope:Scope,types:Type[],instanceof:PropertyList )
 		Super.New( pdecl.ident,scope )
 		Self.pnode=pdecl
 		Self.pdecl=pdecl
 		Self.scope=scope
 		Self.cscope=Cast<ClassScope>( scope )
+		Self.types=types
+		Self.instanceof=instanceof
 	End
 	
 	Method ToString:String() Override
@@ -43,7 +55,7 @@ Class PropertyList Extends FuncList
 		
 		If pdecl.getFunc
 			Try
-				getFunc=New FuncValue( pdecl.getFunc,scope,Null,Null )
+				getFunc=New FuncValue( pdecl.getFunc,scope,types,instanceof?.getFunc )
 				getFunc.Semant()
 				type=getFunc.ftype.retType
 				If type.Equals( Type.VoidType ) Throw New SemantEx( "Property '"+pdecl.ident+"' getter has void type" )
@@ -54,9 +66,9 @@ Class PropertyList Extends FuncList
 
 		If pdecl.setFunc
 			Try
-				setFunc=New FuncValue( pdecl.setFunc,scope,Null,Null )
+				setFunc=New FuncValue( pdecl.setFunc,scope,types,instanceof?.setFunc )
 				setFunc.Semant()
-				If type And Not type.Equals( setFunc.ftype.argTypes[0] ) Throw New SemantEx( "Property '"+pdecl.ident+"' getter and setter have different types" )
+				If type And Not type.Equals( setFunc.ftype.argTypes[0] ) Throw New SemantEx( "Property '"+pdecl.ident+"' Getter And Setter have different types" )
 				If Not type type=setFunc.ftype.argTypes[0]
 				PushFunc( setFunc )
 			Catch ex:SemantEx
@@ -80,6 +92,27 @@ Class PropertyList Extends FuncList
 		Endif
 		
 		Return New PropertyValue( Self,instance )
+	End
+	
+	Method GenInstance:PropertyList( types:Type[] )
+		
+		If instanceof Return instanceof.GenInstance( types )
+		
+		If types.Length<>Self.types.Length Throw New SemantEx( "Wrong number of generic type parameters" )
+		
+		If Not instances instances=New Stack<PropertyList>
+		
+		For Local inst:=Eachin instances
+			If TypesEqual( inst.types,types ) Return inst
+		Next
+		
+		Local plist:=New PropertyList( pdecl,scope,types,Self )
+		
+		instances.Add( plist )
+		
+		plist.Semant()
+		
+		Return plist
 	End
 	
 End
@@ -157,5 +190,12 @@ Class PropertyValue Extends Value
 		
 		Return New PropertyValue( plist,value )
 	End
+	
+'	Method GenInstance:Value( types:Type[] ) Override
+		
+'		Local plist:=Self.plist.GenInstance( types )
+		
+'		Return New PropertyValue( plist,instance )
+'	End
 	
 End

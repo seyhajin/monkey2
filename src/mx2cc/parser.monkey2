@@ -499,6 +499,8 @@ Class Parser
 			
 			genArgs=ParseGenArgs()
 			
+			If genArgs And (flags & (DECL_SETTER|DECL_GETTER)) "Generic arguments can not appear here"
+			
 			If CParse( ":" )
 				type=Cast<FuncTypeExpr>( ParseType() )
 				If Not type Error( "Expecting function type" )
@@ -722,6 +724,7 @@ Class Parser
 		
 		Local func:=ParseFunc( flags )
 		decl.ident=func.ident
+		decl.genArgs=func.genArgs
 		
 		If func.IsGetter
 		
@@ -730,6 +733,7 @@ Class Parser
 			If Toke="setter"
 				decl.setFunc=ParseFunc( flags )
 				decl.setFunc.ident=decl.ident
+				decl.setFunc.genArgs=decl.genArgs
 			Endif
 			
 		Else If func.IsSetter
@@ -739,6 +743,7 @@ Class Parser
 			If Toke="getter"
 				decl.getFunc=ParseFunc( flags )
 				decl.getFunc.ident=decl.ident
+				decl.getFunc.genArgs=decl.genArgs
 			Endif
 			
 		Endif
