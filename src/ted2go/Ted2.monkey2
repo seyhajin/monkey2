@@ -13,7 +13,8 @@
 
 '----------------------------
 
-#Import "<reflection>"
+'Help!
+'#Import "<reflection>"
 
 #Import "<std>"
 #Import "<mojo>"
