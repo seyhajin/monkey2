@@ -17,7 +17,7 @@ namespace bbFileSystem{
 	
 #if BB_IOS
 	
-	bbString getInternalDir();
+	bbString getSpecialDir( bbString name );
 	
 #endif
 

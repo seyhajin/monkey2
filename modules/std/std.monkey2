@@ -91,14 +91,28 @@ Function Main()
 
 	'Capture app start time
 	'
-	std.time.Microsecs()
+	std.time.Now()
 
-	'Add 'file::' stream protocol
+	'Add stream handlers
 	'
 	Stream.OpenFuncs["file"]=Lambda:Stream( proto:String,path:String,mode:String )
 
 		Return FileStream.Open( path,mode )
 	End
+	
+#If __MOBILE_TARGET__
+	
+	Stream.OpenFuncs["internal"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return FileStream.Open( filesystem.InternalDir()+path,mode )
+	End
+
+	Stream.OpenFuncs["external"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return FileStream.Open( filesystem.ExternalDir()+path,mode )
+	End
+
+#endif
 	
 #If __DESKTOP_TARGET__
 
@@ -116,7 +130,7 @@ Function Main()
 	
 		Return FileStream.Open( filesystem.HomeDir()+path,mode )
 	End
-
+	
 #Endif
 
 #If __DESKTOP_TARGET__ Or __WEB_TARGET__
@@ -144,13 +158,4 @@ Function Main()
 	
 #Endif
 	
-#If __MOBILE_TARGET__
-
-	Stream.OpenFuncs["internal"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return FileStream.Open( filesystem.InternalDir()+path,mode )
-	End
-
-#Endif
-
 End

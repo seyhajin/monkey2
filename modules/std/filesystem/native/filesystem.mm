@@ -3,9 +3,17 @@
 
 #include <UIKit/UIKit.h>
 
-bbString bbFileSystem::getInternalDir(){
+bbString bbFileSystem::getSpecialDir( bbString name ){
 
-	NSString *docs=[@"~/Documents" stringByExpandingTildeInPath];
+	NSString *dir=0;
 
-	return bbString( docs )+"/";
+	if( name=="internal" ){
+	
+		dir=[@"~/Documents" stringByExpandingTildeInPath];
+		
+	}else if( name=="external" ){	//?
+	
+	}
+
+	return bbString( dir )+"/";
 }

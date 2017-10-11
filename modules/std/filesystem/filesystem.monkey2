@@ -47,15 +47,7 @@ Returns true if successful.
 
 #end
 Function CopyFile:Bool( srcPath:String,dstPath:String )="bbFileSystem::copyFile"
-
-#If __TARGET__="ios"
-
-Extern Private
-
-Function getInternalDir:String()="bbFileSystem::getInternalDir"
 	
-#EndIf
-
 Private
 
 Function FixPath:String( path:String )
@@ -69,6 +61,10 @@ Function FixPath:String( path:String )
 	Case "asset::" return AssetsDir()+path
 	Case "desktop::" Return DesktopDir()+path
 	Case "home::" Return HomeDir()+path
+#If __MOBILE_TARGET__
+	Case "internal::" Return InternalDir()+path
+	Case "external::" Return ExternalDir()+path
+#endif
 	End
 	
 	Return ""
@@ -78,6 +74,45 @@ Function FixFilePath:String( path:String )
 	
 	Return FixPath( StripSlashes( path ) )
 End
+
+#If __TARGET__="android"
+
+Function GetSpecialDir:String( name:String )
+	
+	Global _class:jclass
+	Global _getSpecilarDir:jmethodID
+	
+	If Not _getSpecialDir
+	
+		Local env:=sdl2.Android_JNI_GetEnv()
+		
+		_class=env.FindClass( "com/monkey2/lib/Monkey2FileSystem" )
+		
+		_getSpecialDir=env.GetStaticMethodID( cls,"getSpecialDir","(Ljava/lang/String;)Ljava/lang/String;" )
+	
+	Endif
+	
+	Local dir:=env.CallStaticStringMethod( _class,_getSpecialDir,New Variant[]( name ) )
+	
+	Return dir
+End
+
+#Elseif __TARGET__="ios"
+
+Extern Private
+
+Function GetSpecialDir:String()="bbFileSystem::getSpecialDir"
+	
+Private
+	
+#else
+
+Function GetSpecialDir:String( name:String )
+	
+	Return ""
+End
+	
+#Endif
 
 Public
 
@@ -194,34 +229,34 @@ End
 
 #rem monkeydoc Gets the filesystem directory of the app's internal storage directory.
 
-Note that only the mobile targets have an internal directory. Other targets will return an empty string.
+Returns the absolute path to the directory on the filesystem where files created with openFileOutput(String, int) are stored.
 
-The internal directory is where your app should create and manage app specific files such as game saves, preferences, items purchased and so on.
+This directory will be removed when your app is uninstalled.
+
+This function is only available on mobile targets.
 
 @return The app's internal directory.
 
-#end
+#End
 Function InternalDir:String()
-#If __TARGET__="android"
-	Local env:=sdl2.Android_JNI_GetEnv()
-	
-	Local cls:=env.FindClass( "com/monkey2/lib/Monkey2FileSystem" )
-	
-	Local mth:=env.GetStaticMethodID( cls,"getInternalDir","()Ljava/lang/String;" )
-	
-	Local dir:=env.CallStaticStringMethod( cls,mth,Null )
-	
-	Return dir
-	
-#Elseif __TARGET__="ios"
 
-	local dir:=getInternalDir()
-	
-	Return dir
-	
-#Endif
+	Return GetSpecialDir( "internal" )
+End
 
-	Return ""
+#rem monkeydoc Gets the filesystem directory of the app's external storage directory.
+
+Returns the absolute path to the directory on the primary shared/external storage device where the application can place persistent files it owns. These files are internal to the applications, and not typically visible to the user as media.
+
+This directory will be removed when your app is uninstalled.
+
+This function is only available on mobile targets.
+
+@return The app's external storage directory.
+
+#End
+Function ExternalDir:String()
+	
+	Return GetSpecialDir( "external" )
 End
 
 #rem monkeydoc Extracts the root directory from a file system path.
