@@ -1478,8 +1478,8 @@ Class Canvas
 	End
 	
 	Global _quadIndices:IndexBuffer
-	Global _defaultFont:Font
 	Global _shadowVB:VertexBuffer
+	Global _defaultFont:Font
 
 	Global _lighting:Bool=False
 	Global _gbuffers:=New Texture[2]
@@ -1599,7 +1599,7 @@ Class Canvas
 		_lightVP0=Cast<Vertex2f Ptr>( _lightVB.Lock() )
 		_lightNV=0
 		
-		_shadowVB=New VertexBuffer( Vertex2f.Format,65536 )
+'		_shadowVB=New VertexBuffer( Vertex2f.Format,65536 )
 		
 		_device.IndexBuffer=_quadIndices
 
@@ -1791,14 +1791,15 @@ Class Canvas
 	
 	'Shadows
 	'
-	Method DrawShadows( lightOp:LightOp )
+	Method DrawShadows:Int( lightOp:LightOp )
 	
 		Const EXTRUDE:=1024.0
 		
 		Local lv:=lightOp.lightPos
+		
+		lv=New Vec2f( 320,240 )
 
-		Local vp0:=Cast<Vertex2f Ptr>( _shadowVB.Lock() )
-		Local n:=0
+		Local vp0:=Cast<Vertex2f Ptr>( _shadowVB.Lock() ),n:=0
 		
 		For Local op:=Eachin _shadowOps
 		
@@ -1833,13 +1834,15 @@ Class Canvas
 				tp[3].position=tv;tp[4].position=hv2;tp[5].position=pv
 				tp[6].position=hv2;tp[7].position=pv2;tp[8].position=pv
 				
-				tp+=9
 			Next
 			
 		Next
 		
+		_shadowVB.Invalidate( 0,n )
+		
 		_shadowVB.Unlock()
 		
+		Return n
 	End
 		
 	'Lighting
@@ -1852,19 +1855,9 @@ Class Canvas
 		
 		For Local op:=Eachin _lightOps
 		
-			DrawShadows( op )
+			Local n:=DrawShadows( op )
 			
-			If _shadowVB.Length
-#rem
-				_device.RenderTarget=Null
-				_device.BlendMode=BlendMode.Opaque
-				_device.ColorMask=ColorMask.All
-				_device.VertexBuffer=_shadowVB
-				_device.Shader=Shader.GetShader( "shadow" )
-				_device.Clear( Color.Blue )
-				_device.Render( 3,_shadowVB.Length/3,0 )
-				Continue
-#end				
+			If n
 				_device.RenderPass=4
 				_device.RenderTarget=_gbrtargets[0]
 				_device.BlendMode=BlendMode.Opaque
@@ -1873,7 +1866,7 @@ Class Canvas
 				_device.Shader=Shader.GetShader( "shadow" )
 
 				_device.Clear( Color.White )
-				_device.Render( 3,_shadowVB.Length/3,0 )
+				_device.Render( 3,n/3,0 )
 				
 				_device.RenderPass=5				
 				_device.RenderTarget=_rtarget
