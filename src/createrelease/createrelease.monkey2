@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.07"
+Const MX2CC_VERSION:="1.1.08"
 
 Const RELEASE_SUFFIX:=""
 
