@@ -15,7 +15,7 @@ public class Monkey2FileSystem{
 		if( name.equals( "internal" ) ){
 	    	f=Monkey2Activity.instance().getFilesDir();
 	    }else if( name.equals( "external" ) ){
-	    	f=Monkey2Activity.instance().getExternalFilesDir();
+	    	f=Monkey2Activity.instance().getExternalFilesDir( null );
 	    }
 
 		if( f!=null ) return f.getAbsolutePath()+"/";

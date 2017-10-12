@@ -80,15 +80,15 @@ End
 Function GetSpecialDir:String( name:String )
 	
 	Global _class:jclass
-	Global _getSpecilarDir:jmethodID
+	Global _getSpecialDir:jmethodID
 	
+	Local env:=sdl2.Android_JNI_GetEnv()
+		
 	If Not _getSpecialDir
 	
-		Local env:=sdl2.Android_JNI_GetEnv()
-		
 		_class=env.FindClass( "com/monkey2/lib/Monkey2FileSystem" )
 		
-		_getSpecialDir=env.GetStaticMethodID( cls,"getSpecialDir","(Ljava/lang/String;)Ljava/lang/String;" )
+		_getSpecialDir=env.GetStaticMethodID( _class,"getSpecialDir","(Ljava/lang/String;)Ljava/lang/String;" )
 	
 	Endif
 	
