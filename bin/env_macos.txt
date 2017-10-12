@@ -70,7 +70,7 @@ PATH=${HOME}/Library/Android/sdk/ndk-bundle:${PATH}
 
 '***** IOS *****
 
-MX2_SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk
+MX2_SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk
 MX2_DEPLOYMENT_TARGET=8.0
 
 'LD options
