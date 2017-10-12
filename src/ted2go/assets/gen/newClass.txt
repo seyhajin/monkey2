@@ -1,9 +1,0 @@
-
-_NAMESPACE_
-
-
-Class _NAME__SUPERCLASS__INTERFACES_
-	
-	
-	
-End
