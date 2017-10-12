@@ -7,6 +7,8 @@
 #if _MSC_VER
 #include <stdint.h>
 #endif
+#elif __APPLE__
+#include <TargetConditionals.h>
 #endif
 
 void setenv_( const char *name,const char *value,int overwrite ){
@@ -58,12 +60,20 @@ int system_( const char *cmd ){
 	CloseHandle( pi.hThread );
 
 	return res;
+	
+#elif __APPLE__
+
+#if !TARGET_OS_IPHONE
+	return system( cmd );
+#endif
 
 #else
 
 	return system( cmd );
 
 #endif
+
+	return -1;
 
 }
 
