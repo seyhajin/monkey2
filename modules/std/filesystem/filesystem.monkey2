@@ -101,7 +101,7 @@ End
 
 Extern Private
 
-Function GetSpecialDir:String()="bbFileSystem::getSpecialDir"
+Function GetSpecialDir:String( name:String )="bbFileSystem::getSpecialDir"
 	
 Private
 	
