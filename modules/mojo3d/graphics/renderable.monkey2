@@ -46,6 +46,6 @@ Class Renderable Extends Entity Abstract
 	
 	Private
 	
-	Field _castsShadow:bool
+	Field _castsShadow:Bool=True
 	
 End
