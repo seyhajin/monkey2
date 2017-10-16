@@ -176,6 +176,11 @@ Class DebugView Extends DockingView
 		
 		MainWindow.UpdateKeyView()
 	End
+	
+	Method KillApp()
+		
+		_kill.Trigger()
+	End
 
 	Private
 		

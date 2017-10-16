@@ -29,6 +29,7 @@ Class StbAudioData Extends AudioData
 	
 End
 
+Internal
 
 Function LoadAudioData_OGG:AudioData( path:String )
 

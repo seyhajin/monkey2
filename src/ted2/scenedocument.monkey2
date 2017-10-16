@@ -2,7 +2,7 @@
 Namespace ted2
 
 #Import "<mojo3d>"
-#Import "<mojo3d-assimp>"
+#Import "<mojo3d-loaders>"
 
 Using mojo3d..
 
@@ -33,28 +33,60 @@ Class SceneDocumentView Extends View
 		
 		RequestRender()
 		
-		If Keyboard.KeyDown( Key.Up )
-			model.RotateX( .1 )
-		Else If Keyboard.KeyDown( Key.Down )
-			model.RotateX( -.1 )
-		Endif
+		Global _anim:Float=0
 		
-		If Keyboard.KeyDown( Key.Left )
-			model.RotateY( .1,True )
-		Else If Keyboard.KeyDown( Key.Right )
-			model.RotateY( -.1,True )
-		Endif
-
 		If Keyboard.KeyDown( Key.A )
-			_doc.Camera.MoveZ( .1 )
-		Else If Keyboard.KeyDown( Key.Z )
-			_doc.Camera.MoveZ( -.1 )
+			If _doc.Model.Animator
+				_anim+=12.0/60.0
+				_doc.Model.Animator.Animate( 0,_anim )
+			Endif
+		Else
+			_anim=0
 		Endif
 		
 		_doc.Scene.Render( canvas,_doc.Camera )
 	End
 	
 	Method OnMouseEvent( event:MouseEvent ) Override
+		
+		If Not _doc.Model Return
+		
+		Global _v:Vec2i
+		Global _f:Bool
+		
+		Select event.Type
+		Case EventType.MouseDown
+			_v=event.Location
+			_f=True
+		Case EventType.MouseMove
+			If _f
+				Local dv:=event.Location-_v
+				Local rx:=Float(dv.x)/Height * +180.0
+				Local ry:=Float(dv.y)/Height * -180.0
+				_doc.Model.Rotate( ry,rx,0 )
+				_v=event.Location
+			Endif
+		Case EventType.MouseUp
+			_f=False
+		Case EventType.MouseWheel
+			_doc.Camera.MoveZ( Float(event.Wheel.y)*-.1 )
+		End
+	End
+	
+	Method OnKeyEvent( event:KeyEvent ) Override
+		
+		If event.Type=EventType.KeyDown
+			Select event.Key
+			Case Key.R
+				_doc.Camera.Position=New Vec3f(0,0,-2.5)
+				_doc.Model.Rotation=New Vec3f(0,0,0)
+			Case Key.S
+				_doc.Light.CastsShadow=Not _doc.Light.CastsShadow
+			Case Key.A
+				
+			End
+		Endif
+		
 	End
 	
 	Private
@@ -74,19 +106,16 @@ Class SceneDocument Extends Ted2Document
 		Scene.SetCurrent( _scene )
 		
 		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera.Near=.01
+		_camera.Far=10
 		_camera.MoveZ( -2.5 )
 			
 		_light=New Light
 		_light.RotateX( Pi/2 )
 		
+		_model=null
+		
 		Scene.SetCurrent( Null )
-	End
-	
-	Property Model:Model()
-	
-		Return _model
 	End
 	
 	Property Scene:Scene()
@@ -99,21 +128,31 @@ Class SceneDocument Extends Ted2Document
 		Return _camera
 	End
 	
+	Property Light:Light()
+		
+		Return _light
+	End
+	
+	Property Model:Model()
+	
+		Return _model
+	End
+	
 	Protected
 	
 	Method OnLoad:Bool() Override
-
-		Scene.SetCurrent( _scene )
+		
+		If _model _model.Destroy()
 		
 		Print "Loading model:"+Path
 
+		Scene.SetCurrent( _scene )
+		
 		_model=Model.Load( Path )
-
-		If _model
-			_model.Mesh.FitVertices( New Boxf( -1,1 ) )
-		Endif
 		
 		Scene.SetCurrent( Null )
+
+		If _model _model.Mesh.FitVertices( New Boxf( -1,1 ) )
 	
 		Return True
 	End
@@ -124,6 +163,8 @@ Class SceneDocument Extends Ted2Document
 	End
 	
 	Method OnClose() Override
+		
+		_scene.DestroyAllEntities()
 		
 	End
 	
@@ -152,7 +193,7 @@ Class SceneDocumentType Extends Ted2DocumentType
 	Method New()
 		AddPlugin( Self )
 		
-		Extensions=New String[]( ".b3d",".3ds",".dae" )
+		Extensions=New String[]( ".gltf",".b3d",".3ds",".obj",".dae",".fbx",".blend",".x" )
 	End
 	
 	Method OnCreateDocument:Ted2Document( path:String ) Override

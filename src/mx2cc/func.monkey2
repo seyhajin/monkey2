@@ -210,7 +210,19 @@ Class FuncValue Extends Value
 		'
 		If IsCtor
 		
-			If cscope.ctype.cdecl.kind="struct"
+			If cscope.ctype.cdecl.kind="class"
+			
+				Local isdefault:=True
+				
+				For Local p:=Eachin pdecls
+					If p.init Continue
+					isdefault=False
+					Exit
+				Next
+				
+				If isdefault cscope.ctype.defaultCtor=Self
+		
+			Else If cscope.ctype.cdecl.kind="struct"
 			
 				If ftype.argTypes.Length And ftype.argTypes[0].Equals( cscope.ctype )
 					Local ok:=False
@@ -221,7 +233,7 @@ Class FuncValue Extends Value
 					Next
 					If Not ok Throw New SemantEx( "Illegal struct constructor - 'copy constructors' are automatically generated and cannot be redefined" )
 				Endif
-			
+						
 			Endif
 		
 		Else If IsMethod
@@ -383,16 +395,10 @@ Class FuncValue Extends Value
 	End
 	
 	Method SemantStmts()
-	
+
 		If block.IsGeneric SemantError( "FuncValue.SemantStmts(1)" )
 	
-		Try
-		
-			SemantParams()
-			
-		Catch ex:SemantEx
-		
-		End
+		SemantParams()
 		
 		If Not fdecl.IsAbstract
 			
@@ -401,13 +407,16 @@ Class FuncValue Extends Value
 			If fdecl.ident="new" And Not invokeNew
 			
 				Local superType:=cscope.ctype.superType
-				If superType And Not superType.hasDefaultCtor
-				
-					Try
-						Throw New SemantEx( "Super class '"+superType.Name+"' has no default constructor",pnode )
-					Catch ex:SemantEx
-					End
-					
+				If superType
+					If superType.cdecl.hasDefaultCtor
+						Local ctor:=superType.FindNode( "new" )
+						If ctor
+							Local invoke:=Cast<InvokeValue>( ctor.ToValue( Null ).Invoke( null ) )
+							invokeNew=New InvokeNewValue( superType,invoke.args )
+						Endif
+					Else
+						New SemantEx( "Super class '"+superType.Name+"' has no default constructor!!!!",pnode )
+					Endif
 				Endif
 			
 			Endif
@@ -418,37 +427,43 @@ Class FuncValue Extends Value
 		
 		If fdecl.kind="function" Or IsExtension
 		
-			transFile.functions.Push( Self )
-			
 			If fdecl.kind="function" And Not cscope And fdecl.ident="Main"
 			
 				If Not TCast<VoidType>( ftype.retType ) Or ftype.argTypes
 					Throw New SemantEx( "Function 'Main' must be of type Void()" )
 				Endif
 
-				Local module:=scope.FindFile().fdecl.module
+				Local module:=transFile.module'.FindFile().fdecl.module
+				
 				If module.main Throw New SemantEx( "Duplicate declaration of 'Main'" )
 				
 				module.main=Self
 			Endif
 			
-			If instanceOf Or IsExtension
+			If instanceOf Or IsExtension Or (cscope And cscope.ctype.instanceOf)
 			
-				Local module:=Builder.semantingModule
-				module.genInstances.Push( Self )
+				Builder.semantingModule.genInstances.Push( Self )
 				
 			Endif
 
-		Else
-		
-			If IsCtor Or IsMethod
+			transFile.functions.Push( Self )
 			
-				If fdecl.ident="new"
-					cscope.ctype.ctors.Push( Self )
-				Else
-					cscope.ctype.methods.Push( Self )
-				Endif
+		Else
+			
+			If IsCtor
+				cscope.ctype.ctors.Push( Self )
+			Elseif IsMethod
+				cscope.ctype.methods.Push( Self )
 			Endif
+		
+'			If IsCtor Or IsMethod
+			
+'				If fdecl.ident="new"
+'					cscope.ctype.ctors.Push( Self )
+'				Else
+'					cscope.ctype.methods.Push( Self )
+'				Endif
+'			Endif
 		
 			scope.transMembers.Push( Self )
 
@@ -457,7 +472,7 @@ Class FuncValue Extends Value
 	
 	Method TryGenInstance:FuncValue( types:Type[] )
 		If AnyTypeGeneric( types ) SemantError( "FuncValue.GenInstance()" )
-
+		
 		If types.Length<>Self.types.Length Return Null
 		
 		If Not instances instances=New Stack<FuncValue>

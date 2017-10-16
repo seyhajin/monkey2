@@ -116,10 +116,6 @@ Class BuildProduct
 	
 		If Not assetsDir.EndsWith( "/" ) assetsDir+="/"
 		
-		DeleteDir( assetsDir,True )
-		
-		CreateDir( assetsDir )
-		
 		Local assetFiles:=New StringMap<String>
 		
 		For Local src:=Eachin ASSET_FILES
@@ -146,6 +142,12 @@ Class BuildProduct
 			End
 			
 		Next
+		
+		If assetFiles.Empty Return
+		
+		DeleteDir( assetsDir,True )
+		
+		CreateDir( assetsDir )
 		
 		CopyAssetFiles( assetFiles )
 	End
@@ -330,7 +332,8 @@ Class GccBuildProduct Extends BuildProduct
 			
 		Local rfile:=src.EndsWith( "/_r.cpp" )
 
-		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
+'		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
+		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
 		If rfile And opts.reflection obj+="_r"
 			
 		obj+=toolchain="msvc" ? ".obj" Else ".o"
@@ -489,9 +492,11 @@ Class GccBuildProduct Extends BuildProduct
 		outputFile=opts.product
 		If Not outputFile outputFile=module.outputDir+module.name
 		
-		Local assetsDir:=ExtractDir( outputFile )+"assets/"
+		Local productDir:=ExtractDir( outputFile )
 		
-		Local dllsDir:=ExtractDir( outputFile )
+		Local assetsDir:=productDir+"assets/"
+		
+		Local dllsDir:=productDir
 
 		Local cmd:=LD_CMD+LD_OPTS
 		
@@ -557,7 +562,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 			cmd+=" --preload-file ~q"+assetsDir+"@/assets~q"
 			
-			If opts.wasm cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
+			If opts.appType.StartsWith( "wasm" ) cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
 		End
 		
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."
@@ -590,11 +595,19 @@ Class GccBuildProduct Extends BuildProduct
 #Else
 		cmd+=lnkFiles
 #Endif
+		CreateDir( productDir,True )
+		
 		CopyAssets( assetsDir )
 		
 		CopyDlls( dllsDir )
 		
 		Exec( cmd )
+		
+		If opts.target="emscripten"
+			If opts.appType="wasm"
+				DeleteFile( StripExt( outputFile )+".asm.js" )
+			Endif
+		Endif
 
 	End
 	
@@ -762,6 +775,7 @@ Class AndroidBuildProduct Extends BuildProduct
 		
 		For Local src:=Eachin srcs
 			buf.Push( MakeRelativePath( src,jniDir )+" \" )
+'			buf.Push( MakeRelativePath( src,module.cfileDir )+" \" )
 		Next
 		
 		buf.Push( "" )
@@ -776,7 +790,7 @@ Class AndroidBuildProduct Extends BuildProduct
 			For Local imp:=Eachin imports
 				If imp=module Continue
 				
-				If imp.name="sdl2" Or imp.name="admob" 
+				If imp.name="sdl2" 'Or imp.name="admob" 'Or imp.name="std"
 					whole_libs+=" mx2_"+imp.name
 					Continue
 				Endif

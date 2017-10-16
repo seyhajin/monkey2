@@ -9,7 +9,7 @@ Const Touch:=New TouchDevice
 
 To access the touch device, use the global [[Touch]] constant.
 
-The touch device should only used after a new [[app.AppInstance]] is created.
+The touch device should only used after a new [[AppInstance]] is created.
 
 #end
 Class TouchDevice Extends InputDevice

@@ -15,8 +15,17 @@ Using std.fiber
 
 Public
 
+#rem monkeydoc The Timer class.
+#end
 Class Timer
 
+	#rem monkeydoc Creates a new Timer.
+	
+	Creates new timer with `hertz` frequency.
+	
+	The timer will continually invoke the `fired` function at the rate of `hertz` times per second.
+	
+	#end
 	Method New( hertz:Double,fired:Void() )
 	
 		New Fiber( Lambda()
@@ -35,6 +44,8 @@ Class Timer
 					Continue
 				Endif
 				
+				If _cancelled Exit
+				
 				If Not _suspended fired()
 
 				timeout+=period
@@ -44,7 +55,10 @@ Class Timer
 		End )
 
 	End
-	
+
+	#rem monkeydoc Timer suspended state.
+	#end
+		
 	Property Suspended:Bool()
 	
 		Return _suspended
@@ -54,6 +68,8 @@ Class Timer
 		_suspended=suspended
 	End
 	
+	#rem monkeydoc Cancels the timer.
+	#end
 	Method Cancel()
 	
 		_cancelled=True

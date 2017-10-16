@@ -340,7 +340,11 @@ Class Translator
 				
 				If GenTypeInfo( ctype ) 
 					Emit( "#ifdef BB_REFLECTION" )
-					Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+					If ctype.IsStruct 
+						Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
+					Else
+						Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+					Endif
 					Emit( "#endif" )
 				Endif
 				
@@ -356,10 +360,12 @@ Class Translator
 			
 			Local etype:=TCast<EnumType>( type )
 			If etype
-			
 				If Included( etype.transFile ) Continue
 				
-				Emit( "enum class "+EnumName( etype )+";" )
+				Local ename:=EnumName( etype )
+				Emit( "enum class "+ename+";" )
+				Emit( "bbString bbDBType("+ename+"*);" )
+				Emit( "bbString bbDBValue("+ename+"*);" )
 				
 				Continue
 			Endif
@@ -469,7 +475,12 @@ Class Translator
 		
 		Local atype:=TCast<ArrayType>( type )
 		If atype
-			Refs( atype.elemType )
+			Local ctype:=TCast<ClassType>( atype.elemType )
+			If ctype And ctype.IsStruct
+				Uses( ctype )
+			Else
+				Refs( atype.elemType )
+			Endif
 			Return
 		Endif
 		
@@ -540,7 +551,6 @@ Class Translator
 		UsesRefInfo( vvar.type )
 	
 		Uses( vvar.transFile )
-		
 	End
 	
 	Method UsesRefInfo( func:FuncValue )

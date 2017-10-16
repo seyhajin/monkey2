@@ -1,13 +1,24 @@
 
-***** Monkey2 v1.1.06b *****
+***** Monkey2 v1.1.08 *****
+
+Language additions: objects can now by cast to/from void ptr using the Cast operator.
+
+Language additions: Elvis operator '&Else' and safe member access '?.'.
+
+Structs now reflected.
+
+Mojo3d anisotropic texture filtering enabled, see anisotropic test.
+
+Mojo3d Scene.EnvColor added.
+
+Mojo3d Light.ShadowsEnabled renamed to Light.CastsShadow.
+
+
+***** Monkey2 v1.1.07 *****
 
 Android min-sdk now 14 for android projects.
 
-Now only 1 Renderer class.
-
 Added Scene.DestroyAllEntities.
-
-Now have to use Scene.AddPostEffect.
 
 Added new 'instance' uniformblock type for better (not great yet) instancing.
 
@@ -18,6 +29,16 @@ Sprites now compare with depth buffer.
 Added Sprite.TextureRect:Rectf property for simple 3d sprite animation.
 
 Fixed Texture.Flags setter.
+
+Added simple outline drawing to Canvas, see: Canvas.OutlineMode, Canvas.OutlineColor and Canvas.OutlineWidth. See chimpmunkdebugger.monkey2 in hellochipmunk banana for demo.
+
+Implemented point light shadows using rgba depth cube texturing for webgl compatibility. Slow, needs to do some culling.
+
+Added ParticleSystem entity subclass. A ParticleSystem contains a ParticleBuffer and a ParticleMaterial, so you can creating multiple instances of the same ParticleBuffer with different materials. See mojo3d particles test.
+
+Added LinearColors property to UniformBlock and Renderer. Material color properties now always in sRGB space. Changed Color.Gold etc. to compensate (they were linear colors).
+
+Added bananas showcase files. See Help->Bananas showcase.
 
 
 ***** Monkey2 v1.1.06 *****

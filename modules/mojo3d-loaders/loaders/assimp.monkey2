@@ -128,7 +128,7 @@ Class AssimpLoader
 				
 				Local aiweight:=aibone.mWeights[j]
 				
-				If aiweight.mWeight<.00001 continue
+				If aiweight.mWeight<.00001 Continue
 				
 				Local wp:=Cast<Float Ptr>( Varptr vertices[aiweight.mVertexId].weights )
 				Local bp:=Cast<UByte Ptr>( Varptr vertices[aiweight.mVertexId].bones )
@@ -221,9 +221,7 @@ Class AssimpLoader
 		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
 		diffuseColor=New Color( Pow( aicolor.r,2.2 ),Pow( aicolor.g,2.2 ),Pow( aicolor.b,2.2 ),aicolor.a )
 
-		Local textured:=diffuseTexture<>Null
-
-		Local material:=New PbrMaterial( textured,False,boned )
+		Local material:=New PbrMaterial( boned )
 		
 		If diffuseTexture material.ColorTexture=diffuseTexture
 		material.ColorFactor=diffuseColor
@@ -316,6 +314,8 @@ Class AssimpLoader
 		
 		Local channels:=New AnimationChannel[ _entities.Length ]
 		
+'		Print "Num anim channels="+aianim.mNumChannels
+		
 		For Local i:=0 Until aianim.mNumChannels
 			
 			Local aichan:=aianim.mChannels[i]
@@ -382,7 +382,8 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
 		'flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_SortByPType
 		flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SortByPType
-		flags|=aiProcess_GenSmoothNormals |aiProcess_FixInfacingNormals | aiProcess_Triangulate
+'		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
+		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
 		flags|=aiProcess_PreTransformVertices
 		flags|=aiProcess_FindInvalidData
 		flags|=aiProcess_OptimizeMeshes
@@ -404,7 +405,8 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
 		'flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_SortByPType
 		flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SortByPType
-		flags|=aiProcess_GenSmoothNormals |aiProcess_FixInfacingNormals | aiProcess_Triangulate
+'		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
+		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
 '		flags|=aiProcess_SplitByBoneCount
 		flags|=aiProcess_LimitBoneWeights
 		flags|=aiProcess_FindInvalidData
@@ -435,18 +437,15 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 			
 		path=RealPath( path )
 		
-'		Local scene:=aiImportFile( path,flags )
 		Local scene:=aiImportFileExWithProperties( path,flags,Null,props )
 		
 		aiReleasePropertyStore( props )
 		
-		If Not scene Print "aiImportFile failed: path="+path
-		
-'		Local data:=DataBuffer.Load( path )
-
-'		Local scene:=aiImportFileFromMemory( Cast<libc.char_t Ptr>( data.Data ),data.Length,flags,ExtractExt( path ).Slice( 1 ) )
-		
-'		data.Discard()
+		If Not scene 
+			Print "aiImportFile failed: path="+path
+			Print "error="+aiGetErrorString()
+			Return Null
+		Endif
 		
 		Return scene
 	End

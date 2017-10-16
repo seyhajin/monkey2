@@ -151,14 +151,16 @@ template<class C,class T> struct bbFieldDeclInfo : public bbDeclInfo{
 	
 	bbVariant get( bbVariant instance ){
 	
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		return bbVariant( p->*ptr );
 	}
 	
 	void set( bbVariant instance,bbVariant value ){
 	
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		p->*ptr=value.get<T>();
 	}
@@ -178,14 +180,16 @@ template<class C,class T> struct bbFieldVarDeclInfo : public bbDeclInfo{
 	
 	bbVariant get( bbVariant instance ){
 	
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		return bbVariant( (p->*ptr).get() );
 	}
 	
 	void set( bbVariant instance,bbVariant value ){
 	
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		p->*ptr=value.get<T*>();
 	}
@@ -250,7 +254,8 @@ template<class C,class R,class...A> struct bbMethodDeclInfo : public bbDeclInfo{
 	
 	bbVariant invoke( bbVariant instance,bbArray<bbVariant> params ){
 	
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		return bbVariant( invoke( p,params,detail::gen_seq<sizeof...(A)>{} ) );
 	}
@@ -277,7 +282,8 @@ template<class C,class...A> struct bbMethodDeclInfo<C,void,A...> : public bbDecl
 
 	bbVariant invoke( bbVariant instance,bbArray<bbVariant> params ){
 	
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		invoke( p,params,detail::gen_seq<sizeof...(A)>{} );
 		
@@ -309,7 +315,8 @@ template<class C,class T> struct bbPropertyDeclInfo : public bbDeclInfo{
 	bbVariant get( bbVariant instance ){
 		if( !getter ) bbRuntimeError( "Property has not getter" );
 
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		return bbVariant( (p->*getter)() );
 	}
@@ -317,7 +324,8 @@ template<class C,class T> struct bbPropertyDeclInfo : public bbDeclInfo{
 	void set( bbVariant instance,bbVariant value ){
 		if( !setter ) bbRuntimeError( "Property has not setter" );
 		
-		C *p=instance.get<C*>();
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
 		
 		(p->*setter)( value.get<T>() );
 	}
@@ -388,7 +396,7 @@ template<class R,class...A> bbDeclInfo *bbFunctionDecl( bbString name,R (*ptr)(A
 template<class...Ds> bbDeclInfo **bbMembers( Ds...ds ){
 
 	int n=sizeof...(Ds);
-	bbDeclInfo *ts[]={ ds... };
+	bbDeclInfo *ts[]={ ds...,0 };
 	bbDeclInfo **ps=new bbDeclInfo*[n+1];
 	for( int i=0;i<n;++i ) ps[i]=ts[i];
 	ps[n]=0;

@@ -6,11 +6,12 @@
 		"transparent": "#0000",
 		"textview-cursor-line":"#2000",
 		"textview-whitespaces":"#2aaa",
+		"textview-extra-selection":"#5555",
 		"statusbar": "content",
 		"statusbar-active": "#CA5100",
 		"menu-shortcut":"text-background",
 		"codemap-background": "transparent",
-		"codemap-selection": "#48000000"
+		"codemap-selection": "#48000000"		
 	},
 
 	"fonts":{
@@ -20,7 +21,8 @@
 	},
 	
 	"styles":{
-	
+				
+
 		"GutterView":{
 			"extends":"TextView",
 			"textColor":"text-disabled",
@@ -51,7 +53,8 @@
 			"margin":[ 0 ],
 			"backgroundColor":"content",
 			"border":[ 0,0,0,1 ],
-			"borderColor":"clear"
+			"borderColor":"clear",
+			"iconColor":"#f00"
 		},
 
 		"MainToolBar":{
@@ -70,6 +73,11 @@
 			"extends":"Button",
 			"padding":[ 2,0 ],
 			"margin":[ 3,0 ]
+		},
+
+		"ColoredToolButton":{
+			"extends":"ToolButton",
+			"iconColor":"text-default"
 		},
 
 		"TabViewArrowPrev":{
@@ -120,12 +128,7 @@
 		"CompletionDialogContent":{
 			"padding":[ 1 ]
 		},
-		
-		"ProjectTabView":{
-			"extends":"TabView",
-			"backgroundColor":"content"
-		},
-		
+				
 		"TextFieldBordered":{
 			"extends":"TextField",
 			"border":[ 1 ],
@@ -162,6 +165,37 @@
 		"BananasDescription":{
 			"extends":"TextView",
 			"font":"normal"
+		},
+
+		"MenuButton":{
+			"extends":"Label",
+			"states":{
+				"hover":{
+					"backgroundColor":"hover"
+				},
+				"active":{
+					"backgroundColor":"active"
+				},
+				"selected":{
+					"backgroundColor":"active"
+				}
+			}
+		},
+
+		"FindReplaceView":{
+			"extends":"DockingView",
+			"padding":[ 0,4,0,2 ]
+		},
+
+		"TabsDropArea":{
+			"extends":"Label",
+			"backgroundColor":"#5009"
+		},
+		
+		"TabButtonLocked":{
+			"extends":"TabButton",
+			"borderColor":"#fa22",
+			"border":[ 0,0,0,1 ]
 		}
 	}
 }

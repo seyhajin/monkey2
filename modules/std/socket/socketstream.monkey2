@@ -29,7 +29,7 @@ Class SocketStream Extends std.stream.Stream
 	#end
 	Property Eof:Bool() Override
 
-		Return _socket.Closed
+		Return Not _socket.Connected
 	End
 
 	#rem monkeydoc Always 0.
@@ -74,7 +74,7 @@ Class SocketStream Extends std.stream.Stream
 
 	#end
 	Method Read:Int( buf:Void Ptr,count:Int ) Override
-	
+		
 		Return _socket.Receive( buf,count )
 	End
 	
@@ -94,21 +94,16 @@ Class SocketStream Extends std.stream.Stream
 
 	#end
 	Method Write:Int( buf:Void Ptr,count:Int ) Override
-	
-		Local sent:=0
 		
-		While count>0
+		Local pos:=0
 		
-			Local n:=_socket.Send( buf,count )
-			If n<0 Exit
-			
-			buf=Cast<Byte Ptr>( buf )+n
-			count-=n
-			sent+=n
-
+		While pos<count
+			Local n:=_socket.Send( Cast<UByte Ptr>( buf )+pos,count-pos )
+			If n<=0 Exit
+			pos+=n
 		Wend
 		
-		Return sent
+		Return pos
 	End
 
 	Private
@@ -116,3 +111,4 @@ Class SocketStream Extends std.stream.Stream
 	Field _socket:Socket
 
 End
+

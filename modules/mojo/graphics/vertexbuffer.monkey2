@@ -5,42 +5,40 @@ Namespace mojo.graphics
 #end	
 Class VertexFormat
 	
-	Property Pitch:Int() Abstract
-
-	Method UpdateGLAttribs() Abstract
-End
-
-#rem monkeydoc @hidden
-#end	
-Class VertexBuffer
-
-	Method New( format:VertexFormat,capacity:Int )
-		
-		_format=format
-		_capacity=capacity
-		_pitch=_format.Pitch
-		_data=New UByte[_capacity*_pitch]
+	Method New()
 	End
 	
-	Method New( vertices:VertexBuffer )
+	Property Pitch:Int() Virtual
+		Return 0
+	End
+
+	Method UpdateGLAttribs() Virtual
+	End
+End
+
+#rem
+
+Vertex buffers can 'grow' stack-like.
+
+Use Resize or AddVertices to grow a vertex buffer.
+
+#end
+Class VertexBuffer Extends Resource
+	
+	Method New( format:VertexFormat,length:Int=0 )
 		
-		_format=vertices._format
-		_capacity=vertices._capacity
-		_pitch=vertices._pitch
-		_length=vertices._length
-		_data=vertices._data.Slice( 0 )
+		_format=format
+		_length=length
+		_pitch=_format.Pitch
+		_managed=New UByte[_length*_pitch]
+		_dirtyMin=_length
+		_dirtyMax=0
 	End
 	
 	Method New( vertices:Vertex3f[] )
+		Self.New( Vertex3f.Format,vertices.Length )
 		
-		Self.New( Vertex3fFormat.Instance,vertices.Length )
-		
-		If _capacity libc.memcpy( AddVertices( _capacity ),vertices.Data,_capacity*_pitch )
-	End
-	
-	Property Data:UByte Ptr()
-		
-		Return _data.Data
+		SetVertices( vertices.Data,0,vertices.Length )
 	End
 	
 	Property Format:VertexFormat()
@@ -48,9 +46,9 @@ Class VertexBuffer
 		Return _format
 	End
 	
-	Property Capacity:Int()
-	
-		Return _capacity
+	Property Length:Int()
+		
+		Return _length
 	End
 	
 	Property Pitch:Int()
@@ -58,89 +56,148 @@ Class VertexBuffer
 		Return _pitch
 	End
 	
-	Property Length:Int()
-	
-		Return _length
+	#rem monkeydoc Resizes the vertex buffer.
+	#end
+	Method Resize( length:Int )
+		
+		If length=_length Return
+		
+		Local managed:=New UByte[length*_pitch]
+		
+		Local n:=Min( length,_length )
+		
+		If n libc.memcpy( managed.Data,_managed.Data,n*_pitch )
+
+		_managed=managed
+		
+		_length=length
+
+		If _glSeq=glGraphicsSeq glDeleteBuffers( 1,Varptr _glBuffer )
+			
+		_glSeq=0
 	End
 	
-	Method Clear()
+	#rem monkeydoc Sets a range of vertices.
+	#end
+	Method SetVertices( vertices:Void Ptr,first:Int,count:Int )
 		
-		_length=0
-		_clean=0
+		DebugAssert( Not _locked,"VertexBuffer is locked" )
+		
+		DebugAssert( first>=0 And count>=0 And first<=_length And first+count<=_length,"Invalid vertex range" )
+		
+		libc.memcpy( _managed.Data+first*_pitch,vertices,count*_pitch )
+		
+		Invalidate( first,count )
+	End
+	
+	#rem monkeydoc Locks vertices.
+	
+	Make sure to invalidate any vertices you modify by using [[Invalidate]].
+	
+	#end
+	Method Lock:UByte ptr()
+		
+		DebugAssert( Not _locked,"VertexBuffer is already locked" )
+		
+		_locked=_managed.Data
+		
+		Return _locked
+	End
+	
+	#rem onkeydoc Invalidates vertices.
+	
+	You should use this method to invalidate any vertices you have modified by writing to a locked vertex buffer.
+	
+	#End
+	Method Invalidate( first:Int,count:Int )
+		
+'		DebugAssert( _locked,"Vertex buffer is not locked" )
+		
+		DebugAssert( first>=0 And count>=0 And first<=_length And first+count<=_length,"Invalid vertex range" )
+		
+		_dirtyMin=Min( _dirtyMin,first )
+		
+		_dirtyMax=Max( _dirtyMax,first+count )
 	End
 	
 	Method Invalidate()
 		
-		_clean=0
+		Invalidate( 0,_length )
 	End
 	
-	Method AddVertices:UByte Ptr( count:Int )
+	#rem monkeydoc Unlocks vertices.
+	#end
+	Method Unlock:Void()
 		
-		Reserve( _length+count )
-
-		Local p:=_data.Data+_length*_pitch
+		DebugAssert( _locked,"Vertex buffer is not locked" )
 		
-		_length+=count
-		
-		Return p
+		_locked=Null
 	End
+	
+	Protected
+	
+	Method OnDiscard() Override
+		
+		If _glSeq=glGraphicsSeq glDeleteBuffers( 1,Varptr _glBuffer )
+			
+		_glSeq=-1
+	End
+	
+	Method OnFinalize() Override
 
-	'***** INTERNAL *****
+		If _glSeq=glGraphicsSeq glDeleteBuffers( 1,Varptr _glBuffer )
+	End
+	
+	Internal
 	
 	Method Bind()
+		
+		DebugAssert( Not _locked,"VertexBuffer.Bind() failed, VertexBuffer is locked" )
 		
 		If _glSeq<>glGraphicsSeq
 			
 			glGenBuffers( 1,Varptr _glBuffer )
 			glBindBuffer( GL_ARRAY_BUFFER,_glBuffer )
 			
-			glBufferData( GL_ARRAY_BUFFER,_capacity*_pitch,Null,GL_DYNAMIC_DRAW )
-'			Print "bound vb "+_glBuffer
-			
+			glBufferData( GL_ARRAY_BUFFER,_length*_pitch,_managed.Data,GL_DYNAMIC_DRAW )
+			_dirtyMin=_length
+			_dirtyMax=0
+
 			_glSeq=glGraphicsSeq
-			_clean=0
+			
 		Else
+
 			glBindBuffer( GL_ARRAY_BUFFER,_glBuffer )
-'			Print "bound vb "+_glBuffer
 		Endif
 		
-		_format.UpdateGLAttribs()
-			
+		If _format _format.UpdateGLAttribs()
 	End
 	
 	Method Validate()
-	
-		If _length=_clean Return
 		
-		glBufferData( GL_ARRAY_BUFFER,_length*_pitch,_data.Data,GL_DYNAMIC_DRAW )
-'		Print "updated vb "+_glBuffer
-
-		_clean=_length
+		If _dirtyMax>_dirtyMin
+			
+			glBufferSubData( GL_ARRAY_BUFFER,_dirtyMin*_pitch,(_dirtyMax-_dirtyMin)*_pitch,_managed.Data )
+			
+			_dirtyMin=_length
+			_dirtyMax=0
+		
+		Endif
 	End
-		
+	
 	Private
 	
 	Field _format:VertexFormat
-	Field _capacity:Int
-	Field _pitch:int
 	Field _length:Int
-	Field _clean:Int
-	Field _data:UByte[]
+	Field _pitch:Int
+	
+	Field _managed:UByte[]
+	Field _dirtyMin:Int
+	Field _dirtyMax:Int
+	
+	Field _locked:UByte Ptr
 	
 	Field _glSeq:Int
 	Field _glBuffer:GLuint
-
-	Method Reserve( capacity:Int )
-		
-		If _capacity>=capacity Return
-		
-		_capacity=Max( _length*2+_length,capacity )
-		
-		Local data:=New UByte[_capacity*_pitch]
-		
-		If _length libc.memcpy( data.Data,_data.Data,_length*_pitch )
-		
-		_data=data
-	End
-
+	
 End

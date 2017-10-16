@@ -38,8 +38,6 @@ Class BuildProduct
 #endif
 		Case "emscripten"
 			product=New EmscriptenProduct( srcPath )
-		Case "wasm"
-			product=New WasmProduct( srcPath )
 		Case "android"
 			product=New AndroidProduct( srcPath )
 		Case "ios"
@@ -434,6 +432,8 @@ Class EmscriptenProduct Extends BuildProduct
 		Super.New( srcPath,"emscripten" )
 
 		AddExts( New String[]( ".html" ) )
+		
+		AddVar( "Application Type","wasm","options:wasm|wasm+asmjs|asmjs" )
 	End
 	
 	Protected
@@ -454,10 +454,13 @@ Class EmscriptenProduct Extends BuildProduct
 	
 	Method OnGetMx2ccOpts:String() Override
 
+		Local appType:=GetVar( "APPLICATION_TYPE" )
+
 		Local opts:=""
 		
 		opts+=" ~q-product="+ProductDir+AppName+".js~q"
-		
+		opts+=" -apptype="+appType
+
 		Return opts
 	End
 
@@ -468,6 +471,7 @@ Class EmscriptenProduct Extends BuildProduct
 	End
 End
 
+#rem
 Class WasmProduct Extends BuildProduct
 
 	Method New( srcPath:String )
@@ -507,6 +511,7 @@ Class WasmProduct Extends BuildProduct
 	
 	End
 End
+#end
 
 Class AndroidProduct Extends BuildProduct
 

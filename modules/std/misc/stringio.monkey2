@@ -76,7 +76,7 @@ Function ULongToString:String( value:ULong,base:UInt )
 		value/=base
 	Wend
 	
-	Return str
+	Return str ? str Else "0"
 
 End
 

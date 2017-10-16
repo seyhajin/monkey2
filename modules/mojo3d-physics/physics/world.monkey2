@@ -1,15 +1,19 @@
 
 Namespace mojo3d.physics
 
-#Import "native/objecthandle.h"
+Class Scene Extension
 
-Extern
+	Property World:World()
+	
+		Local world:=GetDynamicProperty<World>( "$world" )
+		If Not world
+			world=New World( Self )
+			SetDynamicProperty( "$world",world )
+		Endif
+		Return world
+	End
 
-Function object_to_handle:Void Ptr( obj:Object )="bb_object_to_handle"
-
-Function handle_to_object:Object( handle:Void Ptr )="bb_handle_to_object"
-
-Public
+End
 
 Class RaycastResult
 
@@ -23,7 +27,7 @@ Class RaycastResult
 	
 	Method New( btresult:btCollisionWorld.ClosestRayResultCallback Ptr )
 		time=btresult->m_closestHitFraction
-		body=Cast<RigidBody>( handle_to_object( btresult->m_collisionObject.getUserPointer() ) )
+		body=Cast<RigidBody>( btresult->m_collisionObject.getUserPointer() )
 		point=btresult->m_hitPointWorld
 		normal=btresult->m_hitNormalWorld
 	End
@@ -34,7 +38,7 @@ Class RaycastResult
 		Local castTo:=Cast<Vec3f>( btresult->m_convexToWorld )
 		
 		time=btresult->m_closestHitFraction
-		body=Cast<RigidBody>( handle_to_object( btresult->m_hitCollisionObject.getUserPointer() ) )
+		body=Cast<RigidBody>( btresult->m_hitCollisionObject.getUserPointer() )
 		point=(castTo-castFrom) * btresult->m_closestHitFraction + castFrom
 		normal=btresult->m_hitNormalWorld
 	End
@@ -43,7 +47,9 @@ End
 
 Class World
 	
-	Method New()
+	Method New( scene:Scene )
+	
+		_scene=scene
 		
 		Local broadphase:=New btDbvtBroadphase()
 		
@@ -57,6 +63,11 @@ Class World
 
 		Gravity=New Vec3f( 0,-9.81,0 )
 		
+	End
+	
+	Property Scene:Scene()
+	
+		Return _scene
 	End
 
 	Property Gravity:Vec3f()
@@ -104,22 +115,13 @@ Class World
 		If Not btresult.hasHit() Return Null
 		
 		Return New RaycastResult( Varptr btresult )
-		
 	End
 	
 	Method ConvexSweep:RaycastResult( collider:ConvexCollider,castFrom:Vec3f,castTo:Vec3f )
 		
 		Return ConvexSweep( collider,AffineMat4f.Translation( castFrom ),AffineMat4f.Translation( castTo ) )
-
 	End
 	
-	Function GetDefault:World()
-	
-		Global _default:=New World
-		
-		Return _default
-	End
-
 	Internal
 	
 	Method Add( body:RigidBody )
@@ -128,7 +130,7 @@ Class World
 		
 		_btworld.addRigidBody( body.btBody,body.CollisionGroup,body.CollisionMask )
 		
-		body.btBody.setUserPointer( object_to_handle( body ) )
+		body.btBody.setUserPointer( Cast<Void Ptr>( body ) )
 	End
 	
 	Method Remove( body:RigidBody )
@@ -141,6 +143,8 @@ Class World
 	End
 	
 	Private
+	
+	Field _scene:Scene
 	
 	Field _btworld:btDynamicsWorld
 	

@@ -111,6 +111,8 @@ Class JNIEnv Extends Void
 		
 	Method DeleteGlobalRef( obj:jobject )
 		
+	Method DeleteLocalRef( obj:jobject )
+		
 	Method IsSameObject:Bool( obj1:jobject,obj2:jobject )
 		
 End

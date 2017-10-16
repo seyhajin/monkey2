@@ -12,7 +12,7 @@ Class BloomEffect Extends PostEffect
 	#end
 	Method New( passes:Int=2 )
 		
-		_shader=Shader.Open( "bloom" )
+		_shader=Shader.Open( "effect-bloom" )
 		
 		_uniforms=New UniformBlock( 3 )
 		
@@ -45,9 +45,12 @@ Class BloomEffect Extends PostEffect
 		Local rtexture:=rtarget.GetColorTexture( 0 )
 		
 		If Not _target0 Or rsize.x>_target0.Size.x Or rsize.y>_target0.Size.y
+		
+			_texture0?.Discard()
+			_texture1?.Discard()
 			
-			SafeDiscard( _target0 ) ; SafeDiscard( _texture0 )
-			SafeDiscard( _target1 ) ; SafeDiscard( _texture1 )
+			_target0?.Discard()
+			_target1?.Discard()
 			
 			_texture0=New Texture( rsize.x,rsize.y,rtexture.Format,Null )
 			_texture1=New Texture( rsize.x,rsize.y,rtexture.Format,Null )

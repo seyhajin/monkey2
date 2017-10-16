@@ -27,7 +27,7 @@ Class HelloChipmunk Extends Window
 	
 	Method New()
 	
-		ClearColor=Color.Black
+		ClearColor=Color.Grey'Black
 
 		'Create a new space and set its gravity to 100
 		'		

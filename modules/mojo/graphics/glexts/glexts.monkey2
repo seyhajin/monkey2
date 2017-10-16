@@ -8,6 +8,10 @@ Namespace mojo.graphics.glexts
 
 #Endif
 
+Const GL_TEXTURE_MAX_ANISOTROPY:=$84FE
+
+Const GL_MAX_TEXTURE_MAX_ANISOTROPY:=$84FF
+
 Const GL_TEXTURE_CUBE_MAP_SEAMLESS:=$884f
 
 Const GL_DRAW_BUFFER:=$0c01
@@ -38,6 +42,7 @@ Const GL_COLOR_ATTACHMENT14:Int=$8CEE
 Const GL_COLOR_ATTACHMENT15:Int=$8CEF
 
 'GLES2 targets
+'
 #If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
 
 Const GL_draw_buffer:Bool=False
@@ -50,6 +55,7 @@ Const GL_draw_buffers:Bool="bbGLexts::GL_draw_buffers"
 Const GL_depth_texture:bool="bbGLexts::GL_depth_texture"
 Const GL_texture_float:Bool="bbGLexts::GL_texture_float"
 Const GL_texture_half_float:bool="bbGLexts::GL_texture_half_float"
+Const GL_texture_filter_anisotropic:Bool="bbGLexts::GL_texture_filter_anisotropic"
 
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
 
@@ -66,7 +72,8 @@ Function glReadBuffer( mode:GLenum )
 	RuntimeError( "glReadBuffer unsupported" )
 End
 
-'GL targets
+'OpenGL targets
+'
 #Elseif __TARGET__="macos" Or __TARGET__="linux"
 
 Const GL_draw_buffer:Bool=True
@@ -76,6 +83,7 @@ Const GL_depth_texture:bool=True
 Const GL_texture_float:Bool=True
 Const GL_texture_half_float:bool=True
 Const GL_seamless_cube_map:bool=True
+Const GL_texture_filter_anisotropic:Bool=True
 
 Extern
 
@@ -98,6 +106,7 @@ Const GL_depth_texture:bool=False
 Const GL_texture_float:Bool=False
 Const GL_texture_half_float:bool=False
 Const GL_seamless_cube_map:Bool=False
+Const GL_texture_filter_anisotropic:Bool=False
 
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )
 	RuntimeError( "glDrawBuffers unsupported" )

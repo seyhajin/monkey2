@@ -8,10 +8,12 @@ Class WaterMaterial Extends Material
 	#rem monkeydoc Creates a new water material.
 	#end
 	Method New()
-		Super.New( Shader.Open( "water" ) )
+		Assert( Cast<DeferredRenderer>( Renderer.GetCurrent() ),"Water material requires deferred renderer" )
 		
-		ColorTexture=Texture.ColorTexture( Color.SeaGreen )
-		ColorFactor=Color.White
+		SetShader( Shader.Open( "material-water" ) )
+		
+		ColorTexture=Texture.ColorTexture( Color.White )
+		ColorFactor=Color.SeaGreen
 		
 		Metalness=0
 		Roughness=0
@@ -49,7 +51,7 @@ Class WaterMaterial Extends Material
 		Return Uniforms.GetColor( "ColorFactor" )
 	
 	Setter( factor:Color )
-		
+	
 		Uniforms.SetColor( "ColorFactor",factor )
 	End
 	

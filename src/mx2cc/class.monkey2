@@ -6,8 +6,26 @@ Class ClassDecl Extends Decl
 	Field genArgs:String[]
 	Field superType:Expr
 	Field ifaceTypes:Expr[]
+	Field hasCtor:Bool=False
+	Field hasDefaultCtor:Bool=True
 	
 	Method ToNode:SNode( scope:Scope ) Override
+
+		hasCtor=False
+		For Local decl:=Eachin members
+			Local fdecl:=Cast<FuncDecl>( decl )
+			If Not fdecl Or fdecl.ident<>"new" Continue
+			hasCtor=True
+			Local isdefault:=True
+			For Local pdecl:=Eachin fdecl.type.params
+				If pdecl.init Continue
+				isdefault=False
+				Exit
+			Next
+			If Not isdefault Continue
+			hasDefaultCtor=True
+			Exit
+		Next
 	
 		Local types:=New Type[genArgs.Length]
 		For Local i:=0 Until types.Length
@@ -53,7 +71,7 @@ Class ClassType Extends Type
 	Field fields:=New Stack<VarValue>
 
 	Field extendsVoid:Bool
-	Field hasDefaultCtor:Bool
+	Field defaultCtor:FuncValue
 	
 	Method New( cdecl:ClassDecl,outer:Scope,types:Type[],instanceOf:ClassType )
 	
@@ -218,16 +236,24 @@ Class ClassType Extends Type
 		
 		If scope.IsGeneric Or cdecl.IsExtern
 		
-			Builder.semantMembers.AddLast( Self )
+			If Not scope.IsGeneric Or Builder.opts.makedocs
+				
+				Builder.semantMembers.AddLast( Self )
+			
+			Endif
 			
 		Else
 		
 			If IsGenInstance
+				
 				SemantMembers()
-				Local module:=Builder.semantingModule 
-				module.genInstances.Push( Self )
+				
+				Builder.semantingModule.genInstances.Push( Self )
+				
 			Else
+				
 				Builder.semantMembers.AddLast( Self )
+				
 			Endif
 			
 			transFile.classes.Push( Self )
@@ -238,7 +264,7 @@ Class ClassType Extends Type
 	End
 	
 	Method SemantMembers()
-	
+		
 		If membersSemanted Return
 	
 		If membersSemanting SemantError( "ClassType.SemantMembers()" )
@@ -269,25 +295,6 @@ Class ClassType Extends Type
 			Next
 
 		Next
-		
-		'default ctor check
-		'
-		Local flist:=Cast<FuncList>( scope.GetNode( "new" ) )
-		If flist
-			hasDefaultCtor=False
-			For Local func:=Eachin flist.funcs
-				If func.ftype.argTypes Continue
-				hasDefaultCtor=True
-			Next
-		Else If Not cdecl.IsExtension
-			If superType And Not superType.hasDefaultCtor
-				Try
-					Throw New SemantEx( "Super class '"+superType.Name+"' has no default constructor" )
-				Catch ex:SemantEx
-				End
-			Endif
-			hasDefaultCtor=True
-		Endif
 		
 		If (cdecl.kind="class" Or cdecl.kind="struct") And Not scope.IsGeneric
 		
@@ -342,13 +349,45 @@ Class ClassType Extends Type
 			Endif
 		
 		Endif
-		
+
 		Self.abstractMethods=abstractMethods.ToArray()
 		
 		'Finished semanting funcs
 		'
 		membersSemanting=False
 		membersSemanted=True
+
+		'default ctor check
+		'
+		If Not cdecl.IsExtension And superType And Not superType.cdecl.hasDefaultCtor
+			Local flist:=Cast<FuncList>( scope.GetNode( "new" ) )
+			If Not flist New SemantEx( "Super class '"+superType.Name+"' has no default constructor!!!!" )
+		Endif
+		
+		#rem
+		If flist
+			For Local func:=Eachin flist.funcs
+				hasDefaultCtor=True
+				If func.params
+					For Local p:=Eachin func.params
+						If p.init Continue
+						hasDefaultCtor=False
+						Exit
+					Next
+					If Not hasDefaultCtor Continue
+				Endif
+				Exit
+			Next
+		Else If Not cdecl.IsExtension
+			If superType
+				superType.scope.GetNode( "new" )
+				If Not superType.hasDefaultCtor
+					New SemantEx( "Super class '"+superType.Name+"' has no default constructor" )
+				Endif
+			Endif
+			hasDefaultCtor=True
+		Endif
+		#end
 		
 		'Semant non-func members
 		'
@@ -412,7 +451,7 @@ Class ClassType Extends Type
 		
 		Return node
 	End
-		
+	
 	Method FindType:Type( ident:String ) Override
 	
 		Local type:=FindType2( ident )
@@ -491,7 +530,8 @@ Class ClassType Extends Type
 		If type=Self Return 0
 		
 		'no struct->bool as yet.
-		If type=BoolType Return (IsClass Or IsInterface) ? MAX_DISTANCE Else -1
+		If type=BoolType Return MAX_DISTANCE
+'		If type=BoolType Return (IsClass Or IsInterface) ? MAX_DISTANCE Else -1
 		
 		If type=VariantType Return MAX_DISTANCE
 
@@ -528,6 +568,9 @@ Class ClassType Extends Type
 	
 		'instance->bool
 		If type=BoolType
+			
+			If IsStruct Return rvalue.Compare( "<>",LiteralValue.NullValue( rvalue.type ) )
+			
 			If IsClass Or IsInterface Return New UpCastValue( type,rvalue )
 		Else
 			'Operator To:
@@ -546,6 +589,10 @@ Class ClassType Extends Type
 	End
 	
 	Method CanCastToType:Bool( type:Type ) Override
+
+		'explicit cast to void ptr.
+		Local ptype:=TCast<PointerType>( type )
+		If ptype Return cdecl.kind<>"struct" and ptype.elemType.Equals( VoidType )
 	
 		Local ctype:=TCast<ClassType>( type )
 		If Not ctype Return False

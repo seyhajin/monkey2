@@ -22,6 +22,10 @@ Class ChipmunkDebugger
 	Method DebugDraw( canvas:Canvas,space:cpSpace )
 	
 		_canvas=canvas
+		
+		canvas.OutlineMode=OutlineMode.Smooth
+		
+		canvas.OutlineWidth=3
 	
 		cpSpaceDebugDraw( space,_options )
 	End
@@ -30,8 +34,10 @@ Class ChipmunkDebugger
 	
 	Method DrawCircle( pos:cpVect,angle:cpFloat,radius:cpFloat,outlineColor:cpSpaceDebugColor,fillColor:cpSpaceDebugColor,data:cpDataPointer )
 	
-		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b,fillColor.a )
+		_canvas.OutlineColor=New Color( outlineColor.r,outlineColor.g,outlineColor.b )
 		
+		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b )
+
 		_canvas.DrawCircle( pos.x,pos.y,radius )
 		
 		_canvas.Color=Color.Black
@@ -41,7 +47,7 @@ Class ChipmunkDebugger
 	
 	Method DrawSegment( a:cpVect,b:cpVect,color:cpSpaceDebugColor,data:cpDataPointer )
 
-		_canvas.Color=New Color( color.r,color.g,color.b,color.a )
+		_canvas.Color=New Color( color.r,color.g,color.b )
 
 		_canvas.LineWidth=1
 				
@@ -50,7 +56,9 @@ Class ChipmunkDebugger
 	
 	Method DrawFatSegment( a:cpVect,b:cpVect,radius:cpFloat,outlineColor:cpSpaceDebugColor,fillColor:cpSpaceDebugColor,data:cpDataPointer )
 
-		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b,fillColor.a )
+		_canvas.OutlineColor=New Color( outlineColor.r,outlineColor.g,outlineColor.b )
+		
+		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b )
 
 		_canvas.LineWidth=radius
 		
@@ -64,15 +72,17 @@ Class ChipmunkDebugger
 			vs[i*2]=verts[i].x
 			vs[i*2+1]=verts[i].y
 		Next
-
-		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b,fillColor.a )
+		
+		_canvas.OutlineColor=New Color( outlineColor.r,outlineColor.g,outlineColor.b )
+		
+		_canvas.Color=New Color( fillColor.r,fillColor.g,fillColor.b )
 		
 		_canvas.DrawPolys( count,1,vs )
 	End
 	
 	Method DrawDot( size:cpFloat,pos:cpVect,color:cpSpaceDebugColor,data:cpDataPointer )
 
-		_canvas.Color=New Color( color.r,color.g,color.b,color.a )
+		_canvas.Color=New Color( color.r,color.g,color.b )
 
 		_canvas.PointSize=size
 		

@@ -11,7 +11,7 @@ Function IsPow2:Bool( w:Int,h:Int )
 End
 
 Function IsDepth:Bool( format:PixelFormat )
-	Return format=PixelFormat.Depth32F
+	Return format=PixelFormat.Depth32
 End
 
 Function glInternalFormat:GLenum( format:PixelFormat )
@@ -23,7 +23,7 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_RGBA
 	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
-	Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
+	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
@@ -38,7 +38,7 @@ Function glFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_RGBA
 	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
-	Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
+	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
@@ -53,7 +53,7 @@ Function glType:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
 	Case PixelFormat.RGBA32F Return GL_FLOAT
-	Case PixelFormat.Depth32F Return GL_UNSIGNED_INT
+	Case PixelFormat.Depth32 Return GL_UNSIGNED_INT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_UNSIGNED_BYTE
@@ -66,7 +66,12 @@ Public
 | TextureFlags	| Description
 |:--------------|:-----------
 | Dynamic		| Texture is frequently updated. This flag should be set if the texture contents are regularly updated and don't need to be preserved.
-
+| WrapS			| Wrap S texture coordinates
+| WrapT			| Wrap T texture coordinates
+| Filter		| Enable magnification filtering
+| Mipmap		| Enable minification mipmapping, and minification filtering if Filter enabled.
+| WrapST		| Enable WrapS and WrapT.
+| FilterMipmap	| Enable Filter and Mipmap.
 #end
 Enum TextureFlags
 	None=			$0000
@@ -82,9 +87,38 @@ Enum TextureFlags
 	FilterMipmap=	Filter|Mipmap
 End
 
-#rem monkeydoc @hidden
+#rem monketdoc @hidden
+#end
+Enum CubeFace
+	PositiveX
+	NegativeX
+	PositiveY
+	NegativeY
+	PositiveZ
+	NegativeZ
+End
+
+#Rem monkeydoc The Texture class.
 #end
 Class Texture Extends Resource
+	
+	Private
+	
+	Method New( face:GLenum,cubeMap:Texture )
+		
+		_size=cubeMap._size
+		_format=cubeMap._format
+		_flags=cubeMap._flags
+		
+		_glTarget=face
+		_glInternalFormat=cubeMap._glInternalFormat
+		_glFormat=cubeMap._glFormat
+		_glType=cubeMap._glType
+
+		_cubeMap=cubeMap
+	End
+	
+	Public
 	
 	Method New( pixmap:Pixmap,flags:TextureFlags )
 
@@ -93,59 +127,79 @@ Class Texture Extends Resource
 		_format=pixmap.Format
 		_flags=flags
 		
-		If _flags & TextureFlags.Cubemap
-			If _size.x=_size.y
-			Else If _size.x/4*3=_size.y
-				_size.x/=4
-				_size.y/=3
-			Else
-				RuntimeError( "Invalid Cubemap size" )
-			Endif
-		Endif
-		
-#If Not __DESKTOP_TARGET__
-		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
-#Endif
 		_glTarget=_flags & TextureFlags.Cubemap ? GL_TEXTURE_CUBE_MAP Else GL_TEXTURE_2D
 		_glInternalFormat=glInternalFormat( _format )
 		_glFormat=glFormat( _format )
 		_glType=glType( _format )
 		
+		If _flags & TextureFlags.Cubemap
+			
+			If _size.x/4*3=_size.y
+				_size.x/=4
+				_size.y/=3
+			Else If _size.x<>_size.y
+				RuntimeError( "Invalid Cubemap size" )
+			Endif
+			
+		Endif
+		
+#If Not __DESKTOP_TARGET__
+		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
+#Endif
+
 		If _flags & TextureFlags.Dynamic
 			PastePixmap( _managed,0,0 )
 		Endif
 	End
 	
 	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
+		
+		If flags & TextureFlags.Cubemap
+			Assert( width=height,"Invalid cubemap size" )
+			Assert( flags & TextureFlags.Dynamic,"Cubemaps must be dynamic" )
+		Endif
 
 		_managed=Null
 		_size=New Vec2i( width,height )
 		_format=format
 		_flags=flags
-		
-		If _flags & TextureFlags.Cubemap
-			If _size.x=_size.y
-			Else If _size.x/4*3=_size.y
-				_size.x/=4
-				_size.y/=3
-			Else
-				RuntimeError( "Invalid Cubemap size" )
-			Endif
-		Endif
-		
-#If Not __DESKTOP_TARGET__
-		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
-#Endif
 
 		_glTarget=_flags & TextureFlags.Cubemap ? GL_TEXTURE_CUBE_MAP Else GL_TEXTURE_2D
 		_glInternalFormat=glInternalFormat( _format )
 		_glFormat=glFormat( _format )
 		_glType=glType( _format )
 		
+		#rem
+		If _flags & TextureFlags.Cubemap
+			
+			If _size.x/4*3=_size.y
+				_size.x/=4
+				_size.y/=3
+			Else If _size.x<>_size.y
+				RuntimeError( "Invalid Cubemap size" )
+			Endif
+			
+		Endif
+		#end
+
+#If Not __DESKTOP_TARGET__
+		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
+#Endif
+		If _flags & TextureFlags.Cubemap
+
+			_cubeFaces=New Texture[6]
+			For Local i:=0 Until 6
+				_cubeFaces[i]=New Texture( GL_TEXTURE_CUBE_MAP_POSITIVE_X+i,Self )
+			Next
+			
+		Endif
+		
+		#rem		
 		If Not (_flags & TextureFlags.Dynamic)
 			_managed=New Pixmap( width,height,format )
 			_managed.Clear( Color.Magenta )
 		Endif
+		#end
 	End
 	
 	Property Size:Vec2i()
@@ -170,9 +224,13 @@ Class Texture Extends Resource
 	
 	Property Flags:TextureFlags()
 		
+		Assert( Not _cubeMap )
+		
 		Return _flags
 	
 	Setter( flags:TextureFlags )
+		
+		Assert( Not _cubeMap )
 		
 		Local mask:=TextureFlags.WrapS|TextureFlags.WrapT|TextureFlags.Filter|TextureFlags.Mipmap
 		
@@ -182,7 +240,9 @@ Class Texture Extends Resource
 	End
 	
 	Method PastePixmap( pixmap:Pixmap,x:Int,y:Int )
-	
+		
+		Assert( NOT _cubeMap )
+		
 		If _managed
 
 			_managed.Paste( pixmap,x,y )
@@ -208,6 +268,13 @@ Class Texture Extends Resource
 			
 		Endif
 	
+	End
+	
+	Method GetCubeFace:Texture( face:CubeFace )
+		
+		If _cubeFaces Return _cubeFaces[ Cast<Int>( face ) ]
+		
+		Return Null
 	End
 
 	Function Load:Texture( path:String,flags:TextureFlags )
@@ -277,11 +344,21 @@ Class Texture Extends Resource
 	End
 	
 	'***** INTERNAL *****
+
+	#rem monkeydoc @hidden
+	#end
+	Property GLTarget:GLenum()
 		
+		Return _glTarget
+	End
+	
 	#rem monkeydoc @hidden
 	#end
 	Method Modified( r:Recti )
-	
+		
+		If _cubeMap Return
+'		Assert( Not _cubeMap )
+		
 		If _managed
 			glPixelStorei( GL_PACK_ALIGNMENT,1 )
 			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
@@ -294,6 +371,8 @@ Class Texture Extends Resource
 	#end
 	Method Bind( unit:GLenum )
 		
+		Assert( Not _cubeMap )
+		
 		glActiveTexture( GL_TEXTURE0+unit )
 
 		glBindTexture( _glTarget,ValidateGLTexture() )
@@ -302,6 +381,8 @@ Class Texture Extends Resource
 	#rem monkeydoc @hidden
 	#end
 	Method ValidateGLTexture:GLuint()
+		
+		If _cubeMap Return _cubeMap.ValidateGLTexture()
 		
 		If _discarded Return 0
 		
@@ -339,20 +420,32 @@ Class Texture Extends Resource
 			If _retroMode
 				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
 				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
-			Else If _flags & TextureFlags.Mipmap
-				If _flags & TextureFlags.Filter
+			Else
+				 If _flags & TextureFlags.Mipmap
+					If _flags & TextureFlags.Filter
+						glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
+						glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR )
+					Else
+						glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
+						glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST )
+					Endif
+				Else If _flags & TextureFlags.Filter
 					glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
-					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR )
+					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR )
 				Else
 					glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
-					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST )
+					glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
 				Endif
-			Else If _flags & TextureFlags.Filter
-				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR )
-				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR )
-			Else
-				glTexParameteri( _glTarget,GL_TEXTURE_MAG_FILTER,GL_NEAREST )
-				glTexParameteri( _glTarget,GL_TEXTURE_MIN_FILTER,GL_NEAREST )
+				
+				If _flags & TextureFlags.Mipmap And Not (_flags & TextureFlags.Cubemap)
+					If glexts.GL_texture_filter_anisotropic
+						Local max:Int=0
+						glGetIntegerv( GL_MAX_TEXTURE_MAX_ANISOTROPY,Varptr max )
+						Local n:=Min( Int(App.GetConfig( "GL_texture_max_anisotropy",max )),max )
+						glTexParameteri( _glTarget,GL_TEXTURE_MAX_ANISOTROPY,n )
+					Endif
+				Endif
+								
 			Endif
 			
 			glCheck()
@@ -415,6 +508,8 @@ Class Texture Extends Resource
 	#end	
 	Method OnDiscard() Override
 		
+		If _cubeMap return
+		
 		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 			
 		_discarded=True
@@ -426,6 +521,8 @@ Class Texture Extends Resource
 	#rem monkeydoc @hidden
 	#end	
 	Method OnFinalize() Override
+		
+		If _cubeMap return
 		
 		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 	End
@@ -446,6 +543,14 @@ Class Texture Extends Resource
 	Field _format:PixelFormat
 	Field _flags:TextureFlags
 	Field _managed:Pixmap
+	Field _cubeMap:Texture
+	Field _cubeFaces:Texture[]
+	
+	Field _glTarget:GLenum
+	Field _glInternalFormat:GLenum
+	Field _glFormat:GLenum
+	Field _glType:GLenum
+	
 	Field _discarded:Bool
 	Field _retroMode:Bool
 	
@@ -454,12 +559,9 @@ Class Texture Extends Resource
 	Field _glSeq:Int	
 	Field _glTexture:GLuint
 	
-	Field _glTarget:GLenum
-	Field _glInternalFormat:GLenum
-	Field _glFormat:GLenum
-	Field _glType:GLenum
-	
 	Method UploadTexImageCubeMap( glTarget:GLenum,image:Pixmap )
+		
+		Assert( Not _cubeMap )
 	
 		Local format:=PixelFormat.RGBA32
 		Local gliformat:=glInternalFormat( format )
@@ -503,6 +605,9 @@ Class Texture Extends Resource
 	End
 	
 	Method UploadTexImage2D( glTarget:GLenum,image:Pixmap )
+		
+		Assert( Not _cubeMap )
+		
 		glCheck()
 		
 		Local width:=image.Width,height:=image.Height

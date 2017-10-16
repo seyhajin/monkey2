@@ -87,9 +87,9 @@ Class Utils
 		Return result
 	End
 	
-	Function GetAllFiles( rootDir:String,filterExts:String[],target:Stack<String> )
+	Function GetAllFiles( rootDir:String,filterExts:String[],target:Stack<String>,idleAppEachN:Int=-1 )
 		
-		GetAllFilesInternal( rootDir,filterExts,target )
+		GetAllFilesInternal( rootDir,filterExts,target,idleAppEachN )
 	End
 	
 	#Rem monkeydoc If 'any' is true - check at least one starts, else - check all.
@@ -148,10 +148,12 @@ Class Utils
 	Method New()
 	End
 	
-	Function GetAllFilesInternal( dir:String,filterExts:String[],target:Stack<String> )
+	Function GetAllFilesInternal( dir:String,filterExts:String[],target:Stack<String>,idleAppEachN:Int=-1 )
 		
 		Local files:=LoadDir( dir )
+		Local ii:=0
 		For Local f:=Eachin files
+			If idleAppEachN>0 And ii Mod idleAppEachN = 0 Then App.WaitIdle()
 			f=dir+f
 			If GetFileType( f )=FileType.Directory
 				GetAllFilesInternal( f+"/",filterExts,target )
@@ -165,7 +167,6 @@ Class Utils
 	End
 	
 End
-
 
 Function FileExists:Bool( path:String )
 	
@@ -187,4 +188,87 @@ Function FormatTime:String( millis:Long,format:String="{min} m {sec} s" )
 	s=s.Replace( "{sec}",""+secs )
 	
 	Return s
+End
+
+Function ShowMessage( title:String,msg:String,okButton:String="  OK  " )
+
+	Dialog.Run( title,New Label( msg ),New String[](okButton),0,0 )
+End
+
+Function IsIdentStr:Bool( str:String,skipDots:Bool=True )
+	
+	If Not str Return False
+	
+	If IsDigit( str[0] ) Return False
+	
+	If str[0]=Chars.DOT Or str[str.Length-1]=Chars.DOT Return False
+	
+	For Local c:=Eachin str
+		If c=Chars.DOT
+			If Not skipDots Return False
+		Else
+			If Not IsIdent( c ) Return False
+		Endif
+	Next
+	
+	Return True
+End
+
+Function TODO( message:String )
+	
+	Print "Not implemented yet: '"+message+"'"
+	DebugStop()
+	MainWindow.GainFocus()
+End
+
+Function DoInNotMainFiber( work:Void() )
+	
+	If Fiber.Current()=Fiber.Main()
+		New Fiber( work )
+	Else
+		work()
+	End
+End
+
+Function GetOrCreate<T>:T( map:StringMap<T>,key:String )
+	
+	Local item:=map[key]
+	If Not item
+		item=New T
+		map[key]=item
+	Endif
+	Return item
+End
+
+'Function SplitToCombinations:String[]( str:String,splitter:String="." )
+'	
+'	
+'End
+
+
+Class Stack<T> Extension
+	
+	Method AddUnique( value:T )
+		
+		If Not Self.Contains( value ) Then Self.Add( value )
+	End
+	
+End
+
+
+Struct Recti Extension
+	
+	Method MoveTo( x:Int,y:Int )
+		
+		Local size:=Self.Size
+		Self.Origin=New Vec2i( x,y )
+		Self.Size=size
+	End
+	
+	Method MoveBy( dx:Int,dy:Int )
+	
+		Local size:=Self.Size
+		Self.Origin=Self.Origin+New Vec2i( dx,dy )
+		Self.Size=size
+	End
 End

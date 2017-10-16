@@ -6,11 +6,13 @@
 
 namespace bbSocket{
 
-	int connect( const char *hostname,const char *service,int type );
-	
-	int bind( const char *hostname,const char *service );
+	int init();
 
-	int listen( const char *hostname,const char *service,int queue );
+	int connect( const char *hostname,const char *service,int type,int flags );
+	
+	int bind( const char *hostname,const char *service,int flags );
+
+	int listen( const char *hostname,const char *service,int backlog,int flags );
 
 	int accept( int socket );
 	
@@ -37,6 +39,8 @@ namespace bbSocket{
 	int getpeeraddr( int socket,void *sockaddr,int *addrlen );
 
 	int sockaddrname( const void *sockaddr,int addrlen,char *host,char *service );
+	
+	int select( int n_read,int *r_socks,int n_write,int *w_socks,int n_except,int *e_socks,int millis );
 }
 
 #endif

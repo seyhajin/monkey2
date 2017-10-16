@@ -71,6 +71,30 @@ Class Value Extends SNode
 		Return New AssignStmt( pnode,op,Self,value.UpCast( rtype ) )
 	End
 	
+	Method Compare:Value( op:String,rhs:Value )
+		
+		Local rvalue:=ToRValue()
+		rhs=rhs.ToRValue()
+		
+		If Not type.Equals( rhs.type ) SemantError( "Value.Compare" )
+			
+		Local ctype:=TCast<ClassType>( rvalue.type )
+		
+		If ctype And ctype.IsStruct
+			Local node:=rvalue.FindValue( op )
+			If node
+				Return node.Invoke( New Value[]( rhs ) )
+			Endif
+			node=rvalue.FindValue( "<=>" )
+			If node
+				Local cmp:=node.Invoke( New Value[]( rhs ) )
+				Return New BinaryopValue( Type.BoolType,op,cmp,LiteralValue.NullValue( cmp.type ) )
+			Endif
+		Endif
+		
+		Return New BinaryopValue( Type.BoolType,op,rvalue,rhs )
+	End
+	
 	Method CheckAccess( tscope:Scope ) Virtual
 	End
 	
@@ -147,6 +171,7 @@ Class UpCastValue Extends Value
 	Method New( type:Type,value:Value )
 		Self.type=type
 		Self.value=value
+
 	End
 	
 	Method ToString:String() Override
@@ -236,11 +261,15 @@ Class LiteralValue Extends Value
 		
 		Local ptype:=TCast<PrimType>( type )
 		If ptype And ptype.IsNumeric
-			If ptype.IsIntegral
-				value=String( ULong( value ) )
+			If ptype.IsSignedIntegral
+				value=String( Cast<Long>( value ) )
+			Else If ptype.IsUnsignedIntegral
+				value=String( Cast<ULong>( value ) )
 			Else If ptype.IsReal
-				value=String( Double( value ) )
-			Endif
+				value=String( Cast<Double>( value ) )
+			Else
+				SemantError( "LiteralValue.New() type="+ptype.ToString() )
+			End
 		Endif
 
 		Self.value=value
@@ -322,7 +351,11 @@ Class LiteralValue Extends Value
 
 	Function IntValue:LiteralValue( value:Int )
 		Return New LiteralValue( Type.IntType,String( value ) )
-	End	
+	End
+	
+	Function NullValue:LiteralValue( type:Type )
+		Return New LiteralValue( type,"" )
+	end
 End
 
 Class NullValue Extends Value
@@ -596,6 +629,10 @@ Class IfThenElseValue Extends Value
 		Self.value=value
 		Self.thenValue=thenValue
 		Self.elseValue=elseValue
+	End
+	
+	Property HasSideEffects:Bool() Override
+		Return thenValue.HasSideEffects Or elseValue.HasSideEffects
 	End
 
 End

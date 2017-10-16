@@ -45,7 +45,7 @@ Function QCollide:QResult( collider:ConvexCollider,src:Vec3f,dst:Vec3f )
 		
 		casts+=1
 		
-		Local cresult:=World.GetDefault().ConvexSweep( collider,src,dst )
+		Local cresult:=Scene.GetCurrent().World.ConvexSweep( collider,src,dst )
 		If Not cresult Exit
 
 '		debug+=", "

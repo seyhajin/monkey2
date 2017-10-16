@@ -47,7 +47,7 @@ Class MyWindow Extends Window
 	
 	Method Server()
 	
-		Local server:=Socket.Bind( HOST,PORT )
+		Local server:=Socket.Bind( PORT )
 		If Not server print "Server: Failed to create server" ; Return
 		
 		Print "Server @"+server.Address+" ready"

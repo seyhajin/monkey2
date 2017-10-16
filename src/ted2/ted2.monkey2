@@ -34,8 +34,7 @@
 #import "audiodocument"
 #import "jsondocument"
 #import "xmldocument"
-
-'#Import "scenedocument"
+#Import "scenedocument"
 
 #import "textviewkeyeventfilter"
 
@@ -81,8 +80,8 @@ Function Main()
 	
 	Local config:=New StringMap<String>
 	
-	config["initialTheme"]=jobj.GetString( "theme" )
-	config["initialThemeScale"]=jobj.GetNumber( "themeScale" )
+	'config["initialTheme"]=jobj.GetString( "theme" )
+	'config["initialThemeScale"]=jobj.GetNumber( "themeScale" )
 	
 	'initial window state
 	'

@@ -59,8 +59,19 @@ Class PostEffect
 	#rem monkeydoc @hidden
 	#end	
 	Method RenderQuad()
-		
-		_device.Render( 4,1,0 )
+
+		Global _vertices:VertexBuffer
+	
+		If Not _vertices
+			_vertices=New VertexBuffer( New Vertex3f[](
+			New Vertex3f( 0,1,0 ),
+			New Vertex3f( 1,1,0 ),
+			New Vertex3f( 1,0,0 ),
+			New Vertex3f( 0,0,0 ) ) )
+		Endif
+			
+		_device.VertexBuffer=_vertices
+		_device.Render( 4,1 )
 	End
 		
 	Private

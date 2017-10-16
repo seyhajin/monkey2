@@ -48,7 +48,7 @@ Class MyWindow Extends Window
 		Local waterMaterial:=New WaterMaterial
 		
 		waterMaterial.ScaleTextureMatrix( 10,10 )
-		waterMaterial.ColorTexture=Texture.ColorTexture( Color.SeaGreen )
+		waterMaterial.ColorFactor=Color.SeaGreen
 		waterMaterial.Roughness=0
 		
 		waterMaterial.NormalTextures=New Texture[]( 
@@ -79,7 +79,11 @@ End
 
 Function Main()
 
-	New AppInstance
+	Local config:=New StringMap<String>
+
+	config["mojo3d_renderer"]="deferred"
+
+	New AppInstance( config )
 	
 	New MyWindow
 	

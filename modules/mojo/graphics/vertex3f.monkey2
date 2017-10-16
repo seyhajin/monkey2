@@ -3,6 +3,10 @@ Namespace mojo.graphics
 
 Struct Vertex3f
 
+	Const Format:=New Vertex3fFormat
+	
+	Const Pitch:=76			'76
+	
 	Field position:Vec3f	'0
 	Field texCoord0:Vec2f	'12
 	Field texCoord1:Vec2f	'20
@@ -11,8 +15,6 @@ Struct Vertex3f
 	Field weights:Vec4f		'56
 	Field bones:UInt		'72
 
-	Const Pitch:=76			'76
-	
 	Method New()
 	End
 	
@@ -95,10 +97,8 @@ End
 
 Class Vertex3fFormat Extends VertexFormat
 
-	Const Instance:=New Vertex3fFormat
-	
 	Property Pitch:Int() Override
-		
+
 		Return Vertex3f.Pitch
 	End
 

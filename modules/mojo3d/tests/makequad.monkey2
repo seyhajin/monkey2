@@ -52,6 +52,8 @@ Class MyWindow Extends Window
 		
 		Local mesh:=New Mesh( vertices,indices )
 		
+		mesh.UpdateNormals()
+		
 		'create model for the mesh
 		'
 		_model=New Model

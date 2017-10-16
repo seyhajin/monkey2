@@ -31,7 +31,7 @@ Using mojox..
 Using mojo..
 Using std..
 
-Const HOST:="localhost"	'Note: Use "" for 'public' host?
+Const HOST:="localhost"
 Const PORT:=40122
 
 Class MyWindow Extends Window
@@ -45,7 +45,7 @@ Class MyWindow Extends Window
 	
 	Method Server()
 	
-		Local server:=Socket.Listen( HOST,PORT )
+		Local server:=Socket.Listen( PORT )
 		If Not server print "Server: Failed to create server" ; Return
 		
 		Print "Server @"+server.Address+" listening"
@@ -61,18 +61,22 @@ Class MyWindow Extends Window
 			
 			Print "Server accepted client @"+socket.PeerAddress
 			
+			Print "Server Connected="+Int( socket.Connected )
+			
 			Local stream:=New SocketStream( socket )
 			
 			New Fiber( Lambda()
 			
-				Repeat
+				While Not stream.Eof
 				
 					Local line:=stream.ReadSizedString()
-					If Not line Exit
+					If Not line Print "empty line!" ; Continue
 					
 					stream.WriteSizedString( line )
-					
-				Forever
+
+				Wend
+				
+				Print "Sever Eof"
 				
 				stream.Close()
 				
@@ -89,10 +93,12 @@ Class MyWindow Extends Window
 	
 		Fiber.Sleep( .5 )
 	
-		Local client:=Socket.Connect( HOST,PORT )
+		Local client:=Socket.Connect( HOST,PORT,SocketType.Stream )
 		If Not client Print "Client: Couldn't connect to server" ; Return
 		
 		Print "Client @"+client.Address+" connected to server @"+client.PeerAddress
+		
+		Print "Client Connected="+Int(client.Connected)
 		
 		client.SetOption( "TCP_NODELAY",1 )
 		

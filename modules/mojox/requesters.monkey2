@@ -42,12 +42,12 @@ This function must not be called from the main fiber.
 
 
 #end
-Function RequestString:String( message:String="Enter a string:",title:String="String requester" )
+Function RequestString:String( message:String="Enter a string:",title:String="String requester",initialValue:String="" )
 	Assert( Fiber.Current()<>Fiber.Main(),"RequestString cannot be used from the main fiber" )
 
 	Local future:=New Future<String>
 	
-	Local textField:=New TextField
+	Local textField:=New TextField( initialValue )
 	
 	Local label:=New Label( message )
 	label.AddView( textField )

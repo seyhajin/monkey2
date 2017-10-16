@@ -5,7 +5,7 @@ Namespace sqlite
 
 #Import "<libc>"
 
-#Import "sqlite-amalgamation-3150000/sqlite3.h"
+#Import "sqlite-amalgamation/sqlite3.h"
 
 Extern
 

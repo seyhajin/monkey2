@@ -7,11 +7,13 @@ Class Translator_CPP Extends Translator
 	Field _module:Module
 	Field _lambdaId:Int
 	Field _gctmps:=0
+	Field _dbline:=-1
 	
 	Method Reset() Override
 		Super.Reset()
 		_lambdaId=0
 		_gctmps=0
+		_dbline=-1
 	End
 	
 	Method TranslateModule:Bool( module:Module )
@@ -79,13 +81,21 @@ Class Translator_CPP Extends Translator
 				Uses( ctype )
 				
 				Local cname:=ClassName( ctype )
+				Local rname:=""
 				
-				Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
-				Emit( "return &bbObjectTypeInfo::instance;" )
+				If ctype.IsStruct
+					Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
+					rname="bbVoidTypeInfo"
+				Else
+					Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
+					rname="bbObjectTypeInfo"
+				Endif
+								
+				Emit( "return &"+rname+"::instance;" )
 				Emit( "}" )
 				
 				Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
-				Emit( "return &bbObjectTypeInfo::instance;" )
+				Emit( "return &"+rname+"::instance;" )
 				Emit( "}" )
 				
 			Next
@@ -140,7 +150,10 @@ Class Translator_CPP Extends Translator
 
 		EmitBr()
 		For Local etype:=Eachin fdecl.enums
-			Emit( "enum class "+EnumName( etype )+";" )
+			Local ename:=EnumName( etype )
+			Emit( "enum class "+ename+";" )
+			Emit( "bbString bbDBType("+ename+"*);" )
+			Emit( "bbString bbDBValue("+ename+"*);" )
 		Next
 		
 		EmitBr()
@@ -176,7 +189,6 @@ Class Translator_CPP Extends Translator
 			EmitClassProto( ctype,fdecl,emitted )
 		Next
 		
-		
 		EmitBr()		
 		Emit( "#endif" )
 		EmitBr()
@@ -190,6 +202,21 @@ Class Translator_CPP Extends Translator
 		EmitBr()
 		Emit( "#include ~q"+MakeIncludePath( fdecl.hfile,ExtractDir( fdecl.cfile ) )+"~q" )
 		EmitBr()
+
+		'debug enums!		
+		EmitBr()
+		For Local etype:=Eachin fdecl.enums
+			
+			Local ename:=EnumName( etype )
+			
+			Emit( "bbString bbDBType("+ename+"*p){" )
+			Emit( "~treturn ~q"+etype.Name+"~q;" )
+			Emit( "}" )
+			Emit( "bbString bbDBValue("+ename+"*p){" )
+			Emit( "~treturn bbString( *(int*)p );" )
+			Emit( "}" )
+		Next
+		
 		
 		BeginDeps()
 		
@@ -579,7 +606,11 @@ Class Translator_CPP Extends Translator
 		Emit( "};" )
 		
 		If GenTypeInfo( ctype )
-			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+			If ctype.IsStruct
+				Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
+			Else
+				Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+			Endif
 		Endif
 		
 		If _debug
@@ -1011,14 +1042,39 @@ Class Translator_CPP Extends Translator
 		Emit( rcname+"::decls_t "+rcname+"::decls;" )
 		
 		EmitBr()
+
+		If ctype.IsStruct
+			Emit( "bbTypeInfo *bbGetType( "+cname+" const& ){" )
+		Else
+			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
+		Endif
+
+		Emit( "return &"+rcname+"::instance;" )
+		Emit( "}" )
+
 		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
 		Emit( "return &"+rcname+"::instance;" )
 		Emit( "}" )
 		
-		EmitBr()
-		Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
-		Emit( "return &"+rcname+"::instance;" )
-		Emit( "}" )
+		#rem
+		If ctype.IsStruct
+			EmitBr()
+			Emit( "bbTypeInfo *bbGetType( "+cname+" const& ){" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+		Else
+			EmitBr()
+			Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+			
+			EmitBr()
+			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+		Endif
+		#end
+		
 	End
 
 	'For later...
@@ -1164,15 +1220,35 @@ Class Translator_CPP Extends Translator
 	
 	'***** Block *****
 	
+	Method DebugInfo:String( stmt:Stmt )
+		
+		If _debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
+		
+		Return ""
+	End
+	
+	Method EmitDebugInfo( stmt:Stmt )
+		
+		Local db:=DebugInfo( stmt )
+		If Not db Return
+		
+		If stmt.pnode.srcpos Shr 12=_dbline Return 
+
+		_dbline=stmt.pnode.srcpos Shr 12
+		
+		Emit( db+";" )
+	End
+	
 	Method BeginBlock()
 
 		BeginGCFrame()
+		
 		If _debug Emit( "bbDBBlock db_blk;" )
 
 	End
 	
 	Method EmitStmts( block:Block )
-
+		
 		For Local stmt:=Eachin block.stmts
 			EmitStmt( stmt )
 			FreeGCTmps()
@@ -1228,16 +1304,6 @@ Class Translator_CPP Extends Translator
 	
 	'***** Stmt *****
 	
-	Method DebugInfo:String( stmt:Stmt )
-		If _debug And stmt.pnode Return "bbDBStmt("+stmt.pnode.srcpos+")"
-		Return ""
-	End
-	
-	Method EmitDebugInfo( stmt:Stmt )
-		Local db:=DebugInfo( stmt )
-		If db Emit( db+";" )
-	End
-	
 	Method EmitStmt( stmt:Stmt )
 	
 		If Not stmt Return
@@ -1265,6 +1331,9 @@ Class Translator_CPP Extends Translator
 		Local ifStmt:=Cast<IfStmt>( stmt )
 		If ifStmt EmitStmt( ifStmt ) ; Return
 		
+		Local forStmt:=Cast<ForStmt>( stmt )
+		If forStmt EmitStmt( forStmt ) ; Return
+		
 		Local whileStmt:=Cast<WhileStmt>( stmt )
 		If whileStmt EmitStmt( whileStmt ) ; Return
 		
@@ -1273,9 +1342,6 @@ Class Translator_CPP Extends Translator
 		
 		Local selectStmt:=Cast<SelectStmt>( stmt )
 		If selectStmt EmitStmt( selectStmt ) ; Return
-		
-		Local forStmt:=Cast<ForStmt>( stmt )
-		If forStmt EmitStmt( forStmt ) ; Return
 		
 		Local tryStmt:=Cast<TryStmt>( stmt )
 		If tryStmt EmitStmt( tryStmt ) ; Return
@@ -1286,8 +1352,7 @@ Class Translator_CPP Extends Translator
 		Local printStmt:=Cast<PrintStmt>( stmt )
 		If printStmt EmitStmt( printStmt ) ; Return
 		
-'		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt '"+String.FromCString( stmt.typeName() )+"' not recognized" )
-		Throw New TransEx( "Translator_CPP.EmitStmt() Stmt not recognized" )
+		TransError( "Translator.EmitSmt" )
 	End
 	
 	Method EmitStmt( stmt:PrintStmt )
@@ -1419,7 +1484,8 @@ Class Translator_CPP Extends Translator
 	
 	Method EmitStmt( stmt:SelectStmt )
 	
-		Local tvalue:=Trans( stmt.value ),head:=True
+		'Local tvalue:=Trans( stmt.value ),head:=True
+		Local head:=True
 		
 		For Local cstmt:=Eachin stmt.cases
 		
@@ -1427,7 +1493,7 @@ Class Translator_CPP Extends Translator
 				Local cmps:=""
 				For Local value:=Eachin cstmt.values
 					If cmps cmps+="||"
-					cmps+=tvalue+"=="+Trans( value )
+					cmps+=Trans( value )
 				Next
 				cmps="if("+cmps+"){"
 				If Not head cmps="}else "+cmps
@@ -1613,8 +1679,9 @@ Class Translator_CPP Extends Translator
 		Local typeofTypeValue:=Cast<TypeofTypeValue>( value )
 		If typeofTypeValue Return Trans( typeofTypeValue )
 		
-'		Return "{* "+value.ToString()+" "+String.FromCString( value.typeName() )+" *}"
-		Return "{* "+value.ToString()+" *}"
+		TransError( "Translator.Trans()" )
+		
+		Return ""
 	End
 	
 	Method Trans:String( value:UpCastValue )
@@ -1643,9 +1710,10 @@ Class Translator_CPP Extends Translator
 		If value.value.type=Type.VariantType Return src+".get<"+TransType( value.type )+">()"
 		
 		If IsCValueType( value.type ) Return TransType( value.type )+src
-		
+
+		'obj->obj		
 		Local ctype:=TCast<ClassType>( value.type )
-		If ctype Return "bb_object_cast<"+ClassName( ctype )+"*>"+src
+		If ctype And TCast<ClassType>( value.value.type ) Return "bb_object_cast<"+ClassName( ctype )+"*>"+src
 		
 		Return "(("+TransType( value.type )+")"+src+")"
 	End
@@ -1679,28 +1747,43 @@ Class Translator_CPP Extends Translator
 		If Not value.value Return TransNull( value.type )
 		
 		Local ptype:=TCast<PrimType>( value.type )
-		Select ptype
-		Case Type.FloatType,Type.DoubleType
-		
-			Local t:=value.value
-			If t.Find( "." )=-1 And t.Find( "e" )=-1 And t.Find( "E" )=-1 t+=".0"
+		If ptype
 			
-			If ptype=Type.FloatType Return t+"f"
-			Return t
-			
-		Case Type.StringType
+			If ptype.IsIntegral
+				    
+				If value.value="0" Return TransType( value.type )+"(0)"
+				
+				Select value.type
+				Case Type.IntType  Return value.value
+				Case Type.UIntType Return value.value+"u"
+				Case Type.LongType Return value.value+"l"
+				Case Type.ULongType Return value.value+"ul"
+				End
+				
+				Return TransType( value.type )+"("+value.value+")"
+				
+			Else If ptype.IsReal
+
+				Local t:=value.value
+				If t.Find( "." )=-1 And t.Find( "e" )=-1 And t.Find( "E" )=-1 t+=".0"
+				
+				If ptype=Type.FloatType Return t+"f"
+				Return t
+
+			Else If ptype=Type.StringType
+
+				Local str:=value.value
+				If str.Length Return "bbString("+EnquoteCppString( str )+","+str.Length+")"
+				Return "bbString()"
+				
+			Endif
 		
-			Local str:=value.value
-			If str.Length Return "bbString("+EnquoteCppString( str )+","+str.Length+")"
-			Return "bbString()"
-		End
+		Endif
 		
 		Refs( value.type )
 		
 		Local etype:=TCast<EnumType>( value.type )
 		If etype Return EnumValueName( etype,value.value )
-		
-		If value.value="0" Return TransType( value.type )+"(0)"
 		
 		Return value.value
 	End
@@ -1788,7 +1871,17 @@ Class Translator_CPP Extends Translator
 
 		Local cname:=ClassName( ctype )
 		
-		Return "bbMethod(("+cname+"*)("+Trans( value.instance )+"),&"+cname+"::"+Trans( value.member )+")"
+		Local func:=value.member
+		
+		Local args:="<"+cname+","+TransType( func.ftype.retType )
+		For Local ty:=Eachin func.ftype.argTypes
+			args+=","+TransType( ty )
+		Next
+		args+=">"
+		
+'		Print "args="+args
+		
+		Return "bbMethod"+args+"(("+cname+"*)("+Trans( value.instance )+"),&"+cname+"::"+Trans( value.member )+")"
 	End
 	
 	Method Trans:String( value:FuncValue )
@@ -1815,9 +1908,9 @@ Class Translator_CPP Extends Translator
 		Endif
 		
 		If ctype.IsStruct
-			If Not value.args Return cname+"(bbNullCtor)"
-			If value.args[0].type.Equals( ctype ) Return cname+"("+TransArgs( value.args )+",bbNullCtor)"
-			Return cname+"("+TransArgs( value.args )+")"
+			If Not value.args Return cname+"{bbNullCtor}"
+			If value.args[0].type.Equals( ctype ) Return cname+"{"+TransArgs( value.args )+",bbNullCtor}"
+			Return cname+"{"+TransArgs( value.args )+"}"
 		Endif
 		
 		Return "bbGCNew<"+cname+">("+TransArgs( value.args )+")"
@@ -1891,6 +1984,9 @@ Class Translator_CPP Extends Translator
 		Local op:=value.op
 		Select op
 		Case "<=>"
+			
+			Uses( value.lhs.type )
+			Uses( value.rhs.type )
  
 			Return "bbCompare("+Trans( value.lhs )+","+Trans( value.rhs )+")"
 			
@@ -1902,6 +1998,10 @@ Class Translator_CPP Extends Translator
 			Local ftype:=TCast<FuncType>( value.lhs.type )
 			
 			If (ctype And ctype.IsStruct) Or (ftype And op<>"==" And op<>"!=" )
+				
+				Uses( value.lhs.type )
+				Uses( value.rhs.type )
+			
 				Return "(bbCompare("+Trans( value.lhs )+","+Trans( value.rhs )+")"+op+"0)"
 			Endif
 			
@@ -1937,7 +2037,7 @@ Class Translator_CPP Extends Translator
 	
 	Method Trans:String( value:PointerValue )
 		
-		Return "(&"+Trans( value.value )+")"
+		Return "(&"+TransRef( value.value )+")"
 	End
 	
 	Method Trans:String( value:VarValue )
@@ -2192,7 +2292,7 @@ Function GenTypeInfo:Bool( vvar:VarValue )
 
 	If vvar.vdecl.kind<>"field" And vvar.vdecl.kind="global" And vvar.vdecl.kind="const" Return False
 	
-	Return True	'GenTypeInfo( vvar.type )
+	Return True
 End
 
 Function GenTypeInfo:Bool( func:FuncValue )
@@ -2201,17 +2301,21 @@ Function GenTypeInfo:Bool( func:FuncValue )
 
 	If func.IsExtension Return False
 	
-	Return True	'GenTypeInfo( func.ftype )
+	Return True
 End
 
 Function GenTypeInfo:Bool( ctype:ClassType )
 
-	If ctype.IsStruct Return False
-
-	'This 'sort of' works, but no generics just yet!
+	'disable generic instances
 	If ctype.types Or ctype.scope.IsInstanceOf Return False
+
+	'disable structs
+	'If ctype.IsStruct Return False
+
+	'disable native types
+	If ctype.ExtendsVoid Return False
 	
-	'No extensions yet either
+	'disable type extensions
 	If ctype.cdecl.IsExtension Return False
 	
 	Return True

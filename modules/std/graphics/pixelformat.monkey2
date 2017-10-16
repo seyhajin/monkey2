@@ -30,7 +30,7 @@ Enum PixelFormat
 	
 	Depth16
 	Depth24
-	Depth32F
+	Depth32
 
 	'deprecated
 	IA16=IA8
@@ -53,7 +53,7 @@ Function PixelFormatDepth:Int( format:PixelFormat )
 	Case PixelFormat.RGBA32F Return 16
 	Case PixelFormat.Depth16 Return 2
 	Case PixelFormat.Depth24 Return 4
-	Case PixelFormat.Depth32F Return 4
+	Case PixelFormat.Depth32 Return 4
 		
 	'deprecated
 	Case PixelFormat.IA16 Return 2

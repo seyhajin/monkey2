@@ -1,44 +1,59 @@
 Namespace ted2go
 
 
-Class Prefs
+Const Prefs:=New PrefsInstance
+
+Class PrefsInstance
 	
 	' AutoCompletion
-	Global AcEnabled:=True
-	Global AcKeywordsOnly:=False
-	Global AcShowAfter:=2
-	Global AcUseTab:=True
-	Global AcUseEnter:=False
-	Global AcUseSpace:=False
-	Global AcUseDot:=False
-	Global AcNewLineByEnter:=True
-	Global AcStrongFirstChar:=True
+	Field AcEnabled:=True
+	Field AcKeywordsOnly:=False
+	Field AcShowAfter:=2
+	Field AcUseTab:=True
+	Field AcUseEnter:=False
+	Field AcUseSpace:=False
+	Field AcUseDot:=False
+	Field AcNewLineByEnter:=True
+	Field AcStrongFirstChar:=True
+	Field AcUseLiveTemplates:=True
 	'
-	Global MainToolBarVisible:=True
-	Global MainProjectTabsRight:=True
-	Global MainProjectIcons:=True
+	Field MainToolBarVisible:=True
+	Field MainProjectIcons:=True
 	'
-	Global IrcNickname:String
-	Global IrcServer:="irc.freenode.net"
-	Global IrcPort:=6667
-	Global IrcRooms:="#monkey2" '#mojox#mojo2d
-	Global IrcConnect:Bool=False
+	Field IrcNickname:String
+	Field IrcServer:="irc.freenode.net"
+	Field IrcPort:=6667
+	Field IrcRooms:="#monkey2" '#mojox#mojo2d
+	Field IrcConnect:Bool=False
 	'
-	Global EditorToolBarVisible:=False
-	Global EditorGutterVisible:=True
-	Global EditorShowWhiteSpaces:=False
-	Global EditorFontPath:String
-	Global EditorFontSize:=16
-	Global EditorShowEvery10LineNumber:=True
-	Global EditorCodeMapVisible:=True
-	Global EditorAutoIndent:=True
+	Field EditorToolBarVisible:=False
+	Field EditorGutterVisible:=True
+	Field EditorShowWhiteSpaces:=False
+	Field EditorFontPath:String
+	Field EditorFontSize:=16
+	Field EditorShowEvery10LineNumber:=True
+	Field EditorCodeMapVisible:=True
+	Field EditorAutoIndent:=True
+	Field EditorAutoPairs:=True
+	Field EditorSurroundSelection:=True
 	'
-	Global SourceSortByType:=True
-	Global SourceShowInherited:=False
+	Field SourceSortByType:=True
+	Field SourceShowInherited:=False
 	'
-	Global MonkeyRootPath:String
+	Field MonkeyRootPath:String
+	Field IdeHomeDir:String
+	'	
+	Field SiblyMode:Bool
 	
-	Function LoadState( json:JsonObject )
+	Property FindFilesFilter:String()
+		Return _findFilter
+	Setter( value:String )
+		
+		_findFilter=value
+		SaveLocalState()
+	End
+	
+	Method LoadState( json:JsonObject )
 		
 		If json.Contains( "irc" )
 			
@@ -55,7 +70,6 @@ Class Prefs
 			
 			Local j2:=json["main"].ToObject()
 			MainToolBarVisible=Json_GetBool( j2,"toolBarVisible",MainToolBarVisible )
-			MainProjectTabsRight=Json_GetBool( j2,"tabsRight",MainProjectTabsRight )
 			MainProjectIcons=Json_GetBool( j2,"projectIcons",MainProjectIcons )
       
 		Endif
@@ -71,6 +85,7 @@ Class Prefs
 			AcUseSpace=Json_GetBool( j2,"useSpace",AcUseSpace )
 			AcUseDot=Json_GetBool( j2,"useDot",AcUseDot )
 			AcNewLineByEnter=Json_GetBool( j2,"newLineByEnter",AcNewLineByEnter )
+			AcUseLiveTemplates=Json_GetBool( j2,"useLiveTemplates",AcUseLiveTemplates )
 			
 		Endif
 		
@@ -85,6 +100,8 @@ Class Prefs
 			EditorShowEvery10LineNumber=Json_GetBool( j2,"showEvery10",EditorShowEvery10LineNumber )
 			EditorCodeMapVisible=Json_GetBool( j2,"codeMapVisible",EditorCodeMapVisible )
 			EditorAutoIndent=Json_GetBool( j2,"autoIndent",EditorAutoIndent )
+			EditorAutoPairs=Json_GetBool( j2,"autoPairs",EditorAutoPairs )
+			EditorSurroundSelection=Json_GetBool( j2,"surroundSelection",EditorSurroundSelection )
 			
 		Endif
 		
@@ -95,14 +112,19 @@ Class Prefs
 			SourceShowInherited=j2["showInherited"].ToBool()
 			
 		Endif
+		
+		If json.Contains( "siblyMode" )
+		
+			SiblyMode=json["siblyMode"].ToBool()
+		End
+	
 	End
 	
-	Function SaveState( json:JsonObject )
+	Method SaveState( json:JsonObject )
 		
 		Local j:=New JsonObject
 		json["main"]=j
 		j["toolBarVisible"]=New JsonBool( MainToolBarVisible )
-		j["tabsRight"]=New JsonBool( MainProjectTabsRight )
 		j["projectIcons"]=New JsonBool( MainProjectIcons )
 		
 		j=New JsonObject
@@ -123,6 +145,7 @@ Class Prefs
 		j["useSpace"]=New JsonBool( AcUseSpace )
 		j["useDot"]=New JsonBool( AcUseDot )
 		j["newLineByEnter"]=New JsonBool( AcNewLineByEnter )
+		j["useLiveTemplates"]=New JsonBool( AcUseLiveTemplates )
 		
 		j=New JsonObject
 		json["editor"]=j
@@ -134,34 +157,44 @@ Class Prefs
 		j["showEvery10"]=New JsonBool( EditorShowEvery10LineNumber )
 		j["codeMapVisible"]=New JsonBool( EditorCodeMapVisible )
 		j["autoIndent"]=New JsonBool( EditorAutoIndent )
+		j["autoPairs"]=New JsonBool( EditorAutoPairs )
+		j["surroundSelection"]=New JsonBool( EditorSurroundSelection )
 		
 		j=New JsonObject
 		json["source"]=j
 		j["sortByType"]=New JsonBool( SourceSortByType )
 		j["showInherited"]=New JsonBool( SourceShowInherited )
 		
+		If "SiblyMode" json["siblyMode"]=JsonBool.TrueValue
+		
 	End
 	
-	Function LoadLocalState()
+	Method LoadLocalState()
+		
+		IdeHomeDir=HomeDir()+"Ted2Go/"
+		CreateDir( IdeHomeDir )
 		
 		Local json:=JsonObject.Load( AppDir()+"state.json" )
 		If Not json Return
 		
 		MonkeyRootPath=Json_GetString( json.Data,"rootPath","" )
 		If Not MonkeyRootPath.EndsWith( "/" ) Then MonkeyRootPath+="/"
+		
+		FindFilesFilter=Json_GetString( json.Data,"findFilesFilter","monkey2,txt" )
 	End
 	
-	Function SaveLocalState()
+	Method SaveLocalState()
 		
 		If Not MonkeyRootPath.EndsWith( "/" ) Then MonkeyRootPath+="/"
 		
 		Local json:=New JsonObject
 		json["rootPath"]=New JsonString( MonkeyRootPath )
+		json["findFilesFilter"]=New JsonString( FindFilesFilter )
 		json.Save( AppDir()+"state.json" )
 		
 	End
 	
-	Function GetCustomFontPath:String()
+	Method GetCustomFontPath:String()
 		
 		If Not EditorFontPath Return ""
 		If Not EditorFontPath.Contains( ".ttf" ) Return ""
@@ -174,11 +207,13 @@ Class Prefs
 		Return path
 	End
 	
-	Function GetCustomFontSize:Int()
+	Method GetCustomFontSize:Int()
 	
 		Return Max( EditorFontSize,6 ) '6 is a minimum
 	End
+	
+	Private 
+	
+	Field _findFilter:String
+	
 End
-
-
-

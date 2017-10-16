@@ -3,6 +3,50 @@
 
 namespace bbJNI{
 
+	jstring jstring_refs[64];
+	jstring *jstring_refsp=jstring_refs;
+	
+	void AddStrRef( jstring jstr ){
+		
+		*jstring_refsp++=jstr;
+	}
+	
+	void DeleteStrRefs( JNIEnv *env ){
+	
+		while( jstring_refsp!=jstring_refs ){
+			
+			jstring jstr=*--jstring_refsp;
+			
+			env->DeleteLocalRef( (jobject)jstr );
+		}
+	}
+
+	bbString JStringToString( JNIEnv *env,jstring jstr ){
+	
+		if( !jstr ) return "";
+	
+		const char *cstr=env->GetStringUTFChars( jstr,0 );
+		
+		bbString str=bbString::fromCString( cstr );
+		
+		env->ReleaseStringUTFChars( jstr,cstr );
+		
+		return str;
+	}
+	
+	jstring StringToJString( JNIEnv *env,bbString str ){
+	
+		int n=str.utf8Length()+1;
+		
+		char *buf=new char[n];
+		
+		str.toCString( buf,n );
+		
+		jstring jstr=env->NewStringUTF( buf );
+		
+		return jstr;
+	}
+	
 	jvalue *makeArgs( JNIEnv *env,bbArray<bbVariant> args ){
 	
 		jvalue *jargs=new jvalue[args.length()];
@@ -39,13 +83,9 @@ namespace bbJNI{
 			
 				bbString str=arg.get<bbString>();
 				
-				int n=str.utf8Length()+1;
+				jstring jstr=StringToJString( env,str );
 				
-				char *buf=new char[n];
-				
-				str.toCString( buf,n );
-				
-				jstring jstr=env->NewStringUTF( buf );
+				AddStrRef( jstr );
 				
 				jarg->l=jstr;
 /*				
@@ -92,37 +132,15 @@ namespace bbJNI{
 		return jargs;
 	}
 	
-	bbString JStringToString( JNIEnv *env,jstring jstr ){
-	
-		if( !jstr ) return "";
-	
-		const char *cstr=env->GetStringUTFChars( jstr,0 );
-		
-		bbString str=bbString::fromCString( cstr );
-		
-		env->ReleaseStringUTFChars( jstr,cstr );
-		
-		return str;
-	}
-	
-	jstring StringToJString( JNIEnv *env,bbString str ){
-	
-		int n=str.utf8Length()+1;
-		
-		char *buf=new char[n];
-		
-		str.toCString( buf,n );
-		
-		jstring jstr=env->NewStringUTF( buf );
-		
-		return jstr;
-	}
-	
 	bbString GetStringField( JNIEnv *env,jobject obj,jfieldID fieldID ){
 	
 		jstring jstr=(jstring)env->GetObjectField( obj,fieldID );
 		
-		return JStringToString( env,jstr );
+		bbString r=JStringToString( env,jstr );
+		
+		env->DeleteLocalRef( jstr );
+		
+		return r;
 	}
 
 	void CallVoidMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
@@ -130,6 +148,8 @@ namespace bbJNI{
 		jvalue *jargs=makeArgs( env,args );
 		
 		env->CallVoidMethodA( obj,methodID,jargs );
+		
+		DeleteStrRefs( env );
 		
 		delete[] jargs;
 	}
@@ -139,6 +159,8 @@ namespace bbJNI{
 		jvalue *jargs=makeArgs( env,args );
 		
 		bbBool r=env->CallBooleanMethodA( obj,methodID,jargs );
+		
+		DeleteStrRefs( env );
 		
 		delete[] jargs;
 		
@@ -151,6 +173,8 @@ namespace bbJNI{
 		
 		bbInt r=env->CallIntMethodA( obj,methodID,jargs );
 		
+		DeleteStrRefs( env );
+		
 		delete[] jargs;
 		
 		return r;
@@ -160,7 +184,13 @@ namespace bbJNI{
 		
 		jvalue *jargs=makeArgs( env,args );
 		
-		bbString r=JStringToString( env,(jstring)env->CallObjectMethodA( obj,methodID,jargs ) );
+		jstring jstr=(jstring)env->CallObjectMethodA( obj,methodID,jargs );
+		
+		bbString r=JStringToString( env,jstr );
+		
+		env->DeleteLocalRef( jstr );
+		
+		DeleteStrRefs( env );
 		
 		delete[] jargs;
 		
@@ -173,6 +203,8 @@ namespace bbJNI{
 		
 		jobject r=env->CallObjectMethodA( obj,methodID,jargs );
 		
+		DeleteStrRefs( env );
+		
 		delete[] jargs;
 		
 		return r;
@@ -184,6 +216,8 @@ namespace bbJNI{
 		
 		env->CallStaticVoidMethodA( clazz,methodID,jargs );
 		
+		DeleteStrRefs( env );
+		
 		delete[] jargs;
 	}
 
@@ -192,6 +226,8 @@ namespace bbJNI{
 		jvalue *jargs=makeArgs( env,args );
 		
 		bbBool r=env->CallStaticBooleanMethodA( clazz,methodID,jargs );
+		
+		DeleteStrRefs( env );
 		
 		delete[] jargs;
 		
@@ -204,6 +240,8 @@ namespace bbJNI{
 		
 		bbInt r=env->CallStaticIntMethodA( clazz,methodID,jargs );
 		
+		DeleteStrRefs( env );
+		
 		delete[] jargs;
 		
 		return r;
@@ -212,8 +250,14 @@ namespace bbJNI{
 	bbString CallStaticStringMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );
+
+		jstring jstr=(jstring)env->CallStaticObjectMethodA( clazz,methodID,jargs );
 		
-		bbString r=JStringToString( env,(jstring)env->CallStaticObjectMethodA( clazz,methodID,jargs ) );
+		bbString r=JStringToString( env,jstr );
+		
+		env->DeleteLocalRef( jstr );
+		
+		DeleteStrRefs( env );
 		
 		delete[] jargs;
 		
@@ -226,6 +270,8 @@ namespace bbJNI{
 		
 		jobject r=env->CallStaticObjectMethodA( clazz,methodID,jargs );
 		
+		DeleteStrRefs( env );
+		
 		delete[] jargs;
 		
 		return r;
@@ -236,6 +282,8 @@ namespace bbJNI{
 		jvalue *jargs=makeArgs( env,args );
 		
 		jobject r=env->NewObjectA( clazz,methodID,jargs );
+		
+		DeleteStrRefs( env );
 		
 		delete[] jargs;
 		

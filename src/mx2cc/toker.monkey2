@@ -48,7 +48,7 @@ Function InitToker:Void()
 	
 	trigraphs="<=>".Split( "," )
 
-	digraphs="->,:=,*=,/=,+=,-=,&=,|=,~~=,<=,>=,<>".Split( "," )
+	digraphs="->,:=,*=,/=,+=,-=,&=,|=,~~=,<=,>=,<>,?.".Split( "," )
 
 End
 

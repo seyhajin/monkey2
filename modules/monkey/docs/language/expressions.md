@@ -17,7 +17,8 @@
 | _identifier_		| Identifier				|
 | _literal_			| Literal value				|
 | | |
-| `.`				| Postfix member acccess	| 2
+| `?.`				| Safe postfix member access | 2
+| `.`				| Postfix member acccess	| 
 | `( )`				| Postfix Invoke			|
 | `[ ]`				| Postfix Index				|
 | `< >`				| Postfix Generic instance	|
@@ -57,6 +58,11 @@
 | `Or`				| Boolean or				| 13
 | | |
 | `?` `Else`		| If-then-else				| 14
+| `?Else`			| 'Elvis operator' 			|
+
+The safe member access operator allows you to safely access members of a possibly null object. Accessing a field, property or method of a null object using the plain '.' operator will cause a 'null object runtime error' in debug mode - in release it will likely just crash the program. However, using '?.' instead will cause a null value of the expected type to be returned instead, preventing the runtime error occuring. Note however that this involves some overhead as it means the object must be checked before it is accessed.
+
+The 'Elvis operator' is a binary operator that returns its left hand argument if it is non-null, otherwise it returns its right hand argument. It is similar to 'X<>Null ? X Else Null' except that 'X' is only evaluted once.
 
 #### Type balancing
 
@@ -64,12 +70,11 @@ When evaluating an operator's operands, it is sometimes necessary to adjust the 
 
 When evaluating the operands of arithemetic or comparison operators, the following rules are used:
 
-* If either operator String, the other is converted to String.
+* If either operator is String, the other is converted to String.
 * Else If either operand is Double, the other is converted to Double.
 * Else if either operand is Float, the other is converted to Float.
 * Else if either operand is ULong, the other is converted to ULong.
 * Else if either operand is Long, the other is converted to Long.
-* Else if either operand is UInt, the other is converted to UInt.
 * Else if either operand is unsigned, both are converted to UInt.
 * Else both operands are converted to Int.
 
@@ -77,7 +82,6 @@ When evaluating the operands of the `&`, `|` and `^` integer operators, both ope
 
 * If either operand is ULong, the other is converted to ULong.
 * Else if either operand is Long, the other is converted to Long.
-* Else if either operand is UInt, the other is converted to UInt.
 * Else if either operand is unsigned, both are converted to UInt.
 * Else both operands are converted to Int.
 

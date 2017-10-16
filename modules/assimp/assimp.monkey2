@@ -241,3 +241,5 @@ Function aiSetImportPropertyFloat( store:aiPropertyStore,szName:CString,value:Fl
 Function aiSetImportPropertyInteger( store:aiPropertyStore,szName:CString,value:Int )
 
 Function aiSetImportPropertyString( store:aiPropertyStore,szName:CString,st:CString )
+	
+Function aiGetErrorString:CString()

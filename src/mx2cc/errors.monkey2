@@ -56,6 +56,7 @@ Class SemantEx Extends ErrorEx
 	Method ToString:String() Override
 		If Not pnode Return "? [?] : Error : "+msg
 		Local fdecl:=pnode.srcfile
+		If Not fdecl Return "????? ["+(pnode.srcpos Shr 12)+"] : Error : "+msg
 		Return fdecl.path+" ["+(pnode.srcpos Shr 12)+"] : Error : "+msg
 	End
 	

@@ -45,7 +45,7 @@ Notify activates a simple modal dialog informing the user of an event. The optio
 #end
 Function Notify:Void( title:String,text:String,serious:Bool=False )="bbRequesters::Notify"
 
-#rem monkeydoc Activates a simple modal Yes/No dialog.
+#rem monkeydoc Activates a modal Yes/No dialog.
 
 Confirm activates a simple modal dialog requesting the user to select between Yes and No options. If the user selects Yes, then Confirm returns true. Otherwise, false is returned.
 
@@ -59,7 +59,7 @@ Proceed activates a simple modal dialog requesting the user to select between Ye
 #end
 Function Proceed:Int( title:String,text:String,serious:Bool=False )="bbRequesters::Proceed"
 
-#rem monkeydoc Activate a modal file requester dialog.
+#rem monkeydoc Activates a modal file requester dialog.
 
 RequestFile activates a modal file requester dialog.
 
@@ -76,7 +76,7 @@ Returns selected file path, or an empty string if dialog was cancelled.
 #end
 Function RequestFile:String( title:String,filter:String="",save:Bool=False,file:String="" )="bbRequesters::RequestFile"
 
-#rem monkeydoc Activates a modal directory path dialog.
+#rem monkeydoc Activates a modal directory requester dialog.
 
 RequestDir activates a modal directory path dialog.
 

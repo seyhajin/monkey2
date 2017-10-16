@@ -2,6 +2,10 @@
 Namespace mojo.graphics
 
 Struct Vertex2f
+	
+	Const Format:=New Vertex2fFormat
+	
+	Const Pitch:=28
 
 	Field position:Vec2f
 	Field texCoord0:Vec2f
@@ -36,11 +40,9 @@ End
 
 Class Vertex2fFormat Extends VertexFormat
 	
-	Const Instance:=New Vertex2fFormat
-	
 	Property Pitch:Int() Override
 		
-		Return 28
+		Return Vertex2f.Pitch
 	End
 
 	Method UpdateGLAttribs() Override

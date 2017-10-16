@@ -98,7 +98,7 @@ Function ReadWAV:AudioData( stream:std.stream.Stream )
 
 End
 
-Public
+Internal
 
 Function LoadAudioData_WAV:AudioData( path:String )
 

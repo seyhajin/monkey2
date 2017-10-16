@@ -8,6 +8,8 @@ Class ProjectView Extends ScrollView
 	
 	Field ProjectOpened:Void( dir:String )
 	Field ProjectClosed:Void( dir:String )
+	
+	Field RequestedFindInFolder:Void( folder:String )
 
 	Method New( docs:DocumentManager,builder:IModuleBuilder )
 	
@@ -36,6 +38,18 @@ Class ProjectView Extends ScrollView
 		Return projs.ToArray()
 	End
 	
+	Function FindProjectByFile:String( filePath:String )
+		
+		If Not filePath Return ""
+		
+		For Local p:=Eachin _projects.Keys
+			If filePath.StartsWith( p )
+				Return p
+			Endif
+		End
+		Return ""
+	End
+	
 	Method OpenProject:Bool( dir:String )
 	
 		dir=StripSlashes( dir )
@@ -46,28 +60,53 @@ Class ProjectView Extends ScrollView
 	
 		Local browser:=New ProjectBrowserView( dir )
 		
-		browser.FileClicked+=Lambda( path:String )
+		browser.RequestedDelete+=Lambda( path:String )
 		
-			'OnOpenDocument( path )
+			DeleteItem( browser,path )
+		End
+		
+		If Prefs.SiblyMode
+		
+			browser.FileClicked+=Lambda( path:String )
 			
-		End
+				OnOpenDocument( path,False )
+			End
 		
-		browser.FileDoubleClicked+=Lambda( path:String )
+		Else 
 		
-			OnOpenDocument( path )
+			browser.FileDoubleClicked+=Lambda( path:String )
+			
+				OnOpenDocument( path )
+			End
 		
-		End
+		Endif
 		
 		browser.FileRightClicked+=Lambda( path:String )
 		
-			Local menu:=New Menu
+			Local menu:=New MenuExt
 		
 			Select GetFileType( path )
 			Case FileType.Directory
 			
-				menu.AddAction( "Open on Desktop" ).Triggered=Lambda()
+				menu.AddAction( "Find..." ).Triggered=Lambda()
 				
-					requesters.OpenUrl( path )
+					RequestedFindInFolder( path )
+				End
+				
+				menu.AddSeparator()
+				
+				menu.AddAction( "New class..." ).Triggered=Lambda()
+				
+					Local d:=New GenerateClassDialog( path )
+					d.Generated+=Lambda( filePath:String,fileContent:String )
+						
+						If CreateFileInternal( filePath,fileContent )
+						
+							MainWindow.OpenDocument( filePath )
+							browser.Refresh()
+						Endif
+					End
+					d.ShowModal()
 				End
 				
 				menu.AddSeparator()
@@ -77,23 +116,13 @@ Class ProjectView Extends ScrollView
 					Local file:=RequestString( "New file name:" )
 					If Not file Return
 					
-					If ExtractExt(file)="" Then file+=".monkey2"
-					
 					Local tpath:=path+"/"+file
 					
-					If GetFileType( tpath )<>FileType.None
-						Alert( "A file or directory already exists at '"+tpath+"'" )
-						Return
-					End
-					
-					If Not CreateFile( tpath )
-						Alert( "Failed to create file '"+file+"'" )
-					Endif
+					CreateFileInternal( tpath )
 					
 					browser.Refresh()
-					Return
 				End
-		
+				
 				menu.AddAction( "New folder" ).Triggered=Lambda()
 				
 					Local dir:=RequestString( "New folder name:" )
@@ -112,19 +141,11 @@ Class ProjectView Extends ScrollView
 					Endif
 					
 					browser.Refresh()
-					Return
 				End
 				
 				menu.AddAction( "Delete" ).Triggered=Lambda()
 
-					If Not RequestOkay( "Really delete folder '"+path+"'?" ) Return
-					
-					If DeleteDir( path,True )
-						browser.Refresh()
-						Return
-					Endif
-					
-					Alert( "Failed to delete folder '"+path+"'" )
+					DeleteItem( browser,path )
 				End
 				
 				menu.AddSeparator()
@@ -197,6 +218,14 @@ Class ProjectView Extends ScrollView
 					Endif
 				Endif
 				
+				menu.AddSeparator()
+				
+				menu.AddAction( "Open on Desktop" ).Triggered=Lambda()
+				
+					requesters.OpenUrl( path )
+				End
+				
+				
 			Case FileType.File
 			
 				menu.AddAction( "Open on Desktop" ).Triggered=Lambda()
@@ -209,8 +238,8 @@ Class ProjectView Extends ScrollView
 				menu.AddAction( "Rename" ).Triggered=Lambda()
 				
 					Local oldName:=StripDir( path )
-					Local name:=RequestString( "Enter new name:","Ranaming '"+oldName+"'" )
-					If name=oldName Return
+					Local name:=RequestString( "Enter new name:","Ranaming '"+oldName+"'",oldName )
+					If Not name Or name=oldName Return
 					
 					Local newPath:=ExtractDir( path )+name
 					If CopyFile( path,newPath )
@@ -227,20 +256,8 @@ Class ProjectView Extends ScrollView
 				menu.AddSeparator()
 			
 				menu.AddAction( "Delete" ).Triggered=Lambda()
-				
-					If Not RequestOkay( "Really delete file '"+path+"'?" ) return
-				
-					If DeleteFile( path )
 					
-						Local doc:=_docs.FindDocument( path )
-						
-						If doc doc.Close()
-					
-						browser.Refresh()
-						Return
-					Endif
-					
-					Alert( "Failed to delete file: '"+path+"'" )
+					DeleteItem( browser,path )
 				End
 				
 			Default
@@ -317,9 +334,47 @@ Class ProjectView Extends ScrollView
 	
 	Field _docs:DocumentManager
 	Field _docker:=New DockingView
-	Field _projects:=New StringMap<FileBrowserExt>
+	Global _projects:=New StringMap<FileBrowserExt>
 	Field _builder:IModuleBuilder
-
+	
+	Method DeleteItem( browser:ProjectBrowserView,path:String )
+		
+		Local work:=Lambda()
+			
+			If DirectoryExists( path )
+			
+				If Not RequestOkay( "Really delete folder '"+path+"'?" ) Return
+				
+				If DeleteDir( path,True )
+					browser.Refresh()
+					Return
+				Endif
+				
+				Alert( "Failed to delete folder '"+path+"'" )
+				
+			Else
+				
+				If Not RequestOkay( "Really delete file '"+path+"'?" ) Print "1111" ; Return
+				
+				If DeleteFile( path )
+				
+					Local doc:=_docs.FindDocument( path )
+				
+					If doc doc.Close()
+				
+					browser.Refresh()
+					Return
+				Endif
+				
+				Alert( "Failed to delete file: '"+path+"'" )
+				
+			Endif
+			
+		End
+		
+		New Fiber( work )
+	End
+	
 	Method OnOpenProject()
 	
 		Local dir:=MainWindow.RequestDir( "Select Project Directory...","" )
@@ -328,12 +383,29 @@ Class ProjectView Extends ScrollView
 		OpenProject( dir )
 	End
 	
-	Method OnOpenDocument( path:String )
+	Method OnOpenDocument( path:String,runExec:Bool=True )
 		
 		If GetFileType( path )=FileType.File
-		
+			
 			New Fiber( Lambda()
+				
+				Local ext:=ExtractExt( path )
+				Local exe:=(ext=".exe")
+				If runExec
+					If exe Or ext=".bat" Or ext=".sh"
+						Local s:="Do you want to execute this file?"
+						If Not exe s+="~nPress 'Cancel' to open file in editor."
+						If RequestOkay( s,StripDir( path ) )
+							OpenUrl( path )
+							Return
+						Endif
+					Endif
+				Endif
+				
+				If exe Return 'never open .exe
+				
 				_docs.OpenDocument( path,True )
+				
 			End )
 		
 		Endif
@@ -358,6 +430,25 @@ Class ProjectView Extends ScrollView
 		MainWindow.ShowStatusBarText( s )
 		
 		Return succ>0
+	End
+	
+	Method CreateFileInternal:Bool( path:String,content:String=Null )
+		
+		If ExtractExt(path)="" Then path+=".monkey2"
+		
+		If GetFileType( path )<>FileType.None
+			Alert( "A file or directory already exists at '"+path+"'" )
+			Return False
+		End
+		
+		If Not CreateFile( path )
+			Alert( "Failed to create file '"+StripDir( path )+"'" )
+			Return False
+		Endif
+		
+		If content Then SaveString( content,path )
+		
+		Return True
 	End
 	
 End

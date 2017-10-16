@@ -505,6 +505,9 @@ Class PointerType Extends Type
 		Local ptype:=TCast<PrimType>( type )
 		If ptype And ptype.IsIntegral Return True
 		
+		Local ctype:=TCast<ClassType>( type )
+		If ctype Return elemType.Equals( VoidType ) And ctype.cdecl.kind<>"struct"
+		
 		Return False
 	End
 	

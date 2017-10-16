@@ -4,7 +4,7 @@ Namespace mojo3d.graphics
 Private
 
 Class Gltf2Loader
-
+	
 	Method New( asset:Gltf2Asset,dir:String )
 		
 		_asset=asset
@@ -89,49 +89,54 @@ Class Gltf2Loader
 		
 		Local tex:=Texture.Load( _dir+texture.source.uri,flags )
 		
-		Print "Opened texture:"+_dir+texture.source.uri
+'		Print "Opened texture:"+_dir+texture.source.uri
 		
 		_textureCache[texture]=tex
 		Return tex
 	End
 	
-	Method GetMaterial:Material( material:Gltf2Material )
+	Method GetMaterial:Material( material:Gltf2Material,textured:Bool )
 		
 		If Not material Return New PbrMaterial( Color.Magenta )
 		
 		If _materialCache.Contains( material ) Return _materialCache[material]
 		
-		Local mat:=New PbrMaterial
+		Local colorTexture:Texture
+		Local metallicRoughnessTexture:Texture
+		Local occlusionTexture:Texture
+		Local emissiveTexture:Texture
+		Local normalTexture:Texture
 		
-		Local texture:=GetTexture( material.baseColorTexture )
-		If texture
-			mat.ColorTexture=texture
+		If textured
+			colorTexture=GetTexture( material.baseColorTexture )
+			metallicRoughnessTexture=GetTexture( material.metallicRoughnessTexture )
+			occlusionTexture=GetTexture( material.occlusionTexture )
+			emissiveTexture=GetTexture( material.emissiveTexture )
+			normalTexture=GetTexture( material.normalTexture )
 		Endif
+			
+		Local mat:=New PbrMaterial
+
 		mat.ColorFactor=New Color( material.baseColorFactor.x,material.baseColorFactor.y,material.baseColorFactor.z )
-		
-		texture=GetTexture( material.emissiveTexture )
-		If texture
-			mat.EmissiveTexture=texture
+		mat.MetalnessFactor=material.metallicFactor
+		mat.RoughnessFactor=material.roughnessFactor
+
+		If colorTexture mat.ColorTexture=colorTexture
+		If metallicRoughnessTexture mat.MetalnessTexture=metallicRoughnessTexture ; mat.RoughnessTexture=metallicRoughnessTexture
+		If occlusionTexture mat.OcclusionTexture=occlusionTexture
+		If emissiveTexture 
+			mat.EmissiveTexture=emissiveTexture
+ 			If material.emissiveFactor<>Null
+				mat.EmissiveFactor=New Color( material.emissiveFactor.x,material.emissiveFactor.y,material.emissiveFactor.z )
+			Else
+				mat.EmissiveFactor=Color.White
+			Endif
+		Else If material.emissiveFactor<>Null
+			mat.EmissiveTexture=Texture.ColorTexture( Color.White )
 			mat.EmissiveFactor=New Color( material.emissiveFactor.x,material.emissiveFactor.y,material.emissiveFactor.z )
 		Endif
 		
-		texture=GetTexture( material.metallicRoughnessTexture )
-		If texture
-			mat.MetalnessTexture=texture
-			mat.RoughnessTexture=texture
-		Endif
-		mat.MetalnessFactor=material.metallicFactor
-		mat.RoughnessFactor=material.roughnessFactor
-		
-		texture=GetTexture( material.occlusionTexture )
-		If texture
-			mat.OcclusionTexture=texture
-		Endif
-		
-		texture=GetTexture( material.normalTexture )
-		If texture
-			mat.NormalTexture=texture
-		Endif
+		If normalTexture mat.NormalTexture=normalTexture
 			
 		_materialCache[material]=mat
 		Return mat
@@ -148,9 +153,9 @@ Class Gltf2Loader
 		
 		If node.mesh
 			
-			Print "mesh="+node.mesh.name
+'			Print "mesh="+node.mesh.name
 			
-			Local matrix:=Cast<AffineMat4f>( GetMatrix( node ) )
+			Local matrix:=New AffineMat4f( GetMatrix( node ) )
 
 			Local cofactor:=matrix.m.Cofactor()
 			
@@ -158,25 +163,48 @@ Class Gltf2Loader
 				
 				'some sanity checking!
 				'
-				If prim.mode<>4 Continue
+				If prim.mode<>4
+					Print "Gltf invalid mesh mode:"+prim.mode
+					Continue
+				Endif
 				
-				If Not prim.POSITION Or prim.POSITION.componentType<>5126 Or prim.POSITION.type<>"VEC3" DebugStop()
-				If Not prim.NORMAL Or prim.NORMAL.componentType<>5126 Or prim.NORMAL.type<>"VEC3" DebugStop()
-				If Not prim.TEXCOORD_0 Or prim.TEXCOORD_0.componentType<>5126 Or prim.TEXCOORD_0.type<>"VEC2" DebugStop()
-				If Not prim.indices Or (prim.indices.componentType<>5123 And prim.indices.componentType<>5125) Or prim.indices.type<>"SCALAR" DebugStop()
+				If Not prim.indices
+					Print "Gltf mesh has no indices"
+					Continue
+				Endif
+
+				If prim.POSITION.componentType<>5126 Or prim.POSITION.type<>"VEC3"
+					Print "Gltf invalid nesh POSITION data"
+					Continue
+				Endif
+				
+				If Not prim.indices Or (prim.indices.componentType<>5123 And prim.indices.componentType<>5125) Or prim.indices.type<>"SCALAR" 
+					Print "Gltf invalid mesh indices data"
+					Continue
+				Endif
 				
 				Local pp:=GetData( prim.POSITION )
 				Local pstride:=prim.POSITION.bufferView.byteStride
 				If Not pstride pstride=12
-				
-				Local np:=GetData( prim.NORMAL )
-				Local nstride:=prim.NORMAL.bufferView.byteStride
-				If Not nstride nstride=12
-				
-				Local tp:=GetData( prim.TEXCOORD_0 )
-				Local tstride:=prim.TEXCOORD_0.bufferView.byteStride
-				If Not tstride tstride=8
 					
+				Local np:UByte Ptr,nstride:Int
+				If prim.NORMAL
+					If prim.NORMAL.componentType=5126 And prim.NORMAL.type="VEC3"
+						np=GetData( prim.NORMAL )
+						nstride=prim.NORMAL.bufferView.byteStride
+						If Not nstride nstride=12
+					Endif
+				Endif
+				
+				Local tp:UByte Ptr,tstride:Int
+				If prim.TEXCOORD_0 
+					If prim.TEXCOORD_0.componentType=5126 And prim.TEXCOORD_0.type="VEC2"
+						tp=GetData( prim.TEXCOORD_0 )
+						tstride=prim.TEXCOORD_0.bufferView.byteStride
+						If Not tstride tstride=8
+					Endif
+				Endif
+				
 				Local vcount:=prim.POSITION.count
 				
 				Local vertices:=New Vertex3f[vcount],dstvp:=vertices.Data
@@ -184,18 +212,21 @@ Class Gltf2Loader
 				For Local i:=0 Until vcount
 					
 					dstvp[i].position=Cast<Vec3f Ptr>( pp )[0]
-					dstvp[i].normal=Cast<Vec3f Ptr>( np )[0]
-					dstvp[i].texCoord0=Cast<Vec2f Ptr>( tp )[0]
-					
 					dstvp[i].position.z=-dstvp[i].position.z
-					dstvp[i].normal.z=-dstvp[i].normal.z
-					
 					dstvp[i].position=matrix * dstvp[i].position
-					dstvp[i].normal=cofactor * dstvp[i].normal
-					
 					pp+=pstride
-					np+=nstride
-					tp+=tstride
+					
+					If np
+						dstvp[i].normal=Cast<Vec3f Ptr>( np )[0]
+						dstvp[i].normal.z=-dstvp[i].normal.z
+						dstvp[i].normal=cofactor * dstvp[i].normal
+						np+=nstride
+					Endif
+					
+					If tp
+						dstvp[i].texCoord0=Cast<Vec2f Ptr>( tp )[0]
+						tp+=tstride
+					Endif
 				Next
 				
 				Local icount:=prim.indices.count
@@ -231,7 +262,7 @@ Class Gltf2Loader
 					
 					mesh.AddTriangles( indices,mesh.NumMaterials )
 
-					materials.Push( GetMaterial( prim.material ) )
+					materials.Push( GetMaterial( prim.material,tp<>Null ) )
 					
 				Else
 					
@@ -239,8 +270,6 @@ Class Gltf2Loader
 					
 				Endif
 					
-				Print "Added "+vcount+" vertices, "+icount+" indices."
-				
 			Next
 			
 		Endif
@@ -251,101 +280,6 @@ Class Gltf2Loader
 		Next
 		
 	End
-	
-	#rem
-	Method AddMeshes( node:Gltf2Node )
-		
-		If node.mesh
-			
-			Print "mesh="+node.mesh.name
-			
-			For Local prim:=Eachin node.mesh.primitives
-				
-				'some sanity checking!
-				'
-				If prim.mode<>4 Continue
-				
-				If Not prim.POSITION Or prim.POSITION.componentType<>5126 Or prim.POSITION.type<>"VEC3" DebugStop()
-				If Not prim.NORMAL Or prim.NORMAL.componentType<>5126 Or prim.NORMAL.type<>"VEC3" DebugStop()
-				If Not prim.TEXCOORD_0 Or prim.TEXCOORD_0.componentType<>5126 Or prim.TEXCOORD_0.type<>"VEC2" DebugStop()
-				If Not prim.indices Or (prim.indices.componentType<>5123 And prim.indices.componentType<>5125) Or prim.indices.type<>"SCALAR" DebugStop()
-				
-				Local pp:=GetData( prim.POSITION )
-				Local pstride:=prim.POSITION.bufferView.byteStride
-				If Not pstride pstride=12
-				
-				Local np:=GetData( prim.NORMAL )
-				Local nstride:=prim.NORMAL.bufferView.byteStride
-				If Not nstride nstride=12
-				
-				Local tp:=GetData( prim.TEXCOORD_0 )
-				Local tstride:=prim.TEXCOORD_0.bufferView.byteStride
-				If Not tstride tstride=8
-					
-				Local vcount:=prim.POSITION.count
-				
-				Local vertices:=New Vertex3f[vcount],dstvp:=vertices.Data
-				
-				For Local i:=0 Until vcount
-					dstvp[i].position=Cast<Vec3f Ptr>( pp )[0]
-					dstvp[i].normal=Cast<Vec3f Ptr>( np )[0]
-					dstvp[i].texCoord0=Cast<Vec2f Ptr>( tp )[0]
-					'dstvp[i].position.x=-dstvp[i].position.x
-					'dstvp[i].position.y=-dstvp[i].position.y
-					dstvp[i].position.z=-dstvp[i].position.z
-					dstvp[i].normal.z=-dstvp[i].normal.z
-					pp+=pstride
-					np+=nstride
-					tp+=tstride
-				Next
-				
-				Local icount:=prim.indices.count
-				
-				Local indices:=New IndexType[icount],dstip:=indices.Data
-
-				Local ip:=GetData( prim.indices )
-				Local istride:=prim.indices.bufferView.byteStride
-				
-				Local v0:=_loadedMesh.NumVertices
-				
-				If prim.indices.componentType=5123
-					If Not istride istride=2
-					For Local i:=0 Until icount Step 3
-						dstip[i+0]=Cast<UShort Ptr>( ip )[0] + v0
-						dstip[i+2]=Cast<UShort Ptr>( ip )[1] + v0
-						dstip[i+1]=Cast<UShort Ptr>( ip )[2] + v0
-						ip+=istride*3
-					Next
-				Else
-					If Not istride istride=4
-					For Local i:=0 Until icount Step 3
-						dstip[i+0]=Cast<UInt Ptr>( ip )[0] + v0
-						dstip[i+2]=Cast<UInt Ptr>( ip )[1] + v0
-						dstip[i+1]=Cast<UInt Ptr>( ip )[2] + v0
-						ip+=istride*3
-					Next
-				Endif
-				
-				_loadedMesh.AddVertices( vertices )
-				
-				_loadedMesh.AddTriangles( indices )
-					
-				_loadedMaterials.Push( GetMaterial( prim.material ) )
-				
-				Print "Added "+vcount+" vertices, "+icount+" indices."
-				
-			Next
-			
-		Endif
-		
-		For Local child:=Eachin node.children
-			
-			AddMeshes( child )
-		Next
-		
-	End
-	
-	#end
 	
 End
 

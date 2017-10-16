@@ -2,37 +2,6 @@
 Namespace ted2go
 
 
-Enum CodeItemKind
-	Undefine_,
-	Class_,
-	Interface_,
-	Enum_,
-	EnumMember_,
-	Struct_,
-	Field_,
-	Global_,
-	Const_,
-	Method_,
-	Function_,
-	Property_,
-	Param_,
-	Lambda_,
-	Local_,
-	Operator_,
-	Inner_,
-	Alias_,
-	Inherited_
-End
-
-
-Enum AccessMode
-	Private_,
-	Protected_,
-	Public_
-End
-
-
-
 Interface ICodeParser
 
 	Method RefineRawType( item:CodeItem )
@@ -43,14 +12,17 @@ Interface ICodeParser
 	Method GetScope:CodeItem( docPath:String,docLine:Int )
 	Method ItemAtScope:CodeItem( ident:String,filePath:String,docLine:Int )
 	
-	Method GetItemsForAutocomplete( ident:String,filePath:String,docLine:Int,target:List<CodeItem>,usingsFilter:Stack<String> =Null )
+	Method GetItemsForAutocomplete( options:ParserRequestOptions )
 	Method CheckStartsWith:Bool( ident1:String,ident2:String )
 	
 	Method GetItem:CodeItem( ident:String )
 	
-	Property Items:List<CodeItem>()
-	Property ItemsMap:StringMap<List<CodeItem>>()
+	Method SetEnabled( enabled:Bool )
+	
+	Property Items:Stack<CodeItem>()
+	Property ItemsMap:StringMap<Stack<CodeItem>>()
 	Property UsingsMap:StringMap<UsingInfo>()
+	Property ExtraItemsMap:StringMap<Stack<CodeItem>>()
 	
 End
 
@@ -61,13 +33,26 @@ Class ParsersManager
 		For Local p:=Eachin plugins
 			If p.CheckFileTypeSuitability( fileType ) Then Return p
 		Next
-		Return _empty
+		Return _fake
 	End
 
+	Function DisableAll()
+		
+		Local plugins:=Plugin.PluginsOfType<CodeParserPlugin>()
+		For Local p:=Eachin plugins
+			p.SetEnabled( False )
+		Next
+	End
+	
+	Function IsFake:Bool( parser:ICodeParser )
+		
+		Return parser=_fake
+	End
+	
 	
 	Private
 	
-	Global _empty:=New EmptyParser
+	Global _fake:=New FakeParser
 	
 End
 
@@ -79,20 +64,37 @@ Function StripGenericType:String( ident:String )
 End
 
 
+Class ParserRequestOptions Final
+	
+	Field ident:String
+	Field filePath:String
+	Field docLineNum:Int
+	Field results:Stack<CodeItem>
+	Field usingsFilter:Stack<String>
+	Field docLineStr:String
+	Field docPosInLine:Int
+	
+End
+
+
 Private
 
-Class EmptyParser Implements ICodeParser
+Class FakeParser Implements ICodeParser
 
-	Property Items:List<CodeItem>()
+	Property Items:Stack<CodeItem>()
 		Return _items
 	End
 	
-	Property ItemsMap:StringMap<List<CodeItem>>()
+	Property ItemsMap:StringMap<Stack<CodeItem>>()
 		Return _itemsMap
 	End
 	
 	Property UsingsMap:StringMap<UsingInfo>()
 		Return _usingsMap
+	End
+	
+	Property ExtraItemsMap:StringMap<Stack<CodeItem>>()
+		Return _extraItemsMap
 	End
 	
 	Method ParseFile:String( filePath:String,pathOnDisk:String,isModule:Bool )
@@ -113,7 +115,7 @@ Class EmptyParser Implements ICodeParser
 	End
 	Method RefineRawType( item:CodeItem )
 	End
-	Method GetItemsForAutocomplete( ident:String,filePath:String,docLine:Int,target:List<CodeItem>,usingsFilter:Stack<String> =Null )
+	Method GetItemsForAutocomplete( options:ParserRequestOptions )
 	End
 	Method CheckStartsWith:Bool( ident1:String,ident2:String )
 		Return False
@@ -121,12 +123,13 @@ Class EmptyParser Implements ICodeParser
 	Method GetItem:CodeItem( ident:String )
 		Return Null
 	End
-	
+	Method SetEnabled( enabled:Bool )
+	End
 	
 	Private
 	
-	Field _items:=New List<CodeItem>
-	Field _itemsMap:=New StringMap<List<CodeItem>>
+	Field _items:=New Stack<CodeItem>
+	Field _itemsMap:=New StringMap<Stack<CodeItem>>
 	Field _usingsMap:=New StringMap<UsingInfo>
-	
+	Field _extraItemsMap:=New StringMap<Stack<CodeItem>>
 End

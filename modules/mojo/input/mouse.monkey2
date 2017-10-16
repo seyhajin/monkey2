@@ -60,7 +60,7 @@ End
 
 To access the mouse device, use the global [[Mouse]] constant.
 
-The mouse device should only used after a new [[app.AppInstance]] is created.
+The mouse device should only used after a new [[AppInstance]] is created.
 
 #end
 Class MouseDevice Extends InputDevice
@@ -153,7 +153,12 @@ Class MouseDevice Extends InputDevice
 	#end
 	Method ButtonPressed:Bool( button:MouseButton )
 		DebugAssert( button>=0 And button<4,"Mouse button out of range" )
-		Return _pressed[button]
+		
+		Local pressed:=_pressed[button]
+		
+		_pressed[button]=False
+		
+		Return pressed
 	End
 	
 	#rem monkeydoc Checks if a mouse button was released.
@@ -165,7 +170,12 @@ Class MouseDevice Extends InputDevice
 	#end
 	Method ButtonReleased:Bool( button:MouseButton )
 		DebugAssert( button>=0 And button<4,"Mouse button out of range" )
-		Return _released[button]
+		
+		Local released:=_released[button]
+		
+		_released[button]=False
+		
+		Return released
 	End
 	
 	#rem monkeydoc @hidden
@@ -174,10 +184,8 @@ Class MouseDevice Extends InputDevice
 		Return ButtonPressed( button )
 	End
 
-	'***** Internal *****
+	Internal
 
-	#rem monkeydoc @hidden
-	#end
 	Method Init()
 	
 		_cursors=New SDL_Cursor Ptr[ MouseCursor.Max ]
@@ -192,8 +200,6 @@ Class MouseDevice Extends InputDevice
 		SDL_SetCursor( _cursors[_cursor] )
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method Update()
 	
 		Local mask:=SDL_GetMouseState( Varptr _location.x,Varptr _location.y )
@@ -206,8 +212,6 @@ Class MouseDevice Extends InputDevice
 		_wheel=Null
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method SendEvent( event:SDL_Event Ptr )
 	
 		Select event->type
@@ -222,6 +226,13 @@ Class MouseDevice Extends InputDevice
 			_wheel+=New Vec2i( mevent->x,mevent->y )
 		
 		End
+	End
+	
+	Method Reset()
+		For Local i:=0 Until 4
+			_pressed[i]=False
+			_released[i]=false
+		next
 	End
 	
 	Private
@@ -239,8 +250,8 @@ Class MouseDevice Extends InputDevice
 	End
 	
 	Method UpdateButton( button:MouseButton,down:Bool )
-		_pressed[button]=False
-		_released[button]=False
+		'_pressed[button]=False
+		'_released[button]=False
 		If down=_down[button] Return
 		If down _pressed[button]=True Else _released[button]=True
 		_down[button]=down

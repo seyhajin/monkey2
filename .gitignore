@@ -19,16 +19,19 @@
 /docs/docs.html
 /docs/modules.html
 /docs/manuals.html
+/docs/modules/
 
 __PAGES__/
 __MANPAGES__/
-
+__NEWPAGES__/
 /tmp/*
 !/tmp/.gitignore
 
 /modules/module-manager/downloads/*.zip
 
-#/src/ted2go
+/src/ted2go-v*
+/src/ted2go-dev
+/src/ted2go-master
 
 /modules/cmark
 /modules/lua
@@ -40,16 +43,20 @@ __MANPAGES__/
 /modules/pyro-framework
 /modules/pyro-gui
 /modules/pyro-scenegraph
+/modules/pyro-tiled
 /modules/gles30
 /modules/timelinefx
 /modules/admob
 /modules/iap
+/modules/win32
+/modules/tinyaes
 
 /modules/module-manager/backups
 
 Monkey2 (Windows).exe
 Monkey2 (Macos).app
 Monkey2 (Linux)
+Mollusk.exe
 
 /src/c2mx2/LLVM
 /src/mx23d

@@ -34,7 +34,7 @@ namespace bbSocket{
 		Future():fiber( bbFiber::getCurrentFiber() ){}
 				
 		void dispatch(){
-				
+		
 			bbFiber::resumeFiber( fiber );
 		}
 		
@@ -61,14 +61,15 @@ namespace bbSocket{
 #endif
 	}
 	
-	void init(){
+	int init(){
 		static bool done;
-		if( done ) return;
+		if( done ) return 1;
 		done=true;
 #if _WIN32	
 		WSADATA wsa;
 		WSAStartup( MAKEWORD(2,2),&wsa );
 #endif
+		return 1;
 	}
 
 	void dontBlock( int sock ){
@@ -85,29 +86,37 @@ namespace bbSocket{
 #endif
 	}
 	
-	int _connect( const char *hostname,const char *service,int type ){
+	int _connect( const char *hostname,const char *service,int type,int flags ){
 	
-		init();
-		
 		addrinfo hints;
 		memset( &hints,0,sizeof( hints ) );
 
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
+		hints.ai_protocol=(type==1) ? IPPROTO_UDP : IPPROTO_TCP;
+		if( (flags&1)==1 ) hints.ai_flags|=AI_PASSIVE;
+		if( (flags&6)==2 ) hints.ai_family=AF_INET;
+		if( (flags&6)==4 ) hints.ai_family=AF_INET6;
+		if( hostname && !hostname[0] ) hostname=0;
 
 		addrinfo *pres=0;
-		if( getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
+		if( ::getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
 		
 		int sock=-1;
 		
 		for( addrinfo *res=pres;res;res=res->ai_next ){
 		
-			sock=socket( res->ai_family,res->ai_socktype,res->ai_protocol );
-
+			sock=::socket( res->ai_family,res->ai_socktype,res->ai_protocol );
 			if( sock==-1 ) continue;
-			
+#if _WIN32		
+			if( res->ai_family==AF_INET6 ){
+				int value=0,sz=sizeof( value );	
+				const char *ip=(const char*)&value;
+				::setsockopt( sock,IPPROTO_IPV6,IPV6_V6ONLY,ip,sz );
+			}
+#endif
 			if( !connect( sock,res->ai_addr,res->ai_addrlen ) ) break;
-				
+		
 			::closesocket( sock );
 			sock=-1;
 		}
@@ -117,28 +126,36 @@ namespace bbSocket{
 		return sock;
 	}
 	
-	int _bind( const char *hostname,const char *service,int type ){
+	int _bind( const char *hostname,const char *service,int type,int flags ){
 	
-		init();
-		
 		addrinfo hints;
 		memset( &hints,0,sizeof( hints ) );
 		
 		hints.ai_family=AF_UNSPEC;
 		hints.ai_socktype=(type==1) ? SOCK_DGRAM : SOCK_STREAM;
-		hints.ai_flags=AI_PASSIVE;
+		hints.ai_protocol=(type==1) ? IPPROTO_UDP : IPPROTO_TCP;
+		if( (flags&1)==1 ) hints.ai_flags|=AI_PASSIVE;
+		if( (flags&6)==2 ) hints.ai_family=AF_INET;
+		if( (flags&6)==4 ) hints.ai_family=AF_INET6;
+		if( hostname && !hostname[0] ) hostname=0;
 		
 		addrinfo *pres=0;
-		if( getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
+		if( ::getaddrinfo( hostname,service,&hints,&pres ) ) return -1;
 		
 		int sock=-1;
 		
 		for( addrinfo *res=pres;res;res=res->ai_next ){
 		
-			sock=socket( res->ai_family,res->ai_socktype,res->ai_protocol );
-
+			sock=::socket( res->ai_family,res->ai_socktype,res->ai_protocol );
 			if( sock==-1 ) continue;
-
+			
+#if _WIN32		
+			if( res->ai_family==AF_INET6 ){
+				int value=0,sz=sizeof( value );	
+				const char *ip=(const char*)&value;
+				::setsockopt( sock,IPPROTO_IPV6,IPV6_V6ONLY,ip,sz );
+			}
+#endif
 			if( !::bind( sock,res->ai_addr,res->ai_addrlen ) ) break;
 				
 			::closesocket( sock );
@@ -150,17 +167,17 @@ namespace bbSocket{
 		return sock;
 	}
 	
-	int _listen( const char *hostname,const char *service,int queue,int type ){
+	int _listen( const char *hostname,const char *service,int backlog,int flags ){
 
-		int sock=_bind( hostname,service,type );
+		int sock=_bind( hostname,service,2,flags );
 			
-		if( sock!=-1 ) ::listen( sock,queue );
+		if( sock!=-1 ) ::listen( sock,backlog );
 		
 		return sock;
 	}
 	
-	int connect( const char *hostname,const char *service,int type ){
-
+	int connect( const char *hostname,const char *service,int type,int flags ){
+	
 		int sock=-1;
 		
 		if( bbFiber::getCurrentFiber() ){
@@ -169,7 +186,7 @@ namespace bbSocket{
 			
 			std::thread thread( [=,&future](){
 
-				future.set( _connect( hostname,service,type ) );
+				future.set( _connect( hostname,service,type,flags ) );
 	
 			} );
 			
@@ -179,13 +196,13 @@ namespace bbSocket{
 
 		}else{
 		
-			sock=_connect( hostname,service,type );
+			sock=_connect( hostname,service,type,flags );
 		}
 		
 		return sock;
 	}
 	
-	int bind( const char *hostname,const char *service ){
+	int bind( const char *hostname,const char *service,int flags ){
 	
 		int sock=-1;
 		
@@ -195,7 +212,7 @@ namespace bbSocket{
 			
 			std::thread thread( [=,&future](){
 			
-				future.set( _bind( hostname,service,1 ) );
+				future.set( _bind( hostname,service,1,flags ) );
 	
 			} );
 			
@@ -205,13 +222,13 @@ namespace bbSocket{
 			
 		}else{
 		
-			sock=_bind( hostname,service,1 );
+			sock=_bind( hostname,service,1,flags );
 		}
 		
 		return sock;
 	}
 	
-	int listen( const char *hostname,const char *service,int queue ){
+	int listen( const char *hostname,const char *service,int backlog,int flags ){
 	
 		int sock=-1;
 		
@@ -221,7 +238,7 @@ namespace bbSocket{
 			
 			std::thread thread( [=,&future](){
 			
-				future.set( _listen( hostname,service,queue,0 ) );
+				future.set( _listen( hostname,service,backlog,flags ) );
 	
 			} );
 			
@@ -231,7 +248,7 @@ namespace bbSocket{
 			
 		}else{
 		
-			sock=_listen( hostname,service,queue,0 );
+			sock=_listen( hostname,service,backlog,flags );
 		}
 		
 		return sock;
@@ -307,7 +324,7 @@ namespace bbSocket{
 	
 		int n=-1;
 		
-		if( bbFiber::getCurrentFiber() && cansend( socket )<size ){
+		if( bbFiber::getCurrentFiber() && cansend( socket )==0 ){//<size ){
 			
 			Future future;
 				
@@ -316,7 +333,7 @@ namespace bbSocket{
 				future.set( ::send( socket,(const char*)data,size,0 ) );
 					
 			} );
-				
+
 			n=future.get();
 				
 			thread.join();
@@ -337,7 +354,7 @@ namespace bbSocket{
 	
 		int n=-1;
 		
-		if( bbFiber::getCurrentFiber() && cansend( socket )<size  ){
+		if( bbFiber::getCurrentFiber() && cansend( socket )==0 ){//<size  ){
 			
 			Future future;
 				
@@ -366,8 +383,8 @@ namespace bbSocket{
 	int recv( int socket,void *data,int size ){
 	
 		int n=-1;
-	
-		if( bbFiber::getCurrentFiber() && canrecv( socket )<size ){
+		
+		if( bbFiber::getCurrentFiber() && canrecv( socket )==0 ){//<size ){
 		
 			Future future;
 			
@@ -397,7 +414,7 @@ namespace bbSocket{
 	
 		int n=-1;
 
-		if( bbFiber::getCurrentFiber() && canrecv( socket )<size ){
+		if( bbFiber::getCurrentFiber() && canrecv( socket )==0 ){//<size ){
 		
 			Future future;
 			
@@ -436,6 +453,8 @@ namespace bbSocket{
 			setsockopt( socket,SOL_SOCKET,SO_SNDTIMEO,ip,sz );
 		}else if( name=="SO_RCVTIMEO" ){
 			setsockopt( socket,SOL_SOCKET,SO_RCVTIMEO,ip,sz );
+		}else if( name=="SO_BROADCAST" ){
+			setsockopt( socket,SOL_SOCKET,SO_BROADCAST,ip,sz );
 		}
 	}
 	
@@ -454,6 +473,8 @@ namespace bbSocket{
 			getsockopt( socket,SOL_SOCKET,SO_SNDTIMEO,ip,(socklen_t*)&sz );
 		}else if( name=="SO_RCVTIMEO" ){
 			getsockopt( socket,SOL_SOCKET,SO_RCVTIMEO,ip,(socklen_t*)&sz );
+		}else if( name=="SO_BROADCAST" ){
+			getsockopt( socket,SOL_SOCKET,SO_BROADCAST,ip,(socklen_t*)&sz );
 		}
 		
 		return value;
@@ -471,7 +492,57 @@ namespace bbSocket{
 	
 	int sockaddrname( const void *addr,int addrlen,char *host,char *service ){
 	
-		return getnameinfo( (const sockaddr*)addr,addrlen,host,1023,service,79,0 );
+		int flags=0;//NI_NUMERICHOST|NI_NUMERICSERV;
+	
+		return getnameinfo( (const sockaddr*)addr,addrlen,host,1023,service,79,flags );
+	}
+	
+	int select( int n_read,int *r_socks,int n_write,int *w_socks,int n_except,int *e_socks,int millis ){
+	
+		fd_set r_set,w_set,e_set;
+		
+		int n=-1;
+		
+		FD_ZERO( &r_set );
+		for( int i=0;i<n_read;++i ){
+			FD_SET( r_socks[i],&r_set );
+			if( r_socks[i]>n ) n=r_socks[i];
+		}
+		FD_ZERO( &w_set );
+		for( int i=0;i<n_write;++i ){
+			FD_SET( w_socks[i],&w_set );
+			if( w_socks[i]>n ) n=w_socks[i];
+		}
+		FD_ZERO( &e_set );
+		for( int i=0;i<n_except;++i ){
+			FD_SET( e_socks[i],&e_set );
+			if( e_socks[i]>n ) n=e_socks[i];
+		}
+		
+		struct timeval tv,*tvp;
+			
+		if( millis<0 ){
+			tvp=0;
+		}else{
+			tv.tv_sec=millis/1000;
+			tv.tv_usec=(millis%1000)*1000;
+			tvp=&tv;
+		}
+		
+		int r=select( n+1,&r_set,&w_set,&e_set,tvp );
+		if( r<0 ) return r;
+		
+		for( int i=0;i<n_read;++i ){
+			if( !FD_ISSET(r_socks[i],&r_set) ) r_socks[i]=0;
+		}
+		for( int i=0;i<n_write;++i ){
+			if( !FD_ISSET(w_socks[i],&w_set) ) w_socks[i]=0;
+		}
+		for( int i=0;i<n_except;++i ){
+			if( !FD_ISSET(e_socks[i],&e_set) ) e_socks[i]=0;
+		}
+		
+		return r;
 	}
 	
 }

@@ -25,7 +25,7 @@ Const Keyboard:=New KeyboardDevice
 
 To access the keyboard device, use the global [[Keyboard]] constant.
 
-The keyboard device should only used after a new [[app.AppInstance]] is created.
+The keyboard device should only used after a new [[AppInstance]] is created.
 
 All methods that take a `key` parameter can also be combined with 'raw' keys.
 
@@ -103,16 +103,28 @@ Class KeyboardDevice Extends InputDevice
 
 	If `key` is a raw key, the state of the key as it is physically positioned on US keyboards is returned.
 	
+	if `repeating` is true, then key repeats are included.
+	
 	@param key Key to check.
 	
 	#end
 	Method KeyPressed:Bool( key:Key,repeating:Bool=False )
-	
+		
 		Local scode:=ScanCode( key )
 		
-		If repeating Return _keys[scode].rpressed=_frame
+		If repeating 
+			Local pressed:=_keys[scode].rpressed<>0
+			
+			_keys[scode].rpressed=0
+			
+			Return pressed
+		Endif
+
+		Local pressed:=_keys[scode].pressed<>0
 		
-		Return _keys[scode].pressed=_frame
+		_keys[scode].pressed=0
+		
+		Return pressed
 	End
 
 	#rem monkeydoc Checks if a key was released.
@@ -128,7 +140,11 @@ Class KeyboardDevice Extends InputDevice
 	
 		Local scode:=ScanCode( key )
 		
-		Return _keys[scode].released=_frame
+		Local released:=_keys[scode].released<>0
+		
+		_keys[scode].released=0
+		
+		Return released
 	End
 	
 	#rem monkeydoc @hidden
@@ -154,16 +170,19 @@ Class KeyboardDevice Extends InputDevice
 	End
 	
 	#rem monkeydoc Flushes the character queue.
+	
+	Removes all queued characters in the character queue.
+	
+	Note that [[AppInstance.ResetPolledInput|App.ResetPolledInput]] also flushes the character queue.
+	
 	#end
 	Method FlushChars()
 		_charPut=0
 		_charGet=0
 	End
 	
-	'***** Internal *****
+	Internal
 	
-	#rem monkeydoc @hidden
-	#end
 	Method ScanCode:Int( key:Key )
 		If key & Key.Raw 
 			key&=~Key.Raw
@@ -174,23 +193,17 @@ Class KeyboardDevice Extends InputDevice
 		Return _key2scan[ key ]
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method KeyCodeToKey:Key( keyCode:Int )
 		If (keyCode & $40000000) keyCode=(keyCode & ~$40000000)+$80
 		If keyCode<=0 Or keyCode>=Int( Key.Max ) Return Null
 		Return Cast<Key>( keyCode )
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method ScanCodeToRawKey:Key( scanCode:Int )
 		If scanCode<=0 Or scanCode>=512 Return null
 		Return _scan2raw[ scanCode ]
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method Init()
 		Local p:=bbKeyInfos
 		
@@ -218,15 +231,11 @@ Class KeyboardDevice Extends InputDevice
 
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method Update()
 		_frame+=1
 		FlushChars()
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method SendEvent( event:SDL_Event Ptr )
 	
 		Select event->type
@@ -295,6 +304,16 @@ Class KeyboardDevice Extends InputDevice
 			If text PushChar( text[0] )
 		End
 
+	End
+	
+	Method Reset()
+		_charPut=0
+		_charGet=0
+		For Local i:=0 Until 512
+			_keys[i].pressed=0
+			_keys[i].rpressed=0
+			_keys[i].released=0
+		Next
 	End
 
 	Private

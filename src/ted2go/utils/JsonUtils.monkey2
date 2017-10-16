@@ -2,6 +2,16 @@
 Namespace ted2go
 
 
+Function Json_LoadObject:JsonObject( filePath:String )
+	
+	If GetFileType(filePath) <> FileType.File Return Null
+	
+	'Local txt:=LoadString( filePath ).Replace( "\n","~n" ).Replace( "\t","~t" ).Replace( "\r","~r" )
+	
+	'Return JsonObject.Parse( txt )
+	Return JsonObject.Load( filePath )
+End
+
 Function Json_LoadValue:JsonValue( filePath:String,key:String )
 	
 	If GetFileType(filePath) <> FileType.File Return Null
@@ -42,3 +52,18 @@ Function Json_GetInt:Int( json:Map<String,JsonValue>,key:String,def:Int )
 	
 	Return json[key] ? Int(json[key].ToNumber()) Else def
 End
+
+
+Class JsonArray Extension
+	
+	Function Create:JsonArray( values:String[] )
+		
+		Local jvals:=New JsonValue[values.Length]
+		For Local i:=0 Until values.Length
+			jvals[i]=New JsonString( values[i] )
+		Next
+		Return New JsonArray( jvals )
+	End
+	
+End
+

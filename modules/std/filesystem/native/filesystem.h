@@ -3,6 +3,7 @@
 #define BB_FILESYSTEM_H
 
 #include <bbmonkey.h>
+#include <bbplatform.h>
 
 namespace bbFileSystem{
 
@@ -16,7 +17,7 @@ namespace bbFileSystem{
 	
 #if BB_IOS
 	
-	bbString getInternalDir();
+	bbString getSpecialDir( bbString name );
 	
 #endif
 

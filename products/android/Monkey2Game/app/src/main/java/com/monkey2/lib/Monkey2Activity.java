@@ -5,13 +5,15 @@ import android.os.Looper;
 import android.util.Log;
 import android.content.Intent;
 import android.view.ViewGroup;
+import android.support.v4.app.ActivityCompat;
 
 import org.libsdl.app.SDLActivity;
 
 import java.util.List;
 import java.util.LinkedList;
 
-public class Monkey2Activity extends SDLActivity {
+public class Monkey2Activity extends SDLActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
+
     private static final String TAG = "Monkey2Activity";
 
     public static Monkey2Activity mSingleton;
@@ -20,7 +22,9 @@ public class Monkey2Activity extends SDLActivity {
 
     public static class Delegate{
 
-        void onActivityResult( int requestCode,int resultCode,Intent data ){}
+        public void onActivityResult( int requestCode,int resultCode,Intent data ){}
+        
+		public void onRequestPermissionsResult( int requestCode,String[] permissions,int[] results ){}
     }
 
     public static Monkey2Activity instance(){
@@ -61,4 +65,13 @@ public class Monkey2Activity extends SDLActivity {
             delegate.onActivityResult( requestCode,resultCode,data );
         }
     }
+
+	public void onRequestPermissionsResult( int requestCode,String[] permissions,int[] results ){
+
+        for( Delegate delegate : mDelegates ){
+
+            delegate.onRequestPermissionsResult( requestCode,permissions,results );
+        }
+	}
+    
 }

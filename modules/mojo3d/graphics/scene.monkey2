@@ -3,7 +3,7 @@ Namespace mojo3d.graphics
 
 #rem monkeydoc The Scene class.
 #end
-Class Scene
+Class Scene Extends DynamicObject
 
 	#rem monkeydoc Creates a new scene.
 	#end
@@ -12,6 +12,8 @@ Class Scene
 		_clearColor=Color.Sky
 
 		_ambientDiffuse=Color.DarkGrey
+		
+		_envColor=Color.White
 	End
 	
 	#rem monkeydoc The sky texture.
@@ -25,11 +27,11 @@ Class Scene
 	#end
 	Property SkyTexture:Texture()
 		
-		Return _skytex
+		Return _skyTexture
 	
-	Setter( skytex:Texture )
+	Setter( texture:Texture )
 		
-		_skytex=skytex
+		_skyTexture=texture
 	End
 	
 	#rem monkeydoc The environment texture.
@@ -45,11 +47,23 @@ Class Scene
 	#end
 	Property EnvTexture:Texture()
 		
-		Return _envtex
+		Return _envTexture
 	
-	Setter( envtex:Texture )
+	Setter( texture:Texture )
 		
-		_envtex=envtex
+		_envTexture=texture
+	End
+	
+	#rem monkey The environment color.
+	
+	#end
+	Property EnvColor:Color()
+		
+		Return _envColor
+	
+	Setter( color:Color )
+		
+		_envColor=color
 	End
 	
 	#rem monkeydoc The clear color.
@@ -86,15 +100,28 @@ Class Scene
 		_postEffects.Add( postEffect )
 	End
 	
-	#rem monkeydoc 	Destroys all entities in the scene.
+	#rem monkeydoc Removes a post effect from the scene
+	#end
+	Method RemovePostEffect( postEffect:PostEffect )
+		
+		_postEffects.Remove( postEffect )
+	End
 	
+	#rem monkeydocs Get all post effect that have been added to the scene
+	#end
+	Method GetPostEffects:PostEffect[]()
+		
+		Return _postEffects.ToArray()
+	End
+	
+	#rem monkeydoc Destroys all entities in the scene.
 	#end
 	Method DestroyAllEntities()
 		
-		For Local entity:=Eachin _rootEntities
-			
-			entity.Destroy()
-		Next
+		While Not _rootEntities.Empty
+
+			_rootEntities.Top.Destroy()
+		Wend
 	End
 	
 	#rem monkeydoc Renders the scene to	a canvas.
@@ -115,9 +142,17 @@ Class Scene
 		Return _rootEntities.ToArray()
 	End
 	
+	#rem monkeydoc Sets the current scene.
+	#end
+	Function SetCurrent( scene:Scene )
+		
+		_current=scene
+	End
+	
 	#rem monkeydoc Gets the current scene.
 	#end
 	Function GetCurrent:Scene()
+
 		If Not _current _current=New Scene
 			
 		Return _current
@@ -125,11 +160,6 @@ Class Scene
 	
 	Internal
 
-	Function SetCurrent( scene:Scene )
-		
-		_current=scene
-	End
-	
 	Property PostEffects:Stack<PostEffect>()
 		
 		Return _postEffects
@@ -150,19 +180,9 @@ Class Scene
 		Return _lights
 	End
 	
-	Property Models:Stack<Model>()
-		
-		Return _models
-	End
+	Property Renderables:Stack<Renderable>()
 	
-	Property Terrains:Stack<Terrain>()
-		
-		Return _terrains
-	End
-	
-	Property Sprites:Stack<Sprite>()
-		
-		Return _sprites
+		Return _renderables
 	End
 	
 	Private
@@ -171,8 +191,11 @@ Class Scene
 	
 	Global _defaultEnv:Texture
 	
-	Field _skytex:Texture
-	Field _envtex:Texture
+	Field _skyTexture:Texture
+	
+	Field _envTexture:Texture
+	Field _envColor:Color
+	
 	Field _clearColor:Color
 	Field _ambientDiffuse:Color
 	Field _postEffects:=New Stack<PostEffect>
@@ -181,8 +204,6 @@ Class Scene
 	
 	Field _cameras:=New Stack<Camera>
 	Field _lights:=New Stack<Light>
-	Field _models:=New Stack<Model>
-	Field _terrains:=New Stack<Terrain>
-	Field _sprites:=New Stack<Sprite>
+	Field _renderables:=New Stack<Renderable>()
 			
 End

@@ -11,7 +11,7 @@ void main(){
 
 	v_ClipPosition=a_Position * 2.0 - 1.0;
 
-	gl_Position=vec4( v_ClipPosition,0.0,1.0 );
+	gl_Position=vec4( v_ClipPosition,1.0,1.0 );
 }
 
 //@fragment
@@ -24,9 +24,15 @@ uniform mat4 r_InverseProjectionMatrix;
 
 void main(){
 
-	vec4 clip=r_InverseProjectionMatrix * vec4( v_ClipPosition,0.0,1.0 );
+	vec4 clip=r_InverseProjectionMatrix * vec4( v_ClipPosition,1.0,1.0 );
 
 	vec3 tv=r_EnvMatrix * (clip.xyz/clip.w);
 	
-	gl_FragColor=vec4( pow( textureCube( r_SkyTexture,tv ).rgb,vec3( 2.2 ) ),1.0 );
+	vec3 color=textureCube( r_SkyTexture,tv ).rgb;
+	
+#if defined( MX2_LINEAROUTPUT )
+	gl_FragColor=vec4( pow( color,vec3( 2.2 ) ),1.0 );
+#else
+	gl_FragColor=vec4( color,1.0 );
+#endif
 }

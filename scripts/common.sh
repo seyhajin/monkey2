@@ -8,35 +8,25 @@ launcher_new=""
 
 if [ "$OSTYPE" = "linux-gnu" ]
 then
+
+	host="linux"
 	mx2cc="../bin/mx2cc_linux"
-	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.06/linux_release/mx2cc"
-	
 	ted2="../bin/ted2_linux"
-	ted2_new="../src/ted2/ted2.buildv1.1.06/linux_release"
-	ted2go_new="../src/ted2go/Ted2.buildv1.1.06/linux_release"
-	
 	launcher="../Monkey2 (Linux)"
-	launcher_new="../src/launcher/launcher.buildv1.1.06/linux_release/launcher"
 	
 elif [ "$OSTYPE" = "linux-gnueabihf" ]
 then
+
+	host="raspbian"
 	mx2cc="../bin/mx2cc_raspbian"
-	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.06/raspbian_release/mx2cc"
-	
 	ted2="../bin/ted2_raspbian"
-	ted2_new="../src/ted2/ted2.buildv1.1.06/raspbian_release"
-	ted2go_new="../src/ted2go/Ted2.buildv1.1.06/raspbian_release"
-	
 	launcher="../Monkey2 (Raspbian)"
-	launcher_new="../src/launcher/launcher.buildv1.1.06/raspbian_release/launcher"
+	
 else
+
+	host="macos"
 	mx2cc="../bin/mx2cc_macos"
-	mx2cc_new="../src/mx2cc/mx2cc.buildv1.1.06/macos_release/mx2cc"
-	
 	ted2="../bin/ted2_macos.app"
-	ted2_new="../src/ted2/ted2.buildv1.1.06/macos_release/ted2.app"
-	ted2go_new="../src/ted2go/Ted2.buildv1.1.06/macos_release/ted2.app"
-	
 	launcher="../Monkey2 (Macos).app"
-	launcher_new="../src/launcher/launcher.buildv1.1.06/macos_release/launcher.app"
+	
 fi

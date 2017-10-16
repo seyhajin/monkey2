@@ -1,16 +1,43 @@
 
-Namespace ted2go
+Namespace test2go
 
 
 Private
 
 
+Class TestTheSame
+	
+	Property TestTheSame:TestTheSame()
+		Return Null
+	End
+	
+	Method Test()
+		
+	End
+	
+End
+
+Struct Vec2i Extension
+	
+	Const One := New Vec2i( 1,1 )
+End
+
+Function vTest( v:Vec2i,e:Entity )
+	
+	v*=Vec2i.One
+	
+	Local ok:=RequestOkay()
+	
+	std.filesystem.AppDir()
+	filesystem.AppDir()
+End
+
+
 Interface ITest
 
 	Method abs()
-	Property bpp()
+	Property bpp:Bool()
 	
-		
 End
 
 
@@ -74,6 +101,11 @@ Class AAA Extends TestClass
 	Method TestArray( arr2:String[] )
 		
 		'arr2[i].start
+	End
+	
+	Function TestParentFunc()
+		
+		
 	End
 	
 	Method anstrMethod() Abstract

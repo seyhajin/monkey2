@@ -1,9 +1,27 @@
 
 Namespace mojo.graphics
 
+#rem monkeydoc Outline modes.
+
+Outline modes are used with the [[Canvas.OutlineMode]] property and control the style
+of outline drawn.
+
+| OutlineMode	| Description
+|:--------------|:-----------
+| None			| Outlines disabled.
+| Solid			| Solid outlines.
+| Smooth		| Smooth outlines.
+
+#end
+Enum OutlineMode
+	None=0
+	Solid=1
+	Smooth=2
+End
+
 #rem monkeydoc The Canvas class.
 
-Canvas objects are used to perform rendering to either a mojo [[app.View]] or an 'off screen' [[mojo.graphics.Image]].
+Canvas objects are used to perform rendering to either a mojo [[View]] or an 'off screen' [[Image]].
 
 To draw to a canvas, use one of the 'Draw' methods. Drawing is affected by a number of draw states, including:
 
@@ -65,6 +83,9 @@ Class Canvas
 		LineWidth=0
 		LineSmoothing=False
 		TextureFilteringEnabled=true
+		OutlineMode=OutlineMode.None
+		OutlineColor=Color.Yellow
+		OutlineWidth=0
 		
 		ClearMatrix()
 	End
@@ -292,6 +313,50 @@ Class Canvas
 		_tanvec=_matrix.i.Normalize()
 	End
 	
+	#rem monkeydoc The current outline mode.
+	
+	Outline modes control the style of outlines drawn.
+	
+	See the [[OutlineMode]] enum for a list of possible values.
+	
+	#end
+	Property OutlineMode:OutlineMode()
+		
+		Return _outlineMode
+	
+	Setter( mode:OutlineMode )
+		
+		_outlineMode=mode
+	End
+	
+	#rem monkeydoc The current outline color.
+	
+	#end
+	Property OutlineColor:Color()
+		
+		Return _outlineColor
+		
+	Setter( color:Color )
+		
+		_outlineColor=color
+
+		Local a:=_outlineColor.a * 255.0
+		
+		_outlinepmcolor=UInt(a) Shl 24 | UInt(_outlineColor.b*a) Shl 16 | UInt(_outlineColor.g*a) Shl 8 | UInt(_outlineColor.r*a)
+	End
+	
+	#rem monkeydoc The current outline width.
+	
+	#end
+	Property OutlineWidth:Float()
+		
+		Return _outlineWidth
+		
+	Setter( width:Float )
+		
+		_outlineWidth=width
+	End
+	
 	#rem monkeydoc Pushes the drawing matrix onto the internal matrix stack.
 	
 	#end
@@ -403,6 +468,76 @@ Class Canvas
 		DrawPoint( v.x,v.y )
 	End
 	
+	Private
+
+	Method DrawOutlineLine( x0:Float,y0:Float,x1:Float,y1:Float )
+		
+'		x0+=.5;y0+=.5;x1+=.5;y1+=.5
+		
+		Local blendMode:=_outlineMode=OutlineMode.Smooth ? BlendMode.Alpha Else BlendMode.Opaque
+		
+		Local pmcolor:=_pmcolor
+		
+		_pmcolor=_outlinepmcolor
+		
+		If _outlineWidth<=0
+			AddDrawOp( _shader,_material,blendMode,2,1 )
+			AddPointVertex( x0,y0,0,0 )
+			AddPointVertex( x1,y1,1,1 )
+			_pmcolor=pmcolor
+			Return
+		Endif
+		
+		Local dx:=y0-y1,dy:=x1-x0
+		Local sc:=0.5/Sqrt( dx*dx+dy*dy )*_outlineWidth
+		dx*=sc;dy*=sc
+		
+		If _outlineMode=OutlineMode.Solid
+			AddDrawOp( _shader,_material,_blendMode,4,1 )
+'			AddPointVertex( x0-dx-dy,y0-dy+dx,0,0 )
+'			AddPointVertex( x0+dx-dy,y0+dy+dx,0,0 )
+'			AddPointVertex( x1+dx+dy,y1+dy-dx,0,0 )
+'			AddPointVertex( x1-dx+dy,y1-dy-dx,0,0 )
+			AddPointVertex( x0-dx,y0-dy,0,0 )
+			AddPointVertex( x0+dx,y0+dy,0,0 )
+			AddPointVertex( x1+dx,y1+dy,0,0 )
+			AddPointVertex( x1-dx,y1-dy,0,0 )
+			_pmcolor=pmcolor
+			Return
+		End
+		
+		AddDrawOp( _shader,_material,blendMode,4,2 )
+
+		AddPointVertex( x0,y0,0,0 )
+		AddPointVertex( x1,y1,0,0 )
+		_pmcolor=0
+		AddPointVertex( x1-dx,y1-dy,0,0 )
+		AddPointVertex( x0-dx,y0-dy,0,0 )
+
+		AddPointVertex( x0+dx,y0+dy,0,0 )
+		AddPointVertex( x1+dx,y1+dy,0,0 )
+		_pmcolor=_outlinepmcolor
+		AddPointVertex( x1,y1,0,0 )
+		AddPointVertex( x0,y0,0,0 )
+		
+		_pmcolor=pmcolor
+	End
+	
+	Method DrawOutlineLine( v0:Vec2f,v1:Vec2f )
+		
+		DrawOutlineLine( v0.x,v0.y,v1.x,v1.y )
+	End
+	
+	Method DrawOutline( rect:Rectf )
+		
+		DrawOutlineLine( rect.min.x,rect.min.y,rect.max.x,rect.min.y )
+		DrawOutlineLine( rect.max.x,rect.min.y,rect.max.x,rect.max.y )
+		DrawOutlineLine( rect.max.x,rect.max.y,rect.min.x,rect.max.y )
+		DrawOutlineLine( rect.min.x,rect.max.y,rect.min.x,rect.min.y )
+	End
+	
+	Public
+	
 	#rem monkeydoc Draws a line.
 
 	Draws a line in the current [[Color]] using the current [[BlendMode]].
@@ -431,10 +566,7 @@ Class Canvas
 			Return
 		Endif
 		
-'		x0+=.5
-'		y0+=.5
-'		x1+=.5
-'		y1+=.5
+'		x0+=.5;y0+=.5;x1+=.5;y1+=.5
 		
 		Local dx:=y0-y1,dy:=x1-x0
 		Local sc:=0.5/Sqrt( dx*dx+dy*dy )*_lineWidth
@@ -467,6 +599,7 @@ Class Canvas
 	End
 	
 	Method DrawLine( v0:Vec2f,v1:Vec2f )
+		
 		DrawLine( v0.x,v0.y,v1.x,v1.y )
 	End
 	
@@ -478,13 +611,22 @@ Class Canvas
 
 	#End
 	Method DrawTriangle( x0:Float,y0:Float,x1:Float,y1:Float,x2:Float,y2:Float )
+		
 		AddDrawOp( _shader,_material,_blendMode,3,1 )
 		AddVertex( x0,y0,0,0 )
 		AddVertex( x1,y1,1,0 )
 		AddVertex( x2,y2,1,1 )
+		
+		If _outlineMode=OutlineMode.None Return
+		
+		DrawOutlineLine( x0,y0,x1,y1 )
+		DrawOutlineLine( x1,y1,x2,y2 )
+		DrawOutlineLine( x2,y2,x0,y0 )
+				
 	End
 	
 	Method DrawTriangle( v0:Vec2f,v1:Vec2f,v2:Vec2f )
+		
 		DrawTriangle( v0.x,v0.y,v1.x,v1.y,v2.x,v2.y )
 	End
 
@@ -496,14 +638,23 @@ Class Canvas
 
 	#end
 	Method DrawQuad( x0:Float,y0:Float,x1:Float,y1:Float,x2:Float,y2:Float,x3:Float,y3:Float )
+		
 		AddDrawOp( _shader,_material,_blendMode,4,1 )
 		AddVertex( x0,y0,0,0 )
 		AddVertex( x1,y1,1,0 )
 		AddVertex( x2,y2,1,1 )
 		AddVertex( x3,y3,0,1 )
+		
+		If _outlineMode=OutlineMode.None Return
+		
+		DrawOutlineLine( x0,y0,x1,y1 )
+		DrawOutlineLine( x1,y1,x2,y2 )
+		DrawOutlineLine( x2,y2,x3,y3 )
+		DrawOutlineLine( x3,y3,x0,y0 )
 	End
 
 	Method DrawQuad( v0:Vec2f,v1:Vec2f,v2:Vec2f,v3:Vec2f )
+		
 		DrawQuad( v0.x,v0.y,v1.x,v1.y,v2.x,v2.y,v3.x,v3.y )
 	End
 
@@ -515,7 +666,10 @@ Class Canvas
 
 	#end
 	Method DrawRect( x:Float,y:Float,w:Float,h:Float )
+		
+		DrawQuad( x,y,x+w,y,x+w,y+h,x,y+h )
 	
+		#rem
 		Local x0:=x,y0:=y,x1:=x+w,y1:=y+h
 		
 		AddDrawOp( _shader,_material,_blendMode,4,1 )
@@ -524,42 +678,60 @@ Class Canvas
 		AddVertex( x1,y0,1,0 )
 		AddVertex( x1,y1,1,1 )
 		AddVertex( x0,y1,0,1 )
+		#end
 	End
 	
 	Method DrawRect( rect:Rectf )
+		
 		DrawRect( rect.X,rect.Y,rect.Width,rect.Height )
 	End
 	
 	Method DrawRect( rect:Rectf,srcImage:Image )
+		
 		Local tc:=srcImage.TexCoords
 		AddDrawOp( srcImage.Shader,srcImage.Material,srcImage.BlendMode,4,1 )
+		
 		AddVertex( rect.min.x,rect.min.y,tc.min.x,tc.min.y )
 		AddVertex( rect.max.x,rect.min.y,tc.max.x,tc.min.y )
 		AddVertex( rect.max.x,rect.max.y,tc.max.x,tc.max.y )
 		AddVertex( rect.min.x,rect.max.y,tc.min.x,tc.max.y )
+
+		If _outlineMode=OutlineMode.None Return
+		
+		DrawOutline( rect )
 	End
 	
 	Method DrawRect( x:Float,y:Float,width:Float,height:Float,srcImage:Image )
+		
 		DrawRect( New Rectf( x,y,x+width,y+height ),srcImage )
 	End
 	
 	Method DrawRect( rect:Rectf,srcImage:Image,srcRect:Recti )
+		
 		Local s0:=Float(srcImage.Rect.min.x+srcRect.min.x)/srcImage.Texture.Width
 		Local t0:=Float(srcImage.Rect.min.y+srcRect.min.y)/srcImage.Texture.Height
 		Local s1:=Float(srcImage.Rect.min.x+srcRect.max.x)/srcImage.Texture.Width
 		Local t1:=Float(srcImage.Rect.min.y+srcRect.max.y)/srcImage.Texture.Height
+		
 		AddDrawOp( srcImage.Shader,srcImage.Material,srcImage.BlendMode,4,1 )
+		
 		AddVertex( rect.min.x,rect.min.y,s0,t0 )
 		AddVertex( rect.max.x,rect.min.y,s1,t0 )
 		AddVertex( rect.max.x,rect.max.y,s1,t1 )
 		AddVertex( rect.min.x,rect.max.y,s0,t1 )
+
+		If _outlineMode=OutlineMode.None Return
+		
+		DrawOutline( rect )
 	End
 	
 	Method DrawRect( x:Float,y:Float,width:Float,height:Float,srcImage:Image,srcX:Int,srcY:Int )
+
 		DrawRect( New Rectf( x,y,x+width,y+height ),srcImage,New Recti( srcX,srcY,srcX+width,srcY+height ) )
 	End
 	
 	Method DrawRect( x:Float,y:Float,width:Float,height:Float,srcImage:Image,srcX:Int,srcY:Int,srcWidth:Int,srcHeight:Int )
+
 		DrawRect( New Rectf( x,y,x+width,y+height ),srcImage,New Recti( srcX,srcY,srcX+srcWidth,srcY+srcHeight ) )
 	End
 	
@@ -601,6 +773,23 @@ Class Canvas
 			Local py:=y0+Sin( th ) * yr
 			AddPointVertex( px,py,0,0 )
 		Next
+		
+		If _outlineMode=OutlineMode.None Return
+		
+		For Local i:=0 until n
+
+			Local th0:=(i+.5)*TwoPi/n
+			Local px0:=x0+Cos( th0 ) * xr
+			Local py0:=y0+Sin( th0 ) * yr
+			
+			Local th1:=(i+1.5)*TwoPi/n
+			Local px1:=x0+Cos( th1 ) * xr
+			Local py1:=y0+Sin( th1 ) * yr
+			
+			DrawOutlineLine( px0,py0,px1,py1 )
+		
+		Next
+		
 	End
 	
 	#rem monkeydoc Draws an ellipse.
@@ -619,6 +808,7 @@ Class Canvas
 
 	#end
 	Method DrawEllipse( x:Float,y:Float,xRadius:Float,yRadius:Float )
+		
 		DrawOval( x-xRadius,y-yRadius,xRadius*2,yRadius*2 )
 	End
 	
@@ -634,32 +824,48 @@ Class Canvas
 
 	#end
 	Method DrawCircle( x:Float,y:Float,radius:Float )
+		
 		DrawOval( x-radius,y-radius,radius*2,radius*2 )
 	End
 
 	#rem monkeydoc Draws a polygon.
 
 	Draws a polygon using the current [[Color]], [[BlendMode]] and [[Matrix]].
+	
+	The `vertices` array must be at least 2 elements long
 
 	@param vertices Array of x/y vertex coordinate pairs.
 
 	#end
 	Method DrawPoly( vertices:Float[] )
+		
 		Local order:=vertices.Length/2
-		DebugAssert( order>0,"Invalid polygon" )
+		DebugAssert( order>=1,"Invalid polygon" )
 		
 		AddDrawOp( _shader,_material,_blendMode,order,1 )
 		
 		For Local i:=0 Until order*2 Step 2
+			
 			AddVertex( vertices[i],vertices[i+1],0,0 )
 		Next
+
+		If _outlineMode=OutlineMode.None Or order<3 Return
+		
+		For Local i:=0 Until order-1 
+			
+			Local k:=i*2
+			DrawOutlineLine( vertices[k],vertices[k+1],vertices[k+2],vertices[k+3] )
+		Next
+		
+		Local kn:=(order-1)*2
+		DrawOutlineLine( vertices[kn],vertices[kn+1],vertices[0],vertices[1] )
 	End
 	
 	#rem monkeydoc Draws a sequence of polygons.
 
 	Draws a sequence of polygons using the current [[Color]], [[BlendMode]] and [[Matrix]].
 
-	@param order The type of polygon: 1=points, 2=lines, 3=triangles, 4=quads, >4=n-gons.
+	@param order The type of polygon: 3=triangles, 4=quads, >4=n-gons.
 
 	@param count The number of polygons.
 	
@@ -667,13 +873,30 @@ Class Canvas
 	
 	#end
 	Method DrawPolys( order:Int,count:Int,vertices:Float[] )
-		DebugAssert( order>0 And count>0 And order*count<=vertices.Length,"Invalid polyon" )
+		
+		DebugAssert( order>=1 And count>0 And order*count<=vertices.Length,"Invalid polyon" )
 
 		AddDrawOp( _shader,_material,_blendMode,order,count )
 		
 		For Local i:=0 Until order*count*2 Step 2
+			
 			AddVertex( vertices[i],vertices[i+1],0,0 )
 		Next
+		
+		If _outlineMode=OutlineMode.None Or order<3 Return
+		
+		For Local i:=0 Until count
+			
+			For Local j:=0 Until order-1
+				
+				Local k:=(i*order+j)*2
+				DrawOutlineLine( vertices[k],vertices[k+1],vertices[k+2],vertices[k+3] )
+			Next
+			
+			Local k0:=i*order*2,kn:=(i*order+order-1)*2
+			DrawOutlineLine( vertices[kn],vertices[kn+1],vertices[k0],vertices[k0+1] )
+		Next
+		
 	End
 	
 	#rem monkeydoc Draws a sequence of primtives.
@@ -919,17 +1142,19 @@ Class Canvas
 		DebugAssert( _lighting,"Canvas.AddLight() can only be used while lighting" )
 		If Not _lighting Return
 		
+		If _lightNV+4>_lightVB.Length Return
+		
 		Local lx:=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		Local ly:=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
 		
-		_vp=Cast<Vertex2f Ptr>( _lightVB.AddVertices( 4 ) )
-		If Not _vp Return
-
 		Local op:=New LightOp
 		op.light=light
 		op.lightPos=New Vec2f( lx,ly )
-		op.primOffset=_lightVB.Length-4
+		op.primOffset=_lightNV
 		_lightOps.Push( op )
+
+		_vp=_lightVP0+_lightNV
+		_lightNV+=4
 		
 		Local vs:=light.Vertices
 		Local ts:=light.TexCoords
@@ -1068,12 +1293,16 @@ Class Canvas
 		
 		If _drawOps.Empty Return
 		
+		_drawVB.Invalidate( 0,_drawNV )
+		
+		_drawVB.Unlock()
+		
 		'Render ambient
 		'		
 		RenderDrawOps( 0 )
 		
 		If _lighting
-
+		
 			'render diffuse gbuffer
 			'
 			_device.RenderTarget=_gbrtargets[0]
@@ -1089,9 +1318,11 @@ Class Canvas
 			'back to rendertarget
 			'			
 			_device.RenderTarget=_rtarget
+			
 		Endif
 		
-		_drawVB.Clear()
+		_drawVP0=Cast<Vertex2f Ptr>( _drawVB.Lock() )
+		_drawNV=0
 		_drawOps.Clear()
 		_drawOp=New DrawOp
 	End
@@ -1174,9 +1405,14 @@ Class Canvas
 		
 		Flush()
 		
+		_lightVB.Invalidate( 0,_lightNV )
+		
+		_lightVB.Unlock()
+		
 		RenderLighting()
 	
-		_lightVB.Clear()
+		_lightVP0=Cast<Vertex2f Ptr>( _lightVB.Lock() )
+		_lightNV=0
 		_lightOps.Clear()
 		
 		_shadowOps.Clear()
@@ -1242,8 +1478,8 @@ Class Canvas
 	End
 	
 	Global _quadIndices:IndexBuffer
-	Global _defaultFont:Font
 	Global _shadowVB:VertexBuffer
+	Global _defaultFont:Font
 
 	Global _lighting:Bool=False
 	Global _gbuffers:=New Texture[2]
@@ -1272,6 +1508,12 @@ Class Canvas
 	Field _matrix:=New AffineMat3f
 	Field _tanvec:Vec2f=New Vec2f( 1,0 )
 	Field _matrixStack:=New Stack<AffineMat3f>
+
+	Field _outlineMode:OutlineMode
+	Field _outlineColor:Color
+	Field _outlinepmcolor:UInt
+	Field _outlineSmoothing:Bool
+	Field _outlineWidth:Float
 	
 	Field _rmatrix:=New AffineMat3f
 	Field _rbounds:=New Recti( 0,0,$40000000,$40000000 )
@@ -1287,10 +1529,14 @@ Class Canvas
 	Field _vp:Vertex2f Ptr
 
 	Field _drawVB:VertexBuffer
+	Field _drawVP0:Vertex2f Ptr
+	Field _drawNV:Int
 	Field _drawOps:=New Stack<DrawOp>
 	Field _drawOp:=New DrawOp
 
 	Field _lightVB:VertexBuffer
+	Field _lightVP0:Vertex2f Ptr
+	Field _lightNV:Int
 	Field _lightOps:=New Stack<LightOp>
 	
 	Field _shadowOps:=New Stack<ShadowOp>
@@ -1306,8 +1552,11 @@ Class Canvas
 		inited=True
 
 		Local nquads:=MaxVertices/4
+		
 		_quadIndices=New IndexBuffer( IndexFormat.UINT16,nquads*6 )
-		Local ip:=Cast<UShort Ptr>( _quadIndices.AddIndices( nquads*6 ) )
+		
+		Local ip:=Cast<UShort Ptr>( _quadIndices.Lock() )
+		
 		For Local i:=0 Until nquads*4 Step 4
 			ip[0]=i
 			ip[1]=i+1
@@ -1317,8 +1566,12 @@ Class Canvas
 			ip[5]=i+3
 			ip+=6
 		Next
+
+		_quadIndices.Invalidate( 0,nquads*6 )
 		
-		_shadowVB=New VertexBuffer( Vertex2fFormat.Instance,MaxShadowVertices )
+		_quadIndices.Unlock()
+		
+		_shadowVB=New VertexBuffer( Vertex2f.Format,MaxShadowVertices )
 
 		_defaultFont=mojo.graphics.Font.Load( "font::DejaVuSans.ttf",16 )
 	End
@@ -1338,9 +1591,15 @@ Class Canvas
 		_uniforms=New UniformBlock( 1 )
 		_device.BindUniformBlock( _uniforms )
 
-		_drawVB=New VertexBuffer( Vertex2fFormat.Instance,MaxVertices )
-		_lightVB=New VertexBuffer( Vertex2fFormat.Instance,MaxLights*4 )
-		_shadowVB=New VertexBuffer( Vertex2fFormat.Instance,65536 )
+		_drawVB=New VertexBuffer( Vertex2f.Format,MaxVertices )
+		_drawVP0=Cast<Vertex2f Ptr>( _drawVB.Lock() )
+		_drawNV=0
+		
+		_lightVB=New VertexBuffer( Vertex2f.Format,MaxLights*4 )
+		_lightVP0=Cast<Vertex2f Ptr>( _lightVB.Lock() )
+		_lightNV=0
+		
+'		_shadowVB=New VertexBuffer( Vertex2f.Format,65536 )
 		
 		_device.IndexBuffer=_quadIndices
 
@@ -1356,6 +1615,11 @@ Class Canvas
 		_alpha=1
 		_color=Color.White
 		_pmcolor=$ffffffff
+		
+		_outlineMode=OutlineMode.None
+		_outlineColor=Color.Yellow
+		_outlinepmcolor=$ffffffff
+		_outlineWidth=0
 		
 		_matrix=New AffineMat3f
 	End
@@ -1422,8 +1686,8 @@ Class Canvas
 	'Drawing
 	'	
 	Method AddDrawOp( shader:Shader,material:UniformBlock,blendMode:BlendMode,primOrder:int,primCount:Int )
-	
-		If _drawVB.Length+primCount*primOrder>_drawVB.Capacity
+
+		If _drawNV+primCount*primOrder>_drawVB.Length
 			Flush()
 		Endif
 		
@@ -1432,8 +1696,8 @@ Class Canvas
 		If shader<>_drawOp.shader Or material<>_drawOp.material Or blendMode<>_drawOp.blendMode Or primOrder<>_drawOp.primOrder
 		
 			'pad quads so primOffset always on a 4 vert boundary
-			If primOrder=4 And _drawVB.Length & 3 
-				_drawVB.AddVertices( 4-(_drawVB.Length&3) )
+			If primOrder=4 And _drawNV & 3
+				_drawNV+=4-(_drawNV&3)
 			Endif
 			
 			_drawOp=New DrawOp
@@ -1442,13 +1706,14 @@ Class Canvas
 			_drawOp.blendMode=blendMode
 			_drawOp.primOrder=primOrder
 			_drawOp.primCount=primCount
-			_drawOp.primOffset=_drawVB.Length
+			_drawOp.primOffset=_drawNV
 			_drawOps.Push( _drawOp )
 		Else
 			_drawOp.primCount+=primCount
 		Endif
 		
-		_vp=Cast<Vertex2f Ptr>( _drawVB.AddVertices( primOrder*primCount ) )
+		_vp=_drawVP0+_drawNV
+		_drawNV+=primCount*primOrder
 	End
 	
 	Method Validate()
@@ -1526,13 +1791,15 @@ Class Canvas
 	
 	'Shadows
 	'
-	Method DrawShadows( lightOp:LightOp )
+	Method DrawShadows:Int( lightOp:LightOp )
 	
 		Const EXTRUDE:=1024.0
 		
 		Local lv:=lightOp.lightPos
+		
+		lv=New Vec2f( 320,240 )
 
-		_shadowVB.Clear()
+		Local vp0:=Cast<Vertex2f Ptr>( _shadowVB.Lock() ),n:=0
 		
 		For Local op:=Eachin _shadowOps
 		
@@ -1553,8 +1820,9 @@ Class Canvas
 				Local d:=lv.Dot( nv )+pd
 				If d<0 Continue
 				
-				Local tp:=Cast<Vertex2f Ptr>( _shadowVB.AddVertices( 9 ) )
-				If Not tp Exit
+				If n+9>_shadowVB.Length Exit
+				Local tp:=vp0+n
+				n+=9
 			
 				Local hv:=(pv+tv)/2
 				
@@ -1566,11 +1834,15 @@ Class Canvas
 				tp[3].position=tv;tp[4].position=hv2;tp[5].position=pv
 				tp[6].position=hv2;tp[7].position=pv2;tp[8].position=pv
 				
-				tp+=9
 			Next
 			
 		Next
 		
+		_shadowVB.Invalidate( 0,n )
+		
+		_shadowVB.Unlock()
+		
+		Return n
 	End
 		
 	'Lighting
@@ -1578,23 +1850,14 @@ Class Canvas
 	Method RenderLighting()
 	
 		_device.BlendMode=BlendMode.Additive
+		
 		_device.VertexBuffer=_lightVB
 		
 		For Local op:=Eachin _lightOps
 		
-			DrawShadows( op )
+			Local n:=DrawShadows( op )
 			
-			If _shadowVB.Length
-#rem
-				_device.RenderTarget=Null
-				_device.BlendMode=BlendMode.Opaque
-				_device.ColorMask=ColorMask.All
-				_device.VertexBuffer=_shadowVB
-				_device.Shader=Shader.GetShader( "shadow" )
-				_device.Clear( Color.Blue )
-				_device.Render( 3,_shadowVB.Length/3,0 )
-				Continue
-#end				
+			If n
 				_device.RenderPass=4
 				_device.RenderTarget=_gbrtargets[0]
 				_device.BlendMode=BlendMode.Opaque
@@ -1603,7 +1866,7 @@ Class Canvas
 				_device.Shader=Shader.GetShader( "shadow" )
 
 				_device.Clear( Color.White )
-				_device.Render( 3,_shadowVB.Length/3,0 )
+				_device.Render( 3,n/3,0 )
 				
 				_device.RenderPass=5				
 				_device.RenderTarget=_rtarget

@@ -34,6 +34,8 @@
 #Import "dialog/NoTitleDialog"
 #Import "dialog/FindInFilesDialog"
 #Import "dialog/UpdateModulesDialog"
+#Import "dialog/GenerateClassDialog"
+#Import "dialog/LiveTemplateDialog"
 
 #Import "document/DocumentManager"
 #Import "document/Ted2Document"
@@ -44,6 +46,7 @@
 #Import "document/JsonDocument"
 #Import "document/XmlDocument"
 #Import "document/BananasDocument"
+#Import "document/SceneDocument"
 
 #Import "eventfilter/TextViewKeyEventFilter"
 #Import "eventfilter/Monkey2KeyEventFilter"
@@ -93,18 +96,28 @@
 #Import "view/ProjectView"
 #Import "view/HelpTreeView"
 #Import "view/Ted2TextView"
+#Import "view/Ted2CodeTextView"
 #Import "view/JsonTreeView"
 #Import "view/XmlTreeView"
 #Import "view/Monkey2TreeView"
 #Import "view/GutterView"
 #Import "view/MenuExt"
 #Import "view/ScrollableViewExt"
+#Import "view/BuildErrorListViewItem"
+#Import "view/TextFieldExt"
+#Import "view/SpacerView"
+#Import "view/FindReplaceView"
+#Import "view/ViewExtensions"
+#Import "view/DockingViewExt"
 
-#Import "MainWindow"
+#Import "Tuple"
 #Import "Plugin"
 #Import "ThemeImages"
 #Import "Prefs"
 #Import "ProcessReader"
+#Import "LiveTemplates"
+#Import "DraggableTabs"
+#Import "MainWindow"
 
 
 Namespace ted2go
@@ -117,7 +130,7 @@ Using tinyxml2..
 
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.4"
+Global AppTitle:="Ted2Go v2.7"
 
 
 Function Main()
@@ -202,7 +215,7 @@ Function SetupMonkeyRootPath:String( rootPath:String,searchMode:Bool )
 		' search for choosen-by-requester folder
 		While Not found
 	
-			Local ok:=Confirm( "Initializing","Error initializing - can't find working dir!~nDo you want to specify Monkey2 root folder now?" )
+			Local ok:=Confirm( "Initializing","Monkey2 root directory isn't set.~nTo continue, you should to specify it." )
 			If Not ok
 				Return ""
 			End
@@ -229,11 +242,6 @@ End
 Function GetActionTextWithShortcut:String( action:Action )
 
 	Return action.Text+" ("+action.HotKeyText+")"
-End
-
-Function IsFileExists:Bool( path:String )
-	
-	Return GetFileType( path ) = FileType.File
 End
 
 Function Exec( exePath:String,args:String="" )

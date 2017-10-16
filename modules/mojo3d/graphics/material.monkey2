@@ -5,14 +5,22 @@ Namespace mojo3d.graphics
 #end
 Class Material Extends Resource
 	
-	#rem monkeydoc Creates a new material
-	#end
-	Method New( shader:Shader=Null )
-		_shader=shader
-		_uniforms=New UniformBlock( 3 )
+	Method New()
+
+		_shader=Null	
+		_uniforms=New UniformBlock( 3,True )
 		_blendMode=BlendMode.Opaque
 		_cullMode=CullMode.Back
+		
 		TextureMatrix=New AffineMat3f
+	End		
+	
+	#rem monkeydoc Creates a new material
+	#end
+	Method New( shader:Shader )
+		Self.new()
+		
+		_shader=shader
 	End
 	
 	#rem monkeydoc Creates a copy of the material.
@@ -96,21 +104,42 @@ Class Material Extends Resource
 		
 		TextureMatrix=TextureMatrix.Scale( sx,sy )
 	End
+	
+	Method ValidateShader:Shader()
+		
+		If Not _shader _shader=OnValidateShader()
+			
+		Return _shader
+	End
 
 	Protected
-	#rem monkeydoc @hidden
-	#end
-	Method New( material:Material )
-		_shader=material._shader
-		_uniforms=New UniformBlock( material._uniforms )
-		_blendMode=material._blendMode
-		_cullMode=material._cullMode
-		TextureMatrix=material.TextureMatrix
+	
+	Method OnValidateShader:Shader() Virtual
+		
+		RuntimeError( "Material.OnValidateShader unimplemented" )
+		
+		Return Null
+	End
+	
+	Method InvalidateShader()
+		
+		_shader=Null
 	End
 	
 	Method SetShader( shader:Shader )
 		
 		_shader=shader
+	End
+	
+	Method New( material:Material )
+
+		_shader=material._shader
+		_uniforms=New UniformBlock( material._uniforms )
+
+		_blendMode=material._blendMode
+		_cullMode=material._cullMode
+
+		TextureMatrix=material.TextureMatrix
 	End
 	
 	Private

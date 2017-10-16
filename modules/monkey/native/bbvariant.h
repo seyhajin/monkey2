@@ -68,42 +68,6 @@ struct bbVariant{
 		}
 	};
 	
-/*	
-	template<class R,class...A> struct FuncRep : public Rep<bbFunction<R(A...)>>{
-
-		FuncRep( bbFunction<R(A...)> func ):Rep<bbFunction<R(A...)>>( func ){
-		}
-		
-		template<int...I> R invoke( bbArray<bbVariant> params,detail::seq<I...> ){
-
-			return this->value( params[I].get<A>()... );
-		}
-	
-		virtual bbVariant invoke( bbArray<bbVariant> params ){
-		
-			return bbVariant{ invoke( params,detail::gen_seq<sizeof...(A)>{} ) };
-		}
-	};
-	
-	template<class...A> struct FuncRep<void,A...> : public Rep<bbFunction<void(A...)>>{
-
-		FuncRep( bbFunction<void(A...)> func ):Rep<bbFunction<void(A...)>>( func ){
-		}
-		
-		template<int...I> void invoke( bbArray<bbVariant> params,detail::seq<I...> ){
-
-			this->value( params[I].get<A>()... );
-		}
-	
-		virtual bbVariant invoke( bbArray<bbVariant> params ){
-		
-			invoke( params,detail::gen_seq<sizeof...(A)>{} );
-			
-			return {};
-		}
-	};
-*/
-	
 	static RepBase _null;
 	
 	RepBase *_rep;
@@ -131,14 +95,6 @@ struct bbVariant{
 	template<class T> explicit bbVariant( const bbGCVar<T> &t ):_rep( new Rep<T*>( t.get() ) ){
 	}
 	
-	/*
-	template<class R,class...A> explicit bbVariant( bbFunction<R(A...)> func ) : _rep( new FuncRep<R,A...>( func ) ){
-	}
-	
-	template<class R,class...A> explicit bbVariant( R(*func)(A...) ):_rep( new FuncRep<R,A...>( bbMakefunc( func ) ) ){
-	}
-	*/
-	
 	~bbVariant(){
 		release();
 	}
@@ -151,6 +107,13 @@ struct bbVariant{
 	}
 	
 	bbTypeInfo *getType()const{
+		
+		return _rep->getType();
+	}
+	
+	bbTypeInfo *getDynamicType()const{
+	
+		if( bbObject *obj=_rep->getObject() ) return obj->typeof();
 		
 		return _rep->getType();
 	}
@@ -180,6 +143,25 @@ struct bbVariant{
 		bbRuntimeError( "Variant cast failed" );
 		
 		return T{};
+	}
+	
+	template<class T> T *_ref( typename T::bb_object_type *p=0 )const{
+	
+		return get<T*>();
+	}
+	
+	template<class T> T *_ref( T *p=0 )const{
+	
+		Rep<T> *r=dynamic_cast<Rep<T>*>( _rep );
+		
+		if( !r ) bbRuntimeError( "Variant cast failed" );
+		
+		return &r->value;
+	}
+	
+	template<class T> T *ref()const{
+	
+		return _ref<T>( 0 );
 	}
 	
 };

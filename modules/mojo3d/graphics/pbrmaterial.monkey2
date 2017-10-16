@@ -7,7 +7,9 @@ Class PbrMaterial Extends Material
 	
 	#rem monkeydoc Creates a new pbr material.
 	
-	All properties default to white or '1' except for emissive factor which defaults to black. If you set an emissive texture, don't forget to set emissive factor to white to 'enable' it.
+	All properties default to white or '1' except for emissive factor which defaults to black. 
+	
+	If you set an emissive texture, you will also need to set emissive factor to white to 'enable' it.
 	
 	The metalness value should be stored in the 'blue' channel of the metalness texture if the texture has multiple color channels.
 	
@@ -18,40 +20,27 @@ Class PbrMaterial Extends Material
 	The above last 3 rules allow you to pack metalness, roughness and occlusion into a single texture.
 	
 	#end
-	Method New( textured:Bool=True,bumpmapped:Bool=True,boned:Bool=False )
-		Super.New()	'WTF?
+	Method New( boned:Bool=False )
 		
-		Local defs:=""
+		_boned=boned
 		
-		If textured
-			defs+="MX2_TEXTURED~n"
-			If bumpmapped
-				defs+="MX2_BUMPMAPPED~n"
-			Endif
-		Endif
-		If boned defs+="MX2_BONED~n"
-			
-		SetShader( Shader.Open( "material",defs ) )
+		Uniforms.DefaultTexture=Texture.ColorTexture( Color.White )
 		
-		ColorTexture=Texture.ColorTexture( Color.White )
+		ColorTexture=Null
+		EmissiveTexture=Null
+		MetalnessTexture=Null
+		RoughnessTexture=Null
+		OcclusionTexture=Null
+		NormalTexture=Null
+		
 		ColorFactor=Color.White
-		
-		EmissiveTexture=Texture.ColorTexture( Color.White )
 		EmissiveFactor=Color.Black
-	
-		MetalnessTexture=Texture.ColorTexture( Color.White )
 		MetalnessFactor=0.0
-		
-		RoughnessTexture=Texture.ColorTexture( Color.White )
 		RoughnessFactor=1.0
-		
-		OcclusionTexture=Texture.ColorTexture( Color.White )
-		
-		NormalTexture=Texture.ColorTexture( New Color( 0.5,0.5,1.0,0.0 ) )
 	End
 	
-	Method New( color:Color,metalness:Float=0.0,roughness:Float=1.0 )
-		Self.New( False,False,False )
+	Method New( color:Color,metalness:Float=0.0,roughness:Float=1.0,boned:Bool=False )
+		Self.New( boned )
 		
 		ColorFactor=color
 		MetalnessFactor=metalness
@@ -59,8 +48,11 @@ Class PbrMaterial Extends Material
 	End
 	
 	Method New( material:PbrMaterial )
-		
 		Super.New( material )
+		
+		_textured=material._textured
+		_bumpmapped=material._bumpmapped
+		_boned=material._boned
 	End
 	
 	#rem monkeydoc Creates a copy of the pbr material.
@@ -70,6 +62,8 @@ Class PbrMaterial Extends Material
 		Return New PbrMaterial( Self )
 	End
 	
+	'***** textures *****
+	
 	Property ColorTexture:Texture()
 	
 		Return Uniforms.GetTexture( "ColorTexture" )
@@ -77,15 +71,8 @@ Class PbrMaterial Extends Material
 	Setter( texture:Texture )
 	
 		Uniforms.SetTexture( "ColorTexture",texture )
-	End
-	
-	Property ColorFactor:Color()
-	
-		Return Uniforms.GetColor( "ColorFactor" )
 		
-	Setter( color:Color )
-	
-		Uniforms.SetColor( "ColorFactor",color )
+		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
 	End
 	
 	Property EmissiveTexture:Texture()
@@ -95,6 +82,63 @@ Class PbrMaterial Extends Material
 	Setter( texture:Texture )
 	
 		Uniforms.SetTexture( "EmissiveTexture",texture )
+		
+		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+	End
+	
+	Property MetalnessTexture:Texture()
+	
+		Return Uniforms.GetTexture( "MetalnessTexture" )
+		
+	Setter( texture:Texture )
+	
+		Uniforms.SetTexture( "MetalnessTexture",texture )
+		
+		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+	End
+
+	Property RoughnessTexture:Texture()
+	
+		Return Uniforms.GetTexture( "RoughnessTexture" )
+		
+	Setter( texture:Texture )
+	
+		Uniforms.SetTexture( "RoughnessTexture",texture )
+		
+		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+	End
+	
+	Property OcclusionTexture:Texture()
+	
+		Return Uniforms.GetTexture( "OcclusionTexture" )
+		
+	Setter( texture:Texture )
+	
+		Uniforms.SetTexture( "OcclusionTexture",texture )
+		
+		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+	End
+	
+	Property NormalTexture:Texture()
+	
+		Return Uniforms.GetTexture( "NormalTexture" )
+		
+	Setter( texture:Texture )
+	
+		Uniforms.SetTexture( "NormalTexture",texture )
+		
+		If (texture<>null)<>_bumpmapped InvalidateShader()
+	End
+	
+	'***** factors *****
+
+	Property ColorFactor:Color()
+	
+		Return Uniforms.GetColor( "ColorFactor" )
+		
+	Setter( color:Color )
+	
+		Uniforms.SetColor( "ColorFactor",color )
 	End
 	
 	Property EmissiveFactor:Color()
@@ -106,15 +150,6 @@ Class PbrMaterial Extends Material
 		Uniforms.SetColor( "EmissiveFactor",color )
 	End
 	
-	Property MetalnessTexture:Texture()
-	
-		Return Uniforms.GetTexture( "MetalnessTexture" )
-		
-	Setter( texture:Texture )
-	
-		Uniforms.SetTexture( "MetalnessTexture",texture )
-	End
-
 	Property MetalnessFactor:Float()
 	
 		Return Uniforms.GetFloat( "MetalnessFactor" )
@@ -124,15 +159,6 @@ Class PbrMaterial Extends Material
 		Uniforms.SetFloat( "MetalnessFactor",factor )
 	End
 	
-	Property RoughnessTexture:Texture()
-	
-		Return Uniforms.GetTexture( "RoughnessTexture" )
-		
-	Setter( texture:Texture )
-	
-		Uniforms.SetTexture( "RoughnessTexture",texture )
-	End
-	
 	Property RoughnessFactor:Float()
 	
 		Return Uniforms.GetFloat( "RoughnessFactor" )
@@ -140,24 +166,6 @@ Class PbrMaterial Extends Material
 	Setter( factor:Float )
 	
 		Uniforms.SetFloat( "RoughnessFactor",factor )
-	End
-
-	Property OcclusionTexture:Texture()
-	
-		Return Uniforms.GetTexture( "occlusion" )
-		
-	Setter( texture:Texture )
-	
-		Uniforms.SetTexture( "OcclusionTexture",texture )
-	End
-	
-	Property NormalTexture:Texture()
-	
-		Return Uniforms.GetTexture( "NormalTexture" )
-		
-	Setter( texture:Texture )
-	
-		Uniforms.SetTexture( "NormalTexture",texture )
 	End
 
 	#rem monkeydoc Loads a PbrMaterial from a 'file'.
@@ -209,6 +217,40 @@ Class PbrMaterial Extends Material
 		Endif
 		
 		Return material
+	End
+	
+	Protected
+	
+	Field _textured:Bool
+	Field _bumpmapped:Bool
+	Field _boned:Bool
+	
+	Method OnValidateShader:Shader() Override
+		
+		_textured=True'False
+		_bumpmapped=False
+		
+		If Uniforms.NumTextures
+			_textured=True
+			_bumpmapped=(Uniforms.GetTexture( "NormalTexture" )<>null)
+		Endif
+		
+		Local renderer:=Renderer.GetCurrent()
+
+		Local defs:=renderer.ShaderDefs
+		
+		If _textured
+			defs+="MX2_TEXTURED~n"
+			If _bumpmapped
+				defs+="MX2_BUMPMAPPED~n"
+			Endif
+		Endif
+		If _boned defs+="MX2_BONED~n"
+			
+		Local shader:="material-pbr-deferred"
+		If Cast<ForwardRenderer>( renderer ) shader="material-pbr-forward"
+			
+		Return Shader.Open( shader,defs )
 	End
 	
 	

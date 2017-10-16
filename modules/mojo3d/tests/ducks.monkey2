@@ -17,17 +17,17 @@ Class MyWindow Extends Window
 	
 	Field _scene:Scene
 	
+	Field _fog:FogEffect
+
 	Field _camera:Camera
 	
 	Field _light:Light
 	
+	Field _light2:Light
+	
 	Field _ground:Model
 	
 	Field _ducks:=New Stack<Model>
-	
-	Field _fog:FogEffect
-	
-	Field _monochrome:MonochromeEffect
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
@@ -38,48 +38,50 @@ Class MyWindow Extends Window
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
-
-		'fog effect
+		
+		_scene.ClearColor=Color.Sky
+		
+		'add fog effect to scene
 		'		
-		_fog=New FogEffect
-		_fog.Color=Color.Sky
-		_fog.Near=0
-		_fog.Far=100
-		
-		'monochrome effect - hit space to toggle
-		'
-		_monochrome=New MonochromeEffect
-		_monochrome.Enabled=False
-		
-		'_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+'		_fog=New FogEffect
+'		_fog.Color=Color.Sky
+'		_fog.Near=0
+'		_fog.Far=50
+'		_scene.AddPostEffect( _fog )
 		
 		'create camera
 		'
 		_camera=New Camera
 		_camera.Near=.1
-		_camera.Far=100
+		_camera.Far=50
+		_camera.FOV=90
 		_camera.Move( 0,15,-20 )
 		
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 90 )	'aim directional light downwards
-		
+		_light.Type=LightType.Point
+		_light.Move( 0,20,0 )
+		_light.Range=40
+		_light.CastsShadow=True
+
 		'create ground
 		'
 		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,1 ) )
+		_ground.CastsShadow=False
 		
 		'create ducks
 		'		
 		Local duck:=Model.Load( "asset::duck.gltf/Duck.gltf" )
 		duck.Mesh.FitVertices( New Boxf( -1,1 ) )
-		'duck.CastsShadow=false
 		
 		Local root:=duck.Copy()
 		root.Move( 0,10,0 )
 		root.Scale=New Vec3f( 3 )
 		
 		_ducks.Push( root )
+		
+		'#rem
 		
 		For Local m:=0.0 To 1.0 Step .125
 		
@@ -108,6 +110,8 @@ Class MyWindow Extends Window
 			Next
 		Next
 		
+		'#End
+		
 		duck.Destroy()
 	End
 	
@@ -115,30 +119,31 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
-		'Space to toggle monochrome mode!
-		If Keyboard.KeyHit( Key.Space ) _monochrome.Enabled=Not _monochrome.Enabled
-			
-		'_monochrome.Level=Sin( Now()*3 ) * .5 + .5
-		
-		For Local duck:=Eachin _ducks
-			
-			duck.RotateY( 1 )
-		Next
-		
+		'_ducks[0].RotateY( 1 )
+
 		util.Fly( _camera,Self )
 		
 		_scene.Render( canvas,_camera )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		'canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End
 
 Function Main()
+	
+	Local config:=New StringMap<String>
 
-	New AppInstance
+'	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
+
+'	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
+'	config["GL_depth_buffer_enabled"]=1
+
+'	config["mojo3d_renderer"]="forward"
+		
+	New AppInstance( config )
 	
 	New MyWindow
 	

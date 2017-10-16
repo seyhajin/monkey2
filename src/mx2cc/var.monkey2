@@ -72,7 +72,7 @@ Class VarValue Extends Value
 	End
 	
 	Method OnSemant:SNode() Override
-	
+		
 		Scope.semanting.Push( scope )
 		
 		If vdecl.type

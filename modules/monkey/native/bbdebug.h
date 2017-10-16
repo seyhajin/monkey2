@@ -79,6 +79,7 @@ struct bbDBContext{
 	bbDBFrame *frames=nullptr;
 	bbDBVar *localsBuf=nullptr;
 	bbDBVar *locals=nullptr;
+	int stepMode;
 	int stopped;
 
 	~bbDBContext();
@@ -105,49 +106,45 @@ namespace bbDB{
 	void emitStack();
 }
 
-struct bbDBFrame{
-	bbDBFrame *succ;
+struct bbDBBlock{
 	bbDBVar *locals;
+	bbDBBlock():locals( bbDB::currentContext->locals ){
+		if( bbDB::currentContext->stepMode=='l' ) --bbDB::currentContext->stopped;
+	}
+	~bbDBBlock(){
+		if( bbDB::currentContext->stepMode=='l' ) ++bbDB::currentContext->stopped;
+		bbDB::currentContext->locals=locals;
+	}
+};
+
+struct bbDBFrame : public bbDBBlock{
+	bbDBFrame *succ;
 	const char *decl;
 	const char *srcFile;
 	int srcPos;
 	int seq;
 	
-	bbDBFrame( const char *decl,const char *srcFile ):succ( bbDB::currentContext->frames ),locals( bbDB::currentContext->locals ),decl( decl ),srcFile( srcFile ){
+	bbDBFrame( const char *decl,const char *srcFile ):succ( bbDB::currentContext->frames ),decl( decl ),srcFile( srcFile ),seq( ++bbDB::nextSeq ){
 		bbDB::currentContext->frames=this;
-		--bbDB::currentContext->stopped;
-		seq=++bbDB::nextSeq;
+		if( bbDB::currentContext->stepMode=='s' ) --bbDB::currentContext->stopped;
 	}
 	
 	~bbDBFrame(){
-		++bbDB::nextSeq;
-		++bbDB::currentContext->stopped;
-		bbDB::currentContext->locals=locals;
+		if( bbDB::currentContext->stepMode=='s' ) ++bbDB::currentContext->stopped;
 		bbDB::currentContext->frames=succ;
-	}
-};
-
-struct bbDBBlock{
-	bbDBVar *locals;
-	bbDBBlock():locals( bbDB::currentContext->locals ){
-	}
-	~bbDBBlock(){
-		bbDB::currentContext->locals=locals;
 	}
 };
 
 struct bbDBLoop : public bbDBBlock{
 	bbDBLoop(){
-		--bbDB::currentContext->stopped;
 	}
 	~bbDBLoop(){
-		++bbDB::currentContext->stopped;
 	}
 };
 
 inline void bbDBStmt( int srcPos ){
 	bbDB::currentContext->frames->srcPos=srcPos;
-	if( bbDB::currentContext->stopped>=0 ) bbDB::stopped();
+	if( bbDB::currentContext->stopped>0 ) bbDB::stopped();
 }
 
 template<class T> void bbDBEmit( const char *name,T *var ){
@@ -159,7 +156,7 @@ template<class T> void bbDBEmit( const char *name,bbGCVar<T> *p ){
 	T *var=p->get();return bbDBEmit( name,&var );
 }
 
-template<class T> void bbDBLocal ( const char *name,T *var ){
+template<class T> void bbDBLocal( const char *name,T *var ){
 	bbDB::currentContext->locals->name=name;
 	bbDB::currentContext->locals->type=&bbDBVarType_t<T>::info;
 	bbDB::currentContext->locals->var=var;

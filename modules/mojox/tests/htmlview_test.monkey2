@@ -16,22 +16,19 @@ Class MyWindow Extends Window
 
 		Local htmlView:=New HtmlView
 		
-		htmlView.Go( "assets::about.html" )
+		htmlView.Go( "asset::about.html" )
+		
+		Print htmlView.HtmlSource
 		
 		ContentView=htmlView
-		
-		App.Idle+=OnIdle
 	End
 	
-	Method OnIdle()
+	Method OnRender( canvas:Canvas ) Override
 	
-		App.RequestRender()
-		
-		App.Idle+=OnIdle
+		RequestRender()
 	End
 
 End
-
 
 Function Main()
 

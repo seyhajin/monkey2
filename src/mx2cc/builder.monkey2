@@ -31,7 +31,7 @@ Class BuildOpts
 	
 	Field reflection:Bool
 	
-	Field wasm:Bool
+	Field makedocs:bool
 	
 End
 
@@ -85,14 +85,17 @@ Class BuilderInstance
 		
 			opts.target=HostOS
 			
+			If Not opts.appType opts.appType="gui"
+			
 		Else If HostOS="windows" And opts.target="raspbian"
 		
 			SetEnv( "PATH",GetEnv( "MX2_RASPBIAN_TOOLS" )+";"+GetEnv( "PATH" ) )
-			
-		Else If opts.target="wasm"
 		
-			opts.target="emscripten"
-			opts.wasm=True
+			If Not opts.appType opts.appType="gui"
+			
+		Else If opts.target="emscripten"
+		
+			If Not opts.appType opts.appType="wasm"
 			
 		Endif
 		
@@ -323,7 +326,7 @@ Class BuilderInstance
 			Repeat
 			
 				If Not semantMembers.Empty
-				
+					
 					Local ctype:=semantMembers.RemoveFirst()
 					
 					PNode.semanting.Push( ctype.cdecl )
@@ -390,6 +393,7 @@ Class BuilderInstance
 				Local vvar:=Cast<VarValue>( inst )
 				Local func:=Cast<FuncValue>( inst )
 				Local ctype:=TCast<ClassType>( inst )
+				Local etype:=TCast<EnumType>( inst )
 				
 				If vvar
 					transFile=vvar.transFile
@@ -397,6 +401,8 @@ Class BuilderInstance
 					transFile=func.transFile
 				Else If ctype
 					transFile=ctype.transFile
+				Else If etype
+					transFile=etype.transFile
 				Endif
 				
 				If Not transFile Or transFile.module=module Continue
@@ -438,6 +444,9 @@ Class BuilderInstance
 				Else If ctype
 					ctype.transFile=transFile
 					transFile.classes.Push( ctype )
+				Else If etype
+					etype.transFile=transFile
+					transFile.enums.Push( etype )
 				Endif
 				
 			Next

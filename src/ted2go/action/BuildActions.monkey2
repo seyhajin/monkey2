@@ -48,6 +48,9 @@ Class BuildActions Implements IModuleBuilder
 	
 	
 	Field PreBuild:Void()
+	Field PreSemant:Void()
+	Field PreBuildModules:Void()
+	Field ErrorsOccured:Void(errors:BuildError[])
 	
 	Method New( docs:DocumentManager,console:ConsoleExt,debugView:DebugView )
 	
@@ -96,8 +99,7 @@ Class BuildActions Implements IModuleBuilder
 #Endif
 		semant.Triggered=OnSemant
 		
-		
-		buildSettings=New Action( "Target settings..." )
+		buildSettings=New Action( "Product settings..." )
 		buildSettings.Triggered=OnBuildFileSettings
 		
 		nextError=New Action( "Next build error" )
@@ -105,7 +107,7 @@ Class BuildActions Implements IModuleBuilder
 		nextError.HotKey=Key.F4
 		
 		lockBuildFile=New Action( "Lock build file" )
-		lockBuildFile.Triggered=OnLockBuildFile
+		lockBuildFile.Triggered=LockBuildFile
 		lockBuildFile.HotKey=Key.L
 		lockBuildFile.HotKeyModifiers=Modifier.Menu
 		
@@ -141,22 +143,18 @@ Class BuildActions Implements IModuleBuilder
 		_emscriptenTarget=New CheckButton( "Emscripten",,group )
 		_emscriptenTarget.Layout="fill-x"
 		
-		_wasmTarget=New CheckButton( "Wasm",,group )
-		_wasmTarget.Layout="fill-x"
-		
 		_androidTarget=New CheckButton( "Android",,group )
 		_androidTarget.Layout="fill-x"
 		
 		_iosTarget=New CheckButton( "iOS",,group )
 		_iosTarget.Layout="fill-x"
 		
-		targetMenu=New MenuExt( "Build variants" )
+		targetMenu=New MenuExt( "Build target" )
 		targetMenu.AddView( _debugConfig )
 		targetMenu.AddView( _releaseConfig )
 		targetMenu.AddSeparator()
 		targetMenu.AddView( _desktopTarget )
 		targetMenu.AddView( _emscriptenTarget )
-		targetMenu.AddView( _wasmTarget )
 		targetMenu.AddView( _androidTarget )
 		targetMenu.AddView( _iosTarget )
 		targetMenu.AddSeparator()
@@ -184,14 +182,6 @@ Class BuildActions Implements IModuleBuilder
 			_emscriptenTarget.Enabled=False
 		Endif
 
-		If _validTargets.Contains( "wasm" )
-			_wasmTarget.Clicked+=Lambda()
-				_buildTarget="wasm"
-			End
-		Else
-			_wasmTarget.Enabled=False
-		Endif
-
 		If _validTargets.Contains( "android" )
 			_androidTarget.Clicked+=Lambda()
 				_buildTarget="android"
@@ -216,7 +206,8 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method LockBuildFile()
 		
-		OnLockBuildFile()
+		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
+		OnLockBuildFile( doc )
 	End
 	
 	Method SaveState( jobj:JsonObject )
@@ -233,7 +224,7 @@ Class BuildActions Implements IModuleBuilder
 		If jobj.Contains( "lockedDocument" )
 			Local path:=jobj["lockedDocument"].ToString()
 			_locked=Cast<CodeDocument>( _docs.FindDocument( path ) )
-			If _locked _locked.State="+"
+			If _locked Then SetLockedState( _locked,True )
 		Endif
 		
 		If jobj.Contains( "buildConfig" )
@@ -260,8 +251,6 @@ Class BuildActions Implements IModuleBuilder
 					_desktopTarget.Checked=True
 				Case "emscripten"
 					_emscriptenTarget.Checked=True
-				Case "wasm"
-					_wasmTarget.Checked=True
 				Case "android"
 					_androidTarget.Checked=True
 				Case "ios"
@@ -303,6 +292,7 @@ Class BuildActions Implements IModuleBuilder
 		
 		Local targets:=dialog.SelectedTargets
 		modules=dialog.SelectedModules
+		
 		clean=dialog.NeedClean
 		configs=dialog.SelectedConfigs
 		
@@ -326,6 +316,19 @@ Class BuildActions Implements IModuleBuilder
 		Return result
 	End
 	
+	Method GotoError( err:BuildError )
+	
+		Local doc:=Cast<CodeDocument>( _docs.OpenDocument( err.path,True ) )
+		If Not doc Return
+	
+		Local tv := doc.CodeView
+		If Not tv Return
+	
+		MainWindow.UpdateWindow( False )
+	
+		tv.GotoPosition( New Vec2i( err.line,0 ) )
+	End
+	
 	
 	Private
 	
@@ -344,7 +347,6 @@ Class BuildActions Implements IModuleBuilder
 	Field _releaseConfig:CheckButton
 	Field _desktopTarget:CheckButton
 	Field _emscriptenTarget:CheckButton
-	Field _wasmTarget:CheckButton
 	Field _androidTarget:CheckButton
 	Field _iosTarget:CheckButton
 	
@@ -359,9 +361,13 @@ Class BuildActions Implements IModuleBuilder
 		Return _locked
 	End
 	
-	Method SaveAll:Bool()
-	
+	Method SaveAll:Bool( buildFile:String )
+		
+		Local proj:=ProjectView.FindProjectByFile( buildFile )
+		
 		For Local doc:=Eachin _docs.OpenDocuments
+			' save docs only for built project
+			If proj And Not doc.Path.StartsWith( proj ) Continue
 			If Not doc.Save() Return False
 		Next
 		
@@ -379,20 +385,7 @@ Class BuildActions Implements IModuleBuilder
 
 	End
 
-	Method GotoError( err:BuildError )
-	
-		Local doc:=Cast<CodeDocument>( _docs.OpenDocument( err.path,True ) )
-		If Not doc Return
-		
-		Local tv := doc.TextView
-		If Not tv Return
-		
-		MainWindow.UpdateWindow( False )
-		
-		tv.GotoLine( err.line )
-	End
-	
-	Method BuildMx2:Bool( cmd:String,progressText:String,action:String="build",showElapsedTime:Bool=False )
+	Method BuildMx2:Bool( cmd:String,progressText:String,action:String="build",buildFile:String="",showElapsedTime:Bool=False )
 	
 		ClearErrors()
 		
@@ -402,7 +395,7 @@ Class BuildActions Implements IModuleBuilder
 		
 		MainWindow.ShowBuildConsole()
 		
-		If Not SaveAll() Return False
+		If Not SaveAll( buildFile ) Return False
 		
 		_timing=Millisecs()
 		
@@ -445,10 +438,10 @@ Class BuildActions Implements IModuleBuilder
 						
 						If doc
 							doc.AddError( err )
-							If _errors.Empty 
-								MainWindow.ShowBuildConsole( True )
-								GotoError( err )
-							Endif
+							'If _errors.Empty
+							'	MainWindow.ShowBuildConsole( True )
+							'	GotoError( err )
+							'Endif
 							_errors.Add( err )
 						Endif
 						
@@ -464,6 +457,10 @@ Class BuildActions Implements IModuleBuilder
 			_console.Write( stdout )
 		
 		Forever
+		
+		If Not _errors.Empty
+			ErrorsOccured( _errors.ToArray() )
+		Endif
 		
 		MainWindow.HideStatusBarProgress()
 		
@@ -481,6 +478,8 @@ Class BuildActions Implements IModuleBuilder
 	End
 
 	Method BuildModules:Bool( clean:Bool,target:String,modules:String,configs:String="debug release" )
+		
+		PreBuildModules()
 		
 		Local msg:=(clean ? "Rebuilding ~ " Else "Updating ~ ")+target
 		
@@ -505,7 +504,7 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method MakeDocs:Bool()
 	
-		Return BuildMx2( MainWindow.Mx2ccPath+" makedocs","Rebuilding documentation...","build",True )
+		Return BuildMx2( MainWindow.Mx2ccPath+" makedocs","Rebuilding documentation...","build","",True )
 	End
 	
 	Method BuildApp:Bool( config:String,target:String,sourceAction:String )
@@ -531,7 +530,7 @@ Class BuildActions Implements IModuleBuilder
 		Local title := sourceAction="build" ? "Building" Else (sourceAction="run" ? "Running" Else "Checking")
 		Local msg:=title+" ~ "+target+" ~ "+config+" ~ "+StripDir( buildDoc.Path )
 		
-		If Not BuildMx2( cmd,msg,sourceAction,True ) Return False
+		If Not BuildMx2( cmd,msg,sourceAction,buildDoc.Path,True ) Return False
 		
 		_console.Write("~nDone.")
 		
@@ -552,7 +551,7 @@ Class BuildActions Implements IModuleBuilder
 			
 			_debugView.DebugApp( exeFile,config )
 
-		Case "emscripten","wasm"
+		Case "emscripten"
 		
 			Local mserver:=GetEnv( "MX2_MSERVER" )
 			If mserver _console.Run( mserver+" ~q"+exeFile+"~q" )
@@ -591,6 +590,8 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method OnSemant()
 	
+		PreSemant()
+		
 		If _console.Running Return
 	
 		BuildApp( _buildConfig,_buildTarget,"semant" )
@@ -609,13 +610,11 @@ Class BuildActions Implements IModuleBuilder
 		GotoError( _errors.First )
 	End
 	
-	Method OnLockBuildFile()
+	Method OnLockBuildFile( doc:CodeDocument )
 	
-		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
-		
 		If Not doc Return
 		
-		If _locked _locked.State=""
+		If _locked Then SetLockedState( _locked,False )
 		
 		If doc=_locked
 			_locked=Null
@@ -623,8 +622,14 @@ Class BuildActions Implements IModuleBuilder
 		Endif
 		
 		_locked=doc
-		_locked.State="+"
+		SetLockedState( _locked,True )
+	End
+	
+	Method SetLockedState( doc:CodeDocument,locked:Bool )
 		
+		doc.State=locked ? "+" Else ""
+		Local tab:=_docs.FindTab( doc.View )
+		If tab Then tab.SetLockedState( locked )
 	End
 	
 	Method OnBuildFileSettings()
@@ -636,7 +641,7 @@ Class BuildActions Implements IModuleBuilder
 	End
 	
 	Method OnUpdateModules()
-	
+		
 		If _console.Running Return
 	
 		BuildModules( False )

@@ -12,7 +12,7 @@ Class FogEffect Extends PostEffect
 	#end	
 	Method New( color:Color=std.graphics.Color.Sky,near:Float=0,far:Float=1000 )
 
-		_shader=Shader.Open( "fog" )
+		_shader=Shader.Open( "effect-fog" )
 		
 		_uniforms=New UniformBlock( 3 )
 		

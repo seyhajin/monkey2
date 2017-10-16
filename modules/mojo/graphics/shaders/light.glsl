@@ -15,6 +15,7 @@ attribute vec2 a_TexCoord0;
 attribute vec2 a_TexCoord1;
 attribute vec4 a_Color;
 
+uniform mat4 r_ModelViewMatrix;
 uniform mat4 r_ModelViewProjectionMatrix;
 
 uniform vec2 r_ViewportOrigin;
@@ -29,6 +30,7 @@ void main(){
 
 	v_TexCoord0=a_TexCoord0;
 	v_LightPos=a_TexCoord1;
+	v_FragPos=a_Position.xy;
 	v_Color=m_ImageColor * a_Color;
 
 	gl_Position=r_ModelViewProjectionMatrix * a_Position;
@@ -36,15 +38,11 @@ void main(){
 	vec2 vpcoords=(gl_Position.xy * 0.5 + 0.5) * r_ViewportSize;
 	
 	v_GBufferCoords=(vpcoords + r_ViewportOrigin) * r_GBufferScale;
-
-	v_FragPos=vpcoords;
-	v_FragPos.y=r_ViewportSize.y-v_FragPos.y;
-	v_FragPos-=r_ViewportClip;
 }
 
 //@fragment
 
-uniform sampler2D m_ImageTexture0;			//image texture
+uniform sampler2D m_ImageTexture0;				//image texture
 uniform float m_LightDepth;
 
 uniform sampler2D r_GBuffer0;					//gbuffer diffuse
@@ -81,7 +79,9 @@ void main(){
 #if MX2_RENDERPASS==5
 
 	float shadow=texture2D( r_GBuffer0,v_GBufferCoords ).a;
+	
 	diffuse*=shadow;
+	
 	specular*=shadow;
 
 #endif

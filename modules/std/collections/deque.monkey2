@@ -247,7 +247,7 @@ Class Deque<T> Implements IContainer<T>
 	
 	#rem monkeydoc Adds a value at the start of the deque.
 	#end
-	Method PushFirst( value:T )
+	Method AddFirst( value:T )
 		If Length+1=Capacity Reserve( Capacity+1 )
 
 		_head-=1
@@ -257,7 +257,7 @@ Class Deque<T> Implements IContainer<T>
 	
 	#rem monkeydoc Adds a value at the end of the deque.
 	#end
-	Method PushLast( value:T )
+	Method AddLast( value:T )
 		If Length+1=Capacity Reserve( Capacity+1 )
 
 		_data[_tail]=value
@@ -265,12 +265,26 @@ Class Deque<T> Implements IContainer<T>
 		If _tail=Capacity _tail=0
 	End
 	
+	#rem monkeydoc @deprecated Use [[AddFirst]]
+	#end
+	Method PushFirst( value:T )
+	
+		AddFirst( value)
+	End
+
+	#rem monkeydoc @deprecated Use [[AddLast]]
+	#end
+	Method PushLast( value:T )
+	
+		AddLast( value)
+	End
+	
 	#rem monkeydoc Removes and returns the first value in a deque.
 	
 	In debug builds, a runtime error will occur if the deque is empty.
 	
 	#end
-	Method PopFirst:T()
+	Method RemoveFirst:T()
 		DebugAssert( Not Empty,"Illegal operation on empty deque" )
 
 		Local value:=_data[_head]
@@ -285,7 +299,7 @@ Class Deque<T> Implements IContainer<T>
 	In debug builds, a runtime error will occur if the deque is empty.
 
 	#end
-	Method PopLast:T()
+	Method RemoveLast:T()
 		DebugAssert( Not Empty,"Illegal operation on empty deque" )
 		
 		_tail-=1
@@ -294,6 +308,22 @@ Class Deque<T> Implements IContainer<T>
 		_data[_tail]=Null
 		Return value
 	End
+	
+	#rem monkeydoc @deprecated use [[RemoveFirst]].
+	#end
+	Method PopFirst:T()
+	
+		Return RemoveFirst()
+	End
+
+	#rem monkeydoc @deprecated use [[RemoveLast]].
+	#end
+	Method PopLast:T()
+	
+		Return RemoveLast()
+	End
+	
+	
 	
 	#rem monkeydoc Returns the first value in the deque.
 

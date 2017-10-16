@@ -408,7 +408,7 @@ Class GraphicsDevice
 	Field _retroMode:Bool
 	Field _vertexBuffer:VertexBuffer
 	Field _indexBuffer:IndexBuffer
-	Field _ublocks:=New UniformBlock[4]
+	Field _ublocks:=New UniformBlock[8]
 	Field _shader:Shader
 	Field _rpass:Int
 	
@@ -430,20 +430,17 @@ Class GraphicsDevice
 
 		glCheck()
 		
-		'#If __CONFIG__="debug"
-		'Print "GL_VERSION="+glGetString( GL_VERSION )
-		'Print "GL_VENDOR="+glGetString( GL_VENDOR )
-		'Print "GL_RENDERER="+glGetString( GL_VENDOR )
-		'#Endif
-			
-		InitGLexts()
-		
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
 		
 		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
 		If GL_read_buffer glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
 			
 		if GL_seamless_cube_map glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS )
+		
+#If __TARGET__="macos" or __TARGET__="linux"
+		glEnable( $8861 )	'GL_POINT_SPRITE
+		glEnable( $8642 )	'GL_PROGRAM_POINT_SIZE
+#Endif
 			
 		glCheck()
 	End
@@ -453,7 +450,10 @@ Class GraphicsDevice
 		_modified=False
 		If _rtarget And _rtarget.NumColorTextures
 			Validate()
-			_rtarget.GetColorTexture(0).Modified( _viewport & _scissor )
+			For Local i:=0 Until _rtarget.NumColorTextures
+				Local texture:=_rtarget.GetColorTexture( i )
+				texture.Modified( _viewport & _scissor )
+			Next
 		Endif
 	End
 	

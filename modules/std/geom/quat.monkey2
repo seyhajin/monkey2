@@ -1,15 +1,11 @@
 
 Namespace std.geom
 
-#rem monkeydoc @hidden
-#end
-Const EPSILON:=0
-
-#rem monkeydoc @hidden
+#rem monkeydoc Convenience type alias for Quat\<Float\>.
 #end
 Alias Quatf:Quat<Float>
 
-#rem monkeydoc @hidden
+#rem monkeydoc The Quat class provides support for quaternions.
 #end
 Class Quat<T>
 
@@ -28,8 +24,48 @@ Class Quat<T>
 		v.x=vx ; v.y=vy ; v.z=vz ; Self.w=w
 	End
 	
+	Method New( m:Mat3<T> )
+	
+		'Note: assumes m is orthogonalized
+		'
+		Const EPSILON:=0
+	
+		Local t:=m.i.x+m.j.y+m.k.z
+		
+		If t>EPSILON
+			t=Sqrt( t+1 )*2
+			v.x=(m.k.y-m.j.z)/t
+			v.y=(m.i.z-m.k.x)/t
+			v.z=(m.j.x-m.i.y)/t
+			w=t/4
+		Else If m.i.x>m.j.y And m.i.x>m.k.z
+			t=Sqrt( m.i.x-m.j.y-m.k.z+1 )*2
+			v.x=t/4
+			v.y=(m.j.x+m.i.y)/t
+			v.z=(m.i.z+m.k.x)/t
+			w=(m.k.y-m.j.z)/t
+		Else If m.j.y>m.k.z
+			t=Sqrt( m.j.y-m.k.z-m.i.x+1 )*2
+			v.x=(m.j.x+m.i.y)/t
+			v.y=t/4
+			v.z=(m.k.y+m.j.z)/t
+			w=(m.i.z-m.k.x)/t
+		Else
+			t=Sqrt( m.k.z-m.j.y-m.i.x+1 )*2
+			v.x=(m.i.z+m.k.x)/t
+			v.y=(m.k.y+m.j.z)/t
+			v.z=t/4
+			w=(m.j.x-m.i.y)/t
+		Endif
+		
+	End
+	
 	Operator To<C>:Quat<C>()
 		Return New Quat<C>( v,w )
+	End
+	
+	Operator To:Mat3<T>()
+		Return New Mat3<T>( Self )
 	End
 	
 	Method To:String()
@@ -110,6 +146,9 @@ Class Quat<T>
 	End
 	
 	Method Slerp:Quat( q:Quat,a:Double )
+	
+		Const EPSILON:=0
+	
 		Local t:=q
 		Local b:=1-a
 		Local d:=Dot( q )

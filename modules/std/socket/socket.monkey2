@@ -12,15 +12,19 @@ Extern private
 
 #rem monkeydoc @hidden
 #end
-Function socket_connect:Int( hostname:CString,service:CString,type:Int )="bbSocket::connect"
+Function socket_init:int()="bbSocket::init"
 
 #rem monkeydoc @hidden
 #end
-Function socket_bind:Int( hostname:CString,service:CString )="bbSocket::bind"
+Function socket_connect:Int( hostname:CString,service:CString,type:Int,flags:int )="bbSocket::connect"
 
 #rem monkeydoc @hidden
 #end
-Function socket_listen:Int( hostname:CString,service:CString,queue:Int )="bbSocket::listen"
+Function socket_bind:Int( hostname:CString,service:CString,flags:int )="bbSocket::bind"
+
+#rem monkeydoc @hidden
+#end
+Function socket_listen:Int( hostname:CString,service:CString,backlog:Int,flags:int )="bbSocket::listen"
 
 #rem monkeydoc @hidden
 #end
@@ -74,6 +78,14 @@ Function socket_getpeeraddr:Int( socket:Int,addr:Void Ptr,addrlen:Int Ptr )="bbS
 #end
 Function socket_sockaddrname:Int( addr:Void Ptr,addrlen:Int,host:libc.char_t Ptr,service:libc.char_t Ptr )="bbSocket::sockaddrname"
 
+#rem monkeydoc @hidden
+#end
+Function socket_select:Int( n_read:Int,r_socks:Int ptr,n_write:Int,w_socks:Int Ptr,n_except:Int,e_socks:Int Ptr,millis:Int )="bbSocket::select"
+
+Private
+
+Global _init:=socket_init()
+
 Public
 
 #rem monkeydoc The SocketType enum.
@@ -81,12 +93,27 @@ Public
 | SocketType	| Description
 |:--------------|:-----------
 | `Stream`		| Reliable stream, eg: TCP.
-| `Datagram`	| Unreliable datagram, eg: UDP.
+| `Datagram`	| Unreliable datagrams, eg: UDP.
 
 #end
 Enum SocketType
 	Stream=0
 	Datagram=1
+End
+
+#rem monkeydoc The SocketFlags enum.
+
+| SocketFlags	| Description
+|:--------------|:-----------
+| `Passive`		| for Bind and Listen. Indicates socket accepts connections from any address. If not set, socket accepts loopback connections only.
+| `Ipv4`		| for Connect, Bind and Listen. Socket can be an ip4 socket.
+| `Ipv6`		| for Connect, Bind and Listen. Socket can be an ip6 socket.
+
+#end
+Enum SocketFlags
+	Passive=1
+	Ipv4=2
+	Ipv6=4
 End
 
 #rem monkeydoc The SocketAddress class.
@@ -222,10 +249,24 @@ Class Socket Extends std.resource.Resource
 	End
 	#end
 	
-	#rem  monkeydoc True if socket has been closed
+	#rem  monkeydoc True if socket has been closed.
 	#end
 	Property Closed:Bool()
 		Return _socket=-1
+	End
+
+	#rem monkeydoc True if socket is connected to peer.
+	#end
+	Property Connected:bool()
+		If _socket=-1 Return False
+
+		Local read:=_socket
+		
+		Local r:=socket_select( 1,Varptr read,0,Null,0,Null,0 )
+		
+		If r=1 Return socket_canrecv( _socket )<>0
+		
+		Return r=0
 	End
 	
 	#rem monkeydoc The number of bytes that can be received from the socket without blocking.
@@ -298,7 +339,7 @@ Class Socket Extends std.resource.Resource
 	
 	Returns the number of bytes actually written.
 	
-	Can return less than `sizet` if the socket has been closed by the peer or if an error occured.
+	Can return less than `size` if the socket has been closed by the peer or if an error occured.
 	
 	@param buf The memory buffer to write data from.
 	
@@ -384,9 +425,9 @@ Class Socket Extends std.resource.Resource
 	@return A new socket.
 	
 	#end	
-	Function Connect:Socket( hostname:String,service:String,type:SocketType=SocketType.Stream )
+	Function Connect:Socket( hostname:String,service:String,type:SocketType=SocketType.Stream,flags:SocketFlags=Null )
 
-		Local socket:=socket_connect( hostname,service,type )
+		Local socket:=socket_connect( hostname,service,type,flags )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
@@ -394,33 +435,58 @@ Class Socket Extends std.resource.Resource
 
 	#rem monkeydoc Creates a datagram server socket.
 	
-	Returns a new datagram server socket that can be connected to by datagram clients.
+	Returns a new datagram server socket bound to 'service' if successful.
+	
+	`service` can also be an integer port number.
 	
 	Returns null upon failure.
 
 	@return A new socket.
 	
 	#end
-	Function Bind:Socket( hostname:String,service:String )
+	Function Bind:Socket( service:String,flags:SocketFlags=SocketFlags.Passive )
 	
-		Local socket:=socket_bind( hostname,service )
+		Local socket:=socket_bind( "",service,flags )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )
 	End
+	
+	#rem monkey @deprecated
+	#end
+	Function Bind:Socket( hostname:String,service:String )
+		
+		Local socket:=socket_bind( "",service,1 )
+		If socket=-1 Return Null
+		
+		Return New Socket( socket )
+	End
+		
 
 	#rem monkeydoc Creates a stream server socket and listens on it.
 	
 	Returns a new stream server socket listening at `service` if successful.
 	
+	`service` can also be an integer port number.
+	
 	Returns null upon failure.
 
 	@return A new socket.
 	
 	#end
-	Function Listen:Socket( hostname:String,service:String,queue:Int=128 )
-	
-		Local socket:=socket_listen( hostname,service,queue )
+	Function Listen:Socket( service:String,backlog:Int=32,flags:SocketFlags=SocketFlags.Passive )
+
+		Local socket:=socket_listen( "",service,backlog,flags )
+		If socket=-1 Return Null
+		
+		Return New Socket( socket )
+	End
+
+	#rem monkey @deprecated
+	#end
+	Function Listen:Socket( hostname:String,service:String,backlog:Int=128 )
+		
+		Local socket:=socket_listen( "",service,backlog,1 )
 		If socket=-1 Return Null
 		
 		Return New Socket( socket )

@@ -3,6 +3,8 @@ Namespace std.process
 
 #If __TARGET__<>"emscripten"
 
+#rem monkeydoc The ProcessStream class.
+#end
 Class ProcessStream Extends Stream
 
 	#rem monkeydoc The underlying process.

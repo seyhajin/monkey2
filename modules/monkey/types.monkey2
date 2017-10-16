@@ -416,11 +416,123 @@ The one exception to this is if the variant contains a class object, in which ca
 #end
 Struct @Variant="bbVariant"
 
-	#rem monkeydoc Type of the variant value.
+	#rem monkeydoc Static Type of the variant value.
 	#end
 	Property Type:TypeInfo()="getType"
 	
+	#rem monkeydoc Dynamic type of the variant value.
+	#end
+	Property DynamicType:TypeInfo()="getDynamicType"
 End
+
+#rem monkeydoc Primtive array type.
+
+This is a 'pseduo type' extended by all array types.
+
+#end
+Struct @Array<T>
+
+	#rem monkeydoc The raw memory used by the array.
+	
+	#end
+	Property Data:T Ptr()="data"
+	
+	#rem monkeydoc The length of the array.
+	
+	In the case of multi-dimensional arrays, the length of the array is the product of the sizes of all dimensions.
+	
+	#end
+	Property Length:Int()="length"
+	
+	#rem monkeydoc Extracts a subarray from the array.
+	
+	Returns an array consisting of all elements from `from` until (but not including) `tail`, or until the end of the string if `tail` is not specified.
+	
+	If either `from` or `tail` is negative, it represents an offset from the end of the array.
+	
+	@param `from` The starting index.
+	
+	@param `tail` The ending index.
+	
+	@return A subarray.
+	
+	#end
+	Method Slice:T[]( from:Int )="slice"
+	
+	Method Slice:T[]( from:Int,term:Int )="slice" 
+	
+	
+	#rem monkeydoc Resizes an array.
+	
+	Returns a copy of the array resized to length `newLength`.
+	
+	Note that this method does not modify this array in any way.
+	
+	@param newLength The length of the new array.
+	
+	@return A new array.
+	
+	#end
+	Method Resize:T[]( newLength:Int )="resize"
+	
+	#rem monkeydoc Gets the size of a single array dimension.
+	
+	Returns The size of the array in the given dimension.
+	
+	@param dimensions The dimension.
+	
+	@return The size of the array in the given dimension.
+	
+	#end
+	Method GetSize:Int( dimension:Int )="size"
+	
+	#rem monkeydoc Copies a range of elements from this array to another.
+	
+	In debug mode, a runtime error will occur if the copy is outside the range of the array.
+	
+	@param dstArray destination of the copy.
+	
+	@param srcOffset First element to copy from this array.
+	
+	@param dstOffset First element to copy to in destination array.
+	
+	@param count Number of elements to copy.
+	
+	#end
+	Method CopyTo( dstArray:T[],srcOffset:Int,dstOffset:Int,count:Int )="copyTo"
+
+End
+
+#rem monkeydoc Base class of all objects.
+#end
+Class @Object="bbObject"
+
+	#rem monkeydoc The dynamic type of the object.
+	#end
+	Property DynamicType:TypeInfo()="typeof"
+
+	#rem monkeydoc @deprecated: Use [[DynamicType]].
+	#end
+	Property InstanceType:TypeInfo()="typeof"
+	
+	'#rem monkeydoc Finalize method.
+	'#end
+	'Method Finalize() Virtual="gcFinalize"
+
+	#rem monkeydoc @hidden
+	#end
+	Method typeName:Void Ptr()="typeName"
+		
+End
+
+#rem monkeydoc Base class of all throwable objects.
+
+#end
+Class @Throwable="bbThrowable"
+
+End
+
+'***** Reflecftion types *****
 
 #rem monkeydoc Runtime type information.
 #End
@@ -432,7 +544,7 @@ Class @TypeInfo Extends Void="bbTypeInfo"
 	
 	#rem monkeydoc Type kind.
 	
-	Will be one of: Unknown, Primitve, Pointer, Array, Function, Class, Namespace.
+	Will be one of: Unknown, Primitve, Pointer, Array, Function, Class, Interface, Struct, Namespace.
 	
 	#end
 	Property Kind:String()="getKind"
@@ -557,7 +669,7 @@ Class DeclInfo Extends Void="bbDeclInfo"
 	
 	#rem monkeydoc Declaration kind.
 	
-	This will be one of: Field, Global, Method, Function.
+	This will be one of: Const, Field, Global, Property, Method, Function, Constructor.
 	
 	#end
 	Property Kind:String()="getKind"
@@ -618,105 +730,3 @@ Class DeclInfo Extends Void="bbDeclInfo"
 	Method Invoke:Variant( instance:Variant,params:Variant[] )="invoke"
 End
 
-#rem monkeydoc Primtive array type.
-
-This is a 'pseduo type' extended by all array types.
-
-#end
-Struct @Array<T>
-
-	#rem monkeydoc The raw memory used by the array.
-	
-	#end
-	Property Data:T Ptr()="data"
-	
-	#rem monkeydoc The length of the array.
-	
-	In the case of multi-dimensional arrays, the length of the array is the product of the sizes of all dimensions.
-	
-	#end
-	Property Length:Int()="length"
-	
-	#rem monkeydoc Extracts a subarray from the array.
-	
-	Returns an array consisting of all elements from `from` until (but not including) `tail`, or until the end of the string if `tail` is not specified.
-	
-	If either `from` or `tail` is negative, it represents an offset from the end of the array.
-	
-	@param `from` The starting index.
-	
-	@param `tail` The ending index.
-	
-	@return A subarray.
-	
-	#end
-	Method Slice:T[]( from:Int )="slice"
-	
-	Method Slice:T[]( from:Int,term:Int )="slice" 
-	
-	
-	#rem monkeydoc Resizes an array.
-	
-	Returns a copy of the array resized to length `newLength`.
-	
-	Note that this method does not modify this array in any way.
-	
-	@param newLength The length of the new array.
-	
-	@return A new array.
-	
-	#end
-	Method Resize:T[]( newLength:Int )="resize"
-	
-	#rem monkeydoc Gets the size of a single array dimension.
-	
-	Returns The size of the array in the given dimension.
-	
-	@param dimensions The dimension.
-	
-	@return The size of the array in the given dimension.
-	
-	#end
-	Method GetSize:Int( dimension:Int )="size"
-	
-	#rem monkeydoc Copies a range of elements from this array to another.
-	
-	In debug mode, a runtime error will occur if the copy is outside the range of the array.
-	
-	@param dstArray destination of the copy.
-	
-	@param srcOffset First element to copy from this array.
-	
-	@param dstOffset First element to copy to in destination array.
-	
-	@param count Number of elements to copy.
-	
-	#end
-	Method CopyTo( dstArray:T[],srcOffset:Int,dstOffset:Int,count:Int )="copyTo"
-
-End
-
-#rem monkeydoc Base class of all objects.
-#end
-Class @Object="bbObject"
-
-	#rem monkeydoc The runtime type of the object.
-	#end
-	Property InstanceType:TypeInfo()="typeof"
-	
-	'#rem monkeydoc Finalize method.
-	'#end
-	'Method Finalize() Virtual="gcFinalize"
-
-	#rem monkeydoc @hidden
-	#end
-	Method typeName:Void Ptr()="typeName"
-		
-End
-
-#rem monkeydoc Base class of all throwable objects.
-
-#end
-Class @Throwable="bbThrowable"
-
-End

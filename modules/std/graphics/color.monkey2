@@ -1,9 +1,11 @@
 
 Namespace std.graphics
 
-	#rem monkeydoc The Color type provides support for manipulating red, green blue, alpha colors.
-	#end
-	Struct Color
+using std.geom
+
+#rem monkeydoc The Color type provides support for manipulating red, green blue, alpha colors.
+#end
+Struct Color
 		
 	#rem monkeydoc Transparent black.
 	#end
@@ -100,97 +102,46 @@ Namespace std.graphics
 	#rem monkeydoc HotPink.
 	#end
 	Const HotPink:=New Color( 1,.41,.71 )
-	
-	#rem monkeydoc Silver.
-	#end
-	Const Silver:=New Color( .971519,.959915,.915324,1 )
-	
-	#rem monkeydoc Aluminum.
-	#end
-	Const Aluminum:=New Color( .913183,.921494,.924524,1 )
-	
-	#rem monkeydoc Gold.
-	#end
-	Const Gold:=New Color( 1,.765557,.336057,1 )
-	
-	#rem monkeydoc Copper.
-	#end
-	Const Copper:=New Color( .955008,.637427,.538163,1 )
-	
-	#rem monkeydoc Chromium.
-	#end
-	Const Chromium:=New Color( .549585,.556114,.554256,1 )
-	
-	#rem monkeydoc Nickel.
-	#end
-	Const Nickel:=New Color( .659777,.608679,.525649,1 )
-	
-	#rem monkeydoc Titanium.
-	#end
-	Const Titanium:=New Color( .541931,.496791,.449419,1 )
-	
-	#rem monkeydoc Cobalt.
-	#end
-	Const Cobalt:=New Color( .662124,.654864,.633732,1 )
-	
-	#rem monkeydoc Platinum.
-	#end
-	Const Platinum:=New Color( .672411,.637331,.585456,1 )
-	
-	
+
 	#rem monkeydoc SeaGreen.
 	#end
 	Const SeaGreen:=New Color( .031372,.301960,.247058,1 )
-	
-#rem
-	#rem monkeydoc Transparent black.
-	#end
-	Const None:=New Color( 0,0,0,0 )
-	
-	#rem monkeydoc Red.
-	#end
-	Const Red:=New Color( 1,0,0 )
-	
-	#rem monkeydoc Green.
-	#end
-	Const Green:=New Color( 0,1,0 )
-	
-	#rem monkeydoc Blue.
-	#end
-	Const Blue:=New Color( 0,0,1 )
-	
-	#rem monkeydoc Yellow.
-	#end
-	Const Yellow:=New Color( 1,1,0 )
-	
-	#rem monkeydoc Magenta.
-	#end
-	Const Magenta:=New Color( 1,0,1 )
-	
-	#rem monkeydoc Cyan.
-	#end
-	Const Cyan:=New Color( 0,1,1 )
 
-	#rem monkeydoc Black.
+	#rem monkeydoc Silver.
 	#end
-	Const Black:=New Color( 0,0,0 )
+	Const Silver:=New Color( 0.98695202723239916,0.98157612499486091,0.96058105436290453 )
 
-	#rem monkeydoc White.
+	#rem monkeydoc Aluminum.
 	#end
-	Const White:=New Color( 1,1,1 )
+	Const Aluminum:=New Color( 0.95955910300613745,0.9635188914336692,0.96495768667887971 )
 
-	#rem monkeydoc Grey.
+	#rem monkeydoc Gold.
 	#end
-	Const Grey:=New Color( .5,.5,.5 )
+	Const Gold:=New Color( 1,0.88565078560356991,0.6091625017721024 )
 
-	#rem monkeydoc Light Grey.
+	#rem monkeydoc Copper.
 	#end
-	Const LightGrey:=New Color( .75,.75,.75 )
+	Const Copper:=New Color( 0.9792921449434141,0.81490079942355442,0.75455014940288267 )
 
-	#rem monkeydoc Dark Grey.
+	#rem monkeydoc Chromium.
 	#end
-	Const DarkGrey:=New Color( .25,.25,.25 )
-#end
+	Const Chromium:=New Color( 0.76178782381338439,0.76588820797089974,0.76472402871006473 )
+
+	#rem monkeydoc Nickel.
+	#end
+	Const Nickel:=New Color( 0.827766413700323,0.79798492878548577,0.74652364685504802 )
+
+	#rem monkeydoc Titanium.
+	#end
+	Const Titanium:=New Color( 0.75694694835172049,0.72760746687141564,0.69520723368860826 )
+
+	#rem monkeydoc Cobalt.
+	#end
+	Const Cobalt:=New Color( 0.82910355988659823,0.82495893307721546,0.81275025476652396 )
+
+	#rem monkeydoc Platinum.
+	#end
+	Const Platinum:=New Color( 0.83493408973507777,0.81484503266020314,0.78399912482207756 )
 	
 	#rem monkeydoc Red component of color.
 	#end

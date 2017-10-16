@@ -1,6 +1,10 @@
 
 #include "async.h"
 
+#if __ANDROID__
+#include <jni.h>
+#endif
+
 namespace bbAsync{
 
 	typedef std::chrono::duration<double> Duration;
@@ -99,4 +103,5 @@ namespace bbAsync{
 		
 		que_condvar.notify_one();
 	}
+	
 }

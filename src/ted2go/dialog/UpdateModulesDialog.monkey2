@@ -112,6 +112,8 @@ Class UpdateModulesDialog Extends DialogExt
 		
 		ContentView=dock
 		
+		SetKeyAction( Key.Enter,actUpdate )
+		SetKeyAction( Key.Escape,actCancel )
 	End
 	
 	Property SelectedModules:String()
@@ -246,8 +248,4 @@ Class UpdateModulesDialog Extends DialogExt
 	End
 #end
 	
-	Function ShowMessage( title:String,msg:String,okButton:String="  OK  " )
-		
-		Dialog.Run( title,New Label( msg ),New String[](okButton),0,0 )
-	End
 End

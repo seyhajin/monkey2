@@ -53,8 +53,6 @@ Class MyWindow Extends Window
 		'
 		Local material:=SpriteMaterial.Load( "asset::Acadia-Tree-Sprite.png" )
 		
-		material.ColorTexture.Flags=TextureFlags.None
-		
 		For Local i:=0 Until 1000
 			
 			Local sprite:=New Sprite( material )
@@ -94,8 +92,17 @@ Class MyWindow Extends Window
 End
 
 Function Main()
+	
+	Local config:=New StringMap<String>
 
-	New AppInstance
+'	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
+
+'	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
+'	config["GL_depth_buffer_enabled"]=1
+
+'	config["mojo3d_renderer"]="forward"
+		
+	New AppInstance( config )
 	
 	New MyWindow
 	

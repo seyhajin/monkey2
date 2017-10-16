@@ -1,0 +1,8 @@
+{
+  "module": "tinyregex",
+  "about": "Wrapper for the tiny-regex library",
+  "author": "Mark Sibly",
+  "version": "1.0.0",
+  "support": "https://github.com/skn3/tinyaes",
+  "depends": ["libc"]
+}

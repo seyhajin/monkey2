@@ -12,9 +12,9 @@ Note: Only directional lights are currently fully supported.
 | `Spot`		| Spot light.
 #end
 Enum LightType
-	Directional=0
-	Point=1
-	Spot=2
+	Directional=1
+	Point=2
+	Spot=3
 End
 
 #rem monkeydoc The Light class.
@@ -28,8 +28,8 @@ Class Light Extends Entity
 		
 		Type=LightType.Directional
 		Color=Color.White
-		Range=100
-		ShadowsEnabled=True
+		Range=10
+		CastsShadow=False
 		
 		Show()
 	End
@@ -47,13 +47,13 @@ Class Light Extends Entity
 	
 	#rem monkeydoc Light shadows enabled flag.
 	#end
-	Property ShadowsEnabled:Bool()
+	Property CastsShadow:Bool()
 		
-		Return _shadows
+		Return _castsShadow
 		
 	Setter( shadows:Bool )
 		
-		_shadows=shadows
+		_castsShadow=shadows
 	End
 	
 	#rem monkeydoc The light type.
@@ -123,6 +123,6 @@ Class Light Extends Entity
 	
 	Field _range:Float
 	
-	Field _shadows:bool
+	Field _castsShadow:bool
 
 End

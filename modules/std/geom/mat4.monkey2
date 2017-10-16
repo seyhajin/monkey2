@@ -1,11 +1,11 @@
 
 Namespace std.geom
 
-#rem monkeydoc @hidden
+#rem monkeydoc Convenience type alias for Mat4\<Float\>.
 #end
 Alias Mat4f:Mat4<Float>
 
-#rem monkeydoc @hidden
+#rem monkeydoc The generic Mat3 class provides support for 4x4 matrices.
 #end
 Struct Mat4<T>
 
@@ -42,14 +42,6 @@ Struct Mat4<T>
 		Return New Mat4<C>( i,j,k,t )
 	End
 	
-	Operator To:Mat3<T>()
-		Return New Mat3<T>( Cast<Vec3<T>>( i ),Cast<Vec3<T>>( j ),Cast<Vec3<T>>( k ) )
-	End
-	
-	Operator To:AffineMat4<T>()
-		Return New AffineMat4<T>( Cast<Mat3<T>>( Self ),Cast<Vec3<T>>( t ) )
-	End
-		
 	Operator To:String()
 		Return "Mat4("+i+","+j+","+k+","+t+")"
 	End
@@ -196,7 +188,7 @@ Struct Mat4<T>
 		Return r
 	End
 
-	#rem monkeydoc Creates a rotation matrix for euler angles or a quaternion.
+	#rem monkeydoc Creates a rotation matrix for euler angles or a quat.
 	#end
 	Function Rotation:Mat4( rv:Vec3<Double> )
 		Return Rotation( rv.x,rv.y,rv.z )
@@ -206,8 +198,8 @@ Struct Mat4<T>
 		Return New Mat4( Mat3<T>.Rotation( rx,ry,rz ) )
 	End
 	
-	Function Rotation:Mat4( quat:Quat<T> )
-		Return New Mat4( Mat3<T>.Rotation( quat ) )
+	Function Rotation:Mat4( q:Quat<T> )
+		Return New Mat4( q )
 	End
 	
 	#rem monkeydoc Creates a scaling matrix.
