@@ -127,6 +127,8 @@ Class BuilderInstance
 			ppsyms["__DEBUG__"]="false"
 			ppsyms["__RELEASE__"]="true"
 		End
+		
+		ppsyms["__MAKEDOCS__"]=opts.makedocs ? "true" Else "false"
 
 		profileName=opts.target+"_"+opts.config
 		If opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) profileName+="_msvc"
@@ -343,14 +345,14 @@ Class BuilderInstance
 					Scope.semanting.Pop()
 
 				Else If Not semantStmts.Empty
-		
+					
 					Local func:=semantStmts.Pop()
 					
 					PNode.semanting.Push( func.fdecl )
 					Scope.semanting.Push( Null )
 					
 					Try
-						func.SemantStmts()
+						If Not opts.makedocs func.SemantStmts()
 			
 					Catch ex:SemantEx
 					End
