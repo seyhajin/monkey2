@@ -591,7 +591,13 @@ Class CastExpr Extends Expr
 		If castOp value=castOp.Invoke( Null )
 
 		'simple upcast?		
-		If value.type.DistanceToType( type )>=0 Return value.UpCast( type )
+		If value.type.DistanceToType( type )>=0
+			'special case variant->bool
+			If value.type.Equals( Type.VariantType ) And type.Equals( Type.BoolType )
+				Return New ExplicitCastValue( type,value )
+			Endif
+			Return value.UpCast( type )
+		Endif
 
 		'nope...		
 		value=value.ToRValue()
