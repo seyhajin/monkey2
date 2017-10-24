@@ -1,17 +1,25 @@
 
 ***** Monkey2 v1.1.08 *****
 
-Language additions: objects can now by cast to/from void ptr using the Cast operator.
+Language addition: parser now allows optional newlines before primary expressions.
 
-Language additions: Elvis operator '&Else' and safe member access '?.'.
+Language addition: objects can now by cast to/from void ptr using the Cast<> operator.
 
-Structs now reflected.
+Language addition: Elvis operator '?Else' added, eg: 'Local x:=y ?Else -1' will assign 'y' to 'x' if y is 'true', else will assign -1 to 'x'.
+
+Language addition: Safe reference operator added, eg: 'Local x:=c.t' will assign 't' to 'x' if 'c' is not null, else will assign null to 'x'. Can simplify 'If c Then c.Blah' type stuff.
+
+Mojo3d component system added, Animator/RigidBody/Collider now component based.
 
 Mojo3d anisotropic texture filtering enabled, see anisotropic test.
 
 Mojo3d Scene.EnvColor added.
 
-Mojo3d Light.ShadowsEnabled renamed to Light.CastsShadow.
+Mojo3d Renderable class added.
+
+std.permissions added, android only for now.
+
+Implemented custom openal on macos 'coz the OS one is stuffed.
 
 
 ***** Monkey2 v1.1.07 *****
