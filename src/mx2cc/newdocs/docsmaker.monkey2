@@ -886,7 +886,7 @@ Class DocsMaker
 			If Not val Continue
 			
 '			Local edocs:=New DocsNode( node.Key,node.Key,docs,DocsType.Decl,True )
-			Local edocs:=New DocsNode( "",node.Key,docs,DocsType.Nav,True )
+			Local edocs:=New DocsNode( node.Key,node.Key,docs,DocsType.Decl,True )
 
 		Next
 		
