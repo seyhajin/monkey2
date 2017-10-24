@@ -57,8 +57,10 @@ Class MyWindow Extends Window
 		'		
 		_turtle=Model.LoadBoned( "asset::turtle1.b3d" )
 		
-'		_turtle.Mesh.FitVertices( New Boxf( -1,1 ) )
-'		_turtle.Move( 0,10,0 )
+		Local animator:=_turtle.GetComponent<Animator>()
+		
+		animator.Paused=False
+		
 		
 	End
 		
@@ -70,13 +72,17 @@ Class MyWindow Extends Window
 		
 		util.Fly( _camera,Self )
 		
-		If Keyboard.KeyDown( Key.Space ) 
-			time+=12.0/60.0
-			_turtle.Animator.Animate( 0,time )
+		If Keyboard.KeyHit( Key.Space )
+
+			Local animator:=_turtle.GetComponent<Animator>()
+		
+			animator.Paused=Not animator.Paused
 		Endif
 		
+		_scene.Update()
+		
 		_scene.Render( canvas,_camera )
-
+		
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
