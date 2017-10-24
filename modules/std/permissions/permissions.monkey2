@@ -92,13 +92,17 @@ End
 
 Public
 
+#end
+
+#if __TARGET__="android" or __MAKEDOCS__
+
 #rem monkeydoc Check an android permission.
 
 This function is only available on android.
 
 Returns 1 if the given permission has been granted to the app, else 0.
 
-The permission string should be in android manifest form, eg: "android.permission.READ_EXTERNAL_STORAGE".
+The permission string should be in android manifest form, eg: "android.permission.READ\_EXTERNAL\_STORAGE".
 
 #end
 Function CheckPermission:Int( permission:String )
@@ -118,7 +122,7 @@ Attempts to grant the given permissions to the app.
 
 Depending on the permissions, this may cause a modal dialog to be presented to the user.
 
-The permission strings should be in android manifest form, eg: "android.permission.READ_EXTERNAL_STORAGE".
+The permission strings should be in android manifest form, eg: "android.permission.READ\_EXTERNAL\_STORAGE".
 
 If the result is an empty array, the operation was cancelled.
 
@@ -132,4 +136,4 @@ Function RequestPermissions( permissions:String[],finished:void( results:Int[] )
 	StartNextRequest()
 End
 
-#Endif
+#End
