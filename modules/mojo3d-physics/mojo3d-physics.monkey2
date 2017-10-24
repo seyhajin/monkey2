@@ -13,4 +13,5 @@ Using bullet..
 #Import "physics/collider"
 #Import "physics/rigidbody"
 #Import "physics/world"
+#Import "physics/fpscollider"
 

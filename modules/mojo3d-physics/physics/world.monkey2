@@ -1,20 +1,6 @@
 
 Namespace mojo3d.physics
 
-Class Scene Extension
-
-	Property World:World()
-	
-		Local world:=GetDynamicProperty<World>( "$world" )
-		If Not world
-			world=New World( Self )
-			SetDynamicProperty( "$world",world )
-		Endif
-		Return world
-	End
-
-End
-
 Class RaycastResult
 
 	Field time:Float
@@ -48,8 +34,12 @@ End
 Class World
 	
 	Method New( scene:Scene )
+		
+		Assert( scene.GetDynamicProperty<World>( "$world" )=Null,"World already exists" )
 	
 		_scene=scene
+		
+		_scene.SetDynamicProperty( "$world",Self )
 		
 		Local broadphase:=New btDbvtBroadphase()
 		
@@ -63,6 +53,7 @@ Class World
 
 		Gravity=New Vec3f( 0,-9.81,0 )
 		
+		_scene.Updating+=OnUpdate
 	End
 	
 	Property Scene:Scene()
@@ -77,22 +68,6 @@ Class World
 	Setter( gravity:Vec3f )
 	
 		_btworld.setGravity( gravity )
-	End
-	
-	Method Update()
-
-		For Local body:=Eachin _bodies
-		
-			body.Validate()
-		Next
-		
-		_btworld.stepSimulation( 1.0/60.0 )
-		
-		For Local body:=Eachin _bodies
-		
-			body.Update()
-		Next
-		
 	End
 	
 	Method RayCast:RaycastResult( rayFrom:Vec3f,rayTo:Vec3f )
@@ -122,24 +97,42 @@ Class World
 		Return ConvexSweep( collider,AffineMat4f.Translation( castFrom ),AffineMat4f.Translation( castTo ) )
 	End
 	
+	Function GetCurrent:World()
+		
+		Return GetWorld( mojo3d.Scene.GetCurrent() )
+	End
+	
 	Internal
+	
+	Function GetWorld:World( scene:Scene )
+		
+		Local world:=scene.GetDynamicProperty<World>( "$world" )
+		
+		If Not world world=New World( scene )
+			
+		Return world
+	End
 	
 	Method Add( body:RigidBody )
 		
 		_bodies.Add( body )
 		
-		_btworld.addRigidBody( body.btBody,body.CollisionGroup,body.CollisionMask )
+		Local btbody:=body.Validate()
 		
-		body.btBody.setUserPointer( Cast<Void Ptr>( body ) )
+		btbody.setUserPointer( Cast<Void Ptr>( body ) )
+		
+		_btworld.addRigidBody( btbody,body.CollisionGroup,body.CollisionMask )
 	End
 	
 	Method Remove( body:RigidBody )
 		
-		_bodies.Remove( body )
-
-		_btworld.removeRigidBody( body.btBody )
-
+		Local btbody:=body.Validate()
+		
+		_btworld.removeRigidBody( btbody )
+		
 		body.btBody.setUserPointer( Null )
+
+		_bodies.Remove( body )
 	End
 	
 	Private
@@ -151,5 +144,11 @@ Class World
 	Field _newBodies:=New Stack<RigidBody>
 	
 	Field _bodies:=New Stack<RigidBody>
+
+	Method OnUpdate( elapsed:Float )
+		
+		_btworld.stepSimulation( 1.0/60.0 )
+		
+	End
 	
 End

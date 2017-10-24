@@ -12,111 +12,64 @@ Namespace myapp
 
 #Import "../../mojo3d-loaders/tests/assets/castle/@/castle"
 
-#Import "util"
-
-#Import "qcollide"
-
 Using std..
 Using mojo..
 Using mojo3d..
 
-Const GRAVITY:=30	'coz reality sux!
-
-Class Player
-
-	Field _scene:Scene
+Class FPSPlayer Extends FPSCollider
 	
-	Field _model:Model
-	
-	Field _collider:ConvexCollider
-	
-	Field _paused:Bool
-	
-	Field _onground:Bool
-	
-	Field _yvel:Float
-	
-	Method New( radius:Float=.5,height:Float=1 )
-		
-		_model=Model.CreateCapsule( radius,height,Axis.Y,12,New PbrMaterial( Color.Sky ) )
-
-'		_model.Move( 0,0,0 )
-		
-		_collider=New CapsuleCollider( radius,height,Axis.Y )
-		
-		_collider.Margin=.01
+	Method New( entity:Entity )
+		Super.New( entity )
 	End
 	
-	Method Update()
+	Method OnUpdate( elapsed:Float ) Override
 		
-		Local src:=_model.Position
+		Local c:=Entity.GetComponent<GameController>()
+		DebugAssert( c )
 		
-		Move()
-		
-		If _paused Return
-		
-		Local qresult:=qcollide.QCollide( _collider,src,_model.Position )
-
-		_model.Position=qresult.position
-		
-		src=_model.Position
-		
-		If _onground _yvel=-_collider.Margin
+		If c.ButtonDown( Button.Left )
 			
-		_yvel-=GRAVITY/60.0/60.0
+			Entity.RotateY( 2.5 )
+			
+		Else If c.ButtonDown( Button.Right )
+			
+			Entity.RotateY( -2.5 )
+		Endif
 
-		_model.MoveY( _yvel )
-
-		qresult=qcollide.QCollide( _collider,src,_model.Position )
-
-		_model.Position=qresult.position
+		If c.ButtonDown( Button.Up )
+			
+			Entity.MoveY( .25 )
+			
+		Else If c.ButtonDown( Button.Down )
+			
+			Entity.MoveY( -.25 )
+			
+		Endif
 		
-		_yvel=_model.Position.y-src.y
+		If c.ButtonDown( Button.Forward )
+			
+			Entity.MoveZ( .15 )
+			
+		Else If c.ButtonDown( Button.Backward )
+			
+			Entity.MoveZ( -.15 )
+		Endif
 		
-		_onground=qresult.onground
+		If c.ButtonDown( Button.Fire )
+			
+			YVelocity=.25
+			
+		Endif
+
+		'Update actual collider.
+		'
+		'Extending FPSCollider is probably not a great idea, this lot should really be in its own
+		'component, but haven't thought much about how to access YVelocity etc yet so this'll do for now.
+		'
+		Super.OnUpdate( elapsed )
+		
 	End
 	
-	Method Move()
-		
-		If Keyboard.KeyDown( Key.Left )
-			
-			_model.RotateY( 2.5 )
-			
-		Else If Keyboard.KeyDown( Key.Right )
-			
-			_model.RotateY( -2.5 )
-		Endif
-
-		If _paused
-			
-			If Keyboard.KeyDown( Key.Up )
-				
-				_model.MoveY( .25 )
-				
-			Else If Keyboard.KeyDown( Key.Down )
-				
-				_model.MoveY( -.25 )
-				
-			Endif
-		Endif
-		
-		If Keyboard.KeyDown( Key.A )
-			
-			_model.MoveZ( .15 )
-			
-		Else If Keyboard.KeyDown( Key.Z )
-			
-			_model.MoveZ( -.15 )
-		Endif
-		
-		If Keyboard.KeyHit( Key.Space )
-			
-			_onground=False
-			
-			_yvel=.25
-		Endif
-		
-	End
 	
 End
 
@@ -130,7 +83,7 @@ Class MyWindow Extends Window
 	
 	Field _castle:Model
 	
-	Field _player:Player
+	Field _player:FPSPlayer
 	
 	Field _sphere:SphereCollider
 	
@@ -144,11 +97,16 @@ Class MyWindow Extends Window
 		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
+		'create camera
+		'
+		_camera=New Camera
+		_camera.Near=.1
+		_camera.Far=200
+		
 		'create light
 		'
 		_light=New Light
 		_light.Rotate( 60,60,0 )	'aim directional light 'down' - Pi/2=90 degrees.
-		
 		_light.CastsShadow=True
 		
 		'Load castle
@@ -157,45 +115,38 @@ Class MyWindow Extends Window
 		
 '		_castle=Model.Load( "asset::E1M1_clean.obj" )	'On the off chance you've got this...have no idea of license issues though.
 		_castle=Model.Load( "asset::castle/CASTLE1.X" )
-
 		_castle.Mesh.FitVertices( New Boxf( -sz,sz ),True )
 		
-		Local collider:=New MeshCollider( _castle.Mesh )
+		Local collider:=New MeshCollider( _castle )
+		collider.Mesh=_castle.Mesh
 		
-		Local body:=New StaticBody( collider,_castle,1,1 )
+		Local body:=New RigidBody( _castle )
+		body.Mass=0
 		
-	
-		'create player
-		'
-		_player=New Player( .75,.5 )
+		Local model:=Model.CreateCapsule( .5,.75,Axis.Y,24,New PbrMaterial( Color.Sky ) )
 		
-		'create camera
-		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=200
+		model.AddComponent<KeyboardController>()
 		
-		_sphere=New SphereCollider( .2 )
-
+		_player=model.AddComponent<FPSPlayer>()
+		_player.Margin=.01
+		_player.Radius=.5
+		_player.Length=.75
+		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 		
 		RequestRender()
 		
-		If Keyboard.KeyHit( Key.Enter ) _player._paused=Not _player._paused
+		_scene.Update()
 		
-		_player.Update()
-
-		_scene.World.Update()
+		Local src:=_player.Entity.Matrix * New Vec3f( 0,1,0 )
 		
-		Local src:=_player._model.Matrix * New Vec3f( 0,1,0 )
-		
-		Local dst:=_player._model.Matrix * New Vec3f( 0,1.5,-2.5 )
+		Local dst:=_player.Entity.Matrix * New Vec3f( 0,1.5,-2.5 )
 		
 		_camera.Position=dst
 		
-		_camera.PointAt( _player._model.Position+New Vec3f( 0,1.5,0 ) )
+		_camera.PointAt( _player.Entity.Position+New Vec3f( 0,1.5,0 ) )
 		
 		_scene.Render( canvas,_camera )
 		
