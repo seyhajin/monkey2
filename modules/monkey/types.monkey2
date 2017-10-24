@@ -511,7 +511,7 @@ Class @Object="bbObject"
 	#end
 	Property DynamicType:TypeInfo()="typeof"
 
-	#rem monkeydoc @deprecated: Use [[DynamicType]].
+	#rem monkeydoc @deprecated use [[DynamicType]].
 	#end
 	Property InstanceType:TypeInfo()="typeof"
 	

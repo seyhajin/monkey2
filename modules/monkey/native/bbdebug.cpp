@@ -30,8 +30,8 @@ namespace bbDB{
 		const char *err="Unknown signal";
 		switch( sig ){
 		case SIGSEGV:err="Memory access violation";break;
-		case SIGILL:err="Illegal instruction";
-		case SIGFPE:err="Floating point exception";
+		case SIGILL:err="Illegal instruction";break;
+		case SIGFPE:err="Floating point exception";break;
 #if !_WIN32
 		case SIGBUS:err="Bus error";
 #endif	
@@ -65,7 +65,7 @@ namespace bbDB{
 		    std::thread( [=](){
 		    	for( ;; ){
 		    		WaitForSingleObject( breakEvent,INFINITE );
-//	    			bb_printf( "Break event!\n" );fflush( stdout );
+//	    			bb_printf( "received Break event!\n" );fflush( stdout );
 					currentContext->stopped=1;
 		    	}
 		    } ).detach();
@@ -101,9 +101,10 @@ namespace bbDB{
 	}
 	
 	void stop(){
-		stopped();
-//		stepMode=0;
-//		stepnext=1;
+	
+		//currentContext->stopped=1;	//stop on *next* stmt.
+		
+		stopped();						//stop on DebugStop() stmt.
 	}
 	
 	void emit( const char *e ){
