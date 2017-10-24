@@ -1452,7 +1452,9 @@ Class Parser
 
 	'THROWS!
 	Method ParsePrimaryExpr:Expr()
-	
+		
+		CParseEol()
+		
 		Local srcpos:=SrcPos
 	
 		Select Toke

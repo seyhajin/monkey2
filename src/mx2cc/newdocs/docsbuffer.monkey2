@@ -82,7 +82,7 @@ Class DocsBuffer
 				If src
 '					Print "Importing "+path
 					
-					Local docs:=New DocsNode( "","",_docs,DocsType.Nav )
+					Local docs:=New DocsNode( "","",_docs,DocsType.Nav,True )
 					
 					Local buf:=New DocsBuffer( docs,ExtractDir( path ) )
 					
@@ -146,7 +146,7 @@ Class DocsBuffer
 				If src
 '					Print "Importing "+path
 					
-					Local docs:=New DocsNode( "","",_docs,DocsType.Nav )
+					Local docs:=New DocsNode( "","",_docs,DocsType.Nav,True )
 					
 					Local buf:=New DocsBuffer( docs,ExtractDir( path ) )
 					

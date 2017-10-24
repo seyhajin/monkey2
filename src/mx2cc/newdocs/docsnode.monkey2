@@ -11,12 +11,13 @@ End
 
 Class DocsNode
 	
-	Method New( ident:String,label:String,parent:DocsNode,type:DocsType )
+	Method New( ident:String,label:String,parent:DocsNode,type:DocsType,clean:Bool=False )
 
 		_ident=ident
 		_label=label ? label Else ident
 		_parent=parent
 		_type=type
+		_clean=clean
 
 		If _parent _parent._children.Add( Self )
 	End
@@ -35,6 +36,15 @@ Class DocsNode
 	
 '		If _type=DocsType.Nav Return _parent ? _parent.Parent Else Null
 	
+		Return _parent
+	End
+	
+	Property ParentDecl:DocsNode()
+		
+		If Not _parent Return Null
+		
+		If _parent._type<>DocsType.Decl Return _parent.ParentDecl
+		
 		Return _parent
 	End
 	
@@ -62,20 +72,6 @@ Class DocsNode
 		_markdown=markdown
 	End
 	
-	#rem
-	Property Path:String()
-		
-		If _type=DocsType.Dir Return ""
-		
-		If _type=DocsType.Nav Return _parent ? _parent.Path Else ""
-		
-		Local path:=_parent ? _parent.Path Else ""
-		
-		Return path ? path+(_hash ? "#" Else ".")+_ident Else _ident
-	End
-	#end
-	
-	'eg: module/
 	Property FilePath:String()
 		
 		Local path:=_parent ? _parent.FilePath Else ""
@@ -87,7 +83,7 @@ Class DocsNode
 			
 		Case DocsType.Decl,DocsType.Hash
 			
-			If path And Not path.EndsWith( "/" ) path+=_type=DocsType.Decl ? "-" else "#"
+			If path And Not path.EndsWith( "/" ) path+=_type=DocsType.Hash ? "#" Else "-"
 			
 			Return path+_ident.Replace( ".","-" )
 			
@@ -96,7 +92,7 @@ Class DocsNode
 			If path And Not path.EndsWith( "/" ) path+="/"
 				
 			Return path+_ident+"/"
-		
+			
 		Case DocsType.Nav
 			
 			Return path
@@ -107,7 +103,9 @@ Class DocsNode
 	End
 	
 	Property FilePathUrl:String()
-	
+		
+		If _type=DocsType.Nav Return _parent ? _parent.FilePath+_ident+".html" Else _ident+".html"
+		
 		Local url:=FilePath
 			
 		Local i:=url.Find( "#" )
@@ -161,16 +159,34 @@ Class DocsNode
 		Return ""
 	End
 	
-	Method Find:DocsNode( path:String,done:Map<DocsNode,Bool> =null )
+	Method Find:DocsNode( path:String )
+		
+		Local done:=New Map<DocsNode,Bool>
+		
+		Return Find( path,done )
+	End
+	
+	Method Find:DocsNode( path:String,done:Map<DocsNode,Bool> )
+		
+		If done[Self] Return Null
+		done[Self]=True
+		
+		Local found:DocsNode,declPath:=""
 	
  		For Local child:=Eachin _children
  		
- 			If done And done[child] Continue
- 		
  			Local docs:=child.Find( path,done )
+ 			If Not docs Continue
  			
- 			If docs Return docs
+ 			Local path:=docs.DeclPath
+ 			If Not found Or path.Length<declPath.Length
+	 			declPath=path
+	 			found=docs
+	 		Endif
+
  		Next
+ 		
+ 		If found Return found
  		
  		Select _type
  		
@@ -178,14 +194,9 @@ Class DocsNode
 		
 			Local declPath:=DeclPath
 			
-			If declPath=path Or declPath.EndsWith( "."+path ) 
-				Return Self
-			Endif
+			If declPath=path Or declPath.EndsWith( "."+path ) Return Self
 		
 		End
-		
-		If Not done done=New Map<DocsNode,Bool>
-		done[self]=True
 		
 		If _parent Return _parent.Find( path,done )
 		
@@ -211,7 +222,7 @@ Class DocsNode
 			child.Clean()
 		Next
 		
-		If Not _ident
+		If _clean
 			Remove()
 		Endif
 	End
@@ -229,6 +240,7 @@ Class DocsNode
 	Field _label:String
 	Field _parent:DocsNode
 	Field _type:DocsType
+	Field _clean:Bool
 	
 	Field _children:=New Stack<DocsNode>
 	Field _markdown:String

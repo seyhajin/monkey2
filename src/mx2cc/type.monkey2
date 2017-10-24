@@ -258,7 +258,9 @@ Class PrimType Extends Type
 	Method DistanceToType:Int( type:Type ) Override
 	
 		If type.Equals( Self ) Return 0
+		
 		If type.Equals( BoolType ) Return MAX_DISTANCE
+		
 		If type.Equals( VariantType ) Return MAX_DISTANCE
 		
 		Select type

@@ -1,38 +1,14 @@
-Class Type
-	Method M()
-		Print "HEY!"
-	End
-End
 
-Class Comp
-	
-	Const type:=New Type
-End
-
-Class Entity
-	
-	Property P<T>:Int()
-		
-		Local t:=T.type
-		
-		t.M()
-		
-		Return 0
-		
-	Setter( t:Int )
-		
-		T.type.M()
-		
-	End
-	
-End
-	
 Function Main()
 	
-	Local e:=New Entity
+	Local x:=10,y:=20,z:=30
 	
-	e.P<Comp> =10
-	
-	Print e.P<Comp>
-	
+	If x=10 And
+		y=20 And
+		z=30
+		Print "Yes!"
+	Endif
+
 End
+
+	

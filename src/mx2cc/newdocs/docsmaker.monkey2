@@ -22,6 +22,15 @@ Class DocsMaker
 
 		_convertor=New MarkdownConvertor( ResolveHtmlLink )
 		
+		'assets
+		Local asspath:=module.baseDir+"newdocs/assets"
+		If GetFileType( asspath )=FileType.Directory
+			Local dst:=docsDir+"assets"
+'			DeleteDir( dst,True )
+			CreateDir( dst,True )
+			CopyDir( asspath,dst )
+		Endif
+		
 		'manual
 		Local manpath:=module.baseDir+"newdocs/manual.md"
 		
@@ -44,6 +53,9 @@ Class DocsMaker
 		
 		Local modDocs:=New DocsNode( "module","",root,DocsType.Dir )
 		
+		Local modNav:=MakeModuleDocs( modDocs )
+		
+		#rem		
 		Local modNav:=New DocsNode( _module.name,_module.name,modDocs,DocsType.Nav )
 		
 		Local done:=New Map<NamespaceScope,Bool>
@@ -61,6 +73,7 @@ Class DocsMaker
 			
 			done[scope]=True
 		Next
+		#end
 		
 		CreateHtmlPages( root,docsDir )
 		
@@ -97,22 +110,28 @@ Class DocsMaker
 			first=False
 		Next
 
-		Local tree:=buf.Join( "" )		
+		Local tree:=buf.Join( "" )
+		
+		tree=tree.Replace( "\_","_" )
 		
 		SaveString( tree,dir+"index.js" )
 	End
 		
 	Method CreateJSNavTree( docs:DocsNode,buf:StringStack,indent:String,dir:String )
 		
-		buf.Add( indent+"{text:'"+docs.Label+"'" )
+		buf.Add( "~n"+indent+"{text:'"+docs.Label+"'" )
 		
 		Select docs.Type
 			
-		Case DocsType.Decl,DocsType.Hash
+		Case DocsType.Decl,DocsType.Hash,DocsType.Nav
 			
-			Local url:=dir+docs.FilePathUrl
-		
-			buf.Add( ",data:{page:'"+url+"'}")
+			If docs.Ident
+				
+				Local url:=dir+docs.FilePathUrl
+				
+				buf.Add( ",data:{page:'"+url+"'}")
+				
+			Endif
 			
 		End
 		
@@ -120,20 +139,20 @@ Class DocsMaker
 		
 		If children
 		
-			buf.Add( ",children:[~n" )
+			buf.Add( ",children:[" )
 
 			local first:=True			
 			For Local child:=Eachin children
-				If Not first buf.Add( ",~n" )
+				If Not first buf.Add( "," )
 				CreateJSNavTree( child,buf,indent+"  ",dir )
 				first=False
 			Next
 			
-			buf.Add( indent+"]~n" )
+			buf.Add( "]" )
 		
 		Endif
 
-		buf.Add( indent+"}" )
+		buf.Add( "}" )
 		
 	End
 	
@@ -141,21 +160,25 @@ Class DocsMaker
 		
 		Select docs.Type
 			
-		Case DocsType.Decl
+		Case DocsType.Decl,DocsType.Nav
 			
-			_converting=docs
+			If docs.Ident
 			
-			Local html:=_convertor.ConvertToHtml( docs.Markdown )
-			
-			_converting=Null
-			
-			If _pageTemplate html=_pageTemplate.Replace( "${CONTENT}",html )
-	
-			Local url:=dir+docs.FilePathUrl
-			
-'			Print "Creating decl: "+docs.DeclPath
-			
-			SaveString( html,url )
+				_converting=docs
+				
+				Local html:=_convertor.ConvertToHtml( docs.Markdown )
+				
+				_converting=Null
+				
+				If _pageTemplate html=_pageTemplate.Replace( "${CONTENT}",html )
+		
+				Local url:=dir+docs.FilePathUrl
+				
+	'			Print "Creating decl: "+docs.DeclPath
+				
+				SaveString( html,url )
+				
+			Endif
 			
 		Case DocsType.Dir
 			
@@ -174,7 +197,7 @@ Class DocsMaker
 	End
 	
 	Method ResolveHtmlLink:String( link:String,name:String )
-
+		
 		If Not name name=link
 		
 		Local i:=link.Find( "://" )				'http://, https://
@@ -189,17 +212,22 @@ Class DocsMaker
 		
 		i=link.Find( ":" )				'absolute link?
 		If i<>-1
-			Local modname:=link.Slice( 0,i )
+			Local modname:=link.Slice( 0,i ),url:=""
 			
-			Local slug:=link.Slice( i+1 ).Replace( ".","-" )
+			If i<link.Length-1
 			
-			Local url:="../../"+modname+"/module/"+slug
+				Local slug:=link.Slice( i+1 ).Replace( ".","-" )
 			
-			Local i:=url.Find( "#" )
-			If i<>-1
-				url=url.Slice( 0,i )+".html"+url.Slice( i )
+				url="../../"+modname+"/module/"+slug
+				
+				Local i:=url.Find( "#" )
+				If i<>-1
+					url=url.Slice( 0,i )+".html"+url.Slice( i )
+				Else
+					url+=".html"
+				Endif
 			Else
-				url+=".html"
+				url="../../"+modname+"/module/"+modname+"-module.html"
 			Endif
 			
 			Local anchor:="<a href='"+url+"'>"+name+"</a>"
@@ -237,9 +265,13 @@ Class DocsMaker
 		Local ptype:=Cast<PrimType>( type )
 		If ptype 
 			Local ctype:=ptype.ctype
-			If Not name name=ctype.Name
-			Local cname:=DeclIdent( ctype.cdecl )
-			return "[[monkey:monkey.types."+cname+"|"+name+"]]"
+			Local path:=ctype.Name
+			If Not name name=DeclLabel( ctype.cdecl )
+			Return "[[monkey:"+path+"|"+name+"]]"
+			
+'			If Not name name=ctype.Name
+'			Local cname:=DeclDocsIdent( ctype.cdecl )
+'			return "[[monkey:monkey.types."+cname+"|"+name+"]]"
 		Endif
 	
 		Local atype:=Cast<ArrayType>( type )
@@ -274,9 +306,13 @@ Class DocsMaker
 				
 			If ctype.instanceOf ctype=ctype.instanceOf
 			
+			'Print "Typeinfo name="+ctype.Name
+			
 			Local module:=ctype.transFile.module
 			
 			Local path:=type.Name
+'			If path="Typeinfo" path="monkey.types.TypeInfo"	'need to fix @typeinfo keyword!
+			
 			Local i:=path.Find( "<" )
 			If i<>-1 path=path.Slice( 0,i )
 				
@@ -310,12 +346,21 @@ Class DocsMaker
 				If ident="Cstring" ident="CString"
 			Endif
 		Else
-			If ident="new" ident="New"
+			If ident="new" ident="New" Else If ident="to" ident="To"
 		Endif
 
 '		Local ident:=decl.ident.Replace( "@","" )
 		
 		If Not IsIdent( ident[0] ) ident="Op"+OpSym( ident ).Slice( 1 ).Capitalize()
+			
+		Return ident
+	End
+	
+	Method DeclDocsIdent:String( decl:Decl )
+		
+		Local ident:=DeclIdent( decl )
+		
+		If decl.IsExtension ident+="EXT"
 	
 		Return ident
 	End
@@ -362,13 +407,14 @@ Class DocsMaker
 '		label=label.Replace( "<","\<" )
 '		label=label.Replace( ">","\>" )
 		
+'		If Cast<ClassDecl>( decl ) And decl.IsExtension label+=" Extension"
 		
 		Return label
 	End
 	
 	Method DeclLink:String( decl:Decl )
 	
-		Return "[["+DeclIdent( decl )+"|"+DeclLabel( decl )+"]]"
+		Return "[["+DeclDocsIdent( decl )+"|"+DeclLabel( decl )+"]]"
 	End
 	
 	Method DeclDesc:String( decl:Decl )
@@ -401,10 +447,11 @@ Class DocsMaker
 	
 	Method EmitHeader( buf:DocsBuffer,decl:Decl,parent:DocsNode )
 		
-		buf.Emit( "_"+_module.name+":"+parent.DeclLink+"."+DeclLabel( decl )+"_" )
+		buf.Emit( "_[["+_module.name+":|"+_module.name+"]]:"+parent.DeclLink+"."+DeclLabel( decl )+"_" )
+		
 	End
 	
-	Method DocsVisible:Bool( decl:Decl,access:int )
+	Method DocsVisible:Bool( decl:Decl,access:Int )
 	
 		If Not (decl.flags & access) return False
 	
@@ -444,6 +491,36 @@ Class DocsMaker
 '		Endif
 		
 		Local first:=True,docs:DocsNode
+		
+		If kind="extension"
+			
+			Local nmscope:=Cast<NamespaceScope>( scope )
+			
+			For Local ctype:=Eachin nmscope.classexts
+				
+				If ctype.transFile.module<>_module Continue
+				
+				Local decl:=ctype.cdecl
+				If Not DocsVisible( decl,DECL_PUBLIC ) Continue
+				
+				If first
+					first=False
+					buf.EmitBr()
+					buf.Emit( "| Extensions | |" )
+					buf.Emit( "|:---|:---|" )
+					docs=New DocsNode( "","Extensions",parent,DocsType.Nav )
+'					docs=New DocsNode( "Extensions","",parent,DocsType.Nav )
+				Endif
+				
+				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
+				
+				MakeClassDocs( ctype,docs )
+				
+			Next
+			
+			Return docs
+			
+		Endif
 
 		For Local node:=Eachin scope.nodes
 		
@@ -460,7 +537,8 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
+					docs=New DocsNode( "",tag+kinds,parent,DocsType.Nav )
+'					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -485,7 +563,8 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
+					docs=New DocsNode( "",tag+kinds,parent,DocsType.Nav )
+'					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 				
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -508,7 +587,8 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
+					docs=New DocsNode( "",tag+kinds,parent,DocsType.Nav )
+'					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 				
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -532,7 +612,8 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
+					docs=New DocsNode( "",tag+kinds,parent,DocsType.Nav )
+'					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -556,7 +637,8 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
+					docs=New DocsNode( "",tag+kinds,parent,DocsType.Nav )
+'					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -581,7 +663,8 @@ Class DocsMaker
 					buf.EmitBr()
 					buf.Emit( "| "+tag+kinds+" | |" )
 					buf.Emit( "|:---|:---|" )
-					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
+					docs=New DocsNode( "",tag+kinds,parent,DocsType.Nav )
+'					docs=New DocsNode( tag+kinds,"",parent,DocsType.Nav )
 				Endif
 
 				buf.Emit( "| "+DeclLink( decl )+" | "+DeclDesc( decl )+" |" )
@@ -595,6 +678,55 @@ Class DocsMaker
 		
 		Return docs
 	End
+
+	Method MakeModuleDocs:DocsNode( parent:DocsNode )
+		
+'		Local docs:=New DocsNode( _module.name,_module.name,parent,DocsType.Decl )
+		Local docs:=New DocsNode( _module.name+"-module",_module.name,parent,DocsType.Nav )
+'		Local docs:=New DocsNode( "",_module.name,parent,DocsType.Nav )'Decl )
+		
+		Local buf:=New DocsBuffer( docs,_module.baseDir+"newdocs/" )
+		
+		buf.Emit( "_"+_module.name+"_" )
+		
+		Local mpath:=_module.baseDir+"newdocs/module.md"
+		
+		If GetFileType( mpath )=FileType.File
+			
+			Local src:=LoadString( mpath )
+
+			buf.Emit( src )
+		Endif
+		
+		buf.Emit( "##### Module "+_module.name )
+		
+		Local done:=New Map<NamespaceScope,Bool>,first:=True
+		
+		For Local fscope:=Eachin _module.fileScopes
+			
+			Local scope:=Cast<NamespaceScope>( fscope.outer )
+			If Not scope Continue
+			
+			If done[scope] Continue
+			done[scope]=True
+			
+			If Not MakeNamespaceDocs( scope,docs ) Continue
+			
+			If first
+				first=False
+				buf.EmitBr()
+				buf.Emit( "| Namespaces" )
+				buf.Emit( "|:---" )
+			Endif
+
+			buf.Emit( "| [["+scope.ntype.Name+"|"+scope.ntype.Name+"]]" )
+
+		Next
+		
+		docs.Markdown=buf.Flush()
+		
+		Return docs
+	End
 	
 	Method MakeNamespaceDocs:DocsNode( scope:NamespaceScope,parent:DocsNode )
 	
@@ -605,7 +737,7 @@ Class DocsMaker
 		Local docs:=New DocsNode( scope.Name,"",parent,DocsType.Decl )
 		
 		'EmitHeader
-		buf.Emit( "_"+_module.name+":"+scope.Name+"_" )
+		buf.Emit( "_[["+_module.name+":|"+_module.name+"]]:"+scope.Name+"_" )
 		
 		buf.Emit( "##### Namespace "+scope.Name )
 
@@ -617,6 +749,7 @@ Class DocsMaker
 		MakeMemberDocs( scope,"function",DECL_PUBLIC,docs,buf )
 		MakeMemberDocs( scope,"global",DECL_PUBLIC,docs,buf )
 		MakeMemberDocs( scope,"const",DECL_PUBLIC,docs,buf )
+		MakeMemberDocs( scope,"extension",DECL_PUBLIC,docs,buf )
 		
 		If Not docs.NumChildren 
 			docs.Remove()
@@ -634,11 +767,11 @@ Class DocsMaker
 		
 		Local buf:=New DocsBuffer
 		
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
+		Local docs:=New DocsNode( DeclDocsIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 
 		EmitHeader( buf,decl,parent )
 		
-		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclIdent( decl ) )
+		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl ) )
 		
 		buf.Emit( decl.docs )
 				
@@ -654,7 +787,7 @@ Class DocsMaker
 		
 		Local buf:=New DocsBuffer
 		
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
+		Local docs:=New DocsNode( DeclDocsIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		EmitHeader( buf,decl,parent )
 		
@@ -735,13 +868,13 @@ Class DocsMaker
 	
 		Local decl:=etype.edecl
 
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
+		Local docs:=New DocsNode( DeclDocsIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		Local buf:=New DocsBuffer
 		
 		EmitHeader( buf,decl,parent )
 
-		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclIdent( decl ) )
+		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl ) )
 		
 		buf.Emit( decl.docs )
 	
@@ -752,7 +885,8 @@ Class DocsMaker
 			local val:=Cast<LiteralValue>( node.Value )
 			If Not val Continue
 			
-			Local edocs:=New DocsNode( node.Key,node.Key,docs,DocsType.Decl )
+'			Local edocs:=New DocsNode( node.Key,node.Key,docs,DocsType.Decl,True )
+			Local edocs:=New DocsNode( "",node.Key,docs,DocsType.Nav,True )
 
 		Next
 		
@@ -763,13 +897,13 @@ Class DocsMaker
 	
 		Local decl:=plist.pdecl
 
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
+		Local docs:=New DocsNode( DeclDocsIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		Local buf:=New DocsBuffer
 		
 		EmitHeader( buf,decl,parent )
 		
-		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclIdent( decl )+":"+TypeName( plist.type ) )
+		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl )+":"+TypeName( plist.type ) )
 		
 		buf.Emit( decl.docs )
 	
@@ -782,7 +916,7 @@ Class DocsMaker
 	
 		Local decl:=flist.funcs[0].fdecl
 	
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
+		Local docs:=New DocsNode( DeclDocsIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 	
 		Local buf:=New DocsBuffer
 		
@@ -836,7 +970,7 @@ Class DocsMaker
 	
 		Local decl:=vvar.vdecl
 	
-		Local docs:=New DocsNode( DeclIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
+		Local docs:=New DocsNode( DeclDocsIdent( decl ),DeclLabel( decl ),parent,DocsType.Decl )
 		
 		Local buf:=New DocsBuffer
 		

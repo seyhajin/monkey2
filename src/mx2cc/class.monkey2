@@ -743,16 +743,20 @@ Class ClassScope Extends Scope
 	End
 	
 	Property Name:String() Override
-
+		
 		Local args:=""
 		For Local arg:=Eachin ctype.types
 			args+=","+arg.Name
 		Next
 		If args args="<"+args.Slice( 1 )+">"
+			
+		Local ident:=ctype.cdecl.ident
+		If ident.StartsWith( "@" ) ident=ident.Slice( 1 ).Capitalize()
+			
+		Return outer.Name+"."+ident+args
 		
-		If ctype.cdecl.ident.StartsWith( "@" ) Return ctype.cdecl.ident.Slice( 1 ).Capitalize()+args
-		
-		Return outer.Name+"."+ctype.cdecl.ident+args
+'		If ctype.cdecl.ident.StartsWith( "@" ) Return outer.Name+"."+ctype.cdecl.ident.Slice( 1 ).Capitalize()+args
+'		Return outer.Name+"."+ctype.cdecl.ident+args
 	End
 	
 	Property TypeId:String() Override
