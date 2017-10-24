@@ -94,8 +94,6 @@ Public
 
 #end
 
-#if __TARGET__="android" or __MAKEDOCS__
-
 #rem monkeydoc Check an android permission.
 
 This function is only available on android.
@@ -107,11 +105,20 @@ The permission string should be in android manifest form, eg: "android.permissio
 #end
 Function CheckPermission:Int( permission:String )
  
+ #If __TARGET__="android"
+ 
 	Init()
 
 	Local env:=sdl2.Android_JNI_GetEnv()	
 	
 	Return env.CallIntMethod( _instance,_checkPermission,New Variant[]( permission ) )
+	
+#else
+
+	Return -1
+	
+#endif
+
 End
 
 #rem monkeydoc Request android permissions.
@@ -129,11 +136,14 @@ If the result is an empty array, the operation was cancelled.
 #end
 Function RequestPermissions( permissions:String[],finished:void( results:Int[] ) )
 
+#If __TARGET__="android"
+
 	Init()
 
 	_requests.AddLast( New Request( permissions,finished ) )
 	
 	StartNextRequest()
-End
+	
+#endif
 
-#End
+End
