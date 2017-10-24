@@ -57,8 +57,13 @@ Class MyWindow Extends Window
 		_camera.FOV=90
 		_camera.Move( 0,15,-20 )
 		
+		_camera.AddComponent<KeyboardController>()
+'		New KeyboardController( _camera )
+		
+		_camera.AddComponent<FlyComponent>()
+'		New FlyComponent( _camera )
+		
 		'create light
-		'
 		_light=New Light
 		_light.Type=LightType.Point
 		_light.Move( 0,20,0 )
@@ -121,13 +126,13 @@ Class MyWindow Extends Window
 		
 		'_ducks[0].RotateY( 1 )
 
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
 		_scene.Render( canvas,_camera )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		'canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End
