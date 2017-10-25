@@ -6,6 +6,14 @@ Highly experimental audio module!
 #end
 Namespace mojo.audio
 
+#Import "native/bbmusic.cpp"
+
+#Import "native/bbmusic.h"
+
+Extern Private
+
+Function playMusic:Bool( path:CString,callback:int,source:Int )="bbMusic::playMusic"
+	
 Private
 
 Function ALFormat:ALenum( format:AudioFormat )
@@ -32,6 +40,24 @@ Const Audio:=New AudioDevice
 #rem monkeydoc @hidden The AudioDevice class.
 #end
 Class AudioDevice
+
+	Function PlayMusic:Channel( path:String,finished:Void()=Null,paused:Bool=False )
+		
+		Local channel:=New Channel( Null )
+		
+		Local callback:=async.CreateAsyncCallback( Lambda()
+			channel.Discard()
+			finished()
+		End,True )
+		
+		If Not playMusic( path,callback,channel._alSource ) 
+			async.DestroyAsyncCallback( callback )
+			channel.Discard()
+			Return Null
+		Endif
+		
+		Return channel
+	End
 
 	Internal
 	
@@ -434,13 +460,10 @@ Class Channel Extends Resource
 		Local put:=0
 		
 		For Local chan:=Eachin _autoDiscard
-			
 			If Not chan._alSource Continue
 		
 			If chan.ALState()<>AL_STOPPED
-				
 				_autoDiscard[put]=chan;put+=1
-				
 				Continue
 			Endif
 			

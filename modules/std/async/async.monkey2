@@ -37,6 +37,11 @@ End
 #end
 Function CreateAsyncCallback:Int( func:Void(),oneshot:bool )="bbAsync::createAsyncCallback"
 
+'Should be invoked on mx2 thread. No effect if callback has been posted.
+#rem monkeydoc @hidden
+#end
+Function DestroyAsyncCallback:Int( callback:Int )="bbAsync::destroyAsyncCallback"
+
 'Can be invoked on any thread.
 #rem monkeydoc @hidden
 #end
