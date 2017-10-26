@@ -394,6 +394,11 @@ Class Parser
 				If Not (flags & DECL_EXTERN) Error( "Non-extern declaration cannot be assigned an extern symbol" )
 				decl.symbol=ParseString()
 			End
+			
+			If CParse( "where" )
+				decl.whereExpr=ParseExpr()
+			Endif
+			
 		
 			ParseEol()
 		

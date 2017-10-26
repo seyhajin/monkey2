@@ -434,7 +434,7 @@ Class Translator_CPP Extends Translator
 		
 		Case "interface"
 		
-			If Not ctype.ifaceTypes xtends="public bbInterface"
+			If Not ctype.ifaceTypes xtends="public virtual bbInterface"
 			
 		End
 		
