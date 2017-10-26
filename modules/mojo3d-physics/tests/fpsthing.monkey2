@@ -24,38 +24,35 @@ Class FPSPlayer Extends FPSCollider
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
-		Local c:=Entity.GetComponent<GameController>()
-		DebugAssert( c )
-		
-		If c.ButtonDown( Button.Left )
+		If Keyboard.KeyDown( Key.Left )
 			
 			Entity.RotateY( 2.5 )
 			
-		Else If c.ButtonDown( Button.Right )
+		Else If Keyboard.KeyDown( Key.Right )
 			
 			Entity.RotateY( -2.5 )
 		Endif
 
-		If c.ButtonDown( Button.Up )
+		If Keyboard.KeyDown( Key.Up )
 			
 			Entity.MoveY( .25 )
 			
-		Else If c.ButtonDown( Button.Down )
+		Else If Keyboard.KeyDown( Key.Down )
 			
 			Entity.MoveY( -.25 )
 			
 		Endif
 		
-		If c.ButtonDown( Button.Forward )
+		If Keyboard.KeyDown( Key.A )
 			
 			Entity.MoveZ( .15 )
 			
-		Else If c.ButtonDown( Button.Backward )
+		Else If Keyboard.KeyDown( Key.Z )
 			
 			Entity.MoveZ( -.15 )
 		Endif
 		
-		If c.ButtonDown( Button.Fire )
+		If Keyboard.KeyDown( Key.Space )
 			
 			YVelocity=.25
 			
@@ -124,8 +121,6 @@ Class MyWindow Extends Window
 		body.Mass=0
 		
 		Local model:=Model.CreateCapsule( .5,.75,Axis.Y,24,New PbrMaterial( Color.Sky ) )
-		
-		model.AddComponent<KeyboardController>()
 		
 		_player=model.AddComponent<FPSPlayer>()
 		_player.Margin=.01
