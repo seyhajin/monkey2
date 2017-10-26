@@ -57,11 +57,7 @@ Class MyWindow Extends Window
 		_camera.FOV=90
 		_camera.Move( 0,15,-20 )
 		
-		_camera.AddComponent<KeyboardController>()
-'		New KeyboardController( _camera )
-		
-		_camera.AddComponent<FlyComponent>()
-'		New FlyComponent( _camera )
+		_camera.AddComponent<FlyBehaviour>()
 		
 		'create light
 		_light=New Light

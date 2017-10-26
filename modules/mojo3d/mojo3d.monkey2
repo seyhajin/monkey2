@@ -9,9 +9,7 @@ Namespace mojo3d
 #Import "components/animation"
 #Import "components/animator"
 #Import "components/behaviour"
-#Import "components/flycomponent"
-#Import "components/gamecontroller"
-#Import "components/keyboardcontroller"
+#Import "components/flybehaviour"
 
 #Import "entities/camera"
 #Import "entities/light"
