@@ -1,6 +1,8 @@
 
 ***** Monkey2 v1.1.08 *****
 
+Language addition: Added where expressions to classes. Note that since classes can't be overloaded, class where expressions can ponly possibly generate errors, they can't be used to 'select' a particular overload.
+
 Language addition: parser now allows optional newlines before primary expressions.
 
 Language addition: objects can now by cast to/from void ptr using the Cast<> operator.
