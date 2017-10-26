@@ -189,7 +189,7 @@ Function AssetsDir:String()
 #Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
 	Return AppDir()+"assets/"
 #Else
-	Return ""
+	Return "asset::"
 #Endif
 End
 
@@ -206,7 +206,7 @@ Function DesktopDir:String()
 #Else If __DESKTOP_TARGET__
  	Return GetEnv( "HOME" )+"/Desktop/"
  #Else
- 	Return ""
+ 	Return "desktop::"
 #Endif
 End
 
@@ -223,7 +223,7 @@ Function HomeDir:String()
 #Else if __DESKTOP_TARGET__
 	Return GetEnv( "HOME" )+"/"
 #Else
-	Return ""
+	Return "home::"
 #Endif
 End
 
