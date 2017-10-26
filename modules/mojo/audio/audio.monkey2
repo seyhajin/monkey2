@@ -50,6 +50,8 @@ Class AudioDevice
 			finished()
 		End,True )
 		
+		path=filesystem.RealPath( path )
+		
 		If Not playMusic( path,callback,channel._alSource ) 
 			async.DestroyAsyncCallback( callback )
 			channel.Discard()
