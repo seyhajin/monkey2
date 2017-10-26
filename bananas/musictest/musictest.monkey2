@@ -28,12 +28,12 @@ Class MyWindow Extends Window
 	
 	Method StartMusic()
 		
-		_channel=Audio.PlayMusic( AssetsDir()+"ACDC_-_Back_In_Black-sample.ogg",StartMusic )
+		_channel=Audio.PlayMusic( "asset::ACDC_-_Back_In_Black-sample.ogg",StartMusic )
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 		
-		If Keyboard.KeyHit( Key.Space ) _channel.Paused=Not _channel.Paused
+		If Keyboard.KeyHit( Key.Space ) or Mouse.ButtonHit( MouseButton.Left ) _channel.Paused=Not _channel.Paused
 		
 		RequestRender()
 	
