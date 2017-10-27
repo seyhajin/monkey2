@@ -188,6 +188,8 @@ Function AssetsDir:String()
 	'Return ExtractDir( AppDir() )+"/Resources/"	'enable me!
 #Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
 	Return AppDir()+"assets/"
+#Else If __TARGET__="ios"
+	Return GetSpecialDir( "assets" )
 #Else
 	Return "asset::"
 #Endif

@@ -7,9 +7,17 @@ bbString bbFileSystem::getSpecialDir( bbString name ){
 
 	NSString *dir=0;
 
-	if( name=="internal" ){
+	if( name=="assets" ){
+		
+		dir=[[NSBundle mainBundle] resourcePath];
+		
+		dir=[dir stringByAppendingString:@"/assets"];
+		
+	}else if( name=="internal" ){
 	
-		dir=[@"~/Documents" stringByExpandingTildeInPath];
+		dir=NSHomeDirectory();
+	
+//		dir=[@"~/Documents" stringByExpandingTildeInPath];
 		
 	}else if( name=="external" ){	//?
 	
