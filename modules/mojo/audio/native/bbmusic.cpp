@@ -1,15 +1,20 @@
 
 #include "bbmusic.h"
 
+#if __APPLE__
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
+
 #include "../../../std/async/native/async.h"
 #include "../../../std/async/native/async_cb.h"
 #include "../../../stb-vorbis/native/stb-vorbis.h"
-#include "../../../openal/native/bbopenal.h"
 
 #if __ANDROID__
-
 #include "../../../sdl2/SDL/src/core/android/SDL_android.h"
-
 #endif
 
 namespace bbMusic{
