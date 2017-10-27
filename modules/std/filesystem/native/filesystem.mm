@@ -14,14 +14,17 @@ bbString bbFileSystem::getSpecialDir( bbString name ){
 		dir=[dir stringByAppendingString:@"/assets"];
 		
 	}else if( name=="internal" ){
-	
-		dir=NSHomeDirectory();
-	
+
+//		old school...	
 //		dir=[@"~/Documents" stringByExpandingTildeInPath];
 		
-	}else if( name=="external" ){	//?
+		dir=[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject].path;
+	
+	}else if( name=="external" ){	//no sdcard on ios?!?
 	
 	}
 
-	return bbString( dir )+"/";
+	if( dir ) return bbString( dir )+"/";
+	
+	return "";
 }
