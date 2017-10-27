@@ -179,7 +179,7 @@ Class FuncValue Extends Value
 		
 			selfType=cscope.ctype
 
-			If selfType.cdecl.IsExtension selfType=selfType.superType
+			If selfType.cdecl.IsExtension And selfType.superType selfType=selfType.superType
 			
 			selfValue=New SelfValue( selfType,Self )
 			

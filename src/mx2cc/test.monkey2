@@ -1,43 +1,26 @@
-Interface I
+
+Class C Final
 	
-	Method A:Int()
+	Protected
+	
+	Field x:Int
 	
 End
 
-Interface I2
+Class C Extension
 	
-	Method B:Int()
-	
-End
-
-Interface J Extends I,I2
-	
-End
-
-Class C Implements J
-	
-	Method A:Int()
-		Return 1
-	End
-	
-	Method B:Int()
-		Return 1
+	Method Test:Int()
+		
+		Return x
 	End
 	
 End
-
-Class D
-End
-
-Class Test<T> Where T Implements INumeric
-
-End
-
+	
 Function Main()
 	
-	Local test:Test<Int>
+	Local c:=New C
 	
-	Local j:J=New C
-	
-	print j.A()
+	Print c.Test()
+
 End
+	

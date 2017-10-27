@@ -179,10 +179,22 @@ Class ClassType Extends Type
 					If Not superType Throw New SemantEx( "Type '"+type.ToString()+"' is not a valid super class type" )
 					
 					If superType.cdecl.kind<>cdecl.kind Throw New SemantEx( "'"+cdecl.kind.Capitalize()+"' cannot extend '"+superType.cdecl.kind.Capitalize()+"'" )
-					
+						
 					If superType.state=SNODE_SEMANTING Throw New SemantEx( "Cyclic inheritance error for '"+ToString()+"'",cdecl )
-					
-					If superType.cdecl.IsFinal Throw New SemantEx( "Superclass '"+superType.ToString()+"' is final" )
+						
+					If cdecl.IsExtension
+						
+						If superType.cdecl.ident.StartsWith( "@" )	'fix me - this is yuck!
+							Throw New SemantEx( "Built-in types cannot be extended" )
+						Endif
+						
+					Else
+						
+						If superType.cdecl.IsFinal
+							Throw New SemantEx( "Superclass '"+superType.ToString()+"' is final and cannot be extended" )
+						End
+							
+					End
 					
 					extendsVoid=superType.extendsVoid
 					
