@@ -267,7 +267,7 @@ Class PrimType Extends Type
 		Case StringType
 
 			'numeric->string
-			If IsNumeric Return MAX_DISTANCE
+			If IsNumeric Or Self=BoolType Return MAX_DISTANCE
 
 		Case CStringClass
 		
