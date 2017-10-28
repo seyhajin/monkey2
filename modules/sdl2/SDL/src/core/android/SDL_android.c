@@ -792,6 +792,32 @@ static SDL_bool Android_JNI_ExceptionOccurred(SDL_bool silent)
     return SDL_FALSE;
 }
 
+AAssetManager *Android_JNI_GetAssetManager(){
+
+	static AAssetManager *assetManager;
+	
+	if( assetManager ) return assetManager;
+
+    JNIEnv *mEnv = Android_JNI_GetEnv();
+    
+    /* context = SDLActivity.getContext(); */
+    jmethodID mid = (*mEnv)->GetStaticMethodID(mEnv, mActivityClass,
+            "getContext","()Landroid/content/Context;");
+    jobject context = (*mEnv)->CallStaticObjectMethod(mEnv, mActivityClass, mid);
+
+
+    /* assetManager = context.getAssets(); */
+    mid = (*mEnv)->GetMethodID(mEnv, (*mEnv)->GetObjectClass(mEnv, context),
+            "getAssets", "()Landroid/content/res/AssetManager;");
+    jobject jassetManager = (*mEnv)->CallObjectMethod(mEnv, context, mid);
+    
+    jassetManager=(*mEnv)->NewGlobalRef(mEnv, jassetManager);
+    
+    assetManager=AAssetManager_fromJava( mEnv,jassetManager );
+    
+    return assetManager;
+}
+
 static int Internal_Android_JNI_FileOpen(SDL_RWops* ctx)
 {
     struct LocalReferenceHolder refs = LocalReferenceHolder_Setup(__FUNCTION__);

@@ -188,8 +188,10 @@ Function AssetsDir:String()
 	'Return ExtractDir( AppDir() )+"/Resources/"	'enable me!
 #Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
 	Return AppDir()+"assets/"
+#Else If __TARGET__="ios"
+	Return GetSpecialDir( "assets" )
 #Else
-	Return ""
+	Return "asset::"
 #Endif
 End
 
@@ -206,7 +208,7 @@ Function DesktopDir:String()
 #Else If __DESKTOP_TARGET__
  	Return GetEnv( "HOME" )+"/Desktop/"
  #Else
- 	Return ""
+ 	Return "desktop::"
 #Endif
 End
 
@@ -223,7 +225,7 @@ Function HomeDir:String()
 #Else if __DESKTOP_TARGET__
 	Return GetEnv( "HOME" )+"/"
 #Else
-	Return ""
+	Return "home::"
 #Endif
 End
 

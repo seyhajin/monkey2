@@ -29,6 +29,7 @@ extern "C" {
 
 #include <EGL/eglplatform.h>
 #include <android/native_window_jni.h>
+#include <android/asset_manager.h>
 
 #include "SDL_rect.h"
 
@@ -75,9 +76,14 @@ int Android_JNI_GetTouchDeviceIds(int **ids);
 
 /* Threads */
 #include <jni.h>
+
 JNIEnv *Android_JNI_GetEnv(void);
+
 int Android_JNI_SetupThread(void);
+
 jclass Android_JNI_GetActivityClass(void);
+
+AAssetManager* Android_JNI_GetAssetManager(void);
 
 /* Generic messages */
 int Android_JNI_SendMessage(int command, int param);

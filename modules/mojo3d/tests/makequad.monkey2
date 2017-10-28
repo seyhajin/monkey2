@@ -28,7 +28,7 @@ Class MyWindow Extends Window
 		_camera=New Camera
 		_camera.Near=.1
 		_camera.Far=100
-		_camera.Move( 0,0,-5 )
+		_camera.Move( 0,0,-2.5 )
 		
 		'create light
 		'

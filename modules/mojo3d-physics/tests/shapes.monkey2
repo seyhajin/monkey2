@@ -41,7 +41,11 @@ Class MyWindow Extends Window
 		_camera.Far=60
 		_camera.Move( 0,10,-10 )
 		
-		New KinematicBody( New SphereCollider( 1 ),_camera )
+		Local camBody:=New RigidBody( _camera )
+		camBody.Kinematic=True
+		camBody.Mass=1
+		
+		Local camCollider:=New SphereCollider( _camera )
 		
 		'create fog
 		'		
@@ -61,29 +65,44 @@ Class MyWindow Extends Window
 		
 		_ground=Model.CreateBox( groundBox,16,16,16,New PbrMaterial( Color.Green ) )
 		
-		Local collider:Collider=New BoxCollider( groundBox )
+		Local collider:=New BoxCollider( _ground )
+		collider.Box=groundBox
 		
-		Local body:=New StaticBody( collider,_ground )
-
+		Local body:=New RigidBody( _ground )
+		body.Mass=0
+		
 		'create some meshes/colliders
 		
-		Local meshes:=New Mesh[5]
-		Local colliders:=New Collider[5]
+		Local material:=New PbrMaterial( Color.White )
 		
-		meshes[0]=Mesh.CreateBox( New Boxf( -1,-5,-1,1,5,1 ),1,1,1 )
-		colliders[0]=New BoxCollider(  New Boxf( -1,-5,-1,1,5,1 ) )
+		Local model0:=Model.CreateBox( New Boxf( -1,-5,-1,1,5,1 ),1,1,1,material )
+		model0.AddComponent<RigidBody>()
+		Local collider0:=model0.AddComponent<BoxCollider>()
+		collider0.Box=New Boxf( -1,-5,-1,1,5,1 )
+
+		Local model1:=Model.CreateSphere( 1,32,16,material )
+		model1.AddComponent<RigidBody>()
+		Local collider1:=model1.AddComponent<SphereCollider>()
+
+		Local model2:=Model.CreateCylinder( 1,8,Axis.Y,32,material )
+		model2.AddComponent<RigidBody>()
+		Local collider2:=model2.AddComponent<CylinderCollider>()
+		collider2.Radius=1
+		collider2.Length=8
+
+		Local model3:=Model.CreateCapsule( 1,10,Axis.Y,32,material )
+		model3.AddComponent<RigidBody>()
+		Local collider3:=model3.AddComponent<CapsuleCollider>()
+		collider3.Radius=1
+		collider3.Length=10
+
+		Local model4:=Model.CreateCone( 2.5,5,Axis.Y,32,material )
+		model4.AddComponent<RigidBody>()
+		Local collider4:=model4.AddComponent<ConeCollider>()
+		collider4.Radius=2.5
+		collider4.Length=5
 		
-		meshes[1]=Mesh.CreateSphere( 1,32,16 )
-		colliders[1]=New SphereCollider( 1 )
-
-		meshes[2]=Mesh.CreateCylinder( 1,8,Axis.Y,32 )
-		colliders[2]=New CylinderCollider( 1,8,Axis.Y )
-
-		meshes[3]=Mesh.CreateCapsule( 1,10,Axis.Y,32 )
-		colliders[3]=New CapsuleCollider( 1,10,Axis.Y )
-
-		meshes[4]=Mesh.CreateCone( 2.5,5,Axis.Y,32 )
-		colliders[4]=New ConeCollider( 2.5,5,Axis.Y )
+		Local models:=New Model[]( model0,model1,model2,model3,model4 )
 		
 		For Local x:=-40 To 40 Step 8
 			
@@ -91,18 +110,18 @@ Class MyWindow Extends Window
 				
 				Local i:=Int( Rnd(5) )
 				
-				Local mesh:=meshes[i]
-				Local material:=New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) )
+				Local model:=models[i].Copy()
 				
-				Local model:=New Model( mesh,material )
+				model.Materials=New Material[]( New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
+				
 				model.Move( x,10,z )
-				
-				Local body:=New DynamicBody( colliders[i],model )
-				
 			Next
 		
 		Next
 		
+		For Local model:=Eachin models
+			model.Destroy()
+		Next
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
@@ -111,7 +130,7 @@ Class MyWindow Extends Window
 		
 		util.Fly( _camera,Self )
 			
-		_scene.World.Update()
+		_scene.Update()
 		
 		_scene.Render( canvas,_camera )
 		

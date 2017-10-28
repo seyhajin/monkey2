@@ -1,7 +1,7 @@
 
-Namespace mojo3d.loaders
+Namespace mojo3d.assimp
 
-Struct aiVector3D extension
+Struct aiVector3D Extension
 	
 	Operator To:Vec3f()
 		Return New Vec3f( x,y,z )
@@ -98,7 +98,7 @@ Class AssimpLoader
 		
 		Local model:=LoadNode( _scene.mRootNode,Null,True )
 		
-		model.Animator=LoadAnimator()
+		LoadAnimator( model )
 		
 		Return model
 	End
@@ -329,7 +329,7 @@ Class AssimpLoader
 		Return New Animation( channels,aianim.mDuration,aianim.mTicksPerSecond )
 	End
 	
-	Method LoadAnimator:Animator()
+	Method LoadAnimator:Animator( entity:Entity )
 		
 		If Not _scene.mNumAnimations Return Null
 		
@@ -340,7 +340,13 @@ Class AssimpLoader
 			animations[i]=LoadAnimation( _scene.mAnimations[i] )
 		Next
 		
-		Return New Animator( animations,_entities.ToArray() )
+		Local animator:=entity.AddComponent<Animator>()
+		
+		animator.Animations=animations
+		
+		animator.Entities=_entities.ToArray()
+		
+		Return animator
 	End
 
 End

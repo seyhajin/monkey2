@@ -434,7 +434,7 @@ Class Translator_CPP Extends Translator
 		
 		Case "interface"
 		
-			If Not ctype.ifaceTypes xtends="public bbInterface"
+			If Not ctype.ifaceTypes xtends="public virtual bbInterface"
 			
 		End
 		
@@ -2083,7 +2083,6 @@ Class Translator_CPP Extends Translator
 		Local memberVarValue:=Cast<MemberVarValue>( value )
 		If memberVarValue Return TransRef( memberVarValue )
 		
-		DebugStop()
 		Throw New TransEx( "Translator_CPP.TransRef() Unrecognized ref value type:"+value.ToString() )
 	End
 	

@@ -5,9 +5,7 @@ Namespace mx2cc
 
 #Import "mx2"
 
-#If __CONFIG__="debug"
-
-'Use newdocs in debug!
+'Use newdocs
 #Import "newdocs/docsnode"
 #Import "newdocs/docsbuffer"
 #Import "newdocs/docsmaker"
@@ -15,18 +13,14 @@ Namespace mx2cc
 
 Using mx2.newdocs
 
-#Else
-
-'Use olddocs in release!
-#Import "docs/docsmaker"
-#Import "docs/jsonbuffer"
-#Import "docs/minimarkdown"
-#Import "docs/markdownbuffer"
-#Import "docs/manpage"
-
-Using mx2.docs
-
-#endif
+'Use olddocs
+'#Import "docs/docsmaker"
+'#Import "docs/jsonbuffer"
+'#Import "docs/minimarkdown"
+'#Import "docs/markdownbuffer"
+'#Import "docs/manpage"
+'
+'Using mx2.docs
 
 #Import "geninfo/geninfo"
 
@@ -38,8 +32,12 @@ Const MX2CC_VERSION_EXT:=""
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makedocs monkey std mojo"
- 
+'Const TestArgs:="mx2cc makemods"
+
+'Const TestArgs:="mx2cc makedocs mojo"
+'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
+'Const TestArgs:="mx2cc makedocs"
+
 Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
@@ -269,8 +267,8 @@ Function MakeMods:Bool( args:String[] )
 	Return errs=0
 End
 
-#If __CONFIG__="release"
-
+'olddocs...
+#rem
 Function MakeDocs:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
@@ -339,9 +337,10 @@ Function MakeDocs:Bool( args:String[] )
 	
 	Return True
 End
+#end
 
-#Else
 
+'newdocs...
 Function MakeDocs:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
@@ -399,9 +398,11 @@ Function MakeDocs:Bool( args:String[] )
 	For Local modid:=Eachin EnumModules()
 
 		Local index:=LoadString( "docs/modules/"+modid+"/manual/index.js" )
+		If index and Not index.Trim() Print "module OOPS modid="+modid
 		If index buf.Push( index )
 		
 		index=LoadString( "docs/modules/"+modid+"/module/index.js" )
+		If index and Not index.Trim() Print "manual OOPS modid="+modid
 		If index modsbuf.Push( index )
 	Next
 	
@@ -415,8 +416,6 @@ Function MakeDocs:Bool( args:String[] )
 	
 	Return True
 End
-
-#Endif
 
 Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 

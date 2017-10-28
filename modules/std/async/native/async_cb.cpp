@@ -17,8 +17,8 @@ namespace bbAsync{
 	
 		AsyncCallback *succ;
 		bbFunction<void()> func;
-		bool oneshot;
 		std::atomic<int> posted;
+		bool oneshot;
 		int id;
 		
 		void dispatch(){
@@ -29,7 +29,7 @@ namespace bbAsync{
 			
 			if( !oneshot ) return;
 
-			std::unique_lock<std::mutex> lock( cb_mutex );
+			std::lock_guard<std::mutex> lock( cb_mutex );
 			
 			succ=cb_free;
 			cb_free=this;
@@ -49,13 +49,32 @@ namespace bbAsync{
 			cb=new AsyncCallback;
 		}
 		cb->func=func;
-		cb->oneshot=oneshot;
 		cb->posted=0;
+		cb->oneshot=oneshot;
 		cb->id=++cb_nextid;
 		cb->succ=cb_first;
 		cb_first=cb;
 		
 		return cb->id;
+	}
+	
+	void destroyAsyncCallback( int callback ){
+	
+		std::lock_guard<std::mutex> lock( cb_mutex );
+	
+		AsyncCallback **prev=&cb_first;
+		
+		while( AsyncCallback *cb=*prev ){
+			if( cb->id!=callback ){
+				prev=&cb->succ;
+				continue;
+			}
+			if( cb->posted ) return;	//OOPS, can't destroy posted callback.
+			*prev=cb->succ;
+			cb->succ=cb_free;
+			cb_free=cb;
+			return;
+		}
 	}
 
 	void invokeAsyncCallback( int callback ){

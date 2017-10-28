@@ -39,7 +39,7 @@ Class MyWindow Extends Window
 		'
 		_light=New Light
 
-		_light.RotateX( 90 )
+		_light.Rotate( 30,60,0 )
 		
 		'Create donut - metallic silver...
 		'

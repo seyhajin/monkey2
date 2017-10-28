@@ -179,7 +179,7 @@ Class FuncValue Extends Value
 		
 			selfType=cscope.ctype
 
-			If selfType.cdecl.IsExtension selfType=selfType.superType
+			If selfType.cdecl.IsExtension And selfType.superType selfType=selfType.superType
 			
 			selfValue=New SelfValue( selfType,Self )
 			
@@ -629,7 +629,14 @@ Class FuncListType Extends Type
 	End
 	
 	Method ToString:String() Override
+		
+		If funcs.Length>1 Return flist.ident
 
+		Local str:=""
+		If types str="<"+Join( types )+">"
+		Return flist.ident+str+":"+funcs[0].ftype.ToString()
+
+#rem		
 		Local str:=""
 		If types str="<"+Join( types )+">"
 		
@@ -643,6 +650,7 @@ Class FuncListType Extends Type
 		Return flist.ident+str+"["+Join( ftypes )+"]" 
 	
 '		Return flist.ident+str+"(...)"
+#end
 	End
 	
 	Property Name:String() Override

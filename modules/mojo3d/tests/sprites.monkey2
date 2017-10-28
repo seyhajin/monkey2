@@ -68,7 +68,7 @@ Class MyWindow Extends Window
 			_sprites.Push( sprite )
 		Next
 		
-		For Local i:=0 Until 10
+		For Local i:=0 Until 100
 			
 			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 			

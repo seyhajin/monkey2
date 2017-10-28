@@ -10,7 +10,7 @@ public class Monkey2FileSystem{
     
 		//Log.v( TAG,"getSpecialDir, name="+name );
 		
-		java.io.File f;
+		java.io.File f=null;
 		
 		if( name.equals( "internal" ) ){
 	    	f=Monkey2Activity.instance().getFilesDir();

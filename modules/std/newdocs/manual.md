@@ -14,6 +14,11 @@ The standard module includes the following namespaces:
 | [[std.stringio]]		| Functions to help with loading, saving and parsing strings.
 | [[std.stream]]		| The abstract Stream class and useful subclasses including FileStream.
 | [[std.memory]]		| The DataBuffer class to make dealing with memory buffers easier.
-| [[std.graphics]]		| Classes and functions for dealing with raw graphics data such Pixmap and Color.
-| [[std.audio]]			| Classes and functions for dealing with raw audio data such AudioData and Color.
+| [[std.graphics]]		| Classes and functions for dealing with raw graphics data and colors.
+| [[std.audio]]			| Classes and functions for dealing with raw audio data.
 | [[std.random]]		| Functions for generating random numbers.
+| [[std.geom]]			| Generic geometry classes for dealing with vector, matrices, pleanes, lines and quaternions.
+| [[std.process]]		| The process class for using OS processes.
+| [[std.socket]]		| The Socket and SocketStream classes for UDP networking.
+| [[std.json]]			| Classes for loading and saving JSON data.
+

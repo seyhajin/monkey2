@@ -17,6 +17,7 @@
 *.products/
 
 /docs/docs.html
+/docs/newdocs.html
 /docs/modules.html
 /docs/manuals.html
 /docs/modules/

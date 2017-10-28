@@ -10,138 +10,483 @@ Function CreateInternalEdgeInfo( mesh:btBvhTriangleMeshShape )="bbBullet::create
 	
 Public
 
-Class Collider
+
+Class Collider Extends Component
+	
+	Const Type:=New ComponentType( "Collider",-1,ComponentTypeFlags.Singleton )
+	
+	Method New( entity:Entity )
+		Super.New( entity,Type )
+	End
 	
 	Property Margin:Float()
 		
-		Return _btshape.getMargin()
+		Return btShape.getMargin()
 	
 	Setter( margin:Float )
 		
-		_btshape.setMargin( margin )
+		btShape.setMargin( margin )
 	End
 
 	Method CalculateLocalInertia:Vec3f( mass:Float )
 		
-		Return _btshape.calculateLocalInertia( mass )
+		Return btShape.calculateLocalInertia( mass )
 	End
 
 	Property btShape:btCollisionShape()
+		
+		If Not _btshape _btshape=OnCreate()
 	
 		Return _btshape
 	End
 
 Protected
 
-	Field _btshape:btCollisionShape
+	Method OnCreate:btCollisionShape() Abstract
 	
-	Method SetOrigin( origin:Vec3f )
+	Method Invalidate()
 		
-		If origin=Null Return
+		If Not _btshape Return
 		
-		Local shape:=New btCompoundShape( False,1 )
+		_btshape.destroy()
 		
-		shape.addChildShape( AffineMat4f.Translation( origin ),_btshape )
-		
-		_btshape=shape
+		_btshape=Null
 	End
+
+	function SetOrigin:btCollisionShape( shape:btCollisionShape,origin:Vec3f )
+		
+		If origin=Null Return shape
+		
+		Local tshape:=New btCompoundShape( False,1 )
+		
+		tshape.addChildShape( AffineMat4f.Translation( origin ),shape )
+		
+		Return tshape
+	End
+	
+	Private
+
+	Field _btshape:btCollisionShape
 	
 End
 
 Class ConvexCollider Extends Collider
 	
+	Method New( Entity:Entity )
+		Super.New( Entity )
+	End
+	
 End
 
 Class BoxCollider Extends ConvexCollider
 	
-	Method New( box:Boxf )
-	
-		_btshape=New btBoxShape( box.Size/2 )
+	Method New( Entity:Entity )
+		Super.New( Entity )
 		
-		SetOrigin( box.Center )
+		Box=New Boxf( -1,1 )
 	End
 	
+	Property Box:Boxf()
+		
+		Return _box
+	
+	Setter( box:Boxf )
+		
+		_box=box
+		
+		Invalidate()
+	End
+	
+	Protected
+	
+	Method OnCopy:BoxCollider( entity:Entity ) Override
+		
+		Local collider:=New BoxCollider( entity )
+		
+		collider.Box=Box
+		
+		Return collider
+	End
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		Local shape:=New btBoxShape( _box.Size/2 )
+		
+		Return SetOrigin( shape,_box.Center )
+	End
+	
+	Private
+	
+	Field _box:=New Boxf( -1,1 )
 End
 
 Class SphereCollider Extends ConvexCollider
 	
-	Method New( radius:Float,origin:Vec3f=Null )
-		
-		_btshape=New btSphereShape( radius )
-		
-		SetOrigin( origin )
+	Method New( Entity:Entity )
+		Super.New( Entity )
 	End
+	
+	Property Radius:Float()
+		
+		Return _radius
+	
+	Setter( radius:Float )
+		
+		_radius=radius
+		
+		Invalidate()
+	End
+	
+	Property Origin:Vec3f()
+		
+		Return _origin
+		
+	Setter( origin:Vec3f )
+		
+		_origin=origin
+		
+		Invalidate()
+	End
+	
+	Protected
+	
+	Method OnCopy:SphereCollider( entity:Entity ) Override
+		
+		Local collider:=New SphereCollider( entity )
+		
+		collider.Radius=Radius
+		collider.Origin=Origin
+		
+		Return collider
+	End
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		Local shape:=New btSphereShape( _radius )
+		
+		return SetOrigin( shape,_origin )
+	End
+	
+	Private
+	
+	Field _radius:Float=1
+	
+	Field _origin:Vec3f
 	
 End
 
 Class CylinderCollider Extends ConvexCollider
 	
-	Method New( radius:Float,length:Float,axis:Axis,origin:Vec3f=Null )
+	Method New( entity:Entity )
+		Super.New( entity )
+	End
+	
+	Property Radius:Float()
 		
-		Select axis
+		Return _radius
+		
+	Setter( radius:Float )
+		
+		_radius=radius
+		
+		Invalidate()
+	End
+	
+	Property Length:Float()
+		
+		Return _length
+		
+	Setter( length:Float )
+		
+		_length=length
+		
+		Invalidate()
+	End
+	
+	Property Axis:Axis()
+		
+		Return _axis
+		
+	Setter( axis:Axis )
+		
+		_axis=axis
+		
+		Invalidate()
+	End
+	
+	Property Origin:Vec3f()
+		
+		Return _origin
+	
+	Setter( origin:Vec3f )
+		
+		_origin=origin
+		
+		Invalidate()
+	End
+
+	Protected
+
+	Method OnCopy:CylinderCollider( entity:Entity ) Override
+		
+		Local collider:=New CylinderCollider( entity )
+		
+		collider.Radius=Radius
+		collider.Length=Length
+		collider.Axis=Axis
+		collider.Origin=Origin
+		
+		Return collider
+	End
+	
+	Method OnCreate:btCollisionShape() Override
+
+		Local shape:btCollisionShape
+		
+		Select _axis
 		case Axis.X
-			_btshape=New btCylinderShapeX( New btVector3( length/2,radius,radius ) )
+			shape=New btCylinderShapeX( New btVector3( _length/2,_radius,_radius ) )
 		Case Axis.Y
-			_btshape=New btCylinderShape ( New btVector3( radius,length/2,radius ) )
+			shape=New btCylinderShape ( New btVector3( _radius,_length/2,_radius ) )
 		case Axis.Z
-			_btshape=New btCylinderShapeZ( New btVector3( radius,radius,length/2 ) )
+			shape=New btCylinderShapeZ( New btVector3( _radius,_radius,_length/2 ) )
 		Default
 			RuntimeError( "Invalid Cylinder Axis" )
 		End
 		
-		SetOrigin( origin )
+		Return SetOrigin( shape,_origin )
 	End
+	
+	Private
+	
+	Field _radius:Float=0.5
+	Field _length:Float=1.0
+	Field _axis:Axis=geom.Axis.Y
+	Field _origin:Vec3f
 
 End
 
 Class CapsuleCollider Extends ConvexCollider
 	
-	Method New( radius:Float,length:Float,axis:Axis,origin:Vec3f=Null )
+	Method New( entity:Entity )
+		Super.New( entity )
+	End
+	
+	Property Radius:Float()
 		
-		Select axis
+		Return _radius
+		
+	Setter( radius:Float )
+		
+		_radius=radius
+		
+		Invalidate()
+	End
+	
+	Property Length:Float()
+		
+		Return _length
+		
+	Setter( length:Float )
+		
+		_length=length
+		
+		Invalidate()
+	End
+	
+	Property Axis:Axis()
+		
+		Return _axis
+		
+	Setter( axis:Axis )
+		
+		_axis=axis
+		
+		Invalidate()
+	End
+	
+	Property Origin:Vec3f()
+		
+		Return _origin
+	
+	Setter( origin:Vec3f )
+		
+		_origin=origin
+		
+		Invalidate()
+	End
+
+	Protected
+	
+	Method OnCopy:CapsuleCollider( entity:Entity ) Override
+		
+		Local collider:=New CapsuleCollider( entity )
+		
+		collider.Radius=Radius
+		collider.Length=Length
+		collider.Axis=Axis
+		collider.Origin=Origin
+		
+		Return collider
+	End
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		Local shape:btCollisionShape
+		
+		Select _axis
 		Case Axis.X
-			_btshape=New btCapsuleShapeX( radius,length )
+			shape=New btCapsuleShapeX( _radius,_length )
 		Case Axis.Y
-			_btshape=New btCapsuleShape ( radius,length )
+			shape=New btCapsuleShape ( _radius,_length )
 		Case Axis.Z
-			_btshape=New btCapsuleShapeZ( radius,length )
+			shape=New btCapsuleShapeZ( _radius,_length )
 		Default
 			RuntimeError( "Invalid Capsule Axis" )
 		End
 		
-		SetOrigin( origin )
+		Return SetOrigin( shape,_origin )
 	End
 	
+	Private
+	
+	Field _radius:Float=0.5
+	Field _length:Float=1.0
+	Field _axis:Axis=geom.Axis.Y
+	Field _origin:Vec3f
+
 End
 
 Class ConeCollider Extends ConvexCollider
 	
-	Method New( radius:Float,length:Float,axis:Axis,origin:Vec3f=Null )
+	Method New( entity:Entity )
+		Super.New( entity )
+	End
+	
+	Property Radius:Float()
 		
-		Select axis
+		Return _radius
+		
+	Setter( radius:Float )
+		
+		_radius=radius
+		
+		Invalidate()
+	End
+	
+	Property Length:Float()
+		
+		Return _length
+		
+	Setter( length:Float )
+		
+		_length=length
+		
+		Invalidate()
+	End
+	
+	Property Axis:Axis()
+		
+		Return _axis
+		
+	Setter( axis:Axis )
+		
+		_axis=axis
+		
+		Invalidate()
+	End
+	
+	Property Origin:Vec3f()
+		
+		Return _origin
+	
+	Setter( origin:Vec3f )
+		
+		_origin=origin
+		
+		Invalidate()
+	End
+
+	Protected
+	
+	Method OnCopy:ConeCollider( entity:Entity ) Override
+		
+		Local collider:=New ConeCollider( entity )
+		
+		collider.Radius=Radius
+		collider.Length=Length
+		collider.Axis=Axis
+		collider.Origin=Origin
+		
+		Return collider
+	End
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		Local shape:btCollisionShape
+		
+		Select _axis
 		Case Axis.X
-			_btshape=New btConeShapeX( radius,length )
+			shape=New btConeShapeX( _radius,_length )
 		Case Axis.Y
-			_btshape=New btConeShape ( radius,length )
+			shape=New btConeShape ( _radius,_length )
 		Case Axis.Z
-			_btshape=New btConeShapeZ( radius,length )
+			shape=New btConeShapeZ( _radius,_length )
 		Default
 			RuntimeError( "Invalid Cone Axis" )
 		End
-		
-		SetOrigin( origin )
-	End
 
+		Return SetOrigin( shape,_origin )
+	End
+	
+	Private
+	
+	Field _radius:Float=0.5
+	Field _length:Float=1.0
+	Field _axis:Axis=geom.Axis.Y
+	Field _origin:Vec3f
+	
 End
 
 Class ConcaveCollider Extends Collider
+
+	Method New( entity:Entity )
+		Super.New( entity )
+	End
+	
 End
 
 Class MeshCollider Extends ConcaveCollider
-
-	Method New( mesh:Mesh )
 	
-		Local vertices:=mesh.GetVertices()
+	Method New( entity:Entity )
+		Super.New( entity )
+	End
+	
+	Property Mesh:Mesh()
+		
+		Return _mesh
+	
+	Setter( mesh:Mesh ) 
+		
+		_mesh=mesh
+		
+		Invalidate()
+	End
+
+	Protected
+	
+	Method OnCopy:MeshCollider( entity:Entity ) Override
+		
+		Local collider:=New MeshCollider( entity )
+		
+		collider.Mesh=Mesh
+		
+		Return collider
+	End
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		Local vertices:=_mesh.GetVertices()
 		_vertices=New btVector3[vertices.Length]
 		
 		For Local i:=0 Until vertices.Length
@@ -150,7 +495,7 @@ Class MeshCollider Extends ConcaveCollider
 			_vertices[i].z=vertices[i].position.z
 		Next
 		
-		Local indices:=mesh.GetAllIndices()
+		Local indices:=_mesh.GetAllIndices()
 		_indices=New Int[indices.Length]
 		For Local i:=0 Until indices.Length
 			_indices[i]=indices[i]
@@ -162,18 +507,19 @@ Class MeshCollider Extends ConcaveCollider
 		
 		'CreateInternalEdgeInfo( shape )
 		
-		_btshape=shape
+		Return shape
 	End
 	
 	Private
 	
+	Field _mesh:Mesh
 	Field _vertices:btVector3[]
 	Field _indices:Int[]
-	
 	Field _btmesh:btTriangleIndexVertexArray
 	
 End
 
+#rem
 Class TerrainCollider Extends ConcaveCollider
 
 	Method New( box:Boxf,data:Pixmap )
@@ -190,3 +536,4 @@ Class TerrainCollider Extends ConcaveCollider
 	End
 
 End
+#end

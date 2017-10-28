@@ -6,6 +6,7 @@ Class ClassDecl Extends Decl
 	Field genArgs:String[]
 	Field superType:Expr
 	Field ifaceTypes:Expr[]
+	Field whereExpr:Expr
 	Field hasCtor:Bool=False
 	Field hasDefaultCtor:Bool=True
 	
@@ -74,7 +75,7 @@ Class ClassType Extends Type
 	Field defaultCtor:FuncValue
 	
 	Method New( cdecl:ClassDecl,outer:Scope,types:Type[],instanceOf:ClassType )
-	
+
 		Self.pnode=cdecl
 		Self.cdecl=cdecl
 		Self.types=types
@@ -84,6 +85,12 @@ Class ClassType Extends Type
 		If AnyTypeGeneric( types ) flags|=TYPE_GENERIC
 		
 		scope=New ClassScope( Self,outer )
+
+		If cdecl.whereExpr And Not scope.IsGeneric
+			If Not cdecl.whereExpr.SemantWhere( scope )
+				Throw New SemantEx( "class where condition failed" )
+			Endif
+		End
 		
 		For Local member:=Eachin cdecl.members
 			Local node:=member.ToNode( scope )
@@ -172,10 +179,22 @@ Class ClassType Extends Type
 					If Not superType Throw New SemantEx( "Type '"+type.ToString()+"' is not a valid super class type" )
 					
 					If superType.cdecl.kind<>cdecl.kind Throw New SemantEx( "'"+cdecl.kind.Capitalize()+"' cannot extend '"+superType.cdecl.kind.Capitalize()+"'" )
-					
+						
 					If superType.state=SNODE_SEMANTING Throw New SemantEx( "Cyclic inheritance error for '"+ToString()+"'",cdecl )
-					
-					If superType.cdecl.IsFinal Throw New SemantEx( "Superclass '"+superType.ToString()+"' is final" )
+						
+					If cdecl.IsExtension
+						
+						If superType.cdecl.ident.StartsWith( "@" )	'fix me - this is yuck!
+							Throw New SemantEx( "Built-in types cannot be extended" )
+						Endif
+						
+					Else
+						
+						If superType.cdecl.IsFinal
+							Throw New SemantEx( "Superclass '"+superType.ToString()+"' is final and cannot be extended" )
+						End
+							
+					End
 					
 					extendsVoid=superType.extendsVoid
 					
@@ -296,57 +315,84 @@ Class ClassType Extends Type
 
 		Next
 		
-		If (cdecl.kind="class" Or cdecl.kind="struct") And Not scope.IsGeneric
+		If Not scope.IsGeneric
+			
+			Select cdecl.kind
+				
+			Case "interface"
 		
-			'Enum unimplemented superclass abstract methods
-			'
-			If superType
-			
-				For Local func:=Eachin superType.abstractMethods
-				
-					Local flist:=Cast<FuncList>( scope.nodes[func.fdecl.ident] )
-					If flist And flist.FindFunc( func.ftype ) Continue
+				For Local iface:=Eachin allIfaces
 					
-					abstractMethods.Push( func )
-				Next
-
-			Endif
-			
-			'Enum unimplemented interface methods
-			'
-			For Local iface:=Eachin allIfaces
-				
-				If superType And superType.ExtendsType( iface ) Continue
-				
-				For Local func:=Eachin iface.abstractMethods
-
-					Local flist:=Cast<FuncList>( scope.nodes[func.fdecl.ident] )
-					If flist And flist.FindFunc( func.ftype ) Continue
-					
-					abstractMethods.Push( func )
-				Next
-			
-			Next
-			
-			'Add super class overloads to our scope.
-			'
-			If superType
-			
-				For Local flist:=Eachin flists
-					
-					Local flist2:=Cast<FuncList>( superType.scope.GetNode( flist.ident ) )
-					If Not flist2 Continue
+					For Local func:=Eachin iface.abstractMethods
 						
-					For Local func2:=Eachin flist2.funcs
-						
-						If Not flist.FindFunc( func2.ftype )
-							flist.PushFunc( func2 )
+						Local flist:=Cast<FuncList>( scope.nodes[func.fdecl.ident] )
+						If flist
+							Local func2:=flist.FindFunc( func.ftype )
+							If func2
+								If Not func.ftype.retType.Equals( func2.ftype.retType )
+									New SemantEx( "Interface method '"+func.fdecl.ident+"' has different return type from overriden method" )
+								Endif
+								Continue
+							Endif
 						Endif
+						
+						scope.Insert( func.fdecl.ident,func )
+					Next
+				Next
+
+			Case "class","struct"
+		
+				'Enum unimplemented superclass abstract methods
+				'
+				If superType
+				
+					For Local func:=Eachin superType.abstractMethods
+					
+						Local flist:=Cast<FuncList>( scope.nodes[func.fdecl.ident] )
+						If flist And flist.FindFunc( func.ftype ) Continue
+						
+						abstractMethods.Push( func )
 					Next
 	
+				Endif
+				
+				'Enum unimplemented interface methods
+				'
+				For Local iface:=Eachin allIfaces
+					
+					If superType And superType.ExtendsType( iface ) Continue
+					
+					For Local func:=Eachin iface.abstractMethods
+	
+						Local flist:=Cast<FuncList>( scope.nodes[func.fdecl.ident] )
+						If flist And flist.FindFunc( func.ftype ) Continue
+						
+						abstractMethods.Push( func )
+					Next
+				
 				Next
+				
+				'Add super class overloads to our scope.
+				'
+				If superType
+				
+					For Local flist:=Eachin flists
+						
+						Local flist2:=Cast<FuncList>( superType.scope.GetNode( flist.ident ) )
+						If Not flist2 Continue
+							
+						For Local func2:=Eachin flist2.funcs
+							
+							If Not flist.FindFunc( func2.ftype )
+								flist.PushFunc( func2 )
+							Endif
+						Next
+		
+					Next
+				
+				Endif
 			
-			Endif
+			End
 		
 		Endif
 
@@ -743,16 +789,20 @@ Class ClassScope Extends Scope
 	End
 	
 	Property Name:String() Override
-
+		
 		Local args:=""
 		For Local arg:=Eachin ctype.types
 			args+=","+arg.Name
 		Next
 		If args args="<"+args.Slice( 1 )+">"
+			
+		Local ident:=ctype.cdecl.ident
+		If ident.StartsWith( "@" ) ident=ident.Slice( 1 ).Capitalize()
+			
+		Return outer.Name+"."+ident+args
 		
-		If ctype.cdecl.ident.StartsWith( "@" ) Return ctype.cdecl.ident.Slice( 1 ).Capitalize()+args
-		
-		Return outer.Name+"."+ctype.cdecl.ident+args
+'		If ctype.cdecl.ident.StartsWith( "@" ) Return outer.Name+"."+ctype.cdecl.ident.Slice( 1 ).Capitalize()+args
+'		Return outer.Name+"."+ctype.cdecl.ident+args
 	End
 	
 	Property TypeId:String() Override

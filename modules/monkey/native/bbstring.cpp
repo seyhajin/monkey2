@@ -195,49 +195,62 @@ int bbString::utf8Length()const{
 	return n;
 }
 
+bbString::bbString( bool b ){
+
+	_rep=Rep::create( b ? "True" : "False" );
+}
+
 bbString::bbString( int n ){
+
 	char data[64];
 	sprintf( data,"%d",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( unsigned int n ){
+
 	char data[64];
 	sprintf( data,"%u",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( long n ){
+
 	char data[64];
 	sprintf( data,"%ld",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( unsigned long n ){
+
 	char data[64];
 	sprintf( data,"%lu",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( long long n ){
+
 	char data[64];
 	sprintf( data,"%lld",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( unsigned long long n ){
+
 	char data[64];
 	sprintf( data,"%llu",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( float n ){
+
 	char data[64];
 	sprintf( data,"%.9g",n );
 	_rep=Rep::create( data );
 }
 
 bbString::bbString( double n ){
+
 	char data[64];
 	sprintf( data,"%.17g",n );
 	_rep=Rep::create( data );

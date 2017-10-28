@@ -119,23 +119,37 @@ End
 #rem monkeydoc Converts a ulong value to a binary string.
 #end
 Function Bin:String( value:ULong )
+	
 	Return ULongToString( value,2 )
 End
 
 #rem monkeydoc Converts a binary string to a ulong value.
 #end
 Function ParseBin:ULong( str:String )
+	
 	Return StringToULong( str,2 )
 End
 
 #rem monkeydoc Converts a ulong value to a hexadecimal string.
 #end
 Function Hex:String( value:ULong )
+	
 	Return ULongToString( value,16 )
 End
 
 #rem monkeydoc Converts a hexadecimal string to a ulong value.
 #end
 Function ParseHex:ULong( str:String )
+	
 	Return StringToULong( str,16 )
+End
+
+#rem monkeydoc Parse a boolean string.
+
+Returns true if `str` equals "True", ignoring case. Otherwise, returns false.
+
+#end
+Function ParseBool:Bool( str:String )
+	
+	Return str.ToLower()="true"
 End

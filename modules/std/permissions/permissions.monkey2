@@ -92,22 +92,33 @@ End
 
 Public
 
+#end
+
 #rem monkeydoc Check an android permission.
 
 This function is only available on android.
 
 Returns 1 if the given permission has been granted to the app, else 0.
 
-The permission string should be in android manifest form, eg: "android.permission.READ_EXTERNAL_STORAGE".
+The permission string should be in android manifest form, eg: "android.permission.READ\_EXTERNAL\_STORAGE".
 
 #end
 Function CheckPermission:Int( permission:String )
+ 
+ #If __TARGET__="android"
  
 	Init()
 
 	Local env:=sdl2.Android_JNI_GetEnv()	
 	
 	Return env.CallIntMethod( _instance,_checkPermission,New Variant[]( permission ) )
+	
+#else
+
+	Return -1
+	
+#endif
+
 End
 
 #rem monkeydoc Request android permissions.
@@ -118,18 +129,21 @@ Attempts to grant the given permissions to the app.
 
 Depending on the permissions, this may cause a modal dialog to be presented to the user.
 
-The permission strings should be in android manifest form, eg: "android.permission.READ_EXTERNAL_STORAGE".
+The permission strings should be in android manifest form, eg: "android.permission.READ\_EXTERNAL\_STORAGE".
 
 If the result is an empty array, the operation was cancelled.
 
 #end
 Function RequestPermissions( permissions:String[],finished:void( results:Int[] ) )
 
+#If __TARGET__="android"
+
 	Init()
 
 	_requests.AddLast( New Request( permissions,finished ) )
 	
 	StartNextRequest()
-End
+	
+#endif
 
-#Endif
+End

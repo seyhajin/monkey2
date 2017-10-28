@@ -25,7 +25,7 @@ The app will continue executing the event loop until [[AppInstance.Terminate|App
 
 Subclassing the app Window class is easy - just extend the [[Window]] class.
 
-To render to the window, you will also need to override the [[Window.OnRender]] method. 
+To render to the window, you will also need to override the [[View.OnRender]] method. 
 
 The OnRender method is called when the app needs to be rendered, and is passed a [[Canvas|Canvas]] instance for window rendering code to use.
 

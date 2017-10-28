@@ -6,8 +6,8 @@ Namespace mojo3d
 #Import "<mojo3d>"
 
 Using std..
-Using assimp..
-Using mojo3d..
 Using mojo..
+Using mojo3d..
+Using assimp..
 
 #Import "loaders/assimp"

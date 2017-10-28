@@ -344,7 +344,7 @@ Class Deque<T> Implements IContainer<T>
 	Method Last:T()
 		DebugAssert( Not Empty,"Illegal operation on empty deque" )
 		
-		Return _data[ _tail>=0 ? _tail-1 Else Capacity-1 ]
+		Return _data[ _tail>0 ? _tail-1 Else Capacity-1 ]
 	End
 	
 	#rem monkedoc Gets the value of a deque element.

@@ -258,14 +258,16 @@ Class PrimType Extends Type
 	Method DistanceToType:Int( type:Type ) Override
 	
 		If type.Equals( Self ) Return 0
+		
 		If type.Equals( BoolType ) Return MAX_DISTANCE
+		
 		If type.Equals( VariantType ) Return MAX_DISTANCE
 		
 		Select type
 		Case StringType
 
 			'numeric->string
-			If IsNumeric Return MAX_DISTANCE
+			If IsNumeric Or Self=BoolType Return MAX_DISTANCE
 
 		Case CStringClass
 		
