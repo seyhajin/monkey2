@@ -78,6 +78,8 @@ class bbString{
 	bbString( const NSString *str );
 #endif
 
+	explicit bbString( bool b );
+
 	explicit bbString( int n );
 	
 	explicit bbString( unsigned int n );

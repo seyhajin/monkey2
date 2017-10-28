@@ -45,7 +45,7 @@ These type conversions are performed automatically:
 | String or array type 			| `Bool`
 | Class or interface type	 	| `Bool`
 | Any numeric type				| Any numeric type
-| Any numeric type				| `String`
+| Any numeric type or `Bool`	| `String`
 | Any pointer type				| `Void Ptr`
 | Any enum type					| Any integral type
 | Class or interface type		| Base class type or implemented interface type
@@ -60,6 +60,8 @@ When class or interface instances are converted to bool, the result will be true
 When struct values are converted, the result will be true if the struct value is not equal to null.
 
 When floating point values are converted to integral values, the fractional part of the floating point value is simply chopped off - no rounding is performed.
+
+When Bools are converted to strings, the result will be either "True" or "False".
 
 
 @#### Explicit type conversions
