@@ -8,18 +8,11 @@ Postfix Invoke
 ####[ ]
 Postfix Index
 
-Used for Arrays an Pointers dereferencing
-
-/linkto Arrays \linkto
-
-/linkto Pointers \linkto
-
+Used for Arrays indexing an Pointers dereferencing.
 ####->
 Postfix base Index combined with member acces
 
-equivalent to `[0].`
-
-/linkto Pointers \linkto
+Equivalent to `[0].` codewise.
 ####< >
 Postfix Generic instance
 ####-

@@ -49,41 +49,41 @@ See [[modules-and-applications|Modules and applications]] and [[asset-management
 
 @### Preprocessor symbols
 
-@#### __TARGET__
+@#### \_\_TARGET\_\_
 
-The __TARGET__ symbol is set to the current build target and will be one of the following values: “windows”, “macos”, “linux”, “emscripten”, “android” or “ios” – ie: the precise build target.
-
-
-@#### __CONFIG__
-
-The __CONFIG__ symbol is set to the current build config and will be set to either "debug" or "release".
+The \_\_TARGET\_\_ symbol is set to the current build target and will be one of the following values: “windows”, “macos”, “linux”, “emscripten”, “android” or “ios” – ie: the precise build target.
 
 
-@#### __DESKTOP_TARGET__
+@#### \_\_CONFIG\_\_
+
+The \_\_CONFIG\_\_ symbol is set to the current build config and will be set to either "debug" or "release".
+
+
+@#### \_\_DESKTOP\_TARGET\_\_
 
 True if the current build target is desktop (“windows”, “macos” or “linux”), false otherwise.
 
 
-@#### __MOBILE_TARGET__
+@#### \_\_MOBILE\_TARGET\_\_
 
 True if the current build target is mobile (“android” or “ios”), false otherwise.
 
 
-@#### __WEB_TARGET__
+@#### \_\_WEB\_TARGET\_\_
 
 True if the current build target is web (“emscripten”), false otherwise.
 
 
-@#### __DEBUG__
+@#### \_\_DEBUG\_\_
 
 True if the current build config is "debug", false otherwise.
 
 
-@#### __RELEASE__
+@#### \_\_RELEASE\_\_
 
-Truw if the current build config is "release", false otherwsie.
+True if the current build config is "release", false otherwsie.
 
 
-@#### __MAKEDOCS__
+@#### \_\_MAKEDOCS\_\_
 
 True if mx2cc is currently making docs, false otherwise.

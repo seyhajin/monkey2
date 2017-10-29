@@ -35,7 +35,7 @@ See [[conditional-statements.select|Select]].
 
 Allows you to cast custom pointers.
 
-See [[built-in-types.explicit-type-conversions|explicit type conversions]] and [[expressions.operators|operators]].
+See [[built-in-types.explicit-type-conversions|explicit type conversions]] and [[expressions.operators|operators]] and [[pointers.casting|Pointers]].
 
 
 @#### Catch
@@ -68,8 +68,7 @@ See [[loop-statements.continue|Continue]].
 
 @#### CString
 
-Reserved keyword.
-C style String for external string parameters.
+C style String for external C/C++ parameters. `String` is implicitly converted to `CString` for convenience.
 
 
 @#### Default
@@ -120,9 +119,8 @@ See [[conditional-statements.if|If]].
 @#### Enum
 
 32 Bit integer Enumerated Type.
-<br>
-<a href="javascript:void('monkey:enums#enums')" onclick="openDocsPage('monkey:enums#enums')">See Enums.</a>
-&nbsp;
+
+See [[enums|Enums]].
 
 @#### Exit
 
@@ -275,7 +273,7 @@ See [[user-defined-types.methods|Methods]].
 
 All identifiers declared in a monkey2 program file end up inside a 'namespace'.
 
-SDee [[namespaces.declaring-namespaces|Declaring namespaces]].
+See [[namespaces.declaring-namespaces|Declaring namespaces]].
 
 
 @#### New
@@ -333,6 +331,13 @@ See [[user-defined-types.encapsulation|Encapsulation]].
 @#### Protocol
 
 `Protocol` is reserved for future use.
+
+
+@#### Ptr
+
+Used to declare pointers.
+
+See [[pointers.declarations|Pointers]]
 
 
 @#### Public
