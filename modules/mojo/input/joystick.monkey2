@@ -30,7 +30,7 @@ End
 
 #rem monkeydoc The JoystickDevice class.
 #end
-Class JoystickDevice Extends InputDevice
+Class JoystickDevice
 
 	#rem monkeydoc @hidden
 	#end	

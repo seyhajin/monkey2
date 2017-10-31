@@ -40,7 +40,6 @@ Namespace mojo
 #Import "graphics/image"
 #Import "graphics/shadowcaster"
 
-#Import "input/device"
 #Import "input/keyboard"
 #Import "input/mouse"
 #Import "input/touch"

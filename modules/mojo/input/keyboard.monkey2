@@ -33,7 +33,7 @@ A raw key represents the physical location of a key on US keyboards. For example
 QWERTY keys, as this is where the 'Q' key is on US keyboards.
 
 #end
-Class KeyboardDevice Extends InputDevice
+Class KeyboardDevice
 
 	#rem monkeydoc The current state of the modifier keys.
 	#end
