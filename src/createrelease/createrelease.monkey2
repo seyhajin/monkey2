@@ -43,7 +43,7 @@ Function CopyFiles( dir:String )
 	CreateDir( output+"/"+dir )
 	
 	For Local file:=Eachin LoadDir( dir )
-
+		
 		Local src:=dir+"/"+file
 		
 		If IGNORE.Contains( "~n"+src+"~n" ) Continue
@@ -64,7 +64,11 @@ Function CopyFiles( dir:String )
 		Select GetFileType( src )
 		Case FileType.Directory
 			
-			If file.EndsWith( ".products" )
+			If file="__PAGES__" Or file="__MANPAGES__"
+				
+				Continue
+				
+			Else If file.EndsWith( ".products" )
 				
 				Continue
 			
