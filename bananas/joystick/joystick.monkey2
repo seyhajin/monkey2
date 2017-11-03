@@ -11,6 +11,15 @@ Class MyWindow Extends Window
 
 	Method New()
 		Super.New( "Joystick test",640,480 )
+		
+		JoystickDevice.JoystickAdded+=Lambda( index:Int )
+			Print "Joystick added: index="+index
+		End
+		
+		JoystickDevice.JoystickRemoved+=Lambda( index:Int )
+			Print "Joystick removed: index="+index
+		End
+		
 	End
 
 	Method OnRender( canvas:Canvas ) Override
@@ -30,6 +39,7 @@ Class MyWindow Extends Window
 			canvas.DrawText( "GUID="+joy.GUID,x,32 )
 			
 			For Local axis:=0 Until 6
+				
 				canvas.DrawText( "Axis "+axis+"="+joy.GetAxis( axis ),x,(axis+3)*16 )
 			Next
 			

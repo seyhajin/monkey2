@@ -30,6 +30,8 @@ Using mx2..
 
 Const MX2CC_VERSION_EXT:=""
 
+Global opts_time:Bool
+
 Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods"
@@ -128,6 +130,8 @@ Function Main()
 		Local cmd:=args[1]
 		args=args.Slice( 2 )
 		
+		Local start:=std.time.Now()
+		
 		Select cmd
 		Case "makeapp"
 			ok=MakeApp( args )
@@ -138,6 +142,10 @@ Function Main()
 		Default
 			Fail( "Unrecognized mx2cc command: '"+cmd+"'" )
 		End
+		
+		Local elapsed:=std.time.Now()-start
+		
+		If opts_time Print "Elapsed time="+elapsed
 		
 	Catch ex:BuildEx
 	
@@ -446,6 +454,8 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 				opts.verbose=1
 			Case "-geninfo"
 				opts.geninfo=True
+			Case "-time"
+				opts_time=True
 			Default
 				Return args.Slice( i )
 			End

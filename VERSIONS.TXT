@@ -1,9 +1,11 @@
 
 ***** Monkey2 v1.1.08 *****
 
+Added AudioDevice.PlayMusic.
+
 Language addition: Added bool->string implicit conversion, returns "True" or "False". Note that a bool cannot be safely converted to a string and back using built-in conversions, because bool->string->bool will always return true (since string->bool returns true if string is non-null, and bool->string always returns a non-null string). A std.stringio.ParseBool function has been added to parse "True"/"False" style strings. Use this or something similar if you are parsing bools from a stream.
 
-Language addition: Added where expressions to classes. Note that since classes can't be overloaded, class where expressions can ponly possibly generate errors, they can't be used to 'select' a particular overload.
+Language addition: Added where expressions to classes. Note that since classes can't be overloaded, class where expressions can only possibly generate errors, they can't be used to 'select' a particular overload.
 
 Language addition: parser now allows optional newlines before primary expressions, which allows you to split long expressions over multiple lines.
 

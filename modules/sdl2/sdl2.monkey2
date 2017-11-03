@@ -1144,4 +1144,8 @@ Alias SDL_threadID:UInt
 
 Function SDL_ThreadID:SDL_threadID()
 
+'FILE="sdl2/SDL_fileystem.h"
+
+Function SDL_GetPrefPath:CString( org:CString,app:CString )
+
 '${END}

@@ -30,7 +30,11 @@ End
 
 #rem monkeydoc The JoystickDevice class.
 #end
-Class JoystickDevice Extends InputDevice
+Class JoystickDevice
+	
+	Global JoystickAdded:Void( index:Int )
+	
+	Global JoystickRemoved:Void( index:Int )
 
 	#rem monkeydoc @hidden
 	#end	
@@ -134,6 +138,40 @@ Class JoystickDevice Extends InputDevice
 			_joysticks[index]=joystick
 		Endif
 		Return joystick
+	End
+	
+	Internal
+	
+	Function SendEvent( event:SDL_Event Ptr )
+	
+		Select event->type
+		Case SDL_JOYDEVICEADDED
+			
+			Local jevent:=Cast<SDL_JoyDeviceEvent Ptr>( event )
+			
+			JoystickAdded( jevent->which )
+			
+		Case SDL_JOYDEVICEREMOVED
+			
+			Local jevent:=Cast<SDL_JoyDeviceEvent Ptr>( event )
+			
+			For Local i:=0 Until 8
+				
+				Local joystick:=_joysticks[i]
+				
+				If Not joystick Or SDL_JoystickInstanceID( joystick._joystick )<>jevent->which Continue
+
+				SDL_JoystickClose( joystick._joystick )
+				
+				_joysticks[i]=Null
+				
+				JoystickRemoved( i )
+				
+				Exit
+			Next
+				
+		End
+	
 	End
 	
 	Private

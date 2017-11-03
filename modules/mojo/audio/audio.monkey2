@@ -33,15 +33,18 @@ End
 
 Public
 
-#rem monkeydoc @hidden Global instance of the AudioDevice class.
+#rem monkeydoc Global instance of the AudioDevice class.
 #end
 Const Audio:=New AudioDevice
 
-#rem monkeydoc @hidden The AudioDevice class.
+#rem monkeydoc The AudioDevice class.
+
+An instance of the AudioDevice class is automatically created when an [[AppInstance]] is created, and can be accessed via the global [[Audio]] const.
+
 #end
 Class AudioDevice
 
-	Function PlayMusic:Channel( path:String,finished:Void()=Null,paused:Bool=False )
+	Method PlayMusic:Channel( path:String,finished:Void()=Null,paused:Bool=False )
 		
 		Local channel:=New Channel( Null )
 		

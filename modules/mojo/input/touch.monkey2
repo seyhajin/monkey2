@@ -12,7 +12,7 @@ To access the touch device, use the global [[Touch]] constant.
 The touch device should only used after a new [[AppInstance]] is created.
 
 #end
-Class TouchDevice Extends InputDevice
+Class TouchDevice
 
 	Method FingerDown:Bool( finger:Int )
 		DebugAssert( finger>=0 And finger<10,"Finger index out of range" )

@@ -737,6 +737,8 @@ Class AppInstance
 	Method DispatchEvent( event:SDL_Event Ptr )
 	
 		SdlEventFilter( event )
+		
+		JoystickDevice.SendEvent( event )
 	
 		Keyboard.SendEvent( event )
 		
