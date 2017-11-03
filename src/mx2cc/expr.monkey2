@@ -732,6 +732,20 @@ Class UnaryopExpr Extends Expr
 		Return EvalUnaryop( type,op,value.UpCast( type ) )
 	End
 	
+	Method OnSemantWhere:Bool( scope:Scope ) Override
+	
+		Select op
+		Case "not"
+			Local expr:=Self.expr.SemantWhere( scope )
+			Return Not expr
+		Default
+			Throw New SemantEx( "Unary operator '"+op+"' cannot be used in where expressions" )
+		End
+		
+		Return False
+	End
+	
+	
 	Method ToString:String() Override
 		Return op.Capitalize()+expr.ToString()
 	End
@@ -795,14 +809,22 @@ Class BinaryopExpr Extends Expr
 	
 	Method OnSemantWhere:Bool( scope:Scope ) Override
 	
-		If op<>"=" And op<>"<>" Throw New SemantEx( "Types can only be compared for equality" )
+		Select op
+		Case "=","<>"
+			Local lhs:=Self.lhs.SemantType( scope )
+			Local rhs:=Self.rhs.SemantType( scope )
+			If op="=" Return lhs.Equals( rhs )
+			Return Not lhs.Equals( rhs )
+		Case "and","or"
+			Local lhs:=Self.lhs.SemantWhere( scope )
+			Local rhs:=Self.rhs.SemantWhere( scope )
+			If op="and" Return lhs And rhs
+			Return lhs Or rhs
+		Default
+			Throw New SemantEx( "Binary operator '"+op+"' cannot be used in where expressions" )
+		End
 		
-		Local lhs:=Self.lhs.SemantType( scope )
-		Local rhs:=Self.rhs.SemantType( scope )
-		
-		If op="=" Return lhs.Equals( rhs )
-		
-		Return Not lhs.Equals( rhs )
+		Return False
 	End
 	
 	Method ToString:String() Override
