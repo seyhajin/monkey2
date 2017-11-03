@@ -33,14 +33,14 @@ Class MyWindow Extends Window
 			Local joy:=JoystickDevice.Open( i )
 			If Not joy Exit
 			
-			Local x:=i*160
+			Local x:=0,y:=i*144	'i*160,y:=i*160
 			
-			canvas.DrawText( "Name="+joy.Name,x,16 )
-			canvas.DrawText( "GUID="+joy.GUID,x,32 )
+			canvas.DrawText( "Name="+joy.Name,x,y+16 )
+			canvas.DrawText( "GUID="+joy.GUID,x,y+32 )
 			
 			For Local axis:=0 Until 6
 				
-				canvas.DrawText( "Axis "+axis+"="+joy.GetAxis( axis ),x,(axis+3)*16 )
+				canvas.DrawText( "Axis "+axis+"="+joy.GetAxis( axis ),x,(axis+3)*16+y )
 			Next
 			
 		Next
