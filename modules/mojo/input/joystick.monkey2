@@ -144,6 +144,7 @@ Class JoystickDevice
 			
 			Local sdlJoystick:=SDL_JoystickOpen( index )
 			If Not sdlJoystick Return Null
+			
 			joystick=New JoystickDevice( sdlJoystick )
 			_joysticks[index]=joystick
 			
@@ -161,20 +162,22 @@ Class JoystickDevice
 			
 			Local jevent:=Cast<SDL_JoyDeviceEvent Ptr>( event )
 			
-			For Local j:=7 Until jevent->which Step -1
+			Local index:=jevent->which
+			
+			For Local j:=7 Until index Step -1
 				_joysticks[j]=_joysticks[j-1]
 			Next
-			_joysticks[jevent->which]=Null
+			_joysticks[index]=Null
 			
-			JoystickAdded( jevent->which )
+			JoystickAdded( index )
 			
 		Case SDL_JOYDEVICEREMOVED
 			
 			Local jevent:=Cast<SDL_JoyDeviceEvent Ptr>( event )
 			
-			For Local i:=0 Until 8
+			For Local index:=0 Until 8
 				
-				Local joystick:=_joysticks[i]
+				Local joystick:=_joysticks[index]
 				
 				If Not joystick Or SDL_JoystickInstanceID( joystick._joystick )<>jevent->which Continue
 				
@@ -182,12 +185,12 @@ Class JoystickDevice
 				
 				joystick._attached=False
 				
-				For Local j:=i Until 7
+				For Local j:=index Until 7
 					_joysticks[j]=_joysticks[j+1]
 				Next
 				_joysticks[7]=Null
 
-				JoystickRemoved( i )
+				JoystickRemoved( index )
 				
 				Exit
 			Next

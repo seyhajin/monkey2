@@ -186,7 +186,8 @@ Class AppInstance
 		SDL_AddEventWatch( _EventFilter,Null )
 #Endif
 		RequestRender()
-	
+		
+		SDL_FlushEvents( SDL_JOYDEVICEADDED,SDL_JOYDEVICEADDED )
 	End
 	
 	#rem monkeydoc Fallback font.
