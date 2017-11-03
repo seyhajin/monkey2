@@ -8,9 +8,15 @@ Using std..
 Using mojo..
 
 Class MyWindow Extends Window
+	
+	Field _joystick0:JoystickDevice
+	Field _joystick1:JoystickDevice
 
 	Method New()
 		Super.New( "Joystick test",640,480 )
+		
+		_joystick0=JoystickDevice.Open( 0 )
+		_joystick1=JoystickDevice.Open( 1 )
 		
 		JoystickDevice.JoystickAdded+=Lambda( index:Int )
 			Print "Joystick added: index="+index
@@ -26,10 +32,10 @@ Class MyWindow Extends Window
 	
 		App.RequestRender()
 	
-		canvas.DrawText( "NumJoysticks="+JoystickDevice.NumJoysticks(),0,0 )
+		canvas.DrawText( "NumJoysticks="+JoystickDevice.NumJoysticks()+", joystick0.Attached="+_joystick0?.Attached+", joystick1.Attached="+_joystick1?.Attached,0,0 )
 		
 		For Local i:=0 Until 4
-		
+			
 			Local joy:=JoystickDevice.Open( i )
 			If Not joy Exit
 			
