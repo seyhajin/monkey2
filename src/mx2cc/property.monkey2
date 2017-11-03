@@ -55,7 +55,8 @@ Class PropertyList Extends FuncList
 		
 		If pdecl.getFunc
 			Try
-				getFunc=New FuncValue( pdecl.getFunc,scope,types,instanceof?.getFunc )
+'				getFunc=New FuncValue( pdecl.getFunc,scope,types,instanceof?.getFunc )
+				getFunc=New FuncValue( pdecl.getFunc,scope,types,instanceof ? instanceof.getFunc Else Null )
 				getFunc.Semant()
 				type=getFunc.ftype.retType
 				If type.Equals( Type.VoidType ) Throw New SemantEx( "Property '"+pdecl.ident+"' getter has void type" )
@@ -66,7 +67,8 @@ Class PropertyList Extends FuncList
 
 		If pdecl.setFunc
 			Try
-				setFunc=New FuncValue( pdecl.setFunc,scope,types,instanceof?.setFunc )
+'				setFunc=New FuncValue( pdecl.setFunc,scope,types,instanceof?.setFunc )
+				setFunc=New FuncValue( pdecl.setFunc,scope,types,instanceof ? instanceof.setFunc Else Null )
 				setFunc.Semant()
 				If type And Not type.Equals( setFunc.ftype.argTypes[0] ) Throw New SemantEx( "Property '"+pdecl.ident+"' Getter And Setter have different types" )
 				If Not type type=setFunc.ftype.argTypes[0]
