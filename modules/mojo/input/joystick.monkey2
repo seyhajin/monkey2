@@ -35,14 +35,21 @@ Class JoystickDevice
 	Global JoystickAdded:Void( index:Int )
 	
 	Global JoystickRemoved:Void( index:Int )
+	
+	#rem monkeydoc True if joystick is currently attached.
+	#end
+	Property Attached:Bool()
+		
+		Return _attached
+	End
 
-	#rem monkeydoc @hidden
+	#rem monkeydoc Joystick device name.
 	#end	
 	Property Name:String()
 		Return _name
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Joystick globally unique identifier.
 	#end	
 	Property GUID:String()
 		Return _guid
@@ -53,7 +60,6 @@ Class JoystickDevice
 	Property NumAxes:Int()
 		Return _numAxes
 	End
-
 	
 	#rem monkeydoc The number of balls upported by the joystick.
 	#end	
@@ -129,14 +135,20 @@ Class JoystickDevice
 
 	#end
 	Function Open:JoystickDevice( index:Int )
+		
 		Assert( index>=0 And index<8 )
+		
 		Local joystick:=_joysticks[index]
+		
 		If Not joystick
+			
 			Local sdlJoystick:=SDL_JoystickOpen( index )
 			If Not sdlJoystick Return Null
 			joystick=New JoystickDevice( sdlJoystick )
 			_joysticks[index]=joystick
+			
 		Endif
+		
 		Return joystick
 	End
 	
@@ -149,6 +161,11 @@ Class JoystickDevice
 			
 			Local jevent:=Cast<SDL_JoyDeviceEvent Ptr>( event )
 			
+			For Local j:=7 Until jevent->which Step -1
+				_joysticks[j]=_joysticks[j-1]
+			Next
+			_joysticks[jevent->which]=Null
+			
 			JoystickAdded( jevent->which )
 			
 		Case SDL_JOYDEVICEREMOVED
@@ -160,11 +177,16 @@ Class JoystickDevice
 				Local joystick:=_joysticks[i]
 				
 				If Not joystick Or SDL_JoystickInstanceID( joystick._joystick )<>jevent->which Continue
-
+				
 				SDL_JoystickClose( joystick._joystick )
 				
-				_joysticks[i]=Null
+				joystick._attached=False
 				
+				For Local j:=i Until 7
+					_joysticks[j]=_joysticks[j+1]
+				Next
+				_joysticks[7]=Null
+
 				JoystickRemoved( i )
 				
 				Exit
@@ -185,6 +207,7 @@ Class JoystickDevice
 	Field _numBalls:Int
 	Field _numButtons:Int
 	Field _numHats:Int
+	Field _attached:Bool
 	Field _hits:=New Bool[32]
 	
 	Method New( joystick:SDL_Joystick Ptr )
@@ -194,6 +217,7 @@ Class JoystickDevice
 		_numBalls=SDL_JoystickNumBalls( _joystick )
 		_numButtons=SDL_JoystickNumButtons( _joystick )
 		_numHats=SDL_JoystickNumHats( _joystick )
+		_attached=True
 		
 		Local buf:=New Byte[64]
 		Local guid:=SDL_JoystickGetGUID( _joystick )
@@ -201,5 +225,5 @@ Class JoystickDevice
 		buf[buf.Length-1]=0
 		_guid=String.FromCString( buf.Data )
 	End
-
+	
 End
