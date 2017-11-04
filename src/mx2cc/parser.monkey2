@@ -2112,6 +2112,7 @@ Class Parser
 	Field _docs:=New StringStack
 	Field _doccing:Bool
 	Field _imports:=New StringStack
+	Field _reflects:=New StringStack
 	
 	Method IsBool:Bool( v:String )
 		Return v="true" Or v="false"
@@ -2290,9 +2291,29 @@ Class Parser
 						If Not ExtractExt( path ) path+=".monkey2"
 						
 					Endif
+						
+					path+="["+SrcPos+"]"
+						
+					'Print "path="+path
 					
 					_imports.Push( path )
+				Endif
+				
+			Case "reflect"
+				
+				If _cc.Top=1
 					
+					p.Bump()
+					
+					Local path:=p.ParseIdent()
+					
+					While p.CParse( "." )
+						path+="."+p.ParseIdent()
+					Wend
+					
+					p.ParseEol()
+					
+					_reflects.Push( path )
 				Endif
 				
 			Case "print"
