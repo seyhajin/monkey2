@@ -40,7 +40,7 @@ Class JoystickDevice
 	#end
 	Property Attached:Bool()
 		
-		Return _attached
+		Return _joystick<>Null
 	End
 
 	#rem monkeydoc Joystick device name.
@@ -82,12 +82,18 @@ Class JoystickDevice
 	#rem monkeydoc Gets joystick axis value in the range -1 to 1.
 	#end	
 	Method GetAxis:Float( axis:Int )
+		
+		If Not _joystick Return 0
+		
 		Return (Float(SDL_JoystickGetAxis( _joystick,axis ))+32768)/32767.5-1
 	End
 	
 	#rem monkeydoc Gets joystick ball value.
 	#end	
 	Method GetBall:Vec2i( ball:Int )
+
+		If Not _joystick Return Null
+		
 		Local x:Int,y:Int
 		SDL_JoystickGetBall( _joystick,ball,Varptr x,Varptr y )
 		Return New Vec2i( x,y )
@@ -96,18 +102,27 @@ Class JoystickDevice
 	#rem monkeydoc Gets joystick hat value.
 	#end	
 	Method GetHat:JoystickHat( hat:Int )
+
+		If Not _joystick Return JoystickHat.Centered
+		
 		Return Cast<JoystickHat>( SDL_JoystickGetHat( _joystick,hat ) )
 	End
 
 	#rem monkeydoc Check up/down state of a button.
 	#end
 	Method ButtonDown:Bool( button:Int )
+		
+		If Not _joystick Return False
+		
 		Return SDL_JoystickGetButton( _joystick,button )
 	End
 	
 	#rem monkeydoc Checks is a button has been pressed.
 	#end
 	Method ButtonPressed:Bool( button:Int )
+
+		If Not _joystick Return False
+		
 		If ButtonDown( button )
 			If _hits[button] Return False
 			_hits[button]=True
@@ -145,7 +160,17 @@ Class JoystickDevice
 			Local sdlJoystick:=SDL_JoystickOpen( index )
 			If Not sdlJoystick Return Null
 			
-			joystick=New JoystickDevice( sdlJoystick )
+			Local guid:=GetGUID( sdlJoystick )
+			
+			If guid joystick=_guidmap[guid]
+				
+			If joystick
+				_guidmap.Remove( guid )
+				joystick.Attach( sdlJoystick )
+			Else
+				joystick=New JoystickDevice( sdlJoystick )
+			Endif
+
 			_joysticks[index]=joystick
 			
 		Endif
@@ -183,13 +208,15 @@ Class JoystickDevice
 				
 				SDL_JoystickClose( joystick._joystick )
 				
-				joystick._attached=False
+				joystick.Detach()
+
+				If joystick.GUID _guidmap[joystick.GUID]=joystick
 				
 				For Local j:=index Until 7
 					_joysticks[j]=_joysticks[j+1]
 				Next
 				_joysticks[7]=Null
-
+				
 				JoystickRemoved( index )
 				
 				Exit
@@ -201,32 +228,50 @@ Class JoystickDevice
 	
 	Private
 	
+	Global _guidmap:=New StringMap<JoystickDevice>
+	
 	Global _joysticks:=New JoystickDevice[8]
 	
-	Field _joystick:SDL_Joystick Ptr
-	Field _name:String
 	Field _guid:String
+	Field _name:String
 	Field _numAxes:Int
 	Field _numBalls:Int
 	Field _numButtons:Int
 	Field _numHats:Int
-	Field _attached:Bool
+	
+	Field _joystick:SDL_Joystick Ptr
 	Field _hits:=New Bool[32]
 	
+	Function GetGUID:String( joystick:SDL_Joystick Ptr )
+		Local buf:=New Byte[64]
+		Local guid:=SDL_JoystickGetGUID( joystick )
+		SDL_JoystickGetGUIDString( guid,Cast<libc.char_t Ptr>( buf.Data ),buf.Length )
+		buf[buf.Length-1]=0
+		Return String.FromCString( buf.Data )
+	End
+	
 	Method New( joystick:SDL_Joystick Ptr )
-		_joystick=joystick
+
+		Attach( joystick )
+		
+		_guid=GetGUID( joystick )
 		_name=String.FromCString( SDL_JoystickName( _joystick ) )
 		_numAxes=SDL_JoystickNumAxes( _joystick )
 		_numBalls=SDL_JoystickNumBalls( _joystick )
 		_numButtons=SDL_JoystickNumButtons( _joystick )
 		_numHats=SDL_JoystickNumHats( _joystick )
-		_attached=True
-		
-		Local buf:=New Byte[64]
-		Local guid:=SDL_JoystickGetGUID( _joystick )
-		SDL_JoystickGetGUIDString( guid,Cast<libc.char_t Ptr>( buf.Data ),buf.Length )
-		buf[buf.Length-1]=0
-		_guid=String.FromCString( buf.Data )
 	End
 	
+	Method Attach( joystick:SDL_Joystick Ptr )
+		
+		libc.memset( _hits.Data,0,32 )
+		
+		_joystick=joystick
+	End
+	
+	Method Detach()
+		
+		_joystick=Null
+	End
+
 End

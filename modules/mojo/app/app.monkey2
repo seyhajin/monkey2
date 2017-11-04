@@ -93,6 +93,8 @@ Class AppInstance
 		
 		SDL_SetHint( "SDL_MOUSE_FOCUS_CLICKTHROUGH","1" )
 
+		SDL_FlushEvents( SDL_JOYDEVICEADDED,SDL_JOYDEVICEADDED )
+		
 		'possible fix for linux crashing at exit (can't reproduce myself).
 		'		
 		libc.atexit( SDL_Quit )
@@ -186,8 +188,6 @@ Class AppInstance
 		SDL_AddEventWatch( _EventFilter,Null )
 #Endif
 		RequestRender()
-		
-		SDL_FlushEvents( SDL_JOYDEVICEADDED,SDL_JOYDEVICEADDED )
 	End
 	
 	#rem monkeydoc Fallback font.
