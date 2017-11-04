@@ -32,9 +32,9 @@ End
 #end
 Class JoystickDevice
 	
-	Global JoystickAdded:Void( index:Int )
+	Global JoystickAttached:Void( index:Int )
 	
-	Global JoystickRemoved:Void( index:Int )
+	Field JoystickDetached:Void()
 	
 	#rem monkeydoc True if joystick is currently attached.
 	#end
@@ -144,14 +144,16 @@ Class JoystickDevice
 		SDL_JoystickUpdate()
 	End
 	
-	#rem monkeydoc Opens a joystick device.
+	#rem monkeydoc Gets an attached joystick.
+	
+	`index` must be in the range [0,NumJoysticks)
 	
 	@param index Joystick index.
 
 	#end
 	Function Open:JoystickDevice( index:Int )
 		
-		Assert( index>=0 And index<8 )
+		Assert( index>=0 And index<NumJoysticks(),"Joystick index out of range" )
 		
 		Local joystick:=_joysticks[index]
 		
@@ -177,7 +179,7 @@ Class JoystickDevice
 		
 		Return joystick
 	End
-	
+
 	Internal
 	
 	Function SendEvent( event:SDL_Event Ptr )
@@ -194,7 +196,7 @@ Class JoystickDevice
 			Next
 			_joysticks[index]=Null
 			
-			JoystickAdded( index )
+			JoystickAttached( index )
 			
 		Case SDL_JOYDEVICEREMOVED
 			
@@ -206,18 +208,14 @@ Class JoystickDevice
 				
 				If Not joystick Or SDL_JoystickInstanceID( joystick._joystick )<>jevent->which Continue
 				
-				SDL_JoystickClose( joystick._joystick )
-				
-				joystick.Detach()
-
-				If joystick.GUID _guidmap[joystick.GUID]=joystick
-				
 				For Local j:=index Until 7
 					_joysticks[j]=_joysticks[j+1]
 				Next
 				_joysticks[7]=Null
 				
-				JoystickRemoved( index )
+				If joystick.GUID _guidmap[joystick.GUID]=joystick
+				
+				joystick.Detach()
 				
 				Exit
 			Next
@@ -271,7 +269,17 @@ Class JoystickDevice
 	
 	Method Detach()
 		
+		If Not _joystick Return
+		
+		SDL_JoystickClose( _joystick )
+		
 		_joystick=Null
+		
+		Local detached:=JoystickDetached
+		
+		JoystickDetached=Null
+		
+		detached()
 	End
 
 End
