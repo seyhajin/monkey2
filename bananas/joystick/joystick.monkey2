@@ -7,49 +7,108 @@ Namespace test
 Using std..
 Using mojo..
 
-Class MyWindow Extends Window
+'***** Simple Joystick allocater *****
+
+'should something like this go in modules?
+
+Global alloced:=New StringMap<Bool>
+
+Function AllocJoystick:JoystickDevice()
 	
-	Field _joystick0:JoystickDevice
-	Field _joystick1:JoystickDevice
+	For Local i:=0 Until JoystickDevice.NumJoysticks()
+		
+		Local joystick:=JoystickDevice.Open( i )
+		If alloced.Contains( joystick.GUID ) Continue
+		
+		alloced[joystick.GUID]=True
+		
+		Return joystick
+	Next
+	
+	Return Null
+End
+
+Function FreeJoystick( joystick:JoystickDevice )
+	
+	If joystick alloced.Remove( joystick.GUID )
+End
+
+'***** Simple player class *****
+
+Class Player
+
+	Field id:Int
+	Field joystick:JoystickDevice
+	
+	Global used:=New StringMap<Bool>
+	
+	Method New( id:Int )
+		Self.id=id
+		Self.joystick=AllocJoystick()
+	End
+	
+	Method Update( canvas:Canvas )
+		
+		canvas.DrawText( "Player "+id,0,0 )
+		
+		'update joystick state
+		If joystick And Not joystick.Attached
+			FreeJoystick( joystick )
+			joystick=Null
+		Endif
+		
+		If Not joystick
+			joystick=AllocJoystick()
+			If Not joystick
+				canvas.DrawText( "No Joystick available",0,16 )
+				Return
+			Endif
+		Endif
+
+		'draw joystick info.		
+		canvas.DrawText( "Name="+joystick.Name,0,16 )
+		
+		For Local axis:=0 Until 6
+			canvas.DrawText( "Axis "+axis+"="+joystick.GetAxis( axis ),0,axis*16+32 )
+		Next
+	
+	End
+	
+End
+
+'***** MainWindow *****
+
+Class MainWindow Extends Window
+	
+	Field players:=New Player[4]
 
 	Method New()
 		Super.New( "Joystick test",640,480 )
 		
-		_joystick0=JoystickDevice.Open( 0 )
-		_joystick1=JoystickDevice.Open( 1 )
-		
-		JoystickDevice.JoystickAdded+=Lambda( index:Int )
-			Print "Joystick added: index="+index
-		End
-		
-		JoystickDevice.JoystickRemoved+=Lambda( index:Int )
-			Print "Joystick removed: index="+index
-		End
+		For Local i:=0 Until 4
+			players[i]=New Player( i )
+		Next
 		
 	End
 
 	Method OnRender( canvas:Canvas ) Override
 	
-		App.RequestRender()
+		RequestRender()
 	
-		canvas.DrawText( "NumJoysticks="+JoystickDevice.NumJoysticks()+", joystick0.Attached="+_joystick0?.Attached+", joystick1.Attached="+_joystick1?.Attached,0,0 )
+		canvas.DrawText( "NumJoysticks="+JoystickDevice.NumJoysticks(),0,0 )
+		
+		canvas.PushMatrix()
+		
+		canvas.Translate( 0,16 )
 		
 		For Local i:=0 Until 4
 			
-			Local joy:=JoystickDevice.Open( i )
-			If Not joy Exit
+			players[i].Update( canvas )
 			
-			Local x:=0,y:=i*144	'i*160,y:=i*160
-			
-			canvas.DrawText( "Name="+joy.Name,x,y+16 )
-			canvas.DrawText( "GUID="+joy.GUID,x,y+32 )
-			
-			For Local axis:=0 Until 6
-				
-				canvas.DrawText( "Axis "+axis+"="+joy.GetAxis( axis ),x,(axis+3)*16+y )
-			Next
-			
+			canvas.Translate( 0,144 )
 		Next
+		
+		canvas.PopMatrix()
 		
 	End
 	
@@ -59,7 +118,7 @@ Function Main()
 
 	New AppInstance
 	
-	New MyWindow
+	New MainWindow
 	
 	App.Run()
 	
