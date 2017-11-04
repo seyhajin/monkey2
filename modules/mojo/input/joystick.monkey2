@@ -146,14 +146,14 @@ Class JoystickDevice
 	
 	#rem monkeydoc Gets an attached joystick.
 	
-	`index` must be in the range [0,NumJoysticks)
+	if `index` is not in the range [0,NumJoysticks) a null value is returned.
 	
 	@param index Joystick index.
 
 	#end
 	Function Open:JoystickDevice( index:Int )
 		
-		Assert( index>=0 And index<NumJoysticks(),"Joystick index out of range" )
+		If index<0 Or index>=NumJoysticks() Return Null
 		
 		Local joystick:=_joysticks[index]
 		
@@ -174,7 +174,6 @@ Class JoystickDevice
 			Endif
 
 			_joysticks[index]=joystick
-			
 		Endif
 		
 		Return joystick
