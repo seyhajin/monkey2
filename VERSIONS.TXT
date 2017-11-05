@@ -1,4 +1,11 @@
 
+***** Monkey2 v1.1.09 *****
+
+Added experimental selective reflection.
+
+Use '#Reflect namepsace_path' to enable reflection for an entire namespace. Using same system as 'Using' ie: can end with '..' to 'reflect all'.
+
+
 ***** Monkey2 v1.1.08 *****
 
 Added AudioDevice.PlayMusic.
