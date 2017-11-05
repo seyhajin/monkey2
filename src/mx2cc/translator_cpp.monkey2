@@ -45,71 +45,113 @@ Class Translator_CPP Extends Translator
 		Reset()
 	
 		Emit( "#include <bbmonkey.h>" )
+		Emit( "#if BB_NEWREFLECTION" )
+		Emit( "#include ~q_r.h~q" )
+		Emit( "#endif" )
 		
 		EmitBr()
 		
-		Emit( "#ifdef BB_REFLECTION" )
-		
-		BeginDeps()
+		Local nmspaces:=New StringMap<Stack<FileDecl>>
 		
 		For Local fdecl:=Eachin _module.fileDecls
-		
-			EmitTypeInfo( fdecl )
-	
-			For Local ctype:=Eachin fdecl.classes
-			
-				If Not GenTypeInfo( ctype ) Continue
-				
-				EmitTypeInfo( ctype )
-				
-			Next
-		
+			Local nmspace:=fdecl.nmspace
+			Local fdecls:=nmspaces[fdecl.nmspace]
+			If Not fdecls
+				fdecls=New Stack<FileDecl>
+				nmspaces[fdecl.nmspace]=fdecls
+			Endif
+			fdecls.Add( fdecl )
 		Next
 		
-		EndDeps( ExtractDir( _module.rfile ) )
-		
-		Emit( "#else" )
-		
 		BeginDeps()
-
-		For Local fdecl:=Eachin _module.fileDecls
 		
-			For Local ctype:=Eachin fdecl.classes
+		For Local it:=eachin nmspaces
 			
-				If Not GenTypeInfo( ctype ) Continue
-				
-				Uses( ctype )
-				
-				Local cname:=ClassName( ctype )
-				Local rname:=""
-				
-				If ctype.IsStruct
-					Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
-					rname="bbVoidTypeInfo"
+			Local fdecls:=it.Value
+			
+			Local nmpath:=it.Key,rcc:=""
+			
+			Repeat
+				Local mpath:="BB_R_"+nmpath.Replace( "_","_0" ).Replace( ".","_" )
+				If rcc
+					rcc+=" || "+mpath+"__"
 				Else
-					Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
-					rname="bbObjectTypeInfo"
+					rcc=mpath+" || "+mpath+"__"
 				Endif
-								
-				Emit( "return &"+rname+"::instance;" )
-				Emit( "}" )
+				Local i:=nmpath.FindLast( "." )
+				If i=-1 Exit
+				nmpath=nmpath.Slice( 0,i )
+			Forever
+			
+			Emit( "#if "+rcc )
+			
+			For Local fdecl:=Eachin fdecls
+		
+				EmitTypeInfo( fdecl )
+		
+				For Local ctype:=Eachin fdecl.classes
 				
-				Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
-				Emit( "return &"+rname+"::instance;" )
-				Emit( "}" )
+					If Not GenTypeInfo( ctype ) Continue
+					
+					EmitTypeInfo( ctype )
+					
+				Next
 				
 			Next
+			
+			Emit( "#else" )
+			
+			For Local fdecl:=Eachin fdecls
+		
+				EmitNullTypeInfo( fdecl )
+		
+				For Local ctype:=Eachin fdecl.classes
+				
+					If Not GenTypeInfo( ctype ) Continue
+					
+					EmitNullTypeInfo( ctype )
+					
+				Next
+				
+			Next
+
+			Emit( "#endif" )
 		
 		Next
 		
 		EndDeps( ExtractDir( _module.rfile ) )
-		
-		Emit( "#endif" )
 		
 		Local src:=_buf.Join( "~n" )
 		
 		CSaveString( src,_module.rfile )
 	End
+	
+	Method EmitNullTypeInfo( fdecl:FileDecl )
+		
+	End
+	
+	Method EmitNullTypeInfo( ctype:ClassType )
+
+		Local cname:=ClassName( ctype )
+		Local rname:=""
+		
+		If ctype.IsStruct
+			Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
+			rname="bbVoidTypeInfo"
+		Else
+			Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
+			rname="bbObjectTypeInfo"
+		Endif
+						
+		Emit( "return &"+rname+"::instance;" )
+		Emit( "}" )
+		
+		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
+		Emit( "return &"+rname+"::instance;" )
+		Emit( "}" )
+		
+	End
+	
 	
 	Method TranslateFile( fdecl:FileDecl )
 	
@@ -2061,7 +2103,7 @@ Class Translator_CPP Extends Translator
 	End
 	
 	Method Trans:String( value:TypeofTypeValue )
-	
+		
 		Refs( value.ttype )
 	
 		Return "bbGetType<"+TransType( value.ttype )+">()"

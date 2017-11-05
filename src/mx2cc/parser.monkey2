@@ -46,6 +46,7 @@ Class Parser
 		
 		_fdecl.usings=_usings.ToArray()
 		_fdecl.imports=_imports.ToArray()
+		_fdecl.reflects=_reflects.ToArray()
 		_fdecl.errors=_errors.ToArray()
 		_fdecl.endpos=EndPos
 		
@@ -2294,8 +2295,6 @@ Class Parser
 						
 					path+="["+SrcPos+"]"
 						
-					'Print "path="+path
-					
 					_imports.Push( path )
 				Endif
 				
@@ -2308,6 +2307,10 @@ Class Parser
 					Local path:=p.ParseIdent()
 					
 					While p.CParse( "." )
+						If p.CParse( "." )
+							path+=".."
+							Exit
+						Endif
 						path+="."+p.ParseIdent()
 					Wend
 					
