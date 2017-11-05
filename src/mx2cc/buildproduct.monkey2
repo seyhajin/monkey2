@@ -48,7 +48,7 @@ Class BuildProduct
 			
 		Local srcs:=New StringStack
 
-		If opts.productType="app" And Not reflects.Empty
+		If opts.productType="app" 'And Not reflects.Empty
 
 			CC_OPTS+=" -DBB_NEWREFLECTION"
 			CPP_OPTS+=" -DBB_NEWREFLECTION"			
