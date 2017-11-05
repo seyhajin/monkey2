@@ -206,6 +206,8 @@ Class JoystickDevice
 	End
 	
 	Function SendEvent( event:SDL_Event Ptr )
+		
+		If Not _joysticks Return
 	
 		Select event->type
 		Case SDL_JOYDEVICEADDED

@@ -13,7 +13,7 @@ To load an image from a file, use one of the [[Load]], [[LoadBump]] or [[LoadLig
 
 To create an image from an existing pixmap, use the New( pixmap,... ) constructor.
 
-To create an image that is a 'window' into an existing image, use the New( image,rect... ) constructor. This allows you to use images as 'atlases',
+To create an image that is a 'window' into an existing image, use the New( atlas,rect... ) constructor. This allows you to use images as 'atlases',
 
 To create an 'empty' image, use the New( width,height ) constructor. You can then render to this image by creating a canvas with this image as its render target.
 
@@ -31,17 +31,21 @@ Class Image Extends Resource
 	
 	New( pixmap,... ) Creates an image from an existing pixmap.
 	
+	New( texture,... ) Creates an image from an existing texture.
+	
+	New( atlas,... ) Creates an image 'frame' from an 'atlas' image. The new images shares the same material as the atlas.
+
 	New( width,height,... ) Creates an image that can be rendered to using a canvas.
 	
-	New( image,... ) Creates an image from within an 'atlas' image.
-	
 	@param pixmap Source image.
+	
+	@param texture Source texture.
 	
 	@param textureFlags Image texture flags. 
 	
 	@param shader Image shader.
 	
-	@param image Source pixmap.
+	@param atlas Source atlas image.
 	
 	@param rect Source rect.
 	
@@ -57,6 +61,33 @@ Class Image Extends Resource
 		Init( texture,shader )
 	End
 
+	Method New( texture:Texture,rect:Recti,shader:Shader=Null )
+
+		Init( texture,rect,shader )
+	End
+
+	Method New( texture:Texture,shader:Shader=Null )
+
+		Init( texture,shader )
+	End
+	
+	Method New( atlas:Image,x:Int,y:Int,width:Int,height:Int )
+		
+		Init( atlas,New Recti( x,y,x+width,y+height ) )
+	End
+	
+	Method New( atlas:Image,rect:Recti )
+		
+		Init( atlas,rect )
+	End
+	
+	#rem Not very useful, all you can really change of 'copied' image is blendmode.
+	Method New( image:Image )
+		
+		Init( image,New Recti( 0,0,image._rect.Width,image._rect.Height ) )
+	End
+	#end
+	
 	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
 		
 		Local texture:=New Texture( width,height,format,textureFlags )
@@ -67,55 +98,6 @@ Class Image Extends Resource
 	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
 		
 		Self.New( width,height,PixelFormat.RGBA8,textureFlags,shader )
-	End
-
-	Method New( image:Image )
-	
-		Init( image._textures[0],image._rect,image._shader )
-		
-		For Local i:=1 Until 4
-			SetTexture( i,image.GetTexture( i ) )
-		Next
-		
-		BlendMode=image.BlendMode
-		LightDepth=image.LightDepth
-		Handle=image.Handle
-		Scale=image.Scale
-		Color=image.Color
-	End
-	
-	Method New( image:Image,rect:Recti )
-	
-		Init( image._textures[0],rect+image._rect.Origin,image._shader )
-		
-		For Local i:=1 Until 4
-			SetTexture( i,image.GetTexture( i ) )
-		Next
-		
-		BlendMode=image.BlendMode
-		LightDepth=image.LightDepth
-		Handle=image.Handle
-		Scale=image.Scale
-		Color=image.Color
-	End
-	
-	Method New( image:Image,x:Int,y:Int,width:Int,height:Int )
-	
-		Self.New( image,New Recti( x,y,x+width,y+height ) )
-	End
-	
-	#rem monkeydoc @hidden
-	#end
-	Method New( texture:Texture,shader:Shader=Null )
-
-		Init( texture,shader )
-	End
-	
-	#rem monkeydoc @hidden
-	#end
-	Method New( texture:Texture,rect:Recti,shader:Shader=Null )
-
-		Init( texture,rect,shader )
 	End
 	
 	#rem monkeydoc The image's primary texture.
@@ -311,7 +293,7 @@ Class Image Extends Resource
 	
 		Return _textures[index]
 	End
-
+	
 	#rem monkeydoc Loads an image from file.
 	#end
 	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
@@ -441,31 +423,6 @@ Class Image Extends Resource
 	Field _bounds:Rectf
 	Field _radius:Float
 	
-	Method Init( texture:Texture,shader:Shader )
-		
-		Init( texture,New Recti( New Vec2i(0),texture.Size ),shader )
-	End
-	
-	Method Init( texture:Texture,rect:Recti,shader:Shader )
-	
-		If Not shader shader=Shader.GetShader( "sprite" )
-	
-		_rect=rect
-		_shader=shader
-		_uniforms=New UniformBlock( 3 )
-		
-		SetTexture( 0,texture )
-		
-		BlendMode=BlendMode.None
-		Color=Color.White
-		LightDepth=100
-		Handle=New Vec2f( 0 )
-		Scale=New Vec2f( 1 )
-		
-		UpdateVertices()
-		UpdateTexCoords()
-	End
-	
 	Method UpdateVertices()
 		_vertices.min.x=Float(_rect.Width)*(0-_handle.x)*_scale.x
 		_vertices.min.y=Float(_rect.Height)*(0-_handle.y)*_scale.y
@@ -489,6 +446,45 @@ Class Image Extends Resource
 		_texCoords.max.y=Float(_rect.max.y)/_textures[0].Height
 	End
 	
+	Method Init( texture:Texture,rect:Recti,shader:Shader )
+	
+		If Not shader shader=Shader.GetShader( "sprite" )
+	
+		_rect=rect
+		_shader=shader
+		_uniforms=New UniformBlock( 3 )
+		_blendMode=BlendMode.None
+		_handle=New Vec2f( 0 )
+		_scale=New Vec2f( 1 )
+		
+		SetTexture( 0,texture )
+		Color=Color.White
+		LightDepth=100
+
+		UpdateTexCoords()
+		UpdateVertices()
+	End
+	
+	Method Init( texture:Texture,shader:Shader )
+		
+		Init( texture,New Recti( 0,0,texture.Size ),shader )
+	End
+
+	Method Init( image:Image,rect:Recti )
+		
+		_shader=image._shader
+		_uniforms=image._uniforms
+		_textures=image._textures.Slice( 0 )
+		_blendMode=image._blendMode
+		_shadowCaster=image._shadowCaster
+		_rect=rect+image._rect.Origin
+		_handle=image._handle
+		_scale=image._scale
+		
+		UpdateTexCoords()
+		UpdateVertices()
+	End
+
 End
 
 Class ResourceManager Extension
