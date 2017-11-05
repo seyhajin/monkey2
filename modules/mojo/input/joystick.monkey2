@@ -216,10 +216,12 @@ Class JoystickDevice
 			
 			Local sdlindex:=jevent->which
 			
-			For Local i:=MaxJoysticks-1 Until jevent->which Step -1
+'			Print "JOYDEVICEADDED:"+sdlindex
+			
+			For Local i:=MaxJoysticks-1 Until sdlindex Step -1
 				_opened[i]=_opened[i-1]
 			Next
-			_opened[jevent->which]=-1
+			_opened[sdlindex]=-1
 			
 		Case SDL_JOYDEVICEREMOVED
 			
@@ -228,11 +230,17 @@ Class JoystickDevice
 			Local sdljoystick:=SDL_JoystickFromInstanceID( jevent->which )
 			If Not sdljoystick Return
 			
-			For Local joystick:=Eachin _joysticks
+			For Local sdlindex:=0 Until MaxJoysticks
 				
+				Local index:=_opened[sdlindex]
+				If index=-1 Continue
+				
+				Local joystick:=_joysticks[index]
 				If Not joystick Or joystick._joystick<>sdljoystick Continue
 				
-				For Local i:=joystick._index Until MaxJoysticks-1
+'				Print "JOYDEVICEREMOVED:"+sdlindex
+				
+				For Local i:=sdlindex Until MaxJoysticks-1
 					_opened[i]=_opened[i+1]
 				Next
 				_opened[MaxJoysticks-1]=-1
