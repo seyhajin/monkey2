@@ -1,28 +1,30 @@
 
-Interface I
+Namespace std.test
+
+#Import "<std>"
+
+#Reflect std.graphics
+
+Using std..
+
+Function F()
+
 End
 
-Interface J
-End
-
-Class A
-End
-
-Class B
-End
-
-Class C Implements I
-End
-
-Class D Implements J
-End
-
-Class E<X,Y> Where X Implements I Or Y Implements J
+Class C 'Extends Resource
+	
 End
 
 Function Main()
+
+	Print "Hello World"
 	
-	Local test:=New E<A,D>
+'	Local socket:Socket
+	
+	Local ti:=Typeof<Pixmap>
+	'Local ti:=Typeof<C>
+	
+	Print ti
 	
 End
 	

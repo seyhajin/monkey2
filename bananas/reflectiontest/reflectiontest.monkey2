@@ -1,10 +1,10 @@
 
 Namespace test
 
-'Must import this to use reflection!
-'
-#Import "<reflection>"
 #Import "<std>"
+
+#Reflect test
+#Reflect std..
 
 'A test global...
 '

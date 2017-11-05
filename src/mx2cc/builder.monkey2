@@ -29,7 +29,7 @@ Class BuildOpts
 	
 	Field wholeArchive:Bool
 	
-	Field reflection:Bool
+'	Field reflection:Bool
 	
 	Field makedocs:bool
 	
@@ -219,14 +219,36 @@ Class BuilderInstance
 '			fdecl.rfile=module.cfileDir+"r_"+ident+".cpp"
 
 			module.fileDecls.Push( fdecl )
-
-			For Local imp:=Eachin fdecl.imports
 			
-				ImportFile( imp )
+			BuildEx.srcpath=fdecl.path
+			BuildEx.srcpos=-1
+			
+			For Local imp:=0 Until fdecl.imports.Length
 				
+				Local path:=fdecl.imports[imp]
+				
+				Local i:=path.FindLast( "[" )
+				If i<>-1 And path.EndsWith( "]" )
+					BuildEx.srcpos=Int( path.Slice( i+1,-1 ) )
+					path=path.Slice( 0,i )
+					fdecl.imports[imp]=path
+				Else
+					BuildEx.srcpos=-1
+				Endif
+				
+				ImportFile( path )
 			Next
 			
+			BuildEx.srcpath=""
+			
 			currentDir=cd
+			
+			For Local ref:=Eachin fdecl.reflects
+				
+				ref="#define BB_R_"+ref.Replace( "_","_0" ).Replace( ".","_" )+" 1"
+				
+				product.reflects.Push( ref )
+			Next
 			
 		Forever
 	
@@ -273,7 +295,7 @@ Class BuilderInstance
 			
 			If module<>mainModule 
 				product.imports.Push( module )
-				If module.name="reflection" opts.reflection=True
+'				If module.name="reflection" opts.reflection=True
 			Endif
 		Next
 		
@@ -594,8 +616,8 @@ Class BuilderInstance
 		Type.TypeInfoClass.Semant()
 	End
 	
-	Method ImportFile:Void( path:String )
-	
+	Method ImportFile( path:String )
+		
 		If path.StartsWith( "<" ) And path.EndsWith( ">" )
 			ImportSystemFile( path.Slice( 1,-1 ) )
 		Else
@@ -744,34 +766,31 @@ Class BuilderInstance
 		
 		Local qpath:="~q"+path+"~q"
 		
-		Select ext
-		Case ".framework"
+		If ext=".framework"
 			
 			If product.toolchain="gcc"
 				If GetFileType( path )<>FileType.Directory
-					New BuildEx( "Framework "+qpath+" not found" )
-					Return
+					New BuildEx( "Framework not found "+qpath )
 				Endif
+				
+				Return
 			Endif
 			
-		Default
-			Select GetFileType( path )
-			Case FileType.Directory
+		Else If GetFileType( path )=FileType.Directory
 			
-				product.ASSET_FILES.Push( path )
-				Return
-				
-			Case FileType.None
+			product.ASSET_FILES.Push( path )
+			Return
 			
-'				New BuildEx( "File "+qpath+" not found" )
-'				Return
-				
-			End
-		End
+		Else If GetFileType( path )<>FileType.File
+			
+			New BuildEx( "File not found "+qpath )
+			Return
+		
+		Endif
 		
 		Select ext
 		Case ".mx2",".monkey2"
-		
+			
 			MX2_SRCS.Push( path )
 			
 		Case ".h",".hh",".hxx",".hpp"
@@ -786,7 +805,7 @@ Class BuilderInstance
 		
 		Case ".java"
 			
-			If opts.target="android"
+			If opts.target="android" 
 				product.JAVA_FILES.Push( path )
 			Endif
 			

@@ -46,6 +46,7 @@ Class Parser
 		
 		_fdecl.usings=_usings.ToArray()
 		_fdecl.imports=_imports.ToArray()
+		_fdecl.reflects=_reflects.ToArray()
 		_fdecl.errors=_errors.ToArray()
 		_fdecl.endpos=EndPos
 		
@@ -2112,6 +2113,7 @@ Class Parser
 	Field _docs:=New StringStack
 	Field _doccing:Bool
 	Field _imports:=New StringStack
+	Field _reflects:=New StringStack
 	
 	Method IsBool:Bool( v:String )
 		Return v="true" Or v="false"
@@ -2290,9 +2292,31 @@ Class Parser
 						If Not ExtractExt( path ) path+=".monkey2"
 						
 					Endif
-					
+						
+					path+="["+SrcPos+"]"
+						
 					_imports.Push( path )
+				Endif
+				
+			Case "reflect"
+				
+				If _cc.Top=1
 					
+					p.Bump()
+					
+					Local path:=p.ParseIdent()
+					
+					While p.CParse( "." )
+						If p.CParse( "." )
+							path+=".."
+							Exit
+						Endif
+						path+="."+p.ParseIdent()
+					Wend
+					
+					p.ParseEol()
+					
+					_reflects.Push( path )
 				Endif
 				
 			Case "print"

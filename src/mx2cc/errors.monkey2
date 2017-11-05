@@ -63,6 +63,9 @@ Class SemantEx Extends ErrorEx
 End
 
 Class BuildEx Extends ErrorEx
+
+	Global srcpath:String	
+	Global srcpos:Int
 	
 	Method New( msg:String )
 		Super.New( msg )
@@ -71,6 +74,9 @@ Class BuildEx Extends ErrorEx
 	End
 	
 	Method ToString:String() Override
+		
+		If srcpath Return srcpath+" ["+(srcpos Shr 12)+"] : Error : "+msg
+			
 		Return "Build error: "+msg
 	End
 

@@ -7,43 +7,80 @@ Namespace test
 Using std..
 Using mojo..
 
-Class MyWindow Extends Window
+Class Player
+
+	Field id:Int
+	Field joystick:JoystickDevice
+	
+	Global used:=New StringMap<Bool>
+	
+	Method New( id:Int )
+		Self.id=id
+		Self.joystick=JoystickDevice.Open( id )
+	End
+	
+	Method Update( canvas:Canvas )
+		
+		canvas.DrawText( "Player "+id,0,0 )
+		
+		'update joystick state
+		If joystick And Not joystick.Attached 
+			joystick.Close()
+			joystick=Null
+		Endif
+		
+		If Not joystick
+			joystick=JoystickDevice.Open( id )
+			If Not joystick
+				canvas.DrawText( "No Joystick available",0,16 )
+				Return
+			Endif
+		Endif
+
+		'draw joystick info.		
+		canvas.DrawText( "Name="+joystick.Name,0,16 )
+		
+		For Local axis:=0 Until 6
+			canvas.DrawText( "Axis "+axis+"="+joystick.GetAxis( axis ),0,axis*16+32 )
+		Next
+	
+	End
+	
+End
+
+'***** MainWindow *****
+
+Class MainWindow Extends Window
+	
+	Field players:=New Player[4]
 
 	Method New()
 		Super.New( "Joystick test",640,480 )
 		
-		JoystickDevice.JoystickAdded+=Lambda( index:Int )
-			Print "Joystick added: index="+index
-		End
-		
-		JoystickDevice.JoystickRemoved+=Lambda( index:Int )
-			Print "Joystick removed: index="+index
-		End
+		For Local i:=0 Until 4
+			players[i]=New Player( i )
+		Next
 		
 	End
 
 	Method OnRender( canvas:Canvas ) Override
 	
-		App.RequestRender()
+		RequestRender()
 	
 		canvas.DrawText( "NumJoysticks="+JoystickDevice.NumJoysticks(),0,0 )
 		
-		For Local i:=0 Until 4
+		canvas.PushMatrix()
 		
-			Local joy:=JoystickDevice.Open( i )
-			If Not joy Exit
+		canvas.Translate( 0,16 )
+		
+		For Local i:=0 Until 4
 			
-			Local x:=i*160
+			players[i].Update( canvas )
 			
-			canvas.DrawText( "Name="+joy.Name,x,16 )
-			canvas.DrawText( "GUID="+joy.GUID,x,32 )
-			
-			For Local axis:=0 Until 6
-				
-				canvas.DrawText( "Axis "+axis+"="+joy.GetAxis( axis ),x,(axis+3)*16 )
-			Next
-			
+			canvas.Translate( 0,144 )
 		Next
+		
+		canvas.PopMatrix()
 		
 	End
 	
@@ -53,7 +90,7 @@ Function Main()
 
 	New AppInstance
 	
-	New MyWindow
+	New MainWindow
 	
 	App.Run()
 	

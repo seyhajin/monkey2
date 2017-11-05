@@ -23,6 +23,8 @@ Class BuildProduct
 	
 	Field ASSET_FILES:=New StringStack
 	
+	Field reflects:=New StringStack
+	
 	Method New( module:Module,opts:BuildOpts )
 		Self.module=module
 		Self.opts=opts
@@ -33,33 +35,37 @@ Class BuildProduct
 		copts+=" -I~q"+MODULES_DIR+"~q"
 		copts+=" -I~q"+MODULES_DIR+"monkey/native~q"
 		If APP_DIR copts+=" -I~q"+APP_DIR+"~q"
-			
+
 		CC_OPTS+=copts
 		CPP_OPTS+=copts
 	End
 
 	Method Build()
 		
-		If Not CreateDir( module.cacheDir ) Throw New BuildEx( "Error creating dir '"+module.cacheDir+"'" )
-
-		If opts.reflection
-			CC_OPTS+=" -DBB_REFLECTION"
-			CPP_OPTS+=" -DBB_REFLECTION"
-		Endif
-
 		If opts.verbose=0 Print "Compiling..."
 		
+		If Not CreateDir( module.cacheDir ) Throw New BuildEx( "Error creating dir '"+module.cacheDir+"'" )
+			
 		Local srcs:=New StringStack
 
-		If opts.productType="app"
-		
+		If opts.productType="app" 'And Not reflects.Empty
+
+			CC_OPTS+=" -DBB_NEWREFLECTION"
+			CPP_OPTS+=" -DBB_NEWREFLECTION"			
+			
+			CC_OPTS+=" -I~q"+module.cacheDir+"~q"
+			CPP_OPTS+=" -I~q"+module.cacheDir+"~q"
+			
+			Local rhead:="//REFLECT:~n"+reflects.Join( "~n" )
+			
+			CSaveString( rhead,module.cacheDir+"_r.h" )
+			
 			srcs.Push( module.rfile )
 			
 			For Local imp:=Eachin imports
 			
 				srcs.Push( imp.rfile )
 			Next
-			
 		Endif
 		
 		For Local fdecl:=Eachin module.fileDecls
@@ -334,7 +340,8 @@ Class GccBuildProduct Extends BuildProduct
 
 '		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
 		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
-		If rfile And opts.reflection obj+="_r"
+'		If rfile And opts.reflection obj+="_r"
+		If rfile obj+="_r"
 			
 		obj+=toolchain="msvc" ? ".obj" Else ".o"
 	

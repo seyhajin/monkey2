@@ -410,6 +410,7 @@ Function SDL_JoystickNumButtons:Int(joystick_:SDL_Joystick Ptr)
 Function SDL_JoystickUpdate:Void()
 Function SDL_JoystickEventState:Int(state_:Int)
 Function SDL_JoystickGetAxis:Short(joystick_:SDL_Joystick Ptr,axis_:Int)
+Function SDL_JoystickFromInstanceID:SDL_Joystick Ptr( instanceID:Int )
 Const SDL_HAT_CENTERED:Int
 Const SDL_HAT_UP:Int
 Const SDL_HAT_RIGHT:Int

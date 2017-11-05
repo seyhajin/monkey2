@@ -108,6 +108,7 @@ Class FileDecl Extends Decl
 	Field nmspace:String
 	Field usings:String[]
 	Field imports:String[]
+	Field reflects:String[]
 	Field errors:ParseEx[]
 
 	Field module:Module	

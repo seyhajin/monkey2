@@ -339,7 +339,7 @@ Class Translator
 				Emit( "struct "+cname+";" )
 				
 				If GenTypeInfo( ctype ) 
-					Emit( "#ifdef BB_REFLECTION" )
+					Emit( "#ifdef BB_NEWREFLECTION" )
 					If ctype.IsStruct 
 						Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
 					Else
