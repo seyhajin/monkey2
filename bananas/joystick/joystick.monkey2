@@ -7,34 +7,6 @@ Namespace test
 Using std..
 Using mojo..
 
-'***** Simple Joystick allocater *****
-
-'should something like this go in modules?
-
-Global alloced:=New StringMap<Bool>
-
-Function AllocJoystick:JoystickDevice()
-	
-	For Local i:=0 Until JoystickDevice.NumJoysticks()
-		
-		Local joystick:=JoystickDevice.Open( i )
-		If alloced.Contains( joystick.GUID ) Continue
-		
-		alloced[joystick.GUID]=True
-		
-		Return joystick
-	Next
-	
-	Return Null
-End
-
-Function FreeJoystick( joystick:JoystickDevice )
-	
-	If joystick alloced.Remove( joystick.GUID )
-End
-
-'***** Simple player class *****
-
 Class Player
 
 	Field id:Int
@@ -44,7 +16,7 @@ Class Player
 	
 	Method New( id:Int )
 		Self.id=id
-		Self.joystick=AllocJoystick()
+		Self.joystick=JoystickDevice.Open( id )
 	End
 	
 	Method Update( canvas:Canvas )
@@ -52,13 +24,13 @@ Class Player
 		canvas.DrawText( "Player "+id,0,0 )
 		
 		'update joystick state
-		If joystick And Not joystick.Attached
-			FreeJoystick( joystick )
+		If joystick And Not joystick.Attached 
+			joystick.Close()
 			joystick=Null
 		Endif
 		
 		If Not joystick
-			joystick=AllocJoystick()
+			joystick=JoystickDevice.Open( id )
 			If Not joystick
 				canvas.DrawText( "No Joystick available",0,16 )
 				Return
