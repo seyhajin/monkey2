@@ -35,7 +35,7 @@
 #Import "dialog/FindInFilesDialog"
 #Import "dialog/UpdateModulesDialog"
 #Import "dialog/GenerateClassDialog"
-#Import "dialog/LiveTemplateDialog"
+'#Import "dialog/LiveTemplateDialog"
 
 #Import "document/DocumentManager"
 #Import "document/Ted2Document"
@@ -116,7 +116,7 @@
 #Import "Prefs"
 #Import "ProcessReader"
 #Import "LiveTemplates"
-#Import "DraggableTabs"
+'#Import "DraggableTabs"
 #Import "MainWindow"
 
 
