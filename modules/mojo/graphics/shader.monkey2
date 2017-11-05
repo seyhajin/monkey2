@@ -33,7 +33,10 @@ Class GLUniform
 		Self.size=size
 		Self.type=type
 		
-		If name.StartsWith( "r_" )
+		If name.StartsWith( "g_" )
+			name=name.Slice( 2 )
+			block=0
+		Else If name.StartsWith( "r_" )
 			name=name.Slice( 2 )
 			block=1
 		Else If name.StartsWith( "i_" )
@@ -231,18 +234,27 @@ Class Shader
 		Return _source
 	End
 	
-	#rem monkeydoc @hidden The renderpasses the shader is involved in.
+	#rem monkeydoc The renderpasses the shader is valid for.
 	#end
 	Property RenderPasses:Int[]()
 	
 		Return _rpasses
 	End
 	
-	#rem monkeydoc @hidden Renderpass bitmask.
+	#rem monkeydoc Renderpass bitmask.
 	#end
 	Property RenderPassMask:Int()
 	
 		Return _rpassMask
+	End
+	
+	#rem monkeydoc Shader global uniforms.
+	#end
+	Property Uniforms:UniformBlock()
+		
+		If Not _uniforms _uniforms=New UniformBlock( 0 )
+		
+		Return _uniforms
 	End
 	
 	'***** INTERNAL *****
@@ -300,6 +312,8 @@ Class Shader
 	
 	Field _rpasses:Int[]
 	Field _rpassMask:Int
+	Field _uniforms:UniformBlock
+	
 	Field _programs:=New GLProgram[32]
 	Field _glSeq:Int
 	
