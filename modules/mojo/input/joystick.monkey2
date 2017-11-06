@@ -213,7 +213,10 @@ Class JoystickDevice
 			Endif
 			
 			Local sdljoystick:=SDL_JoystickOpen( devid )
-			If Not sdljoystick Continue
+			If Not sdljoystick 
+				If DEBUG Print "***** JoystickDevice.Open() Error: SDL_JoystickOpen failed! *****"
+				Continue
+			Endif
 
 			Local joystick:=New JoystickDevice( index,sdljoystick )
 			
@@ -234,8 +237,6 @@ Class JoystickDevice
 	
 	Function SendEvent( event:SDL_Event Ptr )
 		
-		If Not _joysticks Return
-	
 		Select event->type
 		Case SDL_JOYDEVICEADDED
 			
@@ -272,7 +273,7 @@ Class JoystickDevice
 				Return
 			Next
 
-			If PARANOID Print "***** SDL_JOYDEVICEREMOVED Error: Can't find joystick for instanceID *****"
+			If DEBUG Print "***** SDL_JOYDEVICEREMOVED Error: Can't find joystick for instanceID *****"
 				
 		End
 	
