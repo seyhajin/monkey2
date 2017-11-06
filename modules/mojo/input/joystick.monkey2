@@ -312,6 +312,8 @@ Class JoystickDevice
 		_numHats=SDL_JoystickNumHats( _joystick )
 		
 		_joysticks[_index]=Self
+		
+		Print "Joystick Created, user id="+_index
 	End
 	
 	Method Discard()
@@ -324,11 +326,14 @@ Class JoystickDevice
 		_joystick=Null
 		
 		_joysticks[_index]=Null
-		_index=-1
 				
 		_guid=""
 		
 		UpdateOpened()
+		
+		Print "Joystick Discarded, user id="+_index
+		_index=-1
+		
 	End
 
 End

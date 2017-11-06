@@ -39,9 +39,13 @@ Class Player
 
 		'draw joystick info.		
 		canvas.DrawText( "Name="+joystick.Name,0,16 )
+		canvas.DrawText( "GUID="+joystick.GUID,0,32 )
 		
 		For Local axis:=0 Until 6
-			canvas.DrawText( "Axis "+axis+"="+joystick.GetAxis( axis ),0,axis*16+32 )
+			Local n:=Int( joystick.GetAxis( axis )*100)
+			Local v:=(n/100)+"."+(n Mod 100)
+'			canvas.DrawText( "Axis("+axis+")="+v,(axis Mod 3) * 96,(axis/3)*16+32 )'axis*16+32 )
+			canvas.DrawText( "Axis("+axis+")="+v,axis * 104,48 )'axis*16+32 )
 		Next
 	
 	End
