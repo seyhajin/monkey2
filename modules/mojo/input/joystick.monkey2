@@ -138,10 +138,16 @@ Class JoystickDevice
 	#end
 	Method Close()
 		
-		If Not _refs Return
+		If _index=-1 Return
 		
 		_refs-=1
 		If _refs Return
+
+		For Local devid:=0 Until MaxJoysticks
+			If _opened[devid]<>Self Continue
+			_opened[devid]=Null
+			Exit
+		Next
 		
 		Discard()
 	End
@@ -162,33 +168,22 @@ Class JoystickDevice
 		
 		If index<0 Or index>=MaxJoysticks Return Null
 		
-		If Not _joysticks
-			
-			_joysticks=New JoystickDevice[MaxJoysticks]
-			
-			_opened=New Int[MaxJoysticks]
-			For Local i:=0 Until MaxJoysticks
-				_opened[i]=-1
-			Next
-		Endif
-		
 		Local joystick:=_joysticks[index]
 		If joystick 
 			joystick._refs+=1
 			Return joystick
 		End
 		
-		For Local i:=0 Until NumJoysticks()
+		For Local devid:=0 Until NumJoysticks()
 			
-			If _opened[i]>=0 Continue
+			If _opened[devid] Continue
 			
-			Local sdljoystick:=SDL_JoystickOpen( i )
+			Local sdljoystick:=SDL_JoystickOpen( devid )
 			If Not sdljoystick Continue
 
-			_opened[i]=index
-			
 			Local joystick:=New JoystickDevice( index,sdljoystick )
-			_joysticks[index]=joystick
+			
+			_opened[devid]=joystick
 			
 			return joystick
 		Next
@@ -214,14 +209,11 @@ Class JoystickDevice
 			
 			Local jevent:=Cast<SDL_JoyDeviceEvent Ptr>( event )
 			
-			Local sdlindex:=jevent->which
+			Local devid:=jevent->which
 			
-'			Print "JOYDEVICEADDED:"+sdlindex
+			Print "SDL_JOYDEVICEADDED, device id="+devid
 			
-			For Local i:=MaxJoysticks-1 Until sdlindex Step -1
-				_opened[i]=_opened[i-1]
-			Next
-			_opened[sdlindex]=-1
+			UpdateOpened()
 			
 		Case SDL_JOYDEVICEREMOVED
 			
@@ -230,20 +222,12 @@ Class JoystickDevice
 			Local sdljoystick:=SDL_JoystickFromInstanceID( jevent->which )
 			If Not sdljoystick Return
 			
-			For Local sdlindex:=0 Until MaxJoysticks
+			For Local devid:=0 Until MaxJoysticks
 				
-				Local index:=_opened[sdlindex]
-				If index=-1 Continue
-				
-				Local joystick:=_joysticks[index]
+				Local joystick:=_opened[devid]
 				If Not joystick Or joystick._joystick<>sdljoystick Continue
 				
-'				Print "JOYDEVICEREMOVED:"+sdlindex
-				
-				For Local i:=sdlindex Until MaxJoysticks-1
-					_opened[i]=_opened[i+1]
-				Next
-				_opened[MaxJoysticks-1]=-1
+				Print "SDL_JOYDEVICEREMOVED, device id="+devid+", user id="+joystick._index
 				
 				joystick.Discard()
 				
@@ -258,25 +242,52 @@ Class JoystickDevice
 	
 	Const MaxJoysticks:=8
 	
-	'all user joysticks
-	Global _joysticks:JoystickDevice[]
+	'curently open joysticks by user id.
+	Global _joysticks:=New JoystickDevice[MaxJoysticks]
 	
-	'currently opened devices, maps to index
-	Global _opened:Int[]
+	'currently opened devices by instance id.
+	Global _opened:=New JoystickDevice[MaxJoysticks]
 	
 	Field _refs:=1
 	
 	Field _index:Int
 	Field _joystick:SDL_Joystick Ptr
-	Field _guid:String
 	
+	Field _guid:String
 	Field _name:String
 	Field _numAxes:Int
 	Field _numBalls:Int
 	Field _numButtons:Int
 	Field _numHats:Int
-
 	Field _hits:=New Bool[32]
+	
+	'rethinks the opened joysticks array...
+	Function UpdateOpened()
+		
+		For Local devid:=0 Until MaxJoysticks
+			
+			_opened[devid]=Null
+			If devid>=NumJoysticks() Continue
+			
+			Local guid:=GetGUID( devid )
+			
+			For Local joystick:=Eachin _joysticks
+				If Not joystick Or joystick._guid<>guid Continue
+				_opened[devid]=joystick
+				Exit
+			Next
+		
+		Next
+	End
+	
+	Function GetGUID:String( devid:Int )
+		
+		Local buf:=New Byte[64]
+		Local guid:=SDL_JoystickGetDeviceGUID( devid )
+		SDL_JoystickGetGUIDString( guid,Cast<libc.char_t Ptr>( buf.Data ),buf.Length )
+		buf[buf.Length-1]=0
+		Return String.FromCString( buf.Data )
+	End
 	
 	Function GetGUID:String( joystick:SDL_Joystick Ptr )
 		
@@ -289,6 +300,8 @@ Class JoystickDevice
 	
 	Method New( index:Int,joystick:SDL_Joystick Ptr )
 		
+		Assert( Not _joysticks[index] )
+		
 		_index=index
 		_joystick=joystick
 		_guid=GetGUID( joystick )
@@ -297,6 +310,8 @@ Class JoystickDevice
 		_numBalls=SDL_JoystickNumBalls( _joystick )
 		_numButtons=SDL_JoystickNumButtons( _joystick )
 		_numHats=SDL_JoystickNumHats( _joystick )
+		
+		_joysticks[_index]=Self
 	End
 	
 	Method Discard()
@@ -305,20 +320,15 @@ Class JoystickDevice
 
 		libc.memset( _hits.Data,0,_hits.Length )
 		
-		If _joystick
-			SDL_JoystickClose( _joystick )
-			_joystick=Null
-		Endif
-		
-		For Local i:=0 Until MaxJoysticks
-			If _opened[i]<>_index Continue
-			_opened[i]=-1
-			Exit
-		Next
+		SDL_JoystickClose( _joystick )
+		_joystick=Null
 		
 		_joysticks[_index]=Null
-		
 		_index=-1
+				
+		_guid=""
+		
+		UpdateOpened()
 	End
 
 End
