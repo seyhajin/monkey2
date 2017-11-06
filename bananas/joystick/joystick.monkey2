@@ -44,10 +44,13 @@ Class Player
 		For Local axis:=0 Until 6
 			Local n:=Int( joystick.GetAxis( axis )*100)
 			Local v:=(n/100)+"."+(n Mod 100)
-'			canvas.DrawText( "Axis("+axis+")="+v,(axis Mod 3) * 96,(axis/3)*16+32 )'axis*16+32 )
-			canvas.DrawText( "Axis("+axis+")="+v,axis * 104,48 )'axis*16+32 )
+			canvas.DrawText( "Axis("+axis+")="+v,axis * 104,48 )
 		Next
-	
+		
+		For Local button:=0 Until 10
+			canvas.DrawText( "B"+button+"="+Int( joystick.ButtonDown( button ) ),button*56,64 )
+		Next
+			
 	End
 	
 End
@@ -81,7 +84,7 @@ Class MainWindow Extends Window
 			
 			players[i].Update( canvas )
 			
-			canvas.Translate( 0,144 )
+			canvas.Translate( 0,96 )
 		Next
 		
 		canvas.PopMatrix()
