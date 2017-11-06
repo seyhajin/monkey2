@@ -1666,8 +1666,6 @@ Class Canvas
 		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y + .5
 		_vp->texCoord0.x=s0
 		_vp->texCoord0.y=t0
-		_vp->texCoord1.x=_tanvec.x
-		_vp->texCoord1.y=_tanvec.y
 		_vp->color=_pmcolor
 		_vp+=1
 	End

@@ -631,6 +631,8 @@ Class GraphicsDevice
 		Endif
 		
 		If _dirty2 & Dirty.Shader
+			
+			_ublocks[0]=_shader.Uniforms
 		
 			_shader.Bind( _rpass )
 		Endif
