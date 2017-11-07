@@ -44,6 +44,7 @@ Namespace mojo
 #Import "input/mouse"
 #Import "input/touch"
 #Import "input/joystick"
+#Import "input/gamecontroller"
 #Import "input/keycodes"
 
 #Import "audio/audio"

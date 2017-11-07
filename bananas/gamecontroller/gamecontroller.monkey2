@@ -1,8 +1,9 @@
-
 Namespace test
 
 #Import "<std>"
 #Import "<mojo>"
+
+#Import "gamecontrollerdb.txt"
 
 Using std..
 Using mojo..
@@ -16,44 +17,41 @@ End
 Class Player
 
 	Field id:Int
-	Field joystick:Joystick
+	Field controller:GameController
 	
 	Global used:=New StringMap<Bool>
 	
 	Method New( id:Int )
 		Self.id=id
-		Self.joystick=Joystick.Open( id )
 	End
 	
 	Method Update( canvas:Canvas )
 		
 		canvas.DrawText( "Player "+id,0,0 )
-		
-		'update joystick state
-		If joystick And Not joystick.Attached 
-			joystick.Close()
-			joystick=Null
-		Endif
-		
-		If Not joystick
-			joystick=Joystick.Open( id )
-			If Not joystick
-				canvas.DrawText( "No Joystick available",0,16 )
+
+		'check if attached
+		If Not controller?.Attached
+			controller=GameController.Open( id )
+			If Not controller
+				canvas.DrawText( "No game controller available",0,16 )
 				Return
 			Endif
 		Endif
-
-		'draw joystick info.		
-		canvas.DrawText( "Name="+joystick.Name,0,16 )
-		canvas.DrawText( "GUID="+joystick.GUID,0,32 )
 		
-		For Local axis:=0 Until 6
-			Local v:=Format( joystick.GetAxis( axis ) )
-			canvas.DrawText( "A"+axis+"="+v,axis * 80,48 )
+		'draw controller info.		
+		canvas.DrawText( "Name="+controller.Name,0,16 )
+		
+		For Local i:=0 Until 6
+			Local axis:=Cast<GameControllerAxis>( i )
+			Local name:="A"+i'GameController.GetAxisName( axis )
+			Local v:=Format( controller.GetAxis( axis ) )
+			canvas.DrawText( name+"="+v,i * 80,32 )
 		Next
 		
-		For Local button:=0 Until 15
-			canvas.DrawText( "B"+button+"="+Int( joystick.ButtonDown( button ) ),(button Mod 8)*80,(button/8)*16+64 )
+		For Local i:=0 Until 15
+			Local button:=Cast<GameControllerButton>( i )
+			Local name:="B"+i'"GameController.GetButtonName( button )
+			canvas.DrawText( name+"="+Int( controller.GetButton( button ) ),(i Mod 8)*80,(i/8)*16+48 )
 		Next
 			
 	End
@@ -67,7 +65,9 @@ Class MainWindow Extends Window
 	Field players:=New Player[4]
 
 	Method New()
-		Super.New( "Joystick test",640,480 )
+		Super.New( "Game controller test",640,480 )
+		
+		GameController.AddMappingsFromFile( "asset::gamecontrollerdb.txt" )
 		
 		For Local i:=0 Until 4
 			players[i]=New Player( i )

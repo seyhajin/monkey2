@@ -394,9 +394,9 @@ Struct SDL_JoystickGUID
 End
 Alias SDL_JoystickID:Int
 Function SDL_NumJoysticks:Int()
-Function SDL_JoystickNameForIndex:char_t Ptr(device_index_:Int)
+Function SDL_JoystickNameForIndex:CString(device_index_:Int)
 Function SDL_JoystickOpen:SDL_Joystick Ptr(device_index_:Int)
-Function SDL_JoystickName:char_t Ptr(joystick_:SDL_Joystick Ptr)
+Function SDL_JoystickName:CString(joystick_:SDL_Joystick Ptr)
 Function SDL_JoystickGetDeviceGUID:SDL_JoystickGUID(device_index_:Int)
 Function SDL_JoystickGetGUID:SDL_JoystickGUID(joystick_:SDL_Joystick Ptr)
 Function SDL_JoystickGetGUIDString:Void(guid_:SDL_JoystickGUID,pszGUID_:char_t Ptr ,cbGUID_:Int)
@@ -424,6 +424,73 @@ Function SDL_JoystickGetHat:Byte(joystick_:SDL_Joystick Ptr,hat_:Int)
 Function SDL_JoystickGetBall:Int(joystick_:SDL_Joystick Ptr,ball_:Int,dx_:Int Ptr,dy_:Int Ptr)
 Function SDL_JoystickGetButton:Byte(joystick_:SDL_Joystick Ptr,button_:Int)
 Function SDL_JoystickClose:Void(joystick_:SDL_Joystick Ptr)
+
+'FILE="sdl2/sdl_gamecontroller.h"
+
+Struct SDL_GameController
+End
+
+Struct SDL_GameControllerButtonBind
+End
+
+Enum SDL_GameControllerAxis
+End
+
+Const SDL_CONTROLLER_AXIS_INVALID:SDL_GameControllerAxis	'-1
+Const SDL_CONTROLLER_AXIS_LEFTX:SDL_GameControllerAxis
+Const SDL_CONTROLLER_AXIS_LEFTY:SDL_GameControllerAxis
+Const SDL_CONTROLLER_AXIS_RIGHTX:SDL_GameControllerAxis
+Const SDL_CONTROLLER_AXIS_RIGHTY:SDL_GameControllerAxis
+Const SDL_CONTROLLER_AXIS_TRIGGERLEFT:SDL_GameControllerAxis
+Const SDL_CONTROLLER_AXIS_TRIGGERRIGHT:SDL_GameControllerAxis
+
+Enum SDL_GameControllerButton
+End
+
+Const SDL_CONTROLLER_BUTTON_INVALID:SDL_GameControllerButton		'-1
+Const SDL_CONTROLLER_BUTTON_A:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_B:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_X:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_Y:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_BACK:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_GUIDE:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_START:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_LEFTSTICK:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_RIGHTSTICK:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_LEFTSHOULDER:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_DPAD_UP:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_DPAD_DOWN:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_DPAD_LEFT:SDL_GameControllerButton
+Const SDL_CONTROLLER_BUTTON_DPAD_RIGHT:SDL_GameControllerButton
+
+Function SDL_GameControllerAddMapping:Int( mappingString:CString )
+Function SDL_GameControllerMappingForGUID:libc.char_t Ptr( guid:SDL_JoystickGUID )
+Function SDL_GameControllerMapping:libc.char_t Ptr( gamecontroller:SDL_GameController Ptr )
+Function SDL_IsGameController:SDL_bool( joystick_index:Int )
+Function SDL_GameControllerNameForIndex:CString( joystick_index:Int )
+Function SDL_GameControllerOpen:SDL_GameController Ptr( joystick_index:Int )
+Function SDL_GameControllerFromInstanceID:SDL_GameController Ptr( joyid:Int )
+Function SDL_GameControllerName:CString( gamecontroller:SDL_GameController Ptr )
+Function SDL_GameControllerGetVendor:ushort( gamecontroller:SDL_GameController Ptr )
+Function SDL_GameControllerGetProduct:UShort( gamecontroller:SDL_GameController Ptr )
+Function SDL_GameControllerGetProductVersion:Short( gamecontroller:SDL_GameController Ptr )
+Function SDL_GameControllerGetAttached:SDL_bool( gamecontroller:SDL_GameController Ptr )
+Function SDL_GameControllerGetJoystick:SDL_Joystick Ptr( gamecontroller:SDL_GameController Ptr )
+Function SDL_GameControllerEventState:Int( state:Int )
+Function SDL_GameControllerUpdate()
+
+Function SDL_GameControllerGetAxisFromString:SDL_GameControllerAxis( pchString:CString )
+Function SDL_GameControllerGetStringForAxis:CString( axis:SDL_GameControllerAxis )
+Function SDL_GameControllerGetBindForAxis:SDL_GameControllerButtonBind( gamecontroller:SDL_GameController Ptr,axis:SDL_GameControllerAxis )
+Function SDL_GameControllerGetAxis:Short( gamecontroller:SDL_GameController Ptr,axis:SDL_GameControllerAxis )
+
+Function SDL_GameControllerGetButtonFromString:SDL_GameControllerButton( pchString:CString )
+Function SDL_GameControllerGetStringForButton:CString( button:SDL_GameControllerButton )
+Function SDL_GameControllerGetBindForButton:SDL_GameControllerButtonBind( gamecontroller:SDL_GameController Ptr,button:SDL_GameControllerButton )
+Function SDL_GameControllerGetButton:UByte( gamecontroller:SDL_GameController Ptr,button:SDL_GameControllerButton )
+
+Function SDL_GameControllerClose( gamecontroller:SDL_GameController Ptr )
 
 'FILE="sdl2/sdl_keycode.h"
 
