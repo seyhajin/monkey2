@@ -703,7 +703,7 @@ Class BuilderInstance
 			Local src:=path.Slice( 0,i )
 			
 			If GetFileType( src )=FileType.None
-				New BuildEx( "Asset '"+src+"' not found" )
+				If Not opts.geninfo New BuildEx( "Asset '"+src+"' not found" )
 				Return
 			Endif
 			
@@ -720,7 +720,7 @@ Class BuilderInstance
 			Local dir:=ExtractDir( path )
 			
 			If GetFileType( dir )<>FILETYPE_DIR
-				New BuildEx( "Directory '"+dir+"' not found" )
+				If Not opts.geninfo New BuildEx( "Directory '"+dir+"' not found" )
 				Return
 			Endif
 			
@@ -770,7 +770,7 @@ Class BuilderInstance
 			
 			If product.toolchain="gcc"
 				If GetFileType( path )<>FileType.Directory
-					New BuildEx( "Framework not found "+qpath )
+					If Not opts.geninfo New BuildEx( "Framework not found "+qpath )
 				Endif
 				
 				Return
@@ -783,7 +783,8 @@ Class BuilderInstance
 			
 		Else If GetFileType( path )<>FileType.File
 			
-			New BuildEx( "File not found "+qpath )
+			If Not opts.geninfo New BuildEx( "File not found "+qpath )
+				
 			Return
 		
 		Endif
