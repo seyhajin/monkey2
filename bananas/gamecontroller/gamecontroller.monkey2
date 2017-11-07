@@ -51,7 +51,7 @@ Class Player
 		For Local i:=0 Until 15
 			Local button:=Cast<GameControllerButton>( i )
 			Local name:="B"+i'"GameController.GetButtonName( button )
-			canvas.DrawText( name+"="+Int( controller.GetButton( button ) ),(i Mod 8)*80,(i/8)*16+48 )
+			canvas.DrawText( name+"="+Int( controller.ButtonDown( button ) ),(i Mod 8)*80,(i/8)*16+48 )
 		Next
 			
 	End
