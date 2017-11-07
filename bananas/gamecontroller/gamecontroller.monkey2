@@ -43,15 +43,15 @@ Class Player
 		
 		For Local i:=0 Until 6
 			Local axis:=Cast<GameControllerAxis>( i )
-			Local name:="axis"+i'GameController.GetAxisName( axis )
+			Local name:="A"+i'GameController.GetAxisName( axis )
 			Local v:=Format( controller.GetAxis( axis ) )
-			canvas.DrawText( name+"="+v,i * 104,32 )
+			canvas.DrawText( name+"="+v,i * 80,32 )
 		Next
 		
 		For Local i:=0 Until 15
 			Local button:=Cast<GameControllerButton>( i )
-			Local name:="b"+i'"GameController.GetButtonName( button )
-			canvas.DrawText( name+"="+Int( controller.GetButton( button ) ),(i Mod 10)*56,(i/10)*16+48 )
+			Local name:="B"+i'"GameController.GetButtonName( button )
+			canvas.DrawText( name+"="+Int( controller.GetButton( button ) ),(i Mod 8)*80,(i/8)*16+48 )
 		Next
 			
 	End
