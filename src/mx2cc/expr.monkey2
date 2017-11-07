@@ -770,6 +770,7 @@ Class BinaryopExpr Extends Expr
 		Local lhs:=Self.lhs.Semant( scope )
 		Local rhs:=Self.rhs.Semant( scope )
 		
+		
 		If lhs.type=Type.NullType
 			rhs=rhs.ToRValue()
 			lhs=lhs.UpCast( rhs.type )
