@@ -49,11 +49,11 @@ Class Player
 		
 		For Local axis:=0 Until 6
 			Local v:=Format( joystick.GetAxis( axis ) )
-			canvas.DrawText( "axis"+axis+"="+v,axis * 104,48 )
+			canvas.DrawText( "A"+axis+"="+v,axis * 80,48 )
 		Next
 		
-		For Local button:=0 Until 10
-			canvas.DrawText( "b"+button+"="+Int( joystick.ButtonDown( button ) ),button*56,64 )
+		For Local button:=0 Until 15
+			canvas.DrawText( "B"+button+"="+Int( joystick.ButtonDown( button ) ),(button Mod 8)*80,(button/8)*16+64 )
 		Next
 			
 	End
