@@ -116,7 +116,13 @@ Class Joystick
 		Return SDL_JoystickNumHats( _sdljoystick )
 	End
 	
-	#rem monkeydoc Gets joystick axis value in the range -1 to 1.
+	#rem monkeydoc Gets joystick axis value and returns a result in the range -1 to 1.
+	
+	The `axis` parameter must be in the range 0 (inclusive) to [[NumAxes]] (exclusive).
+	
+	The returned value is in the range -1.0 to +1.0.
+	
+	
 	#end	
 	Method GetAxis:Float( axis:Int )
 		
@@ -126,6 +132,9 @@ Class Joystick
 	End
 	
 	#rem monkeydoc Gets joystick ball value.
+
+	The `ball` parameter must be in the range 0 (inclusive) to [[NumBalls]] (exclusive).
+	
 	#end	
 	Method GetBall:Vec2i( ball:Int )
 
@@ -137,6 +146,9 @@ Class Joystick
 	End
 
 	#rem monkeydoc Gets joystick hat value.
+
+	The `hat` parameter must be in the range 0 (inclusive) to [[NumHats]] (exclusive).
+
 	#end	
 	Method GetHat:JoystickHat( hat:Int )
 
@@ -145,16 +157,12 @@ Class Joystick
 		Return Cast<JoystickHat>( SDL_JoystickGetHat( _sdljoystick,hat ) )
 	End
 
-	#rem monkeydoc Gets button state.
-	#end
-	Method GetButton:Bool( button:Int )
-		
-		If _discarded Return False
-		
-		Return SDL_JoystickGetButton( _sdljoystick,button )
-	End
+	#rem monkeydoc Gets button up/down state.
+	
+	The `button` parameter must be in the range 0 (inclusive) to [[NumButtons]] (exclusive).
+	
+	The returned value is true if button is down, else false.
 
-	#rem monkeydoc Checks up/down state of a button.
 	#end
 	Method ButtonDown:Bool( button:Int )
 		
@@ -164,6 +172,12 @@ Class Joystick
 	End
 	
 	#rem monkeydoc Checks if a button has been pressed.
+
+	The `button` parameter must be in the range 0 (inclusive) to [[NumButtons]] (exclusive).
+
+	Returns true if button has been pressed since the last call to [[ButtonPressed]].
+	
+	
 	#end
 	Method ButtonPressed:Bool( button:Int )
 
