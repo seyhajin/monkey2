@@ -10,13 +10,13 @@ Using mojo..
 Class Player
 
 	Field id:Int
-	Field joystick:JoystickDevice
+	Field joystick:Joystick
 	
 	Global used:=New StringMap<Bool>
 	
 	Method New( id:Int )
 		Self.id=id
-		Self.joystick=JoystickDevice.Open( id )
+		Self.joystick=Joystick.Open( id )
 	End
 	
 	Method Update( canvas:Canvas )
@@ -30,7 +30,7 @@ Class Player
 		Endif
 		
 		If Not joystick
-			joystick=JoystickDevice.Open( id )
+			joystick=Joystick.Open( id )
 			If Not joystick
 				canvas.DrawText( "No Joystick available",0,16 )
 				Return
@@ -74,7 +74,7 @@ Class MainWindow Extends Window
 	
 		RequestRender()
 	
-		canvas.DrawText( "NumJoysticks="+JoystickDevice.NumJoysticks(),0,0 )
+		canvas.DrawText( "NumJoysticks="+Joystick.NumJoysticks(),0,0 )
 		
 		canvas.PushMatrix()
 		
