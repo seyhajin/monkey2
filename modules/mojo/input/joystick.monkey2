@@ -62,42 +62,58 @@ Class Joystick
 	#end	
 	Property Name:String()
 		
-		Return _name
+		If _discarded Return ""
+		
+		Return SDL_JoystickName( _sdljoystick )
 	End
 	
-	#rem monkeydoc Joystick globally unique identifier.
-	#end	
+	#rem monkeydoc Joystick GUID.
+	#end
 	Property GUID:String()
 		
-		Return _guid
-	End
+		If _discarded Return ""
 
+		Local buf:=New Byte[64]
+		Local guid:=SDL_JoystickGetGUID( _sdljoystick )
+		SDL_JoystickGetGUIDString( guid,Cast<libc.char_t Ptr>( buf.Data ),buf.Length )
+		buf[buf.Length-1]=0
+		Return String.FromCString( buf.Data )
+	End
+	
 	#rem monkeydoc The number of axes supported by the joystick.
 	#end	
 	Property NumAxes:Int()
 		
-		Return _numAxes
+		If _discarded Return 0
+		
+		Return SDL_JoystickNumAxes( _sdljoystick )
 	End
 	
 	#rem monkeydoc The number of balls upported by the joystick.
 	#end	
 	Property NumBalls:Int()
 		
-		Return _numBalls
+		If _discarded Return 0
+		
+		Return SDL_JoystickNumBalls( _sdljoystick )
 	End
 	
 	#rem monkeydoc The number of buttons supported by the joystick.
 	#end	
 	Property NumButtons:Int()
 		
-		Return _numButtons
+		If _discarded Return 0
+		
+		Return SDL_JoystickNumButtons( _sdljoystick )
 	End
 	
 	#rem monkeydoc The number of hats supported by the joystick.
 	#end	
 	Property NumHats:Int()
 		
-		Return _numHats
+		If _discarded Return 0
+		
+		Return SDL_JoystickNumHats( _sdljoystick )
 	End
 	
 	#rem monkeydoc Gets joystick axis value in the range -1 to 1.
@@ -129,7 +145,16 @@ Class Joystick
 		Return Cast<JoystickHat>( SDL_JoystickGetHat( _sdljoystick,hat ) )
 	End
 
-	#rem monkeydoc Check up/down state of a button.
+	#rem monkeydoc Gets button state.
+	#end
+	Method GetButton:Bool( button:Int )
+		
+		If _discarded Return False
+		
+		Return SDL_JoystickGetButton( _sdljoystick,button )
+	End
+
+	#rem monkeydoc Checks up/down state of a button.
 	#end
 	Method ButtonDown:Bool( button:Int )
 		
@@ -138,7 +163,7 @@ Class Joystick
 		Return SDL_JoystickGetButton( _sdljoystick,button )
 	End
 	
-	#rem monkeydoc Checks is a button has been pressed.
+	#rem monkeydoc Checks if a button has been pressed.
 	#end
 	Method ButtonPressed:Bool( button:Int )
 
@@ -180,7 +205,7 @@ Class Joystick
 		If index<0 Or index>=MaxJoysticks Return Null
 		
 		Local joystick:=_joysticks[index]
-		If joystick 
+		If joystick?.Attached
 			joystick._refs+=1
 			Return joystick
 		End
@@ -190,13 +215,13 @@ Class Joystick
 			Local sdljoystick:=SDL_JoystickOpen( devid )
 			If Not sdljoystick Continue
 			
-			Local instid:=SDL_JoystickInstanceID( sdljoystick )
-			If _opened[instid]
+			Local inst:=SDL_JoystickInstanceID( sdljoystick )
+			If _opened[inst]
 				SDL_JoystickClose( sdljoystick )
 				Continue
 			Endif
 			
-			Local joystick:=New Joystick( index,sdljoystick )
+			Local joystick:=New Joystick( index,sdljoystick,inst )
 			
 			Return joystick
 		Next
@@ -249,56 +274,34 @@ Class Joystick
 	End
 	
 	Field _refs:=1
-	Field _index:Int
-	Field _sdljoystick:SDL_Joystick Ptr 
 	Field _discarded:Bool
 	
+	Field _index:Int
+	Field _sdljoystick:SDL_Joystick Ptr 
 	Field _inst:Int
-	Field _name:String
-	Field _guid:String
-	
-	Field _numAxes:Int
-	Field _numBalls:Int
-	Field _numButtons:Int
-	Field _numHats:Int
 	
 	Field _hits:=New Bool[32]
 	
-	Method New( index:Int,sdljoystick:SDL_Joystick Ptr )
+	Method New( index:Int,sdljoystick:SDL_Joystick Ptr,inst:Int )
 		
 		_index=index
 		_sdljoystick=sdljoystick
-	
-		_inst=SDL_JoystickInstanceID( _sdljoystick )
-		_name=String.FromCString( SDL_JoystickName( _sdljoystick ) )
-		_guid=GetGUID( _sdljoystick )
-		
-		_numAxes=SDL_JoystickNumAxes( _sdljoystick )
-		_numBalls=SDL_JoystickNumBalls( _sdljoystick )
-		_numButtons=SDL_JoystickNumButtons( _sdljoystick )
-		_numHats=SDL_JoystickNumHats( _sdljoystick )
+		_inst=inst
 		
 		_joysticks[_index]=Self
 		
 		_opened[_inst]=Self
-		
-		If DEBUG Print "Joystick Created, user id="+_index+", instance id="+_inst
 	End
 	
 	Method Discard()
 
 		If _discarded Return
 		
-		If DEBUG Print "Discarding Joystick, user id="+_index+", instance id="+_inst
-		
 		SDL_JoystickClose( _sdljoystick )
-		_sdljoystick=Null
 		
 		_joysticks[_index]=Null
-		_index=-1
 		
 		_opened.Remove( _inst )
-		_inst=-1
 		
 		_discarded=True
 	End

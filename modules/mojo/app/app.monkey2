@@ -89,11 +89,12 @@ Class AppInstance
 	
 		_config=config
 		
-		SDL_Init( SDL_INIT_VIDEO|SDL_INIT_JOYSTICK )
+		SDL_Init( SDL_INIT_VIDEO|SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER )
 		
 		SDL_SetHint( "SDL_MOUSE_FOCUS_CLICKTHROUGH","1" )
 
 		SDL_FlushEvents( SDL_JOYDEVICEADDED,SDL_JOYDEVICEADDED )
+		SDL_FlushEvents( SDL_CONTROLLERDEVICEADDED,SDL_CONTROLLERDEVICEADDED )
 		
 		'possible fix for linux crashing at exit (can't reproduce myself).
 		'		
