@@ -152,11 +152,6 @@ Class TypeValue Extends Value
 		Return "<"+ttype.ToString()+">"
 	End
 	
-'	Method ToRValue:Value() Override
-'		Throw New SemantEx( "Type '"+ttype.ToString()+"' cannot be converted to a value" )
-'		Return Null
-'	End
-	
 	Method FindValue:Value( ident:String ) Override
 		Local node:=ttype.FindNode( ident )
 		If node Return node.ToValue( Null )
@@ -354,6 +349,7 @@ Class LiteralValue Extends Value
 	End
 	
 	Function NullValue:LiteralValue( type:Type )
+		If type.Equals( Type.VoidType ) Throw New SemantEx( "Null value cannot have void type" )
 		Return New LiteralValue( type,"" )
 	end
 End
@@ -374,7 +370,7 @@ Class NullValue Extends Value
 	End
 		
 	Method UpCast:Value( type:Type ) Override
-		Return New LiteralValue( type,"" )
+		Return LiteralValue.NullValue( type )
 	End
 	
 End

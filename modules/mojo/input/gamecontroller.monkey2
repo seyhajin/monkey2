@@ -66,16 +66,10 @@ Class GameController
 		Return (Float(SDL_GameControllerGetAxis( _sdlcontroller,Cast<SDL_GameControllerAxis>( Int(axis) ) ) )+32768)/32767.5-1
 	End
 	
-	#rem monkeydoc Get game controll button state.
-	#end
-	Method GetButton:Bool( button:GameControllerButton )
-		
-		If _discarded Return False
-		
-		Return SDL_GameControllerGetButton( _sdlcontroller,Cast<SDL_GameControllerButton>( Int(button) ) )
-	End
-	
 	#rem monkeydoc Check up/down state of a game controller button.
+	
+	Returns true if button has been pressed since the last call to [[ButtonPressed]].
+	
 	#end
 	Method ButtonDown:Bool( button:GameControllerButton )
 		
@@ -195,6 +189,8 @@ Class GameController
 	Field _index:Int
 	Field _sdlcontroller:SDL_GameController Ptr
 	Field _inst:Int
+	
+	Field _hits:=New Bool[16]
 	
 	Method New( index:Int,sdlcontroller:SDL_GameController Ptr,inst:Int )
 		

@@ -43,12 +43,12 @@ Class Type Extends SNode
 	
 	'Not nice - should fix comparison ops
 	Operator=:Bool( type:Type )
-		If Not Self Or Not type Throw New SemantEx( "Type.Operator=()" )
+		If Not type Throw New SemantEx( "Type.Operator=()" )
 		Return Object(Dealias)=type.Dealias
 	End
 	
 	Operator<>:Bool( type:Type )
-		If Not Self Or Not type Throw New SemantEx( "Type.Operator<>()" )
+		If Not type Throw New SemantEx( "Type.Operator<>()" )
 		Return Object(Dealias)<>type.Dealias
 	End
 	
@@ -790,7 +790,7 @@ Class GenArgType Extends Type
 End
 
 Class VoidType Extends Type
-
+	
 	Method ToString:String() Override
 		Return "Void"
 	End
@@ -850,4 +850,3 @@ Class NullType Extends Type
 	End
 	
 End
-

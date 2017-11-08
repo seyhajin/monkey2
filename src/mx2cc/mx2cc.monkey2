@@ -34,13 +34,13 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"
 
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
 'Const TestArgs:="mx2cc makedocs"
 
-Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '
