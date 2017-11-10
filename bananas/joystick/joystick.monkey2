@@ -18,8 +18,6 @@ Class Player
 	Field id:Int
 	Field joystick:Joystick
 	
-	Global used:=New StringMap<Bool>
-	
 	Method New( id:Int )
 		Self.id=id
 		Self.joystick=Joystick.Open( id )
