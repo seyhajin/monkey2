@@ -19,7 +19,7 @@ Boolean type.
 ####Long
 64 bit signed integer.
 ####ULong
-64 bit signed integer.
+64 bit unsigned integer.
 ####Float
 32 bit floating point.
 ####Double
