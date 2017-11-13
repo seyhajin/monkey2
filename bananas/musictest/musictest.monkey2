@@ -28,18 +28,42 @@ Class MyWindow Extends Window
 	
 	Method StartMusic()
 		
-		_channel=Audio.PlayMusic( "asset::ACDC_-_Back_In_Black-sample.ogg",StartMusic )
+		_channel=Audio.PlayMusic( "asset::ACDC_-_Back_In_Black-sample.ogg",Lambda()
+		
+			If _channel StartMusic()
+		End )
+		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 		
-		If Keyboard.KeyHit( Key.Space ) or Mouse.ButtonHit( MouseButton.Left ) _channel.Paused=Not _channel.Paused
-		
 		RequestRender()
 	
-		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
+		canvas.DrawText( 
+		"Music Test: Hit [Enter] to "+
+		(_channel ? "stop" Else "start")+
+		(_channel ? ", [Space] to "+(_channel.Paused ? "resume" Else "pause") Else ""),
+		0,0 )
+		
+		'Stop/Start?
+		If Keyboard.KeyHit( Key.Enter ) Or Mouse.ButtonHit( MouseButton.Left )
+			If _channel 
+				_channel.Stop()
+				_channel=Null
+			Else
+				StartMusic()
+			Endif
+		Endif
+		
+		'Pause/Resume?
+		If Keyboard.KeyHit( Key.Space ) Or Mouse.ButtonHit( MouseButton.Right )
+			If _channel
+				_channel.Paused=Not _channel.Paused
+			Endif
+		Endif
+		
 	End
-	
+ 	
 End
 
 Function Main()

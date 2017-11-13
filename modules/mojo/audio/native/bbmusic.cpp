@@ -75,6 +75,7 @@ namespace bbMusic{
 			ALuint source=alsource;
 	
 			stb_vorbis_info info=stb_vorbis_get_info( vorbis );
+			
 //			int length=stb_vorbis_stream_length_in_samples( vorbis );
 //			float duration=stb_vorbis_stream_length_in_seconds( vorbis );
 //			bb_printf( "vorbis length=%i, duration=%f, info.sample_rate=%i, info.channels=%i\n",length,duration,info.sample_rate,info.channels );
@@ -85,24 +86,27 @@ namespace bbMusic{
 //			int nsamples=buffer_size / (info.channels==2 ? 4 : 2);
 //			int buffer_ms=nsamples*1000/info.sample_rate;
 			
-			int buffer_ms=50;
+			int buffer_ms=100;
 			int nsamples=buffer_ms*info.sample_rate/1000;
 			int buffer_size=nsamples * (info.channels==2 ? 4 : 2);
 			
 //			bb_printf( "buffer_size=%i, buffer_ms=%i\n",buffer_size,buffer_ms );
 			
 			//polling for paused occasionally fails with only 2 buffers
-			ALuint buffers[3];
-			alGenBuffers( 3,buffers );
+			
+			const int numbufs=3;
+			
+			ALuint buffers[numbufs];
+			alGenBuffers( numbufs,buffers );
 			
 			short *vorbis_data=new short[buffer_size/2];
 			
-			for( int i=0;i<3;++i ){
+			for( int i=0;i<numbufs;++i ){
 				int n=stb_vorbis_get_samples_short_interleaved( vorbis,info.channels,vorbis_data,buffer_size/2 );
 				alBufferData( buffers[i],format,vorbis_data,buffer_size,info.sample_rate );
 			}
 			
-			alSourceQueueBuffers( source,3,buffers );
+			alSourceQueueBuffers( source,numbufs,buffers );
 			
 			alSourcePlay( source );
 			
@@ -118,21 +122,24 @@ namespace bbMusic{
 					for(;;){
 						alGetSourcei( source,AL_SOURCE_STATE,&state );
 						if( state==AL_STOPPED ) break;
-						std::this_thread::sleep_for( std::chrono::milliseconds( buffer_ms ) );
+						std::this_thread::sleep_for( std::chrono::milliseconds( buffer_ms/2 ) );
 					}
 					break;
 				}
 				
 				for(;;){
+				
 					alGetSourcei( source,AL_SOURCE_STATE,&state );
 					if( state==AL_STOPPED ) break;
 
 					ALint processed;
 					alGetSourcei( source,AL_BUFFERS_PROCESSED,&processed );
 					
+//					if( processed>1 )  bb_printf( "processed=%i\n",processed );
+					
 					if( state==AL_PLAYING && processed ) break;
 						
-					std::this_thread::sleep_for( std::chrono::milliseconds( buffer_ms ) );
+					std::this_thread::sleep_for( std::chrono::milliseconds( buffer_ms/2 ) );
 				}
 				if( state==AL_STOPPED ){
 //					bb_printf( "AL_STOPPED\n" );
