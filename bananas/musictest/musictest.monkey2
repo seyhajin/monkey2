@@ -32,6 +32,7 @@ Class MyWindow Extends Window
 		
 			If _channel StartMusic()
 		End )
+		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
