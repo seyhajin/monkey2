@@ -43,13 +43,23 @@ An instance of the AudioDevice class is automatically created when an [[AppInsta
 
 #end
 Class AudioDevice
+	
+	#rem monkeydoc Starts streaming audio playback.
+	
+	PlayMusic starts a piece of audio streaming from a file in the background.
 
+	When the audio finishes, the optional `finished` function is invoked.
+	
+	The returned [[Channel]] instance is automatically discarded when the audio stops, so should not be discarded by your code.
+	
+	The audio file must be in .ogg format.
+	
+	#end
 	Method PlayMusic:Channel( path:String,finished:Void()=Null,paused:Bool=False )
 		
-		Local channel:=New Channel( Null )
+		Local channel:=New Channel( ChannelFlags.AutoDiscard )
 		
 		Local callback:=async.CreateAsyncCallback( Lambda()
-			channel.Discard()
 			finished()
 		End,True )
 		
@@ -57,7 +67,6 @@ Class AudioDevice
 		
 		If Not playMusic( path,callback,channel._alSource ) 
 			async.DestroyAsyncCallback( callback )
-			channel.Discard()
 			Return Null
 		Endif
 		
