@@ -124,7 +124,11 @@ Class GameController
 		
 		Local n:=0
 		
-		For Local mapping:=Eachin LoadString( "asset::gamecontrollerdb.txt",True ).Split( "~n" )
+		For Local mapping:=Eachin LoadString( path,True ).Split( "~n" )
+			
+			mapping=mapping.Trim()
+			
+			If Not mapping Or mapping.StartsWith( "#" ) Continue
 			
 			n+=AddMapping( mapping )>0 ? 1 Else 0
 		Next
