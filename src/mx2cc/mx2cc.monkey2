@@ -34,7 +34,7 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods -target=ios"
 
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
@@ -75,9 +75,15 @@ Function Main()
 	
 	If GetFileType( env )<>FILETYPE_FILE Fail( "Unable to locate mx2cc 'bin' directory" )
 
-	LoadEnv( env )
-	
-	Local args:=AppArgs()
+	CreateDir( "tmp" )
+
+	Local args:String[]
+
+#If __CONFIG__="debug"
+	args=TestArgs.Split( " " )
+#else
+	args=AppArgs()
+#endif
 	
 	If args.Length<2
 
@@ -107,21 +113,26 @@ Function Main()
 		Print "  for makedocs - list of modules, or nothing to make all docs."
 
 #If __DESKTOP_TARGET__
-		CreateDir( "tmp" )
 		system( "g++ --version >tmp/_v.txt" )
 		Print ""
 		Print "Mx2cc g++ version:"
 		Print ""
 		Print LoadString( "tmp/_v.txt" )
 #Endif
-
-#If __CONFIG__="release"
-		exit_(0)
-#Endif
-		args=TestArgs.Split( " " )
-		If args.Length<2 exit_(0)
-		
+		exit_( 0 )
 	Endif
+	
+	For Local i:=0 Until args.Length
+		If args[i]="-target=ios"
+			system( "xcrun --sdk iphoneos --show-sdk-path >tmp/_p.txt" )
+			Local p:=LoadString( "tmp/_p.txt" ).Trim()
+			SetEnv( "MX2_IOS_SDK",p )
+			'Print "MX2_IOS_SDK="+p
+			Exit
+		Endif
+	Next
+	
+	LoadEnv( env )
 	
 	Local ok:=False
 

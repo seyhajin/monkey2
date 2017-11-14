@@ -382,12 +382,12 @@ Class Window Extends View
 	
 	Method UpdateMouseScale()
 	
-		Local w:Int,h:Int,dw:Int,dh:Int
+		Local w:Int,h:Int,dw:Int,dh:Int,fs:Int
 		
 		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
 		
 #If __TARGET__="emscripten"
-		emscripten_get_canvas_size( Varptr dw,Varptr dh,Null )
+		emscripten_get_canvas_size( Varptr dw,Varptr dh,Varptr fs )
 #Else
 		SDL_GL_GetDrawableSize( _sdlWindow,Varptr dw,Varptr dh )
 #Endif
@@ -421,8 +421,8 @@ Class Window Extends View
 		
 #Else if __WEB_TARGET__
 
-		Local dw:Int,dh:Int
-		emscripten_get_canvas_size( Varptr dw,Varptr dh,Null )
+		Local dw:Int,dh:Int,fs:Int
+		emscripten_get_canvas_size( Varptr dw,Varptr dh,Varptr fs )
 		Frame=New Recti( 0,0,dw,dh )
 #Else
 		_frame=GetFrame()

@@ -3,6 +3,8 @@
 
 ### Audio
 
+The [[Audio]] global contains a read only instance of an [[AudioDevice]] object which can be used to [[AudioDevice.PlayMusic|play music]].
+
 A [[Sound]] object contains static audio data that can be play through [[Channel]] objects.
 
 A sound object can be loaded from file using [[Sound.Load]] or constructed from an [[std::std.audio.AudoData|AudioData]] object.

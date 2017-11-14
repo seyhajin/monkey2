@@ -47,12 +47,12 @@ You can also render to an image using a canvas object.
 
 @#### Lighting
 
-A canvas also support 2d lighting with bumpmapping and specular effects.
+A canvas also supports 2d lighting with bumpmapping and specular effects.
 
 Light are 'drawn' using the [[Canvas.AddLight]] method, which can only be used when the canvas is in 'lighting mode'.
 
 To put the canvas into lighting mode, use the [[Canvas.BeginLighting]] method. To end lighting mode, use the [[Canvas.EndLighting]] method. EndLighting is what actually renders the lighting, and will add lighting to any graphics rendered between BeginLighting and EndLighting.
 
-You can not change the canvas viewport or scissor rect while the canvas is in lighting mode.
-
 AddLight takes an image parameter and is used in a very similar way to DrawImage. Light images can contain arbitrary colors and can be scaled, rotated etc. when drawn. However, images used for lighting should be loaded using the [[Image.LoadLight]] method.
+
+You can not change the canvas viewport or scissor rect while the canvas is in lighting mode.
