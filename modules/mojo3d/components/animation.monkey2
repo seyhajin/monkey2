@@ -18,27 +18,91 @@ Alias ScaleKey:AnimationKey<Vec3f>
 Class Animation
 	
 	Method New( channels:AnimationChannel[],duration:Float,hertz:Float )
-		
 		_channels=channels
-		
 		_duration=duration
-		
-		_hertz=hertz
+		_hertz=hertz ?Else 24
 	End
 	
+	#rem monkeydoc Animation channels. 
+	
+	There is a channel for each bone in the animation's skeleton.
+	
+	#end
 	Property Channels:AnimationChannel[]()
 		
 		Return _channels
 	End
 	
+	#rem monkeydoc Duration.
+	
+	The duration of the animation in seconds
+	
+	#end
 	Property Duration:Float()
 		
 		Return _duration
 	End
 	
+	#rem monkeydoc Hertz.
+	
+	The frequency of the animation in seconds
+	
+	#end
 	Property Hertz:Float()
 		
 		Return _hertz
+	End
+	
+	Method Slice:Animation( begin:Float,term:Float )
+		
+		Local newchannels:=New Stack<AnimationChannel>
+		
+		For Local channel:=Eachin _channels
+			
+			If Not channel
+				newchannels.Add( Null )
+				Continue
+			End
+
+			Local posKeys:=New Stack<PositionKey>
+			For Local key:=Eachin channel.PositionKeys
+				If key.Time>term Exit
+				If key.Time>=begin posKeys.Add( New PositionKey( key.Time-begin,key.Value ) )
+			Next
+			
+			Local rotKeys:=New Stack<RotationKey>
+			For Local key:=Eachin channel.RotationKeys
+				If key.Time>term Exit
+				If key.Time>=begin rotKeys.Add( New RotationKey( key.Time-begin,key.Value ) )
+			Next
+			
+			Local sclKeys:=New Stack<ScaleKey>
+			For Local key:=Eachin channel.ScaleKeys
+				If key.Time>term Exit
+				If key.Time>=begin sclKeys.Add( New ScaleKey( key.Time-begin,key.Value ) )
+			Next
+			
+			Local newchannel:=New AnimationChannel( posKeys.ToArray(),rotKeys.ToArray(),sclKeys.ToArray() )
+			newchannels.Add( newchannel )
+		
+		Next
+		
+		Local animation:=New Animation( newchannels.ToArray(),term-begin,_hertz )
+		
+		Return animation
+	
+	End
+	
+	Function Load:Animation( path:String )
+		
+		For Local loader:=Eachin Mojo3dLoader.Instances
+		
+			Local animation:=loader.LoadAnimation( path )
+			
+			If animation Return animation
+		Next
+		
+		Return Null
 	End
 	
 	Private
@@ -46,7 +110,6 @@ Class Animation
 	Field _channels:AnimationChannel[]
 	Field _duration:Float
 	Field _hertz:Float
-	
 End
 
 #rem monkeydoc @hidden

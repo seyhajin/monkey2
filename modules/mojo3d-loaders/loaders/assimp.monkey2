@@ -96,11 +96,36 @@ Class AssimpLoader
 	
 	Method LoadBonedModel:Model()
 		
-		Local model:=LoadNode( _scene.mRootNode,Null,True )
+'		#rem
+		Local model:=New Model
+
+'		_nodes[""]=model
+'		_entityIds[""]=_entities.Length
+'		_entities.Add( model )
+		
+		LoadNode( _scene.mRootNode,model )
+'		#end
+		
+'		Local model:=LoadNode( _scene.mRootNode,Null )
 		
 		LoadAnimator( model )
 		
 		Return model
+	End
+
+	Method LoadAnimation:Animation()
+		
+		If Not _scene.mNumAnimations Return Null
+		
+		_nodes["<null>"]=Null
+		_entityIds["<null>"]=_entities.Length
+		_entities.Add( Null )
+		
+		EnumEntityIds( _scene.mRootNode )
+		
+		Local animation:=LoadAnimation( _scene.mAnimations[0] )
+		
+		Return animation
 	End
 	
 	Private
@@ -155,7 +180,7 @@ Class AssimpLoader
 	End
 	
 	Method LoadMesh( aimesh:aiMesh,mesh:Mesh,model:Model,boned:bool )
-	
+		
 		Local vertices:=New Vertex3f[ aimesh.mNumVertices ]
 		
 		Local vp:=aimesh.mVertices
@@ -195,7 +220,7 @@ Class AssimpLoader
 		If index<_materials.Length And _materials[index] Return _materials[index]
 
 		If index>=_materials.Length _materials.Resize( index+1 )
-		
+			
 		_materials[index]=LoadMaterial( _scene.mMaterials[index],boned )
 		
 		Return _materials[index]
@@ -229,7 +254,17 @@ Class AssimpLoader
 		Return material
 	End
 	
-	Method LoadNode:Model( node:aiNode,parent:Model,boned:bool )
+	Method EnumEntityIds( node:aiNode )
+		
+		_entityIds[ node.mName.data ]=_entityIds.Count()
+	
+		For Local i:=0 Until node.mNumChildren
+			
+			EnumEntityIds( node.mChildren[i] )
+		Next
+	End
+	
+	Method LoadNode:Model( node:aiNode,parent:Model )
 		
 		Local model:=New Model( parent )
 		
@@ -251,7 +286,7 @@ Class AssimpLoader
 		
 		For Local i:=0 Until node.mNumChildren
 			
-			LoadNode( node.mChildren[i],model,boned )
+			LoadNode( node.mChildren[i],model )
 		Next
 		
 		Local mesh:=New Mesh
@@ -264,9 +299,9 @@ Class AssimpLoader
 			
 			mesh.AddMaterials( 1 )
 			
-			LoadMesh( aimesh,mesh,model,boned )
+			LoadMesh( aimesh,mesh,model,aimesh.mNumBones>0 )
 			
-			materials.Push( LoadMaterial( aimesh,boned ) )
+			materials.Push( LoadMaterial( aimesh,aimesh.mNumBones>0 ) )
 		Next
 		
 		If materials.Length
@@ -312,9 +347,11 @@ Class AssimpLoader
 	
 	Method LoadAnimation:Animation( aianim:aiAnimation )
 		
-		Local channels:=New AnimationChannel[ _entities.Length ]
-		
-'		Print "Num anim channels="+aianim.mNumChannels
+'		Print "_entities.Length="+_entities.Length
+'		Print "_entityIds.Count="+_entityIds.Count()
+'		Print "mNumChannels="+aianim.mNumChannels
+
+		Local channels:=New AnimationChannel[ _entityIds.Count() ]
 		
 		For Local i:=0 Until aianim.mNumChannels
 			
@@ -322,7 +359,11 @@ Class AssimpLoader
 			
 			Local id:=_entityIds[ aichan.mNodeName.data ]
 			
-			channels[id]=LoadAnimationChannel( aichan )
+			Local channel:=LoadAnimationChannel( aichan )
+			
+			channels[id]=channel
+			
+'			Print "channel "+id+", numposkeys="+channel.PositionKeys.Length+", numrotkeys="+channel.RotationKeys.Length+", numsclkeys="+channel.ScaleKeys.Length
 		
 		Next
 		
@@ -340,11 +381,11 @@ Class AssimpLoader
 			animations[i]=LoadAnimation( _scene.mAnimations[i] )
 		Next
 		
-		Local animator:=entity.AddComponent<Animator>()
+		Local animator:=New Animator( entity )
 		
-		animator.Animations=animations
+		animator.Skeleton=_entities.ToArray()
 		
-		animator.Entities=_entities.ToArray()
+		animator.Animations.AddAll( animations )
 		
 		Return animator
 	End
@@ -429,6 +470,31 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		Return model
 	End
 	
+	Method LoadAnimation:Animation( path:String ) Override
+
+		Local flags:UInt=0
+		
+		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
+		'flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_SortByPType
+		flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SortByPType
+'		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
+		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
+'		flags|=aiProcess_SplitByBoneCount
+		flags|=aiProcess_LimitBoneWeights
+		flags|=aiProcess_FindInvalidData
+		flags|=aiProcess_OptimizeMeshes
+'		flags|=aiProcess_OptimizeGraph	'fails quite spectacularly!
+		
+		Local scene:=LoadScene( path,flags )
+		If Not scene Return Null
+
+		Local loader:=New AssimpLoader( scene,ExtractDir( path ) )
+		
+		Local animation:=loader.LoadAnimation()
+		
+		Return animation
+	End
+		
 	Private
 
 	Function LoadScene:aiScene( path:String,flags:UInt )

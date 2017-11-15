@@ -56,6 +56,7 @@ Const GL_depth_texture:bool="bbGLexts::GL_depth_texture"
 Const GL_texture_float:Bool="bbGLexts::GL_texture_float"
 Const GL_texture_half_float:bool="bbGLexts::GL_texture_half_float"
 Const GL_texture_filter_anisotropic:Bool="bbGLexts::GL_texture_filter_anisotropic"
+Const GL_standard_derivatives:Bool="bbGLexts::GL_standard_derivatives"
 
 Function glDrawBuffers( n:Int,bufs:GLenum Ptr )="bbGLexts::glDrawBuffers"
 

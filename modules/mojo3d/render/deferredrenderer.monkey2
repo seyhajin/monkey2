@@ -165,7 +165,7 @@ Class DeferredRenderer Extends Renderer
 	Method RenderTransparent()
 		
 		_device.ColorMask=ColorMask.All
-		_device.DepthMask=false
+		_device.DepthMask=True'false
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.RenderPass=0
 
@@ -173,9 +173,9 @@ Class DeferredRenderer Extends Renderer
 	End
 	
 	Method RenderSprites()
-
+		
 		_device.ColorMask=ColorMask.All
-		_device.DepthMask=False
+		_device.DepthMask=True'False
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.RenderPass=0
 		

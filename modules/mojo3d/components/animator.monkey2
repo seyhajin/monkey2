@@ -1,6 +1,15 @@
 
 Namespace mojo3d
 
+Class Entity Extension
+	
+	Property Animator:Animator()
+		
+		Return GetComponent<Animator>()
+	End
+	
+End
+
 #rem monkeydoc The Animator class.
 #end
 Class Animator Extends Component
@@ -8,26 +17,44 @@ Class Animator Extends Component
 	Const Type:=New ComponentType( "Animator",0,ComponentTypeFlags.Singleton )
 	
 	Method New( entity:Entity )
-		
 		Super.New( entity,Type )
 	End
 	
-	Property Animations:Animation[]()
+	Method New( entity:Entity,animator:Animator )
+		Self.New( entity )
+
+		_skeleton=animator._skeleton.Slice( 0 )
+		For Local i:=0 Until _skeleton.Length
+			_skeleton[i]=_skeleton[i].LastCopy
+		End
+		_animations=animator._animations
+		_playing=animator._playing
+		_paused=animator._paused
+		_speed=animator._speed
+		_time=animator._time
+	End
+	
+	Property Skeleton:Entity[]()
+		
+		Return _skeleton
+		
+	Setter( skeleton:Entity[] )
+		
+		_skeleton=skeleton
+	End
+	
+	Property Animations:Stack<Animation>()
 		
 		Return _animations
 		
-	Setter( animations:Animation[] )
+	Setter( animations:Stack<Animation> )
 		
 		_animations=animations
 	End
 	
-	Property Entities:Entity[]()
-	
-		Return _entities
-	
-	Setter( entities:Entity[] )
+	Property Playing:Bool()
 		
-		_entities=entities
+		Return _playing<>Null
 	End
 	
 	Property Paused:Bool()
@@ -57,45 +84,58 @@ Class Animator Extends Component
 		_time=time
 	End
 	
-	Method Animate( animationId:Int,time:Float )
+	Method Animate( animationId:Int,speed:Float=1.0 )
 		
-		Local animation:=_animations[animationId]
-
-		For Local i:=0 Until animation.Channels.Length
-			
-			Local channel:=animation.Channels[i]
-			If Not channel continue
-			
-			_entities[i].LocalPosition=channel.GetPosition( time )
-			_entities[i].LocalBasis=New Mat3f( channel.GetRotation( time ) )
-			_entities[i].LocalScale=channel.GetScale( time )
-		End
+		DebugAssert( animationId>=0 And animationId<_animations.Length,"Animation id out of range" )
 		
+		_playing=_animations[animationId]
+		
+		_speed=speed
+		
+		_time=0
+	End
+	
+	Method Stop()
+		
+		_playing=Null
+	End
+	
+	Protected
+	
+	Method OnCopy:Animator( entity:Entity ) Override
+		
+		Return New Animator( entity,Self )
 	End
 	
 	Method OnUpdate( elapsed:Float ) Override
 		
-		If _paused  or not _animations Return
+		If _paused  Or Not _playing Return
 		
-		Local anim:=_animations[0]
+		Local hertz:=_playing.Hertz
+		Local timeScale:=1.0/hertz
+
+		_time+=elapsed * _speed
 		
-		_time+=anim.Hertz*elapsed
-		
-		If _time>=anim.Duration _time-=anim.Duration Else If _time<0 _time+=anim.Duration
+		If _time>=_playing.Duration * timeScale _time-=_playing.Duration * timeScale Else If _time<0 _time+=_playing.Duration * timeScale
 			
-		Animate( 0,_time )
+		For Local i:=0 Until _playing.Channels.Length
+			
+			Local channel:=_playing.Channels[i]
+			If Not channel continue
+			
+			_skeleton[i].LocalPosition=channel.GetPosition( _time * hertz )
+			_skeleton[i].LocalBasis=New Mat3f( channel.GetRotation( _time * hertz ) )
+			_skeleton[i].LocalScale=channel.GetScale( _time * hertz )
+		End
 	End
 	
 	Private
-
-	Field _animations:Animation[]
-
-	Field _entities:Entity[]
 	
-	Field _paused:Bool=True
-	
+	Field _skeleton:Entity[]
+	Field _animations:=New Stack<Animation>
+	Field _playing:Animation
+	Field _paused:Bool=False
 	Field _speed:Float=1
-	
 	Field _time:Float=0
 	
 End

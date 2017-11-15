@@ -151,6 +151,8 @@ precision mediump float;
 		
 		If glexts.GL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
 			
+		If glexts.GL_standard_derivatives source="#extension GL_OES_standard_derivatives : require~n"+source
+			
 #ElseIf __TARGET__="macos" or __TARGET__="linux"
 	
 		Const prefix:="

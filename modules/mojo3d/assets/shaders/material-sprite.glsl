@@ -31,11 +31,17 @@ uniform sampler2D m_ColorTexture;
 
 uniform vec4 m_ColorFactor;
 
+uniform float m_AlphaDiscard;
+
 void main(){
 
-	vec3 color=pow( texture2D( m_ColorTexture,v_TexCoord0 ).rgb,vec3( 2.2 ) ) * m_ColorFactor.rgb;
+	vec4 tcolor=texture2D( m_ColorTexture,v_TexCoord0 );
+
+	float alpha=tcolor.a * m_ColorFactor.a;
 	
-	float alpha=texture2D( m_ColorTexture,v_TexCoord0 ).a * m_ColorFactor.a;
+	if( alpha<m_AlphaDiscard ) discard;
+
+	vec3 color=pow( tcolor.rgb,vec3( 2.2 ) ) * m_ColorFactor.rgb;
 	
 #if defined( MX2_SRGBOUTPUT )
 	gl_FragColor=vec4( pow( color,vec3( 1.0/2.2 ) ),alpha );

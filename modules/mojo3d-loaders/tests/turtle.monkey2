@@ -6,9 +6,8 @@ Namespace myapp
 #Import "<mojo3d>"
 #Import "<mojo3d-loaders>"
 
-#Import "../mojo3d"
-
-#Import "assets/"
+#Import "assets/turtle1.b3d"
+#Import "assets/turtle1.png"
 
 #Import "util"
 
@@ -44,10 +43,18 @@ Class MyWindow Extends Window
 		_camera.Far=100
 		_camera.Move( 0,10,-20 )
 		
+		New FlyBehaviour( _camera )
+		
 		'create light
 		'
 		_light=New Light
-		_light.Rotate( Pi/2,0,0 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.Rotate( 75,15,0 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.CastsShadow=True
+		
+		'create ground
+		'
+		_ground=Model.CreateBox( New Boxf( -50,-5,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green ) )
+		_ground.CastsShadow=False
 		
 		'create ground
 		'
@@ -56,28 +63,31 @@ Class MyWindow Extends Window
 		'create turtle
 		'		
 		_turtle=Model.LoadBoned( "asset::turtle1.b3d" )
+		_turtle.Scale=New Vec3f( .125 )
+
+		Local walk:=_turtle.Animator.Animations[0].Slice( 1,11 )
+		_turtle.Animator.Animations.Add( walk )
 		
-		Local animator:=_turtle.GetComponent<Animator>()
+		For Local i:=0 Until 360 Step 15
+			
+			Local copy:=_turtle.Copy()
+			
+			copy.RotateY( i )
+			copy.MoveZ( 12 )
+			
+			copy.Animator.Animate( 0,Rnd(.5,1.0) )
+			
+		Next
 		
-		animator.Paused=False
-		
+		_turtle.Animator.Animate( 1,1 )
 		
 	End
 		
 	Method OnRender( canvas:Canvas ) Override
 		
-		Global time:=0.0
-		
 		RequestRender()
-		
-		util.Fly( _camera,Self )
-		
-		If Keyboard.KeyHit( Key.Space )
 
-			Local animator:=_turtle.GetComponent<Animator>()
-		
-			animator.Paused=Not animator.Paused
-		Endif
+		If Keyboard.KeyDown( Key.Space ) _turtle.Animator.Time+=.01
 		
 		_scene.Update()
 		
@@ -85,7 +95,7 @@ Class MyWindow Extends Window
 		
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "Width="+Width+", Height="+Height+", anim time="+_turtle.Animator.Time+", FPS="+App.FPS,0,0 )
 	End
 	
 End

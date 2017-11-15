@@ -9,16 +9,18 @@ Class ParticleSystem Extends Renderable
 		Super.New( parent )
 		
 		_pbuffer=New ParticleBuffer( particleCount )
-		
 		_material=New ParticleMaterial
+		
+		Visible=True
 	End
 
 	Method New( particleBuffer:ParticleBuffer,material:ParticleMaterial,parent:Entity=Null )
 		Super.New( parent )
 		
 		_pbuffer=particleBuffer
-		
 		_material=material
+		
+		Visible=True
 	End
 
 	#rem monkeydoc Copies the particle system.
@@ -27,7 +29,7 @@ Class ParticleSystem Extends Renderable
 		
 		Local copy:=New ParticleSystem( Self,parent )
 		
-		CopyComplete( copy )
+		CopyTo( copy )
 		
 		Return copy
 	End

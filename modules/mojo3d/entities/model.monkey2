@@ -17,15 +17,16 @@ Class Model Extends Renderable
 	Method New( parent:Entity=Null )
 		Super.New( parent )
 		
-		Show()
+		Visible=True
 	End
 	
 	Method New( mesh:Mesh,material:Material,parent:Entity=Null )
-		Self.New( parent )
+		super.New( parent )
 		
 		_mesh=mesh
+		_materials=New Material[]( material )
 		
-		_material=material
+		Visible=True
 	End
 	
 	#rem monkeydoc Copies the model.
@@ -34,7 +35,14 @@ Class Model Extends Renderable
 		
 		Local copy:=New Model( Self,parent )
 		
-		CopyComplete( copy )
+		CopyTo( copy )
+		
+		copy._bones=_bones.Slice( 0 )
+		
+		For Local i:=0 Until _bones.Length
+			
+			copy._bones[i].entity=_bones[i].entity.LastCopy
+		Next
 		
 		Return copy
 	End
@@ -109,9 +117,8 @@ Class Model Extends Renderable
 		Next
 		
 		Return Null
-	
 	End
-
+	
 	#rem monkeydoc Loads a boned model from a file path.
 	
 	On its own, mojo3d can only load gltf2 format mesh and model files.
@@ -159,7 +166,7 @@ Class Model Extends Renderable
 		If Not _mesh Return
 		
 		If _bones
-
+			
 			If _boneMatrices.Length<>_bones.Length _boneMatrices=New Mat4f[ _bones.Length ]
 			
 			For Local i:=0 Until _bones.Length

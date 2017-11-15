@@ -17,6 +17,8 @@ Class MyWindow Extends Window
 	
 	Field _scene:Scene
 	
+	Field _fog:FogEffect
+	
 	Field _camera:Camera
 	
 	Field _light:Light
@@ -32,6 +34,13 @@ Class MyWindow Extends Window
 		_scene=Scene.GetCurrent()
 		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+		
+		'create fog
+		'
+		_fog=New FogEffect
+		_fog.Near=0
+		_fog.Far=50
+		_scene.AddPostEffect( _fog )
 		
 		'create camera
 		'
@@ -53,6 +62,8 @@ Class MyWindow Extends Window
 		'
 		Local material:=SpriteMaterial.Load( "asset::Acadia-Tree-Sprite.png" )
 		
+		material.AlphaDiscard=1.0/255.0
+		
 		For Local i:=0 Until 1000
 			
 			Local sprite:=New Sprite( material )
@@ -70,9 +81,9 @@ Class MyWindow Extends Window
 		
 		For Local i:=0 Until 100
 			
-			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
+'			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 			
-			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
+'			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
 
 		next			
 		

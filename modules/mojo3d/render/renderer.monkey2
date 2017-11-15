@@ -22,7 +22,7 @@ Class Renderer
 	
 	#rem monkeydoc Array containing the cascaded shadow map frustum splits for directional light shadows.
 	
-	Defaults to Float[]( 1.0/64.0,1.0/16.0,1.0/4.0 )
+	Defaults to Float[]( 8.0,16.0,64.0,256.0 )
 	
 	Must have length 3.
 		
@@ -32,7 +32,7 @@ Class Renderer
 		Return _csmSplits
 		
 	Setter( splits:Float[] )
-		Assert( splits.Length=3,"CSMSplits array must have 3 elements" )
+		Assert( splits.Length=4,"CSMSplits array must have 4 elements" )
 		
 		_csmSplits=splits.Slice( 0 )
 	End
@@ -99,10 +99,9 @@ Class Renderer
 		ValidateShadowMaps()
 		
 		_csmSplitDepths[0]=camera.Near
-		For Local i:=1 Until 4
-			_csmSplitDepths[i]=camera.Near+_csmSplits[i-1]*(camera.Far-camera.Near)
+		For Local i:=1 Until 5
+			_csmSplitDepths[i]=_csmSplitDepths[i-1]+_csmSplits[i-1]
 		Next
-		_csmSplitDepths[4]=camera.Far
 		
 		Local time:=Float( Now() )
 
@@ -145,6 +144,20 @@ Class Renderer
 			
 			r.OnRender( _renderQueue )
 		Next
+		
+		Local ops:=_renderQueue.OpaqueOps
+
+#rem		
+		ops.Sort( Lambda:Int( x:RenderOp,y:RenderOp )
+			If x.instance<y.instance Return -1
+			If x.instance>y.instance Return 1
+			If x.material<y.material Return -1
+			If x.material>y.material Return 1
+			If x<y Return -1
+			If x>y Return 1
+			Return 0
+		End )
+#end
 		
 		'***** Set render camera *****
 
@@ -211,19 +224,6 @@ Class Renderer
 			New Mat3f( +1,0, 0, 0,0,-1,  0,-1,0 ),	'-Y
 			New Mat3f( +1,0, 0, 0,-1,0,  0,0,+1 ),	'+Z
 			New Mat3f( -1,0, 0, 0,-1,0,  0,0,-1 ) )	'-Z
-			
-		#rem
-		Matxf tforms[]={
-		{ {0,0,+1},{0,-1,0},{-1,0,0},{0,0,0} },	//+X
-		{ {0,0,-1},{0,-1,0},{+1,0,0},{0,0,0} },	//-X
-		{ {+1,0,0},{0,0,+1},{0,+1,0},{0,0,0} },	//+Y test me!
-		{ {+1,0,0},{0,0,-1},{0,-1,0},{0,0,0} },	//-Y
-		{ {+1,0,0},{0,-1,0},{0,0,+1},{0,0,0} },	//+Z
-		{ {-1,0,0},{0,-1,0},{0,0,-1},{0,0,0} }	//-Z
-	};		
-		
-		#end
-	
 	
 	End
 
@@ -304,29 +304,6 @@ Class Renderer
 		RenderRenderOps( _renderQueue.SpriteOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
 	End
 	
-	#rem
-	Method RenderAmbient()
-		
-		_device.ColorMask=ColorMask.All
-		_device.DepthMask=True
-		_device.DepthFunc=DepthFunc.LessEqual
-		_device.BlendMode=BlendMode.Opaque
-		_device.RenderPass=1
-
-		RenderRenderOps( _renderQueue.OpaqueOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
-	End
-	
-	Method RenderSprites()
-
-		_device.ColorMask=ColorMask.All
-		_device.DepthMask=False
-		_device.DepthFunc=DepthFunc.LessEqual
-		_device.RenderPass=0
-
-		RenderRenderOps( _spriteQueue.TransparentOps,_renderCamera.InverseMatrix,_renderCamera.ProjectionMatrix )
-	End
-	#end
-	
 	Method RenderCSMShadows( light:Light )
 	
 		'Perhaps use a different device for CSM...?
@@ -341,13 +318,10 @@ Class Renderer
 		_device.ColorMask=ColorMask.All
 		_device.DepthMask=True
 		_device.Clear( Color.White,1.0 )
-'		_device.ColorMask=ColorMask.None
-'		_device.DepthMask=True
-'		_device.Clear( Null,1.0 )
 		
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.BlendMode=BlendMode.Opaque
-		_device.CullMode=CullMode.Back
+		_device.CullMode=CullMode.Front	'CullMode.Back
 		_device.RenderPass=16
 
 		Local invLightMatrix:=light.InverseMatrix
@@ -394,7 +368,7 @@ Class Renderer
 			
 			_device.Scissor=_device.Viewport
 				
-			RenderRenderOps( _renderQueue.ShadowOps,invLightMatrix,lightProj )
+			RenderShadowOps( _renderQueue.ShadowOps,invLightMatrix,lightProj )
 			
 		Next
 		
@@ -415,10 +389,10 @@ Class Renderer
 		_device.Scissor=_device.Viewport
 		_device.ColorMask=ColorMask.All
 		_device.DepthMask=True
+		
 		_device.DepthFunc=DepthFunc.LessEqual
-		'
 		_device.BlendMode=BlendMode.Opaque
-		_device.CullMode=CullMode.Back
+		_device.CullMode=CullMode.Front
 		_device.RenderPass=17
 		
 		Local lightProj:=Mat4f.Frustum( -1,+1,-1,+1,1,light.Range )
@@ -437,7 +411,7 @@ Class Renderer
 			
 			Local viewMatrix:=New AffineMat4f( _psmFaceTransforms[i] ) * invLightMatrix
 
-			RenderRenderOps( _renderQueue.ShadowOps,viewMatrix,lightProj )
+			RenderShadowOps( _renderQueue.ShadowOps,viewMatrix,lightProj )
 			
 		Next
 
@@ -475,8 +449,8 @@ Class Renderer
 	
 	Field _psmFaceTransforms:Mat3f[]
 	
-	Field _csmSize:=2048
-	Field _csmSplits:=New Float[]( 1.0/64.0,1.0/16.0,1.0/4.0 )
+	Field _csmSize:=4096
+	Field _csmSplits:=New Float[]( 8.0,16.0,64.0,256.0 )
 	Field _csmSplitDepths:=New Float[5]
 	Field _csmTexture:Texture
 	Field _csmDepth:Texture
@@ -547,49 +521,47 @@ Class Renderer
 
 	Method RenderRenderOps( ops:Stack<RenderOp>,viewMatrix:AffineMat4f,projMatrix:Mat4f )
 		
+		Local viewProjMatrix:=projMatrix * viewMatrix
+		
 		_runiforms.SetMat4f( "ViewMatrix",viewMatrix )
 		_runiforms.SetMat4f( "ProjectionMatrix",projMatrix )
-		_runiforms.SetMat4f( "ViewProjectionMatrix",projMatrix * viewMatrix )
+		_runiforms.SetMat4f( "ViewProjectionMatrix",viewProjMatrix )
 		_runiforms.SetMat4f( "InverseProjectionMatrix",-projMatrix )
 		
+		'_iuniforms.SetMat4fArray( "ModelBoneMatrices",Null )
+		
 		Local instance:Entity=_renderCamera
+		Local bones:Mat4f[]
 		Local material:Material
 		
 		For Local op:=Eachin ops
 			
 			If op.instance<>instance
-				
 				instance=op.instance
-				
-				Local modelMat:= instance ? instance.Matrix Else New AffineMat4f
+				Local modelMat:=instance ? instance.Matrix Else New AffineMat4f
 				Local modelViewMat:=viewMatrix * modelMat
+				Local modelViewNormMat:=modelViewMat.m.Cofactor()
 				Local modelViewProjMat:=projMatrix * modelViewMat
-				Local modelViewNormMat:=~-modelViewMat.m
-					
 				_iuniforms.SetMat4f( "ModelMatrix",modelMat )
 				_iuniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
-				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
 				_iuniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
-				
-				_iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
-				
+				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
 			Endif
-			
+				
+			If op.bones _iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
+				
+			If op.uniforms _device.BindUniformBlock( op.uniforms )
+						
 			If op.material<>material
-				
 				material=op.material
-				
 				_device.Shader=material.ValidateShader()
 				_device.BindUniformBlock( material.Uniforms )
 				If material.BlendMode<>BlendMode.Opaque
 					_device.BlendMode=material.BlendMode
 				Endif
 				_device.CullMode=material.CullMode
-				
 			Endif
 			
-			If op.uniforms _device.BindUniformBlock( op.uniforms )
-						
 			_device.VertexBuffer=op.vbuffer
 			If op.ibuffer
 				_device.IndexBuffer=op.ibuffer
@@ -599,6 +571,57 @@ Class Renderer
 			Endif
 			
 		Next
+	End
+
+	Method RenderShadowOps( ops:Stack<RenderOp>,viewMatrix:AffineMat4f,projMatrix:Mat4f )
+		
+		Local viewProjMatrix:=projMatrix * viewMatrix
+		
+		_runiforms.SetMat4f( "ViewMatrix",viewMatrix )
+		_runiforms.SetMat4f( "ProjectionMatrix",projMatrix )
+		_runiforms.SetMat4f( "ViewProjectionMatrix",viewProjMatrix )
+		_runiforms.SetMat4f( "InverseProjectionMatrix",-projMatrix )
+		
+		'_iuniforms.SetMat4fArray( "ModelBoneMatrices",Null )
+		
+		Local instance:Entity=_renderCamera
+		Local bones:Mat4f[]
+		Local material:Material
+		
+		For Local op:=Eachin ops
+			
+			If op.instance<>instance
+				instance=op.instance
+				Local modelMat:=instance ? instance.Matrix Else New AffineMat4f
+				Local modelViewMat:=viewMatrix * modelMat
+				Local modelViewNormMat:=modelViewMat.m.Cofactor()
+				Local modelViewProjMat:=projMatrix * modelViewMat
+				_iuniforms.SetMat4f( "ModelMatrix",modelMat )
+				_iuniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
+				_iuniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
+				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
+			Endif
+				
+			If op.bones _iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
+			
+			If op.uniforms _device.BindUniformBlock( op.uniforms )
+						
+			If op.material<>material
+				material=op.material
+				_device.Shader=material.ValidateShader()
+				_device.BindUniformBlock( material.Uniforms )
+			Endif
+			
+			_device.VertexBuffer=op.vbuffer
+			If op.ibuffer
+				_device.IndexBuffer=op.ibuffer
+				_device.RenderIndexed( op.order,op.count,op.first )
+			Else
+				_device.Render( op.order,op.count,op.first )
+			Endif
+			
+		Next
+
 	End
 
 End

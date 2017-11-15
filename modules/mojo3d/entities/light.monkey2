@@ -31,7 +31,7 @@ Class Light Extends Entity
 		Range=10
 		CastsShadow=False
 		
-		Show()
+		Visible=True
 	End
 	
 	#rem monkeydoc Copies the light.
@@ -40,7 +40,7 @@ Class Light Extends Entity
 		
 		Local copy:=New Light( Self,parent )
 		
-		CopyComplete( copy )
+		CopyTo( copy )
 		
 		Return copy
 	End
@@ -99,8 +99,6 @@ Class Light Extends Entity
 		Type=light.Type
 		Color=light.Color
 		Range=light.Range
-		
-		Show()
 	End
 	
 	#rem monkeydoc @hidden

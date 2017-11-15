@@ -82,9 +82,16 @@ float viewDepth( float depth ){
 
 float shadowColor(){
 
-//	vec4 vpos=vec4( v_Position + v_Normal * .05,1.0 );
-	vec4 vpos=vec4( v_Position + v_Normal * .06,1.0 );
-	vec4 lpos;
+//	vec3 dx=dFdx( v_Position );
+//	vec3 dy=dFdy( v_Position );
+//	vec3 vn=vec4( cross( dx,dy ),0.0 );
+//	vec4 vpos=vec4( v_Position + v_Normal*0.01,1.0 );
+
+	vec4 vpos=vec4( v_Position,1.0 );
+
+	if( vpos.z>=r_ShadowCSMSplits.w ) return 0.5;
+	
+	vec4 llpos,lpos;
 	vec2 off;
 	
 	if( vpos.z<r_ShadowCSMSplits.x ){

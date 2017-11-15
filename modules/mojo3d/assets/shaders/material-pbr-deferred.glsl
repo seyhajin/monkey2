@@ -123,8 +123,8 @@ void main(){
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
 #ifdef MX2_BUMPMAPPED
 	// viewspace tangent matrix
-	v_TanMatrix[2]=v_Normal;
-	v_TanMatrix[0]=i_ModelViewNormalMatrix * b_Tangent.xyz;
+	v_TanMatrix[2]=normalize( v_Normal );
+	v_TanMatrix[0]=normalize( i_ModelViewNormalMatrix * b_Tangent.xyz );
 	v_TanMatrix[1]=cross( v_TanMatrix[0],v_TanMatrix[2] ) * b_Tangent.a;
 #endif
 #endif
@@ -151,8 +151,8 @@ void main(){
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
 #ifdef MX2_BUMPMAPPED
 	// viewspace tangent matrix
-	v_TanMatrix[2]=v_Normal;
-	v_TanMatrix[0]=i_ModelViewNormalMatrix * a_Tangent.xyz;
+	v_TanMatrix[2]=normalize( v_Normal );
+	v_TanMatrix[0]=normalize( i_ModelViewNormalMatrix * a_Tangent.xyz );
 	v_TanMatrix[1]=cross( v_TanMatrix[0],v_TanMatrix[2] ) * a_Tangent.a;
 #endif
 #endif
