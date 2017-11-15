@@ -1,9 +1,9 @@
 
 ***** Monkey2 v1.1.09 *****
 
-Added experimental selective reflection.
+Added SDL GameController class. Tweaked Joystick/GameController Open logic so devices can be added/removed more cleanly. See joystick and gamecontroller samples in bananas.
 
-Use '#Reflect namepsace_path' to enable reflection for an entire namespace. Using same system as 'Using' ie: can end with '..' to 'reflect all'.
+Added experimental selective reflection. Use '#Reflect namepsace_path' to enable reflection for an entire namespace. Using same system as 'Using' ie: can end with '..' to 'reflect all'.
 
 
 ***** Monkey2 v1.1.08 *****
