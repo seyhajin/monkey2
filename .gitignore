@@ -33,6 +33,7 @@ __NEWPAGES__/
 /src/ted2go-v*
 /src/ted2go-dev
 /src/ted2go-master
+/src/ted2go-github
 
 /modules/cmark
 /modules/lua
