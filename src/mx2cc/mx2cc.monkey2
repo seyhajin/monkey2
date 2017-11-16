@@ -34,7 +34,7 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods -target=ios"
+Const TestArgs:="mx2cc makemods"
 
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
