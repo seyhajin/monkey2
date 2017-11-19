@@ -105,12 +105,12 @@ Class Font Extends Resource
 	
 	#rem monkeydoc Loads a font from a file.
 	#end
-	Function Load:Font( path:String,height:Float,shader:Shader=Null )
+	Function Load:Font( path:String,height:Float,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 	
 		If Not shader shader=Shader.GetShader( "font" )
 		
-		Local font:=FreeTypeFont.Load( path,height,shader )
-		If Not font And Not ExtractRootDir( path ) font=FreeTypeFont.Load( "font::"+path,height,shader )
+		Local font:=FreeTypeFont.Load( path,height,shader,textureFlags )
+		If Not font And Not ExtractRootDir( path ) font=FreeTypeFont.Load( "font::"+path,height,shader,textureFlags )
 		
 		Return font
 	End
@@ -157,14 +157,14 @@ End
 
 Class ResourceManager Extension
 
-	Method OpenFont:Font( path:String,height:Float,shader:Shader=Null )
+	Method OpenFont:Font( path:String,height:Float,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 	
-		Local slug:="Font:name="+StripDir( StripExt( path ) )+"&height="+height+"&shader="+(shader ? shader.Name Else "")
+		Local slug:="Font:name="+StripDir( StripExt( path ) )+"&height="+height+"&shader="+(shader ? shader.Name Else "")+"&textureFlags="+Int(textureFlags)
 		
 		Local font:=Cast<Font>( OpenResource( slug ) )
 		If font Return font
 		
-		font=Font.Load( path,height )
+		font=Font.Load( path,height,shader,textureFlags )
 		
 		AddResource( slug,font )
 		Return font

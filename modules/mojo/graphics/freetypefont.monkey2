@@ -19,13 +19,13 @@ Public
 #end
 Class FreeTypeFont Extends Font
 
-	Function Load:FreeTypeFont( path:String,fheight:Float,shader:Shader )
+	Function Load:FreeTypeFont( path:String,fheight:Float,shader:Shader,textureFlags:TextureFlags )
 	
 		Local ext:=ExtractExt( path )
 		If Not ext
-			Local font:=Load( path+".otf",fheight,shader )
-			If Not font font=Load( path+".ttf",fheight,shader )
-			If Not font font=Load( path+".fon",fheight,shader )
+			Local font:=Load( path+".otf",fheight,shader,textureFlags )
+			If Not font font=Load( path+".ttf",fheight,shader,textureFlags )
+			If Not font font=Load( path+".fon",fheight,shader,textureFlags )
 			Return font
 		Endif
 	
@@ -40,7 +40,7 @@ Class FreeTypeFont Extends Font
 			Return Null
 		Endif
 		
-		Local font:=New FreeTypeFont( data,face,fheight,shader )
+		Local font:=New FreeTypeFont( data,face,fheight,shader,textureFlags )
 		
 		Return font
 	End
@@ -132,7 +132,7 @@ Class FreeTypeFont Extends Font
 			tx+=gw+1
 		Next
 		
-		gpage.image=New Image( pixmap,TextureFlags.Filter|TextureFlags.Mipmap,_shader )
+		gpage.image=New Image( pixmap,_textureFlags,_shader )
 		gpage.glyphs=glyphs
 		
 '		Print "Loading glyph page "+page+", image size="+gpage.image.Rect.Size
@@ -155,14 +155,17 @@ Class FreeTypeFont Extends Font
 	Field _data:DataBuffer
 	Field _face:FT_Face
 	Field _shader:Shader
+	Field _textureFlags:TextureFlags
+	
 	Field _height:Int
 	Field _ascent:Int
 	
-	Method New( data:DataBuffer,face:FT_Face,fheight:Float,shader:Shader )
+	Method New( data:DataBuffer,face:FT_Face,fheight:Float,shader:Shader,textureFlags:TextureFlags )
 		
 		_data=data
 		_face=face
 		_shader=shader
+		_textureFlags=textureFlags
 
 		Local size_req:FT_Size_RequestRec
 		
