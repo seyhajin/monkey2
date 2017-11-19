@@ -84,15 +84,27 @@ Class Animator Extends Component
 		_time=time
 	End
 	
-	Method Animate( animationId:Int,speed:Float=1.0 )
+	Method Animate( animationId:Int,speed:Float=1.0,transition:Float=0.0 )
 		
 		DebugAssert( animationId>=0 And animationId<_animations.Length,"Animation id out of range" )
 		
-		_playing=_animations[animationId]
+		Local anim:=_animations[animationId]
+		If anim<>_playing
+			If _playing And transition>0
+				_playing0=_playing
+				_speed0=_speed
+				_time0=_time
+				_transdur=transition
+				_transtime=0
+				_trans=True
+			Else
+				_trans=False
+			Endif
+			_playing=anim
+			_speed=speed
+			_time=0
+		Endif
 		
-		_speed=speed
-		
-		_time=0
 	End
 	
 	Method Stop()
@@ -111,31 +123,104 @@ Class Animator Extends Component
 		
 		If _paused  Or Not _playing Return
 		
-		Local hertz:=_playing.Hertz
-		Local timeScale:=1.0/hertz
-
-		_time+=elapsed * _speed
+		Local blend:=0.0
 		
-		If _time>=_playing.Duration * timeScale _time-=_playing.Duration * timeScale Else If _time<0 _time+=_playing.Duration * timeScale
-			
-		For Local i:=0 Until _playing.Channels.Length
-			
-			Local channel:=_playing.Channels[i]
-			If Not channel continue
-			
-			_skeleton[i].LocalPosition=channel.GetPosition( _time * hertz )
-			_skeleton[i].LocalBasis=New Mat3f( channel.GetRotation( _time * hertz ) )
-			_skeleton[i].LocalScale=channel.GetScale( _time * hertz )
-		End
+		If _trans
+			_transtime+=elapsed
+			If _transtime<_transdur
+				blend=_transtime/_transdur
+			Else
+				_trans=False
+			Endif
+		Endif
+		
+		_time=UpdateTime( _playing,_time,_speed,elapsed )
+		
+		If _trans
+			_time0=UpdateTime( _playing0,_time0,_speed0,elapsed )
+			UpdateSkeleton( _playing0,_time0,_playing,_time,blend )
+		Else
+			UpdateSkeleton( _playing,_time,Null,0,0 )
+		Endif
+		
 	End
 	
 	Private
 	
 	Field _skeleton:Entity[]
 	Field _animations:=New Stack<Animation>
-	Field _playing:Animation
 	Field _paused:Bool=False
-	Field _speed:Float=1
-	Field _time:Float=0
 	
+	Field _transtime:Float
+	Field _transdur:Float
+	Field _trans:Bool
+	
+	Field _playing0:Animation
+	Field _speed0:Float
+	Field _time0:Float
+	
+	Field _playing:Animation
+	Field _speed:Float
+	Field _time:Float
+
+	Method UpdateTime:Float( playing:Animation,time:Float,speed:Float,elapsed:Float )
+
+		Local period:=1.0/playing.Hertz
+	
+		time+=elapsed * speed
+	
+		If time>=playing.Duration * period time-=playing.Duration * period Else If time<0 time+=playing.Duration * period
+			
+		Return time
+	End
+	
+	Method UpdateSkeleton( playing0:Animation,time0:Float,playing1:Animation,time1:Float,alpha:Float )
+		
+		time0*=playing0?.Hertz
+		time1*=playing1?.Hertz
+		
+		For Local i:=0 Until _skeleton.Length
+			
+			Local chan0:=playing0 ? playing0.Channels[i] Else Null
+			Local chan1:=playing1 ? playing1.Channels[i] Else Null
+			
+			If playing0 And playing1
+				
+				Local pos0:=chan0 ? chan0.GetPosition( time0 ) Else New Vec3f
+				Local rot0:=chan0 ? chan0.GetRotation( time0 ) Else New Quatf
+				Local scl0:=chan0 ? chan0.GetScale( time0 ) Else New Vec3f( 1 )
+				
+				Local pos1:=chan1 ? chan1.GetPosition( time1 ) Else New Vec3f
+				Local rot1:=chan1 ? chan1.GetRotation( time1 ) Else New Quatf
+				Local scl1:=chan1 ? chan1.GetScale( time1 ) Else New Vec3f( 1 )
+
+				_skeleton[i].LocalPosition=pos0.Blend( pos1,alpha )
+				_skeleton[i].LocalBasis=rot0.Slerp( rot1,alpha )
+				_skeleton[i].LocalScale=scl0.Blend( scl1,alpha )
+			
+			Else If playing0
+				
+				Local pos0:=chan0 ? chan0.GetPosition( time0 ) Else New Vec3f
+				Local rot0:=chan0 ? chan0.GetRotation( time0 ) Else New Quatf
+				Local scl0:=chan0 ? chan0.GetScale( time0 ) Else New Vec3f( 1 )
+			
+				_skeleton[i].LocalPosition=pos0
+				_skeleton[i].LocalBasis=rot0
+				_skeleton[i].LocalScale=scl0
+
+			Else If playing1
+
+				Local pos1:=chan1 ? chan1.GetPosition( time1 ) Else New Vec3f
+				Local rot1:=chan1 ? chan1.GetRotation( time1 ) Else New Quatf
+				Local scl1:=chan1 ? chan1.GetScale( time1 ) Else New Vec3f( 1 )
+
+				_skeleton[i].LocalPosition=pos1
+				_skeleton[i].LocalBasis=rot1
+				_skeleton[i].LocalScale=scl1
+			
+			Endif
+		
+		Next
+	End
+
 End

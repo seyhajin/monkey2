@@ -55,42 +55,45 @@ Class Animation
 	
 	Method Slice:Animation( begin:Float,term:Float )
 		
-		Local newchannels:=New Stack<AnimationChannel>
+		Local channels:=_channels.Slice( 0 )
 		
-		For Local channel:=Eachin _channels
+		Local duration:=term-begin
+		
+		For Local i:=0 Until _channels.Length
 			
-			If Not channel
-				newchannels.Add( Null )
-				Continue
-			End
+			Local channel:=_channels[i]
+			If Not channel Continue
 
 			Local posKeys:=New Stack<PositionKey>
+			posKeys.Add( New PositionKey( 0,channel.GetPosition( begin ) ) )
 			For Local key:=Eachin channel.PositionKeys
-				If key.Time>term Exit
-				If key.Time>=begin posKeys.Add( New PositionKey( key.Time-begin,key.Value ) )
+				If key.Time>=term Exit
+				If key.Time>begin posKeys.Add( New PositionKey( key.Time-begin,key.Value ) )
 			Next
+			posKeys.Add( New PositionKey( duration,channel.GetPosition( term ) ) )
 			
 			Local rotKeys:=New Stack<RotationKey>
+			rotKeys.Add( New RotationKey( 0,channel.GetRotation( begin ) ) )			
 			For Local key:=Eachin channel.RotationKeys
-				If key.Time>term Exit
-				If key.Time>=begin rotKeys.Add( New RotationKey( key.Time-begin,key.Value ) )
+				If key.Time>=term Exit
+				If key.Time>begin rotKeys.Add( New RotationKey( key.Time-begin,key.Value ) )
 			Next
+			rotKeys.Add( New RotationKey( duration,channel.GetRotation( term ) ) )
 			
 			Local sclKeys:=New Stack<ScaleKey>
+			sclKeys.Add( New ScaleKey( 0,channel.GetScale( begin ) ) )
 			For Local key:=Eachin channel.ScaleKeys
-				If key.Time>term Exit
-				If key.Time>=begin sclKeys.Add( New ScaleKey( key.Time-begin,key.Value ) )
+				If key.Time>=term Exit
+				If key.Time>begin sclKeys.Add( New ScaleKey( key.Time-begin,key.Value ) )
 			Next
+			sclKeys.Add( New ScaleKey( duration,channel.GetScale( term ) ) )
 			
-			Local newchannel:=New AnimationChannel( posKeys.ToArray(),rotKeys.ToArray(),sclKeys.ToArray() )
-			newchannels.Add( newchannel )
-		
+			channels[i]=New AnimationChannel( posKeys.ToArray(),rotKeys.ToArray(),sclKeys.ToArray() )
 		Next
 		
-		Local animation:=New Animation( newchannels.ToArray(),term-begin,_hertz )
+		Local animation:=New Animation( channels,duration,_hertz )
 		
 		Return animation
-	
 	End
 	
 	Function Load:Animation( path:String )
