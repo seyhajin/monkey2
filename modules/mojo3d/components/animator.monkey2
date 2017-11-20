@@ -16,6 +16,8 @@ Class Animator Extends Component
 	
 	Const Type:=New ComponentType( "Animator",0,ComponentTypeFlags.Singleton )
 	
+	Field Finished:Void()
+	
 	Method New( entity:Entity )
 		Super.New( entity,Type )
 	End
@@ -28,10 +30,6 @@ Class Animator Extends Component
 			_skeleton[i]=_skeleton[i].LastCopy
 		End
 		_animations=animator._animations
-		_playing=animator._playing
-		_paused=animator._paused
-		_speed=animator._speed
-		_time=animator._time
 	End
 	
 	Property Skeleton:Entity[]()
@@ -51,12 +49,21 @@ Class Animator Extends Component
 		
 		_animations=animations
 	End
-	
-	Property Playing:Bool()
+
+	Property MasterSpeed:Float()
 		
-		Return _playing<>Null
+		Return _speed
+	
+	Setter( speed:Float )
+		
+		_speed=speed
 	End
 	
+	Property Animating:Animation()
+		
+		Return _playing ? _animation Else Null
+	End
+
 	Property Paused:Bool()
 		
 		Return _paused
@@ -64,15 +71,6 @@ Class Animator Extends Component
 	Setter( paused:Bool )
 		
 		_paused=paused
-	End
-	
-	Property Speed:Float()
-		
-		Return _speed
-	
-	Setter( speed:Float )
-		
-		_speed=speed
 	End
 	
 	Property Time:Float()
@@ -84,32 +82,46 @@ Class Animator Extends Component
 		_time=time
 	End
 	
-	Method Animate( animationId:Int,speed:Float=1.0,transition:Float=0.0 )
+	Method FindAnimation:Animation( name:String )
 		
-		DebugAssert( animationId>=0 And animationId<_animations.Length,"Animation id out of range" )
+		For Local animation:=Eachin _animations
+			
+			If animation.Name=name Return animation
+		Next
 		
-		Local anim:=_animations[animationId]
-		If anim<>_playing
-			If _playing And transition>0
-				_playing0=_playing
-				_speed0=_speed
-				_time0=_time
-				_transdur=transition
-				_transtime=0
-				_trans=True
-			Else
-				_trans=False
-			Endif
-			_playing=anim
-			_speed=speed
-			_time=0
+		Return Null
+	End
+	
+	Method Animate( name:String,transition:Float=0.0,finished:Void()=Null )
+		
+		Animate( FindAnimation( name ),transition,finished )
+	End
+		
+	Method Animate( animation:Animation,transition:Float=0.0,finished:Void()=Null )
+		
+		If Not animation return
+		
+		If _playing And _animation=animation Return
+		
+		If _playing And transition>0
+			_animation0=_animation
+			_time0=_time
+			_transition=transition
+			_transtime=0
+			_trans=True
+		Else
+			_trans=False
 		Endif
+		_animation=animation
+		_time=0
+		_finished=finished
+		_playing=True
 		
 	End
 	
 	Method Stop()
 		
-		_playing=Null
+		_playing=False
 	End
 	
 	Protected
@@ -127,20 +139,40 @@ Class Animator Extends Component
 		
 		If _trans
 			_transtime+=elapsed
-			If _transtime<_transdur
-				blend=_transtime/_transdur
+			If _transtime<_transition
+				blend=_transtime/_transition
 			Else
 				_trans=False
 			Endif
 		Endif
 		
-		_time=UpdateTime( _playing,_time,_speed,elapsed )
+		Local duration:=_animation.Duration/_animation.Hertz
+		_time+=_speed*elapsed
+		If _time>=duration
+			Select _animation.Mode
+			Case AnimationMode.OneShot
+				_time=duration
+				_playing=False
+			Case AnimationMode.Looping
+				_time-=duration
+			End
+			_finished()
+		Endif
 		
 		If _trans
-			_time0=UpdateTime( _playing0,_time0,_speed0,elapsed )
-			UpdateSkeleton( _playing0,_time0,_playing,_time,blend )
+			Local duration0:=_animation0.Duration/_animation0.Hertz
+			_time0+=_speed0*elapsed
+			If _time0>=duration0
+				Select _animation0.Mode
+				Case AnimationMode.OneShot
+					_time0=duration0
+				Case AnimationMode.Looping
+					_time0-=duration0
+				End
+			Endif
+			UpdateSkeleton( _animation0,_time0,_animation,_time,blend )
 		Else
-			UpdateSkeleton( _playing,_time,Null,0,0 )
+			UpdateSkeleton( _animation,_time,Null,0,0 )
 		Endif
 		
 	End
@@ -149,31 +181,24 @@ Class Animator Extends Component
 	
 	Field _skeleton:Entity[]
 	Field _animations:=New Stack<Animation>
+	
+	Field _playing:Bool=False
 	Field _paused:Bool=False
 	
 	Field _transtime:Float
-	Field _transdur:Float
+	Field _transition:Float
 	Field _trans:Bool
 	
-	Field _playing0:Animation
+	Field _animation0:Animation
 	Field _speed0:Float
 	Field _time0:Float
 	
-	Field _playing:Animation
+	Field _animation:Animation
 	Field _speed:Float
 	Field _time:Float
+	
+	Field _finished:Void()
 
-	Method UpdateTime:Float( playing:Animation,time:Float,speed:Float,elapsed:Float )
-
-		Local period:=1.0/playing.Hertz
-	
-		time+=elapsed * speed
-	
-		If time>=playing.Duration * period time-=playing.Duration * period Else If time<0 time+=playing.Duration * period
-			
-		Return time
-	End
-	
 	Method UpdateSkeleton( playing0:Animation,time0:Float,playing1:Animation,time1:Float,alpha:Float )
 		
 		time0*=playing0?.Hertz

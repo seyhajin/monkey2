@@ -108,6 +108,8 @@ Class FileStream Extends Stream
 			Return Null
 		End
 		
+		path=RealPath( path )
+		
 		Local file:=fopen( path,mode )
 		If Not file Return Null
 		

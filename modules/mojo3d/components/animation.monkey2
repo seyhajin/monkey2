@@ -13,14 +13,30 @@ Alias RotationKey:AnimationKey<Quatf>
 #end
 Alias ScaleKey:AnimationKey<Vec3f>
 
+Enum AnimationMode
+	
+	OneShot=1
+	Looping
+	PingPoong
+End
+
 #rem monkeydoc @hidden
 #end
 Class Animation
 	
-	Method New( channels:AnimationChannel[],duration:Float,hertz:Float )
+	Method New( name:String,channels:AnimationChannel[],duration:Float,hertz:Float,mode:AnimationMode )
+		_name=name
 		_channels=channels
 		_duration=duration
 		_hertz=hertz ?Else 24
+		_mode=mode
+	End
+	
+	#rem monkeydoc Animation name.
+	#end
+	Property Name:String()
+		
+		Return _name
 	End
 	
 	#rem monkeydoc Animation channels. 
@@ -53,7 +69,14 @@ Class Animation
 		Return _hertz
 	End
 	
-	Method Slice:Animation( begin:Float,term:Float )
+	#rem monkeydoc Animation mode.
+	#end
+	Property Mode:AnimationMode()
+		
+		Return _mode
+	End
+	
+	Method Slice:Animation( name:String,begin:Float,term:Float,mode:AnimationMode )
 		
 		Local channels:=_channels.Slice( 0 )
 		
@@ -91,7 +114,7 @@ Class Animation
 			channels[i]=New AnimationChannel( posKeys.ToArray(),rotKeys.ToArray(),sclKeys.ToArray() )
 		Next
 		
-		Local animation:=New Animation( channels,duration,_hertz )
+		Local animation:=New Animation( name,channels,duration,_hertz,mode )
 		
 		Return animation
 	End
@@ -110,9 +133,11 @@ Class Animation
 	
 	Private
 	
+	Field _name:String		
 	Field _channels:AnimationChannel[]
 	Field _duration:Float
 	Field _hertz:Float
+	Field _mode:AnimationMode
 End
 
 #rem monkeydoc @hidden
@@ -232,7 +257,7 @@ Class AnimationKey<T>
 	End
 
 	Private
-		
+
 	Field _time:float
 	Field _value:T
 End

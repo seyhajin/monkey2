@@ -367,7 +367,9 @@ Class AssimpLoader
 		
 		Next
 		
-		Return New Animation( channels,aianim.mDuration,aianim.mTicksPerSecond )
+		Local animation:=New Animation( aianim.mName.data,channels,aianim.mDuration,aianim.mTicksPerSecond,AnimationMode.Looping )
+		
+		Return animation
 	End
 	
 	Method LoadAnimator:Animator( entity:Entity )

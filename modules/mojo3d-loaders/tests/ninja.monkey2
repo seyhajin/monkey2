@@ -24,6 +24,8 @@ Class MyWindow Extends Window
 	
 	Field _ninja:Model
 	
+	Field _animator:Animator
+	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
@@ -39,7 +41,7 @@ Class MyWindow Extends Window
 		_camera.AddComponent<FlyBehaviour>()
 		_camera.Near=.1
 		_camera.Far=100
-		_camera.Move( 0,10,-20 )
+		_camera.Move( 0,5,-7 )
 		
 		'create light
 		'
@@ -55,12 +57,20 @@ Class MyWindow Extends Window
 		'create turtle
 		'		
 		_ninja=Model.LoadBoned( "asset::ninja.b3d" )
+		
+		_animator=_ninja.Animator
+		
+		_ninja.RotateY( 165 )
 '		_ninja.Scale=New Vec3f( .125 )
 
-		Local anim1:=_ninja.Animator.Animations[0].Slice( 1,14 )
-		Local anim2:=_ninja.Animator.Animations[0].Slice( 206,250 )
-		_ninja.Animator.Animations.Add( anim1 )
-		_ninja.Animator.Animations.Add( anim2 )
+		_animator.MasterSpeed=0.5
+
+		Local anim1:=_animator.Animations[0].Slice( "Walk",1,14,AnimationMode.Looping )
+		Local anim2:=_animator.Animations[0].Slice( "Idle",206,250,AnimationMode.Looping )
+		Local anim3:=_animator.Animations[0].Slice( "Attack",134,145,AnimationMode.OneShot )
+		_animator.Animations.Add( anim1 )
+		_animator.Animations.Add( anim2 )
+		_animator.Animations.Add( anim3 )
 		
 	End
 		
@@ -68,19 +78,30 @@ Class MyWindow Extends Window
 		
 		RequestRender()
 		
-		If Keyboard.KeyDown( Key.Enter )
-			_ninja.Animator.Animate( 1,.4,.2 )
-		Else
-			_ninja.Animator.Animate( 2,.4,.2 )
+		If _animator.Animating?.Name<>"Attack"
+			
+			If Keyboard.KeyHit( Key.Space )				'attack!
+				
+				_animator.Animate( "Attack",.2 )
+				
+			Else If Keyboard.KeyDown( Key.Enter )		'walk
+				
+				_animator.Animate( "Walk",.2 )
+			Else										'idle
+				
+				_animator.Animate( "Idle",.2 )
+				
+			Endif
+		
 		Endif
-
+	
 		_scene.Update()
 		
 		_scene.Render( canvas,_camera )
 		
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", anim time="+_ninja.Animator.Time+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "Hold [Enter] to strut, [Space] to attack! anim time="+_ninja.Animator.Time,0,0 )
 	End
 	
 End
