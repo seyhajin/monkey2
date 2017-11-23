@@ -88,6 +88,9 @@ Class FileStream Extends Stream
 	
 	#rem monkeydoc Opens a file and returns a new filestream.
 	
+	Note: This method should not be used to open an 'asset stream' because assets are not always files. You should instead use 
+	[[Stream.Open]] for streams that have a stream path prefix such as `asset::`, `internal::`, `external::` etc.
+	
 	@param path The path of the file to open.
 	
 	@param mode The mode to open the file in: "r", "w" or "rw".
