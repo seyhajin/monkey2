@@ -15,7 +15,9 @@ cfileDir:	mojo/mojo.buildv1.0.3/desktop_windows_debug/src
 #end
 
 Class Module
-
+	
+	Global Dirs:String[]
+	
 	Field name:String
 	Field srcPath:String
 	
@@ -61,5 +63,7 @@ Class Module
 		
 		rfile=hfileDir+"_r.cpp"
 	End
+	
+	
 End
 

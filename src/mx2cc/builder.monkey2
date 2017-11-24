@@ -133,8 +133,6 @@ Class BuilderInstance
 		profileName=opts.target+"_"+opts.config
 		If opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) profileName+="_msvc"
 		
-		MODULES_DIR=CurrentDir()+"modules/"
-		
 		If opts.productType="app" APP_DIR=ExtractDir( opts.mainSource )
 		
 		ClearPrimTypes()
@@ -182,19 +180,25 @@ Class BuilderInstance
 				parsingModule=Null
 			
 				If MX2_LIBS.Empty
-				
 					If modulesMap["monkey"] Exit
-					
 					MX2_LIBS.Push( "monkey" )
 				Endif
 				
 				Local name:=MX2_LIBS.Pop()
-				Local srcPath:=MODULES_DIR+name+"/"+name+".monkey2"
+				Local srcPath:=""
+				For Local moddir:=Eachin module.Dirs
+					srcPath=moddir+name+"/"+name+".monkey2"
+					If GetFileType( srcPath )=FileType.File Exit
+					srcPath=""
+				Next
+				If Not srcPath
+					New BuildEx( "Can't find module '"+name+"'" )
+					Continue
+				Endif
 				
 				module=New Module( name,srcPath,MX2CC_VERSION,profileName )
 				modulesMap[name]=module
 				modules.Push( module )
-				
 				parsingModule=module
 				MX2_SRCS.Push( module.srcPath )
 			Endif

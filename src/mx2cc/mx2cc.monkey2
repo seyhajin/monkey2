@@ -5,22 +5,12 @@ Namespace mx2cc
 
 #Import "mx2"
 
-'Use newdocs
 #Import "newdocs/docsnode"
 #Import "newdocs/docsbuffer"
 #Import "newdocs/docsmaker"
 #Import "newdocs/markdown"
 
 Using mx2.newdocs
-
-'Use olddocs
-'#Import "docs/docsmaker"
-'#Import "docs/jsonbuffer"
-'#Import "docs/minimarkdown"
-'#Import "docs/markdownbuffer"
-'#Import "docs/manpage"
-'
-'Using mx2.docs
 
 #Import "geninfo/geninfo"
 
@@ -34,7 +24,7 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"	' -clean gles20"
 
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
@@ -133,6 +123,17 @@ Function Main()
 	Next
 	
 	LoadEnv( env )
+	
+	Local moddirs:=New StringStack
+	moddirs.Add( CurrentDir()+"modules/" )
+	For Local moddir:=Eachin GetEnv( "MX2_MODULE_DIRS" ).Split( ";" )
+		moddir=moddir.Replace( "\","/" )
+		If GetFileType( moddir )<>FileType.Directory Continue
+		moddir=RealPath( moddir )
+		If Not moddir.EndsWith( "/" ) moddir+="/"
+		If Not moddirs.Contains( moddir ) moddirs.Add( moddir )
+	Next
+	Module.Dirs=moddirs.ToArray()
 	
 	Local ok:=False
 
@@ -253,10 +254,14 @@ Function MakeMods:Bool( args:String[] )
 	Local target:=opts.target
 	
 	For Local modid:=Eachin args
-	
-		Local path:="modules/"+modid+"/"+modid+".monkey2"
 		
-		If GetFileType( path )<>FILETYPE_FILE Fail( "Module file '"+path+"' not found" )
+		Local path:=""
+		For Local moddir:=Eachin Module.Dirs
+			path=moddir+modid+"/"+modid+".monkey2"
+			If GetFileType( path )=FileType.File Exit
+			path=""
+		Next
+		If Not path Fail( "Module '"+modid+"' not found" )
 	
 		Print ""
 		Print "***** Making module '"+modid+"' *****"
@@ -286,80 +291,6 @@ Function MakeMods:Bool( args:String[] )
 	Return errs=0
 End
 
-'olddocs...
-#rem
-Function MakeDocs:Bool( args:String[] )
-
-	Local opts:=New BuildOpts
-	opts.productType="module"
-	opts.target="desktop"
-	opts.config="debug"
-	opts.clean=False
-	opts.fast=True
-	opts.verbose=0
-	opts.passes=2
-	opts.makedocs=true
-	
-	args=ParseOpts( opts,args )
-	
-	opts.clean=False
-	
-	If Not args args=EnumModules()
-
-	Local docsMaker:=New DocsMaker
-	
-	Local errs:=0
-	
-	For Local modid:=Eachin args
-
-		Local path:="modules/"+modid+"/"+modid+".monkey2"
-		If GetFileType( path )<>FILETYPE_FILE Fail( "Module file '"+path+"' not found" )
-	
-		Print ""
-		Print "***** Doccing module '"+modid+"' *****"
-		Print ""
-		
-		opts.mainSource=RealPath( path )
-		
-		New BuilderInstance( opts )
-
-		Builder.Parse()
-		If Builder.errors.Length errs+=1;Continue
-		
-		Builder.Semant()
-		If Builder.errors.Length errs+=1;Continue
-
-		docsMaker.MakeDocs( Builder.modules.Top )
-
-	Next
-	
-	Local api_indices:=New StringStack
-	Local man_indices:=New StringStack
-	
-	For Local modid:=Eachin EnumModules()
-	
-		Local index:=LoadString( "modules/"+modid+"/docs/__MANPAGES__/index.js" )
-		If index man_indices.Push( index )
-		
-		index=LoadString( "modules/"+modid+"/docs/__PAGES__/index.js" )
-		If index api_indices.Push( index )
-		
-	Next
-	
-	Local tree:=man_indices.Join( "," )
-	If tree tree+=","
-	tree+="{ text:'Modules reference',children:["+api_indices.Join( "," )+"] }"
-	
-	Local page:=LoadString( "docs/docs_template.html" )
-	page=page.Replace( "${DOCS_TREE}",tree )
-	SaveString( page,"docs/docs.html" )
-	
-	Return True
-End
-#end
-
-
-'newdocs...
 Function MakeDocs:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
@@ -388,8 +319,13 @@ Function MakeDocs:Bool( args:String[] )
 	
 	For Local modid:=Eachin args
 		
-		Local path:="modules/"+modid+"/"+modid+".monkey2"
-		If GetFileType( path )<>FILETYPE_FILE Fail( "Module file '"+path+"' not found" )
+		Local path:=""
+		For Local moddir:=Eachin Module.Dirs
+			path=moddir+modid+"/"+modid+".monkey2"
+			If GetFileType( path )=FileType.File Exit
+			path=""
+		Next
+		If Not path Fail( "Module '"+modid+"' not found" )
 	
 		Print ""
 		Print "***** Doccing module '"+modid+"' *****"
@@ -542,35 +478,39 @@ End
 Function EnumModules:String[]()
 
 	Local mods:=New StringMap<StringStack>
-
-	For Local f:=Eachin LoadDir( "modules" )
 	
-		Local dir:="modules/"+f+"/"
-		If GetFileType( dir )<>FileType.Directory Continue
+	For Local moddir:=Eachin Module.Dirs
 		
-		Local str:=LoadString( dir+"module.json" )
-		If Not str Continue
+		For Local f:=Eachin LoadDir( moddir )
 		
-		Local obj:=JsonObject.Parse( str )
-		If Not obj 
-			Print "Error parsing json:"+dir+"module.json"
-			Continue
-		Endif
-		
-		Local name:=obj["module"].ToString()
-		If name<>f Continue
-		
-		Local deps:=New StringStack
-		If name<>"monkey" deps.Push( "monkey" )
-		
-		Local jdeps:=obj["depends"]
-		If jdeps
-			For Local dep:=Eachin jdeps.ToArray()
-				deps.Push( dep.ToString() )
-			Next
-		Endif
-		
-		mods[name]=deps
+			Local dir:=moddir+f+"/"
+			If GetFileType( dir )<>FileType.Directory Continue
+			
+			Local str:=LoadString( dir+"module.json" )
+			If Not str Continue
+			
+			Local obj:=JsonObject.Parse( str )
+			If Not obj 
+				Print "Error parsing json:"+dir+"module.json"
+				Continue
+			Endif
+			
+			Local name:=obj["module"].ToString()
+			If name<>f Continue
+			
+			Local deps:=New StringStack
+			If name<>"monkey" deps.Push( "monkey" )
+			
+			Local jdeps:=obj["depends"]
+			If jdeps
+				For Local dep:=Eachin jdeps.ToArray()
+					deps.Push( dep.ToString() )
+				Next
+			Endif
+			
+			mods[name]=deps
+		Next
+	
 	Next
 	
 	Local out:=New StringStack

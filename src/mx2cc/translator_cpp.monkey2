@@ -621,7 +621,12 @@ Class Translator_CPP Extends Translator
 			If func.fdecl.ident="<=>" hasCmp=True
 			
 			Refs( func.ftype )
-			Emit( FuncProto( func,True )+";" )
+			
+			If func.simpleGetter And Not _debug
+				EmitFunc( func,False,True )
+			Else
+				Emit( FuncProto( func,True )+";" )
+			Endif
 		Next
 		
 		If cdecl.kind="struct"
@@ -795,9 +800,9 @@ Class Translator_CPP Extends Translator
 		
 		For Local func:=Eachin ctype.methods
 			
-			If func.fdecl.ident="<=>" 
-				hasCmp=True
-			Endif
+			If func.fdecl.ident="<=>" hasCmp=True
+				
+			If func.simpleGetter And Not _debug Continue
 
 			EmitBr()
 			EmitFunc( func )
@@ -1136,13 +1141,13 @@ Class Translator_CPP Extends Translator
 		Next		
 	End
 
-	Method EmitFunc( func:FuncValue,init:Bool=False )
+	Method EmitFunc( func:FuncValue,init:Bool=False,header:Bool=False )
 	
 		Decls( func )
 	
 		If func.fdecl.IsAbstract Return
 	
-		Local proto:=FuncProto( func,False )
+		Local proto:=FuncProto( func,header )
 		
 		If func.invokeNew
 		
