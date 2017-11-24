@@ -56,6 +56,10 @@ void closedir_utf8( DIR *dir );
 
 #else
 
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/time.h>
+
 typedef struct tm tm_t;
 
 typedef struct stat stat_t;
