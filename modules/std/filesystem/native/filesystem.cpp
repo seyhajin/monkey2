@@ -4,6 +4,8 @@
 #if _WIN32
 
 #include <windows.h>
+
+#include "../../../libc/native/libc.h"
 	
 #elif __APPLE__
 
@@ -126,7 +128,8 @@ namespace bbFileSystem{
 	
 #if _WIN32
 
-		return CopyFileW( bbWString( srcPath ),bbWString( dstPath ),FALSE );
+//		return CopyFileW( bbWString( srcPath ),bbWString( dstPath ),FALSE );
+		return CopyFileW( widen_utf8( bbCString( srcPath ) ),widen_utf8( bbCString( dstPath ) ),FALSE );
 		
 #elif __APPLE__
 

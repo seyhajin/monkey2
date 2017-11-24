@@ -610,7 +610,7 @@ Function LoadDir:String[]( path:String )
 		Local ent:=readdir( dir )
 		If Not ent Exit
 		
-		Local file:=String.FromCString( ent[0].d_name )
+		Local file:=ent[0].d_name	'String.FromCString( ent[0].d_name )
 		If file="." Or file=".." Continue
 		
 		files.Push( file )
