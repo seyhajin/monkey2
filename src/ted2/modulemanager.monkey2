@@ -6,6 +6,7 @@ Private
 Const MONKEY2_DOMAIN:="monkeycoder.co.nz"
 
 Class Module
+	Field dir:String
 	Field name:String
 	Field about:String
 	Field author:String
@@ -21,6 +22,8 @@ Class ModuleManager Extends Dialog
 
 	Method New( console:Console )
 		Super.New( "Module Manager" )
+		
+		LoadEnv()
 		
 		_console=console
 		
@@ -143,7 +146,9 @@ Class ModuleManager Extends Dialog
 		
 		For Local module:=Eachin _procmods
 		
-			Local src:="modules/"+module.name
+'			Local src:="modules/"+module.name
+			Local src:=module.dir+module.name
+			
 			Local dst:=backupDir+module.name
 			
 			Select GetFileType( src )
@@ -166,7 +171,9 @@ Class ModuleManager Extends Dialog
 		For Local module:=Eachin _procmods
 		
 			Local src:=backupDir+module.name
-			Local dst:="modules/"+module.name
+			
+'			Local dst:="modules/"+module.name
+			Local dst:=module.dir+module.name
 			
 			Select GetFileType( src )
 			Case FileType.Directory
@@ -239,12 +246,14 @@ Class ModuleManager Extends Dialog
 			Local zip:=module.name+"-v"+module.new_version+".zip"
 			Local dst:=downloadDir+zip
 			
-			If Not DeleteDir( "modules/"+module.name,True )
+'			If Not DeleteDir( "modules/"+module.name,True )
+			If Not DeleteDir( module.dir+module.name,True )
 				Alert( "Error deleting module directory '"+module.name+"'" )
 				Return False
 			End
 		
-			If Not ExtractZip( dst,"modules",module.name+"/" )
+'			If Not ExtractZip( dst,"modules",module.name+"/" )
+			If Not ExtractZip( dst,module.dir,module.name+"/" )
 				Alert( "Error extracting zip to '"+dst+"'" )
 				Return False
 			Endif
@@ -275,6 +284,7 @@ Class ModuleManager Extends Dialog
 		Local cmd:=MainWindow.Mx2ccPath+" makedocs"
 		
 		For Local module:=Eachin _procmods
+			
 			cmd+=" "+module.name
 		Next
 		
@@ -486,6 +496,7 @@ Class ModuleManager Extends Dialog
 				Endif
 			Else
 				module=New Module
+				module.dir=ModuleDirs[0]
 				module.version=version
 				module.new_version=version
 				module.status="Uninstalled"
@@ -505,45 +516,49 @@ Class ModuleManager Extends Dialog
 	End
 	
 	Method EnumLocalModules()
-	
-		For Local f:=Eachin LoadDir( "modules" )
 		
-			Local dir:="modules/"+f+"/"
-			If GetFileType( dir )<>FileType.Directory Continue
+		For Local moddir:=Eachin ModuleDirs
 			
-			Local str:=LoadString( dir+"module.json" )
-			If Not str Continue
+			For Local f:=Eachin LoadDir( moddir )
 			
-			Local obj:=JsonObject.Parse( str )
-			If Not obj Continue
+				Local dir:=moddir+f+"/"
+				If GetFileType( dir )<>FileType.Directory Continue
+				
+				Local str:=LoadString( dir+"module.json" )
+				If Not str Continue
+				
+				Local obj:=JsonObject.Parse( str )
+				If Not obj Continue
+				
+				Local jname:=obj["module"]
+				If Not jname Or Not Cast<JsonString>( jname ) Continue
+				
+				Local jabout:=obj["about"]
+				If Not jabout Or Not Cast<JsonString>( jabout ) Continue
+				
+				Local jauthor:=obj["author"]
+				If Not jauthor Or Not Cast<JsonString>( jauthor ) Continue
+				
+				Local jversion:=obj["version"]
+				If Not jversion Or Not Cast<JsonString>( jversion ) Continue
+				
+				Local name:=jname.ToString()
+				Local about:=jabout.ToString()
+				Local author:=jauthor.ToString()
+				Local version:=jversion.ToString()
+				
+				Local module:=New Module
+				module.dir=moddir
+				module.name=name
+				module.about=about
+				module.author=author
+				module.version=version
+				module.status="Local"
+				
+				_modules[name]=module
 			
-			Local jname:=obj["module"]
-			If Not jname Or Not Cast<JsonString>( jname ) Continue
-			
-			Local jabout:=obj["about"]
-			If Not jabout Or Not Cast<JsonString>( jabout ) Continue
-			
-			Local jauthor:=obj["author"]
-			If Not jauthor Or Not Cast<JsonString>( jauthor ) Continue
-			
-			Local jversion:=obj["version"]
-			If Not jversion Or Not Cast<JsonString>( jversion ) Continue
-			
-			Local name:=jname.ToString()
-			Local about:=jabout.ToString()
-			Local author:=jauthor.ToString()
-			Local version:=jversion.ToString()
-			
-			Local module:=New Module
-			module.name=name
-			module.about=about
-			module.author=author
-			module.version=version
-			module.status="Local"
-			
-			_modules[name]=module
-		
-		Next
+			Next
+		End
 	End
 
 	Method UpdateTable()

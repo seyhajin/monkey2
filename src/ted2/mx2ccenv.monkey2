@@ -1,6 +1,8 @@
 
 Namespace ted2
 
+Global ModuleDirs:String[]
+
 Function GetEnv:String( name:String )
 
 	Local p:=libc.getenv( name )
@@ -50,6 +52,8 @@ Function ReplaceEnv:String( str:String,lineid:Int )
 	Return str
 End
 
+Public
+
 Function LoadEnv()
 
 	Local path:="bin/env_"+HostOS+".txt"
@@ -78,9 +82,19 @@ Function LoadEnv()
 		
 		SetEnv( name,value )
 	Next
+	
+	Local moddirs:=New StringStack
+	moddirs.Add( CurrentDir()+"modules/" )
+	For Local moddir:=Eachin GetEnv( "MX2_MODULE_DIRS" ).Split( ";" )
+		moddir=moddir.Replace( "\","/" )
+		If GetFileType( moddir )<>FileType.Directory Continue
+		moddir=RealPath( moddir )
+		If Not moddir.EndsWith( "/" ) moddir+="/"
+		If Not moddirs.Contains( moddir ) moddirs.Add( moddir )
+	Next
+	ModuleDirs=moddirs.ToArray()
+	
 End
-
-Public
 
 Function EnumValidTargets:StringStack( console:Console )
 
