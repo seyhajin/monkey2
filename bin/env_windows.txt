@@ -3,6 +3,11 @@
 '
 MX2_WHOLE_ARCHIVE=0
 
+'Semi-colon separated list of module root dirs, relative to MX2_HOME or absolute.
+'
+'mx2cc always adds local modules/ dir to start of list.
+'
+'MX2_MODULE_DIRS=modules;modules_ext
 
 'If you change anything below, you should rebuild all!
 
@@ -35,7 +40,7 @@ MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG
 
 '***** WINDOWS DESKTOP TARGET - MSVC *****
 
-MX2_USE_MSVC=0
+MX2_USE_MSVC=1
 
 'https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
 '
@@ -54,12 +59,12 @@ MX2_LD_OPTS_MSVC_RELEASE=
 
 MX2_CC_OPTS_MSVC=-EHs -W0 -MT
 MX2_CC_OPTS_MSVC_DEBUG=-O1
-MX2_CC_OPTS_MSVC_RELEASE=-Ox -DNDEBUG
+MX2_CC_OPTS_MSVC_RELEASE=-O2 -DNDEBUG
 
 'C++ Compiler options
 MX2_CPP_OPTS_MSVC=-EHs -W0 -MT
 MX2_CPP_OPTS_MSVC_DEBUG=-O1
-MX2_CPP_OPTS_MSVC_RELEASE=-Ox -DNDEBUG
+MX2_CPP_OPTS_MSVC_RELEASE=-O2 -DNDEBUG
 
 
 '***** EMSCRIPTEN/WASM *****
