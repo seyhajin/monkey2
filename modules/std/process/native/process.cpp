@@ -125,8 +125,11 @@ bbBool bbProcess::start( bbString cmd ){
     
 	DWORD flags=CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW;
 	
-//	int res=CreateProcessA( 0,(LPSTR)cmd.c_str(),0,0,TRUE,flags,0,0,&si,&pi );
-	int res=CreateProcessW( 0,(LPWSTR)widen_utf8( bbCString( cmd ) ),0,0,TRUE,flags,0,0,&si,&pi );
+	wchar_t *wstr=_wcsdup( widen_utf8( bbCString( cmd ) ) );
+	
+	int res=CreateProcessW( 0,wstr,0,0,TRUE,flags,0,0,&si,&pi );
+	
+	free( wstr );
 
 	CloseHandle( in[0] );
 	CloseHandle( out[1] );
