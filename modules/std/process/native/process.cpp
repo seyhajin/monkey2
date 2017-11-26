@@ -2,7 +2,9 @@
 #include "process.h"
 #include "procutil.h"
 
+#include "../../../libc/native/libc.h"
 #include "../../../std/async/native/async.h"
+
 
 struct bbProcess::Rep{
 
@@ -113,7 +115,7 @@ bbBool bbProcess::start( bbString cmd ){
 	CreatePipe( &err[0],&err[1],&sa,0 );
 	HANDLE breakEvent=CreateEvent( &sa,0,0,"MX2_BREAK_EVENT" );
 
-	STARTUPINFOA si={sizeof(si)};
+	STARTUPINFOW si={sizeof(si)};
 	si.dwFlags=STARTF_USESTDHANDLES;
 	si.hStdInput=in[0];
 	si.hStdOutput=out[1];
@@ -123,7 +125,8 @@ bbBool bbProcess::start( bbString cmd ){
     
 	DWORD flags=CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW;
 	
-	int res=CreateProcessA( 0,(LPSTR)cmd.c_str(),0,0,TRUE,flags,0,0,&si,&pi );
+//	int res=CreateProcessA( 0,(LPSTR)cmd.c_str(),0,0,TRUE,flags,0,0,&si,&pi );
+	int res=CreateProcessW( 0,(LPWSTR)widen_utf8( bbCString( cmd ) ),0,0,TRUE,flags,0,0,&si,&pi );
 
 	CloseHandle( in[0] );
 	CloseHandle( out[1] );
