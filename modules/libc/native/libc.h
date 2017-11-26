@@ -16,17 +16,18 @@
 
 #include <windows.h>
 #include <wchar.h>
-//#include <winsock2.h>	//for struct timeval?!?
 
 #define PATH_MAX 260
+
+#if _MSC_VER
+typedef int mode_t;
+#endif
 
 struct dirent{
 	char *d_name;
 };
 	
 struct DIR;
-
-typedef int mode_t;
 
 typedef struct tm tm_t;
 
