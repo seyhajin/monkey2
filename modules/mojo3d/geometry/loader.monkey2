@@ -26,5 +26,10 @@ Class Mojo3dLoader
 		
 		Return Null
 	End
+	
+	Method LoadAnimation:Animation( path:String ) Virtual
+		
+		Return Null
+	End
 
 End

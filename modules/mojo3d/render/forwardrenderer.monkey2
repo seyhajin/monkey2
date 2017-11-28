@@ -186,7 +186,7 @@ Class ForwardRenderer Extends Renderer
 	Method RenderSprites()
 
 		_device.ColorMask=ColorMask.All
-		_device.DepthMask=False
+		_device.DepthMask=True'False
 		_device.DepthFunc=DepthFunc.LessEqual
 		_device.RenderPass=0
 		

@@ -160,7 +160,7 @@ Class GLProgram
 					
 					If size>1 size=ublock.GetMat4fArray( u.uniformId ).Length
 					
-					glUniformMatrix4fv( u.location,u.size,False,ublock.GetMat4fv( u.uniformId ) )
+					glUniformMatrix4fv( u.location,size,False,ublock.GetMat4fv( u.uniformId ) )
 					
 				Case GL_SAMPLER_2D,GL_SAMPLER_CUBE
 				

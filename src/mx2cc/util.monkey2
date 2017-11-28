@@ -51,19 +51,14 @@ Global STRING_MX2RETURN:=STRING_TILDE+"r"
 Global STRING_MX2TAB:=STRING_TILDE+"t"
 
 Global APP_DIR:String
-Global MODULES_DIR:String
 
 Function MakeIncludePath:String( path:String,baseDir:String )
 	
-	If MODULES_DIR
-'		If baseDir And baseDir.StartsWith( MODULES_DIR ) Return MakeRelativePath( path,baseDir )
-		 If path.StartsWith( MODULES_DIR ) Return path.Slice( MODULES_DIR.Length )
-	Endif
-
-	If APP_DIR
-'		If baseDir And baseDir.StartsWith( APP_DIR ) Return MakeRelativePath( path,baseDir )
-	 	If path.StartsWith( APP_DIR ) Return path.Slice( APP_DIR.Length )
-	Endif
+	For Local moddir:=Eachin Module.Dirs
+		If path.StartsWith( moddir ) Return path.Slice( moddir.Length )
+	Next
+	
+	If APP_DIR And path.StartsWith( APP_DIR ) Return path.Slice( APP_DIR.Length )
 	
 	Return path
 End
@@ -98,13 +93,13 @@ End
 
 Function MakeRelativePath:String( path:String,baseDir:String )
 
-'	Print "MakeRelativepath("+path+","+baseDir+")"
-
-	While baseDir.EndsWith( "/" )
-		baseDir=baseDir.Slice( 0,-1 )
-	Wend
-	baseDir+="/"
-
+	If Not baseDir.EndsWith( "/" ) 
+		Print "Invalid baseDir:"+baseDir
+		baseDir+="/"
+	End
+	
+	If path.StartsWith( baseDir ) Return path.Slice( baseDir.Length )
+	
 	Local relpath:=""
 
 	While Not path.StartsWith( baseDir )

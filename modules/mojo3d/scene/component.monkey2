@@ -61,17 +61,21 @@ Class Component
 		
 		Return _type
 	End
-	
-	Method Copy:Component( entity:Entity )
 		
-		Return OnCopy( entity )
-	End
-		
+	Internal
+
 	Method OnCopy:Component( entity:Entity ) Virtual
+
+		RuntimeError( "Don't know how to copy component of type "+Type.Name )
+		
 		Return Null
 	End
 	
-	Internal
+	Method OnShow() virtual
+	End
+	
+	Method OnHide() Virtual
+	End
 		
 	Method OnBeginUpdate() Virtual
 	End
@@ -85,8 +89,6 @@ Class Component
 	Private
 	
 	Field _entity:Entity
-	
-	Field _priority:Int
 	
 	Field _type:ComponentType
 End

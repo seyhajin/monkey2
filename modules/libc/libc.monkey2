@@ -94,7 +94,7 @@ Const SEEK_SET:Int
 Const SEEK_CUR:Int
 Const SEEK_END:Int
 
-Function fopen:FILE Ptr( path:CString,mode:CString )
+Function fopen:FILE Ptr( path:CString,mode:CString )="fopen_utf8"
 
 Function rewind:Void( stream:FILE )
 Function ftell:Int( stream:FILE Ptr )
@@ -104,29 +104,31 @@ Function fread:Int( buf:Void Ptr,size:Int,count:Int,stream:FILE Ptr )
 Function fwrite:Int( buf:Void Ptr,size:Int,count:Int,stream:FILE Ptr )
 Function fflush:Int( stream:FILE Ptr )
 Function fclose:Int( stream:FILE Ptr )
-Function fputs:Int( str:CString,stream:FILE Ptr )
+Function fputs:Int( str:CString,stream:FILE Ptr )="fputs_utf8"
 
-Function remove:Int( path:CString )
-Function rename:Int( oldPath:CString,newPath:CString )
+Function remove:Int( path:CString )="remove_utf8"
+Function rename:Int( oldPath:CString,newPath:CString )="rename_utf8"
 
-Function puts:Int( str:CString )
+Function puts:Int( str:CString )="puts_utf8"
 
 '***** stdlib.h *****
 
 Function malloc:Void Ptr( size:Int )
 Function free:Void( mem:Void Ptr )
+	
 
 #If __TARGET__<>"ios"	'gone in ios11!
-Function system:Int( cmd:CString )="system_"
+Function system:Int( cmd:CString )="system_utf8"
 #endif
-Function setenv:Int( name:CString,value:CString,overwrite:Int )="setenv_"
-Function getenv:char_t ptr( name:CString )
+
+Function setenv:Int( name:CString,value:CString,overwrite:Int )="setenv_utf8"
+Function getenv:char_t Ptr( name:CString )="getenv_utf8"
 
 Function exit_:Void( status:Int )="exit"
 Function atexit:Int( func:Void() )="atexit" 
 Function abort:Void()
 	
-Function realpath:char_t Ptr( path:CString,resolved_path:char_t Ptr )
+Function realpath:char_t Ptr( path:CString,resolved_path:char_t Ptr )="realpath_utf8"
 
 '***** string.h *****
 
@@ -172,13 +174,13 @@ Function time:time_t( timer:time_t Ptr )
 Function localtime:tm_t Ptr( timer:time_t Ptr )
 Function gmtime:tm_t Ptr( timer:time_t Ptr )
 Function difftime:Double( endtime:time_t,starttime:time_t ) 
-Function gettimeofday:Int( tv:timeval Ptr )="gettimeofday_"
+Function gettimeofday:Int( tv:timeval Ptr )="gettimeofday_utf8"
 
 '***** unistd.h *****
 
-Function getcwd:char_t Ptr( buf:char_t Ptr,size:Int )
-Function chdir:Int( path:CString )
-Function rmdir:Int( path:CString )
+Function getcwd:char_t Ptr( buf:char_t Ptr,size:Int )="getcwd_utf8"
+Function chdir:Int( path:CString )="chdir_utf8"
+Function rmdir:Int( path:CString )="rmdir_utf8"
 
 '***** sys/stat.h *****
 
@@ -200,8 +202,8 @@ Struct stat_t
 	Field st_ctime:time_t	'status change
 End
 
-Function stat:Int( path:CString,buf:stat_t Ptr )
-Function mkdir:Int( path:CString,mode:Int )="mkdir_"
+Function stat:Int( path:CString,buf:stat_t Ptr )="stat_utf8"
+Function mkdir:Int( path:CString,mode:Int )="mkdir_utf8"
 
 '***** dirent.h *****
 
@@ -209,9 +211,9 @@ Struct DIR
 End
 
 Struct dirent
-	Field d_name:Void Ptr
+	Field d_name:CString
 End
 
-Function opendir:DIR Ptr( path:CString )
-Function readdir:dirent Ptr( dir:DIR Ptr )
-Function closedir( dir:DIR Ptr )
+Function opendir:DIR Ptr( path:CString )="opendir_utf8"
+Function readdir:dirent Ptr( dir:DIR Ptr )="readdir_utf8"
+Function closedir( dir:DIR Ptr )="closedir_utf8"

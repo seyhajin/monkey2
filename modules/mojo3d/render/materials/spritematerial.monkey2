@@ -19,6 +19,8 @@ Class SpriteMaterial Extends Material
 		
 		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.White
+		
+		AlphaDiscard=.5
 	End
 	
 	Method New( material:SpriteMaterial )
@@ -49,6 +51,15 @@ Class SpriteMaterial Extends Material
 	Setter( color:Color )
 	
 		Uniforms.SetColor( "ColorFactor",color )
+	End
+	
+	Property AlphaDiscard:Float()
+		
+		Return Uniforms.GetFloat( "AlphaDiscard" )
+	
+	Setter( discard:Float )
+		
+		Uniforms.SetFloat( "AlphaDiscard",discard )
 	End
 
 	#rem monkeydoc Loads a sprite material from an image file.

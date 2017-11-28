@@ -22,3 +22,5 @@ The standard module includes the following namespaces:
 | [[std.socket]]		| The Socket and SocketStream classes for UDP networking.
 | [[std.json]]			| Classes for loading and saving JSON data.
 
+@import streams.md
+

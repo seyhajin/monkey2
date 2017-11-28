@@ -59,6 +59,8 @@ Class FuncValue Extends Value
 
 	Field invokeNew:InvokeNewValue	'call to Super.New or Self.new
 	
+	Field simpleGetter:Bool
+	
 	Field used:Bool
 	
 	Method New( fdecl:FuncDecl,scope:Scope,types:Type[],instanceOf:FuncValue )
@@ -422,6 +424,17 @@ Class FuncValue Extends Value
 			Endif
 			
 			If block.reachable And ftype.retType<>Type.VoidType Throw New SemantEx( "Missing return statement" )
+			
+			If IsMethod And Not ftype.argTypes And block.stmts.Length=1
+				Local retstmt:=Cast<ReturnStmt>( block.stmts[0] )
+				If retstmt
+					Local mvar:=Cast<MemberVarValue>( retstmt.value )
+					If mvar And mvar.instance=selfValue
+						simpleGetter=True
+'						Print "Return Self."+mvar.member.ToString()
+					Endif
+				Endif
+			Endif
 
 		Endif
 		

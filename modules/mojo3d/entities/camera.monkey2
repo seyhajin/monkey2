@@ -15,7 +15,7 @@ Class Camera Extends Entity
 		Far=1000
 		FOV=90
 		
-		Show()
+		Visible=True
 	End
 	
 	#rem monkeydoc Copies the camera.
@@ -24,7 +24,7 @@ Class Camera Extends Entity
 		
 		Local copy:=New Camera( Self,parent )
 		
-		CopyComplete( copy )
+		CopyTo( copy )
 		
 		Return copy
 	End
@@ -144,8 +144,6 @@ Class Camera Extends Entity
 	
 	Protected
 
-	#rem monkeydoc @hidden
-	#end	
 	Method New( camera:Camera,parent:Entity )
 		Super.New( camera,parent )
 		
@@ -153,19 +151,13 @@ Class Camera Extends Entity
 		Near=camera.Near
 		Far=camera.Far
 		FOV=camera.FOV
-		
-		Show()
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Method OnShow() Override
 		
 		Scene.Cameras.Add( Self )
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Method OnHide() Override
 		
 		Scene.Cameras.Remove( Self )

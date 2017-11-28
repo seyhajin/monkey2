@@ -13,40 +13,131 @@ Alias RotationKey:AnimationKey<Quatf>
 #end
 Alias ScaleKey:AnimationKey<Vec3f>
 
+Enum AnimationMode
+	
+	OneShot=1
+	Looping
+	PingPoong
+End
+
 #rem monkeydoc @hidden
 #end
 Class Animation
 	
-	Method New( channels:AnimationChannel[],duration:Float,hertz:Float )
-		
+	Method New( name:String,channels:AnimationChannel[],duration:Float,hertz:Float,mode:AnimationMode )
+		_name=name
 		_channels=channels
-		
 		_duration=duration
-		
-		_hertz=hertz
+		_hertz=hertz ?Else 24
+		_mode=mode
 	End
 	
+	#rem monkeydoc Animation name.
+	#end
+	Property Name:String()
+		
+		Return _name
+	End
+	
+	#rem monkeydoc Animation channels. 
+	
+	There is a channel for each bone in the animation's skeleton.
+	
+	#end
 	Property Channels:AnimationChannel[]()
 		
 		Return _channels
 	End
 	
+	#rem monkeydoc Duration.
+	
+	The duration of the animation in seconds
+	
+	#end
 	Property Duration:Float()
 		
 		Return _duration
 	End
 	
+	#rem monkeydoc Hertz.
+	
+	The frequency of the animation in seconds
+	
+	#end
 	Property Hertz:Float()
 		
 		Return _hertz
 	End
 	
+	#rem monkeydoc Animation mode.
+	#end
+	Property Mode:AnimationMode()
+		
+		Return _mode
+	End
+	
+	Method Slice:Animation( name:String,begin:Float,term:Float,mode:AnimationMode )
+		
+		Local channels:=_channels.Slice( 0 )
+		
+		Local duration:=term-begin
+		
+		For Local i:=0 Until _channels.Length
+			
+			Local channel:=_channels[i]
+			If Not channel Continue
+
+			Local posKeys:=New Stack<PositionKey>
+			posKeys.Add( New PositionKey( 0,channel.GetPosition( begin ) ) )
+			For Local key:=Eachin channel.PositionKeys
+				If key.Time>=term Exit
+				If key.Time>begin posKeys.Add( New PositionKey( key.Time-begin,key.Value ) )
+			Next
+			posKeys.Add( New PositionKey( duration,channel.GetPosition( term ) ) )
+			
+			Local rotKeys:=New Stack<RotationKey>
+			rotKeys.Add( New RotationKey( 0,channel.GetRotation( begin ) ) )			
+			For Local key:=Eachin channel.RotationKeys
+				If key.Time>=term Exit
+				If key.Time>begin rotKeys.Add( New RotationKey( key.Time-begin,key.Value ) )
+			Next
+			rotKeys.Add( New RotationKey( duration,channel.GetRotation( term ) ) )
+			
+			Local sclKeys:=New Stack<ScaleKey>
+			sclKeys.Add( New ScaleKey( 0,channel.GetScale( begin ) ) )
+			For Local key:=Eachin channel.ScaleKeys
+				If key.Time>=term Exit
+				If key.Time>begin sclKeys.Add( New ScaleKey( key.Time-begin,key.Value ) )
+			Next
+			sclKeys.Add( New ScaleKey( duration,channel.GetScale( term ) ) )
+			
+			channels[i]=New AnimationChannel( posKeys.ToArray(),rotKeys.ToArray(),sclKeys.ToArray() )
+		Next
+		
+		Local animation:=New Animation( name,channels,duration,_hertz,mode )
+		
+		Return animation
+	End
+	
+	Function Load:Animation( path:String )
+		
+		For Local loader:=Eachin Mojo3dLoader.Instances
+		
+			Local animation:=loader.LoadAnimation( path )
+			
+			If animation Return animation
+		Next
+		
+		Return Null
+	End
+	
 	Private
 	
+	Field _name:String		
 	Field _channels:AnimationChannel[]
 	Field _duration:Float
 	Field _hertz:Float
-	
+	Field _mode:AnimationMode
 End
 
 #rem monkeydoc @hidden
@@ -166,7 +257,7 @@ Class AnimationKey<T>
 	End
 
 	Private
-		
+
 	Field _time:float
 	Field _value:T
 End

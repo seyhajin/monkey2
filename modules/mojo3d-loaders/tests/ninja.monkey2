@@ -1,4 +1,3 @@
-
 Namespace myapp
 
 #Import "<std>"
@@ -6,10 +5,8 @@ Namespace myapp
 #Import "<mojo3d>"
 #Import "<mojo3d-loaders>"
 
-#Import "assets/psionic/turtle1.b3d"
-#Import "assets/psionic/turtle1.png"
-
-#Import "util"
+#Import "assets/psionic/ninja.b3d"
+#Import "assets/psionic/nskinbl.jpg"
 
 Using std..
 Using mojo..
@@ -25,7 +22,9 @@ Class MyWindow Extends Window
 	
 	Field _ground:Model
 	
-	Field _turtle:Model
+	Field _ninja:Model
+	
+	Field _animator:Animator
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
@@ -39,11 +38,10 @@ Class MyWindow Extends Window
 		'create camera
 		'
 		_camera=New Camera
+		_camera.AddComponent<FlyBehaviour>()
 		_camera.Near=.1
 		_camera.Far=100
-		_camera.Move( 0,10,-20 )
-		
-		New FlyBehaviour( _camera )
+		_camera.Move( 0,5,-7 )
 		
 		'create light
 		'
@@ -56,45 +54,54 @@ Class MyWindow Extends Window
 		_ground=Model.CreateBox( New Boxf( -50,-5,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green ) )
 		_ground.CastsShadow=False
 		
-		'create ground
-		'
-'		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,.5 ) )
-		
 		'create turtle
 		'		
-		_turtle=Model.LoadBoned( "asset::turtle1.b3d" )
-		_turtle.Scale=New Vec3f( .125 )
+		_ninja=Model.LoadBoned( "asset::ninja.b3d" )
+		
+		_animator=_ninja.Animator
+		
+		_ninja.RotateY( 165 )
+'		_ninja.Scale=New Vec3f( .125 )
 
-		Local walk:=_turtle.Animator.Animations[0].Slice( 1,11 )
-		_turtle.Animator.Animations.Add( walk )
+		_animator.MasterSpeed=0.5
+
+		Local anim1:=_animator.Animations[0].Slice( "Walk",1,14,AnimationMode.Looping )
+		Local anim2:=_animator.Animations[0].Slice( "Idle",206,250,AnimationMode.Looping )
+		Local anim3:=_animator.Animations[0].Slice( "Attack",134,145,AnimationMode.OneShot )
+		_animator.Animations.Add( anim1 )
+		_animator.Animations.Add( anim2 )
+		_animator.Animations.Add( anim3 )
 		
-		For Local i:=0 Until 360 Step 15
-			
-			Local copy:=_turtle.Copy()
-			
-			copy.RotateY( i )
-			copy.MoveZ( 12 )
-			
-			copy.Animator.Animate( 0,Rnd(.5,1.0) )
-			
-		Next
-		
-		_turtle.Animator.Animate( 1,1 )
 	End
 		
 	Method OnRender( canvas:Canvas ) Override
 		
 		RequestRender()
-
-		If Keyboard.KeyDown( Key.Space ) _turtle.Animator.Time+=.01
 		
+		If _animator.Animating?.Name<>"Attack"
+			
+			If Keyboard.KeyHit( Key.Space )				'attack!
+				
+				_animator.Animate( "Attack",.2 )
+				
+			Else If Keyboard.KeyDown( Key.Enter )		'walk
+				
+				_animator.Animate( "Walk",.2 )
+			Else										'idle
+				
+				_animator.Animate( "Idle",.2 )
+				
+			Endif
+		
+		Endif
+	
 		_scene.Update()
 		
 		_scene.Render( canvas,_camera )
 		
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", anim time="+_turtle.Animator.Time+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "Hold [Enter] to strut, [Space] to attack! anim time="+_ninja.Animator.Time,0,0 )
 	End
 	
 End

@@ -28,6 +28,8 @@ Class Sprite Extends Renderable
 		Self.New( parent )
 		
 		_material=material
+		
+		Visible=True
 	End
 
 	#rem monkeydoc Copies the sprite.
@@ -36,7 +38,7 @@ Class Sprite Extends Renderable
 		
 		Local copy:=New Sprite( Self,parent )
 		
-		CopyComplete( copy )
+		CopyTo( copy )
 		
 		Return copy
 	End

@@ -41,11 +41,9 @@ Class Entity Extends DynamicObject
 		
 		If _parent 
 			_scene=_parent._scene
-			
 			_parent._children.Add( Self )
 		Else
 			_scene=Scene.GetCurrent()
-			
 			_scene.RootEntities.Add( Self )
 		Endif
 			
@@ -57,13 +55,16 @@ Class Entity Extends DynamicObject
 	Method Copy:Entity( parent:Entity=Null ) Virtual
 		
 		Local copy:=New Entity( Self,parent )
-
-		CopyComplete( copy )
 		
-		Return copy
+		CopyTo( copy )
+		
+		return copy
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Sequence id.
+	
+	The sequence id is an integer that is incremented whenever the entity's matrix is modified.
+	
 	#end
 	Property Seq:Int()
 		
@@ -111,6 +112,8 @@ Class Entity Extends DynamicObject
 		Else
 			_scene.RootEntities.Add( Self )
 		Endif
+		
+		ValidateVisibility()
 			
 		Invalidate()
 	End
@@ -137,20 +140,27 @@ Class Entity Extends DynamicObject
 	
 	Setter( visible:Bool )
 		
-		If visible Show() Else Hide()
+		If visible=_visible Return
+		
+		_visible=visible
+		
+		ValidateVisibility()
+	End
+	
+	#rem monkeydoc True if entity and all parents are visible.
+	#end
+	Property ReallyVisible:Bool()
+		
+		Return _rvisible
 	End
 
-	#rem monkeydoc Entity animator.
-	#end	
-	Property Animator:Animator()
+	#rem monkeydoc Last copy.
+	#end
+	Property LastCopy:Entity()
 		
-		Return _animator
-	
-	Setter( animator:Animator )
-		
-		_animator=animator
+		Return _lastCopy
 	End
-	
+
 	'***** World space properties *****
 	
 	#rem monkeydoc World space transformation matrix.
@@ -285,34 +295,6 @@ Class Entity Extends DynamicObject
 		Invalidate()
 	End
 	
-	#rem monkeydoc Hides the entity and all of its children
-	#end
-	Method Hide()
-		
-		If _visible
-			_visible=False
-			OnHide()
-		Endif
-		
-		For Local child:=Eachin _children
-			child.Hide()
-		Next
-	End
-	
-	#rem monkeydoc Shows the entity and all of its children
-	#end
-	Method Show()
-		
-		If Not _visible
-			_visible=True
-			OnShow()
-		Endif
-
-		For Local child:=Eachin _children
-			child.Show()
-		Next
-	End
-	
 	#rem monkeydoc Destroys the entity and all of its children.
 	#end
 	Method Destroy()
@@ -361,30 +343,7 @@ Class Entity Extends DynamicObject
 		Next
 		Return n
 	End
-	
-	Internal
-	
-	Method AddComponent( c:Component )
 
-		If c.Type.Flags & ComponentTypeFlags.Singleton And NumComponents( c.Type ) RuntimeError( "Duplicate component" )
-			
-		For Local i:=0 Until _components.Length
-			
-			If c.Type.Priority>_components[i].Type.Priority
-				
-				_components.Insert( i,c )
-				
-				Return
-			Endif
-		Next
-
-		_components.Add( c )
-		
-		Return
-	End
-	
-	Public
-	
 	Method AddComponent<T>:T() Where T Extends Component
 		
 		Local c:=New T( Self )
@@ -417,12 +376,9 @@ Class Entity Extends DynamicObject
 			index-=1
 		Next
 	End
-		
 	
-Protected
+	Protected
 
-	#rem monkeydoc @hidden
-	#end
 	Method New( entity:Entity,parent:Entity )
 		Self.New( parent )
 		
@@ -433,43 +389,67 @@ Protected
 		Invalidate()
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method OnShow() Virtual
 	End
 	
-	#rem monkeydoc @hidden
-	#end
 	Method OnHide() Virtual
 	End
-		
-	#rem monkeydoc @hidden
+	
+	#rem monkeydoc OnCopy
+	
+	1) Recursively copies all child entities.
+	
+	2) Invokes OnCopy for each component.
+	
+	3) Copies visibility.
+	
+	4) Invokes Copied signal.
+	
 	#end
-	Method CopyComplete( copy:Entity )
+	Method CopyTo( copy:Entity )
+		
+		_lastCopy=copy
 		
 		For Local child:=Eachin _children
 			child.Copy( copy )
 		Next
-
+		
+		'should really be different pass...ie: ALL entities should be copied before ANY components.
 		For Local c:=Eachin _components
-			c.Copy( copy )
+			c.OnCopy( copy )
 		Next
-
+		
+		copy.Visible=Visible
+		
 		Copied( copy )
 	End
+
+	Internal
 	
-Internal
+	Method AddComponent( c:Component )
+
+		If c.Type.Flags & ComponentTypeFlags.Singleton 
+			If NumComponents( c.Type ) RuntimeError( "Duplicate component" )
+		Endif
+			
+		For Local i:=0 Until _components.Length
+			If c.Type.Priority>_components[i].Type.Priority
+				_components.Insert( i,c )
+				Return
+			Endif
+		Next
+
+		_components.Add( c )
+	End
 
 	'bottom up
 	Method BeginUpdate()
 
 		For Local e:=Eachin _children
-			
 			e.BeginUpdate()
 		Next
 		
 		For Local c:=Eachin _components
-			
 			c.OnBeginUpdate()
 		Next
 		
@@ -479,12 +459,10 @@ Internal
 	Method Update( elapsed:Float )
 		
 		For Local c:=Eachin _components
-			
 			c.OnUpdate( elapsed )
 		End
 		
 		For Local e:=Eachin _children
-			
 			e.Update( elapsed )
 		Next
 	End
@@ -502,8 +480,10 @@ Private
 	Field _scene:Scene
 	Field _parent:Entity
 	Field _children:=New Stack<Entity>
+	Field _components:=New Stack<Component>
+	Field _lastCopy:Entity
+	Field _rvisible:Bool
 	Field _visible:Bool
-	Field _animator:Animator
 	
 	Field _t:Vec3f=New Vec3f
 	Field _r:Mat3f=New Mat3f
@@ -514,8 +494,6 @@ Private
 	Field _M:AffineMat4f
 	Field _W:AffineMat4f
 	Field _IW:AffineMat4f
-	
-	Field _components:=New Stack<Component>
 	
 	Method InvalidateWorld()
 		
@@ -537,5 +515,38 @@ Private
 		
 		InvalidateWorld()
 	End
+	
+	Method ValidateVisibility()
+		
+		If _visible And (Not _parent Or _parent._rvisible)
+			
+			If _rvisible Return
+			
+			_rvisible=True
 
+			OnShow()
+			
+			For Local c:=Eachin _components
+				c.OnShow()
+			Next
+		
+		Else
+			
+			If Not _rvisible Return
+			
+			_rvisible=False
+			
+			OnHide()
+			
+			For Local c:=Eachin _components
+				c.OnHide()
+			Next
+		Endif
+		
+		For Local child:=Eachin _children
+			
+			child.ValidateVisibility()
+		Next
+	
+	End
 End

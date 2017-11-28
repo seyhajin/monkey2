@@ -32,8 +32,11 @@ Class BuildProduct
 		toolchain=opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) ? "msvc" Else "gcc"
 		
 		Local copts:=""
-		copts+=" -I~q"+MODULES_DIR+"~q"
-		copts+=" -I~q"+MODULES_DIR+"monkey/native~q"
+		For Local moddir:=Eachin Module.Dirs
+			copts+=" -I~q"+moddir+"~q"
+		Next
+		copts+=" -I~q"+Module.Dirs[0]+"monkey/native~q"
+		
 		If APP_DIR copts+=" -I~q"+APP_DIR+"~q"
 
 		CC_OPTS+=copts

@@ -13,7 +13,7 @@ Public
 #end
 Class Entity Extension
 
-	#rem monkeydoc Local space rotation in degrees.
+	#rem monkeydoc World space rotation in degrees.
 	#end
 	Property Rotation:Vec3f()
 		

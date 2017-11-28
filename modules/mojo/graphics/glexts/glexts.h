@@ -16,6 +16,7 @@ namespace bbGLexts{
 	extern bool GL_depth_texture;
 	extern bool GL_seamless_cube_map;
 	extern bool GL_texture_filter_anisotropic;
+	extern bool GL_standard_derivatives;
 	
 	typedef void (GL_APIENTRY *PFNGLDRAWBUFFERSPROC)( GLsizei n,const GLenum *bufs );
 

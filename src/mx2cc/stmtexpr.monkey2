@@ -73,8 +73,29 @@ Class AssignStmtExpr Extends StmtExpr
 		Return lhs.ToString()+op+rhs.ToString()
 	End
 	
-	Method OnSemant:Stmt( block:Block ) Override
+	'special case for SafeMemberExpr on lhs of assignment...
+	'
+	Method OnSemant:Stmt( smexpr:SafeMemberExpr,block:Block )
+		
+		Local value:=smexpr.expr.SemantRValue( block ).RemoveSideEffects( block )
+		
+		Local mexpr:=New MemberExpr( New ValueExpr( value,0,0 ),smexpr.ident,smexpr.srcpos,smexpr.endpos )
+		
+		Local asexpr:=New AssignStmtExpr( Self.op,mexpr,Self.rhs,srcpos,endpos )
+		
+		Local tblock:=New Block( block )
+		
+		tblock.Semant( New StmtExpr[]( asexpr ) )
+		
+		Return New IfStmt( self,value.UpCast( Type.BoolType ),tblock )
+	End
 	
+	Method OnSemant:Stmt( block:Block ) Override
+		
+		Local smexpr:=Cast<SafeMemberExpr>( lhs )
+		
+		If smexpr Return OnSemant( smexpr,block )
+		
 		Local op:=Self.op
 		Local lhs:=Self.lhs.Semant( block )
 		Local rhs:Value=Null

@@ -1,6 +1,7 @@
 
 #include "libc.h"
 
+/*
 #if _WIN32
 #include <windows.h>
 #include <bbstring.h>
@@ -10,31 +11,120 @@
 #elif __APPLE__
 #include <TargetConditionals.h>
 #endif
-
-void setenv_( const char *name,const char *value,int overwrite ){
+*/
 
 #if _WIN32
 
-	if( !overwrite && getenv( name ) ) return;
+struct DIR{
+	WIN32_FIND_DATAW ffd;
+	HANDLE hfind;
+	dirent entry;
+};
 
-	bbString tmp=bbString( name )+BB_T( "=" )+bbString( value );
-	putenv( tmp.c_str() );
+static void *tmps[32];
+static int tmpsi;
 
-#else
-	setenv( name,value,overwrite );
-#endif
+static const WCHAR *widen( const char *p ){
+
+	int n=MultiByteToWideChar( CP_UTF8,0,p,-1,0,0 );
+
+	WCHAR *w=(WCHAR*)malloc( n*2 );
+	
+	MultiByteToWideChar( CP_UTF8,0,p,-1,w,n );
+	
+	free(tmps[tmpsi&31]);
+	tmps[(tmpsi++)&31]=w;
+	
+	return w;
 }
 
-int system_( const char *cmd ){
+static const char *narrow( const WCHAR *w ){
 
-#if _WIN32
+	int n=WideCharToMultiByte( CP_UTF8,0,w,-1,0,0,0,0 );
+	
+	char *p=(char*)malloc( n );
+	
+	WideCharToMultiByte( CP_UTF8,0,w,-1,p,n,0,0 );
+	
+	free(tmps[tmpsi&31]);
+	tmps[(tmpsi++)&31]=p;
+	
+	return p;	
+}
+
+const wchar_t *widen_utf8( const char *p ){
+
+	return widen( p );
+}
+
+const char *narrow_utf8( const wchar_t *w ){
+
+	return narrow( w );
+}
+
+FILE *fopen_utf8( const char *filename,const char *mode ){
+
+	return _wfopen( widen( filename ),widen( mode ) );
+}
+
+int fputs_utf8( const char *str,FILE *stream ){
+	
+	return fputws( widen( str ),stream );
+}
+
+int remove_utf8( const char *path ){
+
+	return _wremove( widen( path ) );
+}
+
+int rename_utf8( const char *oldpath,const char *newpath ){
+
+	return _wrename( widen( oldpath ),widen( newpath ) );
+}
+
+int puts_utf8( const char *str ){
+
+	return _putws( widen( str ) );
+}
+
+int setenv_utf8( const char *name,const char *value,int overwrite ){
+
+	const WCHAR *wname=widen( name );
+
+	if( !overwrite && _wgetenv( wname ) ) return -1;
+	
+	WCHAR *wbuf=(WCHAR*)malloc( (strlen(name)+strlen(value)+2)*2 );
+	
+	wcscpy( wbuf,wname );
+	wcscat( wbuf,L"=" );
+	wcscat( wbuf,widen( value ) );
+	
+	int n=_wputenv( wbuf );
+	
+	return n;
+}
+
+char *getenv_utf8( const char *name ){
+
+	static char *p;
+
+	const WCHAR *wname=widen( name );
+	
+	WCHAR *w=_wgetenv( wname );
+	if( !w ) return 0;
+	
+	free( p );
+	p=strdup( narrow( w ) );
+	
+	return p;
+}
+
+int system_utf8( const char *cmd ){
 
 	bool inherit=false;
 	DWORD flags=CREATE_NO_WINDOW;
-	STARTUPINFOA si={sizeof(si)};
+	STARTUPINFOW si={sizeof(si)};
 	PROCESS_INFORMATION pi={0};
-	
-	bbString tmp=BB_T( "cmd /S /C\"" )+BB_T( cmd )+BB_T( "\"" );
 	
 	if( GetStdHandle( STD_OUTPUT_HANDLE ) ){
 	
@@ -49,8 +139,19 @@ int system_( const char *cmd ){
 
 		flags=0;
 	}
+
+//	bbString tmp=BB_T( "cmd /S /C\"" )+BB_T( cmd )+BB_T( "\"" );
 	
-	if( !CreateProcessA( 0,(LPSTR)tmp.c_str(),0,0,inherit,flags,0,0,&si,&pi ) ) return -1;
+	const WCHAR *wopts=L"cmd /S /C\"";
+	const WCHAR *wcmd=widen( cmd );
+	
+	WCHAR *wtmp=(WCHAR*)malloc( (wcslen( wopts )+wcslen( wcmd )+2)*2 );
+	
+	wcscpy( wtmp,wopts );
+	wcscat( wtmp,wcmd );
+	wcscat( wtmp,L"\"" );
+	
+	if( !CreateProcessW( 0,wtmp,0,0,inherit,flags,0,0,&si,&pi ) ) return -1;
 
 	WaitForSingleObject( pi.hProcess,INFINITE );
 	
@@ -60,61 +161,104 @@ int system_( const char *cmd ){
 	CloseHandle( pi.hThread );
 
 	return res;
-	
-#elif __APPLE__
-
-#if !TARGET_OS_IPHONE
-	return system( cmd );
-#endif
-
-#else
-
-	return system( cmd );
-
-#endif
-
-	return -1;
-
 }
 
-int mkdir_( const char *path,int mode ){
-#if _WIN32
+char *realpath_utf8( const char *path,char *rpath ){
 
-	return mkdir( path );
+	if( !rpath ){
+		rpath=(char*)malloc( PATH_MAX );
+		if( realpath_utf8( path,rpath ) ) return rpath;
+		free( rpath );
+		return 0;
+	}
 	
-#else
-
-	return mkdir( path,0777 );
+	WCHAR wbuf[PATH_MAX];
 	
-#endif
+	if( !GetFullPathNameW( widen( path ),PATH_MAX,wbuf,0 ) ) return 0;
+	
+	WideCharToMultiByte( CP_UTF8,0,wbuf,-1,rpath,PATH_MAX,0,0 );
+		
+	return rpath;
 }
 
-int gettimeofday_( timeval *tv ){
-#if _MSC_VER
-	
-	// https://stackoverflow.com/questions/10905892/equivalent-of-gettimeday-for-windows
+int mkdir_utf8( const char *path,int mode ){
 
-    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
-    // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
-    // until 00:00:00 January 1, 1970 
-    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
-
-    SYSTEMTIME  system_time;
-    FILETIME    file_time;
-    uint64_t    time;
-
-    GetSystemTime( &system_time );
-    SystemTimeToFileTime( &system_time, &file_time );
-    time =  ((uint64_t)file_time.dwLowDateTime )      ;
-    time += ((uint64_t)file_time.dwHighDateTime) << 32;
-
-    tv->tv_sec  = (long) ((time - EPOCH) / 10000000L);
-    tv->tv_usec = (long) (system_time.wMilliseconds * 1000);
-    return 0;
-    
-#else
-
-	return gettimeofday( tv,0 );
-	
-#endif
+	return _wmkdir( widen( path ) );
 }
+
+char *getcwd_utf8( char *buf,int size ){
+
+	WCHAR wbuf[PATH_MAX];
+	
+	if( !GetCurrentDirectoryW( size,wbuf ) ) return 0;
+	
+	WideCharToMultiByte( CP_UTF8,0,wbuf,-1,buf,size,0,0 );
+	
+	return buf;
+}
+
+int chdir_utf8( const char *path ){
+
+	return SetCurrentDirectoryW( widen( path ) ) ? 0 : -1;
+}
+
+int rmdir_utf8( const char *path ){
+
+	return _wrmdir( widen( path ) );
+}
+
+int stat_utf8( const char *path,stat_t *buf ){
+
+	return _wstat( widen( path ),buf );
+}
+
+DIR *opendir_utf8( const char *path ){
+
+	const WCHAR *wpath=widen( path );
+
+	WCHAR *wbuf=(WCHAR*)malloc( (wcslen(wpath)+3)*2 );
+	
+	wcscpy( wbuf,wpath );
+	wcscat( wbuf,L"\\*" );
+	
+	DIR *dir=(DIR*)malloc( sizeof( DIR ) );
+	memset( dir,0,sizeof(DIR) );
+	
+	dir->hfind=FindFirstFileW( wbuf,&dir->ffd );
+
+	if( !dir->hfind ){
+		free( dir );
+		dir=0;
+	}
+	
+	free( wbuf );
+	
+	return dir;
+}
+
+dirent *readdir_utf8( DIR *dir ){
+
+	if( !dir->hfind ) return 0;
+
+	const char *p=narrow( dir->ffd.cFileName );
+	free( dir->entry.d_name );
+	dir->entry.d_name=strdup( p );
+	
+	if( !FindNextFileW( dir->hfind,&dir->ffd ) ){
+		FindClose( dir->hfind );
+		dir->hfind=0;
+	}
+	
+	return &dir->entry;
+}
+
+void closedir_utf8( DIR *dir ){
+
+	if( dir->hfind ) FindClose( dir->hfind );
+
+	free( dir->entry.d_name );
+	free( dir );
+}
+
+#endif
+

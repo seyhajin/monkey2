@@ -146,6 +146,8 @@ End
 
 Class aiAnimation Extends Void
 	
+	Field mName:aiString
+
 	Field mDuration:Double
 	
 	Field mTicksPerSecond:Double
