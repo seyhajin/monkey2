@@ -32,6 +32,8 @@ Class Morpher Extends Renderable
 		Local indices:=mesh0.GetIndices( 0 )
 		_ibuffer=New IndexBuffer( IndexFormat.UINT32,indices.Length )
 		_ibuffer.SetIndices( indices.Data,0,indices.Length )
+		
+		Visible=true
 	End
 	
 	Protected
@@ -126,6 +128,8 @@ Class MyWindow Extends Window
 		Local material:=New PbrMaterial( Color.Green )
 		
 		_morpher=New Morpher( mesh1,mesh2,material )
+		_morpher.Visible=True
+		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
