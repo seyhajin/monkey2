@@ -79,6 +79,10 @@ _variable_=_Expression_ `?Else` _Expression-B_
 
 For example:
 
-```r=x ?Else -1```
+```
+r=x ?Else -1
+```
 
 This will assign the value of `x` to `r` if `x` is non-null otherwise, it will assign the value -1 to `r`.
+
+
