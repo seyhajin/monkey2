@@ -70,3 +70,15 @@ the _variable_ will receive the value of _Expression-A_ if _Expression_ is True,
 ```
 i=j>2 ? 5 else j+7
 ```
+
+@#### ?Else
+
+The 'Elvis operator' `?Else` can be used to return an alternate value if an expression is null.
+
+_variable_=_Expression_ `?Else` _Expression-B_
+
+For example:
+
+```r=x ?Else -1```
+
+This will assign the value of `x` to `r` if `x` is non-null otherwise, it will assign the value -1 to `r`.
