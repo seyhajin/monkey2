@@ -1,114 +1,42 @@
 
-Namespace gles20
-
-#Import "<libc.monkey2>"
-
-Using monkey
-
-#If __TARGET__="windows"
-	
-	'USE ANGLE!
-	#Import "angle/lib/libEGL.lib"
-	#Import "angle/lib/libGLESv2.lib"
-		
-	#Import "angle/bin/libEGL.dll"
-	#Import "angle/bin/libGLESv2.dll"
-	#Import "angle/bin/d3dcompiler_47.dll"
-		
-	#Import "angle/include/*.h"
-
-	#Import "<GLES2/gl2.h>"
-
-#Else If __TARGET__="macos"
-	
-	#Import "<OpenGL.framework>"
-
-	#Import "native/gles20_macos.h"
-		
-#Else If __TARGET__="linux"
- 	
-	#Import "<libGL.a>"
-
-	#Import "native/gles20_linux.h"
-		
-#Else If __TARGET__="raspbian"
-	
-	#Import "<libEGL.a>"
-
-	#Import "<libGLESv1_CM.a>"
-	#Import "<libGLESv2.a>"
-	
-	#Import "<GLES2/gl2.h>"
-		
-#Else If __TARGET__="emscripten"
-	
-	#Import "<GLES2/gl2.h>"
-	
-#Else If __TARGET__="android"
-
-	#Import "<libGLESv1_CM.a>"
-	#Import "<libGLESv2.a>"
-	
-	#Import "<GLES2/gl2.h>"
-	
-#Else If __TARGET__="ios"
-
-	#Import "<OpenGLES.framework>"
-
-	#import "<OpenGLES/ES2/gl.h>"
-	
-#Endif
-
 #rem
-typedef void             GLvoid;
-typedef char             GLchar;
-typedef unsigned int     GLenum;
-typedef unsigned char    GLboolean;
-typedef unsigned int     GLbitfield;
-typedef khronos_int8_t   GLbyte;
-typedef short            GLshort;
-typedef int              GLint;
-typedef int              GLsizei;
-typedef khronos_uint8_t  GLubyte;
-typedef unsigned short   GLushort;
-typedef unsigned int     GLuint;
-typedef khronos_float_t  GLfloat;
-typedef khronos_float_t  GLclampf;
-typedef khronos_int32_t  GLfixed;
 
-typedef khronos_intptr_t GLintptr;
-typedef khronos_ssize_t  GLsizeiptr;
+This module is deprecated, please use opengl module instead.
+
 #end
 
-'Not quite right, but less annoying...
-Alias GLvoid:Void
-Alias GLenum:UInt
-Alias GLboolean:Bool
-Alias GLbitfield:UInt
-Alias GLshort:Short
-Alias GLint:Int
-Alias GLsizei:Int
-Alias GLubyte:UByte
-Alias GLushort:UShort
-Alias GLuint:UInt
-Alias GLfloat:Float
-Alias GLfixed:Int
-Alias GLclampf:Float
-Alias GLintptr:Long
-Alias GLsizeiptr:Long
+Namespace gles20
 
-#If __TARGET__="windows" or __MOBILE_TARGET__ or __WEB_TARGET__
-Const GL_ES_VERSION_2_0:=1
-#Else
-Const GL_ES_VERSION_2_0:=0
-#Endif
+#Import "<opengl.monkey2>"
+
+#Import "bbglue.h"
+
+Alias GLvoid:opengl.GLvoid
+Alias GLenum:opengl.GLenum
+Alias GLboolean:opengl.GLboolean
+Alias GLbitfield:opengl.GLbitfield
+Alias GLbyte:opengl.GLbyte
+Alias GLshort:opengl.GLshort
+Alias GLint:opengl.GLint
+Alias GLsizei:opengl.GLsizei
+Alias GLubyte:opengl.GLubyte
+Alias GLushort:opengl.GLushort
+Alias GLuint:opengl.GLuint
+Alias GLfloat:opengl.GLfloat
+Alias GLclampf:opengl.GLclampf
+Alias GLdouble:opengl.GLdouble
+Alias GLclampd:opengl.GLclampd
+Alias GLfixed:opengl.GLfixed
+Alias GLclampx:opengl.GLclampx
+Alias GLintptr:opengl.GLintptr
+Alias GLsizeiptr:opengl.GLsizeiptr
 
 Extern
 
-Struct GLchar="char"
+Struct GLchar="GLchar"
 End
 
-Struct GLcchar="const char"
+Struct GLcchar="const GLchar"
 End
 
 '${CONSTS}
@@ -434,7 +362,7 @@ Function glBufferSubData:Void(target_:GLenum,offset_:GLintptr,size_:GLsizeiptr,d
 Function glCheckFramebufferStatus:GLenum(target_:GLenum)
 Function glClear:Void(mask_:GLbitfield)
 Function glClearColor:Void(red_:GLclampf,green_:GLclampf,blue_:GLclampf,alpha_:GLclampf)
-Function glClearDepthf:Void(depth_:GLclampf)
+
 Function glClearStencil:Void(s_:GLint)
 Function glColorMask:Void(red_:GLboolean,green_:GLboolean,blue_:GLboolean,alpha_:GLboolean)
 Function glCompileShader:Void(shader_:GLuint)
@@ -561,24 +489,14 @@ Function glVertexAttrib4f:Void(indx_:GLuint,x_:GLfloat,y_:GLfloat,z_:GLfloat,w_:
 Function glVertexAttrib4fv:Void(indx_:GLuint,values_:GLfloat Ptr)
 Function glVertexAttribPointer:Void(indx_:GLuint,size_:GLint,type_:GLenum,normalized_:GLboolean,stride_:GLsizei,ptr_:GLvoid Ptr)
 Function glViewport:Void(x_:GLint,y_:GLint,width_:GLsizei,height_:GLsizei)
-'${END}
-
-#If __TARGET__="windows"
-Function bb_gles20_windows_init()
-#Endif
 
 Public
 
-'Must call this after creating context...
-'
-Function glInitEx()
-	#If __TARGET__="windows"
-'		bb_gles20_windows_init()
-	#Endif
+Function glClearDepthf:Void(depth:GLclampf)
+	
+	opengl.glClearDepth(depth)
 End
 
-'Saner versions of some string functions...
-'
 Function glShaderSourceEx:Void( shader:GLuint,source:String )
 
 	Local n:=source.Length
