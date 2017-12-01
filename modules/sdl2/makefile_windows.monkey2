@@ -1,8 +1,6 @@
 
 Namespace sdl2
 
-
-
 #import "<libdsound.a>"
 #import "<libxinput.a>"
 #import "<libdinput8.a>"
