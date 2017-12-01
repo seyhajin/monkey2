@@ -98,19 +98,21 @@ Enum CubeFace
 	NegativeZ
 End
 
-#Rem monkeydoc The Texture class.
-
-The environment variable "MX2_MOJO_TEXTURE_MAX_ANISOTROPY" can be used to control texture max anisotropy.
-
-If this env variable is not set, texture max anisotropy is set to the max level.
-	
-Environment variables may be set using the [[std::std.filesystem.SetEnv|SetEnv]] function.
-	
+#rem monkeydoc The Texture class.
 #end
 Class Texture Extends Resource
 	
 	Private
 	
+	#rem monkeydoc Creates a new texture.
+	
+	The config setting "MOJO_TEXTURE_MAX_ANISOTROPY" can be used to set the new texture's max anisotropy value.
+
+	If this config setting does not exist, the texture's max anisotropy is set to the max level.
+		
+	Config settings may be changed using the [[std::std.filesystem.SetConfig|SetConfig]] function.
+	
+	#end
 	Method New( face:GLenum,cubeMap:Texture )
 		
 		_size=cubeMap._size
@@ -448,7 +450,7 @@ Class Texture Extends Resource
 '					If glexts.GL_texture_filter_anisotropic
 						Local max:Int=0
 						glGetIntegerv( GL_MAX_TEXTURE_MAX_ANISOTROPY,Varptr max )
-						Local n:=Min( Int(GetEnv( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",max )),max )
+						Local n:=Min( Int(GetConfig( "MOJO_TEXTURE_MAX_ANISOTROPY",max )),max )
 						glTexParameteri( _glTarget,GL_TEXTURE_MAX_ANISOTROPY,n )
 '					Endif
 				Endif
