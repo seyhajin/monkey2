@@ -82,13 +82,7 @@ End
 
 Function Main()
 
-	'New optional App config options - these enabled depth/stencil buffers.
-	'
-	Local cfg:=New StringMap<String>
-	cfg["GL_depth_buffer_enabled"]=1
-	cfg["GL_stencil_buffer_enabled"]=1
-
-	New AppInstance( cfg )
+	New AppInstance
 	
 	New MyWindow
 	
