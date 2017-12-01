@@ -11,7 +11,7 @@
 
 #Import "data/shoota.ogg"
 #Import "data/hita.ogg"
-#Import "data/fireball.ogg"
+#Import "data/Fireball.ogg"
 #Import "data/hit.ogg"
 #Import "data/explosion.ogg"
 #Import "data/bomb0.ogg"
@@ -86,6 +86,8 @@ Class Game Extends Window
 		aparticleList =New List<ParticleA>
 		aparticleStore = New AParticleStore(20)
 		stars = New Stars()
+		
+		SwapInterval=1
 	End
 
 	Method OnRender( canvas:Canvas ) Override
