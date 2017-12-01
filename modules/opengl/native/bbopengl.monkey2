@@ -12,6 +12,8 @@ Namespace opengl
 	#Import "../angle/bin/libGLESv2.dll"
 	#Import "../angle/bin/d3dcompiler_47.dll"
 	
+	#Import "../angle/include/*.h"
+	
 '	#include <GL/gl.h>	
 
 	#Import "bbopengl.c"

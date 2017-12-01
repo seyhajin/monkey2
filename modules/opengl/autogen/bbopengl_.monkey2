@@ -5,12 +5,17 @@ Namespace opengl
 
 #If __TARGET__="windows"
 
+	'TODO: Move all angle stuff to SDL2 or its own module?
+	'
 	#Import "../angle/lib/libEGL.lib"
 '	#Import "../angle/lib/libGLESv2.lib"
 
 	#Import "../angle/bin/libEGL.dll"
 	#Import "../angle/bin/libGLESv2.dll"
 	#Import "../angle/bin/d3dcompiler_47.dll"
+
+	'Need this so SDL2 can #include <EGL/egl.h>
+	#Import "../angle/include/*.h"	
 	
 '	#include <GL/gl.h>	
 
