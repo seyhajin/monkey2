@@ -29,7 +29,7 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		SetEnv( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",MaxAnisotropy )
+		SetConfig( "MOJO_TEXTURE_MAX_ANISOTROPY",MaxAnisotropy )
 		
 		'create scene
 		'		
