@@ -1,11 +1,11 @@
 
 ***** Monkey2 v1.1.09 *****
 
-Completely nuked mojo App.Config system.
+Use SetConfig( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",n ) to set texture max anisotropy, 0 to 16.
 
-Use SetEnv( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",n ) to set texture anisotropy, 0 to 16.
+Nuked mojo App.Config system in favor of a simpler 'config setting' system in std.filesystem. Set SetConfig/GetConfig.
 
-gles20 module deprecated, use opengl module instead. gles20 may or may not still work, left it in there for the BlahEx funcs that people were using - pleasre copy these into your own project.
+gles20 module deprecated, use opengl module instead. gles20 may or may not still work, left it in there mainly for the BlahEx funcs that people were using - please copy these into your own project.
 
 Note: env_target.txt files in bin have CHANGED! Make sure to update your old ones if you've changed them.
 
