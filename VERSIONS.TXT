@@ -1,6 +1,18 @@
 
 ***** Monkey2 v1.1.09 *****
 
+Completely nuked mojo App.Config system.
+
+Use SetEnv( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",n ) to set texture anisotropy, 0 to 16.
+
+gles20 module deprecated, use opengl module instead. gles20 may or may not still work, left it in there for the BlahEx funcs that people were using - pleasre copy these into your own project.
+
+Note: env_target.txt files in bin have CHANGED! Make sure to update your old ones if you've changed them.
+
+Added a TextureFlags param to Font.Load.
+
+Cleaned up animator/animation. Added transition parameter to Animator.Animate.
+
 Added SDL GameController class. Tweaked Joystick/GameController Open logic so devices can be added/removed more cleanly. See joystick and gamecontroller samples in bananas.
 
 Added experimental selective reflection. Use '#Reflect namepsace_path' to enable reflection for an entire namespace. Using same system as 'Using' ie: can end with '..' to 'reflect all'.
