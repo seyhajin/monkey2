@@ -13,6 +13,15 @@ Using std..
 Using mojo..
 Using mojo3d..
 
+Function Main()
+
+	New AppInstance
+	
+	New MyWindow
+	
+	App.Run()
+End
+
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
@@ -33,7 +42,7 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		Print gles20.glGetString( gles20.GL_EXTENSIONS ).Replace( " ","~n" )
+		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )
 		
 		'create scene
 		'		
@@ -57,11 +66,12 @@ Class MyWindow Extends Window
 		_camera.FOV=90
 		_camera.Move( 0,15,-20 )
 		
-		_camera.AddComponent<FlyBehaviour>()
+		New FlyBehaviour( _camera )
 		
 		'create light
 		_light=New Light
-		_light.Type=LightType.Point
+'		_light.Type=LightType.Point
+		_light.Rotate( 75,15,0 )
 		_light.Move( 0,20,0 )
 		_light.Range=40
 		_light.CastsShadow=True
@@ -120,8 +130,6 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
-		'_ducks[0].RotateY( 1 )
-
 		_scene.Update()
 		
 		_scene.Render( canvas,_camera )
@@ -133,20 +141,3 @@ Class MyWindow Extends Window
 	
 End
 
-Function Main()
-	
-	Local config:=New StringMap<String>
-
-'	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
-
-'	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
-'	config["GL_depth_buffer_enabled"]=1
-
-'	config["mojo3d_renderer"]="forward"
-		
-	New AppInstance( config )
-	
-	New MyWindow
-	
-	App.Run()
-End

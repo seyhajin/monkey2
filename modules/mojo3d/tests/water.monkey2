@@ -79,11 +79,7 @@ End
 
 Function Main()
 
-	Local config:=New StringMap<String>
-
-	config["mojo3d_renderer"]="deferred"
-
-	New AppInstance( config )
+	New AppInstance
 	
 	New MyWindow
 	

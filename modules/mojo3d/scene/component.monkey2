@@ -46,10 +46,9 @@ Class Component
 	Method New( entity:Entity,type:ComponentType )
 		
 		_entity=entity
-		
 		_type=type
-		
 		_entity.AddComponent( Self )
+		Modified()
 	End
 	
 	Property Entity:Entity()
@@ -60,6 +59,25 @@ Class Component
 	Property Type:ComponentType()
 		
 		Return _type
+	End
+	
+	Property GuidSeq:Int()
+		
+		Return _guidseq
+	End
+	
+	Property Seq:Int()
+		
+		Return _seq
+	End
+	
+	Protected
+	
+	Method Modified()
+		
+		_nextguidseq+=1
+		_guidseq=_nextguidseq
+		_seq+=1
 	End
 		
 	Internal
@@ -88,9 +106,12 @@ Class Component
 	
 	Private
 	
-	Field _entity:Entity
+	Global _nextguidseq:=0
 	
+	Field _entity:Entity
 	Field _type:ComponentType
+	Field _guidseq:=0
+	Field _seq:=0
 End
 
 

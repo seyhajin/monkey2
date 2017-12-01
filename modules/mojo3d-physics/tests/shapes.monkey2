@@ -24,15 +24,11 @@ Class MyWindow Extends Window
 	
 	Field _ground:Model
 	
-	Field _collider:SphereCollider
-	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
 		_scene=Scene.GetCurrent()
-		
-		_scene.ClearColor=Color.Sky
 		
 		'create camera
 		'
@@ -40,24 +36,18 @@ Class MyWindow Extends Window
 		_camera.Near=.1
 		_camera.Far=60
 		_camera.Move( 0,10,-10 )
-		
-		Local camBody:=New RigidBody( _camera )
-		camBody.Kinematic=True
-		camBody.Mass=1
+		New FlyBehaviour( _camera )
 		
 		Local camCollider:=New SphereCollider( _camera )
-		
-		'create fog
-		'		
-		Local fog:=New FogEffect
-		fog.Color=Color.Sky
-		fog.Near=50
-		fog.Far=60
+		camCollider.Radius=1
+		Local camBody:=New RigidBody( _camera )
+		camBody.Kinematic=True
+		camBody.Mass=0
 		
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 90 )	'aim directional light 'down'.
+		_light.RotateX( 75,15 )
 		
 		'create ground
 		'
@@ -65,45 +55,45 @@ Class MyWindow Extends Window
 		
 		_ground=Model.CreateBox( groundBox,16,16,16,New PbrMaterial( Color.Green ) )
 		
-		Local collider:=New BoxCollider( _ground )
-		collider.Box=groundBox
+		Local groundCollider:=New BoxCollider( _ground )
+		groundCollider.Box=groundBox
 		
-		Local body:=New RigidBody( _ground )
-		body.Mass=0
-		
-		'create some meshes/colliders
+		Local groundBody:=New RigidBody( _ground )
+		groundBody.Mass=0
 		
 		Local material:=New PbrMaterial( Color.White )
-		
-		Local model0:=Model.CreateBox( New Boxf( -1,-5,-1,1,5,1 ),1,1,1,material )
-		model0.AddComponent<RigidBody>()
-		Local collider0:=model0.AddComponent<BoxCollider>()
-		collider0.Box=New Boxf( -1,-5,-1,1,5,1 )
 
+		Local box0:=New Boxf( -1,-5,-1,1,5,1 )		
+		Local model0:=Model.CreateBox( box0,1,1,1,material )
+		Local collider0:=New BoxCollider( model0 )
+		collider0.Box=box0
+		Local body0:=New RigidBody( model0 )
+		
 		Local model1:=Model.CreateSphere( 1,32,16,material )
-		model1.AddComponent<RigidBody>()
-		Local collider1:=model1.AddComponent<SphereCollider>()
+		Local collider1:=New SphereCollider( model1 )
+		Local body1:=New RigidBody( model1 )
 
 		Local model2:=Model.CreateCylinder( 1,8,Axis.Y,32,material )
-		model2.AddComponent<RigidBody>()
-		Local collider2:=model2.AddComponent<CylinderCollider>()
+		Local collider2:=New CylinderCollider( model2 )
 		collider2.Radius=1
 		collider2.Length=8
+		Local body2:=New RigidBody( model2 )
 
 		Local model3:=Model.CreateCapsule( 1,10,Axis.Y,32,material )
-		model3.AddComponent<RigidBody>()
-		Local collider3:=model3.AddComponent<CapsuleCollider>()
+		Local collider3:=New CapsuleCollider( model3 )
 		collider3.Radius=1
 		collider3.Length=10
+		Local body3:=New RigidBody( model3 )
 
 		Local model4:=Model.CreateCone( 2.5,5,Axis.Y,32,material )
-		model4.AddComponent<RigidBody>()
-		Local collider4:=model4.AddComponent<ConeCollider>()
+		Local collider4:=New ConeCollider( model4 )
 		collider4.Radius=2.5
 		collider4.Length=5
+		Local body4:=New RigidBody( model4 )
 		
 		Local models:=New Model[]( model0,model1,model2,model3,model4 )
 		
+		#rem
 		For Local x:=-40 To 40 Step 8
 			
 			For Local z:=-40 To 40 Step 8
@@ -118,9 +108,17 @@ Class MyWindow Extends Window
 			Next
 		
 		Next
+		#end
+		
+		Local x:=0.0
 		
 		For Local model:=Eachin models
-			model.Destroy()
+			
+			model.Move( x,10,0 )
+			
+			x+=5.0
+			
+			'model.Destroy()
 		Next
 	End
 	
@@ -128,8 +126,6 @@ Class MyWindow Extends Window
 		
 		RequestRender()
 		
-		util.Fly( _camera,Self )
-			
 		_scene.Update()
 		
 		_scene.Render( canvas,_camera )

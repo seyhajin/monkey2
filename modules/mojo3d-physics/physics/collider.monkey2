@@ -10,12 +10,21 @@ Function CreateInternalEdgeInfo( mesh:btBvhTriangleMeshShape )="bbBullet::create
 	
 Public
 
+Class Entity Extension
+	
+	Property Collider:Collider()
+		
+		Return GetComponent<Collider>()
+	End
+	
+End
 
 Class Collider Extends Component
 	
 	Const Type:=New ComponentType( "Collider",-1,ComponentTypeFlags.Singleton )
 	
 	Method New( entity:Entity )
+		
 		Super.New( entity,Type )
 	End
 	
@@ -49,8 +58,10 @@ Protected
 		If Not _btshape Return
 		
 		_btshape.destroy()
-		
+
 		_btshape=Null
+
+		Modified()
 	End
 
 	function SetOrigin:btCollisionShape( shape:btCollisionShape,origin:Vec3f )

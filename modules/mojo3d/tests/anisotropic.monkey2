@@ -13,8 +13,8 @@ Using std..
 Using mojo..
 Using mojo3d..
 
-Const MaxAnisotropy:=0			'set to 0 to use use HW max (usually 16) 1 for min/off.
-
+Const MaxAnisotropy:=16
+			
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
@@ -29,7 +29,7 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		Print gles20.glGetString( gles20.GL_EXTENSIONS ).Replace( " ","~n" )
+		SetEnv( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",MaxAnisotropy )
 		
 		'create scene
 		'		
@@ -87,11 +87,7 @@ End
 
 Function Main()
 	
-	Local config:=New StringMap<String>
-	
-	If MaxAnisotropy config["GL_texture_max_anisotropy"]=MaxAnisotropy
-
-	New AppInstance( config )
+	New AppInstance
 	
 	New MyWindow
 	

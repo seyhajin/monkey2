@@ -15,16 +15,17 @@ Material render passes:
 #end
 Class DeferredRenderer Extends Renderer
 
-	#rem monkeydoc @hidden
+	#rem monkeydoc Creates a deferred renderer.
 	#end
 	Method New()
-		Super.New( True )
-		
+
 		Print "Creating DeferredRenderer"
+		
+		Super.Init( True )
 	
 		_lightShader=Shader.Open( "lighting-deferred",ShaderDefs )
-		_copyShader=Shader.Open( "copy" )
 		
+		_copyShader=Shader.Open( "copy" )
 	End
 
 	Protected
@@ -207,8 +208,8 @@ Class DeferredRenderer Extends Renderer
 		_device.CullMode=CullMode.None
 		_device.Shader=_lightShader
 		_device.RenderPass=pass
+		
 		RenderQuad()
-
 	End
 
 	Method RenderEffects( scene:Scene )
