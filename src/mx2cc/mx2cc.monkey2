@@ -24,7 +24,7 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"	' -clean gles20"
+Const TestArgs:="mx2cc makemods -target=android"
 
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"

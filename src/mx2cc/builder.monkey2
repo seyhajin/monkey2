@@ -780,17 +780,21 @@ Class BuilderInstance
 				Return
 			Endif
 			
-		Else If GetFileType( path )=FileType.Directory
+		Else If Not path.Contains( "$(TARGET_ARCH" )
 			
-			product.ASSET_FILES.Push( path )
-			Return
-			
-		Else If GetFileType( path )<>FileType.File
-			
-			If Not opts.geninfo New BuildEx( "File not found "+qpath )
+			If GetFileType( path )=FileType.Directory
 				
-			Return
-		
+				product.ASSET_FILES.Push( path )
+				Return
+				
+			Else If GetFileType( path )<>FileType.File
+				
+				If Not opts.geninfo New BuildEx( "File not found "+qpath )
+					
+				Return
+			
+			Endif
+			
 		Endif
 		
 		Select ext

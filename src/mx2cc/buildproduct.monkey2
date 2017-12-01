@@ -726,8 +726,15 @@ Class AndroidBuildProduct Extends BuildProduct
 		
 		buf.Push( "APP_ABI := "+GetEnv( "MX2_ANDROID_APP_ABI","armeabi-v7a" ) )
 		
-		buf.Push( "APP_PLATFORM := "+GetEnv( "MX2_ANDROID_APP_PLATFORM","10" ) )
+		buf.Push( "APP_PLATFORM := "+GetEnv( "MX2_ANDROID_APP_PLATFORM","android-14" ) )
 		
+		buf.Push( "APP_CFLAGS := "+GetEnv( "MX2_ANDROID_APP_CFLAGS","-std=gnu99 -fno-stack-protector" ) )
+		
+		buf.Push( "APP_CPPFLAGS := "+GetEnv( "MX2_ANDROID_APP_CPPFLAGS","-std=c++11 -fno-stack-protector -frtti -fexceptions" ) )
+		
+		buf.Push( "APP_STL := "+GetEnv( "MX2_ANDROID_APP_STL","c++_static" ) )
+		
+		#rem
 		buf.Push( "APP_CFLAGS += -std=gnu99" )
 		buf.Push( "APP_CFLAGS += -fno-stack-protector" )
 		
@@ -737,6 +744,8 @@ Class AndroidBuildProduct Extends BuildProduct
 		buf.Push( "APP_CPPFLAGS += -fno-stack-protector" )
 		
 		buf.Push( "APP_STL := c++_static" )
+		
+		#end
 		
 		CSaveString( buf.Join( "~n" ),jniDir+"Application.mk" )
 		
