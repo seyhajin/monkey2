@@ -5,16 +5,16 @@ Namespace mojo.graphics
 #end
 Class UniformBlock Extends Resource
 
-	Method New( name:Int,linearColors:Bool=False )
+	Method New( blockid:Int,linearColors:Bool=False )
 	
-		_name=name
+		_blockid=blockid
 		
 		_linearColors=linearColors
 	End
 	
 	Method New( uniforms:UniformBlock )
 	
-		_name=uniforms._name
+		_blockid=uniforms._blockid
 		_linearColors=uniforms._linearColors
 		_defaultTexture=uniforms._defaultTexture
 		_ntextures=uniforms._ntextures
@@ -22,11 +22,6 @@ Class UniformBlock Extends Resource
 		For Local i:=0 Until _uniforms.Length
 			_uniforms[i]=uniforms._uniforms[i]
 		Next
-	End
-	
-	Property Name:Int()
-	
-		Return _name
 	End
 	
 	Property LinearColors:Bool()
@@ -38,30 +33,6 @@ Class UniformBlock Extends Resource
 		_linearColors=linearColors
 	End
 	
-	Function GetUniformId:Int( name:String,block:Int )
-		Local ids:=_ids[block]
-		If Not ids
-			ids=New StringMap<Int>
-			_ids[block]=ids
-		Endif
-		Local id:=ids[name]
-		If Not id
-			id=ids.Count()+1
-			ids[name]=id
-		Endif
-		Return id
-	End
-	
-	Method GetUniformId:Int( name:String )
-		Return GetUniformId( name,_name )
-	End
-	
-	Method GetUniformId:Int( name:String,type:Type )
-		Local id:=GetUniformId( name,_name )
-		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
-		Return id
-	End
-
 	'***** Int *****
 	'	
 	Method SetInt( uniform:String,value:Int )
@@ -200,22 +171,31 @@ Class UniformBlock Extends Resource
 
 	'***** Mat4f array *****
 	'
-	Method SetMat4fArray( uniform:String,value:Mat4f[] )
-		Local id:=GetUniformId( uniform )
+	Method SetMat4fArray( name:String,value:Mat4f[] )
+		
+		Local id:=GetUniformId( name )
 		_uniforms[id].arrayData=value
 		_uniforms[id].type=Type.Mat4fArray
 		_seq=_gseq
 		_gseq+=1
 	End
 	
-	Method GetMat4fArray:Mat4f[]( uniform:String )
-		Local id:=GetUniformId( uniform )
-		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalidate uniform type" )
+	Method GetMat4fArray:Mat4f[]( name:String )
+		
+		Local id:=GetUniformId( name,Type.Mat4fArray )
+		
 		Return _uniforms[id].arrayData
 	End
 
 	Method GetMat4fArray:Mat4f[]( id:Int )
-		DebugAssert( _uniforms[id].type=Type.Mat4fArray,"Invalidate uniform type" )
+		
+	#If __DEBUG__
+		Local type:=Type.Mat4fArray
+		Assert( id,"Uniform '"+GetUniformName( id )+"' not found" )
+		Assert( _uniforms[id].type,"Uniform '"+GetUniformName( id )+"' not found in UniformBlock" )
+		Assert( _uniforms[id].type=type,"Uniform '"+GetUniformName( id )+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
+	#endif
+	
 		Return _uniforms[id].arrayData
 	End
 
@@ -235,11 +215,14 @@ Class UniformBlock Extends Resource
 		_defaultTexture=texture
 	End
 	
-	Method SetTexture( uniform:String,value:Texture )
-		Local id:=GetUniformId( uniform )
+	Method SetTexture( name:String,value:Texture )
+		
+		Local id:=GetUniformId( name )
+		
 		If (value<>Null)<>(_uniforms[id].texture<>Null)
 			If value _ntextures+=1 Else _ntextures-=1
 		End
+		
 		_uniforms[id].texture=value
 		_uniforms[id].type=Type.Texture
 		_seq=_gseq
@@ -247,15 +230,21 @@ Class UniformBlock Extends Resource
 	End
 
 	Method GetTexture:Texture( uniform:String )
-		Local id:=GetUniformId( uniform )
-		DebugAssert( _uniforms[id].type=Type.Texture,"Invalid uniform type" )
+		
+		Local id:=GetUniformId( uniform,Type.Texture )
 		Return _uniforms[id].texture
 	End
 	
 	Method GetTexture:Texture( id:Int )
-		DebugAssert( _uniforms[id].type=Type.Texture,"Invalid uniform type" )
-		Local texture:=_uniforms[id].texture
-		Return texture ? texture Else _defaultTexture
+		
+	#If __DEBUG__
+		Local type:=Type.Texture
+		Assert( id,"Uniform '"+GetUniformName( id )+"' not found" )
+		Assert( _uniforms[id].type,"Uniform '"+GetUniformName( id )+"' not found in UniformBlock" )
+		Assert( _uniforms[id].type=type,"Uniform '"+GetUniformName( id )+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
+	#endif
+		
+		Return _uniforms[id].texture ?Else _defaultTexture
 	End
 	
 	#rem monkeydoc @hidden
@@ -273,10 +262,60 @@ Class UniformBlock Extends Resource
 		_uniforms=Null
 	End
 	
+	Internal
+
+	Property BlockId:Int()
+	
+		Return _blockid
+	End
+	
+	Function GetUniformId:Int( name:String,blockid:Int )
+		
+		Local ids:=_ids[blockid]
+		If Not ids
+			ids=New StringMap<Int>
+			_ids[blockid]=ids
+			_names[blockid]=New IntMap<String>
+		Endif
+		Local id:=ids[name]
+		If Not id
+			id=ids.Count()+1
+			ids[name]=id
+			_names[blockid][id]=name
+		Endif
+		Return id
+	End
+	
+	Method GetUniformId:Int( name:String )
+		
+		Return GetUniformId( name,_blockid )
+	End
+	
+	Method GetUniformId:Int( name:String,type:Type )
+		
+		Local id:=_ids[_blockid][name]
+
+#If __DEBUG__		
+		Assert( id,"Uniform '"+name+"' not found" )
+		Assert( _uniforms[id].type,"Uniform '"+name+"' does not found in UniformBlock" )
+		Assert( _uniforms[id].type=type,"Uniform '"+name+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
+#endif
+		Return id
+	End
+	
+	Method GetUniformName:String( id:Int )
+		
+		Local names:=_names[_blockid]
+		Local name:=names ? names[id] Else ""
+		Return name ?Else "<unknown>"
+	End
+		
 	Private
 	
 	Global _gseq:Int=1
 	Global _ids:=New StringMap<Int>[8]
+	Global _names:=New IntMap<String>[8]
+	Global _typenames:=New String[]( "Void","Float","Vec2f","Vec3f","Vec4f","Mat3f","Mat4f","Mat4f[]","Int" )
 	
 	Enum Type
 		None=0
@@ -298,7 +337,7 @@ Class UniformBlock Extends Resource
 		Field floatData:Mat4f
 	End
 
-	Field _name:Int
+	Field _blockid:Int
 	Field _linearColors:bool
 	Field _defaultTexture:Texture
 	Field _ntextures:Int
@@ -306,28 +345,33 @@ Class UniformBlock Extends Resource
 	Field _uniforms:=New Uniform[64]
 	Field _seq:Int
 	
-	Method SetData<T>( uniform:String,data:T,type:Type )
-		Local id:=GetUniformId( uniform )
+	Method SetData<T>( name:String,data:T,type:Type )
+		Local id:=GetUniformId( name )
 		Cast<T Ptr>( Varptr _uniforms[id].floatData )[0]=data
 		_uniforms[id].type=type
 		_seq=_gseq
 		_gseq+=1
 	End
 	
-	Method GetData<T>:T( uniform:String,type:Type )
-		Local id:=GetUniformId( uniform )
-		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+	Method GetData<T>:T( name:String,type:Type )
+		Local id:=GetUniformId( name,type )
+'		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
 		Return Cast<T Ptr>( Varptr _uniforms[id].floatData )[0]
 	End
 
-	Method GetDataPtr<T>:T Ptr( uniform:String,type:Type )
-		Local id:=GetUniformId( uniform )
-		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+	Method GetDataPtr<T>:T Ptr( name:String,type:Type )
+		Local id:=GetUniformId( name,type )
+'		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
 		Return Cast<T Ptr>( Varptr _uniforms[id].floatData )
 	End
 	
 	Method GetFloatPtr:Float Ptr( id:Int,type:Type )
-		DebugAssert( _uniforms[id].type=type,"Invalid uniform type "+Int(_uniforms[id].type)+" expecting "+Int(type) )
+		
+#If __DEBUG__
+		Assert( id,"Uniform '"+GetUniformName( id )+"' not found" )
+		Assert( _uniforms[id].type,"Uniform '"+GetUniformName( id )+"' not found in UniformBlock" )
+		Assert( _uniforms[id].type=type,"Uniform '"+GetUniformName( id )+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
+#endif
 		Return Cast<Float Ptr>( Varptr _uniforms[id].floatData )
 	End
 	

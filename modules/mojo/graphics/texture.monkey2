@@ -21,7 +21,7 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.IA8 Return GL_LUMINANCE_ALPHA
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
-	Case PixelFormat.RGBA16F Return GL_RGBA
+'	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
@@ -36,7 +36,7 @@ Function glFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.IA8 Return GL_LUMINANCE_ALPHA
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
-	Case PixelFormat.RGBA16F Return GL_RGBA
+'	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
@@ -51,7 +51,7 @@ Function glType:GLenum( format:PixelFormat )
 	Case PixelFormat.IA8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGB8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGBA8 Return GL_UNSIGNED_BYTE
-	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
+'	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
 	Case PixelFormat.RGBA32F Return GL_FLOAT
 	Case PixelFormat.Depth32 Return GL_UNSIGNED_INT
 	End
@@ -99,6 +99,13 @@ Enum CubeFace
 End
 
 #Rem monkeydoc The Texture class.
+
+The environment variable "MX2_MOJO_TEXTURE_MAX_ANISOTROPY" can be used to control texture max anisotropy.
+
+If this env variable is not set, texture max anisotropy is set to the max level.
+	
+Environment variables may be set using the [[std::std.filesystem.SetEnv|SetEnv]] function.
+	
 #end
 Class Texture Extends Resource
 	
@@ -438,12 +445,12 @@ Class Texture Extends Resource
 				Endif
 				
 				If _flags & TextureFlags.Mipmap And Not (_flags & TextureFlags.Cubemap)
-					If glexts.GL_texture_filter_anisotropic
+'					If glexts.GL_texture_filter_anisotropic
 						Local max:Int=0
 						glGetIntegerv( GL_MAX_TEXTURE_MAX_ANISOTROPY,Varptr max )
-						Local n:=Min( Int(App.GetConfig( "GL_texture_max_anisotropy",max )),max )
+						Local n:=Min( Int(GetEnv( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",max )),max )
 						glTexParameteri( _glTarget,GL_TEXTURE_MAX_ANISOTROPY,n )
-					Endif
+'					Endif
 				Endif
 								
 			Endif

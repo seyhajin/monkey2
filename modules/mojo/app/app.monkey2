@@ -80,14 +80,27 @@ Class AppInstance
 	Field SdlEventFilter:Void( event:SDL_Event Ptr )
 
 	#rem monkeydoc Create a new app instance.
+	
+	The following environment variables can be set prior to constructing a new AppInstance:
+	
+	MX2_MOJO_OPENGL_PROFILE : Should be set to one of "es", "compatibility" or "core". Defaults to "compatibility" on macos and linux, "es" on all other targets. Uses 'Angle' for es support on windows.
+	
+	MX2_MOJO_OPENGL_VERSION_MAJOR : defaults to "2".
+	
+	MX2_MOJO_OPENGL_VERSION_MINOR : defaults to "1".
+	
+	MX2_MOJO_COLOR_BUFFER_BITS : Minimum depth buffer bit depth. defaults to "8".
+	
+	MX2_MOJO_DEPTH_BUFFER_BITS : Minimum depth buffer bit depth. defaults to "0".
+
+	MX2_MOJO_STENCIL_BUFFER_BITS : Minimum stencil buffer bit depth. defaults to "0".
+	
+	Environment variables may be set using the [[std::std.filesystem.SetEnv|SetEnv]] function.
+	
 	#end
-	Method New( config:StringMap<String> =Null )
+	Method New()
 	
 		App=Self
-		
-		If Not config config=New StringMap<String>
-	
-		_config=config
 		
 		SDL_Init( SDL_INIT_VIDEO|SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER )
 		
@@ -114,7 +127,7 @@ Class AppInstance
 		'
 		Local gl_profile:Int,gl_major:Int=2,gl_minor:Int=0
 
-		Select GetConfig( "GL_context_profile","" )
+		Select GetEnv( "MX2_MOJO_OPENGL_PROFILE" )
 		Case "core"
 			gl_profile=SDL_GL_CONTEXT_PROFILE_CORE
 		Case "compatibility"
@@ -130,17 +143,18 @@ Class AppInstance
 		End
 
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,gl_profile )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,Int( GetConfig( "GL_context_major_version",gl_major ) ) )
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,Int( GetConfig( "GL_context_minor_version",gl_minor ) ) )
-		
-		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "GL_depth_buffer_enabled",0 ) ) )
-		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetConfig( "GL_stencil_buffer_enabled",0 ) ) )
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,Int( GetEnv( "MX2_MOJO_OPENGL_VERSION_MAJOR",gl_major ) ) ) 
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,Int( GetEnv( "MX2_MOJO_OPENGL_VERSION_MINOR",gl_minor ) ) )
 		
 		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 )
+		
+		Local n:=Int( GetEnv( "MX2_MOJO_COLOR_BUFFER_BITS",8 ) )
 
-		SDL_GL_SetAttribute( SDL_GL_RED_SIZE,8 )
-		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,8 )
-		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,8 )
+		SDL_GL_SetAttribute( SDL_GL_RED_SIZE,n )
+		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,n )
+		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,n )
+		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetEnv( "MX2_MOJO_DEPTH_BUFFER_BITS" ) ) )
+		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetEnv( "MX2_MOJO_STENCIL_BUFFER_BITS" ) ) )
 		
 #If __DESKTOP_TARGET__
 
@@ -170,9 +184,9 @@ Class AppInstance
 		
 		_theme=New Theme
 		
-		Local themePath:=GetConfig( "initialTheme","default" )
+		Local themePath:=GetEnv( "MX2_MOJO_INITIAL_THEME","default" )
 		
-		Local themeScale:=Float( GetConfig( "initialThemeScale",1 ) )
+		Local themeScale:=Float( GetEnv( "MX2_MOJO_INITIAL_THEME_SCALE",1 ) )
 		
 		_theme.Load( themePath,New Vec2f( themeScale ) )
 		
@@ -391,13 +405,6 @@ Class AppInstance
 	
 	#rem monkeydoc @hidden
 	#end
-	Method GetConfig:String( name:String,defValue:String )
-		If _config.Contains( name ) Return _config[name]
-		Return defValue
-	End
-
-	#rem monkeydoc @hidden
-	#end
 	Method GetDisplayModes:DisplayMode[]()
 	
 		Local n:=SDL_GetNumDisplayModes( 0 )
@@ -607,8 +614,6 @@ Class AppInstance
 
 	Private
 	
-	Field _config:StringMap<String>
-
 	Field _touchMouse:Bool=False		'Whether mouse is really touch
 	Field _captureMouse:Bool=False		'Whether to use SDL_CaptureMouse
 	

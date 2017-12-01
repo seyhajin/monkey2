@@ -520,7 +520,7 @@ Class Window Extends View
 		Endif
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
 		
-		InitGLexts()
+		bbglInit()
 		
 		_allWindows.Push( Self )
 		_windowsByID[SDL_GetWindowID( _sdlWindow )]=Self

@@ -7,6 +7,40 @@ Global bindings:=New IntStack
 
 Public
 
+Function glShaderSourceEx:Void( shader:GLuint,source:String )
+
+	Local n:=source.Length
+	Local buf:=Cast<Byte Ptr>( libc.malloc( n+1 ) )
+	For Local i:=0 Until n
+		buf[i]=source[i]
+	Next
+	buf[n]=0
+	
+	Local p:=Cast<GLcchar Ptr>( buf )
+	
+	glShaderSource( shader,1,Varptr p,Null )
+	
+	libc.free( buf )
+End
+
+Function glGetShaderInfoLogEx:String( shader:GLuint )
+
+	Local buf:=New Byte[1024],length:GLsizei
+	
+	glGetShaderInfoLog( shader,buf.Length,Varptr length,Cast<GLchar Ptr>( Varptr buf[0] ) )
+	
+	Return String.FromCString( Varptr buf[0] )
+End
+
+Function glGetProgramInfoLogEx:String( program:GLuint )
+
+	Local buf:=New Byte[1024],length:GLsizei
+	
+	glGetProgramInfoLog( program,buf.Length,Varptr length,Cast<GLchar Ptr>( Varptr buf[0] ) )
+	
+	Return String.FromCString( Varptr buf[0] )
+End
+
 #rem monkeydoc @hidden
 #end
 Global glDebug:Bool=False
@@ -26,6 +60,7 @@ Global glRetroSeq:Int=1
 #rem monkeydoc @hidden
 #end
 Function glInvalidateGraphics()
+	
 	glGraphicsSeq+=1
 End
 
@@ -136,9 +171,9 @@ End
 #end
 Function glCompile:Int( type:Int,source:String )
 	
-#If __TARGET__="windows" Or __MOBILE_TARGET__ Or __WEB_TARGET__
-
-		Const prefix:="
+	If BBGL_ES
+	
+		Local prefix:="
 #ifdef GL_ES
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
@@ -149,18 +184,16 @@ precision mediump float;
 "
 		source=prefix+source
 		
-		If glexts.GL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
+		If BBGL_draw_buffers source="#extension GL_EXT_draw_buffers : require~n"+source
 			
-		If glexts.GL_standard_derivatives source="#extension GL_OES_standard_derivatives : require~n"+source
+'		If glexts.GL_standard_derivatives source="#extension GL_OES_standard_derivatives : require~n"+source
+	Else
 			
-#ElseIf __TARGET__="macos" or __TARGET__="linux"
-	
-		Const prefix:="
+		Local prefix:="
 #version 120
 "
 		source=prefix+source
-		 
-#EndIf
+	Endif
 	
 	Local shader:=glCreateShader( type )
 	glShaderSourceEx( shader,source )
