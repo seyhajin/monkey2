@@ -19,14 +19,20 @@ Render passes:
 #end
 Class ForwardRenderer Extends Renderer
 
-	#rem monkeydoc @hidden
+	#rem monkeydoc Creates a forward renderer.
+	
+	If the config setting "MOJO3D_FORWARD_RENDERER_DIRECT" is set to "1", the renderer will render directly to the render target when [[Render]] is invoked.
+
+	Config settings may be set using the [[std::std.filesystem.SetConfig|SetConfig]] function.
+
 	#end
-	Method New( direct:Bool )
-		Super.New( Not direct )
+	Method New()
 		
-		_direct=direct
-		
-		Print "Creating ForwardRenderer, direct="+Int( _direct )
+		_direct=Int( GetConfig( "MOJO3D_FORWARD_RENDERER_DIRECT" ) )
+
+		Print "Creating ForwardRenderer, direct="+_direct
+			
+		Super.Init( Not _direct )
 		
 		If Not _direct _copyShader=Shader.Open( "copy" )
 	End
@@ -53,7 +59,7 @@ Class ForwardRenderer Extends Renderer
 			Const depth_format:=PixelFormat.Depth32
 			#Endif
 				
-			_colorBuffer=New Texture( size.x,size.y,color_format,TextureFlags.Filter|TextureFlags.Dynamic )
+			_colorBuffer=New Texture( size.x,size.y,color_format,TextureFlags.Dynamic|TextureFlags.Filter )
 			_depthBuffer=New Texture( size.x,size.y,depth_format,TextureFlags.Dynamic )
 			_colorTarget0=New RenderTarget( New Texture[]( _colorBuffer ),_depthBuffer )
 			_colorTarget1=New RenderTarget( New Texture[]( _colorBuffer ),Null )

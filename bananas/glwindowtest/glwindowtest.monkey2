@@ -6,7 +6,7 @@ Namespace myapp
 
 Using std..
 Using mojo..
-Using gles20..
+Using opengl..
 
 Class MyWindow Extends GLWindow
 
@@ -50,7 +50,7 @@ Class MyWindow Extends GLWindow
 		'	
 		glClearColor( 0,0,1,1 )
 		
-		glClearDepthf( 0 )
+		glClearDepth( 0 )
 		
 		glClearStencil( 0 )
 		
@@ -82,13 +82,7 @@ End
 
 Function Main()
 
-	'New optional App config options - these enabled depth/stencil buffers.
-	'
-	Local cfg:=New StringMap<String>
-	cfg["GL_depth_buffer_enabled"]=1
-	cfg["GL_stencil_buffer_enabled"]=1
-
-	New AppInstance( cfg )
+	New AppInstance
 	
 	New MyWindow
 	

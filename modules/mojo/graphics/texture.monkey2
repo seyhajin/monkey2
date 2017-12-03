@@ -21,7 +21,7 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.IA8 Return GL_LUMINANCE_ALPHA
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
-	Case PixelFormat.RGBA16F Return GL_RGBA
+'	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
@@ -36,7 +36,7 @@ Function glFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.IA8 Return GL_LUMINANCE_ALPHA
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
-	Case PixelFormat.RGBA16F Return GL_RGBA
+'	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
@@ -51,7 +51,7 @@ Function glType:GLenum( format:PixelFormat )
 	Case PixelFormat.IA8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGB8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGBA8 Return GL_UNSIGNED_BYTE
-	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
+'	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
 	Case PixelFormat.RGBA32F Return GL_FLOAT
 	Case PixelFormat.Depth32 Return GL_UNSIGNED_INT
 	End
@@ -98,12 +98,21 @@ Enum CubeFace
 	NegativeZ
 End
 
-#Rem monkeydoc The Texture class.
+#rem monkeydoc The Texture class.
 #end
 Class Texture Extends Resource
 	
 	Private
 	
+	#rem monkeydoc Creates a new texture.
+	
+	The config setting "MOJO_TEXTURE_MAX_ANISOTROPY" can be used to set the new texture's max anisotropy value.
+
+	If this config setting does not exist, the texture's max anisotropy is set to the max level.
+		
+	Config settings may be changed using the [[std::std.filesystem.SetConfig|SetConfig]] function.
+	
+	#end
 	Method New( face:GLenum,cubeMap:Texture )
 		
 		_size=cubeMap._size
@@ -438,12 +447,12 @@ Class Texture Extends Resource
 				Endif
 				
 				If _flags & TextureFlags.Mipmap And Not (_flags & TextureFlags.Cubemap)
-					If glexts.GL_texture_filter_anisotropic
+'					If glexts.GL_texture_filter_anisotropic
 						Local max:Int=0
 						glGetIntegerv( GL_MAX_TEXTURE_MAX_ANISOTROPY,Varptr max )
-						Local n:=Min( Int(App.GetConfig( "GL_texture_max_anisotropy",max )),max )
+						Local n:=Min( Int(GetConfig( "MOJO_TEXTURE_MAX_ANISOTROPY",max )),max )
 						glTexParameteri( _glTarget,GL_TEXTURE_MAX_ANISOTROPY,n )
-					Endif
+'					Endif
 				Endif
 								
 			Endif

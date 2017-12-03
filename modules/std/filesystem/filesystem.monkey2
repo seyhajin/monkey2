@@ -50,6 +50,8 @@ Function CopyFile:Bool( srcPath:String,dstPath:String )="bbFileSystem::copyFile"
 	
 Private
 
+Global _config:=New StringMap<String>
+
 Function FixPath:String( path:String )
 	
 	Local root:=ExtractRootDir( path )
@@ -173,6 +175,40 @@ Sets the value of a given environment variable.
 Function SetEnv( name:String,value:String )
 	
 	setenv( name,value,1 )
+End
+
+#rem monkeydoc Gets a global config setting.
+
+See also [[SetConfig]] for a list of possible config settings.
+
+#end
+Function GetConfig:String( name:String,defaultValue:String="" )
+	
+	Return _config.Contains( name ) ? _config[name] Else defaultValue
+End
+
+#rem monkeydoc Sets a global config setting.
+
+Currently known built-in config settings:
+
+| Name								| More information
+|:----------------------------------|:----------------
+| "MOJO_OPENGL_PROFILE"				| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO_OPENGL_VERSION_MAJOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO_OPENGL_VERSION_MINOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO_COLOR_BUFFER_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO_DEPTH_BUFFER_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO_STENCIL_BUFFER_BITS"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO_TEXTURE_MAX_ANISOTROPY"		| [[mojo:mojo.graphics.Texture.New|Texture.New]]
+| "MOJO3D_DEFAULT_RENDERER"			| [[mojo3d:mojo3d.Renderer.GetCurrent|Renderer.GetCurrent]]
+| "MOJO3D_FORWARD_RENDERER_DIRECT"	| [[mojo3d:mojo3d.ForwardRenderer.New|ForwardRenderer.New]]
+
+See also: [[GetConfig]].
+
+#end
+Function SetConfig( name:String,value:String )
+	
+	If value _config[name]=value Else _config.Remove( name )
 End
 
 #rem monkeydoc Gets the filesystem directory of the app's assets directory.

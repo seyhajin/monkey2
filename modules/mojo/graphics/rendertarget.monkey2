@@ -69,12 +69,12 @@ Class RenderTarget Extends Resource
 	Method Bind()
 	
 		glBindFramebuffer( GL_FRAMEBUFFER,ValidateGLFramebuffer() )
-
-		If glexts.GL_draw_buffers 
+		
+		If BBGL_draw_buffers
 			glDrawBuffers( _glDrawBufs.Length,_glDrawBufs.Data )
 		Endif
-
-		If glexts.GL_read_buffer
+		
+		If Not BBGL_ES
 			glReadBuffer( _glDrawBufs ? _glDrawBufs[0] Else GL_NONE )
 		Endif
 
@@ -127,7 +127,7 @@ Class RenderTarget Extends Resource
 	
 	Method CheckStatus()
 		
-		Local status:=gles20.glCheckFramebufferStatus( GL_FRAMEBUFFER )
+		Local status:=glCheckFramebufferStatus( GL_FRAMEBUFFER )
 		
 		If status=GL_FRAMEBUFFER_COMPLETE Return
 		

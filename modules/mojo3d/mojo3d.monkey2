@@ -3,6 +3,7 @@ Namespace mojo3d
 
 #Import "<std>"
 #Import "<mojo>"
+#Import "<opengl>"
 
 #Import "assets/"
 
@@ -50,6 +51,23 @@ Namespace mojo3d
 #Import "geometry/util3d"
 
 Using std..
-Using gles20..
 Using mojo..
-Using mojo3d..
+Using opengl..
+
+Function Main()
+	
+#If __DESKTOP_TARGET__ Or __WEB_TARGET__
+
+	SetEnv( "MOJO3D_DEFAULT_RENDERER","deferred" )
+	
+#Else if __MOBILE_TARGET__
+	
+	SetEnv( "MOJO3D_DEFAULT_RENDERER","forward" )
+	
+	SetEnv( "MOJO3D_FORWARD_RENDERER_DIRECT",1 )
+	
+	SetEnv( "MOJO_DEPTH_BUFFER_BITS",16 )
+	
+#endif
+	
+End

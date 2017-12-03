@@ -104,16 +104,7 @@ End
 
 Function Main()
 	
-	Local config:=New StringMap<String>
-
-'	config["mojo3d_renderer"]="deferred"		'defeault on non-mobile targets.
-
-'	config["mojo3d_renderer"]="forward-direct"	'default on mobile targets. depth buffer must be enabled too.
-'	config["GL_depth_buffer_enabled"]=1
-
-'	config["mojo3d_renderer"]="forward"
-		
-	New AppInstance( config )
+	New AppInstance
 	
 	New MyWindow
 	

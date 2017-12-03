@@ -1,5 +1,5 @@
 {
 	"module":"gles20",
 	"version":"1.0.0",
-	"depends":["libc"]
+	"depends":["opengl"]
 }

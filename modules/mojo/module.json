@@ -4,5 +4,5 @@
 	"author":"Mark Sibly",
 	"version":"1.0.0",
 	"support":"http://monkeycoder.co.nz",
-	"depends":["freetype","emscripten","std","sdl2","gles20","openal"]
+	"depends":["freetype","emscripten","std","sdl2","opengl","openal"]
 }

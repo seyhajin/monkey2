@@ -41,7 +41,7 @@ Class Camera Extends Entity
 
 		_aspect=Float( _viewport.Width )/Float( _viewport.Height )
 		
-		_dirty|=Dirty.ProjMatrix
+		'_dirty|=Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc Aspect ratio.
@@ -67,7 +67,7 @@ Class Camera Extends Entity
 	
 		_fovy=fovy
 		
-		_dirty|=Dirty.ProjMatrix
+		'_dirty|=Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc Near clip plane distance.
@@ -83,7 +83,7 @@ Class Camera Extends Entity
 	
 		_near=nearz
 		
-		_dirty|=Dirty.ProjMatrix
+		'_dirty|=Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc Far clip plane distance.
@@ -99,7 +99,7 @@ Class Camera Extends Entity
 	
 		_farz=farz
 		
-		_dirty|=Dirty.ProjMatrix
+		'_dirty|=Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc @hidden
@@ -114,6 +114,12 @@ Class Camera Extends Entity
 		Endif
 		
 		Return _projMatrix
+		
+	Setter( matrix:Mat4f )
+		
+		_projMatrix=matrix
+		
+		_dirty&=~Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc Converts a point from world coordinates to viewport coordinates.

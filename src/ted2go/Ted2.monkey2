@@ -162,15 +162,14 @@ Function Main()
 	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-prime-blue" )
 
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
+		
+	SetConfig( "MOJO_INITIAL_THEME",jobj.GetString( "theme" ) )
 	
-	Local config:=New StringMap<String>
-	
-	config["initialTheme"]=jobj.GetString( "theme" )
-	config["initialThemeScale"]=jobj.GetNumber( "themeScale" )
+	SetConfig( "MOJO_INITIAL_THEME_SCALE",jobj.GetString( "themeScale" ) )
 	
 	'start the app!
 	'
-	New AppInstance( config )
+	New AppInstance
 	
 	'initial window state
 	'

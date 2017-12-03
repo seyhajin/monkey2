@@ -255,7 +255,7 @@ Class GraphicsDevice
 	
 	Method BindUniformBlock( ublock:UniformBlock )
 	
-		_ublocks[ublock.Name]=ublock
+		_ublocks[ublock.BlockId]=ublock
 	End
 	
 	Method GetUniformBlock:UniformBlock( block:Int )
@@ -290,7 +290,7 @@ Class GraphicsDevice
 		Endif
 		
 		If _depthMask
-			glClearDepthf( depth )
+			glClearDepth( depth )
 			mask|=GL_DEPTH_BUFFER_BIT
 		Endif
 		
@@ -432,15 +432,15 @@ Class GraphicsDevice
 		
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
 		
-		If GL_draw_buffer glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
-		If GL_read_buffer glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
-			
-		if GL_seamless_cube_map glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS )
+		If BBGL_seamless_cube_map glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS )
 		
-#If __TARGET__="macos" or __TARGET__="linux"
-		glEnable( $8861 )	'GL_POINT_SPRITE
-		glEnable( $8642 )	'GL_PROGRAM_POINT_SIZE
-#Endif
+		If Not BBGL_ES
+			glGetIntegerv( GL_DRAW_BUFFER,Varptr _defaultDrawBuf )
+			glGetIntegerv( GL_READ_BUFFER,Varptr _defaultReadBuf )
+			glEnable( GL_POINT_SPRITE )
+			glEnable( GL_VERTEX_PROGRAM_POINT_SIZE )
+			glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS )
+		Endif
 			
 		glCheck()
 	End
@@ -482,12 +482,13 @@ Class GraphicsDevice
 				_rtarget.Bind()
 			Else
 				glBindFramebuffer( GL_FRAMEBUFFER,_defaultFbo )
-
-				If GL_draw_buffer glDrawBuffer( _defaultDrawBuf )
-				If GL_read_buffer glReadBuffer( _defaultReadBuf )
+				
+				If Not BBGL_ES
+					glDrawBuffer( _defaultDrawBuf )
+					glReadBuffer( _defaultReadBuf )
+				Endif
 				
 			Endif
-			
 
 		Endif
 	

@@ -54,30 +54,36 @@ Class Renderer
 		_psmSize=size
 	End
 	
+	Function SetCurrent( renderer:Renderer )
+		
+		DebugAssert( Not _current,"Renderer.Current already set" )
+		
+		_current=renderer
+	End
+	
 	#rem monkeydoc Gets the current renderer.
+	
+	The config setting "MOJO3D_DEFAULT_RENDERER" can be used to override the default renderer created. It should be set to "deferred" or "forward".
+
+	Config settings may be changed using the [[std::std.filesystem.SetConfig|SetConfig]] function.
+	
 	#end
 	Function GetCurrent:Renderer()
 		
-		Global _current:Renderer
+		If _current Return _current
 		
-		If Not _current
-			
-			Local hasDepth:=Int( App.GetConfig( "GL_depth_buffer_enabled","0" ) )<>0
-			
-			Select App.GetConfig( "mojo3d_renderer","" )
-			Case "deferred"
-				_current=New DeferredRenderer
-			Case "forward-direct"
-				_current=New ForwardRenderer( True )
-			Case "forward"
-				_current=New ForwardRenderer( False )
-			Default
+		Select( GetConfig( "MOJO3D_DEFAULT_RENDERER" ) )
+		Case "deferred"
+			_current=New DeferredRenderer
+		Case "forward"
+			_current=New ForwardRenderer
+		Default
 #If Not __MOBILE_TARGET__					
-				If glexts.GL_draw_buffers _current=New DeferredRenderer
+			_current=New DeferredRenderer
+#else
+			_current=New ForwardRenderer
 #Endif
-			End
-			If Not _current _current=New ForwardRenderer( hasDepth )
-		Endif
+		End
 		
 		Return _current
 	End
@@ -185,6 +191,11 @@ Class Renderer
 		_renderScene=Null
 	End
 	
+	Property ShaderDefs:String()
+		
+		Return _linearOutput ? "MX2_LINEAROUTPUT~n" Else "MX2_SRGBOUTPUT~n"
+	End
+	
 	Protected
 	
 	Method OnValidateSize( size:Vec2i ) Virtual
@@ -192,18 +203,12 @@ Class Renderer
 	
 	Method OnRender( scene:Scene,camera:Camera,device:GraphicsDevice ) Virtual
 	End
-
-	Method New( linearOutput:Bool )
+	
+	Method Init( linearOutput:Bool )
 		
 		_linearOutput=linearOutput
 
 		_rgbaDepthTextures=False
-		
-		_shaderDefs+=_linearOutput ? "MX2_LINEAROUTPUT~n" Else "MX2_SRGBOUTPUT~n"
-		
-		If _rgbaDepthTextures _shaderDefs+="MX2_RGBADEPTHTEXTURES~n"
-		
-		Print "Renderer.ShaderDefs="+ShaderDefs
 		
 		_device=New GraphicsDevice( 0,0 )
 		
@@ -305,7 +310,7 @@ Class Renderer
 	End
 	
 	Method RenderCSMShadows( light:Light )
-	
+		
 		'Perhaps use a different device for CSM...?
 		'
 		Local t_rtarget:=_device.RenderTarget
@@ -420,20 +425,9 @@ Class Renderer
 		_device.Scissor=t_scissor
 	End
 
-	Internal
-	
-	Property ShaderDefs:String()
-		
-		Return _shaderDefs
-	End
-	
-	Property LinearOutput:Bool()
-	
-		Return _linearOutput
-	
-	End
-
 	Private
+	
+	Global _current:Renderer
 	
 	Field _rgbaDepthTextures:=False
 	
@@ -478,18 +472,11 @@ Class Renderer
 			_csmTexture?.Discard()
 			_csmDepth?.Discard()
 
-			const color_format:=PixelFormat.RGBA8
 			const depth_format:=PixelFormat.Depth32
 			
-			If _rgbaDepthTextures
-				_csmTexture=New Texture( _csmSize,_csmSize,color_format,TextureFlags.Dynamic )
-				_csmDepth=New Texture( _csmSize,_csmSize,depth_format,TextureFlags.Dynamic )
-				_csmTarget=New RenderTarget( New Texture[]( _csmTexture ),_csmDepth )
-			Else
-				_csmTexture=New Texture( _csmSize,_csmSize,depth_format,TextureFlags.Dynamic )
-				_csmTarget=New RenderTarget( Null,_csmTexture )
-				_csmDepth=Null
-			Endif
+			_csmTexture=New Texture( _csmSize,_csmSize,depth_format,TextureFlags.Dynamic )
+			_csmTarget=New RenderTarget( Null,_csmTexture )
+			_csmDepth=Null
 			
 		Endif
 		
@@ -512,8 +499,6 @@ Class Renderer
 				Local face:=_psmTexture.GetCubeFace( Cast<CubeFace>( i ) )
 				_psmTargets[i]=New RenderTarget( New Texture[]( face ),_psmDepth )
 			Next
-			
-			glCheck()
 		
 		Endif
 		

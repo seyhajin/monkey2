@@ -303,10 +303,9 @@ Class Entity Extends DynamicObject
 			_children.Top.Destroy()
 		Wend
 		
-		If _visible
-			_visible=False
-			 OnHide()
-		Endif
+		_visible=False
+		
+		ValidateVisibility()
 		
 		For Local c:=Eachin _components
 			c.OnDestroy()

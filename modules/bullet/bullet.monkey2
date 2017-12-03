@@ -384,15 +384,15 @@ Class btTriangleIndexVertexArray Extends btStridingMeshInterface
 
 End
 
-Class btMotionState Extends btObject
-
-	Method setWorldTransform( worldTrans:btTransform )
+Class btMotionState Extends btObject="bbBullet::MotionState"
+	
+	Method setWorldTransform( worldTrans:btTransform Ptr ) Virtual
 		
-	Method getWorldTransform:btTransform() Extension="bbBullet::getWorldTransform"
+	Method getWorldTransform( worldTrans:btTransform Ptr ) Virtual
 	
 End
 
-Class btDefaultMotionState Extends btMotionState
+Class btDefaultMotionState Extends btMotionState="bbBullet::DefaultMotionState"
 
 	Field m_graphicsWorldTrans:btTransform
 	Field m_centerOfMassOffset:btTransform
@@ -419,6 +419,18 @@ Class btCollisionObject Extends btObject
 	Const CF_CHARACTER_OBJECT:Int="btCollisionObject::CF_CHARACTER_OBJECT"
 	Const CF_DISABLE_VISUALIZE_OBJECT:Int="btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT"
 	Const CF_DISABLE_SPU_COLLISION_PROCESSING:Int="btCollisionObject::CF_DISABLE_SPU_COLLISION_PROCESSING"
+	
+	Method isStaticObject:Bool()
+		
+	Method isKinematicObject:Bool()
+		
+	Method isStaticOrKinematicObject:Bool()
+		
+	Method hasContactResponse:Bool()
+		
+	Method setCollisionShape( collisionShape:btCollisionShape )
+		
+	Method getCollisionShape:btCollisionShape()
 	
 	Method setWorldTransform( transform:btTransform )
 	
@@ -449,6 +461,8 @@ Class btCollisionObject Extends btObject
 	Method getCollisionFlags:Int()
 		
 	Method setActivationState( newState:Int )
+		
+	Method forceActivationState( newState:Int )
 	
 	Method getActivationState:Int()
 		
@@ -489,6 +503,10 @@ Class btRigidBody Extends btCollisionObject
 	Method New( mass:btScalar,motionState:btMotionState,collisionShape:btCollisionShape,localInertia:btVector3=New btVector3( 0,0,0 ) )
 	
 	Method clearForces()
+		
+	Method setMassProps( mass:btScalar,inertia:btVector3 )
+		
+	Method getInvMass:btScalar()
 		
 	Method setGravity( acceleration:btVector3 )
 		

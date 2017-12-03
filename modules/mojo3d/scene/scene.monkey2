@@ -95,6 +95,17 @@ Class Scene Extends DynamicObject
 		_ambientDiffuse=color
 	End
 	
+	#rem monkeydoc Renderer for the scene.
+	#end
+	Property Renderer:Renderer()
+		
+		Return _renderer
+	
+	Setter( renderer:Renderer )
+		
+		_renderer=renderer
+	End
+	
 	#rem monkeydoc Adds a post effect to the scene.
 	#end
 	Method AddPostEffect( postEffect:PostEffect )
@@ -165,7 +176,9 @@ Class Scene Extends DynamicObject
 			
 		canvas.Flush()
 		
-		Renderer.GetCurrent().Render( Self,camera,canvas.GraphicsDevice )
+		Local renderer:=Renderer.GetCurrent()
+		
+		renderer.Render( Self,camera,canvas.GraphicsDevice )
 	End
 
 	#rem monkeydoc Enumerates all entities in the scene with null parents.
@@ -178,6 +191,8 @@ Class Scene Extends DynamicObject
 	#rem monkeydoc Sets the current scene.
 	#end
 	Function SetCurrent( scene:Scene )
+		
+		DebugAssert( Not _current,"Scene.Current already set" )
 		
 		_current=scene
 	End
@@ -231,7 +246,11 @@ Class Scene Extends DynamicObject
 	
 	Field _clearColor:Color
 	Field _ambientDiffuse:Color
+	
+	Field _renderer:Renderer
+	
 	Field _postEffects:=New Stack<PostEffect>
+	
 	
 	Field _rootEntities:=New Stack<Entity>
 	

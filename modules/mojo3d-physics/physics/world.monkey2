@@ -102,6 +102,11 @@ Class World
 		Return GetWorld( mojo3d.Scene.GetCurrent() )
 	End
 	
+	Property btWorld:btDynamicsWorld()
+		
+		Return _btworld
+	End
+	
 	Internal
 	
 	Function GetWorld:World( scene:Scene )
@@ -115,9 +120,11 @@ Class World
 	
 	Method Add( body:RigidBody )
 		
+		Print "World.Add( RigidBody )"
+		
 		_bodies.Add( body )
 		
-		Local btbody:=body.Validate()
+		Local btbody:=body.btBody
 		
 		btbody.setUserPointer( Cast<Void Ptr>( body ) )
 		
@@ -126,7 +133,9 @@ Class World
 	
 	Method Remove( body:RigidBody )
 		
-		Local btbody:=body.Validate()
+		Print "World.Remove( RigidBody )"
+		
+		Local btbody:=body.btBody
 		
 		_btworld.removeRigidBody( btbody )
 		

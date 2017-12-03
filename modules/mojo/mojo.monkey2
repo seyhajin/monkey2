@@ -6,9 +6,16 @@ Namespace mojo
 #Import "<emscripten>"
 #Import "<std>"
 #Import "<sdl2>"
-#Import "<gles20>"
+#Import "<opengl>"
 #Import "<openal>"
 #Import "<freetype>"
+
+Using emscripten..
+Using std..
+Using sdl2..
+Using opengl..
+Using openal..
+Using mojo..
 
 #Import "app/app"
 #Import "app/event"
@@ -21,7 +28,7 @@ Namespace mojo
 #Import "app/glwindow"
 
 'core graphics stuff
-#Import "graphics/glexts/glexts"
+'#Import "graphics/glexts/glexts"
 #Import "graphics/glutil"
 #Import "graphics/graphicsdevice"
 #Import "graphics/uniformblock"
@@ -48,13 +55,6 @@ Namespace mojo
 #Import "input/keycodes"
 
 #Import "audio/audio"
-
-Using emscripten..
-Using std..
-Using sdl2..
-Using gles20..
-Using openal..
-Using mojo..
 
 Private
 
