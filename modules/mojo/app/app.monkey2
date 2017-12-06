@@ -83,17 +83,17 @@ Class AppInstance
 	
 	The following environment variables can be set prior to constructing a new AppInstance:
 	
-	MOJO_OPENGL_PROFILE : Should be set to one of "es", "compatibility" or "core". Defaults to "compatibility" on macos and linux, "es" on all other targets. Uses 'Angle' for es support on windows.
+	MOJO\_OPENGL\_PROFILE : Should be set to one of "es", "compatibility" or "core". Defaults to "compatibility" on macos and linux, "es" on all other targets. Uses 'Angle' for es support on windows.
 
-	MOJO_OPENGL_VERSION_MAJOR : defaults to "2".
+	MOJO\_OPENGL\_VERSION\_MAJOR : defaults to "2".
 
-	MOJO_OPENGL_VERSION_MINOR : defaults to "1".
+	MOJO\_OPENGL\_VERSION\_MINOR : defaults to "1".
 
-	MOJO_COLOR_BUFFER_BITS : Minimum depth buffer bit depth. defaults to "8".
+	MOJO\_COLOR\_BUFFER\_BITS : Minimum depth buffer bit depth. defaults to "8".
 	
-	MOJO_DEPTH_BUFFER_BITS : Minimum depth buffer bit depth. defaults to "0".
+	MOJO\_DEPTH\_BUFFER\_BITS : Minimum depth buffer bit depth. defaults to "0".
 
-	MOJO_STENCIL_BUFFER_BITS : Minimum stencil buffer bit depth. defaults to "0".
+	MOJO\_STENCIL\_BUFFER\_BITS : Minimum stencil buffer bit depth. defaults to "0".
 	
 	Environment variables may be set using the [[std::std.filesystem.SetEnv|SetEnv]] function.
 	

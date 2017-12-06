@@ -191,17 +191,17 @@ End
 
 Currently known built-in config settings:
 
-| Name								| More information
-|:----------------------------------|:----------------
-| "MOJO_OPENGL_PROFILE"				| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO_OPENGL_VERSION_MAJOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO_OPENGL_VERSION_MINOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO_COLOR_BUFFER_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO_DEPTH_BUFFER_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO_STENCIL_BUFFER_BITS"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO_TEXTURE_MAX_ANISOTROPY"		| [[mojo:mojo.graphics.Texture.New|Texture.New]]
-| "MOJO3D_DEFAULT_RENDERER"			| [[mojo3d:mojo3d.Renderer.GetCurrent|Renderer.GetCurrent]]
-| "MOJO3D_FORWARD_RENDERER_DIRECT"	| [[mojo3d:mojo3d.ForwardRenderer.New|ForwardRenderer.New]]
+| Name									| More information
+|:--------------------------------------|:----------------
+| "MOJO\_OPENGL\_PROFILE"				| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO\_OPENGL\_VERSION\_MAJOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO\_OPENGL\_VERSION\_MINOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO\_COLOR\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO\_DEPTH\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO\_STENCIL\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
+| "MOJO\_TEXTURE\_MAX\_ANISOTROPY"		| [[mojo:mojo.graphics.Texture.New|Texture.New]]
+| "MOJO3D\_DEFAULT\_RENDERER"			| [[mojo3d:mojo3d.Renderer.GetCurrent|Renderer.GetCurrent]]
+| "MOJO3D\_FORWARD\_RENDERER\_DIRECT"	| [[mojo3d:mojo3d.ForwardRenderer.New|ForwardRenderer.New]]
 
 See also: [[GetConfig]].
 

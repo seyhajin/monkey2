@@ -106,7 +106,7 @@ Class Texture Extends Resource
 	
 	#rem monkeydoc Creates a new texture.
 	
-	The config setting "MOJO_TEXTURE_MAX_ANISOTROPY" can be used to set the new texture's max anisotropy value.
+	The config setting "MOJO\_TEXTURE\_MAX\_ANISOTROPY" can be used to set the new texture's max anisotropy value.
 
 	If this config setting does not exist, the texture's max anisotropy is set to the max level.
 		

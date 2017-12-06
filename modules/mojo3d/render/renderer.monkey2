@@ -63,7 +63,7 @@ Class Renderer
 	
 	#rem monkeydoc Gets the current renderer.
 	
-	The config setting "MOJO3D_DEFAULT_RENDERER" can be used to override the default renderer created. It should be set to "deferred" or "forward".
+	The config setting "MOJO3D\_DEFAULT\_RENDERER" can be used to override the default renderer created. It should be set to "deferred" or "forward".
 
 	Config settings may be changed using the [[std::std.filesystem.SetConfig|SetConfig]] function.
 	

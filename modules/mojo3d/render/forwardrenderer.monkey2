@@ -21,7 +21,7 @@ Class ForwardRenderer Extends Renderer
 
 	#rem monkeydoc Creates a forward renderer.
 	
-	If the config setting "MOJO3D_FORWARD_RENDERER_DIRECT" is set to "1", the renderer will render directly to the render target when [[Render]] is invoked.
+	If the config setting "MOJO3D\_FORWARD\_RENDERER\_DIRECT" is set to "1", the renderer will render directly to the render target when [[Render]] is invoked.
 
 	Config settings may be set using the [[std::std.filesystem.SetConfig|SetConfig]] function.
 

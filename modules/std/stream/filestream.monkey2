@@ -87,6 +87,10 @@ Class FileStream Extends Stream
 	End
 	
 	#rem monkeydoc Opens a file and returns a new filestream.
+
+	When opening a file using "r" or "rw", the file must already exist or the function will fail and null will be returned.
+	
+	When opening a file using "w", any existing file at the same path will be overwritten.
 	
 	Note: This method should not be used to open an 'asset stream' because assets are not always files. You should instead use 
 	[[Stream.Open]] for streams that have a stream path prefix such as `asset::`, `internal::`, `external::` etc.
