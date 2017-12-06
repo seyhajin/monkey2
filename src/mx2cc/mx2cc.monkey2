@@ -467,12 +467,12 @@ End
 
 Function EnumModules( out:StringStack,cur:String,src:String,deps:StringMap<StringStack> )
 	
-	If out.Contains( cur ) Return
-	
 	If Not deps.Contains( cur )
 		Print "Can't find module dependancy '"+cur+"' - check module.json file for '"+src+"'"
 		Return
 	End
+	
+	If out.Contains( cur ) Return
 	
 	For Local dep:=Eachin deps[cur]
 		EnumModules( out,dep,cur,deps )
