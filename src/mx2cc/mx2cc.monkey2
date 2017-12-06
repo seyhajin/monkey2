@@ -24,8 +24,8 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods -target=android"
-
+Const TestArgs:="mx2cc makemods"
+ 
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
 'Const TestArgs:="mx2cc makedocs"
@@ -465,11 +465,17 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 	Return Null
 End
 
-Function EnumModules( out:StringStack,cur:String,deps:StringMap<StringStack> )
+Function EnumModules( out:StringStack,cur:String,src:String,deps:StringMap<StringStack> )
+	
 	If out.Contains( cur ) Return
 	
+	If Not deps.Contains( cur )
+		Print "Can't find module dependancy '"+cur+"' - check module.json file for '"+src+"'"
+		Return
+	End
+	
 	For Local dep:=Eachin deps[cur]
-		EnumModules( out,dep,deps )
+		EnumModules( out,dep,cur,deps )
 	Next
 	
 	out.Push( cur )
@@ -515,7 +521,7 @@ Function EnumModules:String[]()
 	
 	Local out:=New StringStack
 	For Local cur:=Eachin mods.Keys
-		EnumModules( out,cur,mods )
+		EnumModules( out,cur,"",mods )
 	Next
 	
 	Return out.ToArray()
