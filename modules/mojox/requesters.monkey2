@@ -28,10 +28,10 @@ Returns true if the user selects 'Okay', else false.
 This function must not be called from the main fiber.
 
 #end
-Function RequestOkay:Bool( message:String="Are you sure you want to do this?",title:String="Okay?" )
+Function RequestOkay:Bool( message:String="Are you sure you want to do this?",title:String="Okay?",yesButton:String="Okay",noButton:String="Cancel" )
 	Assert( Fiber.Current()<>Fiber.Main(),"RequestOkay cannot be used from the main fiber" )
 
-	Return TextDialog.Run( title,message,New String[]( "Okay","Cancel" ),0,1 )=0
+	Return TextDialog.Run( title,message,New String[]( yesButton,noButton ),0,1 )=0
 End
 
 #rem monkeydoc Runs a simple string dialog.
