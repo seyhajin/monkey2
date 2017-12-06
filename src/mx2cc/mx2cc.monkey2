@@ -66,7 +66,7 @@ Function Main()
 	If GetFileType( env )<>FILETYPE_FILE Fail( "Unable to locate mx2cc 'bin' directory" )
 
 	CreateDir( "tmp" )
-
+	
 	Local args:String[]
 
 #If __CONFIG__="debug"
@@ -74,44 +74,7 @@ Function Main()
 #else
 	args=AppArgs()
 #endif
-	
-	If args.Length<2
 
-		Print ""
-		Print "Mx2cc usage: mx2cc action options sources"
-		Print ""
-		Print "Actions:"
-		print "  makeapp      - make an application"
-		print "  makemods     - make modules"
-		print "  makedocs     - make docs"
-		Print ""
-		Print "Options:"
-		Print "  -quiet       - emit less info when building"
-		Print "  -verbose     - emit more info when building"
-		Print "  -parse       - parse only"
-		Print "  -semant      - parse and semant"
-		Print "  -translate   - parse, semant and translate"
-		Print "  -build       - parse, semant, translate and build"
-		Print "  -run         - the works! The default."
-		Print "  -apptype=    - app type to make, one of : gui, console. Defaults to gui."
-		print "  -target=     - build target, one of: windows, macos, linux, emscripten, wasm, android, ios, desktop. Desktop is an alias for current host. Defaults to desktop."
-		Print "  -config=     - build config, one of: debug, release. Defaults to debug."
-		Print ""
-		Print "Sources:"
-		Print "  for makeapp  - single monkey2 source file."
-		Print "  for makemods - list of modules, or nothing to make all modules."
-		Print "  for makedocs - list of modules, or nothing to make all docs."
-
-#If __DESKTOP_TARGET__
-		system( "g++ --version >tmp/_v.txt" )
-		Print ""
-		Print "Mx2cc g++ version:"
-		Print ""
-		Print LoadString( "tmp/_v.txt" )
-#Endif
-		exit_( 0 )
-	Endif
-	
 	For Local i:=0 Until args.Length
 		If args[i]="-target=ios"
 			system( "xcrun --sdk iphoneos --show-sdk-path >tmp/_p.txt" )
@@ -134,6 +97,76 @@ Function Main()
 		If Not moddirs.Contains( moddir ) moddirs.Add( moddir )
 	Next
 	Module.Dirs=moddirs.ToArray()
+	
+	If args.Length<2
+
+		Print ""
+		Print "Mx2cc usage: mx2cc action options sources"
+		Print ""
+		Print "Actions:"
+		print "  makeapp      - make an application."
+		print "  makemods     - make modules."
+		print "  makedocs     - make docs."
+		Print ""
+		Print "Options:"
+		Print "  -quiet       - emit less info when building."
+		Print "  -verbose     - emit more info when building."
+		Print "  -parse       - parse only."
+		Print "  -semant      - parse and semant."
+		Print "  -translate   - parse, semant and translate."
+		Print "  -build       - parse, semant, translate and build."
+		Print "  -run         - the works! The default."
+		Print "  -apptype=    - app type to make, one of : gui, console. Defaults to gui."
+		print "  -target=     - build target, one of: windows, macos, linux, emscripten, wasm, android, ios, desktop. Desktop is an alias for current host. Defaults to desktop."
+		Print "  -config=     - build config, one of: debug, release. Defaults to debug."
+		Print ""
+		Print "Sources:"
+		Print "  for makeapp  - single monkey2 source file."
+		Print "  for makemods - space separated list of modules, or nothing to make all modules."
+		Print "  for makedocs - space separated list of modules, or nothing to make all docs."
+
+#If __DESKTOP_TARGET__
+		If Int( GetEnv( "MX2_USE_MSVC" ) )
+			system( "cl > tmp\_v.txt" )		'doesn't work?
+			Print ""
+			Print "Mx2cc using cl version:"
+			Print ""
+			Print LoadString( "tmp/_v.txt" )
+		Else
+			system( "g++ --version >tmp/_v.txt" )
+			Print ""
+			Print "Mx2cc using g++ version:"
+			Print ""
+			Print LoadString( "tmp/_v.txt" )
+		Endif
+#Endif
+		exit_( 0 )
+	Endif
+
+	#rem	
+	For Local i:=0 Until args.Length
+		If args[i]="-target=ios"
+			system( "xcrun --sdk iphoneos --show-sdk-path >tmp/_p.txt" )
+			Local p:=LoadString( "tmp/_p.txt" ).Trim()
+			SetEnv( "MX2_IOS_SDK",p )
+			'Print "MX2_IOS_SDK="+p
+			Exit
+		Endif
+	Next
+	
+	LoadEnv( env )
+	
+	Local moddirs:=New StringStack
+	moddirs.Add( CurrentDir()+"modules/" )
+	For Local moddir:=Eachin GetEnv( "MX2_MODULE_DIRS" ).Split( ";" )
+		moddir=moddir.Replace( "\","/" )
+		If GetFileType( moddir )<>FileType.Directory Continue
+		moddir=RealPath( moddir )
+		If Not moddir.EndsWith( "/" ) moddir+="/"
+		If Not moddirs.Contains( moddir ) moddirs.Add( moddir )
+	Next
+	Module.Dirs=moddirs.ToArray()
+	#end
 	
 	Local ok:=False
 
