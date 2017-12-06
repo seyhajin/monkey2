@@ -56,17 +56,18 @@ Using opengl..
 
 Function Main()
 	
+	SetConfig( "MOJO_OPENGL_PROFILE","compatibility" )
+	
 #If __DESKTOP_TARGET__ Or __WEB_TARGET__
 
-	SetEnv( "MOJO3D_DEFAULT_RENDERER","deferred" )
+	SetConfig( "MOJO3D_DEFAULT_RENDERER","deferred" )
 	
 #Else if __MOBILE_TARGET__
 	
-	SetEnv( "MOJO3D_DEFAULT_RENDERER","forward" )
+	SetConfig( "MOJO3D_DEFAULT_RENDERER","forward" )
 	
-	SetEnv( "MOJO3D_FORWARD_RENDERER_DIRECT",1 )
-	
-	SetEnv( "MOJO_DEPTH_BUFFER_BITS",16 )
+	SetConfig( "MOJO3D_FORWARD_RENDERER_DIRECT",1 )
+	SetConfig( "MOJO_DEPTH_BUFFER_BITS",16 )
 	
 #endif
 	

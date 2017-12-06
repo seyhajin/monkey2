@@ -13,21 +13,10 @@ Using std..
 Using mojo..
 Using mojo3d..
 
-Function Main()
-
-	New AppInstance
-	
-	New MyWindow
-	
-	App.Run()
-End
-
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
 	
-	Field _fog:FogEffect
-
 	Field _camera:Camera
 	
 	Field _light:Light
@@ -44,19 +33,13 @@ Class MyWindow Extends Window
 		
 		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )
 		
+		'SwapInterval=0
+		
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
 		
 		_scene.ClearColor=Color.Sky
-		
-		'add fog effect to scene
-		'		
-'		_fog=New FogEffect
-'		_fog.Color=Color.Sky
-'		_fog.Near=0
-'		_fog.Far=50
-'		_scene.AddPostEffect( _fog )
 		
 		'create camera
 		'
@@ -141,3 +124,11 @@ Class MyWindow Extends Window
 	
 End
 
+Function Main()
+
+	New AppInstance
+	
+	New MyWindow
+	
+	App.Run()
+End

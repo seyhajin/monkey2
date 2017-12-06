@@ -31,6 +31,10 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
+		Print opengl.glGetString( opengl.GL_VERSION )
+		
+		SwapInterval=0
+		
 		_scene=Scene.GetCurrent()
 		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
@@ -64,13 +68,13 @@ Class MyWindow Extends Window
 		
 		material.AlphaDiscard=1.0/255.0
 		
-		For Local i:=0 Until 1000
+		For Local i:=0 Until 10000
 			
 			Local sprite:=New Sprite( material )
 			
 			sprite.Move( Rnd(-50,50),0,Rnd(-50,50) )
 			
-			sprite.Scale=New Vec3f( Rnd(2,3),Rnd(3,5),1 )
+			sprite.Scale=New Vec3f( Rnd(2,3),Rnd(4,5),1 )
 			
 			sprite.Handle=New Vec2f( .5,0 )
 			
@@ -103,6 +107,8 @@ Class MyWindow Extends Window
 End
 
 Function Main()
+	
+'	SetConfig( "MOJO_OPENGL_PROFILE","es" )
 	
 	New AppInstance
 	

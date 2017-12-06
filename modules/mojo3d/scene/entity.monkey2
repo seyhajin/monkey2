@@ -165,7 +165,7 @@ Class Entity Extends DynamicObject
 	
 	#rem monkeydoc World space transformation matrix.
 	
-	The world matrix combines the world position, basis matrix and scale of the entity into a single affine 4x4 matrix.
+	The world matrix combines the world position, basis matrix and scale of the entity into a single affine 3x4 matrix.
 	
 	#end
 	Property Matrix:AffineMat4f()
@@ -176,6 +176,13 @@ Class Entity Extends DynamicObject
 		Endif
 		
 		Return _W
+	
+	Setter( matrix:AffineMat4f )
+		
+		Local scale:=matrix.m.GetScaling()
+		Basis=matrix.m.Scale( 1/scale.x,1/scale.y,1/scale.z )
+		Position=matrix.t
+		Scale=scale
 	End
 	
 	#rem monkeydoc Inverse world space transformation matrix.

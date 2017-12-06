@@ -17,9 +17,18 @@ Class FlyBehaviour Extends Behaviour
 		_speed=speed
 	End
 	
+	Property RotSpeed:Float()
+		
+		Return _rspeed
+		
+	Setter( rspeed:Float )
+		
+		_rspeed=rspeed
+	End
+	
 	Method OnUpdate( elapsed:Float ) Override
 		
-		Local rspeed:=_speed*(elapsed/(1.0/60.0))
+		Local rspeed:=_rspeed * 60.0 * elapsed
 		
 		Local entity:=Entity
 		
@@ -38,9 +47,9 @@ Class FlyBehaviour Extends Behaviour
 		Endif
 	
 		If Keyboard.KeyDown( Key.A )
-			entity.MoveZ( .1 )
+			entity.MoveZ( _speed * 60 * elapsed )
 		Else If Keyboard.KeyDown( Key.Z )
-			entity.MoveZ( -.1 )
+			entity.MoveZ( -_speed * 60 * elapsed )
 		Endif
 		
 		If Mouse.ButtonDown( MouseButton.Left )
@@ -49,7 +58,7 @@ Class FlyBehaviour Extends Behaviour
 			Else If Mouse.X>view.Width/3*2
 				entity.RotateY( -rspeed,True )
 			Else
-				entity.Move( New Vec3f( 0,0,.1 ) )
+				entity.Move( New Vec3f( 0,0,_speed * 60 * elapsed ) )
 			Endif
 		Endif
 		
@@ -57,6 +66,7 @@ Class FlyBehaviour Extends Behaviour
 	
 	Private
 	
-	Field _speed:Float=3.0
+	Field _speed:Float=.1
+	Field _rspeed:Float=3.0
 	
 End

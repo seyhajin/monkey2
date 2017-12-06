@@ -24,6 +24,10 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
+		Print opengl.glGetString( opengl.GL_VERSION )
+		
+		SwapInterval=0
+		
 		_scene=Scene.GetCurrent()
 		
 		_scene.ClearColor=Color.Sky
@@ -72,7 +76,7 @@ Class MyWindow Extends Window
 End
 
 Function Main()
-
+	
 	New AppInstance
 	
 	New MyWindow

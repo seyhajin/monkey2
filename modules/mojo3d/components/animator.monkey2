@@ -194,7 +194,7 @@ Class Animator Extends Component
 	Field _time0:Float
 	
 	Field _animation:Animation
-	Field _speed:Float
+	Field _speed:Float=1
 	Field _time:Float
 	
 	Field _finished:Void()
