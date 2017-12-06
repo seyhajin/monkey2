@@ -14,7 +14,12 @@ Class ListView Extends ScrollableView
 	#rem monkeydoc Invoked when an item is right clicked.
 	#end
 	Field ItemRightClicked:Void( item:Item )
-
+	
+	#rem monkeydoc Invoked when current selected item is changed.
+	An item can be Null.
+	#end
+	Field SelectedChanged:Void( item:Item )
+	
 	Class Item Extends ViewCell
 	
 		Method New( text:String,icon:Image,list:ListView )
@@ -38,19 +43,42 @@ Class ListView Extends ScrollableView
 	End
 
 	#rem monkeydoc Currently selected item.
-	#end	
+	#end
 	Property Selected:Item()
 	
 		Return _selected
 	
 	Setter( selected:Item )
-		If selected=_selected Return
-	
-		_selected=selected
+		
+		If selected<>_selected
+			_selected=selected
+			_selIndex=IndexOfItem( _selected )
+			SelectedChanged( _selected )
+		Endif
+		
+		If _selected Then EnsureVisible( _selected._rect )
 		
 		RequestRender()
 	End
-
+	
+	#rem monkeydoc Currently selected index.
+	#end
+	Property SelectedIndex:Int()
+		
+		Return _selIndex
+		
+	Setter( value:Int )
+		
+		Selected=ItemAtIndex( value )
+	End
+	
+	#rem monkeydoc Items count in the list view.
+	#end
+	Property Count:Int()
+	
+		Return _items.Length
+	End
+	
 	#rem monkeydoc Adds an item to the list view.
 	#end
 	Method AddItem:Item( text:String,icon:Image=Null )
@@ -105,9 +133,9 @@ Class ListView Extends ScrollableView
 	
 		_items.Clear()
 		
-		_selected=Null
+		Selected=Null
 		
-		_hover=null
+		_hover=Null
 		
 		RequestRender()
 	End
@@ -134,6 +162,13 @@ Class ListView Extends ScrollableView
 		If Not item._rect.Contains( point ) Return Null
 		
 		Return item
+	End
+	
+	#rem monkeydoc Returns the item by index in the list view.
+	#end
+	Method ItemAtIndex:Item( index:Int )
+		
+		Return (index>=0 And index<_items.Length) ? _items[index] Else Null
 	End
 	
 	Protected
@@ -253,6 +288,7 @@ Class ListView Extends ScrollableView
 	
 	Field _hover:Item
 	Field _selected:Item
+	Field _selIndex:Int
 	
 	Field _dirty:Bool
 
