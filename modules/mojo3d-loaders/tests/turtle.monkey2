@@ -31,9 +31,14 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
+		Print opengl.glGetString( opengl.GL_VERSION )
+		
+		SwapInterval=0
+		
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
+		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
 		'create camera
@@ -65,29 +70,27 @@ Class MyWindow Extends Window
 		_turtle=Model.LoadBoned( "asset::turtle1.b3d" )
 		_turtle.Scale=New Vec3f( .125 )
 
-		Local walk:=_turtle.Animator.Animations[0].Slice( 1,11 )
+		Local walk:=_turtle.Animator.Animations[0].Slice( "Walk",1,11,AnimationMode.Looping )
 		_turtle.Animator.Animations.Add( walk )
 		
-		For Local i:=0 Until 360 Step 15
+		For Local i:=0 Until 360 Step 6
 			
 			Local copy:=_turtle.Copy()
 			
 			copy.RotateY( i )
-			copy.MoveZ( 12 )
+			copy.MoveZ( 30 )
 			
-			copy.Animator.Animate( 0,Rnd(.5,1.0) )
+			copy.Animator.Animate( copy.Animator.Animations[0],Rnd(.5,1.0) )
 			
 		Next
 		
-		_turtle.Animator.Animate( 1,1 )
+		_turtle.Animator.Animate( "Walk",1 )
 	End
 		
 	Method OnRender( canvas:Canvas ) Override
 		
 		RequestRender()
 
-		If Keyboard.KeyDown( Key.Space ) _turtle.Animator.Time+=.01
-		
 		_scene.Update()
 		
 		_scene.Render( canvas,_camera )
