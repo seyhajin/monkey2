@@ -9,6 +9,8 @@ Class BuildOpts
 	
 	Field productType:String	'"app" or "module"
 	
+	Field toolchain:String		'"msvc" or "gcc"
+	
 	Field target:String
 	
 	Field config:String
@@ -18,6 +20,8 @@ Class BuildOpts
 	Field product:String
 
 	Field appType:String
+	
+	Field arch:String
 	
 	Field verbose:Int
 	
@@ -78,41 +82,25 @@ Class BuilderInstance
 		Self.opts=opts
 		
 		Builder=self
-
-		If Int( GetEnv( "MX2_WHOLE_ARCHIVE" ) ) opts.wholeArchive=True
-		
-		If opts.target="desktop"
-		
-			opts.target=HostOS
-			
-			If Not opts.appType opts.appType="gui"
-			
-		Else If HostOS="windows" And opts.target="raspbian"
-		
-			SetEnv( "PATH",GetEnv( "MX2_RASPBIAN_TOOLS" )+";"+GetEnv( "PATH" ) )
-		
-			If Not opts.appType opts.appType="gui"
-			
-		Else If opts.target="emscripten"
-		
-			If Not opts.appType opts.appType="wasm"
-			
-		Endif
 		
 		ppsyms["__HOST__"]="~q"+HostOS+"~q"
 		ppsyms["__HOSTOS__"]="~q"+HostOS+"~q"
 		ppsyms["__TARGET__"]="~q"+opts.target+"~q"
 		ppsyms["__CONFIG__"]="~q"+opts.config+"~q"
+		ppsyms["__ARCH__"]="~q"+opts.arch+"~q"
 		
 		Select opts.target
 		Case "windows","macos","linux","raspbian"
+			
 			ppsyms["__DESKTOP_TARGET__"]="true"
 			ppsyms["__MOBILE_TARGET__"]="false"
 			ppsyms["__WEB_TARGET__"]="false"
+			
 		Case "android","ios"
 			ppsyms["__DESKTOP_TARGET__"]="false"
 			ppsyms["__MOBILE_TARGET__"]="true"
 			ppsyms["__WEB_TARGET__"]="false"
+			
 		Case "emscripten"
 			ppsyms["__DESKTOP_TARGET__"]="false"
 			ppsyms["__MOBILE_TARGET__"]="false"
@@ -131,7 +119,14 @@ Class BuilderInstance
 		ppsyms["__MAKEDOCS__"]=opts.makedocs ? "true" Else "false"
 
 		profileName=opts.target+"_"+opts.config
-		If opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) profileName+="_msvc"
+		
+		If opts.target="windows"
+			
+			If opts.toolchain="msvc" profileName+="_msvc"
+				
+			If opts.arch="x64" profileName+="_x64"
+				
+		Endif
 		
 		If opts.productType="app" APP_DIR=ExtractDir( opts.mainSource )
 		
@@ -650,7 +645,7 @@ Class BuilderInstance
 				
 				name=name.Slice( 3 )
 				
-				If product.toolchain="msvc"
+				If opts.toolchain="msvc"
 					product.LIB_FILES.Push( name+".lib" )
 				Else
 					product.LIB_FILES.Push( "-l"+name )
@@ -663,7 +658,7 @@ Class BuilderInstance
 			
 		Case ".lib"
 			
-			If product.toolchain="msvc"
+			If opts.toolchain="msvc"
 				product.LIB_FILES.Push( name )
 			Else
 				product.LIB_FILES.Push( "-l"+name )
@@ -671,13 +666,13 @@ Class BuilderInstance
 			
 		Case ".dylib"
 			
-			If product.toolchain="gcc"
+			If opts.toolchain="gcc"
 				product.LIB_FILES.Push( "-l"+name )
 			Endif
 			
 		Case ".framework"
 			
-			If product.toolchain="gcc"
+			If opts.toolchain="gcc"
 				product.LIB_FILES.Push( "-framework "+name )
 			Endif
 			
@@ -742,7 +737,7 @@ Class BuilderInstance
 				
 			Case ".a",".lib"
 				
-				If product.toolchain="msvc"
+				If opts.toolchain="msvc"
 					product.LD_OPTS+=" -LIBPATH:"+qdir
 				Else
 					product.LD_OPTS+=" -L"+qdir
@@ -750,13 +745,13 @@ Class BuilderInstance
 				
 			Case ".dylib"
 				
-				If product.toolchain="gcc"
+				If opts.toolchain="gcc"
 					product.LD_OPTS+=" -L"+qdir
 				Endif
 				
 			Case ".framework"
 				
-				If product.toolchain="gcc"
+				If opts.toolchain="gcc"
 					product.LD_OPTS+=" -F"+qdir
 				Endif
 				
@@ -772,7 +767,7 @@ Class BuilderInstance
 		
 		If ext=".framework"
 			
-			If product.toolchain="gcc"
+			If opts.toolchain="gcc"
 				If GetFileType( path )<>FileType.Directory
 					If Not opts.geninfo New BuildEx( "Framework not found "+qpath )
 				Endif
@@ -828,13 +823,13 @@ Class BuilderInstance
 		
 		Case ".a"
 			
-			If product.toolchain="gcc"
+			If opts.toolchain="gcc"
 				product.LIB_FILES.Push( qpath )
 			Endif
 			
 		Case ".so",".dylib"
 			
-			If product.toolchain="gcc"
+			If opts.toolchain="gcc"
 				product.LIB_FILES.Push( qpath )
 				product.DLL_FILES.Push( path )
 			Endif
@@ -847,7 +842,7 @@ Class BuilderInstance
 			
 		Case ".framework"
 			
-			If product.toolchain="gcc"
+			If opts.toolchain="gcc"
 				'OK, this is ugly...
 				ImportLocalFile( ExtractDir( path )+"*.framework" )
 				ImportSystemFile( StripDir( path ) )

@@ -8,8 +8,6 @@ Class BuildProduct
 	Field imports:=New Stack<Module>
 	Field outputFile:String
 	
-	Field toolchain:String
-
 	Field CC_OPTS:String
 	Field CPP_OPTS:String
 	Field AS_OPTS:String
@@ -28,8 +26,6 @@ Class BuildProduct
 	Method New( module:Module,opts:BuildOpts )
 		Self.module=module
 		Self.opts=opts
-		
-		toolchain=opts.target="windows" And Int( GetEnv( "MX2_USE_MSVC" ) ) ? "msvc" Else "gcc"
 		
 		Local copts:=""
 		For Local moddir:=Eachin Module.Dirs
@@ -279,32 +275,59 @@ Class GccBuildProduct Extends BuildProduct
 	Field LD_CMD:=""
 	
 	Method New( module:Module,opts:BuildOpts )
+		
 		Super.New( module,opts )
 		
 		Local target:="_"+opts.target.ToUpper()
 		Local config:="_"+opts.config.ToUpper()
 		
-		If toolchain="msvc"
+		Select opts.toolchain
+		Case "msvc"
+			
 			CC_CMD= "cl -c"
 			CXX_CMD="cl -c"
-			AS_CMD="ml -c"
+			AS_CMD=opts.arch="x64" ? "ml64 -c" Else "ml -c"
 			AR_CMD="lib"
 			LD_CMD="link"
 			target="_MSVC"
-		Else If opts.target="emscripten"
-			CC_CMD= "emcc -c"
-			CXX_CMD="em++ -c"
-			AR_CMD="emar"
-			LD_CMD="em++"
-		Else
-			Local prefix:=(opts.target="raspbian" ? "arm-linux-gnueabihf-" Else "")
-			Local suffix:=GetEnv( "MX2_GCC_SUFFIX" )
-			CC_CMD= prefix+"gcc"+suffix+" -c"
-			CXX_CMD=prefix+"g++"+suffix+" -c"
-			AS_CMD= prefix+"as"
-			AR_CMD= prefix+"ar"
-			LD_CMD= prefix+"g++"+suffix
-		Endif
+			
+		Case "gcc"
+			
+			Select opts.target
+			Case "emscripten"
+				
+				CC_CMD= "emcc -c"
+				CXX_CMD="em++ -c"
+				AR_CMD="emar"
+				LD_CMD="em++"
+				
+			Case "raspbian"
+
+				CC_CMD= "arm-linux-gnueabihf-gcc -c"
+				CXX_CMD="arm-linux-gnueabihf-g++ -c"
+				AS_CMD= "arm-linux-gnueabihf-as"
+				AR_CMD= "arm-linux-gnueabihf-ar"
+				LD_CMD= "arm-linux-gnueabihf-g++"
+				
+			Default
+				
+				Local suffix:=GetEnv( "MX2_GCC_SUFFIX" )
+				
+				Local mopt:=opts.target="windows" ? (opts.arch="x64" ? "-m64" Else "-m32") Else ""
+				
+				CC_CMD= "gcc"+suffix+" -c "+mopt
+				CXX_CMD="g++"+suffix+" -c "+mopt
+				AS_CMD= "as"
+				AR_CMD= "ar"
+				LD_CMD= "g++"+suffix+" "+mopt
+				
+			End
+			
+		Default
+			
+			RuntimeError( "Toolchain error: '"+opts.toolchain+"'" )
+			
+		End
 		
 		CC_CMD+=" "+GetEnv( "MX2_CC_OPTS"+target )+" "+GetEnv( "MX2_CC_OPTS"+target+config )
 		CXX_CMD+=" "+GetEnv( "MX2_CPP_OPTS"+target )+" "+GetEnv( "MX2_CPP_OPTS"+target+config )
@@ -320,20 +343,33 @@ Class GccBuildProduct Extends BuildProduct
 
 		Select ext
 		Case ".c",".m"
+			
 			cmd=CC_CMD+CC_OPTS
+			
 		Case ".cc",".cxx",".cpp",".mm"
+			
 			cmd=CXX_CMD+CPP_OPTS
+			
 		Case ".asm",".s"
+			
 			cmd=AS_CMD+AS_OPTS
 			
-			If toolchain="msvc"
+			If opts.toolchain="msvc"
+				
+				If opts.arch="x64" 
+					src=src.Replace( "_i386_","_x86_64_" )
+				Endif
+					
 				src=src.Replace( "_pe_gas.","_pe_masm." )
+				
 			Else If opts.target="ios"
+				
 				If src.Contains( "_arm64_" )
 					cmd+=" -arch arm64"
 				Else
 					cmd+=" -arch armv7"
 				Endif
+				
 			Endif
 			
 			isasm=True
@@ -346,7 +382,7 @@ Class GccBuildProduct Extends BuildProduct
 '		If rfile And opts.reflection obj+="_r"
 		If rfile obj+="_r"
 			
-		obj+=toolchain="msvc" ? ".obj" Else ".o"
+		obj+=opts.toolchain="msvc" ? ".obj" Else ".o"
 	
 		'Check dependancies
 		'			
@@ -360,12 +396,12 @@ Class GccBuildProduct Extends BuildProduct
 		
 			If isasm Return obj
 			
-			Local uptodate:=True
+			Local uptodate:=GetFileType( deps )=FileType.File
 			
-			If GetFileType( deps )=FILETYPE_NONE
-					
+			If Not uptodate And opts.toolchain="gcc"
+
 				If opts.verbose>0 Print "Scanning "+src
-				
+					
 				Local tmp:=cmd
 				
 				'A bit dodgy - rip out -arch's from ios
@@ -380,35 +416,34 @@ Class GccBuildProduct Extends BuildProduct
 					Forever
 					tmp+=" -arch armv7"
 					
-				Else If toolchain="msvc"
-					
-					If ext=".c" 
-						tmp="gcc -c "+GetEnv( "MX2_CC_OPTS_WINDOWS" )+" "+GetEnv( "MX2_CC_OPTS_WINDOWS_"+opts.config.ToUpper() )+CC_OPTS
-					Else
-						tmp="g++ -c "+GetEnv( "MX2_CPP_OPTS_WINDOWS" )+" "+GetEnv( "MX2_CPP_OPTS_WINDOWS_"+opts.config.ToUpper() )+CPP_OPTS
-					Endif
-					
 				Endif
 				
 				tmp+=" -MM ~q"+src+"~q >~q"+deps+"~q"
 				
 				Exec( tmp )
-			Endif
-					
-			Local srcs:=LoadString( deps ).Split( " \" )
-					
-			For Local i:=1 Until srcs.Length
-					
-				Local src:=srcs[i].Trim().Replace( "\ "," " )
-					
-				If GetFileTime( src )>objTime
-					uptodate=False
-					Exit
-				Endif
-						
-			Next
 				
-			If uptodate Return obj
+				uptodate=True
+				
+			Endif
+			
+			If uptodate
+			
+				Local srcs:=LoadString( deps ).Split( " \" )
+						
+				For Local i:=1 Until srcs.Length
+						
+					Local src:=srcs[i].Trim().Replace( "\","" )
+						
+					If GetFileTime( src )>objTime
+						uptodate=False
+						Exit
+					Endif
+							
+				Next
+				
+				If uptodate Return obj
+				
+			Endif
 				
 		Else
 			
@@ -416,14 +451,59 @@ Class GccBuildProduct Extends BuildProduct
 
 		Endif
 			
-'		If opts.verbose>0 Print "Compiling "+src
+		If opts.verbose>0 Print StripDir( src )
+				
+		If opts.toolchain="msvc"
+
+			If isasm
+				cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
+				
+				Exec( cmd )
+				
+				Return obj
+			Endif
 			
-		cmd+=(toolchain="msvc" ? " -Fo~q" Else " -o ~q") +obj+"~q ~q"+src+"~q"
+			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q"
 		
-		If opts.verbose>0 And toolchain<>"msvc" Print StripDir( src )
-		
+			Local incs:=AllocTmpFile( "incs" )
+			Local errs:=AllocTmpFile( "stderr" )
+			
+			If system( cmd+" 1>"+incs+" 2>"+errs )
+				Local terrs:=LoadString( errs )
+				Throw New BuildEx( "System command '"+cmd+"' failed.~n~n"+cmd+"~n~n"+terrs )
+			Endif
+			
+			Local buf:=New StringStack
+			buf.Push( StripDir( obj )+": "+src+" \" )
+
+			Local tincs:=LoadString( incs )
+			
+			For Local line:=Eachin tincs.Split( "~n" )
+				
+				line=line.Trim()
+				
+				If Not line.StartsWith( "Note: including file:" ) Continue
+				
+				line=line.Slice( 21 ).Trim()
+				
+				If line.Contains( "\Program Files (x86)\" ) Continue
+				
+				buf.Add( line+" \" )
+			Next
+			
+			Local str:=buf.Join( "~n" )
+			
+'			Print "deps="+str
+			
+			SaveString( str,deps )
+			
+			Return obj
+		Endif
+
+		cmd+=" -o~q"+obj+"~q ~q"+src+"~q"
+				
 		Exec( cmd )
-		
+			
 		Return obj
 	End
 	
@@ -451,7 +531,7 @@ Class GccBuildProduct Extends BuildProduct
 	Method BuildModule( objs:StringStack )
 
 		Local output:=module.afile
-		If toolchain="msvc" output=StripExt(output)+".lib"
+		If opts.toolchain="msvc" output=StripExt(output)+".lib"
 
 		Local maxObjTime:Long
 		For Local obj:=Eachin objs
@@ -472,7 +552,7 @@ Class GccBuildProduct Extends BuildProduct
 		
 			cmd="libtool -o ~q"+output+"~q"+args
 			
-		Else If toolchain="msvc"
+		Else If opts.toolchain="msvc"
 			
 			Local tmp:=AllocTmpFile( "libFiles" )
 			SaveString( args,tmp )
@@ -515,7 +595,7 @@ Class GccBuildProduct Extends BuildProduct
 		
 			If ExtractExt( outputFile ).ToLower()<>".exe" outputFile+=".exe"
 				
-			If toolchain="msvc"
+			If opts.toolchain="msvc"
 '				cmd+=" -entry:main"
 				If opts.appType="gui" cmd+=" -subsystem:windows" Else cmd+=" -subsystem:console"
 			Else
@@ -577,7 +657,7 @@ Class GccBuildProduct Extends BuildProduct
 		
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."
 			
-		If toolchain="msvc"
+		If opts.toolchain="msvc"
 			cmd+=" -entry:mainCRTStartup -out:~q"+outputFile+"~q"
 		Else
 			cmd+=" -o ~q"+outputFile+"~q"
@@ -591,7 +671,7 @@ Class GccBuildProduct Extends BuildProduct
 		
 		For Local imp:=Eachin imports
 			Local afile:=imp.afile
-			If toolchain="msvc" afile=StripExt(afile)+".lib"
+			If opts.toolchain="msvc" afile=StripExt(afile)+".lib"
 			lnkFiles+=" ~q"+afile+"~q"
 		Next
 

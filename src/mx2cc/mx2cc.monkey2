@@ -24,13 +24,14 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+'Const TestArgs:="mx2cc makemods -clean -config=release stb-image-write"	'release monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makemods"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
  
+'Const TestArgs:="mx2cc makeapp -clean -config=release src/mx2cc/test.monkey2"
+
 'Const TestArgs:="mx2cc makedocs mojo"
 'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
 'Const TestArgs:="mx2cc makedocs"
-
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'To build with old mx2cc...
 '
@@ -45,17 +46,21 @@ Const TestArgs:="mx2cc makemods"
 'Const TestArgs:="mx2cc makeapp -build -clean -config=release -target=raspbian src/mx2cc/mx2cc.monkey2"
 
 Function Main()
+	
+'	Print "YARGH!"
+	
+'	Return
 
 	'Set aside 64M for GC!
 	GCSetTrigger( 64*1024*1024 )
-
+	
 	Print ""
 	Print "Mx2cc version "+MX2CC_VERSION+MX2CC_VERSION_EXT
 	
 	StartDir=CurrentDir()
 	
 	ChangeDir( AppDir() )
-		
+	
 	Local env:="bin/env_"+HostOS+".txt"
 	
 	While Not IsRootDir( CurrentDir() ) And GetFileType( env )<>FILETYPE_FILE
@@ -70,6 +75,8 @@ Function Main()
 	Local args:String[]
 
 #If __CONFIG__="debug"
+	Local tenv:="bin/env_"+HostOS+"_dev.txt"
+	If GetFileType( tenv )=FileType.File env=tenv
 	args=TestArgs.Split( " " )
 #else
 	args=AppArgs()
@@ -228,7 +235,7 @@ Function MakeApp:Bool( args:String[] )
 	opts.mainSource=srcPath
 	
 	Print ""
-	Print "***** Building app '"+opts.mainSource+"' *****"
+	Print "***** Making app '"+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+") *****"
 	Print ""
 
 	New BuilderInstance( opts )
@@ -297,7 +304,7 @@ Function MakeMods:Bool( args:String[] )
 		If Not path Fail( "Module '"+modid+"' not found" )
 	
 		Print ""
-		Print "***** Making module '"+modid+"' *****"
+		Print "***** Making module '"+modid+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+") *****"
 		Print ""
 		
 		opts.mainSource=RealPath( path )
@@ -407,8 +414,12 @@ End
 
 Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 
+	Global done:=False
+	Assert( Not done )
+	done=True
+	
 	opts.verbose=Int( GetEnv( "MX2_VERBOSE" ) )
-
+	
 	For Local i:=0 Until args.Length
 	
 		Local arg:=args[i]
@@ -437,7 +448,9 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 			Case "-time"
 				opts_time=True
 			Default
-				Return args.Slice( i )
+				If arg.StartsWith( "-" ) Fail( "Unrecognized option '"+arg+"'" )
+				args=args.Slice( i )
+				Exit
 			End
 			Continue
 		Endif
@@ -481,21 +494,88 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 	
 	Next
 	
+	If Not opts.target Or opts.target="desktop" opts.target=HostOS
+		
+	opts.wholeArchive=Int( GetEnv( "MX2_WHOLE_ARCHIVE" ) )
+		
+	opts.toolchain="gcc"
+		
+	Select opts.target
+	Case "windows"
+		
+		If Not opts.appType opts.appType="gui"
+		
+		opts.arch=GetEnv( "MX2_ARCH_"+opts.target.ToUpper(),"x86" )
+		
+		If opts.arch<>"x64" And opts.arch<>"x86"
+			Fail( "Unrecognized architecture '"+opts.arch+"'" )
+		Endif
+		
+		If Int( GetEnv( "MX2_USE_MSVC" ) )
+			
+			opts.toolchain="msvc"
+			
+			Local arch:=opts.arch.ToUpper()
+			
+			SetEnv( "PATH",GetEnv( "MX2_MSVC_PATH_"+arch )+";"+GetEnv( "PATH" ) )
+			SetEnv( "INCLUDE",GetEnv( "MX2_MSVC_INCLUDE_"+arch ) )
+			SetEnv( "LIB",GetEnv( "MX2_MSVC_LIB_"+arch ) )
+			
+		Endif
+	
+	Case "macos","linux"
+		
+		If Not opts.appType opts.appType="gui"
+		
+		opts.arch="x64"
+		
+	Case "raspbian"
+
+		If Not opts.appType opts.appType="gui"
+			
+		opts.arch="arm32"
+			
+		SetEnv( "PATH",GetEnv( "MX2_RASPBIAN_TOOLS" )+";"+GetEnv( "PATH" ) )
+		
+	Case "emscripten"
+		
+		If Not opts.appType opts.appType="wasm"
+			
+		opts.arch="llvm"
+		
+	Case "android"
+		
+		opts.arch=GetEnv( "MX2_ANDROID_APP_ABI","armeabi-v7a" )
+		
+	Case "ios"
+		
+		opts.arch="arm64"
+		
+	Default
+		
+		Fail( "Unrecognized target '"+opts.target+"'" )
+	
+	End
+	
 	Select opts.appType
 	Case "console","gui"
+		
 		Select opts.target
-		Case "desktop","windows","macos","linux","raspbian"
+		Case "windows","macos","linux","raspbian"
 		Default
-			Fail( "apptype '"+opts.appType+"' may ponly be used with desktop targets" )
+			Fail( "apptype '"+opts.appType+"' is only valid for desktop targets" )
 		End
+		
 	case "wasm","asmjs","wasm+asmjs"
+		
 		If opts.target<>"emscripten" Fail( "apptype '"+opts.appType+"' is only valid for emscripten target" )
+			
 	case ""
 	Default
 		Fail( "Unrecognized apptype '"+opts.appType+"'" )
 	End
 		
-	Return Null
+	Return args
 End
 
 Function EnumModules( out:StringStack,cur:String,src:String,deps:StringMap<StringStack> )
