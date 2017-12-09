@@ -186,7 +186,6 @@ Function MakeApp:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
 	opts.productType="app"
-	opts.appType="gui"
 	opts.target="desktop"
 	opts.config="debug"
 	opts.clean=False
