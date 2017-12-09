@@ -23,6 +23,9 @@ Class BuildProduct
 	
 	Field reflects:=New StringStack
 	
+	Field fstdout:String
+	Field fstderr:String
+	
 	Method New( module:Module,opts:BuildOpts )
 		Self.module=module
 		Self.opts=opts
@@ -102,17 +105,19 @@ Class BuildProduct
 	
 	Method Exec:Bool( cmd:String )
 		
-'		Print "Executing:"+cmd
-	
 		If opts.verbose>2 Print cmd
-	
-		Local errs:=AllocTmpFile( "stderr" )
 			
-		If Not system( cmd+" 2>"+errs ) Return True
+		fstdout=AllocTmpFile( "stdout" )
+	
+		fstderr=AllocTmpFile( "stderr" )
+			
+		If Not system( cmd+" 1>"+fstdout+" 2>"+fstderr ) Return True
 		
-		Local terrs:=LoadString( errs )
+		Local tstdout:=LoadString( fstdout )
 		
-		Throw New BuildEx( "System command '"+cmd+"' failed.~n~n"+cmd+"~n~n"+terrs )
+		Local tstderr:=LoadString( fstderr )
+		
+		Throw New BuildEx( "System command failed:~n~n"+cmd+"~n~n"+tstdout+"~n"+tstderr )
 		
 		Return False
 	End
@@ -462,20 +467,14 @@ Class GccBuildProduct Extends BuildProduct
 			Endif
 			
 			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q"
-		
-			Local incs:=AllocTmpFile( "incs" )
-			Local errs:=AllocTmpFile( "stderr" )
 			
-			If system( cmd+" 1>"+incs+" 2>"+errs )
-				Local terrs:=LoadString( errs )
-				Throw New BuildEx( "System command '"+cmd+"' failed.~n~n"+cmd+"~n~n"+terrs )
-			Endif
+			Exec( cmd )
+			
+			Local tincs:=LoadString( fstdout )
 			
 			Local buf:=New StringStack
 			buf.Push( StripDir( obj )+": "+src+" \" )
 
-			Local tincs:=LoadString( incs )
-			
 			For Local line:=Eachin tincs.Split( "~n" )
 				
 				line=line.Trim()
