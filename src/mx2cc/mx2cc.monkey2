@@ -488,10 +488,6 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 			Fail( "Unrecognized architecture '"+opts.arch+"'" )
 		Endif
 		
-		If opts.arch="x64" And opts.toolchain<>"msvc"
-			Fail( "x64 builds for windows currently only supported for msvc" )
-		Endif
-		
 		If Int( GetEnv( "MX2_USE_MSVC" ) )
 			
 			opts.toolchain="msvc"
@@ -504,6 +500,10 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 			
 		Endif
 	
+		If opts.arch="x64" And opts.toolchain<>"msvc"
+			Fail( "x64 builds for windows currently only supported for msvc" )
+		Endif
+		
 	Case "macos","linux"
 		
 		If Not opts.appType opts.appType="gui"
