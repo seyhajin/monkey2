@@ -23,9 +23,6 @@ Class BuildProduct
 	
 	Field reflects:=New StringStack
 	
-	Field fstdout:String
-	Field fstderr:String
-	
 	Method New( module:Module,opts:BuildOpts )
 		Self.module=module
 		Self.opts=opts
@@ -107,17 +104,11 @@ Class BuildProduct
 		
 		If opts.verbose>2 Print cmd
 			
-		fstdout=AllocTmpFile( "stdout" )
-	
-		fstderr=AllocTmpFile( "stderr" )
-			
-		If Not system( cmd+" 1>"+fstdout+" 2>"+fstderr ) Return True
+		Local fstderr:=AllocTmpFile( "stderr" )
 		
-		Local tstdout:=LoadString( fstdout )
+		If Not system( cmd+" 2>"+fstderr ) Return True
 		
-		Local tstderr:=LoadString( fstderr )
-		
-		Throw New BuildEx( "System command failed:~n~n"+cmd+"~n~n"+tstdout+"~n"+tstderr )
+		Throw New BuildEx( "System command failed:~n~n"+cmd+"~n~n"+LoadString( fstderr ) )
 		
 		Return False
 	End
@@ -460,17 +451,15 @@ Class GccBuildProduct Extends BuildProduct
 
 			If isasm
 				cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
-				
 				Exec( cmd )
-				
 				Return obj
 			Endif
 			
-			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q"
+			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >~q"+deps+"~q"
 			
 			Exec( cmd )
 			
-			Local tincs:=LoadString( fstdout )
+			Local tincs:=LoadString( deps )
 			
 			Local buf:=New StringStack
 			buf.Push( StripDir( obj )+": "+src+" \" )
