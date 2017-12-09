@@ -497,7 +497,7 @@ Class GccBuildProduct Extends BuildProduct
 			Return obj
 		Endif
 
-		cmd+=" -o~q"+obj+"~q ~q"+src+"~q"
+		cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
 				
 		Exec( cmd )
 			
