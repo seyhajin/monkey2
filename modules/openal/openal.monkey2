@@ -3,9 +3,18 @@
 
 #if __TARGET__="windows"
 
+#If __ARCH__="x86"
+
 	#Import "openal-soft/bin/OpenAL32.dll"
 	#Import "openal-soft/lib/OpenAL32.lib"
-		
+
+#Elseif __ARCH__="x64"
+
+	#Import "openal-soft/bin/x64/OpenAL32.dll"
+	#Import "openal-soft/lib/x64/OpenAL32.lib"
+	
+#endif
+
 	#Import "openal-soft/include/*.h"
 	#Import "<AL/al.h>"
 	#Import "<AL/alc.h>"

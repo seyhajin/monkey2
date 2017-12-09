@@ -5,6 +5,8 @@ Namespace opengl
 
 #If __TARGET__="windows"
 
+#If __ARCH__="x86"
+
 	#Import "../angle/lib/libEGL.lib"
 '	#Import "../angle/lib/libGLESv2.lib"
 
@@ -12,6 +14,16 @@ Namespace opengl
 	#Import "../angle/bin/libGLESv2.dll"
 	#Import "../angle/bin/d3dcompiler_47.dll"
 	
+#Elseif __ARCH__="x64"
+
+	#Import "../angle/lib/x64/libEGL.lib"
+'	#Import "../angle/lib/libGLESv2.lib"
+
+	#Import "../angle/bin/x64/libEGL.dll"
+	#Import "../angle/bin/x64/libGLESv2.dll"
+	#Import "../angle/bin/x64/d3dcompiler_47.dll"
+	
+#endif	
 	#Import "../angle/include/*.h"
 	
 '	#include <GL/gl.h>	
