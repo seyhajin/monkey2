@@ -25,7 +25,7 @@ Global opts_time:Bool
 Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods -clean -config=release stb-image-write"	'release monkey libc miniz stb-image stb-image-write stb-vorbis std"
-Const TestArgs:="mx2cc makemods"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makemods -config=debug monkey"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
  
 'Const TestArgs:="mx2cc makeapp -clean -config=release src/mx2cc/test.monkey2"
 
@@ -150,31 +150,6 @@ Function Main()
 		exit_( 0 )
 	Endif
 
-	#rem	
-	For Local i:=0 Until args.Length
-		If args[i]="-target=ios"
-			system( "xcrun --sdk iphoneos --show-sdk-path >tmp/_p.txt" )
-			Local p:=LoadString( "tmp/_p.txt" ).Trim()
-			SetEnv( "MX2_IOS_SDK",p )
-			'Print "MX2_IOS_SDK="+p
-			Exit
-		Endif
-	Next
-	
-	LoadEnv( env )
-	
-	Local moddirs:=New StringStack
-	moddirs.Add( CurrentDir()+"modules/" )
-	For Local moddir:=Eachin GetEnv( "MX2_MODULE_DIRS" ).Split( ";" )
-		moddir=moddir.Replace( "\","/" )
-		If GetFileType( moddir )<>FileType.Directory Continue
-		moddir=RealPath( moddir )
-		If Not moddir.EndsWith( "/" ) moddir+="/"
-		If Not moddirs.Contains( moddir ) moddirs.Add( moddir )
-	Next
-	Module.Dirs=moddirs.ToArray()
-	#end
-	
 	Local ok:=False
 
 	Try
@@ -420,7 +395,9 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 	
 	opts.verbose=Int( GetEnv( "MX2_VERBOSE" ) )
 	
-	For Local i:=0 Until args.Length
+	Local i:=0
+	
+	For i=0 Until args.Length
 	
 		Local arg:=args[i]
 	
@@ -449,7 +426,6 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 				opts_time=True
 			Default
 				If arg.StartsWith( "-" ) Fail( "Unrecognized option '"+arg+"'" )
-				args=args.Slice( i )
 				Exit
 			End
 			Continue
@@ -493,6 +469,7 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		End
 	
 	Next
+	args=args.Slice( i )
 	
 	If Not opts.target Or opts.target="desktop" opts.target=HostOS
 		
@@ -509,6 +486,10 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		
 		If opts.arch<>"x64" And opts.arch<>"x86"
 			Fail( "Unrecognized architecture '"+opts.arch+"'" )
+		Endif
+		
+		If opts.arch="x64" And opts.toolchain<>"msvc"
+			Fail( "x64 builds for windows currently only supported for msvc" )
 		Endif
 		
 		If Int( GetEnv( "MX2_USE_MSVC" ) )

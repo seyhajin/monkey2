@@ -313,13 +313,11 @@ Class GccBuildProduct Extends BuildProduct
 				
 				Local suffix:=GetEnv( "MX2_GCC_SUFFIX" )
 				
-				Local mopt:=opts.target="windows" ? (opts.arch="x64" ? "-m64" Else "-m32") Else ""
-				
-				CC_CMD= "gcc"+suffix+" -c "+mopt
-				CXX_CMD="g++"+suffix+" -c "+mopt
+				CC_CMD= "gcc"+suffix+" -c "
+				CXX_CMD="g++"+suffix+" -c "
 				AS_CMD= "as"
 				AR_CMD= "ar"
-				LD_CMD= "g++"+suffix+" "+mopt
+				LD_CMD= "g++"+suffix+" "
 				
 			End
 			
