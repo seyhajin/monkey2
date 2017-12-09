@@ -1,13 +1,5 @@
 
-'Hack: prevent code stripping for reflection based apps.
-'
-MX2_WHOLE_ARCHIVE=0
-
-
-'If you change anything below, you should rebuild all - including modules!
-
-
-'***** MACOS TARGET *****
+'***** MACOS DESKTOP TARGET *****
 
 'Hacks for dylibs in app
 MX2_APP_DIR_DYLIB=						'ie: dylibs go in app Contents/MacOS dir
@@ -32,7 +24,7 @@ MX2_CPP_OPTS_MACOS_RELEASE=-O3 -DNDEBUG
 MX2_AS_OPTS=
 
 
-'***** EMSCRIPTEN *****
+'***** EMSCRIPTEN TARGET *****
 
 'For emscripten builds, you need emcc, em++ and emar in your PATH.
 '
@@ -63,12 +55,32 @@ MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 
-'***** ANDROID *****
+'***** ANDROID TARGET *****
 
+'Add path to android NDK
+'
 PATH=${HOME}/Library/Android/sdk/ndk-bundle:${PATH}
 
+'Controls APP_ABI in Application.mk for NDK
+'
+MX2_ANDROID_APP_ABI=armeabi-v7a x86
+'MX2_ANDROID_APP_ABI=all
 
-'***** IOS *****
+'Controls APP_PLATFORM in Application.mk for NDK
+'
+MX2_ANDROID_APP_PLATFORM=android-14
+
+'Android app compiler Compiler flags
+'
+MX2_ANDROID_APP_CFLAGS=-std=gnu99 -fno-stack-protector -w
+MX2_ANDROID_APP_CPPFLAGS=-std=c++11 -fno-stack-protector -frtti -fexceptions -w
+
+'Controls version of STL used by android apps.
+'
+MX2_ANDROID_APP_STL=c++_static
+
+
+'***** IOS TARGET *****
 
 'MX2_IOS_SDK=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.1.sdk
 

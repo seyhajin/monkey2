@@ -1,7 +1,11 @@
 
-'Hack: prevent code stripping for reflection based apps.
+'Build architecture: x86 or x64, x64 only working with msvc.
 '
-MX2_WHOLE_ARCHIVE=0
+MX2_ARCH_WINDOWS=x86
+
+'Now uses msvc 2017 community edition (mainly for x64 support, but it's also the latest/greatest).
+'
+MX2_USE_MSVC=0
 
 'Semi-colon separated list of module root dirs, relative to MX2_HOME or absolute.
 '
@@ -29,28 +33,25 @@ MX2_LD_OPTS_WINDOWS_DEBUG=
 MX2_LD_OPTS_WINDOWS_RELEASE=
 
 'C Compiler options. Note: -D_WIN32_WINNT=0x0601 means headers for Windows 7, ie: Windows 7 is min SDK!
-MX2_CC_OPTS_WINDOWS=-std=gnu99 -m32 -D_WIN32_WINNT=0x0603
+MX2_CC_OPTS_WINDOWS=-std=gnu99 -D_WIN32_WINNT=0x0603 -m32
 MX2_CC_OPTS_WINDOWS_DEBUG=-Os
 MX2_CC_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG
 
 'C++ Compiler options
-MX2_CPP_OPTS_WINDOWS=-std=c++11 -m32 -D_WIN32_WINNT=0x0603
+MX2_CPP_OPTS_WINDOWS=-std=c++11 -D_WIN32_WINNT=0x0603 -m32
 MX2_CPP_OPTS_WINDOWS_DEBUG=-Os
 MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG
 
 '***** WINDOWS DESKTOP TARGET - MSVC *****
 
-MX2_USE_MSVC=0
+'directories
+MX2_MSVC_DIR=${ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\VC
 
-'https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
-'
-MX2_WINDOWS_KIT=10.0.15063.0
+MX2_MSVC_TOOLS_DIR=${MX2_MSVC_DIR}\Tools\MSVC\14.12.25827
 
-PATH=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\bin;${PATH}
+MX2_WINDOWS_KITS_DIR=${ProgramFiles(x86)}\Windows Kits\10
 
-INCLUDE=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\INCLUDE;${ProgramFiles(x86)}\Windows Kits\10\include\${MX2_WINDOWS_KIT}\ucrt;${ProgramFiles(x86)}\Windows Kits\10\include\${MX2_WINDOWS_KIT}\um;${ProgramFiles(x86)}\Windows Kits\10\include\${MX2_WINDOWS_KIT}\shared;
-
-LIB=${ProgramFiles(x86)}\Microsoft Visual Studio 14.0\VC\LIB;${ProgramFiles(x86)}\Windows Kits\10\lib\${MX2_WINDOWS_KIT}\ucrt\x86;${ProgramFiles(x86)}\Windows Kits\10\lib\${MX2_WINDOWS_KIT}\um\x86;
+MX2_WINDOWS_KIT=10.0.16299.0
 
 'Linker options
 MX2_LD_OPTS_MSVC=
@@ -66,8 +67,37 @@ MX2_CPP_OPTS_MSVC=-EHs -W0 -MT -utf-8
 MX2_CPP_OPTS_MSVC_DEBUG=-O1
 MX2_CPP_OPTS_MSVC_RELEASE=-O2 -DNDEBUG
 
+'assembler opts
+MX2_AS_OPTS_MSVC=-DBOOST_CONTEXT_EXPORT=
 
-'***** EMSCRIPTEN/WASM *****
+'***** MSVC X86 PATHS *****
+
+MX2_MSVC_PATH_X86=${MX2_MSVC_TOOLS_DIR}\bin\Hostx86\x86
+
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_TOOLS_DIR}\include;
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\ucrt;
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\shared;
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\um;
+
+MX2_MSVC_LIB_X86=${MX2_MSVC_TOOLS_DIR}\lib\x86;
+MX2_MSVC_LIB_X86=${MX2_MSVC_LIB_X86}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x86;
+MX2_MSVC_LIB_X86=${MX2_MSVC_LIB_X86}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x86;
+
+'***** MSVC X64 PATHS *****
+
+MX2_MSVC_PATH_X64=${MX2_MSVC_TOOLS_DIR}\bin\Hostx64\x64
+
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_TOOLS_DIR}\include;
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\ucrt;
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\um;
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\shared;
+
+MX2_MSVC_LIB_X64=${MX2_MSVC_TOOLS_DIR}\lib\x64;
+MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x64;
+MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x64;
+
+
+'***** EMSCRIPTEN TARGET *****
 
 'Note: Requires Emscripten SDK, see: https://github.com/juj/emsdk/blob/master/README.md
 
@@ -91,7 +121,7 @@ MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-Os -s ASSERTIONS=2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 
-'***** ANDROID *****
+'***** ANDROID TARGET *****
 
 'Note: Requires Android Studio + Android NDK, see: https://developer.android.com/studio/index.html
 
