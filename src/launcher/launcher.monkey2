@@ -10,7 +10,11 @@ Using std..
 '
 'windres resource.rc resource.o
 
+#If __ARCH__="x86"
 #Import "resource.o"
+#Elseif __ARCH__="x64"
+#Import "resource_x64.o"
+#endif
 
 #Endif
 
