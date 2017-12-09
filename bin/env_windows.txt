@@ -1,11 +1,11 @@
 
+'Use msvc 2017 community edition (mainly for x64 support, but it's also the latest/greatest).
+'
+MX2_USE_MSVC=0
+
 'Build architecture: x86 or x64, x64 only working with msvc.
 '
 MX2_ARCH_WINDOWS=x86
-
-'Now uses msvc 2017 community edition (mainly for x64 support, but it's also the latest/greatest).
-'
-MX2_USE_MSVC=0
 
 'Semi-colon separated list of module root dirs, relative to MX2_HOME or absolute.
 '
