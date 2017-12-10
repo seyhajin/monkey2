@@ -24,6 +24,9 @@
 
 #include "SDL_platform.h"
 
+//Mark was here!
+#define HAVE_LIBC 1
+
 /* This is a set of defines to configure the SDL features */
 
 #if !defined(_STDINT_H_) && (!defined(HAVE_STDINT_H) || !_HAVE_STDINT_H)

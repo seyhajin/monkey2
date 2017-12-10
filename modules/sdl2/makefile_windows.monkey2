@@ -155,6 +155,8 @@ Namespace sdl2
 #import "SDL/src/SDL_log.c"
 #Import "SDL/src/SDL.c"
 
+#Import "SDL/src/SDL_dataqueue.c"
+	
 'Really?!?...
 #Import "SDL/src/libm/e_atan2.c"
 #Import "SDL/src/libm/e_log.c"

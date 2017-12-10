@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -30,6 +30,7 @@
 
 #include "SDL_stdinc.h"
 #include "SDL_assert.h"
+#include "../../core/unix/SDL_poll.h"
 
 #include "SDL_waylandvideo.h"
 #include "SDL_waylanddatamanager.h"
@@ -46,16 +47,8 @@ write_pipe(int fd, const void* buffer, size_t total_length, size_t *pos)
     sigset_t sig_set;
     sigset_t old_sig_set;
     struct timespec zerotime = {0};
-    fd_set set;
-    struct timeval timeout;
 
-    FD_ZERO(&set);
-    FD_SET(fd, &set);
-
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-
-    ready = select(fd + 1, NULL, &set, NULL, &timeout);
+    ready = SDL_IOReady(fd, SDL_TRUE, 1 * 1000);
 
     sigemptyset(&sig_set);
     sigaddset(&sig_set, SIGPIPE);  
@@ -92,16 +85,7 @@ read_pipe(int fd, void** buffer, size_t* total_length, SDL_bool null_terminate)
     ssize_t bytes_read = 0;
     size_t pos = 0;
 
-    fd_set set;
-    struct timeval timeout;
-
-    FD_ZERO(&set);
-    FD_SET(fd, &set);
-
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-
-    ready = select(fd + 1, &set, NULL, NULL, &timeout);  
+    ready = SDL_IOReady(fd, SDL_FALSE, 1 * 1000);
   
     if (ready == 0) {
         bytes_read = SDL_SetError("Pipe timeout");
@@ -347,10 +331,10 @@ Wayland_data_offer_receive(SDL_WaylandDataOffer *offer,
 
     if (offer == NULL) {
         SDL_SetError("Invalid data offer");
-    } else if (pipe2(pipefd, O_CLOEXEC|O_NONBLOCK) == -1) {
-        SDL_SetError("Could not read pipe");
     } else if ((data_device = offer->data_device) == NULL) {
         SDL_SetError("Data device not initialized");
+    } else if (pipe2(pipefd, O_CLOEXEC|O_NONBLOCK) == -1) {
+        SDL_SetError("Could not read pipe");
     } else {
         wl_data_offer_receive(offer->offer, mime_type, pipefd[1]);
 

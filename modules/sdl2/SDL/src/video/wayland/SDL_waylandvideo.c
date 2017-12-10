@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -35,6 +35,7 @@
 #include "SDL_waylandmouse.h"
 #include "SDL_waylandtouch.h"
 #include "SDL_waylandclipboard.h"
+#include "SDL_waylandvulkan.h"
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -167,7 +168,7 @@ Wayland_CreateDevice(int devindex)
     device->GL_GetProcAddress = Wayland_GLES_GetProcAddress;
     device->GL_DeleteContext = Wayland_GLES_DeleteContext;
 
-    device->CreateWindow = Wayland_CreateWindow;
+    device->CreateSDLWindow = Wayland_CreateWindow;
     device->ShowWindow = Wayland_ShowWindow;
     device->SetWindowFullscreen = Wayland_SetWindowFullscreen;
     device->MaximizeWindow = Wayland_MaximizeWindow;
@@ -180,6 +181,13 @@ Wayland_CreateDevice(int devindex)
     device->SetClipboardText = Wayland_SetClipboardText;
     device->GetClipboardText = Wayland_GetClipboardText;
     device->HasClipboardText = Wayland_HasClipboardText;
+
+#if SDL_VIDEO_VULKAN
+    device->Vulkan_LoadLibrary = Wayland_Vulkan_LoadLibrary;
+    device->Vulkan_UnloadLibrary = Wayland_Vulkan_UnloadLibrary;
+    device->Vulkan_GetInstanceExtensions = Wayland_Vulkan_GetInstanceExtensions;
+    device->Vulkan_CreateSurface = Wayland_Vulkan_CreateSurface;
+#endif
 
     device->free = Wayland_DeleteDevice;
 
@@ -221,6 +229,7 @@ display_handle_mode(void *data,
     SDL_DisplayMode mode;
 
     SDL_zero(mode);
+    mode.format = SDL_PIXELFORMAT_RGB888;
     mode.w = width;
     mode.h = height;
     mode.refresh_rate = refresh / 1000; // mHz to Hz
@@ -271,6 +280,7 @@ Wayland_add_display(SDL_VideoData *d, uint32_t id)
     output = wl_registry_bind(d->registry, id, &wl_output_interface, 2);
     if (!output) {
         SDL_SetError("Failed to retrieve output.");
+        SDL_free(display);
         return;
     }
 
@@ -334,7 +344,8 @@ display_handle_global(void *data, struct wl_registry *registry, uint32_t id,
 }
 
 static const struct wl_registry_listener registry_listener = {
-    display_handle_global
+    display_handle_global,
+    NULL, /* global_remove */
 };
 
 int
@@ -446,7 +457,7 @@ Wayland_VideoQuit(_THIS)
     }
 
     SDL_free(data->classname);
-    free(data);
+    SDL_free(data);
     _this->driverdata = NULL;
 }
 

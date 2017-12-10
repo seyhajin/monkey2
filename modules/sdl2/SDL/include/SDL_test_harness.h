@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -33,8 +33,8 @@
   Based on original GSOC code by Markus Kauppila <markus.kauppila@gmail.com>
 */
 
-#ifndef _SDL_test_harness_h
-#define _SDL_test_harness_h
+#ifndef SDL_test_h_arness_h
+#define SDL_test_h_arness_h
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -129,6 +129,6 @@ int SDLTest_RunSuites(SDLTest_TestSuiteReference *testSuites[], const char *user
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_test_harness_h */
+#endif /* SDL_test_h_arness_h */
 
 /* vi: set ts=4 sw=4 expandtab: */
