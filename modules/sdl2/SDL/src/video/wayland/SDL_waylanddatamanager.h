@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -21,8 +21,8 @@
 
 #include "../../SDL_internal.h"
 
-#ifndef SDL_waylanddatamanager_h_
-#define SDL_waylanddatamanager_h_
+#ifndef _SDL_waylanddatamanager_h
+#define _SDL_waylanddatamanager_h
 
 #include "SDL_waylandvideo.h"
 #include "SDL_waylandwindow.h"
@@ -97,7 +97,9 @@ extern int Wayland_data_device_set_selection(SDL_WaylandDataDevice *device,
                                              SDL_WaylandDataSource *source);
 extern int Wayland_data_device_set_serial(SDL_WaylandDataDevice *device,
                                           uint32_t serial);
-#endif /* SDL_waylanddatamanager_h_ */
+#endif /* _SDL_waylanddatamanager_h */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+
 

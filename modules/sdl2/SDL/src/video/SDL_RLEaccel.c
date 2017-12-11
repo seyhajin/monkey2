@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -445,7 +445,7 @@ RLEClipBlit(int w, Uint8 * srcbuf, SDL_Surface * surf_dst,
 
 
 /* blit a colorkeyed RLE surface */
-int SDLCALL
+int
 SDL_RLEBlit(SDL_Surface * surf_src, SDL_Rect * srcrect,
             SDL_Surface * surf_dst, SDL_Rect * dstrect)
 {
@@ -723,7 +723,7 @@ RLEAlphaClipBlit(int w, Uint8 * srcbuf, SDL_Surface * surf_dst,
 }
 
 /* blit a pixel-alpha RLE surface */
-int SDLCALL
+int
 SDL_RLEAlphaBlit(SDL_Surface * surf_src, SDL_Rect * srcrect,
                  SDL_Surface * surf_dst, SDL_Rect * dstrect)
 {
@@ -1277,7 +1277,7 @@ RLEColorkeySurface(SDL_Surface * surface)
     int y;
     Uint8 *srcbuf, *lastline;
     int maxsize = 0;
-    const int bpp = surface->format->BytesPerPixel;
+    int bpp = surface->format->BytesPerPixel;
     getpix_func getpix;
     Uint32 ckey, rgbmask;
     int w, h;
@@ -1300,9 +1300,6 @@ RLEColorkeySurface(SDL_Surface * surface)
         maxsize = surface->h * (4 * (surface->w / 65535 + 1)
                                 + surface->w * 4) + 4;
         break;
-
-    default:
-        return -1;
     }
 
     rlebuf = (Uint8 *) SDL_malloc(maxsize);
@@ -1396,7 +1393,7 @@ RLEColorkeySurface(SDL_Surface * surface)
         surface->map->data = p;
     }
 
-    return 0;
+    return (0);
 }
 
 int

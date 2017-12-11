@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -21,8 +21,8 @@
 
 #include "../../SDL_internal.h"
 
-#ifndef SDL_waylandvideo_h_
-#define SDL_waylandvideo_h_
+#ifndef _SDL_waylandvideo_h
+#define _SDL_waylandvideo_h
 
 #include <EGL/egl.h>
 #include "wayland-util.h"
@@ -66,6 +66,6 @@ typedef struct {
     int relative_mouse_mode;
 } SDL_VideoData;
 
-#endif /* SDL_waylandvideo_h_ */
+#endif /* _SDL_waylandvideo_h */
 
 /* vi: set ts=4 sw=4 expandtab: */

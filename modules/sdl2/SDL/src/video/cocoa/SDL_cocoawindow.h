@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2017 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,8 +20,8 @@
 */
 #include "../../SDL_internal.h"
 
-#ifndef SDL_cocoawindow_h_
-#define SDL_cocoawindow_h_
+#ifndef _SDL_cocoawindow_h
+#define _SDL_cocoawindow_h
 
 #import <Cocoa/Cocoa.h>
 
@@ -142,6 +142,6 @@ extern void Cocoa_DestroyWindow(_THIS, SDL_Window * window);
 extern SDL_bool Cocoa_GetWindowWMInfo(_THIS, SDL_Window * window, struct SDL_SysWMinfo *info);
 extern int Cocoa_SetWindowHitTest(SDL_Window *window, SDL_bool enabled);
 
-#endif /* SDL_cocoawindow_h_ */
+#endif /* _SDL_cocoawindow_h */
 
 /* vi: set ts=4 sw=4 expandtab: */
