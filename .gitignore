@@ -52,7 +52,6 @@ __NEWPAGES__/
 /modules/iap
 /modules/win32
 /modules/tinyaes
-/modules/sdl2
 /modules/openvr
 /modules/mojo3d-vr
 
