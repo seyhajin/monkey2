@@ -110,9 +110,8 @@
 #define HAVE_ASIN 1
 
 /* Enable various audio drivers */
-#define SDL_AUDIO_DRIVER_DISK   1
-#define SDL_AUDIO_DRIVER_DUMMY  1
 #define SDL_AUDIO_DRIVER_COREAUDIO  1
+#define SDL_AUDIO_DRIVER_DUMMY  1
 
 /* Enable various input drivers */
 #define SDL_JOYSTICK_IOKIT  1
@@ -129,7 +128,6 @@
 #define SDL_TIMER_UNIX  1
 
 /* Enable various video drivers */
-#define SDL_VIDEO_DRIVER_DUMMY  1
 #define SDL_VIDEO_DRIVER_COCOA  1
 
 //#define SDL_RENDER_DISABLED 1
@@ -137,8 +135,6 @@
 /* Enable OpenGL support */
 #define SDL_VIDEO_OPENGL    1
 #define SDL_VIDEO_OPENGL_CGL    1
-
-#define SDL_VIDEO_RENDER_OGL    0
 
 /* Enable system power support */
 #define SDL_POWER_MACOSX 1
