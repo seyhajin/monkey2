@@ -137,3 +137,5 @@ Namespace sdl2
 #Import "SDL/src/SDL_hints.c"
 #Import "SDL/src/SDL_log.c"
 #Import "SDL/src/SDL.c"
+
+#Import "SDL/src/SDL_dataqueue.c"
