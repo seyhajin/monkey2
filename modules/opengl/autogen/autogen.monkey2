@@ -182,7 +182,6 @@ End
 Class GLApi
 	
 	Field ident:String
-	Field value:String
 	
 	Field pfnident:String
 
@@ -242,25 +241,24 @@ Class GLApi
 	
 	Method Mx2Decl:String()
 		
-		If value Return "Const "+ident+":Int"
-		
-		Return "Function "+ident+":"+rtype+"("+args+")"
+		Return "Function "+ident+":"+rtype+"("+args+")"	'=~qbb"+ident+"~q"
 	End
 	
 	Method CDecl:String()
 		
-		If value Return "#define "+ident+" "+value
-		
-		Return "GLAPI "+crtype+" GLAPIFUN("+ident+")("+cargs+");"
+		Return "GLAPI "+crtype+" GLFUN("+ident+")("+cargs+");"
 	End
-
+	
+	Method CDef:String()
+		
+		Return "#define "+ident+" bb"+ident
+	End
+	
 	Method CInit:String()
 		
-		If value Return ""
-		
-		Return ident+"=SDL_GL_GetProcAddress(~q"+ident+"~q);"
+		Return "bb"+ident+"=SDL_GL_GetProcAddress(~q"+ident+"~q);"
 	End
-
+	
 End
 
 Function Main()
@@ -273,11 +271,13 @@ Function Main()
 	
 	Local lines:=New StringStack
 	
-	Local defs:=New StringMap<String>
+	Local defvals:=New StringMap<String>
 	
 	Local pfnapis:=New StringMap<GLApi>
 	
 	Local apis:=New Stack<GLApi>
+	
+	Local defs:=New Stack<String>
 	
 	For Local line:=Eachin src.Split( "~n" )
 		
@@ -294,12 +294,12 @@ Function Main()
 			
 			Local value:=p.Toke
 			
-			If defs.Contains( ident )
-				If  defs[ident]<>value Print "Error: #define error for: "+ident
+			If defvals.Contains( ident )
+				If  defvals[ident]<>value Print "Error: #define error for: "+ident
 				Continue
 			Endif
 			
-			defs[ident]=value
+			defvals[ident]=value
 				
 			If value="GLEW_GET_FUN"
 				
@@ -321,10 +321,7 @@ Function Main()
 
 			If Not ident.StartsWith( "GL_" ) Continue
 			
-			Local api:=New GLApi
-			api.ident=ident
-			api.value=value
-			apis.Add( api )
+			defs.Add( ident )
 
 		Case "typedef"
 			
@@ -388,50 +385,67 @@ Function Main()
 	
 	CreateDir( "../native" )
 	
-	'create bbopengl.h file
+	'***** create bbopengl.h file *****
 	'
-	For Local api:=Eachin apis
-		
-		Local decl:=api.CDecl()
-		If Not decl Continue
-		
-		buf.Add( decl )
+	For Local def:=Eachin defs
+		buf.Add( "#define "+def+" "+defvals[def] )
 	Next
-	Local hdecls:=buf.Join( "~n" )
+	Local hdefs:=buf.Join( "~n" )
+	
+	buf.Clear()
+	For Local api:=Eachin apis
+		buf.Add( api.CDecl() )
+	Next
+	Local cdecls:=buf.Join( "~n" )
+	
+	buf.Clear()
+	For Local api:=Eachin apis
+		buf.Add( api.CDef() )
+	End
+	Local cdefs:=buf.Join( "~n" )
 	
 	str=LoadString( "bbopengl_.h" )
-	str=str.Replace( "${DECLS}",hdecls )
+	str=str.Replace( "${DEFS}",hdefs )
+	str=str.Replace( "${DECLS}",cdecls )
+	str=str.Replace( "${CDEFS}",cdefs )
 	
 	SaveString( str,"../native/bbopengl.h" )
 	
-	'create bbopengl.c file
+	'***** create bbopengl.c file *****
 	'
 	buf.Clear()
 	For Local api:=Eachin apis
-		
-		Local init:=api.CInit()
-		If Not init Continue
-		
-		buf.Add( "~t"+init )
+		buf.Add( "~t"+api.CInit() )
 	Next
 	Local cinits:=buf.Join( "~n" )
+	
 	str=LoadString( "bbopengl_.c" )
 	str=str.Replace( "${INITS}",cinits )
+	
 	SaveString( str,"../native/bbopengl.c" )
 	
-	'create opengl.monkey2 file
+	'***** create opengl.monkey2 file *****
 	'
+	buf.Clear()
+	For Local def:=Eachin defs
+		buf.Add( "Const "+def+":Int" )
+	Next
+	Local mx2defs:=buf.Join( "~n" )
+
 	buf.Clear()
 	For Local api:=Eachin apis
 		
 		Local decl:=api.Mx2Decl()
 		If Not decl Continue
 		
-		buf.Add( decl )
+		buf.Add( api.Mx2Decl() )
 	Next
 	Local mx2decls:=buf.Join( "~n" )
+	
 	str=LoadString( "bbopengl_.monkey2" )
+	str=str.Replace( "${DEFS}",mx2defs )
 	str=str.Replace( "${DECLS}",mx2decls )
+	
 	SaveString( str,"../native/bbopengl.monkey2" )
 	
 End

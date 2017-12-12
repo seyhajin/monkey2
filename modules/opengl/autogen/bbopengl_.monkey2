@@ -5,18 +5,20 @@ Namespace opengl
 
 #If __TARGET__="windows"
 
-	'TODO: Move all angle stuff to SDL2 or its own module?
-	'
-	#Import "../angle/lib/libEGL.lib"
-'	#Import "../angle/lib/libGLESv2.lib"
+#If __ARCH__="x86"
 
 	#Import "../angle/bin/libEGL.dll"
 	#Import "../angle/bin/libGLESv2.dll"
 	#Import "../angle/bin/d3dcompiler_47.dll"
-
-	'Need this so SDL2 can #include <EGL/egl.h>
-	#Import "../angle/include/*.h"	
 	
+#Elseif __ARCH__="x64"
+
+	#Import "../angle/bin/x64/libEGL.dll"
+	#Import "../angle/bin/x64/libGLESv2.dll"
+	#Import "../angle/bin/x64/d3dcompiler_47.dll"
+	
+#endif
+
 '	#include <GL/gl.h>	
 
 	#Import "bbopengl.c"
@@ -117,6 +119,8 @@ Global BBGL_depth_texture:Bool
 Global BBGL_seamless_cube_map:Bool
 Global BBGL_texture_filter_anisotropic:Bool
 Global BBGL_standard_derivatives:Bool
+
+${DEFS}
 
 ${DECLS}
 

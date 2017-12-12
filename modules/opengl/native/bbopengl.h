@@ -4,6 +4,37 @@
 
 #include <stddef.h>
 
+//prevents confusion between 1001 GL headers - pinched from glew...
+//
+#if defined(__gl_h_) || defined(__GL_H__) || defined(_GL_H) || defined(__X_GL_H)
+#error gl.h included before bbopengl.h
+#endif
+#if defined(__gl2_h_)
+#error gl2.h included before bbopengl.h
+#endif
+#if defined(__gltypes_h_)
+#error gltypes.h included before bbopengl.h
+#endif
+#if defined(__REGAL_H__)
+#error Regal.h included before bbopengl.h
+#endif
+#if defined(__glext_h_) || defined(__GLEXT_H_)
+#error glext.h included before bbopengl.h
+#endif
+#if defined(__gl_ATI_h_)
+#error glATI.h included before bbopengl.h
+#endif
+#define __gl_h_
+#define __gl2_h_
+#define __GL_H__
+#define _GL_H
+#define __gltypes_h_
+#define __REGAL_H__
+#define __X_GL_H
+#define __glext_h_
+#define __GLEXT_H_
+#define __gl_ATI_h_
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -19,9 +50,9 @@ extern "C"{
 #endif
 
 #if __EMSCRIPTEN__
-#define GLAPIFUN(X) X
+#define GLFUN(X) X
 #else
-#define GLAPIFUN(X) (GLAPIENTRY*X)
+#define GLFUN(X) (GLAPIENTRY*bb##X)
 #endif
 
 void bbglInit();
@@ -590,342 +621,6 @@ typedef struct __GLsync *GLsync;
 #define GL_SCISSOR_BIT 0x00080000
 #define GL_ALL_ATTRIB_BITS 0x000fffff
 #define GL_CLIENT_ALL_ATTRIB_BITS 0xffffffff
-GLAPI void GLAPIFUN(glAccum)(GLenum op,GLfloat value);
-GLAPI void GLAPIFUN(glAlphaFunc)(GLenum func,GLclampf ref);
-GLAPI GLboolean GLAPIFUN(glAreTexturesResident)(GLsizei n,const GLuint *textures,GLboolean *residences);
-GLAPI void GLAPIFUN(glArrayElement)(GLint i);
-GLAPI void GLAPIFUN(glBegin)(GLenum mode);
-GLAPI void GLAPIFUN(glBindTexture)(GLenum target,GLuint texture);
-GLAPI void GLAPIFUN(glBitmap)(GLsizei width,GLsizei height,GLfloat xorig,GLfloat yorig,GLfloat xmove,GLfloat ymove,const GLubyte *bitmap);
-GLAPI void GLAPIFUN(glBlendFunc)(GLenum sfactor,GLenum dfactor);
-GLAPI void GLAPIFUN(glCallList)(GLuint list);
-GLAPI void GLAPIFUN(glCallLists)(GLsizei n,GLenum type,const void *lists);
-GLAPI void GLAPIFUN(glClear)(GLbitfield mask);
-GLAPI void GLAPIFUN(glClearAccum)(GLfloat red,GLfloat green,GLfloat blue,GLfloat alpha);
-GLAPI void GLAPIFUN(glClearColor)(GLclampf red,GLclampf green,GLclampf blue,GLclampf alpha);
-GLAPI void GLAPIFUN(glClearDepth)(GLclampd depth);
-GLAPI void GLAPIFUN(glClearIndex)(GLfloat c);
-GLAPI void GLAPIFUN(glClearStencil)(GLint s);
-GLAPI void GLAPIFUN(glClipPlane)(GLenum plane,const GLdouble *equation);
-GLAPI void GLAPIFUN(glColor3b)(GLbyte red,GLbyte green,GLbyte blue);
-GLAPI void GLAPIFUN(glColor3bv)(const GLbyte *v);
-GLAPI void GLAPIFUN(glColor3d)(GLdouble red,GLdouble green,GLdouble blue);
-GLAPI void GLAPIFUN(glColor3dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glColor3f)(GLfloat red,GLfloat green,GLfloat blue);
-GLAPI void GLAPIFUN(glColor3fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glColor3i)(GLint red,GLint green,GLint blue);
-GLAPI void GLAPIFUN(glColor3iv)(const GLint *v);
-GLAPI void GLAPIFUN(glColor3s)(GLshort red,GLshort green,GLshort blue);
-GLAPI void GLAPIFUN(glColor3sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glColor3ub)(GLubyte red,GLubyte green,GLubyte blue);
-GLAPI void GLAPIFUN(glColor3ubv)(const GLubyte *v);
-GLAPI void GLAPIFUN(glColor3ui)(GLuint red,GLuint green,GLuint blue);
-GLAPI void GLAPIFUN(glColor3uiv)(const GLuint *v);
-GLAPI void GLAPIFUN(glColor3us)(GLushort red,GLushort green,GLushort blue);
-GLAPI void GLAPIFUN(glColor3usv)(const GLushort *v);
-GLAPI void GLAPIFUN(glColor4b)(GLbyte red,GLbyte green,GLbyte blue,GLbyte alpha);
-GLAPI void GLAPIFUN(glColor4bv)(const GLbyte *v);
-GLAPI void GLAPIFUN(glColor4d)(GLdouble red,GLdouble green,GLdouble blue,GLdouble alpha);
-GLAPI void GLAPIFUN(glColor4dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glColor4f)(GLfloat red,GLfloat green,GLfloat blue,GLfloat alpha);
-GLAPI void GLAPIFUN(glColor4fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glColor4i)(GLint red,GLint green,GLint blue,GLint alpha);
-GLAPI void GLAPIFUN(glColor4iv)(const GLint *v);
-GLAPI void GLAPIFUN(glColor4s)(GLshort red,GLshort green,GLshort blue,GLshort alpha);
-GLAPI void GLAPIFUN(glColor4sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glColor4ub)(GLubyte red,GLubyte green,GLubyte blue,GLubyte alpha);
-GLAPI void GLAPIFUN(glColor4ubv)(const GLubyte *v);
-GLAPI void GLAPIFUN(glColor4ui)(GLuint red,GLuint green,GLuint blue,GLuint alpha);
-GLAPI void GLAPIFUN(glColor4uiv)(const GLuint *v);
-GLAPI void GLAPIFUN(glColor4us)(GLushort red,GLushort green,GLushort blue,GLushort alpha);
-GLAPI void GLAPIFUN(glColor4usv)(const GLushort *v);
-GLAPI void GLAPIFUN(glColorMask)(GLboolean red,GLboolean green,GLboolean blue,GLboolean alpha);
-GLAPI void GLAPIFUN(glColorMaterial)(GLenum face,GLenum mode);
-GLAPI void GLAPIFUN(glColorPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glCopyPixels)(GLint x,GLint y,GLsizei width,GLsizei height,GLenum type);
-GLAPI void GLAPIFUN(glCopyTexImage1D)(GLenum target,GLint level,GLenum internalFormat,GLint x,GLint y,GLsizei width,GLint border);
-GLAPI void GLAPIFUN(glCopyTexImage2D)(GLenum target,GLint level,GLenum internalFormat,GLint x,GLint y,GLsizei width,GLsizei height,GLint border);
-GLAPI void GLAPIFUN(glCopyTexSubImage1D)(GLenum target,GLint level,GLint xoffset,GLint x,GLint y,GLsizei width);
-GLAPI void GLAPIFUN(glCopyTexSubImage2D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint x,GLint y,GLsizei width,GLsizei height);
-GLAPI void GLAPIFUN(glCullFace)(GLenum mode);
-GLAPI void GLAPIFUN(glDeleteLists)(GLuint list,GLsizei range);
-GLAPI void GLAPIFUN(glDeleteTextures)(GLsizei n,const GLuint *textures);
-GLAPI void GLAPIFUN(glDepthFunc)(GLenum func);
-GLAPI void GLAPIFUN(glDepthMask)(GLboolean flag);
-GLAPI void GLAPIFUN(glDepthRange)(GLclampd zNear,GLclampd zFar);
-GLAPI void GLAPIFUN(glDisable)(GLenum cap);
-GLAPI void GLAPIFUN(glDisableClientState)(GLenum array);
-GLAPI void GLAPIFUN(glDrawArrays)(GLenum mode,GLint first,GLsizei count);
-GLAPI void GLAPIFUN(glDrawBuffer)(GLenum mode);
-GLAPI void GLAPIFUN(glDrawElements)(GLenum mode,GLsizei count,GLenum type,const void *indices);
-GLAPI void GLAPIFUN(glDrawPixels)(GLsizei width,GLsizei height,GLenum format,GLenum type,const void *pixels);
-GLAPI void GLAPIFUN(glEdgeFlag)(GLboolean flag);
-GLAPI void GLAPIFUN(glEdgeFlagPointer)(GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glEdgeFlagv)(const GLboolean *flag);
-GLAPI void GLAPIFUN(glEnable)(GLenum cap);
-GLAPI void GLAPIFUN(glEnableClientState)(GLenum array);
-GLAPI void GLAPIFUN(glEnd)();
-GLAPI void GLAPIFUN(glEndList)();
-GLAPI void GLAPIFUN(glEvalCoord1d)(GLdouble u);
-GLAPI void GLAPIFUN(glEvalCoord1dv)(const GLdouble *u);
-GLAPI void GLAPIFUN(glEvalCoord1f)(GLfloat u);
-GLAPI void GLAPIFUN(glEvalCoord1fv)(const GLfloat *u);
-GLAPI void GLAPIFUN(glEvalCoord2d)(GLdouble u,GLdouble v);
-GLAPI void GLAPIFUN(glEvalCoord2dv)(const GLdouble *u);
-GLAPI void GLAPIFUN(glEvalCoord2f)(GLfloat u,GLfloat v);
-GLAPI void GLAPIFUN(glEvalCoord2fv)(const GLfloat *u);
-GLAPI void GLAPIFUN(glEvalMesh1)(GLenum mode,GLint i1,GLint i2);
-GLAPI void GLAPIFUN(glEvalMesh2)(GLenum mode,GLint i1,GLint i2,GLint j1,GLint j2);
-GLAPI void GLAPIFUN(glEvalPoint1)(GLint i);
-GLAPI void GLAPIFUN(glEvalPoint2)(GLint i,GLint j);
-GLAPI void GLAPIFUN(glFeedbackBuffer)(GLsizei size,GLenum type,GLfloat *buffer);
-GLAPI void GLAPIFUN(glFinish)();
-GLAPI void GLAPIFUN(glFlush)();
-GLAPI void GLAPIFUN(glFogf)(GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glFogfv)(GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glFogi)(GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glFogiv)(GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glFrontFace)(GLenum mode);
-GLAPI void GLAPIFUN(glFrustum)(GLdouble left,GLdouble right,GLdouble bottom,GLdouble top,GLdouble zNear,GLdouble zFar);
-GLAPI GLuint GLAPIFUN(glGenLists)(GLsizei range);
-GLAPI void GLAPIFUN(glGenTextures)(GLsizei n,GLuint *textures);
-GLAPI void GLAPIFUN(glGetBooleanv)(GLenum pname,GLboolean *params);
-GLAPI void GLAPIFUN(glGetClipPlane)(GLenum plane,GLdouble *equation);
-GLAPI void GLAPIFUN(glGetDoublev)(GLenum pname,GLdouble *params);
-GLAPI GLenum GLAPIFUN(glGetError)();
-GLAPI void GLAPIFUN(glGetFloatv)(GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetIntegerv)(GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glGetLightfv)(GLenum light,GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetLightiv)(GLenum light,GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glGetMapdv)(GLenum target,GLenum query,GLdouble *v);
-GLAPI void GLAPIFUN(glGetMapfv)(GLenum target,GLenum query,GLfloat *v);
-GLAPI void GLAPIFUN(glGetMapiv)(GLenum target,GLenum query,GLint *v);
-GLAPI void GLAPIFUN(glGetMaterialfv)(GLenum face,GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetMaterialiv)(GLenum face,GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glGetPixelMapfv)(GLenum map,GLfloat *values);
-GLAPI void GLAPIFUN(glGetPixelMapuiv)(GLenum map,GLuint *values);
-GLAPI void GLAPIFUN(glGetPixelMapusv)(GLenum map,GLushort *values);
-GLAPI void GLAPIFUN(glGetPointerv)(GLenum pname,void* *params);
-GLAPI void GLAPIFUN(glGetPolygonStipple)(GLubyte *mask);
-GLAPI const GLubyte * GLAPIFUN(glGetString)(GLenum name);
-GLAPI void GLAPIFUN(glGetTexEnvfv)(GLenum target,GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetTexEnviv)(GLenum target,GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glGetTexGendv)(GLenum coord,GLenum pname,GLdouble *params);
-GLAPI void GLAPIFUN(glGetTexGenfv)(GLenum coord,GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetTexGeniv)(GLenum coord,GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glGetTexImage)(GLenum target,GLint level,GLenum format,GLenum type,void *pixels);
-GLAPI void GLAPIFUN(glGetTexLevelParameterfv)(GLenum target,GLint level,GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetTexLevelParameteriv)(GLenum target,GLint level,GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glGetTexParameterfv)(GLenum target,GLenum pname,GLfloat *params);
-GLAPI void GLAPIFUN(glGetTexParameteriv)(GLenum target,GLenum pname,GLint *params);
-GLAPI void GLAPIFUN(glHint)(GLenum target,GLenum mode);
-GLAPI void GLAPIFUN(glIndexMask)(GLuint mask);
-GLAPI void GLAPIFUN(glIndexPointer)(GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glIndexd)(GLdouble c);
-GLAPI void GLAPIFUN(glIndexdv)(const GLdouble *c);
-GLAPI void GLAPIFUN(glIndexf)(GLfloat c);
-GLAPI void GLAPIFUN(glIndexfv)(const GLfloat *c);
-GLAPI void GLAPIFUN(glIndexi)(GLint c);
-GLAPI void GLAPIFUN(glIndexiv)(const GLint *c);
-GLAPI void GLAPIFUN(glIndexs)(GLshort c);
-GLAPI void GLAPIFUN(glIndexsv)(const GLshort *c);
-GLAPI void GLAPIFUN(glIndexub)(GLubyte c);
-GLAPI void GLAPIFUN(glIndexubv)(const GLubyte *c);
-GLAPI void GLAPIFUN(glInitNames)();
-GLAPI void GLAPIFUN(glInterleavedArrays)(GLenum format,GLsizei stride,const void *pointer);
-GLAPI GLboolean GLAPIFUN(glIsEnabled)(GLenum cap);
-GLAPI GLboolean GLAPIFUN(glIsList)(GLuint list);
-GLAPI GLboolean GLAPIFUN(glIsTexture)(GLuint texture);
-GLAPI void GLAPIFUN(glLightModelf)(GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glLightModelfv)(GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glLightModeli)(GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glLightModeliv)(GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glLightf)(GLenum light,GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glLightfv)(GLenum light,GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glLighti)(GLenum light,GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glLightiv)(GLenum light,GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glLineStipple)(GLint factor,GLushort pattern);
-GLAPI void GLAPIFUN(glLineWidth)(GLfloat width);
-GLAPI void GLAPIFUN(glListBase)(GLuint base);
-GLAPI void GLAPIFUN(glLoadIdentity)();
-GLAPI void GLAPIFUN(glLoadMatrixd)(const GLdouble *m);
-GLAPI void GLAPIFUN(glLoadMatrixf)(const GLfloat *m);
-GLAPI void GLAPIFUN(glLoadName)(GLuint name);
-GLAPI void GLAPIFUN(glLogicOp)(GLenum opcode);
-GLAPI void GLAPIFUN(glMap1d)(GLenum target,GLdouble u1,GLdouble u2,GLint stride,GLint order,const GLdouble *points);
-GLAPI void GLAPIFUN(glMap1f)(GLenum target,GLfloat u1,GLfloat u2,GLint stride,GLint order,const GLfloat *points);
-GLAPI void GLAPIFUN(glMap2d)(GLenum target,GLdouble u1,GLdouble u2,GLint ustride,GLint uorder,GLdouble v1,GLdouble v2,GLint vstride,GLint vorder,const GLdouble *points);
-GLAPI void GLAPIFUN(glMap2f)(GLenum target,GLfloat u1,GLfloat u2,GLint ustride,GLint uorder,GLfloat v1,GLfloat v2,GLint vstride,GLint vorder,const GLfloat *points);
-GLAPI void GLAPIFUN(glMapGrid1d)(GLint un,GLdouble u1,GLdouble u2);
-GLAPI void GLAPIFUN(glMapGrid1f)(GLint un,GLfloat u1,GLfloat u2);
-GLAPI void GLAPIFUN(glMapGrid2d)(GLint un,GLdouble u1,GLdouble u2,GLint vn,GLdouble v1,GLdouble v2);
-GLAPI void GLAPIFUN(glMapGrid2f)(GLint un,GLfloat u1,GLfloat u2,GLint vn,GLfloat v1,GLfloat v2);
-GLAPI void GLAPIFUN(glMaterialf)(GLenum face,GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glMaterialfv)(GLenum face,GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glMateriali)(GLenum face,GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glMaterialiv)(GLenum face,GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glMatrixMode)(GLenum mode);
-GLAPI void GLAPIFUN(glMultMatrixd)(const GLdouble *m);
-GLAPI void GLAPIFUN(glMultMatrixf)(const GLfloat *m);
-GLAPI void GLAPIFUN(glNewList)(GLuint list,GLenum mode);
-GLAPI void GLAPIFUN(glNormal3b)(GLbyte nx,GLbyte ny,GLbyte nz);
-GLAPI void GLAPIFUN(glNormal3bv)(const GLbyte *v);
-GLAPI void GLAPIFUN(glNormal3d)(GLdouble nx,GLdouble ny,GLdouble nz);
-GLAPI void GLAPIFUN(glNormal3dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glNormal3f)(GLfloat nx,GLfloat ny,GLfloat nz);
-GLAPI void GLAPIFUN(glNormal3fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glNormal3i)(GLint nx,GLint ny,GLint nz);
-GLAPI void GLAPIFUN(glNormal3iv)(const GLint *v);
-GLAPI void GLAPIFUN(glNormal3s)(GLshort nx,GLshort ny,GLshort nz);
-GLAPI void GLAPIFUN(glNormal3sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glNormalPointer)(GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glOrtho)(GLdouble left,GLdouble right,GLdouble bottom,GLdouble top,GLdouble zNear,GLdouble zFar);
-GLAPI void GLAPIFUN(glPassThrough)(GLfloat token);
-GLAPI void GLAPIFUN(glPixelMapfv)(GLenum map,GLsizei mapsize,const GLfloat *values);
-GLAPI void GLAPIFUN(glPixelMapuiv)(GLenum map,GLsizei mapsize,const GLuint *values);
-GLAPI void GLAPIFUN(glPixelMapusv)(GLenum map,GLsizei mapsize,const GLushort *values);
-GLAPI void GLAPIFUN(glPixelStoref)(GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glPixelStorei)(GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glPixelTransferf)(GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glPixelTransferi)(GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glPixelZoom)(GLfloat xfactor,GLfloat yfactor);
-GLAPI void GLAPIFUN(glPointSize)(GLfloat size);
-GLAPI void GLAPIFUN(glPolygonMode)(GLenum face,GLenum mode);
-GLAPI void GLAPIFUN(glPolygonOffset)(GLfloat factor,GLfloat units);
-GLAPI void GLAPIFUN(glPolygonStipple)(const GLubyte *mask);
-GLAPI void GLAPIFUN(glPopAttrib)();
-GLAPI void GLAPIFUN(glPopClientAttrib)();
-GLAPI void GLAPIFUN(glPopMatrix)();
-GLAPI void GLAPIFUN(glPopName)();
-GLAPI void GLAPIFUN(glPrioritizeTextures)(GLsizei n,const GLuint *textures,const GLclampf *priorities);
-GLAPI void GLAPIFUN(glPushAttrib)(GLbitfield mask);
-GLAPI void GLAPIFUN(glPushClientAttrib)(GLbitfield mask);
-GLAPI void GLAPIFUN(glPushMatrix)();
-GLAPI void GLAPIFUN(glPushName)(GLuint name);
-GLAPI void GLAPIFUN(glRasterPos2d)(GLdouble x,GLdouble y);
-GLAPI void GLAPIFUN(glRasterPos2dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glRasterPos2f)(GLfloat x,GLfloat y);
-GLAPI void GLAPIFUN(glRasterPos2fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glRasterPos2i)(GLint x,GLint y);
-GLAPI void GLAPIFUN(glRasterPos2iv)(const GLint *v);
-GLAPI void GLAPIFUN(glRasterPos2s)(GLshort x,GLshort y);
-GLAPI void GLAPIFUN(glRasterPos2sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glRasterPos3d)(GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glRasterPos3dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glRasterPos3f)(GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glRasterPos3fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glRasterPos3i)(GLint x,GLint y,GLint z);
-GLAPI void GLAPIFUN(glRasterPos3iv)(const GLint *v);
-GLAPI void GLAPIFUN(glRasterPos3s)(GLshort x,GLshort y,GLshort z);
-GLAPI void GLAPIFUN(glRasterPos3sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glRasterPos4d)(GLdouble x,GLdouble y,GLdouble z,GLdouble w);
-GLAPI void GLAPIFUN(glRasterPos4dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glRasterPos4f)(GLfloat x,GLfloat y,GLfloat z,GLfloat w);
-GLAPI void GLAPIFUN(glRasterPos4fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glRasterPos4i)(GLint x,GLint y,GLint z,GLint w);
-GLAPI void GLAPIFUN(glRasterPos4iv)(const GLint *v);
-GLAPI void GLAPIFUN(glRasterPos4s)(GLshort x,GLshort y,GLshort z,GLshort w);
-GLAPI void GLAPIFUN(glRasterPos4sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glReadBuffer)(GLenum mode);
-GLAPI void GLAPIFUN(glReadPixels)(GLint x,GLint y,GLsizei width,GLsizei height,GLenum format,GLenum type,void *pixels);
-GLAPI void GLAPIFUN(glRectd)(GLdouble x1,GLdouble y1,GLdouble x2,GLdouble y2);
-GLAPI void GLAPIFUN(glRectdv)(const GLdouble *v1,const GLdouble *v2);
-GLAPI void GLAPIFUN(glRectf)(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2);
-GLAPI void GLAPIFUN(glRectfv)(const GLfloat *v1,const GLfloat *v2);
-GLAPI void GLAPIFUN(glRecti)(GLint x1,GLint y1,GLint x2,GLint y2);
-GLAPI void GLAPIFUN(glRectiv)(const GLint *v1,const GLint *v2);
-GLAPI void GLAPIFUN(glRects)(GLshort x1,GLshort y1,GLshort x2,GLshort y2);
-GLAPI void GLAPIFUN(glRectsv)(const GLshort *v1,const GLshort *v2);
-GLAPI GLint GLAPIFUN(glRenderMode)(GLenum mode);
-GLAPI void GLAPIFUN(glRotated)(GLdouble angle,GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glRotatef)(GLfloat angle,GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glScaled)(GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glScalef)(GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glScissor)(GLint x,GLint y,GLsizei width,GLsizei height);
-GLAPI void GLAPIFUN(glSelectBuffer)(GLsizei size,GLuint *buffer);
-GLAPI void GLAPIFUN(glShadeModel)(GLenum mode);
-GLAPI void GLAPIFUN(glStencilFunc)(GLenum func,GLint ref,GLuint mask);
-GLAPI void GLAPIFUN(glStencilMask)(GLuint mask);
-GLAPI void GLAPIFUN(glStencilOp)(GLenum fail,GLenum zfail,GLenum zpass);
-GLAPI void GLAPIFUN(glTexCoord1d)(GLdouble s);
-GLAPI void GLAPIFUN(glTexCoord1dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glTexCoord1f)(GLfloat s);
-GLAPI void GLAPIFUN(glTexCoord1fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glTexCoord1i)(GLint s);
-GLAPI void GLAPIFUN(glTexCoord1iv)(const GLint *v);
-GLAPI void GLAPIFUN(glTexCoord1s)(GLshort s);
-GLAPI void GLAPIFUN(glTexCoord1sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glTexCoord2d)(GLdouble s,GLdouble t);
-GLAPI void GLAPIFUN(glTexCoord2dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glTexCoord2f)(GLfloat s,GLfloat t);
-GLAPI void GLAPIFUN(glTexCoord2fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glTexCoord2i)(GLint s,GLint t);
-GLAPI void GLAPIFUN(glTexCoord2iv)(const GLint *v);
-GLAPI void GLAPIFUN(glTexCoord2s)(GLshort s,GLshort t);
-GLAPI void GLAPIFUN(glTexCoord2sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glTexCoord3d)(GLdouble s,GLdouble t,GLdouble r);
-GLAPI void GLAPIFUN(glTexCoord3dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glTexCoord3f)(GLfloat s,GLfloat t,GLfloat r);
-GLAPI void GLAPIFUN(glTexCoord3fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glTexCoord3i)(GLint s,GLint t,GLint r);
-GLAPI void GLAPIFUN(glTexCoord3iv)(const GLint *v);
-GLAPI void GLAPIFUN(glTexCoord3s)(GLshort s,GLshort t,GLshort r);
-GLAPI void GLAPIFUN(glTexCoord3sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glTexCoord4d)(GLdouble s,GLdouble t,GLdouble r,GLdouble q);
-GLAPI void GLAPIFUN(glTexCoord4dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glTexCoord4f)(GLfloat s,GLfloat t,GLfloat r,GLfloat q);
-GLAPI void GLAPIFUN(glTexCoord4fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glTexCoord4i)(GLint s,GLint t,GLint r,GLint q);
-GLAPI void GLAPIFUN(glTexCoord4iv)(const GLint *v);
-GLAPI void GLAPIFUN(glTexCoord4s)(GLshort s,GLshort t,GLshort r,GLshort q);
-GLAPI void GLAPIFUN(glTexCoord4sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glTexCoordPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glTexEnvf)(GLenum target,GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glTexEnvfv)(GLenum target,GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glTexEnvi)(GLenum target,GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glTexEnviv)(GLenum target,GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glTexGend)(GLenum coord,GLenum pname,GLdouble param);
-GLAPI void GLAPIFUN(glTexGendv)(GLenum coord,GLenum pname,const GLdouble *params);
-GLAPI void GLAPIFUN(glTexGenf)(GLenum coord,GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glTexGenfv)(GLenum coord,GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glTexGeni)(GLenum coord,GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glTexGeniv)(GLenum coord,GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glTexImage1D)(GLenum target,GLint level,GLint internalformat,GLsizei width,GLint border,GLenum format,GLenum type,const void *pixels);
-GLAPI void GLAPIFUN(glTexImage2D)(GLenum target,GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels);
-GLAPI void GLAPIFUN(glTexParameterf)(GLenum target,GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glTexParameterfv)(GLenum target,GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glTexParameteri)(GLenum target,GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glTexParameteriv)(GLenum target,GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glTexSubImage1D)(GLenum target,GLint level,GLint xoffset,GLsizei width,GLenum format,GLenum type,const void *pixels);
-GLAPI void GLAPIFUN(glTexSubImage2D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLenum type,const void *pixels);
-GLAPI void GLAPIFUN(glTranslated)(GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glTranslatef)(GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glVertex2d)(GLdouble x,GLdouble y);
-GLAPI void GLAPIFUN(glVertex2dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glVertex2f)(GLfloat x,GLfloat y);
-GLAPI void GLAPIFUN(glVertex2fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glVertex2i)(GLint x,GLint y);
-GLAPI void GLAPIFUN(glVertex2iv)(const GLint *v);
-GLAPI void GLAPIFUN(glVertex2s)(GLshort x,GLshort y);
-GLAPI void GLAPIFUN(glVertex2sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glVertex3d)(GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glVertex3dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glVertex3f)(GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glVertex3fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glVertex3i)(GLint x,GLint y,GLint z);
-GLAPI void GLAPIFUN(glVertex3iv)(const GLint *v);
-GLAPI void GLAPIFUN(glVertex3s)(GLshort x,GLshort y,GLshort z);
-GLAPI void GLAPIFUN(glVertex3sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glVertex4d)(GLdouble x,GLdouble y,GLdouble z,GLdouble w);
-GLAPI void GLAPIFUN(glVertex4dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glVertex4f)(GLfloat x,GLfloat y,GLfloat z,GLfloat w);
-GLAPI void GLAPIFUN(glVertex4fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glVertex4i)(GLint x,GLint y,GLint z,GLint w);
-GLAPI void GLAPIFUN(glVertex4iv)(const GLint *v);
-GLAPI void GLAPIFUN(glVertex4s)(GLshort x,GLshort y,GLshort z,GLshort w);
-GLAPI void GLAPIFUN(glVertex4sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glVertexPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glViewport)(GLint x,GLint y,GLsizei width,GLsizei height);
 #define GL_VERSION_1_2 1
 #define GL_SMOOTH_POINT_SIZE_RANGE 0x0B12
 #define GL_SMOOTH_POINT_SIZE_GRANULARITY 0x0B13
@@ -967,10 +662,6 @@ GLAPI void GLAPIFUN(glViewport)(GLint x,GLint y,GLsizei width,GLsizei height);
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
 #define GL_ALIASED_POINT_SIZE_RANGE 0x846D
 #define GL_ALIASED_LINE_WIDTH_RANGE 0x846E
-GLAPI void GLAPIFUN(glCopyTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint zoffset,GLint x,GLint y,GLsizei width,GLsizei height);
-GLAPI void GLAPIFUN(glDrawRangeElements)(GLenum mode,GLuint start,GLuint end,GLsizei count,GLenum type,const void *indices);
-GLAPI void GLAPIFUN(glTexImage3D)(GLenum target,GLint level,GLint internalFormat,GLsizei width,GLsizei height,GLsizei depth,GLint border,GLenum format,GLenum type,const void *pixels);
-GLAPI void GLAPIFUN(glTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint zoffset,GLsizei width,GLsizei height,GLsizei depth,GLenum format,GLenum type,const void *pixels);
 #define GL_VERSION_1_2_1 1
 #define GL_VERSION_1_3 1
 #define GL_MULTISAMPLE 0x809D
@@ -1069,52 +760,6 @@ GLAPI void GLAPIFUN(glTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLi
 #define GL_DOT3_RGB 0x86AE
 #define GL_DOT3_RGBA 0x86AF
 #define GL_MULTISAMPLE_BIT 0x20000000
-GLAPI void GLAPIFUN(glActiveTexture)(GLenum texture);
-GLAPI void GLAPIFUN(glClientActiveTexture)(GLenum texture);
-GLAPI void GLAPIFUN(glCompressedTexImage1D)(GLenum target,GLint level,GLenum internalformat,GLsizei width,GLint border,GLsizei imageSize,const void *data);
-GLAPI void GLAPIFUN(glCompressedTexImage2D)(GLenum target,GLint level,GLenum internalformat,GLsizei width,GLsizei height,GLint border,GLsizei imageSize,const void *data);
-GLAPI void GLAPIFUN(glCompressedTexImage3D)(GLenum target,GLint level,GLenum internalformat,GLsizei width,GLsizei height,GLsizei depth,GLint border,GLsizei imageSize,const void *data);
-GLAPI void GLAPIFUN(glCompressedTexSubImage1D)(GLenum target,GLint level,GLint xoffset,GLsizei width,GLenum format,GLsizei imageSize,const void *data);
-GLAPI void GLAPIFUN(glCompressedTexSubImage2D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLsizei imageSize,const void *data);
-GLAPI void GLAPIFUN(glCompressedTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint zoffset,GLsizei width,GLsizei height,GLsizei depth,GLenum format,GLsizei imageSize,const void *data);
-GLAPI void GLAPIFUN(glGetCompressedTexImage)(GLenum target,GLint lod,void *img);
-GLAPI void GLAPIFUN(glLoadTransposeMatrixd)(const GLdouble m[16]);
-GLAPI void GLAPIFUN(glLoadTransposeMatrixf)(const GLfloat m[16]);
-GLAPI void GLAPIFUN(glMultTransposeMatrixd)(const GLdouble m[16]);
-GLAPI void GLAPIFUN(glMultTransposeMatrixf)(const GLfloat m[16]);
-GLAPI void GLAPIFUN(glMultiTexCoord1d)(GLenum target,GLdouble s);
-GLAPI void GLAPIFUN(glMultiTexCoord1dv)(GLenum target,const GLdouble *v);
-GLAPI void GLAPIFUN(glMultiTexCoord1f)(GLenum target,GLfloat s);
-GLAPI void GLAPIFUN(glMultiTexCoord1fv)(GLenum target,const GLfloat *v);
-GLAPI void GLAPIFUN(glMultiTexCoord1i)(GLenum target,GLint s);
-GLAPI void GLAPIFUN(glMultiTexCoord1iv)(GLenum target,const GLint *v);
-GLAPI void GLAPIFUN(glMultiTexCoord1s)(GLenum target,GLshort s);
-GLAPI void GLAPIFUN(glMultiTexCoord1sv)(GLenum target,const GLshort *v);
-GLAPI void GLAPIFUN(glMultiTexCoord2d)(GLenum target,GLdouble s,GLdouble t);
-GLAPI void GLAPIFUN(glMultiTexCoord2dv)(GLenum target,const GLdouble *v);
-GLAPI void GLAPIFUN(glMultiTexCoord2f)(GLenum target,GLfloat s,GLfloat t);
-GLAPI void GLAPIFUN(glMultiTexCoord2fv)(GLenum target,const GLfloat *v);
-GLAPI void GLAPIFUN(glMultiTexCoord2i)(GLenum target,GLint s,GLint t);
-GLAPI void GLAPIFUN(glMultiTexCoord2iv)(GLenum target,const GLint *v);
-GLAPI void GLAPIFUN(glMultiTexCoord2s)(GLenum target,GLshort s,GLshort t);
-GLAPI void GLAPIFUN(glMultiTexCoord2sv)(GLenum target,const GLshort *v);
-GLAPI void GLAPIFUN(glMultiTexCoord3d)(GLenum target,GLdouble s,GLdouble t,GLdouble r);
-GLAPI void GLAPIFUN(glMultiTexCoord3dv)(GLenum target,const GLdouble *v);
-GLAPI void GLAPIFUN(glMultiTexCoord3f)(GLenum target,GLfloat s,GLfloat t,GLfloat r);
-GLAPI void GLAPIFUN(glMultiTexCoord3fv)(GLenum target,const GLfloat *v);
-GLAPI void GLAPIFUN(glMultiTexCoord3i)(GLenum target,GLint s,GLint t,GLint r);
-GLAPI void GLAPIFUN(glMultiTexCoord3iv)(GLenum target,const GLint *v);
-GLAPI void GLAPIFUN(glMultiTexCoord3s)(GLenum target,GLshort s,GLshort t,GLshort r);
-GLAPI void GLAPIFUN(glMultiTexCoord3sv)(GLenum target,const GLshort *v);
-GLAPI void GLAPIFUN(glMultiTexCoord4d)(GLenum target,GLdouble s,GLdouble t,GLdouble r,GLdouble q);
-GLAPI void GLAPIFUN(glMultiTexCoord4dv)(GLenum target,const GLdouble *v);
-GLAPI void GLAPIFUN(glMultiTexCoord4f)(GLenum target,GLfloat s,GLfloat t,GLfloat r,GLfloat q);
-GLAPI void GLAPIFUN(glMultiTexCoord4fv)(GLenum target,const GLfloat *v);
-GLAPI void GLAPIFUN(glMultiTexCoord4i)(GLenum target,GLint s,GLint t,GLint r,GLint q);
-GLAPI void GLAPIFUN(glMultiTexCoord4iv)(GLenum target,const GLint *v);
-GLAPI void GLAPIFUN(glMultiTexCoord4s)(GLenum target,GLshort s,GLshort t,GLshort r,GLshort q);
-GLAPI void GLAPIFUN(glMultiTexCoord4sv)(GLenum target,const GLshort *v);
-GLAPI void GLAPIFUN(glSampleCoverage)(GLclampf value,GLboolean invert);
 #define GL_VERSION_1_4 1
 #define GL_BLEND_DST_RGB 0x80C8
 #define GL_BLEND_SRC_RGB 0x80C9
@@ -1155,53 +800,6 @@ GLAPI void GLAPIFUN(glSampleCoverage)(GLclampf value,GLboolean invert);
 #define GL_TEXTURE_COMPARE_MODE 0x884C
 #define GL_TEXTURE_COMPARE_FUNC 0x884D
 #define GL_COMPARE_R_TO_TEXTURE 0x884E
-GLAPI void GLAPIFUN(glBlendColor)(GLclampf red,GLclampf green,GLclampf blue,GLclampf alpha);
-GLAPI void GLAPIFUN(glBlendEquation)(GLenum mode);
-GLAPI void GLAPIFUN(glBlendFuncSeparate)(GLenum sfactorRGB,GLenum dfactorRGB,GLenum sfactorAlpha,GLenum dfactorAlpha);
-GLAPI void GLAPIFUN(glFogCoordPointer)(GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glFogCoordd)(GLdouble coord);
-GLAPI void GLAPIFUN(glFogCoorddv)(const GLdouble *coord);
-GLAPI void GLAPIFUN(glFogCoordf)(GLfloat coord);
-GLAPI void GLAPIFUN(glFogCoordfv)(const GLfloat *coord);
-GLAPI void GLAPIFUN(glMultiDrawArrays)(GLenum mode,const GLint *first,const GLsizei *count,GLsizei drawcount);
-GLAPI void GLAPIFUN(glMultiDrawElements)(GLenum mode,const GLsizei *count,GLenum type,const void *const* indices,GLsizei drawcount);
-GLAPI void GLAPIFUN(glPointParameterf)(GLenum pname,GLfloat param);
-GLAPI void GLAPIFUN(glPointParameterfv)(GLenum pname,const GLfloat *params);
-GLAPI void GLAPIFUN(glPointParameteri)(GLenum pname,GLint param);
-GLAPI void GLAPIFUN(glPointParameteriv)(GLenum pname,const GLint *params);
-GLAPI void GLAPIFUN(glSecondaryColor3b)(GLbyte red,GLbyte green,GLbyte blue);
-GLAPI void GLAPIFUN(glSecondaryColor3bv)(const GLbyte *v);
-GLAPI void GLAPIFUN(glSecondaryColor3d)(GLdouble red,GLdouble green,GLdouble blue);
-GLAPI void GLAPIFUN(glSecondaryColor3dv)(const GLdouble *v);
-GLAPI void GLAPIFUN(glSecondaryColor3f)(GLfloat red,GLfloat green,GLfloat blue);
-GLAPI void GLAPIFUN(glSecondaryColor3fv)(const GLfloat *v);
-GLAPI void GLAPIFUN(glSecondaryColor3i)(GLint red,GLint green,GLint blue);
-GLAPI void GLAPIFUN(glSecondaryColor3iv)(const GLint *v);
-GLAPI void GLAPIFUN(glSecondaryColor3s)(GLshort red,GLshort green,GLshort blue);
-GLAPI void GLAPIFUN(glSecondaryColor3sv)(const GLshort *v);
-GLAPI void GLAPIFUN(glSecondaryColor3ub)(GLubyte red,GLubyte green,GLubyte blue);
-GLAPI void GLAPIFUN(glSecondaryColor3ubv)(const GLubyte *v);
-GLAPI void GLAPIFUN(glSecondaryColor3ui)(GLuint red,GLuint green,GLuint blue);
-GLAPI void GLAPIFUN(glSecondaryColor3uiv)(const GLuint *v);
-GLAPI void GLAPIFUN(glSecondaryColor3us)(GLushort red,GLushort green,GLushort blue);
-GLAPI void GLAPIFUN(glSecondaryColor3usv)(const GLushort *v);
-GLAPI void GLAPIFUN(glSecondaryColorPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
-GLAPI void GLAPIFUN(glWindowPos2d)(GLdouble x,GLdouble y);
-GLAPI void GLAPIFUN(glWindowPos2dv)(const GLdouble *p);
-GLAPI void GLAPIFUN(glWindowPos2f)(GLfloat x,GLfloat y);
-GLAPI void GLAPIFUN(glWindowPos2fv)(const GLfloat *p);
-GLAPI void GLAPIFUN(glWindowPos2i)(GLint x,GLint y);
-GLAPI void GLAPIFUN(glWindowPos2iv)(const GLint *p);
-GLAPI void GLAPIFUN(glWindowPos2s)(GLshort x,GLshort y);
-GLAPI void GLAPIFUN(glWindowPos2sv)(const GLshort *p);
-GLAPI void GLAPIFUN(glWindowPos3d)(GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glWindowPos3dv)(const GLdouble *p);
-GLAPI void GLAPIFUN(glWindowPos3f)(GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glWindowPos3fv)(const GLfloat *p);
-GLAPI void GLAPIFUN(glWindowPos3i)(GLint x,GLint y,GLint z);
-GLAPI void GLAPIFUN(glWindowPos3iv)(const GLint *p);
-GLAPI void GLAPIFUN(glWindowPos3s)(GLshort x,GLshort y,GLshort z);
-GLAPI void GLAPIFUN(glWindowPos3sv)(const GLshort *p);
 #define GL_VERSION_1_5 1
 #define GL_CURRENT_FOG_COORD GL_CURRENT_FOG_COORDINATE
 #define GL_FOG_COORD GL_FOG_COORDINATE
@@ -1253,25 +851,6 @@ GLAPI void GLAPIFUN(glWindowPos3sv)(const GLshort *p);
 #define GL_DYNAMIC_READ 0x88E9
 #define GL_DYNAMIC_COPY 0x88EA
 #define GL_SAMPLES_PASSED 0x8914
-GLAPI void GLAPIFUN(glBeginQuery)(GLenum target,GLuint id);
-GLAPI void GLAPIFUN(glBindBuffer)(GLenum target,GLuint buffer);
-GLAPI void GLAPIFUN(glBufferData)(GLenum target,GLsizeiptr size,const void* data,GLenum usage);
-GLAPI void GLAPIFUN(glBufferSubData)(GLenum target,GLintptr offset,GLsizeiptr size,const void* data);
-GLAPI void GLAPIFUN(glDeleteBuffers)(GLsizei n,const GLuint* buffers);
-GLAPI void GLAPIFUN(glDeleteQueries)(GLsizei n,const GLuint* ids);
-GLAPI void GLAPIFUN(glEndQuery)(GLenum target);
-GLAPI void GLAPIFUN(glGenBuffers)(GLsizei n,GLuint* buffers);
-GLAPI void GLAPIFUN(glGenQueries)(GLsizei n,GLuint* ids);
-GLAPI void GLAPIFUN(glGetBufferParameteriv)(GLenum target,GLenum pname,GLint* params);
-GLAPI void GLAPIFUN(glGetBufferPointerv)(GLenum target,GLenum pname,void** params);
-GLAPI void GLAPIFUN(glGetBufferSubData)(GLenum target,GLintptr offset,GLsizeiptr size,void* data);
-GLAPI void GLAPIFUN(glGetQueryObjectiv)(GLuint id,GLenum pname,GLint* params);
-GLAPI void GLAPIFUN(glGetQueryObjectuiv)(GLuint id,GLenum pname,GLuint* params);
-GLAPI void GLAPIFUN(glGetQueryiv)(GLenum target,GLenum pname,GLint* params);
-GLAPI GLboolean GLAPIFUN(glIsBuffer)(GLuint buffer);
-GLAPI GLboolean GLAPIFUN(glIsQuery)(GLuint id);
-GLAPI void* GLAPIFUN(glMapBuffer)(GLenum target,GLenum access);
-GLAPI GLboolean GLAPIFUN(glUnmapBuffer)(GLenum target);
 #define GL_VERSION_2_0 1
 #define GL_BLEND_EQUATION_RGB GL_BLEND_EQUATION
 #define GL_VERTEX_ATTRIB_ARRAY_ENABLED 0x8622
@@ -1357,99 +936,6 @@ GLAPI GLboolean GLAPIFUN(glUnmapBuffer)(GLenum target);
 #define GL_STENCIL_BACK_REF 0x8CA3
 #define GL_STENCIL_BACK_VALUE_MASK 0x8CA4
 #define GL_STENCIL_BACK_WRITEMASK 0x8CA5
-GLAPI void GLAPIFUN(glAttachShader)(GLuint program,GLuint shader);
-GLAPI void GLAPIFUN(glBindAttribLocation)(GLuint program,GLuint index,const GLchar* name);
-GLAPI void GLAPIFUN(glBlendEquationSeparate)(GLenum modeRGB,GLenum modeAlpha);
-GLAPI void GLAPIFUN(glCompileShader)(GLuint shader);
-GLAPI GLuint GLAPIFUN(glCreateProgram)();
-GLAPI GLuint GLAPIFUN(glCreateShader)(GLenum type);
-GLAPI void GLAPIFUN(glDeleteProgram)(GLuint program);
-GLAPI void GLAPIFUN(glDeleteShader)(GLuint shader);
-GLAPI void GLAPIFUN(glDetachShader)(GLuint program,GLuint shader);
-GLAPI void GLAPIFUN(glDisableVertexAttribArray)(GLuint index);
-GLAPI void GLAPIFUN(glDrawBuffers)(GLsizei n,const GLenum* bufs);
-GLAPI void GLAPIFUN(glEnableVertexAttribArray)(GLuint index);
-GLAPI void GLAPIFUN(glGetActiveAttrib)(GLuint program,GLuint index,GLsizei maxLength,GLsizei* length,GLint* size,GLenum* type,GLchar* name);
-GLAPI void GLAPIFUN(glGetActiveUniform)(GLuint program,GLuint index,GLsizei maxLength,GLsizei* length,GLint* size,GLenum* type,GLchar* name);
-GLAPI void GLAPIFUN(glGetAttachedShaders)(GLuint program,GLsizei maxCount,GLsizei* count,GLuint* shaders);
-GLAPI GLint GLAPIFUN(glGetAttribLocation)(GLuint program,const GLchar* name);
-GLAPI void GLAPIFUN(glGetProgramInfoLog)(GLuint program,GLsizei bufSize,GLsizei* length,GLchar* infoLog);
-GLAPI void GLAPIFUN(glGetProgramiv)(GLuint program,GLenum pname,GLint* param);
-GLAPI void GLAPIFUN(glGetShaderInfoLog)(GLuint shader,GLsizei bufSize,GLsizei* length,GLchar* infoLog);
-GLAPI void GLAPIFUN(glGetShaderSource)(GLuint obj,GLsizei maxLength,GLsizei* length,GLchar* source);
-GLAPI void GLAPIFUN(glGetShaderiv)(GLuint shader,GLenum pname,GLint* param);
-GLAPI GLint GLAPIFUN(glGetUniformLocation)(GLuint program,const GLchar* name);
-GLAPI void GLAPIFUN(glGetUniformfv)(GLuint program,GLint location,GLfloat* params);
-GLAPI void GLAPIFUN(glGetUniformiv)(GLuint program,GLint location,GLint* params);
-GLAPI void GLAPIFUN(glGetVertexAttribPointerv)(GLuint index,GLenum pname,void** pointer);
-GLAPI void GLAPIFUN(glGetVertexAttribdv)(GLuint index,GLenum pname,GLdouble* params);
-GLAPI void GLAPIFUN(glGetVertexAttribfv)(GLuint index,GLenum pname,GLfloat* params);
-GLAPI void GLAPIFUN(glGetVertexAttribiv)(GLuint index,GLenum pname,GLint* params);
-GLAPI GLboolean GLAPIFUN(glIsProgram)(GLuint program);
-GLAPI GLboolean GLAPIFUN(glIsShader)(GLuint shader);
-GLAPI void GLAPIFUN(glLinkProgram)(GLuint program);
-GLAPI void GLAPIFUN(glShaderSource)(GLuint shader,GLsizei count,const GLchar *const* string,const GLint* length);
-GLAPI void GLAPIFUN(glStencilFuncSeparate)(GLenum frontfunc,GLenum backfunc,GLint ref,GLuint mask);
-GLAPI void GLAPIFUN(glStencilMaskSeparate)(GLenum face,GLuint mask);
-GLAPI void GLAPIFUN(glStencilOpSeparate)(GLenum face,GLenum sfail,GLenum dpfail,GLenum dppass);
-GLAPI void GLAPIFUN(glUniform1f)(GLint location,GLfloat v0);
-GLAPI void GLAPIFUN(glUniform1fv)(GLint location,GLsizei count,const GLfloat* value);
-GLAPI void GLAPIFUN(glUniform1i)(GLint location,GLint v0);
-GLAPI void GLAPIFUN(glUniform1iv)(GLint location,GLsizei count,const GLint* value);
-GLAPI void GLAPIFUN(glUniform2f)(GLint location,GLfloat v0,GLfloat v1);
-GLAPI void GLAPIFUN(glUniform2fv)(GLint location,GLsizei count,const GLfloat* value);
-GLAPI void GLAPIFUN(glUniform2i)(GLint location,GLint v0,GLint v1);
-GLAPI void GLAPIFUN(glUniform2iv)(GLint location,GLsizei count,const GLint* value);
-GLAPI void GLAPIFUN(glUniform3f)(GLint location,GLfloat v0,GLfloat v1,GLfloat v2);
-GLAPI void GLAPIFUN(glUniform3fv)(GLint location,GLsizei count,const GLfloat* value);
-GLAPI void GLAPIFUN(glUniform3i)(GLint location,GLint v0,GLint v1,GLint v2);
-GLAPI void GLAPIFUN(glUniform3iv)(GLint location,GLsizei count,const GLint* value);
-GLAPI void GLAPIFUN(glUniform4f)(GLint location,GLfloat v0,GLfloat v1,GLfloat v2,GLfloat v3);
-GLAPI void GLAPIFUN(glUniform4fv)(GLint location,GLsizei count,const GLfloat* value);
-GLAPI void GLAPIFUN(glUniform4i)(GLint location,GLint v0,GLint v1,GLint v2,GLint v3);
-GLAPI void GLAPIFUN(glUniform4iv)(GLint location,GLsizei count,const GLint* value);
-GLAPI void GLAPIFUN(glUniformMatrix2fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat* value);
-GLAPI void GLAPIFUN(glUniformMatrix3fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat* value);
-GLAPI void GLAPIFUN(glUniformMatrix4fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat* value);
-GLAPI void GLAPIFUN(glUseProgram)(GLuint program);
-GLAPI void GLAPIFUN(glValidateProgram)(GLuint program);
-GLAPI void GLAPIFUN(glVertexAttrib1d)(GLuint index,GLdouble x);
-GLAPI void GLAPIFUN(glVertexAttrib1dv)(GLuint index,const GLdouble* v);
-GLAPI void GLAPIFUN(glVertexAttrib1f)(GLuint index,GLfloat x);
-GLAPI void GLAPIFUN(glVertexAttrib1fv)(GLuint index,const GLfloat* v);
-GLAPI void GLAPIFUN(glVertexAttrib1s)(GLuint index,GLshort x);
-GLAPI void GLAPIFUN(glVertexAttrib1sv)(GLuint index,const GLshort* v);
-GLAPI void GLAPIFUN(glVertexAttrib2d)(GLuint index,GLdouble x,GLdouble y);
-GLAPI void GLAPIFUN(glVertexAttrib2dv)(GLuint index,const GLdouble* v);
-GLAPI void GLAPIFUN(glVertexAttrib2f)(GLuint index,GLfloat x,GLfloat y);
-GLAPI void GLAPIFUN(glVertexAttrib2fv)(GLuint index,const GLfloat* v);
-GLAPI void GLAPIFUN(glVertexAttrib2s)(GLuint index,GLshort x,GLshort y);
-GLAPI void GLAPIFUN(glVertexAttrib2sv)(GLuint index,const GLshort* v);
-GLAPI void GLAPIFUN(glVertexAttrib3d)(GLuint index,GLdouble x,GLdouble y,GLdouble z);
-GLAPI void GLAPIFUN(glVertexAttrib3dv)(GLuint index,const GLdouble* v);
-GLAPI void GLAPIFUN(glVertexAttrib3f)(GLuint index,GLfloat x,GLfloat y,GLfloat z);
-GLAPI void GLAPIFUN(glVertexAttrib3fv)(GLuint index,const GLfloat* v);
-GLAPI void GLAPIFUN(glVertexAttrib3s)(GLuint index,GLshort x,GLshort y,GLshort z);
-GLAPI void GLAPIFUN(glVertexAttrib3sv)(GLuint index,const GLshort* v);
-GLAPI void GLAPIFUN(glVertexAttrib4Nbv)(GLuint index,const GLbyte* v);
-GLAPI void GLAPIFUN(glVertexAttrib4Niv)(GLuint index,const GLint* v);
-GLAPI void GLAPIFUN(glVertexAttrib4Nsv)(GLuint index,const GLshort* v);
-GLAPI void GLAPIFUN(glVertexAttrib4Nub)(GLuint index,GLubyte x,GLubyte y,GLubyte z,GLubyte w);
-GLAPI void GLAPIFUN(glVertexAttrib4Nubv)(GLuint index,const GLubyte* v);
-GLAPI void GLAPIFUN(glVertexAttrib4Nuiv)(GLuint index,const GLuint* v);
-GLAPI void GLAPIFUN(glVertexAttrib4Nusv)(GLuint index,const GLushort* v);
-GLAPI void GLAPIFUN(glVertexAttrib4bv)(GLuint index,const GLbyte* v);
-GLAPI void GLAPIFUN(glVertexAttrib4d)(GLuint index,GLdouble x,GLdouble y,GLdouble z,GLdouble w);
-GLAPI void GLAPIFUN(glVertexAttrib4dv)(GLuint index,const GLdouble* v);
-GLAPI void GLAPIFUN(glVertexAttrib4f)(GLuint index,GLfloat x,GLfloat y,GLfloat z,GLfloat w);
-GLAPI void GLAPIFUN(glVertexAttrib4fv)(GLuint index,const GLfloat* v);
-GLAPI void GLAPIFUN(glVertexAttrib4iv)(GLuint index,const GLint* v);
-GLAPI void GLAPIFUN(glVertexAttrib4s)(GLuint index,GLshort x,GLshort y,GLshort z,GLshort w);
-GLAPI void GLAPIFUN(glVertexAttrib4sv)(GLuint index,const GLshort* v);
-GLAPI void GLAPIFUN(glVertexAttrib4ubv)(GLuint index,const GLubyte* v);
-GLAPI void GLAPIFUN(glVertexAttrib4uiv)(GLuint index,const GLuint* v);
-GLAPI void GLAPIFUN(glVertexAttrib4usv)(GLuint index,const GLushort* v);
-GLAPI void GLAPIFUN(glVertexAttribPointer)(GLuint index,GLint size,GLenum type,GLboolean normalized,GLsizei stride,const void* pointer);
 #define GL_VERSION_2_1 1
 #define GL_CURRENT_RASTER_SECONDARY_COLOR 0x845F
 #define GL_PIXEL_PACK_BUFFER 0x88EB
@@ -1474,12 +960,6 @@ GLAPI void GLAPIFUN(glVertexAttribPointer)(GLuint index,GLint size,GLenum type,G
 #define GL_COMPRESSED_SRGB_ALPHA 0x8C49
 #define GL_COMPRESSED_SLUMINANCE 0x8C4A
 #define GL_COMPRESSED_SLUMINANCE_ALPHA 0x8C4B
-GLAPI void GLAPIFUN(glUniformMatrix2x3fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
-GLAPI void GLAPIFUN(glUniformMatrix2x4fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
-GLAPI void GLAPIFUN(glUniformMatrix3x2fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
-GLAPI void GLAPIFUN(glUniformMatrix3x4fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
-GLAPI void GLAPIFUN(glUniformMatrix4x2fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
-GLAPI void GLAPIFUN(glUniformMatrix4x3fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
 #define GL_ARB_seamless_cube_map 1
 #define GL_TEXTURE_CUBE_MAP_SEAMLESS 0x884F
 #define GL_ARB_texture_filter_anisotropic 1
@@ -1559,26 +1039,1152 @@ GLAPI void GLAPIFUN(glUniformMatrix4x3fv)(GLint location,GLsizei count,GLboolean
 #define GL_RENDERBUFFER_STENCIL_SIZE 0x8D55
 #define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE 0x8D56
 #define GL_MAX_SAMPLES 0x8D57
-GLAPI void GLAPIFUN(glBindFramebuffer)(GLenum target,GLuint framebuffer);
-GLAPI void GLAPIFUN(glBindRenderbuffer)(GLenum target,GLuint renderbuffer);
-GLAPI void GLAPIFUN(glBlitFramebuffer)(GLint srcX0,GLint srcY0,GLint srcX1,GLint srcY1,GLint dstX0,GLint dstY0,GLint dstX1,GLint dstY1,GLbitfield mask,GLenum filter);
-GLAPI GLenum GLAPIFUN(glCheckFramebufferStatus)(GLenum target);
-GLAPI void GLAPIFUN(glDeleteFramebuffers)(GLsizei n,const GLuint* framebuffers);
-GLAPI void GLAPIFUN(glDeleteRenderbuffers)(GLsizei n,const GLuint* renderbuffers);
-GLAPI void GLAPIFUN(glFramebufferRenderbuffer)(GLenum target,GLenum attachment,GLenum renderbuffertarget,GLuint renderbuffer);
-GLAPI void GLAPIFUN(glFramebufferTexture1D)(GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level);
-GLAPI void GLAPIFUN(glFramebufferTexture2D)(GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level);
-GLAPI void GLAPIFUN(glFramebufferTexture3D)(GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level,GLint layer);
-GLAPI void GLAPIFUN(glFramebufferTextureLayer)(GLenum target,GLenum attachment,GLuint texture,GLint level,GLint layer);
-GLAPI void GLAPIFUN(glGenFramebuffers)(GLsizei n,GLuint* framebuffers);
-GLAPI void GLAPIFUN(glGenRenderbuffers)(GLsizei n,GLuint* renderbuffers);
-GLAPI void GLAPIFUN(glGenerateMipmap)(GLenum target);
-GLAPI void GLAPIFUN(glGetFramebufferAttachmentParameteriv)(GLenum target,GLenum attachment,GLenum pname,GLint* params);
-GLAPI void GLAPIFUN(glGetRenderbufferParameteriv)(GLenum target,GLenum pname,GLint* params);
-GLAPI GLboolean GLAPIFUN(glIsFramebuffer)(GLuint framebuffer);
-GLAPI GLboolean GLAPIFUN(glIsRenderbuffer)(GLuint renderbuffer);
-GLAPI void GLAPIFUN(glRenderbufferStorage)(GLenum target,GLenum internalformat,GLsizei width,GLsizei height);
-GLAPI void GLAPIFUN(glRenderbufferStorageMultisample)(GLenum target,GLsizei samples,GLenum internalformat,GLsizei width,GLsizei height);
+
+GLAPI void GLFUN(glAccum)(GLenum op,GLfloat value);
+GLAPI void GLFUN(glAlphaFunc)(GLenum func,GLclampf ref);
+GLAPI GLboolean GLFUN(glAreTexturesResident)(GLsizei n,const GLuint *textures,GLboolean *residences);
+GLAPI void GLFUN(glArrayElement)(GLint i);
+GLAPI void GLFUN(glBegin)(GLenum mode);
+GLAPI void GLFUN(glBindTexture)(GLenum target,GLuint texture);
+GLAPI void GLFUN(glBitmap)(GLsizei width,GLsizei height,GLfloat xorig,GLfloat yorig,GLfloat xmove,GLfloat ymove,const GLubyte *bitmap);
+GLAPI void GLFUN(glBlendFunc)(GLenum sfactor,GLenum dfactor);
+GLAPI void GLFUN(glCallList)(GLuint list);
+GLAPI void GLFUN(glCallLists)(GLsizei n,GLenum type,const void *lists);
+GLAPI void GLFUN(glClear)(GLbitfield mask);
+GLAPI void GLFUN(glClearAccum)(GLfloat red,GLfloat green,GLfloat blue,GLfloat alpha);
+GLAPI void GLFUN(glClearColor)(GLclampf red,GLclampf green,GLclampf blue,GLclampf alpha);
+GLAPI void GLFUN(glClearDepth)(GLclampd depth);
+GLAPI void GLFUN(glClearIndex)(GLfloat c);
+GLAPI void GLFUN(glClearStencil)(GLint s);
+GLAPI void GLFUN(glClipPlane)(GLenum plane,const GLdouble *equation);
+GLAPI void GLFUN(glColor3b)(GLbyte red,GLbyte green,GLbyte blue);
+GLAPI void GLFUN(glColor3bv)(const GLbyte *v);
+GLAPI void GLFUN(glColor3d)(GLdouble red,GLdouble green,GLdouble blue);
+GLAPI void GLFUN(glColor3dv)(const GLdouble *v);
+GLAPI void GLFUN(glColor3f)(GLfloat red,GLfloat green,GLfloat blue);
+GLAPI void GLFUN(glColor3fv)(const GLfloat *v);
+GLAPI void GLFUN(glColor3i)(GLint red,GLint green,GLint blue);
+GLAPI void GLFUN(glColor3iv)(const GLint *v);
+GLAPI void GLFUN(glColor3s)(GLshort red,GLshort green,GLshort blue);
+GLAPI void GLFUN(glColor3sv)(const GLshort *v);
+GLAPI void GLFUN(glColor3ub)(GLubyte red,GLubyte green,GLubyte blue);
+GLAPI void GLFUN(glColor3ubv)(const GLubyte *v);
+GLAPI void GLFUN(glColor3ui)(GLuint red,GLuint green,GLuint blue);
+GLAPI void GLFUN(glColor3uiv)(const GLuint *v);
+GLAPI void GLFUN(glColor3us)(GLushort red,GLushort green,GLushort blue);
+GLAPI void GLFUN(glColor3usv)(const GLushort *v);
+GLAPI void GLFUN(glColor4b)(GLbyte red,GLbyte green,GLbyte blue,GLbyte alpha);
+GLAPI void GLFUN(glColor4bv)(const GLbyte *v);
+GLAPI void GLFUN(glColor4d)(GLdouble red,GLdouble green,GLdouble blue,GLdouble alpha);
+GLAPI void GLFUN(glColor4dv)(const GLdouble *v);
+GLAPI void GLFUN(glColor4f)(GLfloat red,GLfloat green,GLfloat blue,GLfloat alpha);
+GLAPI void GLFUN(glColor4fv)(const GLfloat *v);
+GLAPI void GLFUN(glColor4i)(GLint red,GLint green,GLint blue,GLint alpha);
+GLAPI void GLFUN(glColor4iv)(const GLint *v);
+GLAPI void GLFUN(glColor4s)(GLshort red,GLshort green,GLshort blue,GLshort alpha);
+GLAPI void GLFUN(glColor4sv)(const GLshort *v);
+GLAPI void GLFUN(glColor4ub)(GLubyte red,GLubyte green,GLubyte blue,GLubyte alpha);
+GLAPI void GLFUN(glColor4ubv)(const GLubyte *v);
+GLAPI void GLFUN(glColor4ui)(GLuint red,GLuint green,GLuint blue,GLuint alpha);
+GLAPI void GLFUN(glColor4uiv)(const GLuint *v);
+GLAPI void GLFUN(glColor4us)(GLushort red,GLushort green,GLushort blue,GLushort alpha);
+GLAPI void GLFUN(glColor4usv)(const GLushort *v);
+GLAPI void GLFUN(glColorMask)(GLboolean red,GLboolean green,GLboolean blue,GLboolean alpha);
+GLAPI void GLFUN(glColorMaterial)(GLenum face,GLenum mode);
+GLAPI void GLFUN(glColorPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glCopyPixels)(GLint x,GLint y,GLsizei width,GLsizei height,GLenum type);
+GLAPI void GLFUN(glCopyTexImage1D)(GLenum target,GLint level,GLenum internalFormat,GLint x,GLint y,GLsizei width,GLint border);
+GLAPI void GLFUN(glCopyTexImage2D)(GLenum target,GLint level,GLenum internalFormat,GLint x,GLint y,GLsizei width,GLsizei height,GLint border);
+GLAPI void GLFUN(glCopyTexSubImage1D)(GLenum target,GLint level,GLint xoffset,GLint x,GLint y,GLsizei width);
+GLAPI void GLFUN(glCopyTexSubImage2D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint x,GLint y,GLsizei width,GLsizei height);
+GLAPI void GLFUN(glCullFace)(GLenum mode);
+GLAPI void GLFUN(glDeleteLists)(GLuint list,GLsizei range);
+GLAPI void GLFUN(glDeleteTextures)(GLsizei n,const GLuint *textures);
+GLAPI void GLFUN(glDepthFunc)(GLenum func);
+GLAPI void GLFUN(glDepthMask)(GLboolean flag);
+GLAPI void GLFUN(glDepthRange)(GLclampd zNear,GLclampd zFar);
+GLAPI void GLFUN(glDisable)(GLenum cap);
+GLAPI void GLFUN(glDisableClientState)(GLenum array);
+GLAPI void GLFUN(glDrawArrays)(GLenum mode,GLint first,GLsizei count);
+GLAPI void GLFUN(glDrawBuffer)(GLenum mode);
+GLAPI void GLFUN(glDrawElements)(GLenum mode,GLsizei count,GLenum type,const void *indices);
+GLAPI void GLFUN(glDrawPixels)(GLsizei width,GLsizei height,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glEdgeFlag)(GLboolean flag);
+GLAPI void GLFUN(glEdgeFlagPointer)(GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glEdgeFlagv)(const GLboolean *flag);
+GLAPI void GLFUN(glEnable)(GLenum cap);
+GLAPI void GLFUN(glEnableClientState)(GLenum array);
+GLAPI void GLFUN(glEnd)();
+GLAPI void GLFUN(glEndList)();
+GLAPI void GLFUN(glEvalCoord1d)(GLdouble u);
+GLAPI void GLFUN(glEvalCoord1dv)(const GLdouble *u);
+GLAPI void GLFUN(glEvalCoord1f)(GLfloat u);
+GLAPI void GLFUN(glEvalCoord1fv)(const GLfloat *u);
+GLAPI void GLFUN(glEvalCoord2d)(GLdouble u,GLdouble v);
+GLAPI void GLFUN(glEvalCoord2dv)(const GLdouble *u);
+GLAPI void GLFUN(glEvalCoord2f)(GLfloat u,GLfloat v);
+GLAPI void GLFUN(glEvalCoord2fv)(const GLfloat *u);
+GLAPI void GLFUN(glEvalMesh1)(GLenum mode,GLint i1,GLint i2);
+GLAPI void GLFUN(glEvalMesh2)(GLenum mode,GLint i1,GLint i2,GLint j1,GLint j2);
+GLAPI void GLFUN(glEvalPoint1)(GLint i);
+GLAPI void GLFUN(glEvalPoint2)(GLint i,GLint j);
+GLAPI void GLFUN(glFeedbackBuffer)(GLsizei size,GLenum type,GLfloat *buffer);
+GLAPI void GLFUN(glFinish)();
+GLAPI void GLFUN(glFlush)();
+GLAPI void GLFUN(glFogf)(GLenum pname,GLfloat param);
+GLAPI void GLFUN(glFogfv)(GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glFogi)(GLenum pname,GLint param);
+GLAPI void GLFUN(glFogiv)(GLenum pname,const GLint *params);
+GLAPI void GLFUN(glFrontFace)(GLenum mode);
+GLAPI void GLFUN(glFrustum)(GLdouble left,GLdouble right,GLdouble bottom,GLdouble top,GLdouble zNear,GLdouble zFar);
+GLAPI GLuint GLFUN(glGenLists)(GLsizei range);
+GLAPI void GLFUN(glGenTextures)(GLsizei n,GLuint *textures);
+GLAPI void GLFUN(glGetBooleanv)(GLenum pname,GLboolean *params);
+GLAPI void GLFUN(glGetClipPlane)(GLenum plane,GLdouble *equation);
+GLAPI void GLFUN(glGetDoublev)(GLenum pname,GLdouble *params);
+GLAPI GLenum GLFUN(glGetError)();
+GLAPI void GLFUN(glGetFloatv)(GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetIntegerv)(GLenum pname,GLint *params);
+GLAPI void GLFUN(glGetLightfv)(GLenum light,GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetLightiv)(GLenum light,GLenum pname,GLint *params);
+GLAPI void GLFUN(glGetMapdv)(GLenum target,GLenum query,GLdouble *v);
+GLAPI void GLFUN(glGetMapfv)(GLenum target,GLenum query,GLfloat *v);
+GLAPI void GLFUN(glGetMapiv)(GLenum target,GLenum query,GLint *v);
+GLAPI void GLFUN(glGetMaterialfv)(GLenum face,GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetMaterialiv)(GLenum face,GLenum pname,GLint *params);
+GLAPI void GLFUN(glGetPixelMapfv)(GLenum map,GLfloat *values);
+GLAPI void GLFUN(glGetPixelMapuiv)(GLenum map,GLuint *values);
+GLAPI void GLFUN(glGetPixelMapusv)(GLenum map,GLushort *values);
+GLAPI void GLFUN(glGetPointerv)(GLenum pname,void* *params);
+GLAPI void GLFUN(glGetPolygonStipple)(GLubyte *mask);
+GLAPI const GLubyte * GLFUN(glGetString)(GLenum name);
+GLAPI void GLFUN(glGetTexEnvfv)(GLenum target,GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetTexEnviv)(GLenum target,GLenum pname,GLint *params);
+GLAPI void GLFUN(glGetTexGendv)(GLenum coord,GLenum pname,GLdouble *params);
+GLAPI void GLFUN(glGetTexGenfv)(GLenum coord,GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetTexGeniv)(GLenum coord,GLenum pname,GLint *params);
+GLAPI void GLFUN(glGetTexImage)(GLenum target,GLint level,GLenum format,GLenum type,void *pixels);
+GLAPI void GLFUN(glGetTexLevelParameterfv)(GLenum target,GLint level,GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetTexLevelParameteriv)(GLenum target,GLint level,GLenum pname,GLint *params);
+GLAPI void GLFUN(glGetTexParameterfv)(GLenum target,GLenum pname,GLfloat *params);
+GLAPI void GLFUN(glGetTexParameteriv)(GLenum target,GLenum pname,GLint *params);
+GLAPI void GLFUN(glHint)(GLenum target,GLenum mode);
+GLAPI void GLFUN(glIndexMask)(GLuint mask);
+GLAPI void GLFUN(glIndexPointer)(GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glIndexd)(GLdouble c);
+GLAPI void GLFUN(glIndexdv)(const GLdouble *c);
+GLAPI void GLFUN(glIndexf)(GLfloat c);
+GLAPI void GLFUN(glIndexfv)(const GLfloat *c);
+GLAPI void GLFUN(glIndexi)(GLint c);
+GLAPI void GLFUN(glIndexiv)(const GLint *c);
+GLAPI void GLFUN(glIndexs)(GLshort c);
+GLAPI void GLFUN(glIndexsv)(const GLshort *c);
+GLAPI void GLFUN(glIndexub)(GLubyte c);
+GLAPI void GLFUN(glIndexubv)(const GLubyte *c);
+GLAPI void GLFUN(glInitNames)();
+GLAPI void GLFUN(glInterleavedArrays)(GLenum format,GLsizei stride,const void *pointer);
+GLAPI GLboolean GLFUN(glIsEnabled)(GLenum cap);
+GLAPI GLboolean GLFUN(glIsList)(GLuint list);
+GLAPI GLboolean GLFUN(glIsTexture)(GLuint texture);
+GLAPI void GLFUN(glLightModelf)(GLenum pname,GLfloat param);
+GLAPI void GLFUN(glLightModelfv)(GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glLightModeli)(GLenum pname,GLint param);
+GLAPI void GLFUN(glLightModeliv)(GLenum pname,const GLint *params);
+GLAPI void GLFUN(glLightf)(GLenum light,GLenum pname,GLfloat param);
+GLAPI void GLFUN(glLightfv)(GLenum light,GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glLighti)(GLenum light,GLenum pname,GLint param);
+GLAPI void GLFUN(glLightiv)(GLenum light,GLenum pname,const GLint *params);
+GLAPI void GLFUN(glLineStipple)(GLint factor,GLushort pattern);
+GLAPI void GLFUN(glLineWidth)(GLfloat width);
+GLAPI void GLFUN(glListBase)(GLuint base);
+GLAPI void GLFUN(glLoadIdentity)();
+GLAPI void GLFUN(glLoadMatrixd)(const GLdouble *m);
+GLAPI void GLFUN(glLoadMatrixf)(const GLfloat *m);
+GLAPI void GLFUN(glLoadName)(GLuint name);
+GLAPI void GLFUN(glLogicOp)(GLenum opcode);
+GLAPI void GLFUN(glMap1d)(GLenum target,GLdouble u1,GLdouble u2,GLint stride,GLint order,const GLdouble *points);
+GLAPI void GLFUN(glMap1f)(GLenum target,GLfloat u1,GLfloat u2,GLint stride,GLint order,const GLfloat *points);
+GLAPI void GLFUN(glMap2d)(GLenum target,GLdouble u1,GLdouble u2,GLint ustride,GLint uorder,GLdouble v1,GLdouble v2,GLint vstride,GLint vorder,const GLdouble *points);
+GLAPI void GLFUN(glMap2f)(GLenum target,GLfloat u1,GLfloat u2,GLint ustride,GLint uorder,GLfloat v1,GLfloat v2,GLint vstride,GLint vorder,const GLfloat *points);
+GLAPI void GLFUN(glMapGrid1d)(GLint un,GLdouble u1,GLdouble u2);
+GLAPI void GLFUN(glMapGrid1f)(GLint un,GLfloat u1,GLfloat u2);
+GLAPI void GLFUN(glMapGrid2d)(GLint un,GLdouble u1,GLdouble u2,GLint vn,GLdouble v1,GLdouble v2);
+GLAPI void GLFUN(glMapGrid2f)(GLint un,GLfloat u1,GLfloat u2,GLint vn,GLfloat v1,GLfloat v2);
+GLAPI void GLFUN(glMaterialf)(GLenum face,GLenum pname,GLfloat param);
+GLAPI void GLFUN(glMaterialfv)(GLenum face,GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glMateriali)(GLenum face,GLenum pname,GLint param);
+GLAPI void GLFUN(glMaterialiv)(GLenum face,GLenum pname,const GLint *params);
+GLAPI void GLFUN(glMatrixMode)(GLenum mode);
+GLAPI void GLFUN(glMultMatrixd)(const GLdouble *m);
+GLAPI void GLFUN(glMultMatrixf)(const GLfloat *m);
+GLAPI void GLFUN(glNewList)(GLuint list,GLenum mode);
+GLAPI void GLFUN(glNormal3b)(GLbyte nx,GLbyte ny,GLbyte nz);
+GLAPI void GLFUN(glNormal3bv)(const GLbyte *v);
+GLAPI void GLFUN(glNormal3d)(GLdouble nx,GLdouble ny,GLdouble nz);
+GLAPI void GLFUN(glNormal3dv)(const GLdouble *v);
+GLAPI void GLFUN(glNormal3f)(GLfloat nx,GLfloat ny,GLfloat nz);
+GLAPI void GLFUN(glNormal3fv)(const GLfloat *v);
+GLAPI void GLFUN(glNormal3i)(GLint nx,GLint ny,GLint nz);
+GLAPI void GLFUN(glNormal3iv)(const GLint *v);
+GLAPI void GLFUN(glNormal3s)(GLshort nx,GLshort ny,GLshort nz);
+GLAPI void GLFUN(glNormal3sv)(const GLshort *v);
+GLAPI void GLFUN(glNormalPointer)(GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glOrtho)(GLdouble left,GLdouble right,GLdouble bottom,GLdouble top,GLdouble zNear,GLdouble zFar);
+GLAPI void GLFUN(glPassThrough)(GLfloat token);
+GLAPI void GLFUN(glPixelMapfv)(GLenum map,GLsizei mapsize,const GLfloat *values);
+GLAPI void GLFUN(glPixelMapuiv)(GLenum map,GLsizei mapsize,const GLuint *values);
+GLAPI void GLFUN(glPixelMapusv)(GLenum map,GLsizei mapsize,const GLushort *values);
+GLAPI void GLFUN(glPixelStoref)(GLenum pname,GLfloat param);
+GLAPI void GLFUN(glPixelStorei)(GLenum pname,GLint param);
+GLAPI void GLFUN(glPixelTransferf)(GLenum pname,GLfloat param);
+GLAPI void GLFUN(glPixelTransferi)(GLenum pname,GLint param);
+GLAPI void GLFUN(glPixelZoom)(GLfloat xfactor,GLfloat yfactor);
+GLAPI void GLFUN(glPointSize)(GLfloat size);
+GLAPI void GLFUN(glPolygonMode)(GLenum face,GLenum mode);
+GLAPI void GLFUN(glPolygonOffset)(GLfloat factor,GLfloat units);
+GLAPI void GLFUN(glPolygonStipple)(const GLubyte *mask);
+GLAPI void GLFUN(glPopAttrib)();
+GLAPI void GLFUN(glPopClientAttrib)();
+GLAPI void GLFUN(glPopMatrix)();
+GLAPI void GLFUN(glPopName)();
+GLAPI void GLFUN(glPrioritizeTextures)(GLsizei n,const GLuint *textures,const GLclampf *priorities);
+GLAPI void GLFUN(glPushAttrib)(GLbitfield mask);
+GLAPI void GLFUN(glPushClientAttrib)(GLbitfield mask);
+GLAPI void GLFUN(glPushMatrix)();
+GLAPI void GLFUN(glPushName)(GLuint name);
+GLAPI void GLFUN(glRasterPos2d)(GLdouble x,GLdouble y);
+GLAPI void GLFUN(glRasterPos2dv)(const GLdouble *v);
+GLAPI void GLFUN(glRasterPos2f)(GLfloat x,GLfloat y);
+GLAPI void GLFUN(glRasterPos2fv)(const GLfloat *v);
+GLAPI void GLFUN(glRasterPos2i)(GLint x,GLint y);
+GLAPI void GLFUN(glRasterPos2iv)(const GLint *v);
+GLAPI void GLFUN(glRasterPos2s)(GLshort x,GLshort y);
+GLAPI void GLFUN(glRasterPos2sv)(const GLshort *v);
+GLAPI void GLFUN(glRasterPos3d)(GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glRasterPos3dv)(const GLdouble *v);
+GLAPI void GLFUN(glRasterPos3f)(GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glRasterPos3fv)(const GLfloat *v);
+GLAPI void GLFUN(glRasterPos3i)(GLint x,GLint y,GLint z);
+GLAPI void GLFUN(glRasterPos3iv)(const GLint *v);
+GLAPI void GLFUN(glRasterPos3s)(GLshort x,GLshort y,GLshort z);
+GLAPI void GLFUN(glRasterPos3sv)(const GLshort *v);
+GLAPI void GLFUN(glRasterPos4d)(GLdouble x,GLdouble y,GLdouble z,GLdouble w);
+GLAPI void GLFUN(glRasterPos4dv)(const GLdouble *v);
+GLAPI void GLFUN(glRasterPos4f)(GLfloat x,GLfloat y,GLfloat z,GLfloat w);
+GLAPI void GLFUN(glRasterPos4fv)(const GLfloat *v);
+GLAPI void GLFUN(glRasterPos4i)(GLint x,GLint y,GLint z,GLint w);
+GLAPI void GLFUN(glRasterPos4iv)(const GLint *v);
+GLAPI void GLFUN(glRasterPos4s)(GLshort x,GLshort y,GLshort z,GLshort w);
+GLAPI void GLFUN(glRasterPos4sv)(const GLshort *v);
+GLAPI void GLFUN(glReadBuffer)(GLenum mode);
+GLAPI void GLFUN(glReadPixels)(GLint x,GLint y,GLsizei width,GLsizei height,GLenum format,GLenum type,void *pixels);
+GLAPI void GLFUN(glRectd)(GLdouble x1,GLdouble y1,GLdouble x2,GLdouble y2);
+GLAPI void GLFUN(glRectdv)(const GLdouble *v1,const GLdouble *v2);
+GLAPI void GLFUN(glRectf)(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2);
+GLAPI void GLFUN(glRectfv)(const GLfloat *v1,const GLfloat *v2);
+GLAPI void GLFUN(glRecti)(GLint x1,GLint y1,GLint x2,GLint y2);
+GLAPI void GLFUN(glRectiv)(const GLint *v1,const GLint *v2);
+GLAPI void GLFUN(glRects)(GLshort x1,GLshort y1,GLshort x2,GLshort y2);
+GLAPI void GLFUN(glRectsv)(const GLshort *v1,const GLshort *v2);
+GLAPI GLint GLFUN(glRenderMode)(GLenum mode);
+GLAPI void GLFUN(glRotated)(GLdouble angle,GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glRotatef)(GLfloat angle,GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glScaled)(GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glScalef)(GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glScissor)(GLint x,GLint y,GLsizei width,GLsizei height);
+GLAPI void GLFUN(glSelectBuffer)(GLsizei size,GLuint *buffer);
+GLAPI void GLFUN(glShadeModel)(GLenum mode);
+GLAPI void GLFUN(glStencilFunc)(GLenum func,GLint ref,GLuint mask);
+GLAPI void GLFUN(glStencilMask)(GLuint mask);
+GLAPI void GLFUN(glStencilOp)(GLenum fail,GLenum zfail,GLenum zpass);
+GLAPI void GLFUN(glTexCoord1d)(GLdouble s);
+GLAPI void GLFUN(glTexCoord1dv)(const GLdouble *v);
+GLAPI void GLFUN(glTexCoord1f)(GLfloat s);
+GLAPI void GLFUN(glTexCoord1fv)(const GLfloat *v);
+GLAPI void GLFUN(glTexCoord1i)(GLint s);
+GLAPI void GLFUN(glTexCoord1iv)(const GLint *v);
+GLAPI void GLFUN(glTexCoord1s)(GLshort s);
+GLAPI void GLFUN(glTexCoord1sv)(const GLshort *v);
+GLAPI void GLFUN(glTexCoord2d)(GLdouble s,GLdouble t);
+GLAPI void GLFUN(glTexCoord2dv)(const GLdouble *v);
+GLAPI void GLFUN(glTexCoord2f)(GLfloat s,GLfloat t);
+GLAPI void GLFUN(glTexCoord2fv)(const GLfloat *v);
+GLAPI void GLFUN(glTexCoord2i)(GLint s,GLint t);
+GLAPI void GLFUN(glTexCoord2iv)(const GLint *v);
+GLAPI void GLFUN(glTexCoord2s)(GLshort s,GLshort t);
+GLAPI void GLFUN(glTexCoord2sv)(const GLshort *v);
+GLAPI void GLFUN(glTexCoord3d)(GLdouble s,GLdouble t,GLdouble r);
+GLAPI void GLFUN(glTexCoord3dv)(const GLdouble *v);
+GLAPI void GLFUN(glTexCoord3f)(GLfloat s,GLfloat t,GLfloat r);
+GLAPI void GLFUN(glTexCoord3fv)(const GLfloat *v);
+GLAPI void GLFUN(glTexCoord3i)(GLint s,GLint t,GLint r);
+GLAPI void GLFUN(glTexCoord3iv)(const GLint *v);
+GLAPI void GLFUN(glTexCoord3s)(GLshort s,GLshort t,GLshort r);
+GLAPI void GLFUN(glTexCoord3sv)(const GLshort *v);
+GLAPI void GLFUN(glTexCoord4d)(GLdouble s,GLdouble t,GLdouble r,GLdouble q);
+GLAPI void GLFUN(glTexCoord4dv)(const GLdouble *v);
+GLAPI void GLFUN(glTexCoord4f)(GLfloat s,GLfloat t,GLfloat r,GLfloat q);
+GLAPI void GLFUN(glTexCoord4fv)(const GLfloat *v);
+GLAPI void GLFUN(glTexCoord4i)(GLint s,GLint t,GLint r,GLint q);
+GLAPI void GLFUN(glTexCoord4iv)(const GLint *v);
+GLAPI void GLFUN(glTexCoord4s)(GLshort s,GLshort t,GLshort r,GLshort q);
+GLAPI void GLFUN(glTexCoord4sv)(const GLshort *v);
+GLAPI void GLFUN(glTexCoordPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glTexEnvf)(GLenum target,GLenum pname,GLfloat param);
+GLAPI void GLFUN(glTexEnvfv)(GLenum target,GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glTexEnvi)(GLenum target,GLenum pname,GLint param);
+GLAPI void GLFUN(glTexEnviv)(GLenum target,GLenum pname,const GLint *params);
+GLAPI void GLFUN(glTexGend)(GLenum coord,GLenum pname,GLdouble param);
+GLAPI void GLFUN(glTexGendv)(GLenum coord,GLenum pname,const GLdouble *params);
+GLAPI void GLFUN(glTexGenf)(GLenum coord,GLenum pname,GLfloat param);
+GLAPI void GLFUN(glTexGenfv)(GLenum coord,GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glTexGeni)(GLenum coord,GLenum pname,GLint param);
+GLAPI void GLFUN(glTexGeniv)(GLenum coord,GLenum pname,const GLint *params);
+GLAPI void GLFUN(glTexImage1D)(GLenum target,GLint level,GLint internalformat,GLsizei width,GLint border,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glTexImage2D)(GLenum target,GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glTexParameterf)(GLenum target,GLenum pname,GLfloat param);
+GLAPI void GLFUN(glTexParameterfv)(GLenum target,GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glTexParameteri)(GLenum target,GLenum pname,GLint param);
+GLAPI void GLFUN(glTexParameteriv)(GLenum target,GLenum pname,const GLint *params);
+GLAPI void GLFUN(glTexSubImage1D)(GLenum target,GLint level,GLint xoffset,GLsizei width,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glTexSubImage2D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glTranslated)(GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glTranslatef)(GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glVertex2d)(GLdouble x,GLdouble y);
+GLAPI void GLFUN(glVertex2dv)(const GLdouble *v);
+GLAPI void GLFUN(glVertex2f)(GLfloat x,GLfloat y);
+GLAPI void GLFUN(glVertex2fv)(const GLfloat *v);
+GLAPI void GLFUN(glVertex2i)(GLint x,GLint y);
+GLAPI void GLFUN(glVertex2iv)(const GLint *v);
+GLAPI void GLFUN(glVertex2s)(GLshort x,GLshort y);
+GLAPI void GLFUN(glVertex2sv)(const GLshort *v);
+GLAPI void GLFUN(glVertex3d)(GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glVertex3dv)(const GLdouble *v);
+GLAPI void GLFUN(glVertex3f)(GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glVertex3fv)(const GLfloat *v);
+GLAPI void GLFUN(glVertex3i)(GLint x,GLint y,GLint z);
+GLAPI void GLFUN(glVertex3iv)(const GLint *v);
+GLAPI void GLFUN(glVertex3s)(GLshort x,GLshort y,GLshort z);
+GLAPI void GLFUN(glVertex3sv)(const GLshort *v);
+GLAPI void GLFUN(glVertex4d)(GLdouble x,GLdouble y,GLdouble z,GLdouble w);
+GLAPI void GLFUN(glVertex4dv)(const GLdouble *v);
+GLAPI void GLFUN(glVertex4f)(GLfloat x,GLfloat y,GLfloat z,GLfloat w);
+GLAPI void GLFUN(glVertex4fv)(const GLfloat *v);
+GLAPI void GLFUN(glVertex4i)(GLint x,GLint y,GLint z,GLint w);
+GLAPI void GLFUN(glVertex4iv)(const GLint *v);
+GLAPI void GLFUN(glVertex4s)(GLshort x,GLshort y,GLshort z,GLshort w);
+GLAPI void GLFUN(glVertex4sv)(const GLshort *v);
+GLAPI void GLFUN(glVertexPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glViewport)(GLint x,GLint y,GLsizei width,GLsizei height);
+GLAPI void GLFUN(glCopyTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint zoffset,GLint x,GLint y,GLsizei width,GLsizei height);
+GLAPI void GLFUN(glDrawRangeElements)(GLenum mode,GLuint start,GLuint end,GLsizei count,GLenum type,const void *indices);
+GLAPI void GLFUN(glTexImage3D)(GLenum target,GLint level,GLint internalFormat,GLsizei width,GLsizei height,GLsizei depth,GLint border,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint zoffset,GLsizei width,GLsizei height,GLsizei depth,GLenum format,GLenum type,const void *pixels);
+GLAPI void GLFUN(glActiveTexture)(GLenum texture);
+GLAPI void GLFUN(glClientActiveTexture)(GLenum texture);
+GLAPI void GLFUN(glCompressedTexImage1D)(GLenum target,GLint level,GLenum internalformat,GLsizei width,GLint border,GLsizei imageSize,const void *data);
+GLAPI void GLFUN(glCompressedTexImage2D)(GLenum target,GLint level,GLenum internalformat,GLsizei width,GLsizei height,GLint border,GLsizei imageSize,const void *data);
+GLAPI void GLFUN(glCompressedTexImage3D)(GLenum target,GLint level,GLenum internalformat,GLsizei width,GLsizei height,GLsizei depth,GLint border,GLsizei imageSize,const void *data);
+GLAPI void GLFUN(glCompressedTexSubImage1D)(GLenum target,GLint level,GLint xoffset,GLsizei width,GLenum format,GLsizei imageSize,const void *data);
+GLAPI void GLFUN(glCompressedTexSubImage2D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLsizei width,GLsizei height,GLenum format,GLsizei imageSize,const void *data);
+GLAPI void GLFUN(glCompressedTexSubImage3D)(GLenum target,GLint level,GLint xoffset,GLint yoffset,GLint zoffset,GLsizei width,GLsizei height,GLsizei depth,GLenum format,GLsizei imageSize,const void *data);
+GLAPI void GLFUN(glGetCompressedTexImage)(GLenum target,GLint lod,void *img);
+GLAPI void GLFUN(glLoadTransposeMatrixd)(const GLdouble m[16]);
+GLAPI void GLFUN(glLoadTransposeMatrixf)(const GLfloat m[16]);
+GLAPI void GLFUN(glMultTransposeMatrixd)(const GLdouble m[16]);
+GLAPI void GLFUN(glMultTransposeMatrixf)(const GLfloat m[16]);
+GLAPI void GLFUN(glMultiTexCoord1d)(GLenum target,GLdouble s);
+GLAPI void GLFUN(glMultiTexCoord1dv)(GLenum target,const GLdouble *v);
+GLAPI void GLFUN(glMultiTexCoord1f)(GLenum target,GLfloat s);
+GLAPI void GLFUN(glMultiTexCoord1fv)(GLenum target,const GLfloat *v);
+GLAPI void GLFUN(glMultiTexCoord1i)(GLenum target,GLint s);
+GLAPI void GLFUN(glMultiTexCoord1iv)(GLenum target,const GLint *v);
+GLAPI void GLFUN(glMultiTexCoord1s)(GLenum target,GLshort s);
+GLAPI void GLFUN(glMultiTexCoord1sv)(GLenum target,const GLshort *v);
+GLAPI void GLFUN(glMultiTexCoord2d)(GLenum target,GLdouble s,GLdouble t);
+GLAPI void GLFUN(glMultiTexCoord2dv)(GLenum target,const GLdouble *v);
+GLAPI void GLFUN(glMultiTexCoord2f)(GLenum target,GLfloat s,GLfloat t);
+GLAPI void GLFUN(glMultiTexCoord2fv)(GLenum target,const GLfloat *v);
+GLAPI void GLFUN(glMultiTexCoord2i)(GLenum target,GLint s,GLint t);
+GLAPI void GLFUN(glMultiTexCoord2iv)(GLenum target,const GLint *v);
+GLAPI void GLFUN(glMultiTexCoord2s)(GLenum target,GLshort s,GLshort t);
+GLAPI void GLFUN(glMultiTexCoord2sv)(GLenum target,const GLshort *v);
+GLAPI void GLFUN(glMultiTexCoord3d)(GLenum target,GLdouble s,GLdouble t,GLdouble r);
+GLAPI void GLFUN(glMultiTexCoord3dv)(GLenum target,const GLdouble *v);
+GLAPI void GLFUN(glMultiTexCoord3f)(GLenum target,GLfloat s,GLfloat t,GLfloat r);
+GLAPI void GLFUN(glMultiTexCoord3fv)(GLenum target,const GLfloat *v);
+GLAPI void GLFUN(glMultiTexCoord3i)(GLenum target,GLint s,GLint t,GLint r);
+GLAPI void GLFUN(glMultiTexCoord3iv)(GLenum target,const GLint *v);
+GLAPI void GLFUN(glMultiTexCoord3s)(GLenum target,GLshort s,GLshort t,GLshort r);
+GLAPI void GLFUN(glMultiTexCoord3sv)(GLenum target,const GLshort *v);
+GLAPI void GLFUN(glMultiTexCoord4d)(GLenum target,GLdouble s,GLdouble t,GLdouble r,GLdouble q);
+GLAPI void GLFUN(glMultiTexCoord4dv)(GLenum target,const GLdouble *v);
+GLAPI void GLFUN(glMultiTexCoord4f)(GLenum target,GLfloat s,GLfloat t,GLfloat r,GLfloat q);
+GLAPI void GLFUN(glMultiTexCoord4fv)(GLenum target,const GLfloat *v);
+GLAPI void GLFUN(glMultiTexCoord4i)(GLenum target,GLint s,GLint t,GLint r,GLint q);
+GLAPI void GLFUN(glMultiTexCoord4iv)(GLenum target,const GLint *v);
+GLAPI void GLFUN(glMultiTexCoord4s)(GLenum target,GLshort s,GLshort t,GLshort r,GLshort q);
+GLAPI void GLFUN(glMultiTexCoord4sv)(GLenum target,const GLshort *v);
+GLAPI void GLFUN(glSampleCoverage)(GLclampf value,GLboolean invert);
+GLAPI void GLFUN(glBlendColor)(GLclampf red,GLclampf green,GLclampf blue,GLclampf alpha);
+GLAPI void GLFUN(glBlendEquation)(GLenum mode);
+GLAPI void GLFUN(glBlendFuncSeparate)(GLenum sfactorRGB,GLenum dfactorRGB,GLenum sfactorAlpha,GLenum dfactorAlpha);
+GLAPI void GLFUN(glFogCoordPointer)(GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glFogCoordd)(GLdouble coord);
+GLAPI void GLFUN(glFogCoorddv)(const GLdouble *coord);
+GLAPI void GLFUN(glFogCoordf)(GLfloat coord);
+GLAPI void GLFUN(glFogCoordfv)(const GLfloat *coord);
+GLAPI void GLFUN(glMultiDrawArrays)(GLenum mode,const GLint *first,const GLsizei *count,GLsizei drawcount);
+GLAPI void GLFUN(glMultiDrawElements)(GLenum mode,const GLsizei *count,GLenum type,const void *const* indices,GLsizei drawcount);
+GLAPI void GLFUN(glPointParameterf)(GLenum pname,GLfloat param);
+GLAPI void GLFUN(glPointParameterfv)(GLenum pname,const GLfloat *params);
+GLAPI void GLFUN(glPointParameteri)(GLenum pname,GLint param);
+GLAPI void GLFUN(glPointParameteriv)(GLenum pname,const GLint *params);
+GLAPI void GLFUN(glSecondaryColor3b)(GLbyte red,GLbyte green,GLbyte blue);
+GLAPI void GLFUN(glSecondaryColor3bv)(const GLbyte *v);
+GLAPI void GLFUN(glSecondaryColor3d)(GLdouble red,GLdouble green,GLdouble blue);
+GLAPI void GLFUN(glSecondaryColor3dv)(const GLdouble *v);
+GLAPI void GLFUN(glSecondaryColor3f)(GLfloat red,GLfloat green,GLfloat blue);
+GLAPI void GLFUN(glSecondaryColor3fv)(const GLfloat *v);
+GLAPI void GLFUN(glSecondaryColor3i)(GLint red,GLint green,GLint blue);
+GLAPI void GLFUN(glSecondaryColor3iv)(const GLint *v);
+GLAPI void GLFUN(glSecondaryColor3s)(GLshort red,GLshort green,GLshort blue);
+GLAPI void GLFUN(glSecondaryColor3sv)(const GLshort *v);
+GLAPI void GLFUN(glSecondaryColor3ub)(GLubyte red,GLubyte green,GLubyte blue);
+GLAPI void GLFUN(glSecondaryColor3ubv)(const GLubyte *v);
+GLAPI void GLFUN(glSecondaryColor3ui)(GLuint red,GLuint green,GLuint blue);
+GLAPI void GLFUN(glSecondaryColor3uiv)(const GLuint *v);
+GLAPI void GLFUN(glSecondaryColor3us)(GLushort red,GLushort green,GLushort blue);
+GLAPI void GLFUN(glSecondaryColor3usv)(const GLushort *v);
+GLAPI void GLFUN(glSecondaryColorPointer)(GLint size,GLenum type,GLsizei stride,const void *pointer);
+GLAPI void GLFUN(glWindowPos2d)(GLdouble x,GLdouble y);
+GLAPI void GLFUN(glWindowPos2dv)(const GLdouble *p);
+GLAPI void GLFUN(glWindowPos2f)(GLfloat x,GLfloat y);
+GLAPI void GLFUN(glWindowPos2fv)(const GLfloat *p);
+GLAPI void GLFUN(glWindowPos2i)(GLint x,GLint y);
+GLAPI void GLFUN(glWindowPos2iv)(const GLint *p);
+GLAPI void GLFUN(glWindowPos2s)(GLshort x,GLshort y);
+GLAPI void GLFUN(glWindowPos2sv)(const GLshort *p);
+GLAPI void GLFUN(glWindowPos3d)(GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glWindowPos3dv)(const GLdouble *p);
+GLAPI void GLFUN(glWindowPos3f)(GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glWindowPos3fv)(const GLfloat *p);
+GLAPI void GLFUN(glWindowPos3i)(GLint x,GLint y,GLint z);
+GLAPI void GLFUN(glWindowPos3iv)(const GLint *p);
+GLAPI void GLFUN(glWindowPos3s)(GLshort x,GLshort y,GLshort z);
+GLAPI void GLFUN(glWindowPos3sv)(const GLshort *p);
+GLAPI void GLFUN(glBeginQuery)(GLenum target,GLuint id);
+GLAPI void GLFUN(glBindBuffer)(GLenum target,GLuint buffer);
+GLAPI void GLFUN(glBufferData)(GLenum target,GLsizeiptr size,const void* data,GLenum usage);
+GLAPI void GLFUN(glBufferSubData)(GLenum target,GLintptr offset,GLsizeiptr size,const void* data);
+GLAPI void GLFUN(glDeleteBuffers)(GLsizei n,const GLuint* buffers);
+GLAPI void GLFUN(glDeleteQueries)(GLsizei n,const GLuint* ids);
+GLAPI void GLFUN(glEndQuery)(GLenum target);
+GLAPI void GLFUN(glGenBuffers)(GLsizei n,GLuint* buffers);
+GLAPI void GLFUN(glGenQueries)(GLsizei n,GLuint* ids);
+GLAPI void GLFUN(glGetBufferParameteriv)(GLenum target,GLenum pname,GLint* params);
+GLAPI void GLFUN(glGetBufferPointerv)(GLenum target,GLenum pname,void** params);
+GLAPI void GLFUN(glGetBufferSubData)(GLenum target,GLintptr offset,GLsizeiptr size,void* data);
+GLAPI void GLFUN(glGetQueryObjectiv)(GLuint id,GLenum pname,GLint* params);
+GLAPI void GLFUN(glGetQueryObjectuiv)(GLuint id,GLenum pname,GLuint* params);
+GLAPI void GLFUN(glGetQueryiv)(GLenum target,GLenum pname,GLint* params);
+GLAPI GLboolean GLFUN(glIsBuffer)(GLuint buffer);
+GLAPI GLboolean GLFUN(glIsQuery)(GLuint id);
+GLAPI void* GLFUN(glMapBuffer)(GLenum target,GLenum access);
+GLAPI GLboolean GLFUN(glUnmapBuffer)(GLenum target);
+GLAPI void GLFUN(glAttachShader)(GLuint program,GLuint shader);
+GLAPI void GLFUN(glBindAttribLocation)(GLuint program,GLuint index,const GLchar* name);
+GLAPI void GLFUN(glBlendEquationSeparate)(GLenum modeRGB,GLenum modeAlpha);
+GLAPI void GLFUN(glCompileShader)(GLuint shader);
+GLAPI GLuint GLFUN(glCreateProgram)();
+GLAPI GLuint GLFUN(glCreateShader)(GLenum type);
+GLAPI void GLFUN(glDeleteProgram)(GLuint program);
+GLAPI void GLFUN(glDeleteShader)(GLuint shader);
+GLAPI void GLFUN(glDetachShader)(GLuint program,GLuint shader);
+GLAPI void GLFUN(glDisableVertexAttribArray)(GLuint index);
+GLAPI void GLFUN(glDrawBuffers)(GLsizei n,const GLenum* bufs);
+GLAPI void GLFUN(glEnableVertexAttribArray)(GLuint index);
+GLAPI void GLFUN(glGetActiveAttrib)(GLuint program,GLuint index,GLsizei maxLength,GLsizei* length,GLint* size,GLenum* type,GLchar* name);
+GLAPI void GLFUN(glGetActiveUniform)(GLuint program,GLuint index,GLsizei maxLength,GLsizei* length,GLint* size,GLenum* type,GLchar* name);
+GLAPI void GLFUN(glGetAttachedShaders)(GLuint program,GLsizei maxCount,GLsizei* count,GLuint* shaders);
+GLAPI GLint GLFUN(glGetAttribLocation)(GLuint program,const GLchar* name);
+GLAPI void GLFUN(glGetProgramInfoLog)(GLuint program,GLsizei bufSize,GLsizei* length,GLchar* infoLog);
+GLAPI void GLFUN(glGetProgramiv)(GLuint program,GLenum pname,GLint* param);
+GLAPI void GLFUN(glGetShaderInfoLog)(GLuint shader,GLsizei bufSize,GLsizei* length,GLchar* infoLog);
+GLAPI void GLFUN(glGetShaderSource)(GLuint obj,GLsizei maxLength,GLsizei* length,GLchar* source);
+GLAPI void GLFUN(glGetShaderiv)(GLuint shader,GLenum pname,GLint* param);
+GLAPI GLint GLFUN(glGetUniformLocation)(GLuint program,const GLchar* name);
+GLAPI void GLFUN(glGetUniformfv)(GLuint program,GLint location,GLfloat* params);
+GLAPI void GLFUN(glGetUniformiv)(GLuint program,GLint location,GLint* params);
+GLAPI void GLFUN(glGetVertexAttribPointerv)(GLuint index,GLenum pname,void** pointer);
+GLAPI void GLFUN(glGetVertexAttribdv)(GLuint index,GLenum pname,GLdouble* params);
+GLAPI void GLFUN(glGetVertexAttribfv)(GLuint index,GLenum pname,GLfloat* params);
+GLAPI void GLFUN(glGetVertexAttribiv)(GLuint index,GLenum pname,GLint* params);
+GLAPI GLboolean GLFUN(glIsProgram)(GLuint program);
+GLAPI GLboolean GLFUN(glIsShader)(GLuint shader);
+GLAPI void GLFUN(glLinkProgram)(GLuint program);
+GLAPI void GLFUN(glShaderSource)(GLuint shader,GLsizei count,const GLchar *const* string,const GLint* length);
+GLAPI void GLFUN(glStencilFuncSeparate)(GLenum frontfunc,GLenum backfunc,GLint ref,GLuint mask);
+GLAPI void GLFUN(glStencilMaskSeparate)(GLenum face,GLuint mask);
+GLAPI void GLFUN(glStencilOpSeparate)(GLenum face,GLenum sfail,GLenum dpfail,GLenum dppass);
+GLAPI void GLFUN(glUniform1f)(GLint location,GLfloat v0);
+GLAPI void GLFUN(glUniform1fv)(GLint location,GLsizei count,const GLfloat* value);
+GLAPI void GLFUN(glUniform1i)(GLint location,GLint v0);
+GLAPI void GLFUN(glUniform1iv)(GLint location,GLsizei count,const GLint* value);
+GLAPI void GLFUN(glUniform2f)(GLint location,GLfloat v0,GLfloat v1);
+GLAPI void GLFUN(glUniform2fv)(GLint location,GLsizei count,const GLfloat* value);
+GLAPI void GLFUN(glUniform2i)(GLint location,GLint v0,GLint v1);
+GLAPI void GLFUN(glUniform2iv)(GLint location,GLsizei count,const GLint* value);
+GLAPI void GLFUN(glUniform3f)(GLint location,GLfloat v0,GLfloat v1,GLfloat v2);
+GLAPI void GLFUN(glUniform3fv)(GLint location,GLsizei count,const GLfloat* value);
+GLAPI void GLFUN(glUniform3i)(GLint location,GLint v0,GLint v1,GLint v2);
+GLAPI void GLFUN(glUniform3iv)(GLint location,GLsizei count,const GLint* value);
+GLAPI void GLFUN(glUniform4f)(GLint location,GLfloat v0,GLfloat v1,GLfloat v2,GLfloat v3);
+GLAPI void GLFUN(glUniform4fv)(GLint location,GLsizei count,const GLfloat* value);
+GLAPI void GLFUN(glUniform4i)(GLint location,GLint v0,GLint v1,GLint v2,GLint v3);
+GLAPI void GLFUN(glUniform4iv)(GLint location,GLsizei count,const GLint* value);
+GLAPI void GLFUN(glUniformMatrix2fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat* value);
+GLAPI void GLFUN(glUniformMatrix3fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat* value);
+GLAPI void GLFUN(glUniformMatrix4fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat* value);
+GLAPI void GLFUN(glUseProgram)(GLuint program);
+GLAPI void GLFUN(glValidateProgram)(GLuint program);
+GLAPI void GLFUN(glVertexAttrib1d)(GLuint index,GLdouble x);
+GLAPI void GLFUN(glVertexAttrib1dv)(GLuint index,const GLdouble* v);
+GLAPI void GLFUN(glVertexAttrib1f)(GLuint index,GLfloat x);
+GLAPI void GLFUN(glVertexAttrib1fv)(GLuint index,const GLfloat* v);
+GLAPI void GLFUN(glVertexAttrib1s)(GLuint index,GLshort x);
+GLAPI void GLFUN(glVertexAttrib1sv)(GLuint index,const GLshort* v);
+GLAPI void GLFUN(glVertexAttrib2d)(GLuint index,GLdouble x,GLdouble y);
+GLAPI void GLFUN(glVertexAttrib2dv)(GLuint index,const GLdouble* v);
+GLAPI void GLFUN(glVertexAttrib2f)(GLuint index,GLfloat x,GLfloat y);
+GLAPI void GLFUN(glVertexAttrib2fv)(GLuint index,const GLfloat* v);
+GLAPI void GLFUN(glVertexAttrib2s)(GLuint index,GLshort x,GLshort y);
+GLAPI void GLFUN(glVertexAttrib2sv)(GLuint index,const GLshort* v);
+GLAPI void GLFUN(glVertexAttrib3d)(GLuint index,GLdouble x,GLdouble y,GLdouble z);
+GLAPI void GLFUN(glVertexAttrib3dv)(GLuint index,const GLdouble* v);
+GLAPI void GLFUN(glVertexAttrib3f)(GLuint index,GLfloat x,GLfloat y,GLfloat z);
+GLAPI void GLFUN(glVertexAttrib3fv)(GLuint index,const GLfloat* v);
+GLAPI void GLFUN(glVertexAttrib3s)(GLuint index,GLshort x,GLshort y,GLshort z);
+GLAPI void GLFUN(glVertexAttrib3sv)(GLuint index,const GLshort* v);
+GLAPI void GLFUN(glVertexAttrib4Nbv)(GLuint index,const GLbyte* v);
+GLAPI void GLFUN(glVertexAttrib4Niv)(GLuint index,const GLint* v);
+GLAPI void GLFUN(glVertexAttrib4Nsv)(GLuint index,const GLshort* v);
+GLAPI void GLFUN(glVertexAttrib4Nub)(GLuint index,GLubyte x,GLubyte y,GLubyte z,GLubyte w);
+GLAPI void GLFUN(glVertexAttrib4Nubv)(GLuint index,const GLubyte* v);
+GLAPI void GLFUN(glVertexAttrib4Nuiv)(GLuint index,const GLuint* v);
+GLAPI void GLFUN(glVertexAttrib4Nusv)(GLuint index,const GLushort* v);
+GLAPI void GLFUN(glVertexAttrib4bv)(GLuint index,const GLbyte* v);
+GLAPI void GLFUN(glVertexAttrib4d)(GLuint index,GLdouble x,GLdouble y,GLdouble z,GLdouble w);
+GLAPI void GLFUN(glVertexAttrib4dv)(GLuint index,const GLdouble* v);
+GLAPI void GLFUN(glVertexAttrib4f)(GLuint index,GLfloat x,GLfloat y,GLfloat z,GLfloat w);
+GLAPI void GLFUN(glVertexAttrib4fv)(GLuint index,const GLfloat* v);
+GLAPI void GLFUN(glVertexAttrib4iv)(GLuint index,const GLint* v);
+GLAPI void GLFUN(glVertexAttrib4s)(GLuint index,GLshort x,GLshort y,GLshort z,GLshort w);
+GLAPI void GLFUN(glVertexAttrib4sv)(GLuint index,const GLshort* v);
+GLAPI void GLFUN(glVertexAttrib4ubv)(GLuint index,const GLubyte* v);
+GLAPI void GLFUN(glVertexAttrib4uiv)(GLuint index,const GLuint* v);
+GLAPI void GLFUN(glVertexAttrib4usv)(GLuint index,const GLushort* v);
+GLAPI void GLFUN(glVertexAttribPointer)(GLuint index,GLint size,GLenum type,GLboolean normalized,GLsizei stride,const void* pointer);
+GLAPI void GLFUN(glUniformMatrix2x3fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
+GLAPI void GLFUN(glUniformMatrix2x4fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
+GLAPI void GLFUN(glUniformMatrix3x2fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
+GLAPI void GLFUN(glUniformMatrix3x4fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
+GLAPI void GLFUN(glUniformMatrix4x2fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
+GLAPI void GLFUN(glUniformMatrix4x3fv)(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value);
+GLAPI void GLFUN(glBindFramebuffer)(GLenum target,GLuint framebuffer);
+GLAPI void GLFUN(glBindRenderbuffer)(GLenum target,GLuint renderbuffer);
+GLAPI void GLFUN(glBlitFramebuffer)(GLint srcX0,GLint srcY0,GLint srcX1,GLint srcY1,GLint dstX0,GLint dstY0,GLint dstX1,GLint dstY1,GLbitfield mask,GLenum filter);
+GLAPI GLenum GLFUN(glCheckFramebufferStatus)(GLenum target);
+GLAPI void GLFUN(glDeleteFramebuffers)(GLsizei n,const GLuint* framebuffers);
+GLAPI void GLFUN(glDeleteRenderbuffers)(GLsizei n,const GLuint* renderbuffers);
+GLAPI void GLFUN(glFramebufferRenderbuffer)(GLenum target,GLenum attachment,GLenum renderbuffertarget,GLuint renderbuffer);
+GLAPI void GLFUN(glFramebufferTexture1D)(GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level);
+GLAPI void GLFUN(glFramebufferTexture2D)(GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level);
+GLAPI void GLFUN(glFramebufferTexture3D)(GLenum target,GLenum attachment,GLenum textarget,GLuint texture,GLint level,GLint layer);
+GLAPI void GLFUN(glFramebufferTextureLayer)(GLenum target,GLenum attachment,GLuint texture,GLint level,GLint layer);
+GLAPI void GLFUN(glGenFramebuffers)(GLsizei n,GLuint* framebuffers);
+GLAPI void GLFUN(glGenRenderbuffers)(GLsizei n,GLuint* renderbuffers);
+GLAPI void GLFUN(glGenerateMipmap)(GLenum target);
+GLAPI void GLFUN(glGetFramebufferAttachmentParameteriv)(GLenum target,GLenum attachment,GLenum pname,GLint* params);
+GLAPI void GLFUN(glGetRenderbufferParameteriv)(GLenum target,GLenum pname,GLint* params);
+GLAPI GLboolean GLFUN(glIsFramebuffer)(GLuint framebuffer);
+GLAPI GLboolean GLFUN(glIsRenderbuffer)(GLuint renderbuffer);
+GLAPI void GLFUN(glRenderbufferStorage)(GLenum target,GLenum internalformat,GLsizei width,GLsizei height);
+GLAPI void GLFUN(glRenderbufferStorageMultisample)(GLenum target,GLsizei samples,GLenum internalformat,GLsizei width,GLsizei height);
+
+#if !__EMSCRIPTEN__
+#define glAccum bbglAccum
+#define glAlphaFunc bbglAlphaFunc
+#define glAreTexturesResident bbglAreTexturesResident
+#define glArrayElement bbglArrayElement
+#define glBegin bbglBegin
+#define glBindTexture bbglBindTexture
+#define glBitmap bbglBitmap
+#define glBlendFunc bbglBlendFunc
+#define glCallList bbglCallList
+#define glCallLists bbglCallLists
+#define glClear bbglClear
+#define glClearAccum bbglClearAccum
+#define glClearColor bbglClearColor
+#define glClearDepth bbglClearDepth
+#define glClearIndex bbglClearIndex
+#define glClearStencil bbglClearStencil
+#define glClipPlane bbglClipPlane
+#define glColor3b bbglColor3b
+#define glColor3bv bbglColor3bv
+#define glColor3d bbglColor3d
+#define glColor3dv bbglColor3dv
+#define glColor3f bbglColor3f
+#define glColor3fv bbglColor3fv
+#define glColor3i bbglColor3i
+#define glColor3iv bbglColor3iv
+#define glColor3s bbglColor3s
+#define glColor3sv bbglColor3sv
+#define glColor3ub bbglColor3ub
+#define glColor3ubv bbglColor3ubv
+#define glColor3ui bbglColor3ui
+#define glColor3uiv bbglColor3uiv
+#define glColor3us bbglColor3us
+#define glColor3usv bbglColor3usv
+#define glColor4b bbglColor4b
+#define glColor4bv bbglColor4bv
+#define glColor4d bbglColor4d
+#define glColor4dv bbglColor4dv
+#define glColor4f bbglColor4f
+#define glColor4fv bbglColor4fv
+#define glColor4i bbglColor4i
+#define glColor4iv bbglColor4iv
+#define glColor4s bbglColor4s
+#define glColor4sv bbglColor4sv
+#define glColor4ub bbglColor4ub
+#define glColor4ubv bbglColor4ubv
+#define glColor4ui bbglColor4ui
+#define glColor4uiv bbglColor4uiv
+#define glColor4us bbglColor4us
+#define glColor4usv bbglColor4usv
+#define glColorMask bbglColorMask
+#define glColorMaterial bbglColorMaterial
+#define glColorPointer bbglColorPointer
+#define glCopyPixels bbglCopyPixels
+#define glCopyTexImage1D bbglCopyTexImage1D
+#define glCopyTexImage2D bbglCopyTexImage2D
+#define glCopyTexSubImage1D bbglCopyTexSubImage1D
+#define glCopyTexSubImage2D bbglCopyTexSubImage2D
+#define glCullFace bbglCullFace
+#define glDeleteLists bbglDeleteLists
+#define glDeleteTextures bbglDeleteTextures
+#define glDepthFunc bbglDepthFunc
+#define glDepthMask bbglDepthMask
+#define glDepthRange bbglDepthRange
+#define glDisable bbglDisable
+#define glDisableClientState bbglDisableClientState
+#define glDrawArrays bbglDrawArrays
+#define glDrawBuffer bbglDrawBuffer
+#define glDrawElements bbglDrawElements
+#define glDrawPixels bbglDrawPixels
+#define glEdgeFlag bbglEdgeFlag
+#define glEdgeFlagPointer bbglEdgeFlagPointer
+#define glEdgeFlagv bbglEdgeFlagv
+#define glEnable bbglEnable
+#define glEnableClientState bbglEnableClientState
+#define glEnd bbglEnd
+#define glEndList bbglEndList
+#define glEvalCoord1d bbglEvalCoord1d
+#define glEvalCoord1dv bbglEvalCoord1dv
+#define glEvalCoord1f bbglEvalCoord1f
+#define glEvalCoord1fv bbglEvalCoord1fv
+#define glEvalCoord2d bbglEvalCoord2d
+#define glEvalCoord2dv bbglEvalCoord2dv
+#define glEvalCoord2f bbglEvalCoord2f
+#define glEvalCoord2fv bbglEvalCoord2fv
+#define glEvalMesh1 bbglEvalMesh1
+#define glEvalMesh2 bbglEvalMesh2
+#define glEvalPoint1 bbglEvalPoint1
+#define glEvalPoint2 bbglEvalPoint2
+#define glFeedbackBuffer bbglFeedbackBuffer
+#define glFinish bbglFinish
+#define glFlush bbglFlush
+#define glFogf bbglFogf
+#define glFogfv bbglFogfv
+#define glFogi bbglFogi
+#define glFogiv bbglFogiv
+#define glFrontFace bbglFrontFace
+#define glFrustum bbglFrustum
+#define glGenLists bbglGenLists
+#define glGenTextures bbglGenTextures
+#define glGetBooleanv bbglGetBooleanv
+#define glGetClipPlane bbglGetClipPlane
+#define glGetDoublev bbglGetDoublev
+#define glGetError bbglGetError
+#define glGetFloatv bbglGetFloatv
+#define glGetIntegerv bbglGetIntegerv
+#define glGetLightfv bbglGetLightfv
+#define glGetLightiv bbglGetLightiv
+#define glGetMapdv bbglGetMapdv
+#define glGetMapfv bbglGetMapfv
+#define glGetMapiv bbglGetMapiv
+#define glGetMaterialfv bbglGetMaterialfv
+#define glGetMaterialiv bbglGetMaterialiv
+#define glGetPixelMapfv bbglGetPixelMapfv
+#define glGetPixelMapuiv bbglGetPixelMapuiv
+#define glGetPixelMapusv bbglGetPixelMapusv
+#define glGetPointerv bbglGetPointerv
+#define glGetPolygonStipple bbglGetPolygonStipple
+#define glGetString bbglGetString
+#define glGetTexEnvfv bbglGetTexEnvfv
+#define glGetTexEnviv bbglGetTexEnviv
+#define glGetTexGendv bbglGetTexGendv
+#define glGetTexGenfv bbglGetTexGenfv
+#define glGetTexGeniv bbglGetTexGeniv
+#define glGetTexImage bbglGetTexImage
+#define glGetTexLevelParameterfv bbglGetTexLevelParameterfv
+#define glGetTexLevelParameteriv bbglGetTexLevelParameteriv
+#define glGetTexParameterfv bbglGetTexParameterfv
+#define glGetTexParameteriv bbglGetTexParameteriv
+#define glHint bbglHint
+#define glIndexMask bbglIndexMask
+#define glIndexPointer bbglIndexPointer
+#define glIndexd bbglIndexd
+#define glIndexdv bbglIndexdv
+#define glIndexf bbglIndexf
+#define glIndexfv bbglIndexfv
+#define glIndexi bbglIndexi
+#define glIndexiv bbglIndexiv
+#define glIndexs bbglIndexs
+#define glIndexsv bbglIndexsv
+#define glIndexub bbglIndexub
+#define glIndexubv bbglIndexubv
+#define glInitNames bbglInitNames
+#define glInterleavedArrays bbglInterleavedArrays
+#define glIsEnabled bbglIsEnabled
+#define glIsList bbglIsList
+#define glIsTexture bbglIsTexture
+#define glLightModelf bbglLightModelf
+#define glLightModelfv bbglLightModelfv
+#define glLightModeli bbglLightModeli
+#define glLightModeliv bbglLightModeliv
+#define glLightf bbglLightf
+#define glLightfv bbglLightfv
+#define glLighti bbglLighti
+#define glLightiv bbglLightiv
+#define glLineStipple bbglLineStipple
+#define glLineWidth bbglLineWidth
+#define glListBase bbglListBase
+#define glLoadIdentity bbglLoadIdentity
+#define glLoadMatrixd bbglLoadMatrixd
+#define glLoadMatrixf bbglLoadMatrixf
+#define glLoadName bbglLoadName
+#define glLogicOp bbglLogicOp
+#define glMap1d bbglMap1d
+#define glMap1f bbglMap1f
+#define glMap2d bbglMap2d
+#define glMap2f bbglMap2f
+#define glMapGrid1d bbglMapGrid1d
+#define glMapGrid1f bbglMapGrid1f
+#define glMapGrid2d bbglMapGrid2d
+#define glMapGrid2f bbglMapGrid2f
+#define glMaterialf bbglMaterialf
+#define glMaterialfv bbglMaterialfv
+#define glMateriali bbglMateriali
+#define glMaterialiv bbglMaterialiv
+#define glMatrixMode bbglMatrixMode
+#define glMultMatrixd bbglMultMatrixd
+#define glMultMatrixf bbglMultMatrixf
+#define glNewList bbglNewList
+#define glNormal3b bbglNormal3b
+#define glNormal3bv bbglNormal3bv
+#define glNormal3d bbglNormal3d
+#define glNormal3dv bbglNormal3dv
+#define glNormal3f bbglNormal3f
+#define glNormal3fv bbglNormal3fv
+#define glNormal3i bbglNormal3i
+#define glNormal3iv bbglNormal3iv
+#define glNormal3s bbglNormal3s
+#define glNormal3sv bbglNormal3sv
+#define glNormalPointer bbglNormalPointer
+#define glOrtho bbglOrtho
+#define glPassThrough bbglPassThrough
+#define glPixelMapfv bbglPixelMapfv
+#define glPixelMapuiv bbglPixelMapuiv
+#define glPixelMapusv bbglPixelMapusv
+#define glPixelStoref bbglPixelStoref
+#define glPixelStorei bbglPixelStorei
+#define glPixelTransferf bbglPixelTransferf
+#define glPixelTransferi bbglPixelTransferi
+#define glPixelZoom bbglPixelZoom
+#define glPointSize bbglPointSize
+#define glPolygonMode bbglPolygonMode
+#define glPolygonOffset bbglPolygonOffset
+#define glPolygonStipple bbglPolygonStipple
+#define glPopAttrib bbglPopAttrib
+#define glPopClientAttrib bbglPopClientAttrib
+#define glPopMatrix bbglPopMatrix
+#define glPopName bbglPopName
+#define glPrioritizeTextures bbglPrioritizeTextures
+#define glPushAttrib bbglPushAttrib
+#define glPushClientAttrib bbglPushClientAttrib
+#define glPushMatrix bbglPushMatrix
+#define glPushName bbglPushName
+#define glRasterPos2d bbglRasterPos2d
+#define glRasterPos2dv bbglRasterPos2dv
+#define glRasterPos2f bbglRasterPos2f
+#define glRasterPos2fv bbglRasterPos2fv
+#define glRasterPos2i bbglRasterPos2i
+#define glRasterPos2iv bbglRasterPos2iv
+#define glRasterPos2s bbglRasterPos2s
+#define glRasterPos2sv bbglRasterPos2sv
+#define glRasterPos3d bbglRasterPos3d
+#define glRasterPos3dv bbglRasterPos3dv
+#define glRasterPos3f bbglRasterPos3f
+#define glRasterPos3fv bbglRasterPos3fv
+#define glRasterPos3i bbglRasterPos3i
+#define glRasterPos3iv bbglRasterPos3iv
+#define glRasterPos3s bbglRasterPos3s
+#define glRasterPos3sv bbglRasterPos3sv
+#define glRasterPos4d bbglRasterPos4d
+#define glRasterPos4dv bbglRasterPos4dv
+#define glRasterPos4f bbglRasterPos4f
+#define glRasterPos4fv bbglRasterPos4fv
+#define glRasterPos4i bbglRasterPos4i
+#define glRasterPos4iv bbglRasterPos4iv
+#define glRasterPos4s bbglRasterPos4s
+#define glRasterPos4sv bbglRasterPos4sv
+#define glReadBuffer bbglReadBuffer
+#define glReadPixels bbglReadPixels
+#define glRectd bbglRectd
+#define glRectdv bbglRectdv
+#define glRectf bbglRectf
+#define glRectfv bbglRectfv
+#define glRecti bbglRecti
+#define glRectiv bbglRectiv
+#define glRects bbglRects
+#define glRectsv bbglRectsv
+#define glRenderMode bbglRenderMode
+#define glRotated bbglRotated
+#define glRotatef bbglRotatef
+#define glScaled bbglScaled
+#define glScalef bbglScalef
+#define glScissor bbglScissor
+#define glSelectBuffer bbglSelectBuffer
+#define glShadeModel bbglShadeModel
+#define glStencilFunc bbglStencilFunc
+#define glStencilMask bbglStencilMask
+#define glStencilOp bbglStencilOp
+#define glTexCoord1d bbglTexCoord1d
+#define glTexCoord1dv bbglTexCoord1dv
+#define glTexCoord1f bbglTexCoord1f
+#define glTexCoord1fv bbglTexCoord1fv
+#define glTexCoord1i bbglTexCoord1i
+#define glTexCoord1iv bbglTexCoord1iv
+#define glTexCoord1s bbglTexCoord1s
+#define glTexCoord1sv bbglTexCoord1sv
+#define glTexCoord2d bbglTexCoord2d
+#define glTexCoord2dv bbglTexCoord2dv
+#define glTexCoord2f bbglTexCoord2f
+#define glTexCoord2fv bbglTexCoord2fv
+#define glTexCoord2i bbglTexCoord2i
+#define glTexCoord2iv bbglTexCoord2iv
+#define glTexCoord2s bbglTexCoord2s
+#define glTexCoord2sv bbglTexCoord2sv
+#define glTexCoord3d bbglTexCoord3d
+#define glTexCoord3dv bbglTexCoord3dv
+#define glTexCoord3f bbglTexCoord3f
+#define glTexCoord3fv bbglTexCoord3fv
+#define glTexCoord3i bbglTexCoord3i
+#define glTexCoord3iv bbglTexCoord3iv
+#define glTexCoord3s bbglTexCoord3s
+#define glTexCoord3sv bbglTexCoord3sv
+#define glTexCoord4d bbglTexCoord4d
+#define glTexCoord4dv bbglTexCoord4dv
+#define glTexCoord4f bbglTexCoord4f
+#define glTexCoord4fv bbglTexCoord4fv
+#define glTexCoord4i bbglTexCoord4i
+#define glTexCoord4iv bbglTexCoord4iv
+#define glTexCoord4s bbglTexCoord4s
+#define glTexCoord4sv bbglTexCoord4sv
+#define glTexCoordPointer bbglTexCoordPointer
+#define glTexEnvf bbglTexEnvf
+#define glTexEnvfv bbglTexEnvfv
+#define glTexEnvi bbglTexEnvi
+#define glTexEnviv bbglTexEnviv
+#define glTexGend bbglTexGend
+#define glTexGendv bbglTexGendv
+#define glTexGenf bbglTexGenf
+#define glTexGenfv bbglTexGenfv
+#define glTexGeni bbglTexGeni
+#define glTexGeniv bbglTexGeniv
+#define glTexImage1D bbglTexImage1D
+#define glTexImage2D bbglTexImage2D
+#define glTexParameterf bbglTexParameterf
+#define glTexParameterfv bbglTexParameterfv
+#define glTexParameteri bbglTexParameteri
+#define glTexParameteriv bbglTexParameteriv
+#define glTexSubImage1D bbglTexSubImage1D
+#define glTexSubImage2D bbglTexSubImage2D
+#define glTranslated bbglTranslated
+#define glTranslatef bbglTranslatef
+#define glVertex2d bbglVertex2d
+#define glVertex2dv bbglVertex2dv
+#define glVertex2f bbglVertex2f
+#define glVertex2fv bbglVertex2fv
+#define glVertex2i bbglVertex2i
+#define glVertex2iv bbglVertex2iv
+#define glVertex2s bbglVertex2s
+#define glVertex2sv bbglVertex2sv
+#define glVertex3d bbglVertex3d
+#define glVertex3dv bbglVertex3dv
+#define glVertex3f bbglVertex3f
+#define glVertex3fv bbglVertex3fv
+#define glVertex3i bbglVertex3i
+#define glVertex3iv bbglVertex3iv
+#define glVertex3s bbglVertex3s
+#define glVertex3sv bbglVertex3sv
+#define glVertex4d bbglVertex4d
+#define glVertex4dv bbglVertex4dv
+#define glVertex4f bbglVertex4f
+#define glVertex4fv bbglVertex4fv
+#define glVertex4i bbglVertex4i
+#define glVertex4iv bbglVertex4iv
+#define glVertex4s bbglVertex4s
+#define glVertex4sv bbglVertex4sv
+#define glVertexPointer bbglVertexPointer
+#define glViewport bbglViewport
+#define glCopyTexSubImage3D bbglCopyTexSubImage3D
+#define glDrawRangeElements bbglDrawRangeElements
+#define glTexImage3D bbglTexImage3D
+#define glTexSubImage3D bbglTexSubImage3D
+#define glActiveTexture bbglActiveTexture
+#define glClientActiveTexture bbglClientActiveTexture
+#define glCompressedTexImage1D bbglCompressedTexImage1D
+#define glCompressedTexImage2D bbglCompressedTexImage2D
+#define glCompressedTexImage3D bbglCompressedTexImage3D
+#define glCompressedTexSubImage1D bbglCompressedTexSubImage1D
+#define glCompressedTexSubImage2D bbglCompressedTexSubImage2D
+#define glCompressedTexSubImage3D bbglCompressedTexSubImage3D
+#define glGetCompressedTexImage bbglGetCompressedTexImage
+#define glLoadTransposeMatrixd bbglLoadTransposeMatrixd
+#define glLoadTransposeMatrixf bbglLoadTransposeMatrixf
+#define glMultTransposeMatrixd bbglMultTransposeMatrixd
+#define glMultTransposeMatrixf bbglMultTransposeMatrixf
+#define glMultiTexCoord1d bbglMultiTexCoord1d
+#define glMultiTexCoord1dv bbglMultiTexCoord1dv
+#define glMultiTexCoord1f bbglMultiTexCoord1f
+#define glMultiTexCoord1fv bbglMultiTexCoord1fv
+#define glMultiTexCoord1i bbglMultiTexCoord1i
+#define glMultiTexCoord1iv bbglMultiTexCoord1iv
+#define glMultiTexCoord1s bbglMultiTexCoord1s
+#define glMultiTexCoord1sv bbglMultiTexCoord1sv
+#define glMultiTexCoord2d bbglMultiTexCoord2d
+#define glMultiTexCoord2dv bbglMultiTexCoord2dv
+#define glMultiTexCoord2f bbglMultiTexCoord2f
+#define glMultiTexCoord2fv bbglMultiTexCoord2fv
+#define glMultiTexCoord2i bbglMultiTexCoord2i
+#define glMultiTexCoord2iv bbglMultiTexCoord2iv
+#define glMultiTexCoord2s bbglMultiTexCoord2s
+#define glMultiTexCoord2sv bbglMultiTexCoord2sv
+#define glMultiTexCoord3d bbglMultiTexCoord3d
+#define glMultiTexCoord3dv bbglMultiTexCoord3dv
+#define glMultiTexCoord3f bbglMultiTexCoord3f
+#define glMultiTexCoord3fv bbglMultiTexCoord3fv
+#define glMultiTexCoord3i bbglMultiTexCoord3i
+#define glMultiTexCoord3iv bbglMultiTexCoord3iv
+#define glMultiTexCoord3s bbglMultiTexCoord3s
+#define glMultiTexCoord3sv bbglMultiTexCoord3sv
+#define glMultiTexCoord4d bbglMultiTexCoord4d
+#define glMultiTexCoord4dv bbglMultiTexCoord4dv
+#define glMultiTexCoord4f bbglMultiTexCoord4f
+#define glMultiTexCoord4fv bbglMultiTexCoord4fv
+#define glMultiTexCoord4i bbglMultiTexCoord4i
+#define glMultiTexCoord4iv bbglMultiTexCoord4iv
+#define glMultiTexCoord4s bbglMultiTexCoord4s
+#define glMultiTexCoord4sv bbglMultiTexCoord4sv
+#define glSampleCoverage bbglSampleCoverage
+#define glBlendColor bbglBlendColor
+#define glBlendEquation bbglBlendEquation
+#define glBlendFuncSeparate bbglBlendFuncSeparate
+#define glFogCoordPointer bbglFogCoordPointer
+#define glFogCoordd bbglFogCoordd
+#define glFogCoorddv bbglFogCoorddv
+#define glFogCoordf bbglFogCoordf
+#define glFogCoordfv bbglFogCoordfv
+#define glMultiDrawArrays bbglMultiDrawArrays
+#define glMultiDrawElements bbglMultiDrawElements
+#define glPointParameterf bbglPointParameterf
+#define glPointParameterfv bbglPointParameterfv
+#define glPointParameteri bbglPointParameteri
+#define glPointParameteriv bbglPointParameteriv
+#define glSecondaryColor3b bbglSecondaryColor3b
+#define glSecondaryColor3bv bbglSecondaryColor3bv
+#define glSecondaryColor3d bbglSecondaryColor3d
+#define glSecondaryColor3dv bbglSecondaryColor3dv
+#define glSecondaryColor3f bbglSecondaryColor3f
+#define glSecondaryColor3fv bbglSecondaryColor3fv
+#define glSecondaryColor3i bbglSecondaryColor3i
+#define glSecondaryColor3iv bbglSecondaryColor3iv
+#define glSecondaryColor3s bbglSecondaryColor3s
+#define glSecondaryColor3sv bbglSecondaryColor3sv
+#define glSecondaryColor3ub bbglSecondaryColor3ub
+#define glSecondaryColor3ubv bbglSecondaryColor3ubv
+#define glSecondaryColor3ui bbglSecondaryColor3ui
+#define glSecondaryColor3uiv bbglSecondaryColor3uiv
+#define glSecondaryColor3us bbglSecondaryColor3us
+#define glSecondaryColor3usv bbglSecondaryColor3usv
+#define glSecondaryColorPointer bbglSecondaryColorPointer
+#define glWindowPos2d bbglWindowPos2d
+#define glWindowPos2dv bbglWindowPos2dv
+#define glWindowPos2f bbglWindowPos2f
+#define glWindowPos2fv bbglWindowPos2fv
+#define glWindowPos2i bbglWindowPos2i
+#define glWindowPos2iv bbglWindowPos2iv
+#define glWindowPos2s bbglWindowPos2s
+#define glWindowPos2sv bbglWindowPos2sv
+#define glWindowPos3d bbglWindowPos3d
+#define glWindowPos3dv bbglWindowPos3dv
+#define glWindowPos3f bbglWindowPos3f
+#define glWindowPos3fv bbglWindowPos3fv
+#define glWindowPos3i bbglWindowPos3i
+#define glWindowPos3iv bbglWindowPos3iv
+#define glWindowPos3s bbglWindowPos3s
+#define glWindowPos3sv bbglWindowPos3sv
+#define glBeginQuery bbglBeginQuery
+#define glBindBuffer bbglBindBuffer
+#define glBufferData bbglBufferData
+#define glBufferSubData bbglBufferSubData
+#define glDeleteBuffers bbglDeleteBuffers
+#define glDeleteQueries bbglDeleteQueries
+#define glEndQuery bbglEndQuery
+#define glGenBuffers bbglGenBuffers
+#define glGenQueries bbglGenQueries
+#define glGetBufferParameteriv bbglGetBufferParameteriv
+#define glGetBufferPointerv bbglGetBufferPointerv
+#define glGetBufferSubData bbglGetBufferSubData
+#define glGetQueryObjectiv bbglGetQueryObjectiv
+#define glGetQueryObjectuiv bbglGetQueryObjectuiv
+#define glGetQueryiv bbglGetQueryiv
+#define glIsBuffer bbglIsBuffer
+#define glIsQuery bbglIsQuery
+#define glMapBuffer bbglMapBuffer
+#define glUnmapBuffer bbglUnmapBuffer
+#define glAttachShader bbglAttachShader
+#define glBindAttribLocation bbglBindAttribLocation
+#define glBlendEquationSeparate bbglBlendEquationSeparate
+#define glCompileShader bbglCompileShader
+#define glCreateProgram bbglCreateProgram
+#define glCreateShader bbglCreateShader
+#define glDeleteProgram bbglDeleteProgram
+#define glDeleteShader bbglDeleteShader
+#define glDetachShader bbglDetachShader
+#define glDisableVertexAttribArray bbglDisableVertexAttribArray
+#define glDrawBuffers bbglDrawBuffers
+#define glEnableVertexAttribArray bbglEnableVertexAttribArray
+#define glGetActiveAttrib bbglGetActiveAttrib
+#define glGetActiveUniform bbglGetActiveUniform
+#define glGetAttachedShaders bbglGetAttachedShaders
+#define glGetAttribLocation bbglGetAttribLocation
+#define glGetProgramInfoLog bbglGetProgramInfoLog
+#define glGetProgramiv bbglGetProgramiv
+#define glGetShaderInfoLog bbglGetShaderInfoLog
+#define glGetShaderSource bbglGetShaderSource
+#define glGetShaderiv bbglGetShaderiv
+#define glGetUniformLocation bbglGetUniformLocation
+#define glGetUniformfv bbglGetUniformfv
+#define glGetUniformiv bbglGetUniformiv
+#define glGetVertexAttribPointerv bbglGetVertexAttribPointerv
+#define glGetVertexAttribdv bbglGetVertexAttribdv
+#define glGetVertexAttribfv bbglGetVertexAttribfv
+#define glGetVertexAttribiv bbglGetVertexAttribiv
+#define glIsProgram bbglIsProgram
+#define glIsShader bbglIsShader
+#define glLinkProgram bbglLinkProgram
+#define glShaderSource bbglShaderSource
+#define glStencilFuncSeparate bbglStencilFuncSeparate
+#define glStencilMaskSeparate bbglStencilMaskSeparate
+#define glStencilOpSeparate bbglStencilOpSeparate
+#define glUniform1f bbglUniform1f
+#define glUniform1fv bbglUniform1fv
+#define glUniform1i bbglUniform1i
+#define glUniform1iv bbglUniform1iv
+#define glUniform2f bbglUniform2f
+#define glUniform2fv bbglUniform2fv
+#define glUniform2i bbglUniform2i
+#define glUniform2iv bbglUniform2iv
+#define glUniform3f bbglUniform3f
+#define glUniform3fv bbglUniform3fv
+#define glUniform3i bbglUniform3i
+#define glUniform3iv bbglUniform3iv
+#define glUniform4f bbglUniform4f
+#define glUniform4fv bbglUniform4fv
+#define glUniform4i bbglUniform4i
+#define glUniform4iv bbglUniform4iv
+#define glUniformMatrix2fv bbglUniformMatrix2fv
+#define glUniformMatrix3fv bbglUniformMatrix3fv
+#define glUniformMatrix4fv bbglUniformMatrix4fv
+#define glUseProgram bbglUseProgram
+#define glValidateProgram bbglValidateProgram
+#define glVertexAttrib1d bbglVertexAttrib1d
+#define glVertexAttrib1dv bbglVertexAttrib1dv
+#define glVertexAttrib1f bbglVertexAttrib1f
+#define glVertexAttrib1fv bbglVertexAttrib1fv
+#define glVertexAttrib1s bbglVertexAttrib1s
+#define glVertexAttrib1sv bbglVertexAttrib1sv
+#define glVertexAttrib2d bbglVertexAttrib2d
+#define glVertexAttrib2dv bbglVertexAttrib2dv
+#define glVertexAttrib2f bbglVertexAttrib2f
+#define glVertexAttrib2fv bbglVertexAttrib2fv
+#define glVertexAttrib2s bbglVertexAttrib2s
+#define glVertexAttrib2sv bbglVertexAttrib2sv
+#define glVertexAttrib3d bbglVertexAttrib3d
+#define glVertexAttrib3dv bbglVertexAttrib3dv
+#define glVertexAttrib3f bbglVertexAttrib3f
+#define glVertexAttrib3fv bbglVertexAttrib3fv
+#define glVertexAttrib3s bbglVertexAttrib3s
+#define glVertexAttrib3sv bbglVertexAttrib3sv
+#define glVertexAttrib4Nbv bbglVertexAttrib4Nbv
+#define glVertexAttrib4Niv bbglVertexAttrib4Niv
+#define glVertexAttrib4Nsv bbglVertexAttrib4Nsv
+#define glVertexAttrib4Nub bbglVertexAttrib4Nub
+#define glVertexAttrib4Nubv bbglVertexAttrib4Nubv
+#define glVertexAttrib4Nuiv bbglVertexAttrib4Nuiv
+#define glVertexAttrib4Nusv bbglVertexAttrib4Nusv
+#define glVertexAttrib4bv bbglVertexAttrib4bv
+#define glVertexAttrib4d bbglVertexAttrib4d
+#define glVertexAttrib4dv bbglVertexAttrib4dv
+#define glVertexAttrib4f bbglVertexAttrib4f
+#define glVertexAttrib4fv bbglVertexAttrib4fv
+#define glVertexAttrib4iv bbglVertexAttrib4iv
+#define glVertexAttrib4s bbglVertexAttrib4s
+#define glVertexAttrib4sv bbglVertexAttrib4sv
+#define glVertexAttrib4ubv bbglVertexAttrib4ubv
+#define glVertexAttrib4uiv bbglVertexAttrib4uiv
+#define glVertexAttrib4usv bbglVertexAttrib4usv
+#define glVertexAttribPointer bbglVertexAttribPointer
+#define glUniformMatrix2x3fv bbglUniformMatrix2x3fv
+#define glUniformMatrix2x4fv bbglUniformMatrix2x4fv
+#define glUniformMatrix3x2fv bbglUniformMatrix3x2fv
+#define glUniformMatrix3x4fv bbglUniformMatrix3x4fv
+#define glUniformMatrix4x2fv bbglUniformMatrix4x2fv
+#define glUniformMatrix4x3fv bbglUniformMatrix4x3fv
+#define glBindFramebuffer bbglBindFramebuffer
+#define glBindRenderbuffer bbglBindRenderbuffer
+#define glBlitFramebuffer bbglBlitFramebuffer
+#define glCheckFramebufferStatus bbglCheckFramebufferStatus
+#define glDeleteFramebuffers bbglDeleteFramebuffers
+#define glDeleteRenderbuffers bbglDeleteRenderbuffers
+#define glFramebufferRenderbuffer bbglFramebufferRenderbuffer
+#define glFramebufferTexture1D bbglFramebufferTexture1D
+#define glFramebufferTexture2D bbglFramebufferTexture2D
+#define glFramebufferTexture3D bbglFramebufferTexture3D
+#define glFramebufferTextureLayer bbglFramebufferTextureLayer
+#define glGenFramebuffers bbglGenFramebuffers
+#define glGenRenderbuffers bbglGenRenderbuffers
+#define glGenerateMipmap bbglGenerateMipmap
+#define glGetFramebufferAttachmentParameteriv bbglGetFramebufferAttachmentParameteriv
+#define glGetRenderbufferParameteriv bbglGetRenderbufferParameteriv
+#define glIsFramebuffer bbglIsFramebuffer
+#define glIsRenderbuffer bbglIsRenderbuffer
+#define glRenderbufferStorage bbglRenderbufferStorage
+#define glRenderbufferStorageMultisample bbglRenderbufferStorageMultisample
+#endif
 
 #ifdef __cplusplus
 }
