@@ -61,6 +61,18 @@ Namespace sdl2
 #Import "SDL/src/power/SDL_power.c"
 #Import "SDL/src/power/android/SDL_syspower.c"
 
+'render - have to include software render?
+#Import "SDL/src/render/SDL_yuv_sw.c"
+#Import "SDL/src/render/SDL_render.c"
+
+#Import "SDL/src/render/software/SDL_blendfillrect.c"
+#Import "SDL/src/render/software/SDL_blendline.c"
+#Import "SDL/src/render/software/SDL_blendpoint.c"
+#Import "SDL/src/render/software/SDL_drawline.c"
+#Import "SDL/src/render/software/SDL_drawpoint.c"
+#Import "SDL/src/render/software/SDL_render_sw.c"
+#Import "SDL/src/render/software/SDL_rotate.c"
+
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
 #Import "SDL/src/stdlib/SDL_iconv.c"
@@ -80,18 +92,6 @@ Namespace sdl2
 'timer
 #Import "SDL/src/timer/SDL_timer.c"
 #Import "SDL/src/timer/unix/SDL_systimer.c"
-
-'render - have to include software render?
-#Import "SDL/src/render/SDL_yuv_sw.c"
-#Import "SDL/src/render/SDL_render.c"
-
-#Import "SDL/src/render/software/SDL_blendfillrect.c"
-#Import "SDL/src/render/software/SDL_blendline.c"
-#Import "SDL/src/render/software/SDL_blendpoint.c"
-#Import "SDL/src/render/software/SDL_drawline.c"
-#Import "SDL/src/render/software/SDL_drawpoint.c"
-#Import "SDL/src/render/software/SDL_render_sw.c"
-#Import "SDL/src/render/software/SDL_rotate.c"
 
 'video
 #Import "SDL/src/video/SDL_blit.c"

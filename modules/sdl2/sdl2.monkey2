@@ -3,7 +3,6 @@ Namespace sdl2
 
 #Import "<jni>"
 #Import "<libc>"
-#Import "<gles20>"
 
 #Import "SDL/include/*.h"
 

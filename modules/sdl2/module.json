@@ -4,5 +4,5 @@
 	"author":"Mark Sibly",
 	"version":"1.0.0",
 	"support":"http://monkeycoder.co.nz",
-	"depends":["libc","gles20"]
+	"depends":["libc"]
 }
