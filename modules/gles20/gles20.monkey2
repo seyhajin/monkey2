@@ -7,7 +7,7 @@ This module is deprecated, please use opengl module instead.
 
 Namespace gles20
 
-#Import "<opengl.monkey2>"
+#Import "<opengl>"
 
 #Import "bbglue.h"
 
