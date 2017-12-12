@@ -12,12 +12,11 @@ Namespace sdl2
 #Import "<IOKit.framework>"
 #Import "<ForceFeedback.framework>"
 
+'atomic
 #Import "SDL/src/atomic/SDL_atomic.c"
 #Import "SDL/src/atomic/SDL_spinlock.c"
 
-#Import "SDL/src/audio/disk/SDL_diskaudio.c"
-#Import "SDL/src/audio/dummy/SDL_dummyaudio.c"
-#Import "SDL/src/audio/coreaudio/SDL_coreaudio.m"
+'audio
 #Import "SDL/src/audio/SDL_audio.c"
 #Import "SDL/src/audio/SDL_audiocvt.c"
 #Import "SDL/src/audio/SDL_audiodev.c"
@@ -25,10 +24,16 @@ Namespace sdl2
 #Import "SDL/src/audio/SDL_mixer.c"
 #Import "SDL/src/audio/SDL_wave.c"
 
+#Import "SDL/src/audio/coreaudio/SDL_coreaudio.m"
+#Import "SDL/src/audio/dummy/SDL_dummyaudio.c"
+
+'cpuinfo
 #Import "SDL/src/cpuinfo/SDL_cpuinfo.c"
 
+'dynapi
 #Import "SDL/src/dynapi/SDL_dynapi.c"
 
+'events
 #Import "SDL/src/events/SDL_clipboardevents.c"
 #Import "SDL/src/events/SDL_dropevents.c"
 #Import "SDL/src/events/SDL_events.c"
@@ -39,24 +44,37 @@ Namespace sdl2
 #Import "SDL/src/events/SDL_touch.c"
 #Import "SDL/src/events/SDL_windowevents.c"
 
+'filesystem
 #Import "SDL/src/filesystem/cocoa/SDL_sysfilesystem.m"
-#Import "SDL/src/file/cocoa/SDL_rwopsbundlesupport.m"
+
+'file
 #Import "SDL/src/file/SDL_rwops.c"
 
-#Import "SDL/src/haptic/darwin/SDL_syshaptic.c"
+#Import "SDL/src/file/cocoa/SDL_rwopsbundlesupport.m"
+
+'haptic
 #Import "SDL/src/haptic/SDL_haptic.c"
 
-#Import "SDL/src/joystick/darwin/SDL_sysjoystick.c"
+#Import "SDL/src/haptic/darwin/SDL_syshaptic.c"
+
+'joystick
 #Import "SDL/src/joystick/SDL_joystick.c"
 #Import "SDL/src/joystick/SDL_gamecontroller.c"
 
+#Import "SDL/src/joystick/darwin/SDL_sysjoystick.c"
+
+'loadso
 #Import "SDL/src/loadso/dlopen/SDL_sysloadso.c"
 
-#Import "SDL/src/power/macosx/SDL_syspower.c"
+'power
 #Import "SDL/src/power/SDL_power.c"
 
-'#Import "SDL/src/render/opengl/SDL_render_gl.c"
-'#Import "SDL/src/render/opengl/SDL_shaders_gl.c"
+#Import "SDL/src/power/macosx/SDL_syspower.c"
+
+'render
+#Import "SDL/src/render/SDL_render.c"
+'#Import "SDL/src/render/SDL_yuv_mmx.c"
+#Import "SDL/src/render/SDL_yuv_sw.c"
 
 #Import "SDL/src/render/software/SDL_blendfillrect.c"
 #Import "SDL/src/render/software/SDL_blendline.c"
@@ -66,10 +84,7 @@ Namespace sdl2
 #Import "SDL/src/render/software/SDL_render_sw.c"
 #Import "SDL/src/render/software/SDL_rotate.c"
 
-#Import "SDL/src/render/SDL_render.c"
-#Import "SDL/src/render/SDL_yuv_mmx.c"
-#Import "SDL/src/render/SDL_yuv_sw.c"
-
+'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
 #Import "SDL/src/stdlib/SDL_iconv.c"
 #Import "SDL/src/stdlib/SDL_malloc.c"
@@ -77,31 +92,20 @@ Namespace sdl2
 #Import "SDL/src/stdlib/SDL_stdlib.c"
 #Import "SDL/src/stdlib/SDL_string.c"
 
+'thread
+#Import "SDL/src/thread/SDL_thread.c"
+
 #Import "SDL/src/thread/pthread/SDL_syscond.c"
 #Import "SDL/src/thread/pthread/SDL_sysmutex.c"
 #Import "SDL/src/thread/pthread/SDL_syssem.c"
 #Import "SDL/src/thread/pthread/SDL_systhread.c"
 #Import "SDL/src/thread/pthread/SDL_systls.c"
 
-#Import "SDL/src/thread/SDL_thread.c"
-
+'timer
 #Import "SDL/src/timer/unix/SDL_systimer.c"
 #Import "SDL/src/timer/SDL_timer.c"
 
-#Import "SDL/src/video/cocoa/SDL_cocoaclipboard.m"
-#Import "SDL/src/video/cocoa/SDL_cocoaevents.m"
-#Import "SDL/src/video/cocoa/SDL_cocoakeyboard.m"
-#Import "SDL/src/video/cocoa/SDL_cocoamessagebox.m"
-#Import "SDL/src/video/cocoa/SDL_cocoamodes.m"
-#Import "SDL/src/video/cocoa/SDL_cocoamouse.m"
-#Import "SDL/src/video/cocoa/SDL_cocoamousetap.m"
-#Import "SDL/src/video/cocoa/SDL_cocoaopengl.m"
-#Import "SDL/src/video/cocoa/SDL_cocoashape.m"
-#Import "SDL/src/video/cocoa/SDL_cocoavideo.m"
-#Import "SDL/src/video/cocoa/SDL_cocoawindow.m"
-#Import "SDL/src/video/dummy/SDL_nullevents.c"
-#Import "SDL/src/video/dummy/SDL_nullframebuffer.c"
-#Import "SDL/src/video/dummy/SDL_nullvideo.c"
+'video
 #Import "SDL/src/video/SDL_blit.c"
 #Import "SDL/src/video/SDL_blit_0.c"
 #Import "SDL/src/video/SDL_blit_1.c"
@@ -121,11 +125,21 @@ Namespace sdl2
 #Import "SDL/src/video/SDL_surface.c"
 #Import "SDL/src/video/SDL_video.c"
 
+#Import "SDL/src/video/cocoa/SDL_cocoaclipboard.m"
+#Import "SDL/src/video/cocoa/SDL_cocoaevents.m"
+#Import "SDL/src/video/cocoa/SDL_cocoakeyboard.m"
+#Import "SDL/src/video/cocoa/SDL_cocoamessagebox.m"
+#Import "SDL/src/video/cocoa/SDL_cocoamodes.m"
+#Import "SDL/src/video/cocoa/SDL_cocoamouse.m"
+#Import "SDL/src/video/cocoa/SDL_cocoamousetap.m"
+#Import "SDL/src/video/cocoa/SDL_cocoaopengl.m"
+#Import "SDL/src/video/cocoa/SDL_cocoashape.m"
+#Import "SDL/src/video/cocoa/SDL_cocoavideo.m"
+#Import "SDL/src/video/cocoa/SDL_cocoawindow.m"
+
+'src
 #Import "SDL/src/SDL_assert.c"
 #Import "SDL/src/SDL_error.c"
 #Import "SDL/src/SDL_hints.c"
 #Import "SDL/src/SDL_log.c"
 #Import "SDL/src/SDL.c"
-
-'#Import "SDL/src/SDL_dataqueue.c"
-	
