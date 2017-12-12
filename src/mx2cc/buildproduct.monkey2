@@ -100,15 +100,25 @@ Class BuildProduct
 		Return ""
 	End
 	
-	Method Exec:Bool( cmd:String )
+	Method Exec:Bool( cmd:String,eatstdout:Bool=False )
 		
 		If opts.verbose>2 Print cmd
+			
+		Local fstdout:=eatstdout ? AllocTmpFile( "stdout" ) Else ""
+		
+		If eatstdout cmd+=" >"+fstdout
 			
 		Local fstderr:=AllocTmpFile( "stderr" )
 		
 		If Not system( cmd+" 2>"+fstderr ) Return True
 		
-		Throw New BuildEx( "System command failed:~n~n"+cmd+"~n~n"+LoadString( fstderr ) )
+		Local err:="System command failed:~n~n"+cmd+"~n~n"
+		
+		If eatstdout err+=LoadString( fstdout )+"~n"
+		
+		err+=LoadString( fstderr )
+		
+		Throw New BuildEx( err )
 		
 		Return False
 	End
@@ -451,15 +461,34 @@ Class GccBuildProduct Extends BuildProduct
 
 			If isasm
 				cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
-				Exec( cmd )
+				Exec( cmd,opts.toolchain="msvc" )
 				Return obj
 			Endif
 			
-			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >~q"+deps+"~q"
+			Local fstdout:=AllocTmpFile( "stdout" )
 			
-			Exec( cmd )
+			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >"+fstdout
 			
-			Local tincs:=LoadString( deps )
+			If opts.verbose>2 Print cmd
+				
+			Local fstderr:=AllocTmpFile( "stderr" )
+			
+			If system( cmd+" 2>"+fstderr )
+
+				Local buf:=New StringStack
+				For Local line:=Eachin LoadString( fstdout,True ).Split( "~n" )
+					If Not line.StartsWith( "Note: including file:" ) buf.Add( line )
+				Next
+				
+				Local err:="System command failed:~n~n"+cmd+"~n~n"+buf.Join( "~n" )+"~n"
+				
+				err+=LoadString( fstderr,True )
+				
+				Throw New BuildEx( err )
+				
+			Endif
+			
+			Local tincs:=LoadString( fstdout )
 			
 			Local buf:=New StringStack
 			buf.Push( StripDir( obj )+": "+src+" \" )
@@ -559,7 +588,7 @@ Class GccBuildProduct Extends BuildProduct
 #Endif
 		Endif
 		
-		Exec( cmd )
+		Exec( cmd,opts.toolchain="msvc" )
 			
 	End
 	
@@ -677,7 +706,7 @@ Class GccBuildProduct Extends BuildProduct
 		
 		CopyDlls( dllsDir )
 		
-		Exec( cmd )
+		Exec( cmd,opts.toolchain="msvc" )
 		
 		If opts.target="emscripten"
 			If opts.appType="wasm"
