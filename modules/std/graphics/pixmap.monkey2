@@ -151,18 +151,18 @@ Class Pixmap Extends Resource
 		
 		Local p:=PixelPtr( x,y )
 		Select _format
-		Case Format.A8
+		Case PixelFormat.A8
 			p[0]=color.a * 255
-		Case Format.I8
+		Case PixelFormat.I8
 			p[0]=color.r * 255
-		Case Format.IA16
+		Case PixelFormat.IA16
 			p[0]=color.r * 255
 			p[1]=color.a * 255
-		Case Format.RGB24
+		Case PixelFormat.RGB24
 			p[0]=color.r * 255
 			p[1]=color.g * 255
 			p[2]=color.b * 255
-		Case Format.RGBA32
+		Case PixelFormat.RGBA32
 			p[0]=color.r * 255
 			p[1]=color.g * 255
 			p[2]=color.b * 255
@@ -190,17 +190,17 @@ Class Pixmap Extends Resource
 	
 		Local p:=PixelPtr( x,y )
 		Select _format
-		Case Format.A8 
+		Case PixelFormat.A8 
 			Return New Color( 0,0,0,p[0]/255.0 )
-		Case Format.I8
+		Case PixelFormat.I8
 			Local i:=p[0]/255.0
 			Return New Color( i,i,i,1 )
-		Case Format.IA16
+		Case PixelFormat.IA16
 			Local i:=p[0]/255.0
 			Return New Color( i,i,i,p[1]/255.0 )
-		Case Format.RGB24
+		Case PixelFormat.RGB24
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,1 )
-		Case Format.RGBA32
+		Case PixelFormat.RGBA32
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,p[3]/255.0 )
 '		Default
 '			Assert( False )
@@ -226,18 +226,18 @@ Class Pixmap Extends Resource
 	
 		Local p:=PixelPtr( x,y )
 		Select _format
-		Case Format.A8
+		Case PixelFormat.A8
 			p[0]=color Shr 24
 		Case Format.I8
 			p[0]=color Shr 16
-		Case Format.IA16
+		Case PixelFormat.IA16
 			p[0]=color Shr 24
 			p[1]=color Shr 16
-		Case Format.RGB24
+		Case PixelFormat.RGB24
 			p[0]=color Shr 16
 			p[1]=color Shr 8
 			p[2]=color
-		Case Format.RGBA32
+		Case PixelFormat.RGBA32
 			p[0]=color Shr 16
 			p[1]=color Shr 8
 			p[2]=color
@@ -263,17 +263,17 @@ Class Pixmap Extends Resource
 	
 		Local p:=PixelPtr( x,y )
 		Select _format
-		Case Format.A8 
+		Case PixelFormat.A8 
 			Return p[0] Shl 24
-		Case Format.I8 
+		Case PixelFormat.I8 
 			Local i:=p[0]
 			Return UByte($ff) Shl 24 | i Shl 16 | i Shl 8 | i
-		Case Format.IA16
+		Case PixelFormat.IA16
 			Local i:=p[1]
 			Return p[0] Shl 24 | i Shl 16 | i Shl 8 | i
-		Case Format.RGB24
+		Case PixelFormat.RGB24
 			Return UByte($ff) Shl 24 | p[0] Shl 16 | p[1] Shl 8 | p[2]
-		Case Format.RGBA32
+		Case PixelFormat.RGBA32
 			Return p[3] Shl 24 | p[0] Shl 16 | p[1] Shl 8 | p[2]
 		Default
 			Assert( False )
