@@ -100,11 +100,39 @@ A raw key represents the physical location of a key on US keyboards. For example
 | RightShift
 | RightAlt
 | RightGui
+| Mode
+| AudioNext
+| AudioPrev
+| AudioStop
+| AudioPlay
+| AudioMute
+| MediaSelect
+| WWW
+| Mail
+| Calculator
+| Computer
+| ACSearch
+| ACHome
+| ACBack
+| ACForward
+| ACStop
+| ACRefresh
+| ACBookmarks
+| BrightnessDown
+| BrightnessUp
+| DisplaySwitch
+| IllumToggle
+| IllumDown
+| IllumUp
+| Eject
+| Sleep
 
 #end
 
 Enum Key
 
+	'https://wiki.libsdl.org/SDLKeycodeLookup
+	
 	None=0
 
 	Backspace=8,Tab
@@ -128,7 +156,11 @@ Enum Key
 	Keypad1,Keypad2,Keypad3,Keypad4,Keypad5,Keypad6,Keypad7,Keypad8,Keypad9,Keypad0
 	KeypadPeriod
 	
-	LeftControl=185+167,LeftShift,LeftAlt,LeftGui,RightControl,RightShift,RightAlt,RightGui
+	LeftControl=$e0+$80,LeftShift,LeftAlt,LeftGui,RightControl,RightShift,RightAlt,RightGui
+	
+	Mode=$101+$80,AudioNext,AudioPrev,AudioStop,AudioPlay,AudioMute,MediaSelect,WWW,Mail,Calculator,Computer
+	ACSearch,ACHome,ACBack,ACForward,ACStop,ACRefresh,ACBookmarks
+	BrightnessDown,BrightnessUp,DisplaySwitch,IllumToggle,IllumDown,IllumUp,Eject,Sleep
 	
 	Max
 	
