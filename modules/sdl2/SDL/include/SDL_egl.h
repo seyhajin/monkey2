@@ -24,7 +24,10 @@
  *
  *  This is a simple file to encapsulate the EGL API headers.
  */
-#ifndef _MSC_VER
+ 
+ //Mark was here! was #ifndef _MSC_VER, but we don't want mingw to be dependant on egl.h
+ //
+#ifndef _WIN32
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
