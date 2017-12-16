@@ -1,6 +1,14 @@
 
 ***** Monkey2 v1.1.09 *****
 
+Added support for gltf2 animations/skins.
+
+Added some more keycodes, eg: Key.ACBack.
+
+Updated android studio to 3.0.1
+
+Windows x64 support added! See MX2_ARCH_WINDOWS in env_windows.txt. Also, changed msvc tools to community editiion 2017
+
 Use SetConfig( "MX2_MOJO_TEXTURE_MAX_ANISOTROPY",n ) to set texture max anisotropy, 0 to 16.
 
 Nuked mojo App.Config system in favor of a simpler 'config setting' system in std.filesystem. Set SetConfig/GetConfig.
