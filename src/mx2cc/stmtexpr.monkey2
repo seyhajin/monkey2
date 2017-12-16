@@ -313,7 +313,7 @@ Class ContinueStmtExpr Extends StmtExpr
 	
 	Method OnSemant:Stmt( block:Block ) Override
 	
-		If Not block.loop Throw New SemantEx( "'Exit' must appear inside a loop" )
+		If Not block.loop Throw New SemantEx( "'Continue' must appear inside a loop" )
 		
 		If Not block.reachable Return Null
 		
