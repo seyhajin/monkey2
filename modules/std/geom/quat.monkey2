@@ -7,7 +7,7 @@ Alias Quatf:Quat<Float>
 
 #rem monkeydoc The Quat class provides support for quaternions.
 #end
-Class Quat<T>
+Struct Quat<T>
 
 	Field v:Vec3<T>
 	Field w:T
