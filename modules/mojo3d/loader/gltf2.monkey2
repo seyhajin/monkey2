@@ -1,6 +1,14 @@
 
 Namespace mojo3d.gltf2
 
+Const GLTF_BYTE:=5120
+Const GLTF_UNSIGNED_BYTE:=5121
+Const GLTF_SHORT:=5122
+Const GLTF_UNSIGNED_SHORT:=5123
+Const GLTF_INT:=5124
+Const GLTF_UNSIGNED_INT:=5125
+Const GLTF_FLOAT:=5126
+
 #rem monkeydoc @hidden
 #end
 Class Gltf2Buffer
@@ -75,6 +83,8 @@ Class Gltf2Primitive
 	Field NORMAL:Gltf2Accessor
 	Field TANGENT:Gltf2Accessor
 	Field TEXCOORD_0:Gltf2Accessor
+	Field JOINTS_0:Gltf2Accessor
+	Field WEIGHTS_0:Gltf2Accessor
 	Field indices:Gltf2Accessor
 	Field material:Gltf2Material
 	Field mode:Int
@@ -103,6 +113,39 @@ End
 
 #rem monkeydoc @hidden
 #end
+Class Gltf2Animation
+	Field name:String
+	Field channels:Gltf2AnimationChannel[]
+End
+
+#rem monkeydoc @hidden
+#end
+Class Gltf2AnimationChannel
+	
+	Field sampler:Gltf2AnimationSampler	'for shared samplers (nice).
+	Field targetNode:Gltf2Node
+	Field targetPath:String
+End
+
+#rem monkeydoc @hidden
+#end
+Class Gltf2AnimationSampler
+	
+	Field input:Gltf2Accessor	'time
+	Field output:Gltf2Accessor	'post/rot etc
+	Field interpolation:String
+End
+
+#rem monkeydoc @hidden
+#end
+Class Gltf2Skin
+	Field inverseBindMatrices:Gltf2Accessor	'array of mat4fs
+	Field joints:Gltf2Node[]
+	Field skeleton:Gltf2Node
+End
+
+#rem monkeydoc @hidden
+#end
 Class Gltf2Scene
 	Field name:String
 	Field nodes:Gltf2Node[]
@@ -121,7 +164,10 @@ Class Gltf2Asset
 	Field materials:Gltf2Material[]
 	Field meshes:Gltf2Mesh[]
 	Field nodes:Gltf2Node[]
+	Field animations:Gltf2Animation[]
+	Field skins:Gltf2Skin[]
 	Field scenes:Gltf2Scene[]
+	Field scene:Gltf2Scene
 	
 	Function Load:Gltf2Asset( path:String )
 		
@@ -156,10 +202,10 @@ Class Gltf2Asset
 	
 	Method GetMat4f:Mat4f( jval:JsonArray )
 		Return New Mat4f(
-			New Vec4f( jval.GetNumber(0),jval.GetNumber(1),jval.GetNumber(2),jval.GetNumber(3) ),
-			New Vec4f( jval.GetNumber(4),jval.GetNumber(5),jval.GetNumber(6),jval.GetNumber(7) ),
-			New Vec4f( jval.GetNumber(8),jval.GetNumber(9),jval.GetNumber(10),jval.GetNumber(11) ),
-			New Vec4f( jval.GetNumber(12),jval.GetNumber(13),jval.GetNumber(14),jval.GetNumber(15) ) )
+			New Vec4f( jval.GetNumber(0),  jval.GetNumber(1),  jval.GetNumber(2),  jval.GetNumber(3) ),
+			New Vec4f( jval.GetNumber(4),  jval.GetNumber(5),  jval.GetNumber(6),  jval.GetNumber(7) ),
+			New Vec4f( jval.GetNumber(8),  jval.GetNumber(9),  jval.GetNumber(10), jval.GetNumber(11) ),
+			New Vec4f( jval.GetNumber(12), jval.GetNumber(13), jval.GetNumber(14), jval.GetNumber(15) ) )
 	End
 	
 	Method LoadBuffers:Bool()
@@ -395,6 +441,12 @@ Class Gltf2Asset
 				If jattribs.Contains( "TEXCOORD_0" )
 					prim.TEXCOORD_0=accessors[jattribs.GetNumber( "TEXCOORD_0" )]
 				Endif
+				If jattribs.Contains( "JOINTS_0" )
+					prim.JOINTS_0=accessors[jattribs.GetNumber( "JOINTS_0" )]
+				Endif
+				If jattribs.Contains( "WEIGHTS_0" )
+					prim.WEIGHTS_0=accessors[jattribs.GetNumber( "WEIGHTS_0" )]
+				Endif
 				If jprim.Contains( "indices" )
 					prim.indices=accessors[jprim.GetNumber( "indices" )]
 				Endif
@@ -413,7 +465,102 @@ Class Gltf2Asset
 		
 		Return True
 	End
+	
+	Method LoadSkins:Bool()
+		
+		Local jskins:=root.GetArray( "skins" )
+		If Not jskins Return True
+		
+		skins=New Gltf2Skin[jskins.Length]
+		
+		For Local i:=0 Until skins.Length
+			
+			Local jskin:=jskins.GetObject( i )
+			
+			Local skin:=New Gltf2Skin
+			skins[i]=skin
+			
+			skin.inverseBindMatrices=accessors[jskin.GetNumber( "inverseBindMatrices" )]
+			
+			If jskin.Contains( "skeleton" )
+				
+				skin.skeleton=nodes[jskin.GetNumber("skeleton")]
+			Endif
+			
+			Local jjoints:=jskin.GetArray( "joints" )
+			
+			skin.joints=New Gltf2Node[jjoints.Length]
+			
+			For Local i:=0 Until jjoints.Length
+				
+				skin.joints[i]=nodes[jjoints.GetNumber(i)]
+			Next
+		
+		Next
+		
+		Return True
+		
+	End
 
+	Method LoadAnimations:Bool()
+		
+		Local janimations:=root.GetArray( "animations" )
+		If Not janimations Return True
+		
+		animations=New Gltf2Animation[ janimations.Length ]
+		
+		For Local i:=0 Until animations.Length
+			
+			Local animation:=New Gltf2Animation
+			animations[i]=animation
+
+			Local janimation:=janimations.GetObject( i )
+			
+			animation.name=janimation.GetString( "name" )
+
+			Local jsamplers:=janimation.GetArray( "samplers" )
+			
+			Local samplers:=New Gltf2AnimationSampler[ jsamplers.Length ]
+			
+			For Local i:=0 Until samplers.Length
+				
+				Local sampler:=New Gltf2AnimationSampler
+				samplers[i]=sampler
+				
+				Local jsampler:=jsamplers.GetObject( i )
+				
+				sampler.input=accessors[jsampler.GetNumber( "input" )]
+				sampler.output=accessors[jsampler.GetNumber( "output" )]
+				sampler.interpolation=jsampler.GetString( "interpolation" )
+			
+			Next
+			
+			Local jchannels:=janimation.GetArray( "channels" )
+			
+			animation.channels=New Gltf2AnimationChannel[ jchannels.Length ]
+			
+			For Local i:=0 Until animation.channels.Length
+				
+				Local channel:=New Gltf2AnimationChannel
+				animation.channels[i]=channel
+				
+				Local jchannel:=jchannels.GetObject( i )
+				
+				channel.sampler=samplers[jchannel.GetNumber( "sampler" )]
+				
+				Local jtarget:=jchannel.GetObject( "target" )
+				
+				channel.targetNode=nodes[jtarget.GetNumber( "node" )]
+				channel.targetPath=jtarget.GetString( "path" )
+			
+			Next
+			
+		Next
+		
+		Return True
+		
+	End
+	
 	Method LoadNodes:Bool()
 
 		Local jnodes:=root.GetArray( "nodes" )
@@ -448,7 +595,6 @@ Class Gltf2Asset
 			
 			If jnode.Contains( "translation" )
 				node.translation=GetVec3f( jnode.GetArray( "translation" ) )
-				node.translation.z=-node.translation.z
 			Endif
 
 			If jnode.Contains( "rotation" )
@@ -461,7 +607,6 @@ Class Gltf2Asset
 				
 			If jnode.Contains( "matrix" )
 				node.matrix=GetMat4f( jnode.GetArray( "matrix" ) )
-				node.matrix.t.z=-node.matrix.t.z
 			Else
 				node.matrix=Mat4f.Translation( node.translation ) * Mat4f.Rotation( node.rotation ) * Mat4f.Scaling( node.scale )
 			Endif
@@ -500,6 +645,8 @@ Class Gltf2Asset
 		
 		Next
 		
+		scene=scenes[root.GetNumber( "scene" )]
+		
 		Return True
 	End
 	
@@ -520,6 +667,8 @@ Class Gltf2Asset
 		If Not LoadMaterials() Return False
 		If Not LoadMeshes() Return False
 		If Not LoadNodes() Return False
+		If Not LoadAnimations() Return False
+		If Not LoadSkins() Return False
 		If Not LoadScenes() Return False
 		
 		Return True

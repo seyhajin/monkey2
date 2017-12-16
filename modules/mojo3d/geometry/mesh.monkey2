@@ -101,25 +101,6 @@ Class Mesh Extends Resource
 
 		InvalidateVertices()
 	End
-#rem
-	#rem monkeydoc @hidden
-	#end	
-	Method AddMesh( mesh:Mesh )
-	
-		Local v0:=_vbuffer.Length,i0:=_ibuffers.Length
-	
-		AddVertices( Cast<Vertex3f Ptr>( mesh._vbuffer.Data ),mesh._vbuffer.Length )
-		
-		AddMaterials( mesh._ibuffers.Length )
-		
-		For Local i:=i0 Until _ibuffers.Length
-		
-			Local ibuffer:=mesh._ibuffers[i-i0]
-		
-			AddTriangles( Cast<UInt Ptr>( ibuffer.Data ),ibuffer.Length )
-		Next
-	End
-#end
 
 	#rem monkeydoc Sets a range of vertices.
 	#end
@@ -301,6 +282,35 @@ Class Mesh Extends Resource
 		Next
 		
 		Return first
+	End
+	
+	#rem monkeydoc Adds a mesh to this mesh.
+	#end
+	Method AddMesh( mesh:Mesh,materialid:Int=0 )
+		
+		Local v0:=_vertices.Length
+		
+		AddVertices( mesh._vertices.Data.Data,mesh._vertices.Length )
+		
+		For Local material:=Eachin mesh._materials
+			
+			Local count:=material.indices.Length
+			
+			Local mindices:=material.indices.Data
+			
+			If v0
+				Local indices:=New UInt[count]
+				For Local i:=0 Until count
+					indices[i]=mindices[i]+v0
+				Next
+				mindices=indices
+			Endif
+			
+			AddTriangles( mindices.Data,count,materialid )
+			
+			materialid+=1
+		Next
+	
 	End
 	
 	#rem monkeydoc Transforms all vertices in the mesh.

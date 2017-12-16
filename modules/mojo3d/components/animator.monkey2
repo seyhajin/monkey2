@@ -92,6 +92,11 @@ Class Animator Extends Component
 		Return Null
 	End
 	
+	Method Animate( index:Int=0,transition:Float=0.0,finished:Void()=Null )
+		
+		Animate( _animations[index],transition,finished )
+	End
+		
 	Method Animate( name:String,transition:Float=0.0,finished:Void()=Null )
 		
 		Animate( FindAnimation( name ),transition,finished )
@@ -209,6 +214,32 @@ Class Animator Extends Component
 			Local chan0:=playing0 ? playing0.Channels[i] Else Null
 			Local chan1:=playing1 ? playing1.Channels[i] Else Null
 			
+			If chan0?.PositionKeys
+				If chan1?.PositionKeys
+					_skeleton[i].LocalPosition=chan0.GetPosition( time0 ).Blend( chan1.GetPosition( time1 ),alpha )
+				Else
+					_skeleton[i].LocalPosition=chan0.GetPosition( time0 )
+				Endif
+			Endif
+			
+			If chan0?.RotationKeys
+				If chan1?.RotationKeys
+					_skeleton[i].LocalBasis=chan0.GetRotation( time0 ).Slerp( chan1.GetRotation( time1 ),alpha )
+				Else
+					_skeleton[i].LocalBasis=chan0.GetRotation( time0 )
+				Endif
+			Endif
+
+			If chan0?.ScaleKeys
+				If chan1?.ScaleKeys
+					_skeleton[i].LocalScale=chan0.GetScale( time0 ).Blend( chan1.GetScale( time1 ),alpha )
+				Else
+					_skeleton[i].LocalScale=chan0.GetScale( time0 )
+				Endif
+			Endif
+
+			#rem
+			
 			If playing0 And playing1
 				
 				Local pos0:=chan0 ? chan0.GetPosition( time0 ) Else New Vec3f
@@ -244,6 +275,8 @@ Class Animator Extends Component
 				_skeleton[i].LocalScale=scl1
 			
 			Endif
+			
+			#end
 		
 		Next
 	End

@@ -180,6 +180,7 @@ Class Entity Extends DynamicObject
 	Setter( matrix:AffineMat4f )
 		
 		Local scale:=matrix.m.GetScaling()
+		
 		Basis=matrix.m.Scale( 1/scale.x,1/scale.y,1/scale.z )
 		Position=matrix.t
 		Scale=scale
@@ -256,6 +257,16 @@ Class Entity Extends DynamicObject
 		Endif
 		
 		Return _M
+		
+	Setter( matrix:AffineMat4f )
+		
+		Local scale:=matrix.m.GetScaling()
+		
+		LocalBasis=matrix.m.Scale( 1/scale.x,1/scale.y,1/scale.z )
+		LocalPosition=matrix.t
+		LocalScale=scale
+		
+		Invalidate()
 	End
 
 	#rem monkeydoc Local space position.

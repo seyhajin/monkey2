@@ -249,11 +249,19 @@ Class AnimationKey<T>
 	Property Time:Float()
 		
 		Return _time
+		
+	Setter( time:Float )
+			
+		_time=time
 	End
 	
 	Property Value:T()
 		
 		Return _value
+	
+	Setter( value:T )
+		
+		_value=value
 	End
 
 	Private

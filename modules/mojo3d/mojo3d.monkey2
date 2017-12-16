@@ -43,12 +43,13 @@ Namespace mojo3d
 #Import "scene/entityexts"
 #Import "scene/scene"
 
-#Import "geometry/loader"
-#Import "geometry/gltf2"
-#Import "geometry/gltf2loader"
+#Import "loader/loader"
+#Import "loader/gltf2"
+#Import "loader/gltf2loader"
+
 #Import "geometry/mesh"
 #Import "geometry/meshprims"
-#Import "geometry/util3d"
+'#Import "geometry/util3d"
 
 Using std..
 Using mojo..
