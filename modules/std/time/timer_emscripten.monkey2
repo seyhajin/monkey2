@@ -52,7 +52,8 @@ Class Timer
 	Struct Context
 		Field timer:Timer
 	End
-
+	
+	Field _pad:Int	'emscripten bug?!?
 	Field _period:Double
 	Field _timeout:Double
 	Field _fired:Void()
