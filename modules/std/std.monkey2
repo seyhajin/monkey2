@@ -74,6 +74,7 @@ Namespace std
 #Import "misc/random"
 #Import "misc/chartype"
 #Import "misc/stringio"
+#Import "misc/base64"
 #Import "misc/json"
 #Import "misc/jsonify"
 #Import "misc/zipfile"
