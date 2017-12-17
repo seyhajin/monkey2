@@ -71,7 +71,10 @@ Class Gltf2Loader
 	Field _asset:Gltf2Asset
 	Field _dir:String
 	
-	Field _data:=New StringMap<DataBuffer>
+	Field _data:=New Map<Gltf2Buffer,DataBuffer>
+	
+'	Field _uridata:=New StringMap<DataBuffer>
+	
 	Field _textureCache:=New Map<Gltf2Texture,Texture>
 	Field _materialCache:=New Map<Gltf2Material,Material>
 	
@@ -80,7 +83,8 @@ Class Gltf2Loader
 	Field _entities:=New Stack<Entity>
 	
 	Field _bones:Model.Bone[]
-	
+
+#rem
 	Method GetData:UByte Ptr( uri:String )
 		Local data:=_data[uri]
 		If Not data
@@ -89,9 +93,29 @@ Class Gltf2Loader
 		Endif
 		Return data.Data
 	End
-	
+#end
+
 	Method GetData:UByte Ptr( buffer:Gltf2Buffer )
-		Return GetData( buffer.uri )
+		
+		If _data.Contains( buffer ) Return _data[buffer]?.Data
+		
+		Local data:DataBuffer
+		
+		Local uri:=buffer.uri
+		If uri.StartsWith( "data:" )
+			Local i:=uri.Find( ";base64," )
+			If i<>-1
+				Local base64:=uri.Slice( i+8 )
+				data=DecodeBase64( base64 )
+			Else
+				Print "Can't decode data:"
+			Endif
+		Else
+			data=DataBuffer.Load( _dir+uri )
+		Endif
+		
+		_data[buffer]=data
+		Return data?.Data
 	End
 	
 	Method GetData:UByte Ptr( bufferView:Gltf2BufferView )
