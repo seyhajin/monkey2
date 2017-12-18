@@ -598,7 +598,7 @@ bbCString::bbCString( const bbString &str ){
 }
 
 bbCString::~bbCString(){
-	bbFree( _data );
+	bbGC::free( _data );
 }
 
 bbCString::operator char*()const{
@@ -622,7 +622,7 @@ bbWString::bbWString( const bbString &str ){
 }
 
 bbWString::~bbWString(){
-	bbFree( _data );
+	bbGC::free( _data );
 }
 
 bbWString::operator wchar_t*()const{

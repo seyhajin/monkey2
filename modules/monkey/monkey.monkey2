@@ -7,7 +7,6 @@ Namespace monkey
 
 #Import "native/bbtypes.cpp"
 #Import "native/bbassert.cpp"
-#Import "native/bbmemory.cpp"
 #Import "native/bbstring.cpp"
 #Import "native/bbfunction.cpp"
 #Import "native/bbarray.cpp"

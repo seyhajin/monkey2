@@ -4,7 +4,6 @@
 
 #include "bbtypes.h"
 #include "bbassert.h"
-#include "bbmemory.h"
 
 namespace bbGC{
 	void *malloc( size_t size );

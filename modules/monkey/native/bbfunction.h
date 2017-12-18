@@ -3,8 +3,12 @@
 #define BB_FUNCTION_H
 
 #include "bbtypes.h"
-//#include "bbgc.h"
 #include "bbdebug.h"
+
+namespace bbGC{
+	void *malloc( size_t size );
+	void free( void *p );
+}
 
 template<class T> class bbFunction;
 
@@ -53,11 +57,11 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		}
 		
 		void *operator new( size_t size ){
-			return bbMalloc( size );
+			return bbGC::malloc( size );
 		}
 		
 		void operator delete( void *p ){
-			bbFree( p );
+			bbGC::free( p );
 		}
 	};
 	
