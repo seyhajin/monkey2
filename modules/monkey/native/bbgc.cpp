@@ -241,22 +241,14 @@ namespace bbGC{
 		printf( "Warning! bbGC::release() - node not found!\n" );
 	}
 	
+	//need to return 8 byte aligned memory!
+	//
 	void *malloc( size_t size ){
 	
-		size=(size+sizeof(size_t)+7)&~7;
+//		size=(size+sizeof(size_t)+7)&~7;
+		size=( size+8+7 ) & ~7;
 		
 		memused+=size;
-		
-		/*
-		if( size<256 && pools[size>>3] ){
-			void *p=pools[size>>3];
-			pools[size>>3]=*(void**)p;
-			allocedBytes+=size;
-			size_t *q=(size_t*)p;
-			*q++=size;
-			return q;
-		}
-		*/
 		
 		if( !suspended ){
 
@@ -302,9 +294,13 @@ namespace bbGC{
 		}
 		
 		allocedBytes+=size;
+		
 		size_t *q=(size_t*)p;
-		*q++=size;
+		
+		if( sizeof(size_t)==4 ) ++q;
 
+		*q++=size;
+		
 		return q;
 	}
 	
@@ -323,9 +319,11 @@ namespace bbGC{
 		
 		size_t size=*q;
 		
-		#ifndef NDEBUG
+		if( sizeof(size_t)==4 ) --q;
+		
+#ifndef NDEBUG
 		memset( q,0xa5,size );
-		#endif
+#endif
 		
 		memused-=size;
 		
@@ -338,18 +336,6 @@ namespace bbGC{
 		}
 	}
 
-	bbGCNode *alloc( size_t size ){
-
-		bbGCNode *p=(bbGCNode*)bbGC::malloc( size );
-		
-		*((void**)p)=(void*)0xcafebabe;
-		
-		p->state=0;
-		p->flags=0;
-		
-		return p;
-	}
-	
 	void collect(){
 	
 		if( !inited ) return;

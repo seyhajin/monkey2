@@ -64,7 +64,7 @@ template<class T,int D> struct bbArray{
 			
 		if( !sizes[D-1] ) return;
 			
-		bbGCNode *p=bbGC::alloc( sizeof( Rep )+sizes[D-1]*sizeof(T) );
+		void *p=bbGC::malloc( sizeof( Rep )+sizes[D-1]*sizeof(T) );
 	
 		_rep=new( p ) Rep( sizes );
 			
@@ -78,7 +78,7 @@ template<class T,int D> struct bbArray{
 			
 		if( !sizes[D-1] ) return;
 			
-		bbGCNode *p=bbGC::alloc( sizeof( Rep )+sizes[D-1]*sizeof(T) );
+		void *p=bbGC::malloc( sizeof( Rep )+sizes[D-1]*sizeof(T) );
 			
 		_rep=new( p ) Rep( sizes );
 			

@@ -11,6 +11,7 @@ struct bbObject : public bbGCNode{
 	typedef bbObject *bb_object_type;
 
 	bbObject(){
+	
 		bbGC::beginCtor( this );
 	}
 	
@@ -23,12 +24,14 @@ struct bbObject : public bbGCNode{
 	virtual const char *typeName()const;
 	
 	void *operator new( size_t size ){
-		return bbGC::alloc( size );
+	
+		return bbGC::malloc( size );
 	}
 	
 	//NOTE! We need this in case ctor throws an exception. delete never otherwise called...
 	//
 	void operator delete( void *p ){
+	
 		bbGC::endCtor( (bbObject*)(p) );
 	}
 };
