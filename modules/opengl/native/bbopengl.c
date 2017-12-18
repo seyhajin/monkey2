@@ -5,6 +5,12 @@
 
 #include <stdio.h>
 
+void *SDL_GL_GetProcAddress( const char *proc );
+
+int SDL_GL_ExtensionSupported( const char *ext );
+
+int SDL_GL_GetAttribute( int attr,int *value );
+
 #if __EMSCRIPTEN__
 
 void GLAPIENTRY glClearDepthf( GLclampf depth );
@@ -18,10 +24,6 @@ void GLAPIENTRY bbglClearDepth( GLclampd depth ){
 
 #define SDL_GL_CONTEXT_PROFILE_MASK		21
 #define SDL_GL_CONTEXT_PROFILE_ES		0x0004 
-
-void *SDL_GL_GetProcAddress( const char *proc );
-int SDL_GL_ExtensionSupported( const char *ext );
-int SDL_GL_GetAttribute( int attr,int *value );
 
 void (GLAPIENTRY*bbglClearDepthf)( GLclampf depth );
 
