@@ -24,26 +24,9 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods -clean -config=release stb-image-write"	'release monkey libc miniz stb-image stb-image-write stb-vorbis std"
-Const TestArgs:="mx2cc makemods -config=debug monkey"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
+Const TestArgs:="mx2cc makemods -config=debug"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
  
 'Const TestArgs:="mx2cc makeapp -clean -config=release src/mx2cc/test.monkey2"
-
-'Const TestArgs:="mx2cc makedocs mojo"
-'Const TestArgs:="pyro-framework pyro-gui pyro-scenegraph pyro-tiled"
-'Const TestArgs:="mx2cc makedocs"
-
-'To build with old mx2cc...
-'
-'Creates: src/mx2cc/mx2cc.buildv.VERSION/windows_release/mx2cc.exe
-'
-'Const TestArgs:="mx2cc makemods -clean -config=release monkey libc miniz stb-image stb-image-write stb-vorbis std"
-'Const TestArgs:="mx2cc makeapp -run -apptype=console -clean -config=release src/mx2cc/mx2cc.monkey2"
-
-'To build rasbian mx2cc...
-'
-'Const TestArgs:="mx2cc makemods -clean -config=release -target=raspbian monkey libc miniz stb-image stb-image-write stb-vorbis std"
-'Const TestArgs:="mx2cc makeapp -build -clean -config=release -target=raspbian src/mx2cc/mx2cc.monkey2"
 
 Function Main()
 	
@@ -75,8 +58,8 @@ Function Main()
 	Local args:String[]
 
 #If __CONFIG__="debug"
-	Local tenv:="bin/env_"+HostOS+"_dev.txt"
-	If GetFileType( tenv )=FileType.File env=tenv
+'	Local tenv:="bin/env_"+HostOS+"_dev.txt"
+'	If GetFileType( tenv )=FileType.File env=tenv
 	args=TestArgs.Split( " " )
 #else
 	args=AppArgs()

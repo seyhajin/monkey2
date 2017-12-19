@@ -436,9 +436,11 @@ Class GccBuildProduct Extends BuildProduct
 						
 				For Local i:=1 Until srcs.Length
 						
-					Local src:=srcs[i].Trim().Replace( "\","" )
-						
-					If GetFileTime( src )>objTime
+					Local src:=srcs[i].Trim()
+					If Not src Continue
+					
+					Local time:=GetFileTime( src )
+					If Not time Or time>objTime
 						uptodate=False
 						Exit
 					Endif
@@ -501,7 +503,9 @@ Class GccBuildProduct Extends BuildProduct
 				
 				line=line.Slice( 21 ).Trim()
 				
-				If line.Contains( "\Program Files (x86)\" ) Continue
+				If line.ToLower().Contains( "\program files (x86)\" ) Continue
+				
+				line=line.Replace( "\","/" )
 				
 				buf.Add( line+" \" )
 			Next
