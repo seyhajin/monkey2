@@ -113,7 +113,7 @@ namespace bbDB{
 			dbEmit_t dbEmit=(dbEmit_t)( strtol( p+1,0,16 ) );
 			dbEmit( (void*)strtol( e,0,16 ) );
 		}else{
-			bbGCNode *node=(bbGCNode*)strtol( e,0,16 );
+			bbGCNode *node=(bbGCNode*)strtoll( e,0,16 );
 			node->dbEmit();
 		}
 		

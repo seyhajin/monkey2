@@ -45,7 +45,7 @@ template<class T> bbString bbDBType( bbGCVar<T> *p ){ return bbDBType<T*>(); }
 template<class T> bbString bbDBValue( bbGCVar<T> *p ){ T *t=p->get();return t ? bbDBValue( &t ) : "Null"; }
 
 template<class T> bbString bbDBType( T **p ){ return bbDBType<T>()+" Ptr"; }
-template<class T> bbString bbDBValue( T **p ){ char buf[64];sprintf( buf,"$%x",*p );return buf; }
+template<class T> bbString bbDBValue( T **p ){ char buf[64];sprintf( buf,"$%p",*p );return buf; }
 
 struct bbDBVarType{
 	virtual bbString type()=0;
