@@ -121,7 +121,6 @@ End
 #rem monkeydoc @hidden
 #end
 Class Gltf2AnimationChannel
-	
 	Field sampler:Gltf2AnimationSampler	'for shared samplers (nice).
 	Field targetNode:Gltf2Node
 	Field targetPath:String
@@ -130,7 +129,6 @@ End
 #rem monkeydoc @hidden
 #end
 Class Gltf2AnimationSampler
-	
 	Field input:Gltf2Accessor	'time
 	Field output:Gltf2Accessor	'post/rot etc
 	Field interpolation:String
@@ -174,6 +172,17 @@ Class Gltf2Asset
 		Local root:=JsonObject.Load( path )
 		If Not root Return Null
 
+		Local asset:=New Gltf2Asset( root )
+		If Not asset.LoadAsset() Return Null
+		
+		Return asset
+	End
+	
+	Function Parse:Gltf2Asset( json:String )
+		
+		Local root:=JsonObject.Parse( json )
+		If Not root Return Null
+		
 		Local asset:=New Gltf2Asset( root )
 		If Not asset.LoadAsset() Return Null
 		
