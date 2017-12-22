@@ -256,7 +256,6 @@ Class LiteralValue Extends Value
 		
 		Local ptype:=TCast<PrimType>( type )
 		If ptype And ptype.IsNumeric
-			Print "LiteralValue.New() type="+ptype.ToString()+" value="+value
 			If ptype.IsSignedIntegral
 				value=String( Cast<Long>( value ) )
 			Else If ptype.IsUnsignedIntegral

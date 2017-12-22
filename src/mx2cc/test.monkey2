@@ -5,7 +5,7 @@ Using std..
 
 Function Main()
 	
-	Local t:=UInt( $123456789abcdef0 )
+	Local t:=ULong( $ffffffffffffffff )
 	
 	Print Hex( t )
 	
