@@ -1801,10 +1801,18 @@ Class Translator_CPP Extends Translator
 				If value.value="0" Return TransType( value.type )+"(0)"
 				
 				Select value.type
-				Case Type.IntType  Return value.value
-				Case Type.UIntType Return value.value+"u"
-				Case Type.LongType Return value.value+"l"
-				Case Type.ULongType Return value.value+"ul"
+				Case Type.IntType
+					Local ivalue:=Int( value.value )
+					If String( ivalue )=value.value Return value.value
+				Case Type.UIntType 'Return value.value+"u"
+					Local ivalue:=UInt( value.value )
+					If String( ivalue )=value.value Return value.value+"u"
+				Case Type.LongType 'Return value.value+"l"
+					Local ivalue:=Long( value.value )
+					If String( ivalue )=value.value Return value.value+"l"
+				Case Type.ULongType 'Return value.value+"ul"
+					Local ivalue:=ULong( value.value )
+					If String( ivalue )=value.value Return value.value+"ul"
 				End
 				
 				Return TransType( value.type )+"("+value.value+")"

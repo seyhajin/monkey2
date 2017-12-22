@@ -24,9 +24,9 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods -config=debug"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
+'Const TestArgs:="mx2cc makemods -config=debug mojo3d"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
  
-'Const TestArgs:="mx2cc makeapp -clean -config=release src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp -clean -config=release src/mx2cc/test.monkey2"
 
 Function Main()
 	

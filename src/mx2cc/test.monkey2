@@ -1,12 +1,12 @@
 
+#Import "<std>"
+
+Using std..
+
 Function Main()
 	
-	Local test:="Привет Мир!"
+	Local t:=UInt( $123456789abcdef0 )
 	
-	Print test
-	
-	For Local i:=0 until test.Length
-		Print test[i]
-	Next
+	Print Hex( t )
 	
 End
