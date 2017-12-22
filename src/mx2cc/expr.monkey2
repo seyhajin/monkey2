@@ -241,8 +241,10 @@ Class SafeMemberExpr Extends Expr
 		
 		Local value:=Self.expr.SemantRValue( scope ).RemoveSideEffects( block )
 
-		Local thenValue:=value.FindValue( ident ).ToRValue()
+		Local thenValue:=value.FindValue( ident )
 		If Not thenValue Throw New SemantEx( "Value of type '"+value.type.Name+"' has no member named '"+ident+"'" )
+
+		thenValue=thenValue.ToRValue()
 		
 		Local ifValue:=value.UpCast( Type.BoolType )
 		
