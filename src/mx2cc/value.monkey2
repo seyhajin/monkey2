@@ -256,17 +256,15 @@ Class LiteralValue Extends Value
 		
 		Local ptype:=TCast<PrimType>( type )
 		If ptype And ptype.IsNumeric
-			If ptype.IsSignedIntegral
-				value=String( Cast<Long>( value ) )
-			Else If ptype.IsUnsignedIntegral
-				value=String( Cast<ULong>( value ) )
+			If ptype.IsIntegral
+				value=String( ULong( value ) )
 			Else If ptype.IsReal
-				value=String( Cast<Double>( value ) )
+				value=String( Double( value ))
 			Else
 				SemantError( "LiteralValue.New() type="+ptype.ToString() )
 			End
 		Endif
-
+		
 		Self.value=value
 	End
 	
