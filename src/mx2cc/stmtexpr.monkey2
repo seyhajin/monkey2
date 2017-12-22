@@ -761,7 +761,7 @@ Class ForStmtExpr Extends StmtExpr
 			
 		Else
 		
-			incr=New LiteralValue( Type.IntType,"1" )
+			incr=New LiteralValue( Type.IntType,1 )
 			
 			cond=New BinaryopExpr( opx,iterExpr,termExpr,srcpos,endpos ).SemantRValue( iblock )
 			

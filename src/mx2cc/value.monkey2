@@ -256,13 +256,17 @@ Class LiteralValue Extends Value
 		
 		Local ptype:=TCast<PrimType>( type )
 		If ptype And ptype.IsNumeric
-			If ptype.IsIntegral
+			
+			If ptype.IsIntegral And value.StartsWith( "-" )
+				value="-"+String( ULong( value.Slice(1) ) )
+			Else If ptype.IsIntegral
 				value=String( ULong( value ) )
 			Else If ptype.IsReal
 				value=String( Double( value ))
 			Else
 				SemantError( "LiteralValue.New() type="+ptype.ToString() )
 			End
+			
 		Endif
 		
 		Self.value=value
@@ -289,31 +293,30 @@ Class LiteralValue Extends Value
 		Local result:=""
 		
 		If ptype=Type.BoolType
-			result="false"
-			If ptype2.IsIntegral
-				If ULong( value ) result="true"
+			If ptype2.IsIntegral And value.StartsWith( "-" )
+				result=ULong( value.Slice(1) ) ? "true" Else "false"
+			Else If ptype2.IsIntegral
+				result=ULong( value ) ? "true" Else "false"
 			Else If ptype2.IsReal
-				If Double( value ) result="true"
+				result=Double( value ) ? "true" Else "false"
 			Else If ptype2=Type.StringType
-				If value result="true"
+				result=value<>""
 			Else
 				SemantError( "LiteralValue.UpCast()" )
 			Endif
 		Else If ptype.IsIntegral
-			result="0"
 			If ptype2=Type.BoolType
-				If value="true" result="1"
+				result=value="true" ? "1" Else "0"
 			Else If ptype2.IsNumeric Or ptype2=Type.StringType
-				result=String( ULong( value ) )
+				result=value
 			Else
 				SemantError( "LiteralValue.UpCast()" )
 			Endif
 		Else If ptype.IsReal
-			result="0.0"
 			If ptype2=Type.BoolType
-				If value="true" result="1.0"
+				result=value="true" ? "1.0" Else "0.0"
 			Else If ptype2.IsNumeric Or ptype2=Type.StringType
-				result=String( Double( value ) )
+				result=value
 			Else
 				SemantError( "LiteralValue.UpCast()" )
 			Endif
