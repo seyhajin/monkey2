@@ -42,6 +42,8 @@ End
 #end
 Class Gltf2Image
 	Field uri:String
+	Field bufferView:Gltf2BufferView
+	Field mimeType:String
 End
 
 #rem monkeydoc @hidden
@@ -300,7 +302,17 @@ Class Gltf2Asset
 			Local image:=New Gltf2Image
 			images[i]=image
 			
-			image.uri=jimage.GetString( "uri" )
+			If jimage.Contains( "uri" )
+				
+				image.uri=jimage.GetString( "uri" )
+			
+			Else If jimage.Contains( "bufferView" )
+				
+				image.bufferView=bufferViews[ jimage.GetNumber( "bufferView" ) ]
+				image.mimeType=jimage.GetString( "mimeType" )
+			
+			Endif
+			
 		Next
 		
 		Return True

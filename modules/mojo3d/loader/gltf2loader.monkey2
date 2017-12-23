@@ -136,11 +136,27 @@ Class Gltf2Loader
 		
 		Local flags:=TextureFlags.Filter|TextureFlags.Mipmap|TextureFlags.WrapS|TextureFlags.WrapT
 		
-		Local tex:=Texture.Load( _dir+texture.source.uri,flags )
+		Local tex:Texture
 		
-'		Print "Opened texture:"+_dir+texture.source.uri
+		Local source:=texture.source
+		
+		If source.uri
+			
+			tex=Texture.Load( _dir+source.uri,flags )
+			
+		Else If source.bufferView
+			
+			Local start:=ULong( GetData( source.bufferView ) )
+			Local length:=source.bufferView.byteLength
+			
+			Local path:="memblock::("+start+","+length+")"
+			If source.mimeType.StartsWith( "image/" ) path+="."+texture.source.mimeType.Slice( 6 )
+				
+			tex=Texture.Load( path,flags )
+		Endif
 		
 		_textureCache[texture]=tex
+		
 		Return tex
 	End
 	
@@ -680,7 +696,7 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 				Local version:=stream.ReadUInt()
 				Local length:=stream.ReadUInt()-12
 				
-				While length>0
+				While length>0 And Not stream.Eof
 					
 					Local clength:=stream.ReadUInt()
 					Local ctype:=stream.ReadUInt()
@@ -688,14 +704,20 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 					Select ctype
 					Case $4E4F534A		'"JSON"
 						Local buf:=stream.ReadAll( clength )
+						If buf.Length<>clength Exit	'FAIL!
 						json=buf.PeekString( 0 )
 						buf.Discard()
 					Case $004E4942		'"BIN"
 						bindata=stream.ReadAll( clength )
+						If bindata.Length<>clength Exit 'FAIL!
+					Default
+						'NOP
 					End
 					
 					length-=clength+8
 				Wend
+				
+				If length json=""
 			
 			Endif
 			
