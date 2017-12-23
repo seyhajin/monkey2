@@ -20,7 +20,6 @@ Class DataStream Extends std.stream.Stream
 	#end
 	Method New( buf:DataBuffer,offset:Int=0 )
 		Self.New( buf,offset,buf.Length-offset )
-		
 	End
 
 	Method New( buf:DataBuffer,offset:Int,count:Int )
@@ -109,6 +108,34 @@ Class DataStream Extends std.stream.Stream
 		_pos+=count
 		
 		Return count
+	End
+	
+	#rem monkeydoc Opens a data stream.
+	
+	`path` should begin with a parenthesis enclosed, comma separated pair of values representing start and length of memory.
+	
+	For example: "(10000,100)" represents 100 bytes starting at memory address 10000.
+	
+	#end
+	Function Open:DataStream( path:String,mode:String )
+		
+		path=path.Trim()
+		
+		If Not path.StartsWith( "(" ) Return Null
+		
+		Local i:=path.Find( ",",1 )
+		If i=-1 Return Null
+		
+		Local e:=path.Find( ")",i+1 )
+		If e=-1 Return Null
+		
+		Local start:=ULong( path.Slice( 1,i ) )
+		
+		Local length:=Int( path.Slice( i+1,e ) )
+		
+		Local data:=New DataBuffer( Cast<Void Ptr>( start ),length )
+		
+		Return New DataStream( data )
 	End
 
 	Private

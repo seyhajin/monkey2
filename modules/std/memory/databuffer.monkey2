@@ -7,8 +7,17 @@ Using std.stream
 #end
 Class DataBuffer Extends std.resource.Resource
 
-	#rem monkeydoc Creates a new databuffer.
+	#rem monkeydoc Creates a new data buffer.
 	
+	Creates a data buffer with a newly allocated or existing block of memory.
+	
+	If you provide a `start` pointer value when creating a data buffer, it should point to a valid block of memory at least `length` bytes in size.
+	This pointer value will be used as the 'base address' when poking/peeking the data buffer, and will be returned by the [[Data]] property.
+	Such data buffer cannot be [[Resize]]d.
+		
+	If you do not provide a `start` value, a block of memory `length` bytes long is allocated for you. This memory will be released when the data 
+	buffer is discarded or becomes unreachable by the garbage collector.
+		
 	The new databuffer initally uses little endian byte order. You can change this via the ByteOrder property.
 	
 	When you have finished with the data buffer, you should call its inherited [[Resource.Discard]] method.
@@ -37,17 +46,29 @@ Class DataBuffer Extends std.resource.Resource
 	
 	@end
 	
-	@param length The length of the databuffer to create, in bytes.
+	@param start The start of the data buffer memory.
 	
+	@param length The length of the data buffer memory in bytes.
+
 	@param byteOrder Initial byte order of the data.
 	
 	#end
 	Method New( length:Int,byteOrder:ByteOrder=std.memory.ByteOrder.LittleEndian )
 		
-		_length=length
 		_data=Cast<UByte Ptr>( GCMalloc( length ) )
+		_length=length
 		_byteOrder=byteOrder
 		_swapEndian=(_byteOrder=ByteOrder.BigEndian)
+		_free=True
+	End
+	
+	Method New( data:Void Ptr,length:Int,byteOrder:ByteOrder=std.memory.ByteOrder.LittleEndian )
+		
+		_data=Cast<UByte Ptr>( data )
+		_length=length
+		_byteOrder=byteOrder
+		_swapEndian=(_byteOrder=ByteOrder.BigEndian)
+		_free=False
 	End
 	
 	#rem monkeydoc A raw pointer to the databuffer's internal memory.
@@ -56,20 +77,25 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Property Data:UByte Ptr()
+		
 		Return _data
 	End
 	
 	#rem monkeydoc The length of the databuffer in bytes.
 	#end
 	Property Length:Int()
+		
 		Return _length
 	End
 	
 	#rem monkeydoc The byte order of the databuffer.
 	#end
 	Property ByteOrder:ByteOrder()
+		
 		Return _byteOrder
+		
 	Setter( byteOrder:ByteOrder )
+		
 		_byteOrder=byteOrder
 		_swapEndian=(_byteOrder=ByteOrder.BigEndian)
 	End
@@ -82,6 +108,9 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end	
 	Method Resize( length:Int )
+		
+		If Not _free RuntimeError( "DataBuffer memory cannot be resized" )
+		
 		Local data:=Cast<UByte Ptr>( GCMalloc( length ) )
 		libc.memcpy( data,_data,Min( length,_length ) )
 		GCFree( _data )
@@ -99,6 +128,7 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekByte:Byte( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length )
 		
 		Return Cast<Byte Ptr>( _data+offset )[0]
@@ -114,6 +144,7 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekUByte:UByte( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length )
 
 		Return Cast<UByte Ptr>( _data+offset )[0]
@@ -129,10 +160,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekShort:Short( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-1 )
 		
 		Local t:=Cast<Short Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap2( Varptr t )
+			
 		Return t
 	End
 	
@@ -146,10 +180,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekUShort:UShort( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-1 )
 
 		Local t:=Cast<UShort Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap2( Varptr t )
+			
 		Return t
 	End
 	
@@ -163,10 +200,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekInt:Int( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-3 )
 	
 		Local t:=Cast<Int Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap4( Varptr t )
+			
 		Return t
 	End
 	
@@ -180,10 +220,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekUInt:UInt( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-3 )
 
 		Local t:=Cast<UInt Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap4( Varptr t )
+			
 		Return t
 	End
 	
@@ -197,10 +240,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekLong:Long( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-7 )
 		
 		Local t:=Cast<Long Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap8( Varptr t )
+			
 		Return t
 	End
 		
@@ -214,10 +260,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekULong:ULong( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-7 )
 
 		Local t:=Cast<ULong Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap8( Varptr t )
+			
 		Return t
 	End
 	
@@ -231,10 +280,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekFloat:Float( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-3 )
 
 		Local t:=Cast<Float Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap4( Varptr t )
+			
 		Return t
 	End
 	
@@ -248,10 +300,13 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekDouble:Double( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-7 )
 	
 		Local t:=Cast<Double Ptr>( _data+offset )[0]
+		
 		If _swapEndian Swap8( Varptr t )
+			
 		Return t
 	End
 	
@@ -265,12 +320,14 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PeekString:String( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<=_length )
 		
 		Return PeekString( offset,_length-offset )
 	End
 	
 	Method PeekString:String( offset:Int,count:Int )
+		
 		DebugAssert( offset>=0 And count>=0 And offset+count<=_length )
 
 		Return String.FromCString( _data+offset,count )
@@ -279,6 +336,7 @@ Class DataBuffer Extends std.resource.Resource
 	#rem monkeydoc Reads a null terminated CString from the databuffer.
 	#end
 	Method PeekCString:String( offset:Int )
+		
 		DebugAssert( offset>=0 And offset<=_length )
 		
 		Local i:=offset
@@ -297,6 +355,7 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeByte( offset:Int,value:Byte )
+		
 		DebugAssert( offset>=0 And offset<_length )
 	
 		Cast<Byte Ptr>( _data+offset )[0]=value
@@ -310,6 +369,7 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeUByte( offset:Int,value:UByte )
+		
 		DebugAssert( offset>=0 And offset<_length )
 
 		Cast<UByte Ptr>( _data+offset )[0]=value
@@ -323,9 +383,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeShort( offset:Int,value:Short )
+		
 		DebugAssert( offset>=0 And offset<_length-1 )
 	
 		If _swapEndian Swap2( Varptr value )
+			
 		Cast<Short Ptr>( _data+offset )[0]=value
 	End
 	
@@ -337,9 +399,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeUShort( offset:Int,value:UShort )
+		
 		DebugAssert( offset>=0 And offset<_length-1 )
 
 		If _swapEndian Swap2( Varptr value )
+			
 		Cast<UShort Ptr>( _data+offset )[0]=value
 	End
 	
@@ -351,9 +415,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeInt( offset:Int,value:Int )
+		
 		DebugAssert( offset>=0 And offset<_length-3 )
 	
 		If _swapEndian Swap4( Varptr value )
+			
 		Cast<Int Ptr>( _data+offset )[0]=value
 	End
 	
@@ -365,9 +431,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeUInt( offset:Int,value:UInt )
+		
 		DebugAssert( offset>=0 And offset<_length-3 )
 
 		If _swapEndian Swap4( Varptr value )
+			
 		Cast<UInt Ptr>( _data+offset )[0]=value
 	End
 	
@@ -379,9 +447,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeLong( offset:Int,value:Long )
+		
 		DebugAssert( offset>=0 And offset<_length-7 )
 
 		If _swapEndian Swap8( Varptr value )
+			
 		Cast<Long Ptr>( _data+offset )[0]=value
 	End
 	
@@ -393,9 +463,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeULong( offset:Int,value:ULong )
+		
 		DebugAssert( offset>=0 And offset<_length-7 )
 		
 		If _swapEndian Swap8( Varptr value )
+			
 		Cast<ULong Ptr>( _data+offset )[0]=value
 	End
 	
@@ -407,9 +479,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeFloat( offset:Int,value:Float )
+		
 		DebugAssert( offset>=0 And offset<_length-3 )
 	
 		If _swapEndian Swap4( Varptr value )
+			
 		Cast<Float Ptr>( _data+offset )[0]=value
 	End
 	
@@ -421,9 +495,11 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method PokeDouble( offset:Int,value:Double )
+		
 		DebugAssert( offset>=0 And offset<_length-7 )
 	
 		If _swapEndian Swap8( Varptr value )
+			
 		Cast<Double Ptr>( _data+offset )[0]=value
 	End
 
@@ -439,16 +515,20 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end	
 	Method PokeString( offset:Int,value:String )
+		
 		DebugAssert( offset>=0 And offset<=_length )
 		
 		Local count:=value.CStringLength
+		
 		If offset+count>_length count=_length-offset
+			
 		value.ToCString( _data+offset,count )
 	End
 	
 	#rem monkeydoc Writes a null terminated CString to the data buffer.
 	#end
 	Method PokeCString( offset:Int,value:String )
+		
 		DebugAssert( offset>=0 And offset<=_length )
 		
 		value.ToCString( _data+offset,_length-offset )
@@ -500,6 +580,7 @@ Class DataBuffer Extends std.resource.Resource
 	
 	#end
 	Method CopyTo( dst:DataBuffer,srcOffset:Int,dstOffset:Int,count:Int )
+		
 		DebugAssert( srcOffset>=0 And srcOffset+count<=_length And dstOffset>=0 And dstOffset+count<=dst._length )
 		
 		libc.memmove( dst._data+dstOffset,_data+srcOffset,count )
@@ -549,7 +630,7 @@ Class DataBuffer Extends std.resource.Resource
 	#end	
 	Method OnDiscard() Override
 		
-		GCFree( _data )
+		If _free GCFree( _data )
 		
 		_data=Null
 	End
@@ -558,7 +639,7 @@ Class DataBuffer Extends std.resource.Resource
 	#end	
 	Method OnFinalize() Override
 		
-		GCFree( _data )
+		If _free GCFree( _data )
 	End
 	
 	Private
@@ -567,6 +648,7 @@ Class DataBuffer Extends std.resource.Resource
 	Field _length:Int
 	Field _byteOrder:ByteOrder
 	Field _swapEndian:Bool
+	Field _free:Bool
 	
 	Function Swap2( v:Void Ptr )
 		Local t:=Cast<UShort Ptr>( v )[0]

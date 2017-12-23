@@ -101,6 +101,11 @@ Function Main()
 		Return FileStream.Open( path,mode )
 	End
 	
+	Stream.OpenFuncs["memblock"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return DataStream.Open( path,mode )
+	End
+	
 #If __MOBILE_TARGET__
 	
 	Stream.OpenFuncs["internal"]=Lambda:Stream( proto:String,path:String,mode:String )
