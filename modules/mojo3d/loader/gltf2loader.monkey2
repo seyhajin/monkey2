@@ -696,7 +696,7 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 				Local version:=stream.ReadUInt()
 				Local length:=stream.ReadUInt()-12
 				
-				While length>0 And Not stream.Eof
+				While length>=8 And Not stream.Eof
 					
 					Local clength:=stream.ReadUInt()
 					Local ctype:=stream.ReadUInt()
@@ -710,8 +710,9 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 					Case $004E4942		'"BIN"
 						bindata=stream.ReadAll( clength )
 						If bindata.Length<>clength Exit 'FAIL!
-					Default
-						'NOP
+					Default				'?????
+						Local data:=stream.ReadAll( clength )
+						If data.Length<>clength Exit
 					End
 					
 					length-=clength+8
