@@ -1,5 +1,5 @@
 
-Namespace std.stringio
+Namespace std.base64
 
 Private
 

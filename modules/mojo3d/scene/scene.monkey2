@@ -3,9 +3,7 @@ Namespace mojo3d
 
 #rem monkeydoc The Scene class.
 #end
-Class Scene Extends DynamicObject
-	
-	Field Updating:Void( elapsed:Float )
+Class Scene
 
 	#rem monkeydoc Creates a new scene.
 	#end
@@ -16,6 +14,8 @@ Class Scene Extends DynamicObject
 		_ambientDiffuse=Color.DarkGrey
 		
 		_envColor=Color.White
+		
+		_world=New World( Self )
 	End
 	
 	#rem monkeydoc The sky texture.
@@ -128,19 +128,6 @@ Class Scene Extends DynamicObject
 	
 	#rem monkeydoc Updates the scene.
 	#end
-	Method Update( elapsed:Float )
-		
-		For Local e:=Eachin _rootEntities
-			e.BeginUpdate()
-		Next
-		
-		Updating( elapsed )
-		
-		For Local e:=Eachin _rootEntities
-			e.Update( elapsed )
-		Next
-	End
-	
 	Method Update()
 		
 		Global time:=0.0
@@ -159,15 +146,32 @@ Class Scene Extends DynamicObject
 	
 	#rem monkeydoc Renders the scene to	a canvas.
 	#end
-	Method Render( canvas:Canvas,camera:Camera )
+	Method Render( canvas:Canvas,camera:Camera=Null )
+		
+		If camera
 			
-		camera.Viewport=canvas.Viewport
+			camera.Viewport=canvas.Viewport
 			
+			canvas.Flush()
+		
+			Local renderer:=Renderer.GetCurrent()
+		
+			renderer.Render( Self,camera,canvas.GraphicsDevice )	
+			
+			Return
+			
+		Endif
+		
 		canvas.Flush()
 		
 		Local renderer:=Renderer.GetCurrent()
 		
-		renderer.Render( Self,camera,canvas.GraphicsDevice )
+		renderer.Render( Self,canvas )
+	End
+	
+	Method RayCast:RayCastResult( rayFrom:Vec3f,rayTo:Vec3f,collisionMask:Int )
+		
+		Return _world.RayCast( rayFrom,rayTo,collisionMask )
 	End
 
 	#rem monkeydoc Enumerates all entities in the scene with null parents.
@@ -180,8 +184,6 @@ Class Scene Extends DynamicObject
 	#rem monkeydoc Sets the current scene.
 	#end
 	Function SetCurrent( scene:Scene )
-		
-'		DebugAssert( Not _current,"Scene.Current already set" )
 		
 		_current=scene
 	End
@@ -222,6 +224,11 @@ Class Scene Extends DynamicObject
 		Return _renderables
 	End
 	
+	Property World:World()
+		
+		Return _world
+	End
+	
 	Private
 	
 	Global _current:Scene
@@ -236,12 +243,25 @@ Class Scene Extends DynamicObject
 	Field _clearColor:Color
 	Field _ambientDiffuse:Color
 	
-	Field _postEffects:=New Stack<PostEffect>
-	
 	Field _rootEntities:=New Stack<Entity>
-	
 	Field _cameras:=New Stack<Camera>
 	Field _lights:=New Stack<Light>
 	Field _renderables:=New Stack<Renderable>()
+	Field _postEffects:=New Stack<PostEffect>
+	
+	Field _world:World
+	
+	Method Update( elapsed:Float )
+		
+		For Local e:=Eachin _rootEntities
+			e.BeginUpdate()
+		Next
+		
+		_world.Update( elapsed )
+		
+		For Local e:=Eachin _rootEntities
+			e.Update( elapsed )
+		Next
+	End
 			
 End

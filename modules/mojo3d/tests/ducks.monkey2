@@ -44,6 +44,7 @@ Class MyWindow Extends Window
 		'create camera
 		'
 		_camera=New Camera
+		_camera.Viewport=New Recti( 0,0,640,480 )
 		_camera.Near=.1
 		_camera.Far=50
 		_camera.FOV=90
@@ -53,7 +54,6 @@ Class MyWindow Extends Window
 		
 		'create light
 		_light=New Light
-'		_light.Type=LightType.Point
 		_light.Rotate( 75,15,0 )
 		_light.Move( 0,20,0 )
 		_light.Range=40
@@ -74,8 +74,6 @@ Class MyWindow Extends Window
 		root.Scale=New Vec3f( 3 )
 		
 		_ducks.Push( root )
-		
-		'#rem
 		
 		For Local m:=0.0 To 1.0 Step .125
 		
@@ -104,8 +102,6 @@ Class MyWindow Extends Window
 			Next
 		Next
 		
-		'#End
-		
 		duck.Destroy()
 	End
 	
@@ -115,7 +111,7 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		

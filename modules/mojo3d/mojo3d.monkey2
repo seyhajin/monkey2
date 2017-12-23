@@ -4,11 +4,19 @@ Namespace mojo3d
 #Import "<std>"
 #Import "<mojo>"
 #Import "<opengl>"
+#import "<bullet>"
+
+Using std..
+Using mojo..
+Using opengl..
+Using bullet..
 
 #Import "assets/"
 
 #Import "components/animation"
 #Import "components/animator"
+#Import "components/rigidbody"
+#Import "components/collider"
 #Import "components/behaviour"
 #Import "components/flybehaviour"
 
@@ -37,11 +45,13 @@ Namespace mojo3d
 #Import "render/effects/monochromeeffect"
 #Import "render/effects/bloomeffect"
 
+#Import "scene/raycastresult"
 #Import "scene/component"
 #Import "scene/dynamicobject"
 #Import "scene/entity"
 #Import "scene/entityexts"
 #Import "scene/scene"
+#Import "scene/world"
 
 #Import "loader/loader"
 #Import "loader/gltf2"
@@ -50,10 +60,7 @@ Namespace mojo3d
 #Import "geometry/mesh"
 #Import "geometry/meshprims"
 '#Import "geometry/util3d"
-
-Using std..
-Using mojo..
-Using opengl..
+#Import "geometry/bttypeconvs"
 
 Function Main()
 	

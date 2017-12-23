@@ -156,6 +156,12 @@ Class AppInstance
 		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "MOJO_DEPTH_BUFFER_BITS" ) ) )
 		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetConfig( "MOJO_STENCIL_BUFFER_BITS" ) ) )
 		
+		Local msaa_samples:=Int( GetConfig( "MOJO_MSAA_SAMPLES",0 ) )
+		If msaa_samples
+			SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS,1 )
+			SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES,msaa_samples )
+		Endif
+		
 #If __DESKTOP_TARGET__
 
 		'WIP multiple windows...

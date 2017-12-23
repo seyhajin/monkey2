@@ -62,7 +62,7 @@ Class MyWindow Extends Window
 		
 		util.Fly( _camera,Self )
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )',_camera )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End

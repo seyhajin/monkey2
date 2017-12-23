@@ -48,7 +48,6 @@ Class Component
 		_entity=entity
 		_type=type
 		_entity.AddComponent( Self )
-		Modified()
 	End
 	
 	Property Entity:Entity()
@@ -61,26 +60,7 @@ Class Component
 		Return _type
 	End
 	
-	Property GuidSeq:Int()
-		
-		Return _guidseq
-	End
-	
-	Property Seq:Int()
-		
-		Return _seq
-	End
-	
-	Protected
-	
-	Method Modified()
-		
-		_nextguidseq+=1
-		_guidseq=_nextguidseq
-		_seq+=1
-	End
-		
-	Internal
+Internal
 
 	Method OnCopy:Component( entity:Entity ) Virtual
 
@@ -94,7 +74,7 @@ Class Component
 	
 	Method OnHide() Virtual
 	End
-		
+	
 	Method OnBeginUpdate() Virtual
 	End
 	
@@ -104,14 +84,13 @@ Class Component
 	Method OnDestroy() Virtual
 	End
 	
-	Private
+	Method OnCollide( body:RigidBody ) virtual
+	End
 	
-	Global _nextguidseq:=0
+	Private
 	
 	Field _entity:Entity
 	Field _type:ComponentType
-	Field _guidseq:=0
-	Field _seq:=0
 End
 
 

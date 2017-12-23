@@ -208,6 +208,11 @@ Class btCollisionWorld Extends btObject
 	Method rayTest( rayFromWorld:btVector3,rayToWorld:btVector3,resultCallback:RayResultCallback Ptr ) Extension="bbBullet::rayTest"
 	
 	Method convexSweepTest( castShape:btConvexShape,castFrom:btTransform,castTo:btTransform,resultCallback:ConvexResultCallback ptr,allowedCcdPenetration:btScalar=0 ) Extension="bbBullet::convexSweepTest"
+		
+	Method addCollisionObject( collisionObject:btCollisionObject )
+		
+	Method removeCollisionObject( collisionObject:btCollisionObject )
+				
 End
 
 Class btDynamicsWorld Extends btCollisionWorld

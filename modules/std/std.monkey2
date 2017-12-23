@@ -74,10 +74,11 @@ Namespace std
 #Import "misc/random"
 #Import "misc/chartype"
 #Import "misc/stringio"
-#Import "misc/base64"
 #Import "misc/json"
 #Import "misc/jsonify"
 #Import "misc/zipfile"
+#Import "misc/base64"
+#Import "misc/digest"
 
 #Import "socket/socket"
 #Import "socket/socketstream"

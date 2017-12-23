@@ -91,6 +91,25 @@ Class Renderer
 	
 	#rem monkeydoc @hidden DON'T USE! WILL CHANGE!
 	#end
+	Method Render( scene:Scene,canvas:Canvas )
+		
+		Local viewport:=canvas.Viewport
+		
+		For Local camera:=Eachin scene.Cameras
+			
+			canvas.Viewport=camera.Viewport
+			
+			canvas.Flush()
+			
+			Render( scene,camera,canvas.GraphicsDevice )
+		Next
+		
+		canvas.Viewport=viewport
+	End
+	
+	
+	#rem monkeydoc @hidden DON'T USE! WILL CHANGE!
+	#end
 	Method Render( scene:Scene,camera:Camera,device:GraphicsDevice ) Virtual
 
 		'***** validate stuff *****

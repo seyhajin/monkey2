@@ -1,8 +1,0 @@
-{
-	"module":"mojo3d-physics",
-	"about":"Mojo3d bullet support",
-	"author":"Mark Sibly",
-	"version":"1.0.0",
-	"support":"http://monkeycoder.co.nz",
-	"depends":["std","assimp","mojo3d"]
-}

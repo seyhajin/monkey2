@@ -33,6 +33,13 @@ Class Entity Extends DynamicObject
 	#end
 	Field Shown:Void()
 	
+	#rem monkeydoc Collided signal.
+	
+	After after an entity has collided with a rigidbody.
+	
+	#end
+	Field Collided:Void( rigidBody:RigidBody )
+	
 	#rem monkeydoc Creates a new entity.
 	#end
 	Method New( parent:Entity=Null )
@@ -113,7 +120,7 @@ Class Entity Extends DynamicObject
 			_scene.RootEntities.Add( Self )
 		Endif
 		
-		ValidateVisibility()
+		UpdateVisibility()
 			
 		Invalidate()
 	End
@@ -144,7 +151,7 @@ Class Entity Extends DynamicObject
 		
 		_visible=visible
 		
-		ValidateVisibility()
+		UpdateVisibility()
 	End
 	
 	#rem monkeydoc True if entity and all parents are visible.
@@ -312,7 +319,7 @@ Class Entity Extends DynamicObject
 		
 		Invalidate()
 	End
-	
+
 	#rem monkeydoc Destroys the entity and all of its children.
 	#end
 	Method Destroy()
@@ -323,7 +330,7 @@ Class Entity Extends DynamicObject
 		
 		_visible=False
 		
-		ValidateVisibility()
+		UpdateVisibility()
 		
 		For Local c:=Eachin _components
 			c.OnDestroy()
@@ -483,6 +490,15 @@ Class Entity Extends DynamicObject
 			e.Update( elapsed )
 		Next
 	End
+	
+	Method Collide( body:RigidBody )
+		
+		For Local c:=Eachin _components
+			c.OnCollide( body )
+		Next
+		
+		Collided( body )
+	End
 
 Private
 	
@@ -533,7 +549,7 @@ Private
 		InvalidateWorld()
 	End
 	
-	Method ValidateVisibility()
+	Method UpdateVisibility()
 		
 		If _visible And (Not _parent Or _parent._rvisible)
 			
@@ -562,7 +578,7 @@ Private
 		
 		For Local child:=Eachin _children
 			
-			child.ValidateVisibility()
+			child.UpdateVisibility()
 		Next
 	
 	End

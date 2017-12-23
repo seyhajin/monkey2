@@ -148,6 +148,35 @@ Class Camera Extends Entity
 		Return world_coords
 	End
 	
+	Method Pick:RayCastResult( viewportCoords:Vec2f,collisionMask:Int=-1 )
+		
+		If viewportCoords.x<0 Or viewportCoords.y<0 Or viewportCoords.x>=_viewport.Width Or viewportCoords.y>=_viewport.Height Return Null
+		
+		Local vpcoords:=viewportCoords
+		
+		vpcoords.x=vpcoords.x/_viewport.Width*2-1
+		vpcoords.y=vpcoords.y/_viewport.Height*2-1
+		
+		Local iproj:=-ProjectionMatrix
+		
+		Local rayFrom:=Matrix * (iproj * New Vec3f( vpcoords,-1 ))
+		Local rayTo:=Matrix * (iproj * New Vec3f( vpcoords,1 ))
+		
+		Return Scene.RayCast( rayFrom,rayTo,collisionMask )
+	End
+	
+	Method MousePick:RayCastResult( collisionMask:Int=-1 )
+	
+		Local mouse:=Cast<Vec2f>( Mouse.Location )
+
+		If App.ActiveWindow mouse.y=App.ActiveWindow.Height-mouse.y
+			
+		mouse.x-=Viewport.min.x
+		mouse.y-=Viewport.min.y
+		
+		Return Pick( mouse,collisionMask )
+	End
+	
 	Protected
 
 	Method New( camera:Camera,parent:Entity )
