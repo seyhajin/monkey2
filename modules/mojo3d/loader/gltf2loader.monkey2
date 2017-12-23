@@ -717,8 +717,7 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 							bindata=stream.ReadAll( clength )
 							If bindata.Length<>clength Exit 'FAIL!
 						Default				'?????
-							Local data:=stream.ReadAll( clength )
-							If data.Length<>clength Exit
+							If stream.Skip( clength )<>clength Exit
 						End
 						
 						length-=clength+8
