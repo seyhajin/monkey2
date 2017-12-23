@@ -300,7 +300,7 @@ Class LiteralValue Extends Value
 			Else If ptype2.IsReal
 				result=Double( value ) ? "true" Else "false"
 			Else If ptype2=Type.StringType
-				result=value<>""
+				result=Bool( value ) ? "true" Else "false"
 			Else
 				SemantError( "LiteralValue.UpCast()" )
 			Endif
