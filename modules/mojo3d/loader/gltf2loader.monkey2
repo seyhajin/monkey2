@@ -694,31 +694,39 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 			If stream.ReadUInt()=$46546C67	'"GLTF"
 				
 				Local version:=stream.ReadUInt()
-				Local length:=stream.ReadUInt()-12
+				Local length:=stream.ReadUInt()
 				
-				While length>=8 And Not stream.Eof
+				If length>12
 					
-					Local clength:=stream.ReadUInt()
-					Local ctype:=stream.ReadUInt()
-					
-					Select ctype
-					Case $4E4F534A		'"JSON"
-						Local buf:=stream.ReadAll( clength )
-						If buf.Length<>clength Exit	'FAIL!
-						json=buf.PeekString( 0 )
-						buf.Discard()
-					Case $004E4942		'"BIN"
-						bindata=stream.ReadAll( clength )
-						If bindata.Length<>clength Exit 'FAIL!
-					Default				'?????
-						Local data:=stream.ReadAll( clength )
-						If data.Length<>clength Exit
-					End
-					
-					length-=clength+8
-				Wend
+					length-=12
 				
-				If length json=""
+					While length>=8 And Not stream.Eof
+						
+						Local clength:=stream.ReadUInt()
+						If clength>(length-8) Exit 'FAIL!
+						
+						Local ctype:=stream.ReadUInt()
+						
+						Select ctype
+						Case $4E4F534A		'"JSON"
+							Local buf:=stream.ReadAll( clength )
+							If buf.Length<>clength Exit	'FAIL!
+							json=buf.PeekString( 0 )
+							buf.Discard()
+						Case $004E4942		'"BIN"
+							bindata=stream.ReadAll( clength )
+							If bindata.Length<>clength Exit 'FAIL!
+						Default				'?????
+							Local data:=stream.ReadAll( clength )
+							If data.Length<>clength Exit
+						End
+						
+						length-=clength+8
+					Wend
+					
+					If length json=""
+				
+				Endif
 			
 			Endif
 			
