@@ -1284,7 +1284,12 @@ Class TextView Extends ScrollableView
 		
 			Local key:=event.Key
 			Local modifiers:=event.Modifiers
-			
+
+			'Note: NumLock doesn't work here on any of my keyboards on macos. I get both keypad consts
+			'AND '0', '1', KeyChars, and NumLock modifier is always 'off' so ignore Keypad consts
+			'on macos for now.
+			'
+#If __TARGET__<>"macos"
 			'map keypad nav keys...
 			If Not (modifiers & Modifier.NumLock)
 				Select key
@@ -1299,6 +1304,7 @@ Class TextView Extends ScrollableView
 				Case Key.Keypad0 key=Key.Insert
 				End
 			Endif
+#endif
 			
 			Local r:=False
 			
