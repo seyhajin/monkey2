@@ -1,5 +1,6 @@
 
 #import "<sdl2>"
+#Import "<opengl>"
 
 Namespace sdl2test
 
