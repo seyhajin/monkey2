@@ -13,8 +13,9 @@ Class HelpActions
 	Field makeBetter:Action
 	Field mx2homepage:Action
 	Field bananas:Action
+	Field joinCommunity:Action
 	
-
+	
 	Method New()
 	
 		quickHelp=New Action( "Quick help" )
@@ -22,7 +23,7 @@ Class HelpActions
 		quickHelp.HotKey=Key.F1
 		
 		onlineHelp=New Action( "Online help" )
-		onlineHelp.Triggered=lambda()
+		onlineHelp.Triggered=Lambda()
 		
 			OpenUrl( MONKEY2_DOMAIN+"/monkey2-docs/" )
 		End
@@ -38,58 +39,44 @@ Class HelpActions
 		
 			GotoUploadModulesPage()
 		End
-
+		
 		about=New Action( "About monkey2" )
 		about.Triggered=Lambda()
 		
-			Local htmlView:=New HtmlView
-			htmlView.Go( MainWindow.AboutPagePath )
-	
-			Local dialog:=New Dialog( "About monkey2" )
-			dialog.ContentView=htmlView
-
-			dialog.MinSize=New Vec2i( 640,600 )
-
-			dialog.AddAction( "Okay!" ).Triggered=dialog.Close
-			
-			dialog.Open()
+			OnAboutDialog( "About monkey2",MainWindow.AboutPagePath )
 		End
-
+		
 		aboutTed2go=New Action( "About ted2go" )
 		aboutTed2go.Triggered=Lambda()
 		
-			Local htmlView:=New HtmlView
-			htmlView.Go( "asset::ted2/aboutTed2Go.html" )
-	
-			Local dialog:=New Dialog( "About ted2go" )
-			dialog.ContentView=htmlView
-
-			dialog.MinSize=New Vec2i( 640,600 )
-
-			dialog.AddAction( "Okay!" ).Triggered=dialog.Close
-			
-			dialog.Open()
+			OnAboutDialog( "About ted2go","asset::ted2/aboutTed2Go.html" )
 		End
 		
-		makeBetter=New Action( "Make this app better! (paypal)" )
+		makeBetter=New Action( "Make this app better! (PayPal)" )
 		makeBetter.Triggered=Lambda()
 		
 			OpenUrl( "https://paypal.me/engor/10" )
 		End
 		
 		mx2homepage=New Action( "Monkey2 homepage" )
-		mx2homepage.Triggered=lambda()
+		mx2homepage.Triggered=Lambda()
 		
 			OpenUrl( MONKEY2_DOMAIN )
 		End
 		
 		bananas=New Action( "Bananas showcase" )
-		bananas.Triggered=lambda()
-		
+		bananas.Triggered=Lambda()
+			
 			MainWindow.ShowBananasShowcase()
 		End
+		
+		joinCommunity=New Action( "Join the community (Discord)" )
+		joinCommunity.Triggered=Lambda()
+		
+			OpenUrl( "https://discord.gg/A2C6AMM" )
+		End
+		
 	End
-
 	
 	Private
 	
@@ -97,7 +84,24 @@ Class HelpActions
 	
 	Method OnQuickHelp()
 	
-		MainWindow.ShowQuickHelp()
+		MainWindow.ShowHelp()
+	End
+	
+	Method OnAboutDialog( title:String,url:String,okButton:String="Okay!" )
+	
+		Local htmlView:=New HtmlView
+		htmlView.Go( url )
+	
+		Local dialog:=New DialogExt( title,htmlView )
+	
+		dialog.MinSize=New Vec2i( 640,600 )
+	
+		dialog.AddAction( okButton ).Triggered=dialog.Hide
+	
+		dialog.FadeEnabled=True ' faded
+	
+		dialog.Show()
+	
 	End
 	
 End

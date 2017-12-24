@@ -26,7 +26,11 @@ End
 
 Interface IModuleBuilder
 	
-	Method BuildModules:Bool( clean:Bool,modules:String="",configs:String="debug release" )
+	' cleanState: 
+	' -1: don't clean
+	' 0: use previous
+	' 1: clean
+	Method BuildModules:Bool( modules:String="",configs:String="",cleanState:Int=0 )
 	
 End
 
@@ -149,6 +153,9 @@ Class BuildActions Implements IModuleBuilder
 		_iosTarget=New CheckButton( "iOS",,group )
 		_iosTarget.Layout="fill-x"
 		
+		_verboseMode=New CheckButton( "Verbose")
+		_verboseMode.Layout="fill-x"
+		
 		targetMenu=New MenuExt( "Build target" )
 		targetMenu.AddView( _debugConfig )
 		targetMenu.AddView( _releaseConfig )
@@ -159,6 +166,8 @@ Class BuildActions Implements IModuleBuilder
 		targetMenu.AddView( _iosTarget )
 		targetMenu.AddSeparator()
 		targetMenu.AddAction( buildSettings )
+		targetMenu.AddSeparator()
+		targetMenu.AddView( _verboseMode )
 		
 		'check valid targets...WIP...
 		
@@ -204,6 +213,11 @@ Class BuildActions Implements IModuleBuilder
 		Return _locked
 	End
 	
+	Property Verbosed:Bool()
+	
+		Return _verboseMode.Checked
+	End
+	
 	Method LockBuildFile()
 		
 		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
@@ -217,6 +231,8 @@ Class BuildActions Implements IModuleBuilder
 		jobj["buildConfig"]=New JsonString( _buildConfig )
 		
 		jobj["buildTarget"]=New JsonString( _buildTarget )
+		
+		jobj["buildVerbose"]=New JsonBool( _verboseMode.Checked )
 	End
 		
 	Method LoadState( jobj:JsonObject )
@@ -239,12 +255,12 @@ Class BuildActions Implements IModuleBuilder
 		Endif
 		
 		If jobj.Contains( "buildTarget" )
-					
-			local target:=jobj["buildTarget"].ToString()
-
-			If _validTargets.Contains( target )
 			
-				 _buildTarget=target
+			local target:=jobj["buildTarget"].ToString()
+			
+			If _validTargets.Contains( target )
+				
+				_buildTarget=target
 				
 				Select _buildTarget
 				Case "desktop"
@@ -259,6 +275,10 @@ Class BuildActions Implements IModuleBuilder
 			
 			Endif
 			
+		Endif
+		
+		If jobj.Contains( "buildVerbose" )
+			_verboseMode.Checked=jobj.GetBool( "buildVerbose" )
 		Endif
 		
 	End
@@ -279,27 +299,48 @@ Class BuildActions Implements IModuleBuilder
 		rebuildHelp.Enabled=idle
 		moduleManager.Enabled=idle
 	End
-
-	Method BuildModules:Bool( clean:Bool,modules:String="",configs:String="debug release" )
 	
-		Local dialog:=New UpdateModulesDialog( _validTargets,modules,configs,clean )
+	Method BuildModules:Bool( modules:String="",configs:String="",cleanState:Int=0 )
+		
+		If Not modules Then modules=_storedModules
+		
+		If Not configs
+			configs=_storedConfigs
+			If Not configs Then configs="debug release"
+		Endif
+		
+		Local clean:Bool
+		If cleanState=0
+			clean=_storedClean
+		Else
+			clean=(cleanState=1)
+		Endif
+		
+		Local selTargets:=(_storedTargets ?Else "desktop")
+		
+		Local dialog:=New UpdateModulesDialog( _validTargets,selTargets,modules,configs,clean )
 		dialog.Title="Update / Rebuild modules"
 		
 		Local ok:=dialog.ShowModal()
 		If Not ok Return False
 		
-		Local result:=True
+		Local result:Bool
 		
 		Local targets:=dialog.SelectedTargets
 		modules=dialog.SelectedModules
-		
-		clean=dialog.NeedClean
 		configs=dialog.SelectedConfigs
+		clean=dialog.NeedClean
+		
+		' store
+		_storedTargets=targets.Join( " " )
+		_storedModules=modules
+		_storedConfigs=configs
+		_storedClean=clean
 		
 		Local time:=Millisecs()
 		
 		For Local target:=Eachin targets
-			result=BuildModules( clean,target,modules,configs )
+			result=BuildModules( target,modules,configs,clean )
 			If result=False Exit
 		Next
 		
@@ -318,7 +359,7 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method GotoError( err:BuildError )
 	
-		Local doc:=Cast<CodeDocument>( _docs.OpenDocument( err.path,True ) )
+		Local doc:=Cast<CodeDocument>( _docs.OpenDocument( GetCaseSensitivePath( err.path ),True ) )
 		If Not doc Return
 	
 		Local tv := doc.CodeView
@@ -349,10 +390,15 @@ Class BuildActions Implements IModuleBuilder
 	Field _emscriptenTarget:CheckButton
 	Field _androidTarget:CheckButton
 	Field _iosTarget:CheckButton
+	Field _verboseMode:CheckButton
 	
 	Field _validTargets:StringStack
 	Field _timing:Long
 	
+	Field _storedModules:String
+	Field _storedConfigs:String
+	Field _storedTargets:String
+	Field _storedClean:Bool
 	
 	Method BuildDoc:CodeDocument()
 		
@@ -434,7 +480,7 @@ Class BuildActions Implements IModuleBuilder
 						Local msg:=stdout.Slice( i+12 )
 						
 						Local err:=New BuildError( path,line,msg )
-						Local doc:=Cast<CodeDocument>( _docs.OpenDocument( path,False ) )
+						Local doc:=Cast<CodeDocument>( _docs.OpenDocument( GetCaseSensitivePath( path ),False ) )
 						
 						If doc
 							doc.AddError( err )
@@ -477,7 +523,7 @@ Class BuildActions Implements IModuleBuilder
 		Return _console.ExitCode=0
 	End
 
-	Method BuildModules:Bool( clean:Bool,target:String,modules:String,configs:String="debug release" )
+	Method BuildModules:Bool( target:String,modules:String,configs:String,clean:Bool )
 		
 		PreBuildModules()
 		
@@ -490,6 +536,7 @@ Class BuildActions Implements IModuleBuilder
 			
 			Local cmd:=MainWindow.Mx2ccPath+" makemods -target="+target
 			If clean cmd+=" -clean"
+			If Verbosed cmd+=" -verbose"
 			cmd+=" -config="+cfg
 			If modules Then cmd+=" "+modules
 			
@@ -523,6 +570,7 @@ Class BuildActions Implements IModuleBuilder
 		If run Then action="build"
 
 		Local cmd:=MainWindow.Mx2ccPath+" makeapp -"+action+" "+opts
+		If Verbosed cmd+=" -verbose"
 		cmd+=" -config="+config
 		cmd+=" -target="+target
 		cmd+=" ~q"+buildDoc.Path+"~q"
@@ -623,6 +671,8 @@ Class BuildActions Implements IModuleBuilder
 		
 		_locked=doc
 		SetLockedState( _locked,True )
+		
+		
 	End
 	
 	Method SetLockedState( doc:CodeDocument,locked:Bool )
@@ -630,6 +680,7 @@ Class BuildActions Implements IModuleBuilder
 		doc.State=locked ? "+" Else ""
 		Local tab:=_docs.FindTab( doc.View )
 		If tab Then tab.SetLockedState( locked )
+		_docs.CurrentDocumentChanged()
 	End
 	
 	Method OnBuildFileSettings()
@@ -644,7 +695,7 @@ Class BuildActions Implements IModuleBuilder
 		
 		If _console.Running Return
 	
-		BuildModules( False )
+		BuildModules()
 	End
 	
 	Method OnModuleManager()
