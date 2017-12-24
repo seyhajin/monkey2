@@ -1,6 +1,19 @@
 
 ***** Monkey2 v1.1.09 *****
 
+
+Added support for gltf2 binary files (ie: .glb files).
+
+Added std.digest with MD5, SHA1, SHA256.
+
+Added std.base64 with EncodeBase64 and DecodeBase64.
+
+You can now create a DataBuffer with an existing memory block.
+
+Merged mojo3d-physics into mojo3d.
+
+Added "MOJO_MSAA_SAMPLES" for multisample antialiasing. On windows, need to set "MOJO_OPENGL_PROFILE" to "compatibility" too.
+
 Added support for gltf2 animations/skins.
 
 Added some more keycodes, eg: Key.ACBack.
