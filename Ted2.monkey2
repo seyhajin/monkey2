@@ -7,7 +7,11 @@
 '
 'windres resource.rc resource.o
 
+#If __ARCH__="x86"
 #Import "logo/resource.o"
+#Elseif __ARCH__="x64"
+#Import "logo/resource_x64.o"
+#Endif
 
 #Endif
 
@@ -19,6 +23,7 @@
 #Import "<mojo>"
 #Import "<mojox>"
 #Import "<tinyxml2>"
+#Import "<sdl2>"
 
 #Import "action/FileActions"
 #Import "action/EditActions"
@@ -26,6 +31,7 @@
 #Import "action/HelpActions"
 #Import "action/FindActions"
 #Import "action/ViewActions"
+#Import "action/WindowActions"
 
 #Import "dialog/FindDialog"
 #Import "dialog/PrefsDialog"
@@ -35,7 +41,6 @@
 #Import "dialog/FindInFilesDialog"
 #Import "dialog/UpdateModulesDialog"
 #Import "dialog/GenerateClassDialog"
-#Import "dialog/LiveTemplateDialog"
 
 #Import "document/DocumentManager"
 #Import "document/Ted2Document"
@@ -84,7 +89,6 @@
 #Import "view/AutocompleteView"
 #Import "view/TreeViewExt"
 #Import "view/CodeTreeView"
-'#Import "view/FileBrowserExt"
 #Import "view/CodeGutterView"
 #Import "view/ToolBarViewExt"
 #Import "view/HintView"
@@ -109,14 +113,15 @@
 #Import "view/FindReplaceView"
 #Import "view/ViewExtensions"
 #Import "view/DockingViewExt"
+#Import "view/DraggableViewListener"
 
+#Import "Tree"
 #Import "Tuple"
 #Import "Plugin"
 #Import "ThemeImages"
 #Import "Prefs"
 #Import "ProcessReader"
 #Import "LiveTemplates"
-#Import "DraggableTabs"
 #Import "MainWindow"
 
 
@@ -126,11 +131,11 @@ Using std..
 Using mojo..
 Using mojox..
 Using tinyxml2..
-
+Using sdl2..
 
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.7"
+Global AppTitle:="Ted2Go v2.8"
 
 
 Function Main()
@@ -159,18 +164,17 @@ Function Main()
 	
 	'initial theme
 	'
-	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-prime-blue" )
+	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-warm" )
 
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
 	
-	Local config:=New StringMap<String>
+	SetConfig( "MOJO_INITIAL_THEME",jobj.GetString( "theme" ) )
 	
-	config["initialTheme"]=jobj.GetString( "theme" )
-	config["initialThemeScale"]=jobj.GetNumber( "themeScale" )
+	SetConfig( "MOJO_INITIAL_THEME_SCALE",jobj.GetString( "themeScale" ) )
 	
 	'start the app!
 	'
-	New AppInstance( config )
+	New AppInstance
 	
 	'initial window state
 	'
@@ -181,7 +185,7 @@ Function Main()
 	If jobj.Contains( "windowRect" ) 
 		rect=ToRecti( jobj["windowRect"] )
 	Else
-		Local w:=Min( 1380,App.DesktopSize.x-40 )
+		Local w:=Min( 1480,App.DesktopSize.x-40 )
 		Local h:=Min( 970,App.DesktopSize.y-64 )
 		rect=New Recti( 0,0,w,h )
 		flags|=WindowFlags.Center

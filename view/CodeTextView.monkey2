@@ -12,6 +12,7 @@ Class CodeTextView Extends TextView
 	Field TextChanged:Void()
 	
 	Method New()
+		
 		Super.New()
 		
 		CursorBlinkRate=2.5
@@ -59,6 +60,116 @@ Class CodeTextView Extends TextView
 		UpdateThemeColors()
 	End
 	
+	Method DeleteLineAtCursor()
+	
+		Local line:=Document.FindLine( Cursor )
+		Local pos:=Cursor
+		SelectText( Document.StartOfLine( line ),Document.EndOfLine( line )+1 )
+		ReplaceText( "" )
+		pos=Min( pos,Document.EndOfLine( line ) )
+		SelectText( pos,pos )
+	End
+	
+	Method DeleteWordBackward()
+	
+		If CanCopy ' try to delete selected area
+			ReplaceText( "" )
+			Return
+		Endif
+	
+		Local line:=Document.FindLine( Cursor )
+		Local found:Word=Null
+		For Local word:=Eachin WordIterator.ForLine( Self,line )
+			If Cursor>word.index And Cursor<=word.index+word.length
+				found=word
+				Exit
+			Endif
+		Next
+		If found
+			SelectText( found.index,Cursor )
+			ReplaceText( "" )
+		Endif
+	End
+	
+	Method DeleteWordForward()
+	
+		If CanCopy ' try to delete selected area
+			ReplaceText( "" )
+			Return
+		Endif
+	
+		Local line:=Document.FindLine( Cursor )
+		Local found:Word=Null
+		For Local word:=Eachin WordIterator.ForLine( Self,line )
+			If Cursor>=word.index And Cursor<word.index+word.length
+				found=word
+				Exit
+			Endif
+		Next
+		If found
+			SelectText( Cursor,found.index+found.length )
+			ReplaceText( "" )
+		Endif
+	End
+	
+	Method DeleteToEnd()
+	
+		Local i1:=Min( Anchor,Cursor )
+		Local i2:=Max( Anchor,Cursor )
+	
+		SelectText( i1,Document.EndOfLine( Document.FindLine( i2 ) ) )
+		ReplaceText( "" )
+	End
+	
+	Method DeleteToBegin()
+	
+		Local i1:=Min( Anchor,Cursor )
+		Local i2:=Max( Anchor,Cursor )
+	
+		SelectText( Document.StartOfLine( Document.FindLine( i1 ) ),i2 )
+		ReplaceText( "" )
+	End
+	
+	Method LowercaseSelection()
+	
+		Local txt:=SelectedText
+		If txt
+			Local a:=Anchor,c:=Cursor
+			ReplaceText( txt.ToLower() )
+			SelectText( a,c )
+		Endif
+	End
+	
+	Method UppercaseSelection()
+	
+		Local txt:=SelectedText
+		If txt
+			Local a:=Anchor,c:=Cursor
+			ReplaceText( txt.ToUpper() )
+			SelectText( a,c )
+		Endif
+	End
+	
+	Method SwapCaseSelection()
+	
+		Local txt:=SelectedText
+		If txt
+			Local a:=Anchor,c:=Cursor
+			ReplaceText( SwapCase( txt ) )
+			SelectText( a,c )
+		Endif
+	End
+	
+	Property SelectedText:String()
+		
+		If Not CanCopy Return ""
+		
+		Local i1:=Min( Anchor,Cursor )
+		Local i2:=Max( Anchor,Cursor )
+		
+		Return Text.Slice( i1,i2 )
+	End
+	
 	Property IsCursorAtTheEndOfLine:Bool()
 		
 		Local line:=Document.FindLine( Cursor )
@@ -92,36 +203,8 @@ Class CodeTextView Extends TextView
 	
 	Method IdentBeforeCursor:String( withDots:Bool=True )
 		
-		Local text:=Text
-		Local cur:=Cursor
-		Local n:=Cursor-1
-		Local start:=Document.StartOfLine( Document.FindLine( Cursor ) )
-		
-		While n >= start
-			
-			Local more:=(text[n]=Chars.MORE_BRACKET)
-			
-			If text[n] = Chars.DOT Or more ' . | ?. | ->
-				If Not withDots Exit
-				If more
-					If n>0 And text[n-1]<>"-"[0] Exit
-					n-=1 ' skip '-'
-				Else
-					If n>0 And text[n-1]="?"[0] Then n-=1 ' skip '?'
-				Endif
-			ElseIf Not (IsIdent( text[n] ) Or text[n] = Chars.GRID) ' #
-				Exit
-			Endif
-			
-			n-=1
-		Wend
-		n+=1
-		
-		Local s:=""
-		If n < cur
-			s=text.Slice( n,cur ).Replace( "?.","." ).Replace( "->","." )
-		Endif
-		Return s
+		Local pair:=GetIndentBeforePos_Mx2( LineTextAtCursor,PosInLineAtCursor,withDots )
+		Return pair.Item1
 	End
 	
 	Property WordAtCursor:String()
@@ -247,6 +330,10 @@ Class CodeTextView Extends TextView
 		Return Anchor-Document.StartOfLine( LineNumAtAnchor )
 	End
 	
+	Property StartOfLineAtCursor:Int()
+		Return Document.StartOfLine( LineNumAtCursor )
+	End
+	
 	Property CursorPos:Vec2i()
 		Return New Vec2i( LineNumAtCursor,PosInLineAtCursor )
 	End
@@ -354,7 +441,18 @@ Class CodeTextView Extends TextView
 						Local cur:=CharAtPoint( event.Location )
 						SelectText( cur,cur )
 					Else
-						Local r:=CursorRect | CharRect( Anchor )
+						Local i1:=Min( Cursor,Anchor )
+						Local i2:=Max( Cursor,Anchor )
+						Local l1:=Document.FindLine( i1 )
+						Local l2:=Document.FindLine( i2 )
+						Local r:Recti=Null
+						For Local line:=l1 To l2
+							If r=Null
+								r=LineRect( line )
+							Else
+								r|=LineRect( line )
+							Endif
+						Next
 						If Not r.Contains( event.Location )
 							Local cur:=CharAtPoint( event.Location )
 							SelectText( cur,cur )
@@ -412,9 +510,6 @@ Class CodeTextView Extends TextView
 	Property Line:Int()
 		Return _line
 	End
-	
-	
-	Protected
 	
 	Method OnCut( wholeLine:Bool=False )
 	
@@ -573,11 +668,12 @@ Class CodeTextView Extends TextView
 	Method OnThemeChanged() Override
 		
 		Super.OnThemeChanged()
+		
 		UpdateThemeColors()
 	End
 	
 	Method UpdateThemeColors() Virtual
-	
+		
 		_whitespacesColor=App.Theme.GetColor( "textview-whitespaces" )
 		_extraSelColor=App.Theme.GetColor( "textview-extra-selection" )
 	End
