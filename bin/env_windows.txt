@@ -99,7 +99,20 @@ MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KI
 
 '***** EMSCRIPTEN TARGET *****
 
-'Note: Requires Emscripten SDK, see: https://github.com/juj/emsdk/blob/master/README.md
+'Note: you must setup emscripten yourself, sorry!
+
+'Yet another failed attempt to make emscripten easy to use...
+'EMSDK=${MX2_HOME}\devtools\emsdk-portable-64bit
+'EM_CONFIG=${EMSDK}\.emscripten
+'BINARYEN_ROOT=${EMSDK}\clang\nightly-e1.37.9-2017_04_19_23_39\binaryen
+'JAVA_HOME=${EMSDK}\java\7.45_64bit
+'EMSCRIPTEN=${EMSDK}\emscripten\nightly-1.37.9-2017_04_19_23_39
+'PATH=${EMSDK};${PATH}
+'PATH=${EMSDK}\clang\nightly-e1.37.9-2017_04_19_23_39;${PATH}
+'PATH=${EMSDK}\node\4.1.1_64bit\bin;${PATH}
+'PATH=${EMSDK}\python\2.7.5.3_64bit;${PATH}
+'PATH=${EMSDK}\java\7.45_64bit\bin;${PATH}
+'PATH=${EMSDK}\emscripten\nightly-1.37.9-2017_04_19_23_39;${PATH}
 
 'Add mserver_winnt emscripten mini-server/launcher.
 '
@@ -111,13 +124,13 @@ MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-s ASSERTIONS=2
 MX2_LD_OPTS_EMSCRIPTEN_RELEASE=
 
 'C Compiler options
-MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -Wno-all -s -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
-MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-Os -s ASSERTIONS=2
+MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2 -s ASSERTIONS=2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 'C++ Compiler options
 MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -Wno-all -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
-MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-Os -s ASSERTIONS=2
+MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2 -s ASSERTIONS=2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 
