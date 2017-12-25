@@ -78,7 +78,7 @@ Namespace std
 #Import "misc/jsonify"
 #Import "misc/zipfile"
 #Import "misc/base64"
-'#Import "misc/digest"
+#Import "misc/digest"
 
 #Import "socket/socket"
 #Import "socket/socketstream"
