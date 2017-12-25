@@ -122,10 +122,6 @@
 #Import "Prefs"
 #Import "ProcessReader"
 #Import "LiveTemplates"
-<<<<<<< HEAD
-'#Import "DraggableTabs"
-=======
->>>>>>> 1b419253cfff479620c345a0b6c6b362541f22fd
 #Import "MainWindow"
 
 
