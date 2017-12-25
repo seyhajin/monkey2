@@ -1,4 +1,3 @@
-
 #If __TARGET__="windows"
 
 #Import "bin/wget.exe"
@@ -167,14 +166,9 @@ Function Main()
 	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-warm" )
 
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
-		
+	
 	SetConfig( "MOJO_INITIAL_THEME",jobj.GetString( "theme" ) )
 	
-<<<<<<< HEAD
-=======
-	SetConfig( "MOJO_INITIAL_THEME",jobj.GetString( "theme" ) )
-	
->>>>>>> 1b419253cfff479620c345a0b6c6b362541f22fd
 	SetConfig( "MOJO_INITIAL_THEME_SCALE",jobj.GetString( "themeScale" ) )
 	
 	'start the app!
