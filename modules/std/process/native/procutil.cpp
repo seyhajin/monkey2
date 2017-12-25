@@ -1,6 +1,8 @@
 
 #include "procutil.h"
 
+#include <stdio.h>
+
 namespace bbProcUtil{
 
 #if _WIN32
@@ -12,19 +14,18 @@ namespace bbProcUtil{
 		procinfo.dwSize=sizeof( procinfo );
 		
 		int gotinfo=Process32First( snapshot,&procinfo );
-			
+
 		while( gotinfo ){
 		
 			if( procinfo.th32ParentProcessID==procid ){
 			
-//				printf("process=%i parent=%i module=%x path=%s\n",procinfo.th32ProcessID,procinfo.th32ParentProcessID,procinfo.th32ModuleID,procinfo.szExeFile);
-
 				terminateChildren( procinfo.th32ProcessID,snapshot,exitCode );
 				 
 				HANDLE child=OpenProcess( PROCESS_ALL_ACCESS,0,procinfo.th32ProcessID );
 				
 				if( child ){
 					int res=TerminateProcess( child,exitCode );
+					
 					CloseHandle( child );
 				}
 			}
@@ -38,17 +39,21 @@ namespace bbProcUtil{
 		HANDLE snapshot;
 		
 		int procid=GetProcessId( prochandle );
+
+		//undocumented at msdn! GetProcessId returns 0 if process finished?
+		if( !procid ) return 1;
 		
 		snapshot=CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS,0 );
 		
 		if( snapshot!=INVALID_HANDLE_VALUE ){
-		
+			
 			terminateChildren( GetProcessId( prochandle ),snapshot,exitCode );
 
 			CloseHandle( snapshot );
 		}
 			
 		int res=TerminateProcess( prochandle,exitCode );
+		
 		return res;
 	}
 

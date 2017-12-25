@@ -34,8 +34,8 @@ struct bbProcess::Rep{
 	char stdoutBuf[4096];
 	char *stdoutGet;
 	int stdoutAvail=0;
-	bool terminated=false;
-	int exit;
+	bool exited=false;
+	int exit=-1;
 	
 	FinishedEvent finishedEvent;
 	StdoutEvent stdoutEvent;
@@ -52,9 +52,11 @@ struct bbProcess::Rep{
 	}
 	
 	void close(){
+		CloseHandle( proc );
 		CloseHandle( in );
 		CloseHandle( out );
 		CloseHandle( err );
+		CloseHandle( breakEvent );
 	}
 
 #else
@@ -209,9 +211,9 @@ bbBool bbProcess::start( bbString cmd ){
 	    	
 	    	GetExitCodeProcess( rep->proc,(DWORD*)&rep->exit );
 	    	
-	    	CloseHandle( rep->breakEvent );
+//	    	CloseHandle( rep->breakEvent );
 	    		
-	    	CloseHandle( rep->proc );
+//	    	CloseHandle( rep->proc );
 	    	
 		#else
 		
@@ -225,6 +227,8 @@ bbBool bbProcess::start( bbString cmd ){
 			}
 			
 		#endif
+		
+			rep->exited=true;
 		
 			rep->finishedEvent.post();
 
@@ -270,13 +274,6 @@ bbBool bbProcess::start( bbString cmd ){
 	_rep=rep;
     
     return true;
-}
-
-int bbProcess::exitCode(){
-
-	if( !_rep ) return -1;
-
-	return _rep->exit;
 }
 
 bbInt bbProcess::stdoutAvail(){
@@ -342,9 +339,21 @@ int bbProcess::writeStdin( void *buf,int count ){
 	return n>=0 ? n : 0;
 }
 
+void bbProcess::terminate(){
+
+	if( !_rep || _rep->exited ) return;
+
+#if _WIN32
+	bbProcUtil::TerminateProcessGroup( _rep->proc,-1 );
+	CancelIoEx( _rep->out,0 );
+#else
+	killpg( _rep->proc,SIGTERM );
+#endif
+}
+
 void bbProcess::sendBreak(){
 
-	if( !_rep ) return;
+	if( !_rep || _rep->exited ) return;
 	
 #if _WIN32
 	SetEvent( _rep->breakEvent );
@@ -353,19 +362,11 @@ void bbProcess::sendBreak(){
 #endif
 }
 
-void bbProcess::terminate(){
+int bbProcess::exitCode(){
 
-	if( !_rep ) return;
+	if( !_rep || !_rep->exited ) return -1;
 
-#if _WIN32
-
-	bbProcUtil::TerminateProcessGroup( _rep->proc,-1 );
-	
-	CancelIoEx( _rep->out,0 );
-
-#else
-	killpg( _rep->proc,SIGTERM );
-#endif
+	return _rep->exit;
 }
 
 void bbProcess::gcMark(){
