@@ -400,7 +400,7 @@ Class Gltf2Asset
 					material.metallicFactor=jpbr.GetNumber( "metallicFactor" )
 				Endif
 				If jpbr.Contains( "roughnessFactor" )
-					material.metallicFactor=jpbr.GetNumber( "roughnessFactor" )
+					material.roughnessFactor=jpbr.GetNumber( "roughnessFactor" )
 				Endif
 			End
 			
