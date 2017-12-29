@@ -244,7 +244,7 @@ Class Gltf2Loader
 			Return Null
 		Endif
 		
-		If Not prim.indices Or (prim.indices.componentType<>GLTF_UNSIGNED_SHORT And prim.indices.componentType<>GLTF_UNSIGNED_INT) Or prim.indices.type<>"SCALAR" 
+		If Not prim.indices Or (prim.indices.componentType<>GLTF_UNSIGNED_BYTE And prim.indices.componentType<>GLTF_UNSIGNED_SHORT And prim.indices.componentType<>GLTF_UNSIGNED_INT) Or prim.indices.type<>"SCALAR" 
 			Print "Gltf mesh has invalid index data"
 			Return Null
 		Endif
@@ -323,7 +323,16 @@ Class Gltf2Loader
 
 		datap=GetData( prim.indices )
 		stride=prim.indices.bufferView.byteStride
-		If prim.indices.componentType=GLTF_UNSIGNED_SHORT
+		
+		If prim.indices.componentType=GLTF_UNSIGNED_BYTE
+			stride=stride ?Else 1
+			For Local i:=0 Until icount Step 3
+				indices[i+0]=Cast<UByte Ptr>( datap )[0]
+				indices[i+2]=Cast<UByte Ptr>( datap )[1]
+				indices[i+1]=Cast<UByte Ptr>( datap )[2]
+				datap+=stride*3
+			Next
+		Else If prim.indices.componentType=GLTF_UNSIGNED_SHORT
 			stride=stride ?Else 2
 			For Local i:=0 Until icount Step 3
 				indices[i+0]=Cast<UShort Ptr>( datap )[0]
