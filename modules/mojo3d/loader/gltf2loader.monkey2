@@ -362,6 +362,7 @@ Class Gltf2Loader
 			For Local prim:=Eachin node.mesh.primitives
 				
 				Local pmesh:=LoadPrimitive( prim )
+				If Not pmesh Continue
 				
 				pmesh.TransformVertices( matrix )
 				
@@ -420,6 +421,7 @@ Class Gltf2Loader
 			For Local prim:=Eachin node.mesh.primitives
 				
 				Local pmesh:=LoadPrimitive( prim )
+				If Not pmesh Continue
 				
 				mesh.AddMesh( pmesh,mesh.NumMaterials )
 				
