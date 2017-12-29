@@ -266,7 +266,7 @@ Class Entity Extension
 	
 	#rem monkeydoc Gets entity position in local or world space.
 	#end
-	Method GetPostition:Vec3f( localSpace:Bool=False )
+	Method GetPosition:Vec3f( localSpace:Bool=False )
 		
 		Return localSpace ? LocalPosition Else Position
 	End
