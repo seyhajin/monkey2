@@ -2,8 +2,12 @@
 '***** MACOS DESKTOP TARGET *****
 
 'Hacks for dylibs in app
-MX2_APP_DIR_DYLIB=						'ie: dylibs go in app Contents/MacOS dir
-MX2_APP_DIR_FRAMEWORK=../Frameworks		'ie: frameworks go in app Contents/Frameworks dir
+
+'dylibs for in Contents/MacOS dir...
+MX2_APP_DIR_DYLIB=
+
+'frameworks go in app Contents/Frameworks dir
+MX2_APP_DIR_FRAMEWORK=../Frameworks
 
 'LD options
 MX2_LD_OPTS_MACOS=-mmacosx-version-min=10.9 -Wl,-rpath,@executable_path -Wl,-rpath,@executable_path/../Frameworks
