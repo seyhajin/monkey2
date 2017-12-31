@@ -624,6 +624,9 @@ Class Gltf2Asset
 			
 			If jnode.Contains( "scale" )
 				node.scale=GetVec3f( jnode.GetArray( "scale" ) )
+				node.scale.x=Abs( node.scale.x )
+				node.scale.y=Abs( node.scale.y )
+				node.scale.z=Abs( node.scale.z )
 			Endif
 				
 			If jnode.Contains( "matrix" )
