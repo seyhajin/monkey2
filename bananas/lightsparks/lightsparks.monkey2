@@ -63,7 +63,7 @@ Class MyWindow Extends Window
 	
 		_light.Scale=New Vec2f( 3,3 )
 		
-		_spark=New Image( _light )
+		_spark=New Image( _light,_light.Rect )
 		
 		_spark.Scale=New Vec2f( .5,.5 )
 		
