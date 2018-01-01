@@ -1,4 +1,3 @@
-
 #rem
 
 A slightly more complicated window example.
@@ -60,18 +59,18 @@ Class MyWindow Extends Window
 		'		
 		Local h:=canvas.Font.Height
 		
-		canvas.DrawText( "Size="+Rect.Size.ToString(),0,0 )
-		canvas.DrawText( "Mouse="+mouse.ToString(),0,h )
+		canvas.DrawText( "Size="+Rect.Size,0,0 )
+		canvas.DrawText( "Mouse="+mouse,0,h )
 		canvas.DrawText( "Layout=~q"+Layout+"~q  ('L' to cycle)",0,h*2 )
 		
 		If Layout="float"
-			canvas.DrawText( "Resolution="+virtualRes.ToString()+"  ('R' to cycle)",0,h*3 )
-			canvas.DrawText( "Gravity="+Gravity.ToString()+"  ('G' to cycle)",0,h*4 )
+			canvas.DrawText( "Resolution="+virtualRes+"  ('R' to cycle)",0,h*3 )
+			canvas.DrawText( "Gravity="+Gravity+"  ('G' to cycle)",0,h*4 )
 		Else If Layout="letterbox"
-			canvas.DrawText( "Resolution="+virtualRes.ToString()+"  ('R' to cycle)",0,h*3 )
-			canvas.DrawText( "Gravity="+Gravity.ToString()+"  ('G' to cycle)",0,h*4 )
+			canvas.DrawText( "Resolution="+virtualRes+"  ('R' to cycle)",0,h*3 )
+			canvas.DrawText( "Gravity="+Gravity+"  ('G' to cycle)",0,h*4 )
 		Else If Layout="stretch"
-			canvas.DrawText( "Resolution="+virtualRes.ToString()+"  ('R' to cycle)",0,h*3 )
+			canvas.DrawText( "Resolution="+virtualRes+"  ('R' to cycle)",0,h*3 )
 		Endif
 		
 		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
@@ -119,9 +118,9 @@ Class MyWindow Extends Window
 			Print "Window close"
 			App.Terminate()
 		Case EventType.WindowMoved
-			Print "Window moved to:"+Frame.Origin.ToString()
+			Print "Window moved to:"+Frame.Origin
 		Case EventType.WindowResized
-			Print "Window resized to:"+Frame.Size.ToString()
+			Print "Window resized to:"+Frame.Size
 			App.RequestRender()	'note: we do this to trigger a render when window is being 'modally resized'.
 		End
 	End
