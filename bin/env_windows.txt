@@ -99,9 +99,9 @@ MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KI
 
 '***** EMSCRIPTEN TARGET *****
 
-'env vars for incoming 64bit - I've set these via computer->properties so I can use em from cmd line.
+'example env vars for sdk-incoming-64bit
+'
 'EMSDK=D:/devtools/emsdk-portable-64bit
-'EMSCRIPTEN=${EMSDK}\emscripten\incoming
 'PATH=${EMSDK}\clang\fastcomp\build_incoming_vs2015_64\RelWithDebInfo\bin;${PATH}
 'PATH=${EMSDK}\emscripten\incoming;${PATH}
 
@@ -116,6 +116,9 @@ MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-O2 -s ASSERTIONS=2
 MX2_LD_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 'extra LD opts for 1.37.26 - if you're using 1.37.26 or earlier, you may need to enable these lines.
+'
+'leave these disabled for later versions, eg: emsdk-portable-64bit
+'
 'MX2_LD_OPTS_EMSCRIPTEN=${MX2_LD_OPTS_EMSCRIPTEN} -s EXTRA_EXPORTED_RUNTIME_METHODS="['Pointer_stringify']"
 'MX2_LD_OPTS_EMSCRIPTEN_WASM=${MX2_LD_OPTS_EMSCRIPTEN_WASM} -s BINARYEN_TRAP_MODE='allow'
 
