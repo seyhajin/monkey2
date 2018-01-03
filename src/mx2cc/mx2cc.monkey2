@@ -26,13 +26,16 @@ Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods -config=debug mojo3d"' -clean -config=debug monkey libc miniz stb-image stb-image-write stb-vorbis std"
  
-Const TestArgs:="mx2cc makeapp -clean -config=release src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp -clean -config=debug src/mx2cc/test.monkey2"
 
 Function Main()
 	
 '	Print "YARGH!"
 	
 '	Return
+
+	Local vec2i:=New Vec2i
+	Local vec3f:=New Vec3f
 
 	'Set aside 64M for GC!
 	GCSetTrigger( 64*1024*1024 )

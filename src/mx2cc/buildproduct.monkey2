@@ -440,7 +440,9 @@ Class GccBuildProduct Extends BuildProduct
 					If Not src Continue
 					
 					Local time:=GetFileTime( src )
+					
 					If Not time Or time>objTime
+						If Not time DeleteFile( deps )
 						uptodate=False
 						Exit
 					Endif

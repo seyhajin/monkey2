@@ -45,6 +45,7 @@ Class Translator_CPP Extends Translator
 		Reset()
 	
 		Emit( "#include <bbmonkey.h>" )
+		Emit( "#include <bbdeclinfo_r.h>" )
 		Emit( "#if BB_NEWREFLECTION" )
 		Emit( "#include ~q_r.h~q" )
 		Emit( "#endif" )
@@ -936,8 +937,6 @@ Class Translator_CPP Extends Translator
 	
 		UsesRefInfo( ctype )
 		
-'		Print "TypeInfo:"+ctype.ToString()
-	
 		Local fdecl:=ctype.scope.FindFile().fdecl
 
 		Local cdecl:=ctype.cdecl
@@ -959,7 +958,7 @@ Class Translator_CPP Extends Translator
 		
 		Local decls:=New StringStack
 		
-		If ctype.IsClass And Not ctype.IsAbstract
+		If ctype.IsClass And Not ctype.IsAbstract And Not cdecl.IsExtension
 			If ctype.ctors.Length
 				For Local ctor:=Eachin ctype.ctors
 					If Not GenTypeInfo( ctor ) Continue
@@ -995,6 +994,11 @@ Class Translator_CPP Extends Translator
 		For Local func:=Eachin ctype.methods
 			If func.fdecl.flags & (DECL_GETTER|DECL_SETTER) Or Not GenTypeInfo( func ) Continue
 			
+			If func.IsExtension 
+				Print "Extension:"+func.fdecl.ident
+				Continue
+			Endif
+			
 			Local id:=func.fdecl.ident
 			Local fname:=FuncName( func )
 			Local meta:=func.fdecl.meta ? ","+EnquoteCppString( func.fdecl.meta ) Else ""
@@ -1015,13 +1019,30 @@ Class Translator_CPP Extends Translator
 			If plist.setFunc And Not GenTypeInfo( plist.setFunc ) Continue
 			
 			Local id:=plist.pdecl.ident
-			Local args:=cname+","+TransType( plist.type )
 			Local meta:=plist.pdecl.meta ? ","+EnquoteCppString( plist.pdecl.meta ) Else ""
-			Local get:=plist.getFunc ? "&"+cname+"::"+FuncName( plist.getFunc ) Else "0"
-			Local set:=plist.setFunc ? "&"+cname+"::"+FuncName( plist.setFunc ) Else "0"
+'			Local get:=plist.getFunc ? "&"+cname+"::"+FuncName( plist.getFunc ) Else "0"
+'			Local set:=plist.setFunc ? "&"+cname+"::"+FuncName( plist.setFunc ) Else "0"
 
-			UsesRefInfo( plist.type )			
-			decls.Push( "bbPropertyDecl<"+args+">(~q"+id+"~q,"+get+","+set+meta+")" )
+			UsesRefInfo( plist.type )
+			
+			If cdecl.IsExtension
+				
+				Local cname:=ClassName( ctype.superType )
+				Local args:=cname+","+TransType( plist.type )
+				
+				Local get:=plist.getFunc ? "&"+FuncName( plist.getFunc ) Else "0"
+				Local set:=plist.setFunc ? "&"+FuncName( plist.setFunc ) Else "0"
+				decls.Push( "bbExtPropertyDecl<"+args+">(~q"+id+"~q,"+get+","+set+meta+")" )
+				
+			Else
+
+				Local args:=cname+","+TransType( plist.type )
+				
+				Local get:=plist.getFunc ? "&"+cname+"::"+FuncName( plist.getFunc ) Else "0"
+				Local set:=plist.setFunc ? "&"+cname+"::"+FuncName( plist.setFunc ) Else "0"
+				decls.Push( "bbPropertyDecl<"+args+">(~q"+id+"~q,"+get+","+set+meta+")" )
+				
+			Endif
 		Next
 		
 		For Local vvar:=Eachin fdecl.globals
@@ -1036,19 +1057,38 @@ Class Translator_CPP Extends Translator
 		Next
 		
 		For Local func:=Eachin fdecl.functions
+			
 			If func.scope<>ctype.scope Or Not GenTypeInfo( func ) Continue
+			
+			If func.fdecl.flags & (DECL_GETTER|DECL_SETTER) Continue
 			
 			Local id:=func.fdecl.ident
 			Local fname:=FuncName( func )
 			Local meta:=func.fdecl.meta ? ","+EnquoteCppString( func.fdecl.meta ) Else ""
+				
+			If func.fdecl.IsExtension
 			
-			Local args:=TransType( func.ftype.retType )
-			For Local arg:=Eachin func.ftype.argTypes
-				args+=","+TransType( arg )
-			Next
-
-			UsesRefInfo( func )			
-			decls.Push( "bbFunctionDecl<"+args+">(~q"+id+"~q,&"+fname+meta+")" )
+				Local cname:=ClassName( ctype.superType )
+						
+				Local args:=cname+","+TransType( func.ftype.retType )
+				For Local arg:=Eachin func.ftype.argTypes
+					args+=","+TransType( arg )
+				Next
+						
+				UsesRefInfo( func )
+				decls.Push( "bbExtMethodDecl<"+args+">(~q"+id+"~q,&"+fname+meta+")" )
+			
+			Else
+			
+				Local args:=TransType( func.ftype.retType )
+				For Local arg:=Eachin func.ftype.argTypes
+					args+=","+TransType( arg )
+				Next
+	
+				UsesRefInfo( func )
+				decls.Push( "bbFunctionDecl<"+args+">(~q"+id+"~q,&"+fname+meta+")" )
+				
+			Endif
 		Next
 		
 		Emit( "return bbMembers("+decls.Join( "," )+");" )
@@ -1058,7 +1098,10 @@ Class Translator_CPP Extends Translator
 		Emit( "}decls;" )
 
 		'Ctor		
-		Emit( rcname+"():bbClassTypeInfo(~q"+ctype.Name+"~q,~q"+cdecl.kind.Capitalize()+"~q){" )
+		Local name:=ctype.Name
+		Local kind:=cdecl.kind.Capitalize()
+		If cdecl.IsExtension kind+=" Extension"
+		Emit( rcname+"():bbClassTypeInfo(~q"+name+"~q,~q"+kind+"~q){" )
 		Emit( "}" )
 
 		'superType
@@ -2350,27 +2393,29 @@ Function GenTypeInfo:Bool( vvar:VarValue )
 End
 
 Function GenTypeInfo:Bool( func:FuncValue )
-
-	If func.fdecl.kind<>"method" And func.fdecl.kind<>"function" Return False
-
-	If func.IsExtension Return False
+	
+	'disable generics (for now)
+	If func.types Return False
+	
+	'disable extensions
+	'If func.fdecl.IsExtension return false
 	
 	Return True
 End
 
 Function GenTypeInfo:Bool( ctype:ClassType )
 
-	'disable generic instances
-	If ctype.types Or ctype.scope.IsInstanceOf Return False
+	'disable generics (for now)
+	'If ctype.types return False
 
+	'disable native types
+	If ctype.ExtendsVoid Return False	'just in case
+	
 	'disable structs
 	'If ctype.IsStruct Return False
 
-	'disable native types
-	If ctype.ExtendsVoid Return False
-	
-	'disable type extensions
-	If ctype.cdecl.IsExtension Return False
+	'disable extensions
+	'If ctype.cdecl.IsExtension Return False
 	
 	Return True
 End
