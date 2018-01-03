@@ -1,6 +1,8 @@
 
 ***** Monkey2 v1.1.09 *****
 
+Changed default behaviour of Typeinfo.ExtendsType to do a plain compare instead of runtime error. Makes param matching easier.
+
 Comments in bin/env_blah.txt files have changed. Comments must now span a whole line, and must begin with an apostrophe or hash. If you have modified your env files, make sure to remove any 'inline' comments, ie: comments that begin in the middile of a line somewhere. This change allows for apostrophes in env vars.
 
 Added support for gltf2 binary files (ie: .glb files).
