@@ -612,14 +612,11 @@ Function LoadEnv:Bool( path:String )
 	
 	For Local line:=Eachin stringio.LoadString( path ).Split( "~n" )
 		lineid+=1
-	
-		Local i:=line.Find( "'" )
-		If i<>-1 line=line.Slice( 0,i )
 		
 		line=line.Trim()
-		If Not line Continue
-		
-		i=line.Find( "=" )
+		If Not line Or line.StartsWith( "'" ) Or line.StartsWith( "#" ) Continue
+	
+		Local i:=line.Find( "=" )
 		If i=-1 Fail( "Env config file error at line "+lineid )
 		
 		Local name:=line.Slice( 0,i ).Trim()

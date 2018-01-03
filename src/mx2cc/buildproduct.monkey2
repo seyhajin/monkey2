@@ -671,7 +671,13 @@ Class GccBuildProduct Extends BuildProduct
 			
 			cmd+=" --preload-file ~q"+assetsDir+"@/assets~q"
 			
-			If opts.appType.StartsWith( "wasm" ) cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
+'			If opts.appType.StartsWith( "wasm" ) cmd+=" -s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
+
+			If opts.appType.StartsWith( "wasm" )
+				Local wopts:=GetEnv( "MX2_LD_OPTS_EMSCRIPTEN_WASM" )
+				If Not wopts wopts="-s BINARYEN=1 -s BINARYEN_TRAP_MODE='allow'"
+				cmd+=" "+wopts
+			Endif
 		End
 		
 		If opts.verbose>=0 Print "Linking "+outputFile+"..."

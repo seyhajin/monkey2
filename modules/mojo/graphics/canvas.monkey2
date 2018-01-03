@@ -1795,8 +1795,6 @@ Class Canvas
 		
 		Local lv:=lightOp.lightPos
 		
-		lv=New Vec2f( 320,240 )
-
 		Local vp0:=Cast<Vertex2f Ptr>( _shadowVB.Lock() ),n:=0
 		
 		For Local op:=Eachin _shadowOps

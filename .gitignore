@@ -52,8 +52,10 @@ __NEWPAGES__/
 /modules/iap
 /modules/win32
 /modules/tinyaes
-/modules/openvr
+
 /modules/mojo3d-vr
+/modules/steamworks
+/modules/mojolabs
 
 /modules/module-manager/backups
 

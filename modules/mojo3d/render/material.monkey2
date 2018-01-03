@@ -35,6 +35,9 @@ Class Material Extends Resource
 	End
 	
 	#Rem monkeydoc @hidden The material uniforms.
+	
+	TODO: Should really be protected...
+
 	#End
 	Property Uniforms:UniformBlock()
 	

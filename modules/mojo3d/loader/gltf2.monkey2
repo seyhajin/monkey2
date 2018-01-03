@@ -400,7 +400,7 @@ Class Gltf2Asset
 					material.metallicFactor=jpbr.GetNumber( "metallicFactor" )
 				Endif
 				If jpbr.Contains( "roughnessFactor" )
-					material.metallicFactor=jpbr.GetNumber( "roughnessFactor" )
+					material.roughnessFactor=jpbr.GetNumber( "roughnessFactor" )
 				Endif
 			End
 			
@@ -624,6 +624,9 @@ Class Gltf2Asset
 			
 			If jnode.Contains( "scale" )
 				node.scale=GetVec3f( jnode.GetArray( "scale" ) )
+				node.scale.x=Abs( node.scale.x )
+				node.scale.y=Abs( node.scale.y )
+				node.scale.z=Abs( node.scale.z )
 			Endif
 				
 			If jnode.Contains( "matrix" )

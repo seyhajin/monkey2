@@ -1,4 +1,3 @@
-
 #import "<std>"
 #import "<mojo>"
 #import "<mojox>"
@@ -8,6 +7,8 @@ Using mojo..
 Using mojox..
 
 Class MyWindow Extends Window
+	
+	Field menuBar:MenuBar
 
 	Method New()
 		Super.New( "Dialogs Demo",640,480,WindowFlags.Resizable )
@@ -55,7 +56,7 @@ Class MyWindow Extends Window
 			Alert( "Paste Selected..." )
 		End
 
-		Local menuBar:=New MenuBar
+		menuBar=New MenuBar
 		
 		menuBar.AddMenu( fileMenu )
 		menuBar.AddMenu( editMenu )
@@ -75,7 +76,7 @@ Class MyWindow Extends Window
 				menu.AddAction( "Action 2" )
 				menu.AddAction( "Action 3" )
 				
-				menu.Open( event.Location,event.View )
+				menu.Open( event.Location,event.View,menuBar )
 				
 				event.Eat()
 			End

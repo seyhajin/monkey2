@@ -1,22 +1,10 @@
 
-'Hack: prevent code stripping for reflection based apps.
-'
-MX2_WHOLE_ARCHIVE=0
-
-
-'If you change anything below, you should rebuild all!
-
-
-'***** LINUX TARGET *****
-
-'This will enable g++-6 builds (if g++-6 is installed and it's not already the default).
-'MX2_GCC_SUFFIX=-6
+'***** LINUX DESKTOP TARGET *****
 
 'LD options
 MX2_LD_OPTS_LINUX=
 MX2_LD_OPTS_LINUX_DEBUG=
-MX2_LD_OPTS_LINUX_RELEASE=-g -O3
-'MX2_LD_OPTS_LINUX_RELEASE=-s
+MX2_LD_OPTS_LINUX_RELEASE=-s -O3
 
 'C compiler options
 MX2_CC_OPTS_LINUX=-std=gnu99
@@ -32,21 +20,27 @@ MX2_CPP_OPTS_LINUX_RELEASE=-O3 -DNDEBUG
 '***** EMSCRIPTEN *****
 
 'For emscripten builds, you need emcc, em++ and emar in your PATH.
-'To run emscripten apps, you'll need MonkeyXFree86c in your devtools dir.
+
+EMSDK=${HOME}/emsdk-portable
+
+PATH=${EMSDK}:${EMSDK}/clang/fastcomp/build_incoming_64/bin:${EMSDK}/node/4.1.1_64bit/bin:${EMSDK}/emscripten/incoming:${PATH}
+
+'To run emscripten apps you'll need mserver mini-server.
 '
-MX2_MSERVER="${MX2_HOME}/devtools/MonkeyXFree86c/bin/mserver_linux"
+MX2_MSERVER="${MX2_HOME}/devtools/mserver-v86c/mserver_linux"
 
 'LD options
-MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s FULL_ES2=1 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 ' -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=1
-MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-O2
+MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_LD_OPTS_EMSCRIPTEN_WASM=-s BINARYEN=1
+MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-O2 -s ASSERTIONS=2
 MX2_LD_OPTS_EMSCRIPTEN_RELEASE=-O3
 
 'C compiler options
-MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -I. -s USE_SDL=2 -s FULL_ES2=1 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -Wno-warn-absolute-paths ' -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=1 -Wno-undefined-bool-conversion -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-warn-absolute-paths 
+MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -I. -s USE_SDL=2 -s FULL_ES2=1 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -Wno-warn-absolute-paths
 MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
-MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -I. -s USE_SDL=2 -s FULL_ES2=1 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -Wno-warn-absolute-paths ' -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=1 -Wno-undefined-bool-conversion
+MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -I. -s USE_SDL=2 -s FULL_ES2=1 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -Wno-warn-absolute-paths
 MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
