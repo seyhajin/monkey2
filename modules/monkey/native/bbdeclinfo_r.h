@@ -1,72 +1,9 @@
 
-#ifndef BB_DECLINFO_H
-#define BB_DECLINFO_H
+#ifndef BB_DECLINFO_R_H
+#define BB_DECLINFO_R_H
 
-#include "bbtypeinfo.h"
-#include "bbvariant.h"
+#include "bbdeclinfo.h"
 
-#define BB_DECL_PUBLIC		0x000001
-#define BB_DECL_PRIVATE		0x000002
-#define BB_DECL_PROTECTED	0x000004
-#define BB_DECL_INTERNAL	0x000008
-#define BB_DECL_VIRTUAL		0x000100
-#define BB_DECL_OVERRIDE	0x000200
-#define BB_DECL_ABSTRACT	0x000400
-#define BB_DECL_FINAL		0x000800
-#define BB_DECL_EXTERN		0x001000
-#define BB_DECL_EXTENSION	0x002000
-#define BB_DECL_DEFAULT		0x004000
-#define BB_DECL_GETTER		0x010000
-#define BB_DECL_SETTER		0x020000
-#define BB_DECL_OPERATOR	0x040000
-#define BB_DECL_IFACEMEMBER	0x080000
-
-#define BB_DECL_GETTABLE	0x10000000
-#define BB_DECL_SETTABLE	0x20000000
-#define BB_DECL_INVOKABLE	0x40000000
-
-struct bbDeclInfo{
-
-	bbString name;
-	bbString meta;
-	bbString kind;
-	bbTypeInfo *type;
-	int flags=0;
-	
-	bbString getName(){
-		return name;
-	}
-	
-	bbString getKind(){
-		return kind;
-	}
-	
-	bbTypeInfo *getType(){
-		return type;
-	}
-	
-	bbBool gettable(){ return flags & BB_DECL_GETTABLE; }
-
-	bbBool settable(){ return flags & BB_DECL_SETTABLE; }
-
-	bbBool invokable(){ return flags & BB_DECL_INVOKABLE; }
-
-	bbArray<bbString> getMetaKeys();
-	
-	bbArray<bbString> getMetaData();
-	
-	bbString getMetaValue( bbString key );
-	
-	virtual bbString toString();
-
-	virtual bbVariant get( bbVariant instance );
-	
-	virtual void set( bbVariant instance,bbVariant value );
-	
-	virtual bbVariant invoke( bbVariant instance,bbArray<bbVariant> params );
-};
-
-/*
 // ***** Global *****
 //
 template<class T> struct bbGlobalDeclInfo : public bbDeclInfo{
@@ -297,6 +234,69 @@ template<class C,class R,class...A> bbDeclInfo *bbMethodDecl( bbString name,R (C
 	return new bbMethodDeclInfo<C,R,A...>( name,meta,ptr );
 }
 
+// ***** Extension Method *****
+//
+template<class C,class R,class...A> struct bbExtMethodDeclInfo : public bbDeclInfo{
+
+	R (*ptr)(C*,A...);
+	
+	bbExtMethodDeclInfo( bbString name,bbString meta,R (*ptr)(C*,A...) ):ptr( ptr ){
+		this->name=name;
+		this->meta=meta;
+		this->kind="Method";
+		this->type=bbGetType<bbFunction<R(A...)>>();
+		this->flags=BB_DECL_INVOKABLE;
+	}
+	
+	template<int...I> R invoke( C *p,bbArray<bbVariant> params,detail::seq<I...> ){
+	
+		return ptr( p,params[I].get<A>()... );
+	}
+	
+	bbVariant invoke( bbVariant instance,bbArray<bbVariant> params ){
+	
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
+		
+		return bbVariant( invoke( p,params,detail::gen_seq<sizeof...(A)>{} ) );
+	}
+};
+
+template<class C,class...A> struct bbExtMethodDeclInfo<C,void,A...> : public bbDeclInfo{
+
+	typedef void R;
+
+	R (*ptr)(C*,A...);
+	
+	bbExtMethodDeclInfo( bbString name,bbString meta,R (*ptr)(C*,A...) ):ptr( ptr ){
+		this->name=name;
+		this->meta=meta;
+		this->kind="Method";
+		this->type=bbGetType<bbFunction<R(A...)>>();
+		this->flags=BB_DECL_INVOKABLE;
+	}
+	
+	template<int...I> R invoke( C *p,bbArray<bbVariant> params,detail::seq<I...> ){
+	
+		return ptr( p,params[I].get<A>()... );
+	}
+
+	bbVariant invoke( bbVariant instance,bbArray<bbVariant> params ){
+	
+//		C *p=instance.get<C*>();
+		C *p=instance.ref<C>();
+		
+		invoke( p,params,detail::gen_seq<sizeof...(A)>{} );
+		
+		return {};
+	}
+};
+
+template<class C,class R,class...A> bbDeclInfo *bbExtMethodDecl( bbString name,R (*ptr)(C*,A...),bbString meta="" ){
+
+	return new bbExtMethodDeclInfo<C,R,A...>( name,meta,ptr );
+}
+
 // ***** Property *****
 //
 template<class C,class T> struct bbPropertyDeclInfo : public bbDeclInfo{
@@ -332,6 +332,13 @@ template<class C,class T> struct bbPropertyDeclInfo : public bbDeclInfo{
 	}
 };
 
+template<class C,class T> bbDeclInfo *bbPropertyDecl( bbString name,T(C::*getter)(),void(C::*setter)(T),bbString meta="" ){
+
+	return new bbPropertyDeclInfo<C,T>( name,meta,getter,setter );
+}
+
+// ***** Extension Property *****
+//
 template<class C,class T> struct bbExtPropertyDeclInfo : public bbDeclInfo{
 
 	T (*getter)(C*);
@@ -362,11 +369,6 @@ template<class C,class T> struct bbExtPropertyDeclInfo : public bbDeclInfo{
 		setter(p,value.get<T>() );
 	}
 };
-
-template<class C,class T> bbDeclInfo *bbPropertyDecl( bbString name,T(C::*getter)(),void(C::*setter)(T),bbString meta="" ){
-
-	return new bbPropertyDeclInfo<C,T>( name,meta,getter,setter );
-}
 
 template<class C,class T> bbDeclInfo *bbExtPropertyDecl( bbString name,T(*getter)(C*),void(*setter)(C*,T),bbString meta="" ){
 
@@ -440,6 +442,5 @@ template<class...Ds> bbDeclInfo **bbMembers( Ds...ds ){
 	
 	return ps;
 }
-*/
 
 #endif

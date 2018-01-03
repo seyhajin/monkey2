@@ -69,12 +69,13 @@ bbArray<bbTypeInfo*> bbTypeInfo::interfaceTypes(){
 }
 	
 bbBool bbTypeInfo::extendsType( bbTypeInfo *type ){
-	bbRuntimeError( "Type '"+name+"' is not a class or interface type" );
-	return false;
+	return this==type;
+//	bbRuntimeError( "Type '"+name+"' is not a class or interface type" );
+//	return false;
 }
 	
 bbArray<bbDeclInfo*> bbTypeInfo::getDecls(){
-	bbRuntimeError( "Type '"+name+"' is not a class or interface type" );
+	bbRuntimeError( "Type '"+name+"' is not a class or interface type!!" );
 	return {};
 }
 

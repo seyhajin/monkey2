@@ -1,5 +1,5 @@
 
-#include "bbdeclinfo.h"
+#include "bbdeclinfo_r.h"
 
 // ***** bbDeclInfo ****
 
