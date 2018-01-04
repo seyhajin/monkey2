@@ -92,6 +92,8 @@ Class RenderTarget Extends Resource
 	Field _glFramebuffer:GLuint
 	Field _glSeq:Int
 	
+	Field _checked:Bool
+	
 	Method ValidateGLFramebuffer:GLuint()
 		
 		If _glSeq=glGraphicsSeq Return _glFramebuffer
@@ -126,6 +128,10 @@ Class RenderTarget Extends Resource
 	End
 	
 	Method CheckStatus()
+		
+		If _checked Return
+		
+		_checked=true
 		
 		Local status:=glCheckFramebufferStatus( GL_FRAMEBUFFER )
 		

@@ -245,6 +245,8 @@ Class Texture Extends Resource
 		
 		_flags=(_flags & ~mask) | (flags & mask)
 		
+		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps Else _dirty &=~Dirty.Mipmaps
+		
 		_dirty|=Dirty.TexParams
 	End
 	
@@ -256,12 +258,16 @@ Class Texture Extends Resource
 
 			_managed.Paste( pixmap,x,y )
 			
-			_dirty|=Dirty.TexImage|Dirty.Mipmaps
-			
+			If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
+				
+			_dirty|=Dirty.TexImage
 		Else
-			glPushTexture( _glTarget,ValidateGLTexture() )
-			
-			glPixelStorei( GL_UNPACK_ALIGNMENT,1 )
+
+			If _flags & TextureFlags.Mipmap _dirty&=~Dirty.Mipmaps
+				
+'			glPushTexture( _glTarget,ValidateGLTexture() )
+			glActiveTexture( GL_TEXTURE7 )
+			glBindTexture( _glTarget,ValidateGLTexture() )
 			
 			If pixmap.Pitch=pixmap.Width*pixmap.Depth
 				glTexSubImage2D( GL_TEXTURE_2D,0,x,y,pixmap.Width,pixmap.Height,glFormat( _format ),GL_UNSIGNED_BYTE,pixmap.Data )
@@ -271,9 +277,9 @@ Class Texture Extends Resource
 				Next
 			Endif
 			
-			glPopTexture()
-			
-			_dirty|=Dirty.Mipmaps
+'			glPopTexture()
+
+			If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
 			
 		Endif
 	
@@ -365,26 +371,24 @@ Class Texture Extends Resource
 	#end
 	Method Modified( r:Recti )
 		
-		If _cubeMap Return
-'		Assert( Not _cubeMap )
+		If _cubeMap Return	'laters...
 		
-		If _managed
-			glPixelStorei( GL_PACK_ALIGNMENT,1 )
-			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
-		Endif
-		
-		_dirty|=Dirty.Mipmaps
+		If _managed glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
+
+		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
+			
 	End
 	
 	#rem monkeydoc @hidden
 	#end
-	Method Bind( unit:GLenum )
+	Method Bind( unit:Int )
 		
 		Assert( Not _cubeMap )
 		
+		Local gltex:=ValidateGLTexture()
+		
 		glActiveTexture( GL_TEXTURE0+unit )
-
-		glBindTexture( _glTarget,ValidateGLTexture() )
+		glBindTexture( _glTarget,gltex )
 	End
 	
 	#rem monkeydoc @hidden
@@ -409,8 +413,11 @@ Class Texture Extends Resource
 			_glSeq=glGraphicsSeq
 			_dirty=Dirty.All
 		Endif
-			
-		glPushTexture( _glTarget,_glTexture )
+		
+'		glPushTexture( _glTarget,_glTexture )
+
+		glActiveTexture( GL_TEXTURE7 )
+		glBindTexture( _glTarget,_glTexture )
 
 		If _dirty & Dirty.TexParams
 			
@@ -504,7 +511,7 @@ Class Texture Extends Resource
 		
 		_dirty=Null
 		
-		glPopTexture()
+		'glPopTexture()
 		
 		glCheck()
 
@@ -621,8 +628,6 @@ Class Texture Extends Resource
 		
 		Local width:=image.Width,height:=image.Height
 
-		glPixelStorei( GL_UNPACK_ALIGNMENT,1 )
-	
 		If image.Pitch=width*image.Depth
 			glTexImage2D( glTarget,0,_glInternalFormat,width,height,0,_glFormat,_glType,image.Data )
 		Else

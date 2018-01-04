@@ -80,7 +80,7 @@ Class Window Extends View
 		Return _swapInterval
 	
 	Setter( swapInterval:Int )
-	
+		
 		_swapInterval=swapInterval
 	End
 	
@@ -323,6 +323,7 @@ Class Window Extends View
 	
 	Field _flags:WindowFlags
 	Field _maxfudge:Int
+	Field _rswapInterval:=1
 	Field _swapInterval:=1
 	
 	Field _canvas:Canvas
@@ -444,13 +445,18 @@ Class Window Extends View
 
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
 
-		SDL_GL_SetSwapInterval( _swapInterval )
+		If _swapInterval<>_rswapInterval
+			SDL_GL_SetSwapInterval( _swapInterval )
+			_rswapInterval=_swapInterval
+		Endif
 	
 #If __TARGET__="windows"
-
 		If _weirdHack
 			_weirdHack=False
-			SDL_GL_SwapWindow( _sdlWindow )
+			Local attr:Int
+			If SDL_GL_GetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,Varptr attr )=0
+				If attr=SDL_GL_CONTEXT_PROFILE_ES SDL_GL_SwapWindow( _sdlWindow )
+			Endif
 		Endif
 #Endif
 		Local bounds:=New Recti( 0,0,Frame.Size )
@@ -466,7 +472,6 @@ Class Window Extends View
 		_canvas.EndRender()
 		
 		SDL_GL_SwapWindow( _sdlWindow )
-		
 	End
 	
 	Method Init( title:String,rect:Recti,flags:WindowFlags )
@@ -519,6 +524,8 @@ Class Window Extends View
 			Assert( _sdlGLContext,"FATAL ERROR: SDL_GL_CreateContext failed" )
 		Endif
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
+		
+		SDL_GL_SetSwapInterval( _rswapInterval )
 		
 		bbglInit()
 		

@@ -430,6 +430,9 @@ Class GraphicsDevice
 
 		glCheck()
 		
+		glPixelStorei( GL_PACK_ALIGNMENT,1 )
+		glPixelStorei( GL_UNPACK_ALIGNMENT,1 )
+		
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING,Varptr _defaultFbo )
 		
 		If BBGL_seamless_cube_map glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS )
@@ -446,19 +449,26 @@ Class GraphicsDevice
 	End
 	
 	Method FlushTarget()
+		
 		If Not _modified Return
+		
 		_modified=False
-		If _rtarget And _rtarget.NumColorTextures
-			Validate()
-			For Local i:=0 Until _rtarget.NumColorTextures
-				Local texture:=_rtarget.GetColorTexture( i )
-				texture.Modified( _viewport & _scissor )
-			Next
-		Endif
+		
+		If Not _rtarget Or Not _rtarget.NumColorTextures Return
+			
+'		Validate()
+			
+		For Local i:=0 Until _rtarget.NumColorTextures
+			
+			Local texture:=_rtarget.GetColorTexture( i )
+			
+			texture.Modified( _viewport & _scissor )
+		Next
+		
 	End
 	
 	Method Validate()
-
+		
 		glCheck()
 
 		If _glSeq<>glGraphicsSeq
