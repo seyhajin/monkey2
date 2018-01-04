@@ -334,8 +334,13 @@ Class Translator_CPP Extends Translator
 
 		Local params:=""
 		If func.IsExtension
-			Local tself:=func.selfType.IsStruct ? "&l_self" Else "l_self"
+
+			'new self
+			Local tself:=func.selfType.IsStruct ? "*l_self" Else "l_self"
 			params=TransType( func.selfType )+" "+tself
+			
+'			Local tself:=func.selfType.IsStruct ? "&l_self" Else "l_self"
+'			params=TransType( func.selfType )+" "+tself
 		Endif
 
 		For Local p:=Eachin func.params
@@ -1020,8 +1025,6 @@ Class Translator_CPP Extends Translator
 			
 			Local id:=plist.pdecl.ident
 			Local meta:=plist.pdecl.meta ? ","+EnquoteCppString( plist.pdecl.meta ) Else ""
-'			Local get:=plist.getFunc ? "&"+cname+"::"+FuncName( plist.getFunc ) Else "0"
-'			Local set:=plist.setFunc ? "&"+cname+"::"+FuncName( plist.setFunc ) Else "0"
 
 			UsesRefInfo( plist.type )
 			
@@ -1066,9 +1069,10 @@ Class Translator_CPP Extends Translator
 			Local fname:=FuncName( func )
 			Local meta:=func.fdecl.meta ? ","+EnquoteCppString( func.fdecl.meta ) Else ""
 				
-			If func.fdecl.IsExtension
-			
-				Local cname:=ClassName( ctype.superType )
+			If func.IsExtension
+'			If func.fdecl.IsExtension
+
+				Local cname:=ClassName( func.selfType )
 						
 				Local args:=cname+","+TransType( func.ftype.retType )
 				For Local arg:=Eachin func.ftype.argTypes
@@ -1109,9 +1113,13 @@ Class Translator_CPP Extends Translator
 
 		'superType
 		If ctype.superType
+			
+			Local sname:=ClassName( ctype.superType )
+			If Not ctype.IsStruct sname+="*"
+			
 			UsesRefInfo( ctype.superType )
 			Emit( "bbTypeInfo *superType(){" )
-			Emit( "return bbGetType<"+ClassName( ctype.superType )+"*>();" )
+			Emit( "return bbGetType<"+sname+">();" )
 			Emit( "}" )
 		Endif
 		
@@ -1891,10 +1899,12 @@ Class Translator_CPP Extends Translator
 	
 	Method Trans:String( value:SelfValue )
 	
-		If value.func.IsExtension Return "l_self"
+		If value.func.IsExtension
+			If value.ctype.IsStruct Return "(*l_self)"
+			Return "l_self"
+		Endif
 		
 		If value.ctype.IsStruct Return "(*this)"
-		
 		Return "this"
 	End
 	
@@ -1936,6 +1946,7 @@ Class Translator_CPP Extends Translator
 			
 			If member.selfType.IsStruct
 				If Not instance.IsLValue tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
+				tinst="&"+tinst
 			Else
 				If IsVolatile( instance ) tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
 			Endif
@@ -2354,42 +2365,9 @@ Class Translator_CPP Extends Translator
 
 End
 
-#rem
-Function GenTypeInfo:Bool( type:Type )
-
-	If type=Type.VoidType Return true
-
-	If TCast<PrimType>( type ) Return True
-	
-	Local ctype:=TCast<ClassType>( type )
-	If ctype Return GenTypeInfo( ctype )
-
-	Local atype:=TCast<ArrayType>( type )
-	If atype Return GenTypeInfo( atype.elemType )
-	
-	Local ptype:=TCast<PointerType>( type )
-	If ptype Return GenTypeInfo( ptype.elemType )
-	
-	Local ftype:=TCast<FuncType>( type )
-	If ftype Return GenTypeInfo( ftype )
-	
-	Return False
-End
-
-Function GenTypeInfo:Bool( ftype:FuncType )
-
-	If Not GenTypeInfo( ftype.retType ) Return False
-	
-	For Local arg:=Eachin ftype.argTypes
-		If Not GenTypeInfo( arg ) Return False
-	Next
-	
-	Return True
-End
-#end
-
 Function GenTypeInfo:Bool( vvar:VarValue )
 
+	'sanity check
 	If vvar.vdecl.kind<>"field" And vvar.vdecl.kind="global" And vvar.vdecl.kind="const" Return False
 	
 	Return True
@@ -2397,23 +2375,23 @@ End
 
 Function GenTypeInfo:Bool( func:FuncValue )
 	
-	'disable generics (for now)
-	If func.types Return False
+	'sanity check
+	If func.fdecl.kind<>"method" And func.fdecl.kind<>"function" Return False
 	
-	'disable extensions
-	'If func.fdecl.IsExtension return false
+	'disable generic method instances (for now - almost working!)
+	If func.IsExtension Return func.fdecl.IsExtension
 	
 	Return True
 End
 
 Function GenTypeInfo:Bool( ctype:ClassType )
 
-	'disable generics (for now)
-	'If ctype.types return False
-
 	'disable native types
-	If ctype.ExtendsVoid Return False	'just in case
+	If ctype.ExtendsVoid Return False
 	
+	'disable generic type instances (for now - almost working!)
+	If ctype.types Return False
+
 	'disable structs
 	'If ctype.IsStruct Return False
 

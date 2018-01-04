@@ -33,8 +33,6 @@ Class BuildOpts
 	
 	Field wholeArchive:Bool
 	
-'	Field reflection:Bool
-	
 	Field makedocs:bool
 	
 End
@@ -242,12 +240,16 @@ Class BuilderInstance
 			
 			currentDir=cd
 			
+			product.reflects.AddAll( fdecl.reflects )
+			
+			#rem
 			For Local ref:=Eachin fdecl.reflects
 				
 				ref="#define BB_R_"+ref.Replace( "_","_0" ).Replace( ".","_" )+" 1"
 				
 				product.reflects.Push( ref )
 			Next
+			#end
 			
 		Forever
 	
@@ -294,7 +296,6 @@ Class BuilderInstance
 			
 			If module<>mainModule 
 				product.imports.Push( module )
-'				If module.name="reflection" opts.reflection=True
 			Endif
 		Next
 		

@@ -1,92 +1,70 @@
 
 Namespace test
 
+#Import "<reflection>"
+
+#Import "<mojo3d>"
+#Import "<std>"
+
+Using reflection..
+
+Using std..
+
+#Reflect mojo3d
+#Reflect std
+
 #Reflect test
-
-Function InvokeMethod:Variant( name:String,instance:Object,args:Variant[]=Null )
-	
-	If Not instance Return Null
-	
-	Local type:=instance.DynamicType
-	
-	While type
-	
-		For Local decl:=Eachin type.GetDecls()
-			
-			If decl.Kind<>"Method" Continue
-			
-			Local ptypes:=decl.Type.ParamTypes
-			If ptypes.Length<>args.Length Continue
-			
-			Local fail:=False
-			For Local j:=0 Until args.Length
-				If args[j].Type.ExtendsType( ptypes[j] ) Continue
-				fail=True
-				Exit
-			Next
-			If fail Continue
-			
-			Return decl.Invoke( instance,args)
-		Next
-		
-		type=type.SuperType
-		
-	Wend
-	
-	'search extensions...
-	
-	Return Null
-End
-
-Function PrintAllTypes()
-	
-	For Local type:=Eachin TypeInfo.GetTypes()
-		
-		Print type
-		
-		For Local decl:=Eachin type.GetDecls()
-			
-			Print " "+decl
-		Next
-		
-	Next
-	
-End
 
 Class C
 End
 
-Class C Extension
+Class D Extends C
 	
-	Method Update()
+	Property Position:Vec3f()
+	
+		Return New Vec3f(1,2,3)
+	End
+End
+
+Class E
+	
+	Field _c:C=New D
+	
+	Field _pos:=New Vec3f( 1,2,3 )
+	
+	Method GetC:C()
 		
-		Print "It worked!"
+		Return _c
+	End
+	
+End
+
+Class E Extension
+	
+	Property D:D()
+		
+		Return Cast<D>( GetC() )
+	End
+	
+	Property Position:Vec3f()
+		
+		Return _pos
+	
+	Setter( pos:Vec3f )
+		
+		_pos=pos
 	End
 	
 End
 
 Function Main()
+
+	DebugTypes()
 	
-	Print "All types:"
+	Local e:=New E
 	
-	PrintAllTypes()
+	SetProperty( "Position",e,New Vec3f( 4,5,6 ) )
 	
-	Local c:=New C
+	Print GetProperty<Vec3f>( "Position",e )
 	
-	For Local type:=Eachin TypeInfo.GetTypes()
-		
-		'look for extension
-		If type.Kind="Class Extension" And type.SuperType=Typeof(c)
-			
-			Print "Found extension!"
-			
-			Local decl:=type.GetDecl( "Update" )
-			
-			decl.Invoke( c,Null )
-		Endif
-	
-	Next
-	
-	Print "Bye!"
 End
-		
