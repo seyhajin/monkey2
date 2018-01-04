@@ -1,9 +1,6 @@
 
 Namespace test
 
-'#Import "<std>"
-
-'#Reflect std.graphics
 #Reflect test
 
 Function InvokeMethod:Variant( name:String,instance:Object,args:Variant[]=Null )
@@ -35,6 +32,8 @@ Function InvokeMethod:Variant( name:String,instance:Object,args:Variant[]=Null )
 		type=type.SuperType
 		
 	Wend
+	
+	'search extensions...
 	
 	Return Null
 End
@@ -77,7 +76,7 @@ Function Main()
 	For Local type:=Eachin TypeInfo.GetTypes()
 		
 		'look for extension
-		If type.Kind="Class Extension" And type.Name="test.C Extension"
+		If type.Kind="Class Extension" And type.SuperType=Typeof(c)
 			
 			Print "Found extension!"
 			
