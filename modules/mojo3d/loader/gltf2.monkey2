@@ -501,7 +501,10 @@ Class Gltf2Asset
 			Local skin:=New Gltf2Skin
 			skins[i]=skin
 			
-			skin.inverseBindMatrices=accessors[jskin.GetNumber( "inverseBindMatrices" )]
+			If jskin.Contains( "inverseBindMatrices" )
+				
+				skin.inverseBindMatrices=accessors[jskin.GetNumber( "inverseBindMatrices" )]
+			Endif
 			
 			If jskin.Contains( "skeleton" )
 				

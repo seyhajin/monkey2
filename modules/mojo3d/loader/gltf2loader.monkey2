@@ -624,13 +624,20 @@ Class Gltf2Loader
 		
 		Local skin:=_asset.skins[0]
 		
-		Local datap:=GetData( skin.inverseBindMatrices )
-		Local stride:=skin.inverseBindMatrices.bufferView.byteStride ?Else 64
-		Local n:=skin.inverseBindMatrices.count
+		Local n:=skin.joints.Length
 		
-		If n<>skin.joints.Length
-			Print "Invalid skin"
-			Return
+		Local datap:UByte Ptr,stride:Int
+		
+		If skin.inverseBindMatrices
+			
+			If skin.inverseBindMatrices.count<>n
+				Print "Invalid skin"
+				Return
+			Endif
+			
+			datap=GetData( skin.inverseBindMatrices )
+			stride=skin.inverseBindMatrices.bufferView.byteStride ?Else 64
+			
 		Endif
 		
 		_bones=New Model.Bone[n]
@@ -640,12 +647,12 @@ Class Gltf2Loader
 		For Local i:=0 Until n
 			
 			Local entity:=_entities[ _nodeIds[skin.joints[i]] ]
-			Local matrix:=FlipMatrix( Cast<Mat4f Ptr>( datap )[0] )
+			Local matrix:=datap ? FlipMatrix( Cast<Mat4f Ptr>( datap )[0] ) Else New Mat4f
 			
 			_bones[i].entity=entity
 			_bones[i].offset=New AffineMat4f( matrix )
 			
-			datap+=stride
+			If datap datap+=stride
 		Next
 	End
 	
