@@ -1100,7 +1100,10 @@ Class Translator_CPP Extends Translator
 		'Ctor		
 		Local name:=ctype.Name
 		Local kind:=cdecl.kind.Capitalize()
-		If cdecl.IsExtension kind+=" Extension"
+		If cdecl.IsExtension 
+			name+=" Extension"
+			kind+=" Extension"
+		Endif
 		Emit( rcname+"():bbClassTypeInfo(~q"+name+"~q,~q"+kind+"~q){" )
 		Emit( "}" )
 

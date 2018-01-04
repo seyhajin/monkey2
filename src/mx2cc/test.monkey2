@@ -4,15 +4,7 @@ Namespace test
 '#Import "<std>"
 
 '#Reflect std.graphics
-'#Reflect test
-
-Class C
-	
-End
-
-Enum E
-	A=1,B=2,C=3
-End
+#Reflect test
 
 Function InvokeMethod:Variant( name:String,instance:Object,args:Variant[]=Null )
 	
@@ -47,7 +39,7 @@ Function InvokeMethod:Variant( name:String,instance:Object,args:Variant[]=Null )
 	Return Null
 End
 
-Function EnumTypes()
+Function PrintAllTypes()
 	
 	For Local type:=Eachin TypeInfo.GetTypes()
 		
@@ -62,8 +54,40 @@ Function EnumTypes()
 	
 End
 
-Function Main()
+Class C
+End
 
-	EnumTypes()
+Class C Extension
+	
+	Method Update()
+		
+		Print "It worked!"
+	End
 	
 End
+
+Function Main()
+	
+	Print "All types:"
+	
+	PrintAllTypes()
+	
+	Local c:=New C
+	
+	For Local type:=Eachin TypeInfo.GetTypes()
+		
+		'look for extension
+		If type.Kind="Class Extension" And type.Name="test.C Extension"
+			
+			Print "Found extension!"
+			
+			Local decl:=type.GetDecl( "Update" )
+			
+			decl.Invoke( c,Null )
+		Endif
+	
+	Next
+	
+	Print "Bye!"
+End
+		
