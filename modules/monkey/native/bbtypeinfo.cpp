@@ -1,5 +1,5 @@
 
-#include "bbtypeinfo.h"
+#include "bbtypeinfo_r.h"
 #include "bbdeclinfo.h"
 
 namespace{

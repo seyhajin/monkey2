@@ -1,8 +1,6 @@
 
 Namespace test
 
-#Import "<reflection>"
-
 #Reflect test
 
 Enum E
@@ -16,6 +14,8 @@ End
 
 Function Main()
 	
+	Print Typeof<E>
+
 	Local e:=E.A
 	
 	Print Typeof( e )
@@ -26,14 +26,12 @@ Function Main()
 		
 		Local e:=Cast<E>( decl.Get( Null ) )
 		
-		Print decl.Name+"="+Int( e )'Cast<Int>( decl.Get( Null ) )
+		Print decl.Name+"="+Int( e )
 	
 	Next
 	
 	Local rtest:=TypeInfo.GetType( "test" ).GetDecl( "Test" )
 	
 	rtest.Invoke( Null,New Variant[]( E.C ) )
-	
-	
 
 End

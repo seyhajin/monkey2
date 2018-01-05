@@ -7,7 +7,7 @@
 #include "bbarray.h"
 #include "bbfunction.h"
 
-struct bbClassTypeInfo;
+//struct bbClassTypeInfo;
 
 struct bbTypeInfo{
 
@@ -147,6 +147,7 @@ template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
 
 };
 
+/*
 struct bbClassDecls{
 
 	bbClassDecls *_succ;
@@ -185,6 +186,7 @@ struct bbClassTypeInfo : public bbTypeInfo{
 	
 	static bbClassTypeInfo *getNamespace( bbString name );
 };
+*/
 
 #define BB_GETTYPE_DECL( TYPE ) bbTypeInfo *bbGetType( TYPE const& );
 
@@ -207,10 +209,14 @@ inline bbTypeInfo *bbGetType( bbObject* const& ){
 	return &bbObjectTypeInfo::instance;
 }
 
-template<class T> bbTypeInfo *bbGetType( T const& ){
-	static bbUnknownTypeInfo info;
+template<class T> bbTypeInfo *bbGetUnknownType(){
+ 	static bbUnknownTypeInfo info;
 	
 	return &info;
+}
+
+template<class T> bbTypeInfo *bbGetType( T const& ){
+	return bbGetUnknownType<T>();
 }
 
 template<class T> bbTypeInfo *bbGetType( T* const& ){

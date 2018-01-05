@@ -2,21 +2,13 @@
 Namespace test
 
 #Import "<reflection>"
-#Import "<std>"
-#Import "<mojo>"
-#Import "<mojox>"
-#Import "<mojo3d>"
 
 #Reflect test
-#Reflect std
-#Reflect mojo
-#Reflect mojo3d
-#Reflect mojox
 
 Using reflection..
 Using std..
 
-Class E
+Class C
 	
 	Field _name:="Brian"
 	
@@ -33,7 +25,7 @@ Class E
 	
 End
 
-Class E Extension
+Class C Extension
 	
 	Property Position:Vec3f()
 		
@@ -47,15 +39,23 @@ Class E Extension
 End
 
 Function Main()
+	
+	Local c:=New C
+	
+	Print "Name="+c.Name
 
-	Local e:=New E
+	'set name using reflection	
+	SetProperty( "Name",c,"Douglas" )
 	
-	SetProperty( "Name",e,"Douglas" )
+	'get name using reflection
+	Print "Name="+GetProperty<String>( "Name",c )
 	
-	Print GetProperty<String>( "Name",e )
+	Print "Position="+c.Position
 	
-	SetProperty( "Position",e,New Vec3f( 4,5,6 ) )
+	'set position using reflection
+	SetProperty( "Position",c,New Vec3f( 4,5,6 ) )
 	
-	Print GetProperty<Vec3f>( "Position",e )
+	'set position using reflection
+	Print "Position="+GetProperty<Vec3f>( "Position",c )
 	
 End

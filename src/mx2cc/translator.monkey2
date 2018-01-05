@@ -332,23 +332,20 @@ Class Translator
 		
 			Local ctype:=TCast<ClassType>( type )
 			If ctype
-		
 				If Included( ctype.transFile ) Continue
 				
 				Local cname:=ClassName( ctype )
 				Emit( "struct "+cname+";" )
 				
 				If GenTypeInfo( ctype ) 
-					Emit( "#ifdef BB_NEWREFLECTION" )
 					If ctype.IsStruct 
-						Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
+						Emit( "bbTypeInfo *bbGetType("+cname+" const&);" )
 					Else
-						Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+						Emit( "bbTypeInfo *bbGetType("+cname+"* const&);" )
 					Endif
-					Emit( "#endif" )
 				Endif
 				
-				If _debug And Not ctype.cdecl.IsExtern
+				If _debug
 					Local tname:=cname
 					If Not ctype.IsStruct tname+="*"
 					Emit( "bbString bbDBType("+tname+"*);" )
@@ -364,8 +361,15 @@ Class Translator
 				
 				Local ename:=EnumName( etype )
 				Emit( "enum class "+ename+";" )
-				Emit( "bbString bbDBType("+ename+"*);" )
-				Emit( "bbString bbDBValue("+ename+"*);" )
+				
+				If GenTypeInfo( etype ) 
+					Emit( "bbTypeInfo *bbGetType("+ename+" const&);" )
+				Endif
+				
+				If _debug
+					Emit( "bbString bbDBType("+ename+"*);" )
+					Emit( "bbString bbDBValue("+ename+"*);" )
+				Endif
 				
 				Continue
 			Endif

@@ -121,6 +121,8 @@ Function CheckPermission:Int( permission:String )
 
 End
 
+Alias ResultType:uInt
+
 #rem monkeydoc Request android permissions.
 
 This function is only available on android.
@@ -134,13 +136,13 @@ The permission strings should be in android manifest form, eg: "android.permissi
 If the result is an empty array, the operation was cancelled.
 
 #end
-Function RequestPermissions( permissions:String[],finished:void( results:Int[] ) )
+Function RequestPermissions( permissions:String[],finished:Void( results:ResultType[] ) )
 
 #If __TARGET__="android"
 
 	Init()
 
-	_requests.AddLast( New Request( permissions,finished ) )
+'	_requests.AddLast( New Request( permissions,finished ) )
 	
 	StartNextRequest()
 	

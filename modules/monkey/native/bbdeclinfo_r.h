@@ -432,6 +432,31 @@ template<class R,class...A> bbDeclInfo *bbFunctionDecl( bbString name,R (*ptr)(A
 	return new bbFunctionDeclInfo<R,A...>( name,meta,ptr );
 }
 
+// ***** Literal *****
+//
+template<class T> struct bbLiteralDeclInfo : public bbDeclInfo{
+
+	T value;
+	
+	bbLiteralDeclInfo( bbString name,bbString meta,T value ):value( value ){
+		this->name=name;
+		this->meta=meta;
+		this->kind="Const";
+		this->type=bbGetType<T>();
+		this->flags=BB_DECL_GETTABLE;
+	}
+	
+	bbVariant get( bbVariant instance ){
+	
+		return bbVariant( value );
+	}
+};
+
+template<class T> bbDeclInfo *bbLiteralDecl( bbString name,T value,bbString meta="" ){
+
+	return new bbLiteralDeclInfo<T>( name,meta,value );
+}
+
 template<class...Ds> bbDeclInfo **bbMembers( Ds...ds ){
 
 	int n=sizeof...(Ds);

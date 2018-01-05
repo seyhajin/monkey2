@@ -45,6 +45,7 @@ Class Translator_CPP Extends Translator
 		Reset()
 	
 		Emit( "#include <bbmonkey.h>" )
+		Emit( "#include <bbtypeinfo_r.h>" )
 		Emit( "#include <bbdeclinfo_r.h>" )
 		Emit( "#if BB_NEWREFLECTION" )
 		Emit( "#include ~q_r.h~q" )
@@ -90,6 +91,14 @@ Class Translator_CPP Extends Translator
 		
 				EmitTypeInfo( fdecl )
 		
+				For Local etype:=Eachin fdecl.enums
+					
+					If Not GenTypeInfo( etype ) Continue
+					
+					EmitTypeInfo( etype )
+				
+				Next
+				
 				For Local ctype:=Eachin fdecl.classes
 				
 					If Not GenTypeInfo( ctype ) Continue
@@ -106,6 +115,14 @@ Class Translator_CPP Extends Translator
 		
 				EmitNullTypeInfo( fdecl )
 		
+				For Local etype:=Eachin fdecl.enums
+					
+					If Not GenTypeInfo( etype ) Continue
+					
+					EmitNullTypeInfo( etype )
+				
+				Next
+				
 				For Local ctype:=Eachin fdecl.classes
 				
 					If Not GenTypeInfo( ctype ) Continue
@@ -130,29 +147,33 @@ Class Translator_CPP Extends Translator
 	Method EmitNullTypeInfo( fdecl:FileDecl )
 		
 	End
+
+	Method EmitNullTypeInfo( etype:EnumType )
+		
+		Local ename:=EnumName( etype )
+		
+		Emit( "bbTypeInfo *bbGetType("+ename+" const&){" )
+		Emit( "return bbGetUnknownType<"+ename+">();" )
+		Emit( "}" )
+	End
 	
 	Method EmitNullTypeInfo( ctype:ClassType )
 
 		Local cname:=ClassName( ctype )
-		Local rname:=""
-		
+
 		If ctype.IsStruct
 			Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
-			rname="bbVoidTypeInfo"
 		Else
 			Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
-			rname="bbObjectTypeInfo"
 		Endif
-						
-		Emit( "return &"+rname+"::instance;" )
+
+		Emit( "return bbGetUnknownType<"+cname+">();" )
 		Emit( "}" )
 		
 		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
-		Emit( "return &"+rname+"::instance;" )
+		Emit( "return bbGetUnknownType<"+cname+">();" )
 		Emit( "}" )
-		
 	End
-	
 	
 	Method TranslateFile( fdecl:FileDecl )
 	
@@ -193,10 +214,19 @@ Class Translator_CPP Extends Translator
 
 		EmitBr()
 		For Local etype:=Eachin fdecl.enums
+			
 			Local ename:=EnumName( etype )
+			
 			Emit( "enum class "+ename+";" )
-			Emit( "bbString bbDBType("+ename+"*);" )
-			Emit( "bbString bbDBValue("+ename+"*);" )
+			
+			If GenTypeInfo( etype )
+				Emit( "bbTypeInfo *bbGetType("+ename+" const&);" )
+			Endif
+			
+			If _debug
+				Emit( "bbString bbDBType("+ename+"*);" )
+				Emit( "bbString bbDBValue("+ename+"*);" )
+			Endif
 		Next
 		
 		EmitBr()
@@ -660,9 +690,9 @@ Class Translator_CPP Extends Translator
 		
 		If GenTypeInfo( ctype )
 			If ctype.IsStruct
-				Emit( "bbTypeInfo *bbGetType( "+cname+" const& );" )
+				Emit( "bbTypeInfo *bbGetType("+cname+" const&);" )
 			Else
-				Emit( "bbTypeInfo *bbGetType( "+cname+"* const& );" )
+				Emit( "bbTypeInfo *bbGetType("+cname+"* const&);" )
 			Endif
 		Endif
 		
@@ -937,6 +967,55 @@ Class Translator_CPP Extends Translator
 		
 		Emit( "}_"+tname+";" )
 	End
+	
+	Method EmitTypeInfo( etype:EnumType )
+		
+		UsesRefInfo( etype )
+		
+		Local edecl:=etype.edecl
+		Local ename:=EnumName( etype )
+		Local rname:="e"+ename
+		
+		EmitBr()
+
+		Emit( "struct "+rname+" : public bbEnumTypeInfo{" )
+		
+		Emit( "static "+rname+" instance;" )
+		
+		'struct decls_t
+		Emit( "static struct decls_t : public bbClassDecls{" )
+		
+		Emit( "decls_t():bbClassDecls(&instance){}" )
+		
+		'initDecls()
+		Emit( "bbDeclInfo **initDecls(){" )
+		
+		Local decls:=New StringStack
+		
+		For Local it:=Eachin etype.scope.nodes
+			
+			decls.Add( "bbLiteralDecl<"+ename+">(~q"+it.Key+"~q,("+ename+")"+Cast<LiteralValue>( it.Value ).value+")" )
+		Next
+
+		Emit( "return bbMembers("+decls.Join( "," )+");" )
+		Emit( "}" )
+		Emit( "}decls;" )
+		
+		'Ctor
+		Emit( rname+"():bbEnumTypeInfo(~q"+etype.Name+"~q){" )
+		Emit( "}" )
+		
+		Emit( "};" )
+		
+		Emit( rname+" "+rname+"::instance;" )
+		Emit( rname+"::decls_t "+rname+"::decls;" )
+		
+		EmitBr()
+		
+		Emit( "bbTypeInfo *bbGetType("+ename+" const&){" )
+		Emit( "return &"+rname+"::instance;" )
+		Emit( "}" )
+	End
 
 	Method EmitTypeInfo( ctype:ClassType )
 	
@@ -1101,7 +1180,7 @@ Class Translator_CPP Extends Translator
 		
 		Emit( "}decls;" )
 
-		'Ctor		
+		'Ctor
 		Local name:=ctype.Name
 		Local kind:=cdecl.kind.Capitalize()
 		If cdecl.IsExtension 
@@ -1145,9 +1224,9 @@ Class Translator_CPP Extends Translator
 		EmitBr()
 
 		If ctype.IsStruct
-			Emit( "bbTypeInfo *bbGetType( "+cname+" const& ){" )
+			Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
 		Else
-			Emit( "bbTypeInfo *bbGetType( "+cname+"* const& ){" )
+			Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
 		Endif
 
 		Emit( "return &"+rcname+"::instance;" )
@@ -2384,13 +2463,24 @@ Function GenTypeInfo:Bool( func:FuncValue )
 	Return True
 End
 
+Function GenTypeInfo:Bool( etype:EnumType )
+
+	'disable native enums	
+	If etype.edecl.IsExtern Return False
+	
+	'disable enums in generic scopes
+	If etype.scope.IsInstanceOf Return False
+	
+	Return True
+End
+
 Function GenTypeInfo:Bool( ctype:ClassType )
 
 	'disable native types
 	If ctype.ExtendsVoid Return False
 	
 	'disable generic type instances (for now - almost working!)
-	If ctype.types Return False
+	If ctype.types Or ctype.scope.IsInstanceOf Return False
 
 	'disable structs
 	'If ctype.IsStruct Return False
@@ -2400,3 +2490,4 @@ Function GenTypeInfo:Bool( ctype:ClassType )
 	
 	Return True
 End
+
