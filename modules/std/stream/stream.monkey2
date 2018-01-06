@@ -567,11 +567,11 @@ Class Stream Extends std.resource.Resource
 		Return OpenFuncs[proto]( proto,ipath,mode )
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Stream open function type
 	#end
 	Alias OpenFunc:Stream( proto:String,path:String,mode:String )
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Stream open functions map
 	#end
 	Const OpenFuncs:=New StringMap<OpenFunc>
 	
