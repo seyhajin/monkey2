@@ -1,7 +1,11 @@
 
-***** Monkey2 v1.1.09 *****
+Fixed dots in filenames problems.
+
+Added reflection support for type extensions and enum. Add reflection helper module - see modules/reflection/tests. Still WIP!
 
 Changed default behaviour of Typeinfo.ExtendsType to do a plain compare instead of runtime error. Makes param matching easier.
+
+***** Monkey2 v1.1.09 *****
 
 Comments in bin/env_blah.txt files have changed. Comments must now span a whole line, and must begin with an apostrophe or hash. If you have modified your env files, make sure to remove any 'inline' comments, ie: comments that begin in the middile of a line somewhere. This change allows for apostrophes in env vars.
 
