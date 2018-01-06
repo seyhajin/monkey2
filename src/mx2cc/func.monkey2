@@ -574,6 +574,8 @@ Class FuncListValue Extends Value
 	
 		Local flistType:=Self.flistType.flist.GenFuncListType( types )
 		
+		If flistType.funcs.Empty Throw New SemantEx( "No overloads found for '"+Self.flistType.flist.ident+"' with type parameters '<"+Join( types )+">'" )
+		
 		Return New FuncListValue( flistType,instance )
 	End
 	
@@ -642,32 +644,12 @@ Class FuncListType Extends Type
 	End
 	
 	Method ToString:String() Override
-		
-		If funcs.Length>1 Return flist.ident
-
-		Local str:=""
-		If types str="<"+Join( types )+">"
-		Return flist.ident+str+":"+funcs[0].ftype.ToString()
-
-#rem		
-		Local str:=""
-		If types str="<"+Join( types )+">"
-		
-		If funcs.Length=1 Return flist.ident+str+":"+funcs[0].ftype.ToString()
-		
-		Local ftypes:=New Type[funcs.Length]
-		For Local i:=0 Until ftypes.Length
-			ftypes[i]=funcs[i].ftype
-		Next
-
-		Return flist.ident+str+"["+Join( ftypes )+"]" 
-	
-'		Return flist.ident+str+"(...)"
-#end
+		Return flist.ident+(types ? "<"+Join( types )+">" Else "")
 	End
 	
 	Property Name:String() Override
-		Return "{FuncListType}"
+		Return flist.scope.Name+"."+ToString()
+'		Return "{FuncListType}"
 	End
 	
 	Property TypeId:String() Override
