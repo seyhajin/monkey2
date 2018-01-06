@@ -24,6 +24,7 @@ Class AliasType Extends ProxyType
 	Field scope:Scope
 	Field types:Type[]
 	Field instanceOf:AliasType
+	Field transFile:FileDecl
 	
 	Field instances:Stack<AliasType>
 	
@@ -32,13 +33,18 @@ Class AliasType Extends ProxyType
 		Self.scope=scope
 		Self.types=types
 		Self.instanceOf=instanceOf
+		Self.transFile=scope.FindFile().fdecl
 		
 		If AnyTypeGeneric( types ) flags|=TYPE_GENERIC
 	End
 	
 	Property Name:String() Override
-
-		Return adecl.ident+":"+_alias.Name
+		
+		Local types:=Join( types )
+		
+		If types types="<"+types+">"
+		
+		Return scope.Name+"."+adecl.ident+types
 	End
 
 	Method OnSemant:SNode() Override

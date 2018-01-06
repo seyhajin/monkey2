@@ -385,9 +385,10 @@ Class NewObjectExpr Extends Expr
 		
 		Local ctype:=TCast<ClassType>( type )
 		If Not ctype Throw New SemantEx( "Type '"+type.Name+"' is not a class type" )
+			
+		If Builder.opts.makedocs Return New LiteralValue( type,"" )
 		
 		If ctype.IsGeneric 
-			If Builder.opts.makedocs Return New LiteralValue( ctype,"" )
 			Throw New SemantEx( "Type '"+type.ToString()+"' is generic" )
 		Endif
 		
