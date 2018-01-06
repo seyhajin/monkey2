@@ -389,12 +389,9 @@ Class GccBuildProduct Extends BuildProduct
 			isasm=True
 		End
 			
-		Local rfile:=src.EndsWith( "/_r.cpp" )
-
-'		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
 		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
-'		If rfile And opts.reflection obj+="_r"
-		If rfile obj+="_r"
+
+		If src.EndsWith( "/_r.cpp" ) obj+="_r"
 			
 		obj+=opts.toolchain="msvc" ? ".obj" Else ".o"
 	

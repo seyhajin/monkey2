@@ -74,17 +74,49 @@ Function MungPath:String( path:String )
 	Return id
 End
 
-#rem now in std.filesystem
-Function GetEnv:String( name:String,defaultValue:String="" )
-	Local p:=getenv( name )
-	If p Return String.FromCString( p )
-	Return defaultValue
-End
-
-Function SetEnv( name:String,value:String )
-	setenv( name,value,1 )
+#rem
+Function MungPath:String( path:String )
+	
+	path=path.Replace( "_","_0" )
+	
+	Local i0:=0
+	Repeat
+		Local i:=path.Find( "../",i0 )
+		If i=-1 Exit
+		i0=i
+		Repeat
+			i+=3
+			If path.Slice( i,i+3 )<>"../" Exit
+		Forever
+		Local rep:="_"+String( (i-i0)/3+1 )
+		path=path.Slice( 0,i0 )+rep+path.Slice( i )
+		i0+=rep.Length
+	Forever
+		
+	path=path.Replace( "/","_1" )
+	
+	return path
 End
 #end
+
+Function Identize:String( str:String )
+	
+	str=MungPath( str )
+
+	For Local i:=0 Until str.Length
+		
+		If IsIdent( str[i] ) Continue
+		
+		Local rep:="_"+String( str[i]+6 )
+		
+		str=str.Slice( 0,i )+rep+str.Slice( i+1 ) 
+		
+		i+=rep.Length-1
+	
+	Next
+	
+	Return str
+End
 
 Function CSaveString( str:String,path:String )
 	Local t:=stringio.LoadString( path )

@@ -45,7 +45,7 @@ Class Module
 		Self.name=name
 		Self.srcPath=srcPath
 		
-		ident=MungPath( name )
+		ident=Identize( name )
 		
 		baseDir=ExtractDir( srcPath )
 		

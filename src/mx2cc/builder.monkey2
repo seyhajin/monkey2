@@ -199,8 +199,8 @@ Class BuilderInstance
 			Local path:=MX2_SRCS.Pop()
 			
 			If opts.verbose>0 Print "Parsing "+path
-			
-			Local ident:=module.ident+"_"+MungPath( MakeRelativePath( StripExt( path ),module.baseDir ) )
+				
+			Local ident:=module.ident+"_"+Identize( MakeRelativePath( StripExt( path ),module.baseDir ) )
 			
 			Local parser:=New Parser
 			
