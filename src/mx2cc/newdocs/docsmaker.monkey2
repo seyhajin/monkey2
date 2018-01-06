@@ -174,8 +174,6 @@ Class DocsMaker
 		
 				Local url:=dir+docs.FilePathUrl
 				
-	'			Print "Creating decl: "+docs.DeclPath
-				
 				SaveString( html,url )
 				
 			Endif
@@ -183,8 +181,6 @@ Class DocsMaker
 		Case DocsType.Dir
 			
 			Local path:=dir+docs.FilePath
-			
-'			Print "Creating dir:"+dir
 			
 			CreateDir( path )
 			
@@ -251,15 +247,28 @@ Class DocsMaker
 	
 		Local xtype:=Cast<AliasType>( type )
 		If xtype
+			Local module:=xtype.transFile.module
+			
 			Local types:=""
-			For Local type:=Eachin xtype.types 
+			For Local type:=Eachin xtype.types
 				types+=","+TypeName( type )
 			Next
 			If types types="<"+types.Slice(1)+">"
-		
-			If xtype.instanceOf xtype=xtype.instanceOf
+
+			Local path:=type.Name
 			
-			Return TypeName( xtype._alias,xtype.adecl.ident )+types
+			Local i:=path.Find( "<" )
+			If i<>-1 path=path.Slice( 0,i )
+				
+			If Not name
+				name=path
+				If _module=module
+					Local i:=name.FindLast( "." )
+					If i<>-1 name=name.Slice( i+1 )
+				Endif
+			Endif
+			
+			Return "[["+module.name+":"+path+"|"+name+"]]"+types
 		Endif
 
 		Local ptype:=Cast<PrimType>( type )
@@ -268,10 +277,6 @@ Class DocsMaker
 			Local path:=ctype.Name
 			If Not name name=DeclLabel( ctype.cdecl )
 			Return "[[monkey:"+path+"|"+name+"]]"
-			
-'			If Not name name=ctype.Name
-'			Local cname:=DeclDocsIdent( ctype.cdecl )
-'			return "[[monkey:monkey.types."+cname+"|"+name+"]]"
 		Endif
 	
 		Local atype:=Cast<ArrayType>( type )
@@ -291,9 +296,9 @@ Class DocsMaker
 			local argTypes:=""
 			For Local arg:=Eachin ftype.argTypes
 				If argTypes argTypes+=","
-				argTypes+=","+TypeName( arg )
+				argTypes+=TypeName( arg )
 			Next
-			Return retType+":("+argTypes+")"
+			Return retType+"("+argTypes+")"
 		Endif
 	
 		Local ctype:=Cast<ClassType>( type )
@@ -305,8 +310,6 @@ Class DocsMaker
 			If types types="<"+types.Slice(1)+">"
 				
 			If ctype.instanceOf ctype=ctype.instanceOf
-			
-			'Print "Typeinfo name="+ctype.Name
 			
 			Local module:=ctype.transFile.module
 			
@@ -771,7 +774,10 @@ Class DocsMaker
 
 		EmitHeader( buf,decl,parent )
 		
-		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl ) )
+'		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl ) )
+
+		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl )+":"+TypeName( xtype._alias ) )
+		
 		
 		buf.Emit( decl.docs )
 				
@@ -976,8 +982,8 @@ Class DocsMaker
 		
 		EmitHeader( buf,decl,parent )
 		
-		buf.Emit( "#### "+decl.kind.Capitalize()+" "+DeclLabel( decl )+":"+TypeName( vvar.type ) )
-	
+		buf.Emit( "##### "+decl.kind.Capitalize()+" "+DeclLabel( decl )+":"+TypeName( vvar.type ) )
+		
 		buf.Emit( decl.docs )
 		
 		docs.Markdown=buf.Flush()
