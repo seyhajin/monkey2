@@ -988,8 +988,8 @@ Class Translator_CPP Extends Translator
 		Local decls:=New StringStack
 		
 		For Local it:=Eachin etype.scope.nodes
-			
 			decls.Add( "bbLiteralDecl<"+ename+">(~q"+it.Key+"~q,("+ename+")"+Cast<LiteralValue>( it.Value ).value+")" )
+'			decls.Add( "bbLiteralDecl<int>(~q"+it.Key+"~q,"+Cast<LiteralValue>( it.Value ).value+")" )
 		Next
 
 		Emit( "return bbMembers("+decls.Join( "," )+");" )
@@ -998,6 +998,15 @@ Class Translator_CPP Extends Translator
 		
 		'Ctor
 		Emit( rname+"():bbEnumTypeInfo(~q"+etype.Name+"~q){" )
+		Emit( "}" )
+		
+		'MakeEnum
+		Emit( "bbVariant makeEnum( int i ){" )
+		Emit( "return bbVariant( ("+ename+")i );" )
+		Emit( "}" )
+		
+		Emit( "int getEnum( bbVariant v ){" )
+		Emit( "return (int)v.get<"+ename+">();" )
 		Emit( "}" )
 		
 		Emit( "};" )

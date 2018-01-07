@@ -8,7 +8,7 @@ namespace{
 }
 
 #define BB_PRIM_GETTYPE( TYPE,ID ) bbTypeInfo *bbGetType( TYPE const& ){ \
-	static bbPrimTypeInfo info( ID ); \
+	static bbPrimTypeInfo<TYPE> info( ID ); \
 	return &info; \
 }
 
@@ -70,12 +70,20 @@ bbArray<bbTypeInfo*> bbTypeInfo::interfaceTypes(){
 	
 bbBool bbTypeInfo::extendsType( bbTypeInfo *type ){
 	return this==type;
-//	bbRuntimeError( "Type '"+name+"' is not a class or interface type" );
-//	return false;
 }
 	
 bbArray<bbDeclInfo*> bbTypeInfo::getDecls(){
-	bbRuntimeError( "Type '"+name+"' is not a class or interface type!!" );
+	bbRuntimeError( "Type '"+name+"' is not a class or interface type" );
+	return {};
+}
+
+bbVariant bbTypeInfo::makeEnum( int ){
+	bbRuntimeError( "Type '"+name+"' is not an enum type" );
+	return {};
+}
+
+int bbTypeInfo::getEnum( bbVariant ){
+	bbRuntimeError( "Type '"+name+"' is not an enum type" );
 	return {};
 }
 
@@ -193,14 +201,6 @@ bbTypeInfo *bbObject::typeof()const{
 }
 
 
-// ***** bbPrimTypeInfo *****
-
-bbPrimTypeInfo::bbPrimTypeInfo( bbString name ){
-	this->name=name;
-	this->kind="Primitive";
-}
-
-
 // ***** bbClassDecls *****
 
 bbClassDecls::bbClassDecls( bbClassTypeInfo *classType ){
@@ -285,3 +285,6 @@ bbClassTypeInfo *bbClassTypeInfo::getNamespace( bbString name ){
 	bbClassTypeInfo *nmspace=new bbClassTypeInfo( name,"Namespace" );
 	return nmspace;
 }
+
+// ***** EnumTypeInfo *****
+

@@ -42,6 +42,11 @@ struct bbTypeInfo{
 	
 	virtual bbArray<bbDeclInfo*> getDecls();
 	
+	virtual bbVariant makeEnum( int value );
+	
+	virtual int getEnum( bbVariant );
+	
+	
 	bbDeclInfo *getDecl( bbString name );
 	
 	bbDeclInfo *getDecl( bbString name,bbTypeInfo *type );
@@ -80,9 +85,13 @@ struct bbObjectTypeInfo : public bbTypeInfo{
 	bbArray<bbDeclInfo*> getDecls();
 };
 
-struct bbPrimTypeInfo : public bbTypeInfo{
+template<class T> struct bbPrimTypeInfo : public bbTypeInfo{
 
-	bbPrimTypeInfo( bbString name );
+	bbPrimTypeInfo( bbString name ){
+		this->name=name;
+		this->kind="Primitive";
+	}
+	
 };
 
 template<class T> struct bbPointerTypeInfo : public bbTypeInfo{
@@ -91,10 +100,11 @@ template<class T> struct bbPointerTypeInfo : public bbTypeInfo{
 		this->name=bbGetType<T>()->name+" Ptr";
 		this->kind="Pointer";
 	}
-	
+
 	bbTypeInfo *pointeeType(){
 		return bbGetType<T>();
 	}
+	
 };
 
 template<class T,int D> struct bbArrayTypeInfo : public bbTypeInfo{
@@ -146,47 +156,6 @@ template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
 	}
 
 };
-
-/*
-struct bbClassDecls{
-
-	bbClassDecls *_succ;
-	bbDeclInfo **_decls=0;
-	int _numDecls=0;
-
-	bbClassDecls( bbClassTypeInfo *classType );
-	
-	bbDeclInfo **decls();
-	
-	int numDecls();
-	
-	virtual bbDeclInfo **initDecls(){
-		return 0;
-	}
-};
-
-struct bbClassTypeInfo : public bbTypeInfo{
-
-	bbClassTypeInfo *_succ=0;
-	bbClassDecls *_decls=0;
-	
-	bbClassTypeInfo( bbString name,bbString kind );
-	
-	bbTypeInfo *superType();
-	
-	bbArray<bbTypeInfo*> interfaceTypes();
-	
-	bbBool extendsType( bbTypeInfo *type );
-	
-	bbArray<bbDeclInfo*> getDecls();
-	
-	bbString toString(){
-		return kind+" "+name;
-	}
-	
-	static bbClassTypeInfo *getNamespace( bbString name );
-};
-*/
 
 #define BB_GETTYPE_DECL( TYPE ) bbTypeInfo *bbGetType( TYPE const& );
 

@@ -423,6 +423,13 @@ Struct @Variant="bbVariant"
 	#rem monkeydoc Dynamic type of the variant value.
 	#end
 	Property DynamicType:TypeInfo()="getDynamicType"
+		
+	#rem monkeydoc Gets the integer enum value of an enum variant.
+	
+	The type of the variant must be an enum type, or a runtime error will occur.
+	
+	#end
+	Property EnumValue:Int()="enumValue"
 End
 
 #rem monkeydoc Primtive array type.
@@ -643,6 +650,13 @@ Class @TypeInfo Extends Void="bbTypeInfo"
 	#rem monkeydoc Checks whether a class extends a class.
 	#end
 	Method ExtendsType:Bool( type:TypeInfo )="extendsType"
+		
+	#rem monkeydoc Creates an enum variant from an arbitrary int value.
+
+	This type must represent an enum type.
+	
+	#end
+	Method MakeEnum:Variant( enumValue:Int )="makeEnum"
 
 	#rem monkeydoc Gets a user defined type by name.
 	

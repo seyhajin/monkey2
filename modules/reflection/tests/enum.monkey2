@@ -7,10 +7,7 @@ Enum E
 	A,B,C
 End
 
-Function Test( e:E )
-	
-	Print "e="+Int( e )
-End
+Global G:E
 
 Function Main()
 	
@@ -24,14 +21,21 @@ Function Main()
 	
 	For Local decl:=Eachin type.GetDecls()
 		
-		Local e:=Cast<E>( decl.Get( Null ) )
+		Local e:=decl.Get( Null )
 		
-		Print decl.Name+"="+Int( e )
+		Print decl.Name+"="+e.EnumValue
 	
 	Next
 	
-	Local rtest:=TypeInfo.GetType( "test" ).GetDecl( "Test" )
+	Local g:=TypeInfo.GetType( "test" ).GetDecl( "G" )
 	
-	rtest.Invoke( Null,New Variant[]( E.C ) )
-
+	'one way To set an enum...
+	g.Set( Null,type.MakeEnum( E.A ) )
+	Print g.Get( Null ).EnumValue
+	
+	'another way to set an enum...!
+	g.Set( Null,type.MakeEnum( 2 ) )
+	Print g.Get( Null ).EnumValue
+	
+	
 End

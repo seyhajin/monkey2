@@ -164,6 +164,11 @@ struct bbVariant{
 		return _ref<T>( 0 );
 	}
 	
+	int enumValue()const{
+	
+		return getType()->getEnum( *this );
+	}
+	
 };
 
 extern template struct bbVariant::Rep<bbBool>;
