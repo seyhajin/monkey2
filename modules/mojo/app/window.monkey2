@@ -292,6 +292,11 @@ Class Window Extends View
 	
 	Protected
 	
+	#rem monkeydoc Called once after a Window has been created.
+	#end
+	Method OnCreateWindow() Virtual
+	End
+	
 	#rem monkeydoc Theme changed handler.
 	
 	Called when the App theme changes.
@@ -337,6 +342,25 @@ Class Window Extends View
 	
 		If _contentView _contentView.Frame=Rect
 	End
+
+	Internal
+	
+	Method CreateWindow()
+		
+		If _clearEnabled ClearWindow( _clearColor )
+			
+		OnCreateWindow()
+	End
+		
+	Function CreateNewWindows()
+		
+		For Local window:=Eachin _newWindows
+			
+			window.CreateWindow()
+		End
+		
+		_newWindows.Clear()
+	End
 	
 	Private
 	
@@ -367,6 +391,7 @@ Class Window Extends View
 	Global _allWindows:=New Stack<Window>
 	Global _visibleWindows:=New Stack<Window>
 	Global _windowsByID:=New Map<UInt,Window>
+	Global _newWindows:=New Stack<Window>
 	
 	Method SetMinSize( size:Vec2i )
 		size/=_mouseScale
@@ -552,6 +577,7 @@ Class Window Extends View
 		bbglInit()
 		
 		_allWindows.Push( Self )
+		_newWindows.Push( Self )
 		_windowsByID[SDL_GetWindowID( _sdlWindow )]=Self
 		If Not (flags & WindowFlags.Hidden) _visibleWindows.Push( Self )
 		

@@ -595,6 +595,8 @@ Class AppInstance
 		Local event:SDL_Event
 
 		While SDL_PollEvent( Varptr event )
+			
+			Window.CreateNewWindows()
 		
 			DispatchEvent( Varptr event )
 			
