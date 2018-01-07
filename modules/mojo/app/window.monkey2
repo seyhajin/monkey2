@@ -268,6 +268,28 @@ Class Window Extends View
 		OnWindowEvent( event )
 	End
 	
+	#rem monkeydoc Clear the window directly.
+	
+	ClearWindow can be used to clear the window outside of normal OnRender processing.
+	
+	#end
+	Method ClearWindow( color:Color )
+		
+		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
+
+		Local bounds:=New Recti( 0,0,Frame.Size )
+		
+		_canvas.Resize( bounds.Size )
+		
+		_canvas.BeginRender( bounds,New AffineMat3f )
+		
+		_canvas.Clear( color )
+		
+		_canvas.EndRender()
+		
+		SDL_GL_SwapWindow( _sdlWindow )
+	End
+	
 	Protected
 	
 	#rem monkeydoc Theme changed handler.
