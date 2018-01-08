@@ -1,6 +1,31 @@
 
 Namespace mojo3d
 
+Private
+
+Function MakeColor:Color( jobj:JsonObject )
+	
+	Local r:=jobj.Contains( "r" ) ? jobj.GetNumber( "r" ) Else 1.0
+	Local g:=jobj.Contains( "g" ) ? jobj.GetNumber( "g" ) Else 1.0
+	Local b:=jobj.Contains( "b" ) ? jobj.GetNumber( "b" ) Else 1.0
+	Local a:=jobj.Contains( "a" ) ? jobj.GetNumber( "a" ) Else 1.0
+	
+	Return New Color( r,g,b,a )
+End
+
+Class JsonObject Extension
+
+	Method GetColor:Color( key:String )
+		
+		Local jobj:=GetObject( key )
+		If Not jobj Return Color.White
+		
+		Return MakeColor( jobj )
+	End
+End
+
+Public
+
 #rem monkeydoc The PbrMaterial class.
 #end
 Class PbrMaterial Extends Material
@@ -203,6 +228,7 @@ Class PbrMaterial Extends Material
 		texture=Texture.Load( path+"/roughness.png",textureFlags )
 		If texture
 			material.RoughnessTexture=texture
+			Print "Loaded roughness:"+path
 		Endif
 		
 		texture=Texture.Load( path+"/occlusion.png",textureFlags )
@@ -214,6 +240,14 @@ Class PbrMaterial Extends Material
 '		If Not texture texture=Texture.Load( path+"/unormal.png",textureFlags|TextureFlags.InvertGreen )
 		If texture
 			material.NormalTexture=texture
+		Endif
+		
+		Local jobj:=JsonObject.Load( path+"/material.json" )
+		If jobj
+			If jobj.Contains( "colorFactor" ) material.ColorFactor=jobj.GetColor( "colorFactor" )
+			If jobj.Contains( "emissiveFactor" ) material.EmissiveFactor=jobj.GetColor( "emissiveFactor" )
+			If jobj.Contains( "metalnessFactor" ) material.MetalnessFactor=jobj.GetNumber( "metalnessFactor" )
+			If jobj.Contains( "roughnessFactor" ) material.RoughnessFactor=jobj.GetNumber( "roughnessFactor" )
 		Endif
 		
 		Return material
