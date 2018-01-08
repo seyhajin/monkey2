@@ -1,6 +1,15 @@
 
 Namespace mojo3d
 
+#Import "native/internaledges.cpp"
+#Import "native/internaledges.h"
+
+Extern Private
+ 
+Function CreateInternalEdgeInfo( mesh:btBvhTriangleMeshShape )="bbBullet::createInternalEdgeInfo"
+	
+Public
+	
 Class Entity Extension
 	
 	Property Collider:Collider()
@@ -12,7 +21,7 @@ End
 
 Class Collider Extends Component
 	
-	Const Type:=New ComponentType( "Collider",-1,ComponentTypeFlags.Singleton )
+	Const Type:=New ComponentType( "Collider",10,ComponentTypeFlags.Singleton )
 	
 	Method New( entity:Entity )
 		
@@ -21,30 +30,25 @@ Class Collider Extends Component
 	
 	Property Margin:Float()
 		
-		Return btShape.getMargin()
+		Return Validate().getMargin()
 	
 	Setter( margin:Float )
 		
-		btShape.setMargin( margin )
+		Validate().setMargin( margin )
 	End
 
 	Method CalculateLocalInertia:Vec3f( mass:Float )
 		
-		Return btShape.calculateLocalInertia( mass )
+		Return Validate().calculateLocalInertia( mass )
 	End
+	
+	Method Validate:btCollisionShape()
 
-	Property btShape:btCollisionShape()
-		
 		If Not _btshape _btshape=OnCreate()
 	
 		Return _btshape
 	End
 	
-	Property Seq:Int()
-		
-		Return _seq
-	End
-
 Protected
 
 	Method OnCreate:btCollisionShape() Abstract
@@ -54,12 +58,12 @@ Protected
 		If Not _btshape Return
 		
 		_btshape.destroy()
+		
 		_btshape=Null
 		
-		_gseq+=1
-		_seq=_gseq
+		Entity.RigidBody?.ColliderInvalidated()
 	End
-
+	
 	function SetOrigin:btCollisionShape( shape:btCollisionShape,origin:Vec3f )
 		
 		If origin=Null Return shape
@@ -73,11 +77,7 @@ Protected
 	
 	Private
 	
-	Global _gseq:Int
-
 	Field _btshape:btCollisionShape
-	
-	Field _seq:Int
 	
 End
 
@@ -120,7 +120,7 @@ Class BoxCollider Extends ConvexCollider
 	End
 	
 	Method OnCreate:btCollisionShape() Override
-		
+
 		Local shape:=New btBoxShape( _box.Size/2 )
 		
 		Return SetOrigin( shape,_box.Center )
@@ -134,6 +134,7 @@ End
 Class SphereCollider Extends ConvexCollider
 	
 	Method New( Entity:Entity )
+		
 		Super.New( Entity )
 	End
 	
@@ -516,7 +517,7 @@ Class MeshCollider Extends ConcaveCollider
 		
 		Local shape:=New btBvhTriangleMeshShape( _btmesh,True,True )
 		
-		'CreateInternalEdgeInfo( shape )
+		CreateInternalEdgeInfo( shape )
 		
 		Return shape
 	End

@@ -66,7 +66,7 @@ Class World
 		
 		Local btresult:=New btCollisionWorld.ClosestConvexResultCallback( castFrom.t,castTo.t )
 		
-		_btworld.convexSweepTest( Cast<btConvexShape>( collider.btShape ),castFrom,castTo,Cast<btCollisionWorld.ConvexResultCallback Ptr>( Varptr btresult ),0 )
+		_btworld.convexSweepTest( Cast<btConvexShape>( collider.Validate() ),castFrom,castTo,Cast<btCollisionWorld.ConvexResultCallback Ptr>( Varptr btresult ),0 )
 		
 		If Not btresult.hasHit() Return Null
 		
@@ -82,7 +82,7 @@ Class World
 		
 		resetCollisions()
 		
-		_btworld.stepSimulation( 1.0/60.0 )
+		_btworld.stepSimulation( 1.0/_scene.UpdateRate )
 		
 		Local n:=getNumCollisions()
 		
@@ -119,7 +119,7 @@ Class World
 	
 	Method Add( body:RigidBody )
 		
-		Print "World.Add( RigidBody )"
+'		Print "World.Add( RigidBody )"
 		
 		_bodies.Add( body )
 		
@@ -132,7 +132,7 @@ Class World
 	
 	Method Remove( body:RigidBody )
 		
-		Print "World.Remove( RigidBody )"
+'		Print "World.Remove( RigidBody )"
 		
 		Local btbody:=body.btBody
 		

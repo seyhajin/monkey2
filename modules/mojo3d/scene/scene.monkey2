@@ -84,6 +84,17 @@ Class Scene
 		_clearColor=color
 	End
 	
+	#rem monkeydoc Scene update rate.
+	#end
+	Property UpdateRate:Float()
+		
+		Return _updateRate
+	
+	Setter( updateRate:Float )
+		
+		_updateRate=updateRate
+	End
+	
 	#rem monkeydoc Ambient diffuse lighting.
 	#end
 	Property AmbientLight:Color()
@@ -242,6 +253,8 @@ Class Scene
 	
 	Field _clearColor:Color
 	Field _ambientDiffuse:Color
+	
+	Field _updateRate:Float=60
 	
 	Field _rootEntities:=New Stack<Entity>
 	Field _cameras:=New Stack<Camera>
