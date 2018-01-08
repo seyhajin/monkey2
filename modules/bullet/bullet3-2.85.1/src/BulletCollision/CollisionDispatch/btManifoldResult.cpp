@@ -52,7 +52,11 @@ btScalar	btManifoldResult::calculateCombinedSpinningFriction(const btCollisionOb
 ///User can override this material combiner by implementing gContactAddedCallback and setting body0->m_collisionFlags |= btCollisionObject::customMaterialCallback;
 btScalar	btManifoldResult::calculateCombinedFriction(const btCollisionObject* body0,const btCollisionObject* body1)
 {
-	btScalar friction = body0->getFriction() * body1->getFriction();
+	//Mark was here!
+	btScalar f0=body0->getFriction(),f1=body1->getFriction();
+	btScalar friction=f0<f1 ? f0 : f1;
+	
+	//btScalar friction = body0->getFriction() * body1->getFriction();
 
 	const btScalar MAX_FRICTION  = btScalar(10.);
 	if (friction < -MAX_FRICTION)
@@ -65,7 +69,11 @@ btScalar	btManifoldResult::calculateCombinedFriction(const btCollisionObject* bo
 
 btScalar	btManifoldResult::calculateCombinedRestitution(const btCollisionObject* body0,const btCollisionObject* body1)
 {
-	return body0->getRestitution() * body1->getRestitution();
+	//Mark was here!
+	btScalar r0=body0->getRestitution(),r1=body1->getRestitution();
+	return r0>=r1 ? r0 : r1;
+
+	//return body0->getRestitution() * body1->getRestitution();
 }
 
 btScalar	btManifoldResult::calculateCombinedContactDamping(const btCollisionObject* body0,const btCollisionObject* body1)

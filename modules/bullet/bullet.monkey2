@@ -452,6 +452,16 @@ Class btCollisionObject Extends btObject
 	Method setRollingFriction( friction:btScalar )
 	
 	Method getRollingFriction:btScalar()
+
+	Method setSpinningFriction( friction:btScalar )
+	
+	Method getSpinningFriction:btScalar()
+	
+  	Method setContactStiffnessAndDamping( stiffness:btScalar,damping:btScalar )
+
+	Method getContactStiffness:btScalar()
+	
+	Method getContactDamping:btScalar()
 	
 	Method setCcdSweptSphereRadius( radius:btScalar )
 	
