@@ -24,9 +24,9 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"
  
-Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"
 
 Function Main()
 	
@@ -304,7 +304,10 @@ Function MakeDocs:Bool( args:String[] )
 	
 	opts.clean=False
 	
-	If Not args args=EnumModules()
+	If Not args 
+		args=EnumModules()
+		DeleteDir( "docs/modules",True )
+	Endif
 
 	Local docsDir:=RealPath( "docs" )+"/"
 	
