@@ -31,7 +31,7 @@ namespace{
 		
 		Counter *succ;
 		int source;
-		std::atomic<int> count=0;
+		std::atomic<int> count{};
 		
 		Counter( int source ):source( source ){
 			succ=counters;
