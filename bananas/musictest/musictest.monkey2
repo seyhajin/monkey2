@@ -50,9 +50,8 @@ Class MyWindow Extends Window
 		'Stop/Start?
 		If Keyboard.KeyHit( Key.Enter ) Or Mouse.ButtonHit( MouseButton.Left )
 			If _channel 
-				'_channel.Stop()
-				'_channel=Null
-				StartMusic()
+				_channel.Stop()
+				_channel=Null
 			Else
 				StartMusic()
 			Endif
