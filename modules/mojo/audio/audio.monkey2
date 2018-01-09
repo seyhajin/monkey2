@@ -12,9 +12,14 @@ Namespace mojo.audio
 
 Extern Private
 
-Function playMusic:Bool( path:CString,callback:int,source:Int )="bbMusic::playMusic"
+Function playMusic:Int( path:CString,callback:Int,source:Int )="bbMusic::playMusic"
+Function getBuffersProcessed:Int( source:Int )="bbMusic::getBuffersProcessed"
+Function endMusic:Void( source:Int )="bbMusic::endMusic"
 	
 Private
+
+Const MUSIC_BUFFER_MS:=100
+Const MUSIC_BUFFER_SECS:=0.1
 
 Function ALFormat:ALenum( format:AudioFormat )
 	Local alFormat:ALenum
@@ -56,19 +61,27 @@ Class AudioDevice
 	
 	#end
 	Method PlayMusic:Channel( path:String,finished:Void()=Null,paused:Bool=False )
-		
-		Local channel:=New Channel( ChannelFlags.AutoDiscard )
+
+		'DO NOT use AutoDiscard here or music wont receive 'stop' signal!
+		'		
+		Local channel:=New Channel( ChannelFlags.Music )
 		
 		Local callback:=async.CreateAsyncCallback( Lambda()
+			channel.Discard()
+			endMusic( channel._alSource )
 			finished()
 		End,True )
 		
 		path=filesystem.RealPath( path )
 		
-		If Not playMusic( path,callback,channel._alSource ) 
+		Local sampleRate:=playMusic( path,callback,channel._alSource )
+	
+		If Not sampleRate
 			async.DestroyAsyncCallback( callback )
 			Return Null
 		Endif
+		
+		channel._sampleRate=sampleRate
 		
 		Return channel
 	End
@@ -208,6 +221,7 @@ End
 Enum ChannelFlags
 	
 	AutoDiscard=1
+	Music=2
 End
 
 Class Channel Extends Resource
@@ -321,6 +335,24 @@ Class Channel Extends Resource
 		Local sample:Int
 		alGetSourcei( _alSource,AL_SAMPLE_OFFSET,Varptr sample )
 		
+		If _flags & ChannelFlags.Music
+			
+			Local samplesPerBuffer:=MUSIC_BUFFER_MS * _sampleRate / 1000
+			
+			Local buffersProcessed:=getBuffersProcessed( _alSource )
+			
+			sample+=samplesPerBuffer * buffersProcessed
+			
+			If sample<_sample
+'				Print "Sample catch up:"+sample+"->"+_sample
+				While sample<_sample
+					sample+=samplesPerBuffer
+				Wend
+			Else
+				_sample=sample
+			Endif
+		Endif
+		
 		Return sample
 				
 	Setter( sample:Int )
@@ -343,6 +375,22 @@ Class Channel Extends Resource
 
 		Local time:Float		
 		alGetSourcef( _alSource,AL_SEC_OFFSET,Varptr time )
+		
+		If _flags & ChannelFlags.Music
+			
+			Local buffersProcessed:=getBuffersProcessed( _alSource )
+			
+			time+=MUSIC_BUFFER_SECS * buffersProcessed
+			
+			If time<_time
+'				Print "Time catchup: "+time+"->"+_time
+				While time<_time
+					time+=MUSIC_BUFFER_SECS
+				Wend
+			Else
+				_time=time
+			Endif
+		Endif
 		
 		Return time
 		
@@ -460,6 +508,11 @@ Class Channel Extends Resource
 	Field _volume:Float=1
 	Field _rate:Float=1
 	Field _pan:Float=0
+	
+	Field _sampleRate:Int
+	
+	Field _time:float
+	Field _sample:Int
 	
 	Global _autoDiscard:=New Stack<Channel>
 	

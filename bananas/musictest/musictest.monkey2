@@ -18,7 +18,7 @@ Using mojo..
 Class MyWindow Extends Window
 	
 	Field _channel:Channel
-
+	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=Null )
 
 		Super.New( title,width,height,flags )
@@ -30,7 +30,8 @@ Class MyWindow Extends Window
 		
 		_channel=Audio.PlayMusic( "asset::ACDC_-_Back_In_Black-sample.ogg",Lambda()
 		
-			If _channel StartMusic()
+			Print "Music Finished!"
+			
 		End )
 		
 	End
@@ -38,18 +39,20 @@ Class MyWindow Extends Window
 	Method OnRender( canvas:Canvas ) Override
 		
 		RequestRender()
-	
+		
 		canvas.DrawText( 
 		"Music Test: Hit [Enter] to "+
 		(_channel ? "stop" Else "start")+
-		(_channel ? ", [Space] to "+(_channel.Paused ? "resume" Else "pause") Else ""),
+		(_channel ? ", [Space] to "+(_channel.Paused ? "resume" Else "pause") Else "")+
+		(_channel ? ",  Sample="+_channel.PlayheadSample+", Time="+_channel.PlayheadTime Else ""),
 		0,0 )
 		
 		'Stop/Start?
 		If Keyboard.KeyHit( Key.Enter ) Or Mouse.ButtonHit( MouseButton.Left )
 			If _channel 
-				_channel.Stop()
-				_channel=Null
+				'_channel.Stop()
+				'_channel=Null
+				StartMusic()
 			Else
 				StartMusic()
 			Endif
