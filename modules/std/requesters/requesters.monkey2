@@ -5,6 +5,8 @@ Namespace std.requesters
 
 	#Import "<libole32.a>"
 	#Import "<libComdlg32.a>"
+	#Import "<libshell32.a>"
+	#import "<libuser32.a>"
 	
 	#Import "native/requesters_windows.cpp"
 	#Import "native/requesters.h"
