@@ -378,7 +378,7 @@ Class Translator_CPP Extends Translator
 			params+=TransType( p.type )+" "+VarName( p )
 		Next
 
-		If func.IsCtor And ctype.IsStruct
+		If func.IsCtor And ctype.IsStruct 
 			If Not ftype.argTypes.Length Or ftype.argTypes[0].Equals( ctype )
 				If params params+=","
 				params+="bbNullCtor_t"
@@ -2110,7 +2110,10 @@ Class Translator_CPP Extends Translator
 		Endif
 		
 		If ctype.IsStruct
-			If Not value.args Return cname+"{bbNullCtor}"
+			If Not value.args 
+				If Not ctype.cdecl.IsExtern Return cname+"{bbNullCtor}"
+				Return cname+"{}"
+			Endif
 			If value.args[0].type.Equals( ctype ) Return cname+"{"+TransArgs( value.args )+",bbNullCtor}"
 			Return cname+"{"+TransArgs( value.args )+"}"
 		Endif

@@ -188,32 +188,42 @@ Class MemberExpr Extends Expr
 	
 	Method OnSemant:Value( scope:Scope ) Override
 		
-		Local value:=expr.SemantRValue( scope )
-		Local tv:=Cast<TypeValue>( value )
-	
-		If tv	
-			Local ctype:=TCast<ClassType>( tv.ttype )
+		Local evalue:=expr.Semant( scope )
+		
+		Local tvalue:=Cast<TypeValue>( evalue )
+		
+		If tvalue
+			
+			Local ctype:=TCast<ClassType>( tvalue.ttype )
+			
 			If ctype And ctype.types And Not ctype.instanceOf
-				throw New SemantEx( "Illegal use of generic class '"+ctype.ToString()+"'" )
+				Throw New SemantEx( "Class '"+ctype.Name+"' is generic" )
+				'throw New SemantEx( "Illegal use of generic class '"+ctype.ToString()+"'" )
 			Endif
+			
+			Local value:=tvalue.FindValue( ident )
+			
+			If Not value Throw New SemantEx( "Type '"+tvalue.ttype.Name+"' has no member named '"+ident+"'" )
+				
+			Return value
+		
 		Endif
 		
-		Local tvalue:=value.FindValue( ident )
-		If tvalue Return tvalue
+		Local value:=evalue.FindValue( ident )
 		
-		If tv Throw New SemantEx( "Type '"+tv.ttype.Name+"' has no member named '"+ident+"'" )
-		
-		Throw New SemantEx( "Value of type '"+value.type.Name+"' has no member named '"+ident+"'" )
+		If Not value Throw New SemantEx( "Value of type '"+evalue.type.Name+"' has no member named '"+ident+"'" )
+			
+		Return value
 	End
 	
 	Method OnSemantType:Type( scope:Scope ) Override
 	
-		Local type:=expr.SemantType( scope )
+		Local etype:=expr.SemantType( scope )
 		
-		Local type2:=type.FindType( ident )
-		If Not type2 Throw New SemantEx( "Type '"+type.Name+"' has no member type named '"+ident+"'" )
+		Local type:=etype.FindType( ident )
+		If Not type Throw New SemantEx( "Type '"+etype.Name+"' has no member type named '"+ident+"'" )
 		
-		Return type2
+		Return type
 	End
 
 	Method ToString:String() Override
@@ -242,6 +252,7 @@ Class SafeMemberExpr Extends Expr
 		Local value:=Self.expr.SemantRValue( scope ).RemoveSideEffects( block )
 
 		Local thenValue:=value.FindValue( ident )
+		
 		If Not thenValue Throw New SemantEx( "Value of type '"+value.type.Name+"' has no member named '"+ident+"'" )
 
 		thenValue=thenValue.ToRValue()
@@ -534,7 +545,7 @@ Class ExtendsExpr Extends Expr
 			Throw New SemantEx( "Type '"+type.ToString()+"' is not a class or interface type" )
 		Endif
 		
-		Local value:=Self.expr.SemantRValue( scope )
+		Local value:=Self.expr.Semant( scope )
 
 		Local tvalue:=Cast<TypeValue>( value )
 		If tvalue
@@ -542,6 +553,8 @@ Class ExtendsExpr Extends Expr
 			Local ptype:=TCast<PrimType>( tvalue.ttype )
 			If ptype And ptype.ctype.DistanceToType( ctype )>=0 Return LiteralValue.BoolValue( True )
 			Return LiteralValue.BoolValue( False )
+		Else
+			value=value.ToRValue()
 		Endif
 		
 		If value.type.DistanceToType( ctype )>=0 Return LiteralValue.BoolValue( True )

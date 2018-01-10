@@ -152,6 +152,11 @@ Class TypeValue Extends Value
 		Return "<"+ttype.ToString()+">"
 	End
 	
+	Method ToRValue:Value() Override
+		Throw New SemantEx( "Unexpected type '"+ttype.Name+"'" )
+		Return Null
+	End
+	
 	Method FindValue:Value( ident:String ) Override
 		Local node:=ttype.FindNode( ident )
 		If node Return node.ToValue( Null )
