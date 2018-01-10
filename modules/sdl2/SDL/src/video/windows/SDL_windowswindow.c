@@ -461,11 +461,18 @@ WIN_SetWindowSize(_THIS, SDL_Window * window)
     WIN_SetWindowPositionInternal(_this, window, SWP_NOCOPYBITS | SWP_NOMOVE | SWP_NOACTIVATE);
 }
 
+extern HWND SDL_SHOWING_HWND;
+
 void
 WIN_ShowWindow(_THIS, SDL_Window * window)
 {
     HWND hwnd = ((SDL_WindowData *) window->driverdata)->hwnd;
+    
+    SDL_SHOWING_HWND=hwnd;
+    
     ShowWindow(hwnd, SW_SHOW);
+    
+    SDL_SHOWING_HWND=0;
 }
 
 void

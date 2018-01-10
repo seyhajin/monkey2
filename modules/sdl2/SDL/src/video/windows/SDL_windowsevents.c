@@ -342,6 +342,9 @@ ShouldGenerateWindowCloseOnAltF4(void)
     return !SDL_GetHintBoolean(SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4, SDL_FALSE);
 }
 
+//Mark was here!
+HWND SDL_SHOWING_HWND;
+
 LRESULT CALLBACK
 WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -846,8 +849,9 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         /* We'll do our own drawing, prevent flicker */
     case WM_ERASEBKGND:
         {
+	        if( SDL_SHOWING_HWND==hwnd ) break;
+    	    return (1);
         }
-        return (1);
 
     case WM_SYSCOMMAND:
         {
@@ -1080,6 +1084,7 @@ SDL_RegisterApp(char *name, Uint32 style, void *hInst)
     wcex.hInstance      = SDL_Instance;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
+    wcex.hbrBackground  = 2;
 
     /* Use the first icon as a default icon, like in the Explorer */
     GetModuleFileName(SDL_Instance, path, MAX_PATH);
