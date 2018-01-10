@@ -328,14 +328,14 @@ Class Entity Extends DynamicObject
 			_children.Top.Destroy()
 		Wend
 		
-		_visible=False
-		
-		UpdateVisibility()
-		
 		For Local c:=Eachin _components
 			c.OnDestroy()
 		Next
 
+		_visible=False
+		
+		UpdateVisibility()
+		
 		If _parent
 			_parent._children.Remove( Self )
 		Else
@@ -551,27 +551,27 @@ Private
 	
 	Method UpdateVisibility()
 		
-		If _visible And (Not _parent Or _parent._rvisible)
+		Local rvisible:=_visible And (Not _parent Or _parent._rvisible)
+		
+		If rvisible=_rvisible Return
+		
+		_rvisible=rvisible
+		
+		If _rvisible
 			
-			If _rvisible Return
-			
-			_rvisible=True
-
 			OnShow()
 			
 			For Local c:=Eachin _components
+				
 				c.OnShow()
 			Next
 		
 		Else
 			
-			If Not _rvisible Return
-			
-			_rvisible=False
-			
 			OnHide()
 			
 			For Local c:=Eachin _components
+				
 				c.OnHide()
 			Next
 		Endif
