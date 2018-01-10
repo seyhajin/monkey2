@@ -46,7 +46,9 @@ Class Component
 	Method New( entity:Entity,type:ComponentType )
 		
 		_entity=entity
+		
 		_type=type
+		
 		_entity.AddComponent( Self )
 	End
 	
@@ -58,6 +60,17 @@ Class Component
 	Property Type:ComponentType()
 		
 		Return _type
+	End
+	
+	Method Destroy()
+		
+		OnDestroy()
+		
+		_entity.RemoveComponent( Self )
+		
+		_entity=Null
+		
+		_type=Null
 	End
 	
 Internal

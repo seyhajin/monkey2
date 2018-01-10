@@ -5,7 +5,7 @@ Class Entity Extension
 	
 	Property Animator:Animator()
 		
-		Return GetComponent<Animator>()
+		Return Cast<Animator>( GetComponent( Animator.Type ) )
 	End
 	
 End

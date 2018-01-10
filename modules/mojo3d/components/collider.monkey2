@@ -14,7 +14,7 @@ Class Entity Extension
 	
 	Property Collider:Collider()
 		
-		Return GetComponent<Collider>()
+		Return Cast<Collider>( GetComponent( Collider.Type ) )
 	End
 	
 End

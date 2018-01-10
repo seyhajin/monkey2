@@ -39,7 +39,7 @@ Class Entity Extension
 	
 	Property RigidBody:RigidBody()
 		
-		Return GetComponent<RigidBody>()
+		Return Cast<RigidBody>( GetComponent( RigidBody.Type ) )
 	End
 	
 End

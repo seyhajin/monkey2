@@ -328,9 +328,9 @@ Class Entity Extends DynamicObject
 			_children.Top.Destroy()
 		Wend
 		
-		For Local c:=Eachin _components
-			c.OnDestroy()
-		Next
+		While Not _components.Empty
+			_components.Top.Destroy()
+		Wend
 
 		_visible=False
 		
@@ -348,57 +348,13 @@ Class Entity Extends DynamicObject
 		Destroyed()
 	End
 	
-	#rem monkeydoc @hidden
-	#end
-	Method NumComponents:Int( type:ComponentType )
+	Method GetComponent:Component( type:ComponentType )
 		
-		Local n:=0
 		For Local c:=Eachin _components
-			If c.Type=type n+=1
+			If c.Type=type Return c
 		Next
-		Return n
-	End
-
-	Method NumComponents<T>:Int()
 		
-		Local n:=0
-		For Local c:=Eachin _components
-			If c.Type=T.Type n+=1
-		Next
-		Return n
-	End
-
-	Method AddComponent<T>:T() Where T Extends Component
-		
-		Local c:=New T( Self )
-		
-		Return c
-	End
-	
-	Method GetComponent<T>:T( index:Int=0 ) Where T Extends Component
-	
-		For Local c:=Eachin _components
-			If c.Type<>T.Type Continue
-			
-			If index=0 Return Cast<T>( c )
-			index-=1
-		Next
 		Return Null
-	End
-	
-	Method DestroyComponent<T>( index:Int=0 ) Where T Extends Component
-		
-		For Local i:=0 Until _components.Length
-			
-			Local c:=_components[i]
-			If c.Type<>T.Type Continue
-			
-			If index=0
-				_components.Erase( i )
-				Return
-			Endif
-			index-=1
-		Next
 	End
 	
 	Protected
@@ -451,19 +407,27 @@ Class Entity Extends DynamicObject
 	Internal
 	
 	Method AddComponent( c:Component )
-
-		If c.Type.Flags & ComponentTypeFlags.Singleton 
-			If NumComponents( c.Type ) RuntimeError( "Duplicate component" )
-		Endif
+		
+		Local type:=c.Type
 			
 		For Local i:=0 Until _components.Length
-			If c.Type.Priority>_components[i].Type.Priority
+			
+			If type.Flags & ComponentTypeFlags.Singleton And _components[i].Type=type
+				RuntimeError( "Duplicate component" )
+			Endif
+			
+			If type.Priority>_components[i].Type.Priority
 				_components.Insert( i,c )
 				Return
 			Endif
 		Next
 
 		_components.Add( c )
+	End
+	
+	Method RemoveComponent( c:Component )
+		
+		_components.Remove( c )
 	End
 
 	'bottom up
