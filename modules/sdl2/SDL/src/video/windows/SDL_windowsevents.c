@@ -1079,12 +1079,11 @@ SDL_RegisterApp(char *name, Uint32 style, void *hInst)
     wcex.lpszMenuName   = NULL;
     wcex.lpszClassName  = SDL_Appname;
     wcex.style          = SDL_Appstyle;
-    wcex.hbrBackground  = NULL;
+    wcex.hbrBackground  = GetStockObject( BLACK_BRUSH );
     wcex.lpfnWndProc    = WIN_WindowProc;
     wcex.hInstance      = SDL_Instance;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
-    wcex.hbrBackground  = 2;
 
     /* Use the first icon as a default icon, like in the Explorer */
     GetModuleFileName(SDL_Instance, path, MAX_PATH);
