@@ -18,12 +18,19 @@ Const MZ_ZIP_MODE_READING:mz_zip_mode
 Const MZ_ZIP_MODE_WRITING:mz_zip_mode
 Const MZ_ZIP_MODE_WRITING_HAS_BEEN_FINALIZED:mz_zip_mode
 
-Alias mz_alloc_func:Void Ptr( opaque:Void Ptr,items:size_t,size:size_t )
-Alias mz_free_func:Void( opaque:Void Ptr,address:Void Ptr )
-Alias mz_realloc_func:Void Ptr( opaque:Void Ptr,address:Void Ptr,items:size_t,size:size_t )
+'Alias mz_alloc_func:Void Ptr( opaque:Void Ptr,items:size_t,size:size_t )
+'Alias mz_free_func:Void( opaque:Void Ptr,address:Void Ptr )
+'Alias mz_realloc_func:Void Ptr( opaque:Void Ptr,address:Void Ptr,items:size_t,size:size_t )
 
-Alias mz_file_read_func:size_t( pOpaque:Void Ptr,file_ofs:ULong,buf:Void Ptr,n:size_t )
-Alias mz_file_write_func:size_t( pOpaque:Byte Ptr,file_ofs:ULong,buf:Void Ptr,n:size_t )
+'Alias mz_file_read_func:size_t( pOpaque:Void Ptr,file_ofs:ULong,buf:Void Ptr,n:size_t )
+'Alias mz_file_write_func:size_t( pOpaque:Byte Ptr,file_ofs:ULong,buf:Void Ptr,n:size_t )
+
+Alias mz_alloc_func:Void Ptr
+Alias mz_free_func:Void Ptr
+Alias mz_realloc_func:Void Ptr
+
+Alias mz_file_read_func:Void Ptr
+Alias mz_file_write_func:Void Ptr
 
 Struct mz_zip_archive
 
