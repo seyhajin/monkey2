@@ -30,7 +30,7 @@ Class HelpActions
 		
 		viewManuals=New Action( "Browse manuals" )
 		viewManuals.Triggered=Lambda()
-		
+
 			OpenUrl( "file://"+RealPath( "docs/newdocs.html" ) )
 		End
 		
