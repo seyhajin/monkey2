@@ -347,18 +347,59 @@ Class Entity Extends DynamicObject
 		
 		Destroyed()
 	End
-	
-	Method GetComponent:Component( type:ComponentType )
+
+	#rem monkeydoc Gets the number of components of a given type attached to the entity.
+	#end
+	Method NumComponents:Int( type:ComponentType )
 		
+		Local n:=0
 		For Local c:=Eachin _components
-			If c.Type=type Return c
+			If c.Type=type n+=1
+		Next
+		Return n
+	End
+
+	Method NumComponents<T>:Int() Where T Extends Component
+		
+		Return NumComponents( T.Type )
+	End
+
+	#rem monkeydoc Gets a component of a given type attached to the entity.
+	
+	If there is not exactly one component of the given type attached to the entity, null is returned.
+
+	#end	
+	Method GetComponent:Component( type:ComponentType )
+
+		Local t:Component
+				
+		For Local c:=Eachin _components
+			If c.Type<>type Continue
+			If t Return Null
+			t=c
 		Next
 		
-		Return Null
+		Return t
+	End
+	
+	Method GetComponent<T>:T() Where T Extends Component
+		
+		Return Cast<T>( GetComponent( T.Type ) )
+	End
+	
+	#rem monkeydoc Attaches a component to the entity.
+	#end
+	Method AddComponent<T>:T() Where T Extends Component
+		
+		Local c:=New T( Self )
+		
+		AddComponent( c )
 	End
 	
 	Protected
 
+	#rem monkeydoc Copy constructor
+	#end
 	Method New( entity:Entity,parent:Entity )
 		Self.New( parent )
 		
@@ -369,17 +410,21 @@ Class Entity Extends DynamicObject
 		Invalidate()
 	End
 	
+	#rem monkeydoc Invoked when entity transitions from hidden->visible.
+	#end
 	Method OnShow() Virtual
 	End
 	
+	#rem monkeydoc Invoked when entity transitions from visible->hidden.
+	#end
 	Method OnHide() Virtual
 	End
 	
-	#rem monkeydoc OnCopy
+	#rem monkeydoc Helper method for copying an entity.
 	
 	1) Recursively copies all child entities.
 	
-	2) Invokes OnCopy for each component.
+	2) Invokes OnCopy for each component attached to this entity.
 	
 	3) Copies visibility.
 	
@@ -394,7 +439,7 @@ Class Entity Extends DynamicObject
 			child.Copy( copy )
 		Next
 		
-		'should really be different pass...ie: ALL entities should be copied before ANY components.
+		'should really be different pass...ie: ALL entities should be copied before ANY components?
 		For Local c:=Eachin _components
 			c.OnCopy( copy )
 		Next
@@ -403,7 +448,7 @@ Class Entity Extends DynamicObject
 		
 		Copied( copy )
 	End
-
+	
 	Internal
 	
 	Method AddComponent( c:Component )
