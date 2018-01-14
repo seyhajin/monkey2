@@ -31,7 +31,7 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGBA8 Return GL_RGBA
 '	Case PixelFormat.RGBA16F Return GL_RGBA
 	Case PixelFormat.RGBA32F Return BBGL_ES ? GL_RGBA Else GL_RGBA32F
-	Case PixelFormat.Depth32 Return BBGL_ES ? GL_DEPTH_COMPONENT Else GL_DEPTH_COMPONENT32F
+	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
