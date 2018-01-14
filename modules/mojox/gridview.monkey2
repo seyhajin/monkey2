@@ -124,8 +124,6 @@ Class GridView Extends View
 		End
 	End
 	
-	Field _cellw:Int
-	Field _cellh:Int
 	Field _gridw:Int
 	Field _gridh:Int
 	Field _cells:=New Stack<Cell>
