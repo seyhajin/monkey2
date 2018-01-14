@@ -5,6 +5,14 @@ Using std.resource
 
 Private
 
+'fake it for now!
+const GL_RGBA32F:=	$8814
+const GL_RGB32F:=	$8815
+const GL_RGBA16F:=	$881A
+const GL_RGB16F:=	$881B
+
+const GL_DEPTH_COMPONENT32F:=$8CAC
+
 Function IsPow2:Bool( w:Int,h:Int )
 	Local tw:=Log2( w ),th:=Log2( h )
 	Return tw=Round( tw ) And th=Round( th )
@@ -22,8 +30,8 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
 '	Case PixelFormat.RGBA16F Return GL_RGBA
-	Case PixelFormat.RGBA32F Return GL_RGBA
-	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
+	Case PixelFormat.RGBA32F Return BBGL_ES ? GL_RGBA Else GL_RGBA32F
+	Case PixelFormat.Depth32 Return BBGL_ES ? GL_DEPTH_COMPONENT Else GL_DEPTH_COMPONENT32F
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
