@@ -82,7 +82,9 @@ Class GridView Extends View
 		
 		For Local cell:=Eachin _cells
 			
-			Local size:=cell.view.MeasuredSize
+			Local size:=cell.view.LayoutSize
+			
+			Print "size="+size
 			
 			maxw=Max( maxw,size.x/cell.w )
 			maxh=Max( maxh,size.y/cell.h )
