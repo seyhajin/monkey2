@@ -11,8 +11,19 @@ Class Camera Extends Entity
 		Super.New( parent )
 		
 		Viewport=New Recti( 0,0,640,480 )
-		Near=1
-		Far=1000
+		Near=.1
+		Far=100
+		FOV=90
+		
+		Visible=True
+	End
+	
+	Method New( view:View,parent:Entity=Null )
+		Super.New( parent )
+		
+		View=view
+		Near=.1
+		Far=100
 		FOV=90
 		
 		Visible=True
@@ -28,8 +39,27 @@ Class Camera Extends Entity
 		
 		Return copy
 	End
+	
+	#rem monkeydoc View camera is tracking.
+	#end
+	Property View:View()
+		
+		Return _view
+	
+	Setter( view:View )
+		
+		_view=view
+		
+		If _view SetViewport( _view.Rect )
+		
+	End
 
-	#rem monkeydoc @hidden
+	#rem monkeydoc Viewport.
+	
+	If [[View]] is non-null, this property will automatically track the view's rect.
+		
+	This property can only be modified if View is null.
+		
 	#end	
 	Property Viewport:Recti()
 		
@@ -37,11 +67,9 @@ Class Camera Extends Entity
 		
 	Setter( viewport:Recti )
 		
-		_viewport=viewport
-
-		_aspect=Float( _viewport.Width )/Float( _viewport.Height )
+		Assert( Not _view,"Viewport cannot be manually modified for a camera with view" )
 		
-		'_dirty|=Dirty.ProjMatrix
+		SetViewport( viewport )
 	End
 	
 	#rem monkeydoc Aspect ratio.
@@ -61,54 +89,58 @@ Class Camera Extends Entity
 	#end
 	Property FOV:Float()
 	
-		Return _fovy
+		Return _fov
 		
-	Setter( fovy:Float )
-	
-		_fovy=fovy
+	Setter( fov:Float )
 		
-		'_dirty|=Dirty.ProjMatrix
+		_fov=fov
+		
+		_dirty|=Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc Near clip plane distance.
 	
-	Defaults to 1.0.
+	Defaults to 0.1 (10 cenitimetres).
+		
+	The ratio of Far/Near clip planes should be kept as low as possible to reduce numerical precision errors.
 	
 	#end
 	Property Near:Float()
 	
 		Return _near
 	
-	Setter( nearz:Float )
-	
-		_near=nearz
+	Setter( near:Float )
 		
-		'_dirty|=Dirty.ProjMatrix
+		_near=near
+		
+		_dirty|=Dirty.ProjMatrix
 	End
 	
 	#rem monkeydoc Far clip plane distance.
 	
-	Defaults to 1000.0.
+	Defaults to 100.0 (100 metres).
+	
+	The ratio of Far/Near clip planes should be kept as low as possible to reduce numerical precision errors.
 	
 	#end
 	Property Far:Float()
 	
-		Return _farz
+		Return _far
 	
-	Setter( farz:Float )
-	
-		_farz=farz
+	Setter( far:Float )
 		
-		'_dirty|=Dirty.ProjMatrix
+		_far=far
+		
+		_dirty|=Dirty.ProjMatrix
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc The projection matrix.
 	#end	
 	Property ProjectionMatrix:Mat4f()
 	
 		If _dirty & Dirty.ProjMatrix
 			
-			_projMatrix=Mat4f.Perspective( _fovy,_aspect,_near,_farz )
+			_projMatrix=Mat4f.Perspective( _fov,_aspect,_near,_far )
 		
 			_dirty&=~Dirty.ProjMatrix
 		Endif
@@ -120,6 +152,25 @@ Class Camera Extends Entity
 		_projMatrix=matrix
 		
 		_dirty&=~Dirty.ProjMatrix
+	End
+	
+	#rem monkeydoc Renders the camera to a canvas.
+	#end
+	Method Render( canvas:Canvas )
+		
+		If _view SetViewport( _view.Rect )
+		
+		Local target:=canvas.GraphicsDevice.RenderTarget
+		
+		Local targetSize:=canvas.GraphicsDevice.RenderTargetSize
+		
+		Local viewport:=canvas.RenderBounds
+		
+		canvas.Flush()
+		
+		Local renderer:=Renderer.GetCurrent()
+		
+		renderer.Render( target,targetSize,viewport,Scene,InverseMatrix,ProjectionMatrix,Near,Far )
 	End
 	
 	#rem monkeydoc Converts a point from world coordinates to viewport coordinates.
@@ -171,6 +222,8 @@ Class Camera Extends Entity
 
 		If App.ActiveWindow mouse.y=App.ActiveWindow.Height-mouse.y
 			
+		If _view mouse=_view.TransformWindowPointToView( mouse )
+			
 		mouse.x-=Viewport.min.x
 		mouse.y-=Viewport.min.y
 		
@@ -203,19 +256,24 @@ Class Camera Extends Entity
 	Enum Dirty
 		ProjMatrix=1
 	End
-	
-	Field _viewport:=New Recti( 0,0,640,480 )
-	
+
+	Field _view:View	
+	Field _viewport:Recti
 	Field _aspect:Float
-	
-	Field _fovy:Float
-	
+	Field _fov:Float
 	Field _near:Float
-	
-	Field _farz:Float
-	
-	Field _dirty:Dirty=Dirty.ProjMatrix
-	
+	Field _far:Float
 	Field _projMatrix:Mat4f
-	
+	Field _dirty:Dirty=Dirty.ProjMatrix
+
+	Method SetViewport( viewport:Recti )
+		
+		If viewport=_viewport Return
+			
+		_viewport=viewport
+
+		_aspect=Float( _viewport.Width )/Float( _viewport.Height )
+		
+		_dirty|=Dirty.ProjMatrix
+	End
 End

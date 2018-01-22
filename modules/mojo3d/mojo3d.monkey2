@@ -29,8 +29,6 @@ Using bullet..
 #Import "entities/renderable"
 #Import "entities/sprite"
 
-#Import "render/deferredrenderer"
-#Import "render/forwardrenderer"
 #Import "render/material"
 #Import "render/renderer"
 #Import "render/renderqueue"
@@ -41,9 +39,8 @@ Using bullet..
 #Import "render/materials/spritematerial"
 #Import "render/materials/watermaterial"
 
-#Import "render/effects/fogeffect"
-#Import "render/effects/monochromeeffect"
 #Import "render/effects/bloomeffect"
+#Import "render/effects/monochromeeffect"
 
 #Import "scene/raycastresult"
 #Import "scene/component"
@@ -86,5 +83,7 @@ Function Main()
 	SetConfig( "MOJO_DEPTH_BUFFER_BITS",16 )
 	
 #endif
+
+	SetConfig( "MOJO_DEPTH_BUFFER_BITS",16 )
 	
 End

@@ -32,7 +32,7 @@ Class Entity Extension
 	
 	Setter( rotation:Vec3f )
 		
-		Basis=Mat3f.Rotation( rotation * DegreesToRadians )
+		LocalBasis=Mat3f.Rotation( rotation * DegreesToRadians )
 	End
 	
 	#Rem monkeydoc World space rotation around the X axis in degrees.
@@ -425,13 +425,13 @@ Class Entity Extension
 	#end
 	Method PointAt( target:Vec3f,up:Vec3f=New Vec3f( 0,1,0 ) )
 		
-		Local k:=(target-LocalPosition).Normalize()
+		Local k:=(target-Position).Normalize()
 		
 		Local i:=up.Cross( k ).Normalize()
 		
 		Local j:=k.Cross( i )
 		
-		LocalBasis=New Mat3f( i,j,k )
+		Basis=New Mat3f( i,j,k )
 	End
 	
 	Method PointAt( target:Entity,up:Vec3f=New Vec3f( 0,1,0 ) )

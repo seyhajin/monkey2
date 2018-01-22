@@ -4,8 +4,6 @@
 
 #include "btBulletDynamicsCommon.h"
 
-
-
 void initCollisions( btDynamicsWorld *world );
 void resetCollisions();
 int  getNumCollisions();

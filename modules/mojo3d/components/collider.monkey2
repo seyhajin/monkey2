@@ -499,25 +499,28 @@ Class MeshCollider Extends ConcaveCollider
 	Method OnCreate:btCollisionShape() Override
 		
 		Local vertices:=_mesh.GetVertices()
-		_vertices=New btVector3[vertices.Length]
+		_vertices=New btScalar[vertices.Length*3]
 		
 		For Local i:=0 Until vertices.Length
-			_vertices[i].x=vertices[i].position.x
-			_vertices[i].y=vertices[i].position.y
-			_vertices[i].z=vertices[i].position.z
+			_vertices[i*3]=vertices[i].position.x
+			_vertices[i*3+1]=vertices[i].position.y
+			_vertices[i*3+2]=vertices[i].position.z
 		Next
 		
 		Local indices:=_mesh.GetAllIndices()
 		_indices=New Int[indices.Length]
-		For Local i:=0 Until indices.Length
-			_indices[i]=indices[i]
+		
+		For Local i:=0 Until indices.Length Step 3
+			_indices[i+0]=indices[1]
+			_indices[i+1]=indices[i+1]
+			_indices[i+2]=indices[i+2]
 		Next
 		
-		_btmesh=New btTriangleIndexVertexArray( _indices.Length/3,_indices.Data,12,_vertices.Length,Cast<btScalar Ptr>( _vertices.Data ),16 )
+		_btmesh=New btTriangleIndexVertexArray( _indices.Length/3,_indices.Data,12,_vertices.Length,_vertices.Data,12 )
 		
 		Local shape:=New btBvhTriangleMeshShape( _btmesh,True,True )
 		
-		CreateInternalEdgeInfo( shape )
+'		CreateInternalEdgeInfo( shape )
 		
 		Return shape
 	End
@@ -525,7 +528,8 @@ Class MeshCollider Extends ConcaveCollider
 	Private
 	
 	Field _mesh:Mesh
-	Field _vertices:btVector3[]
+	Field _vertices:btScalar[]
+	'Field _vertices:btVector3[]
 	Field _indices:Int[]
 	Field _btmesh:btTriangleIndexVertexArray
 	

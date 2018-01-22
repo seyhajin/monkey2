@@ -75,7 +75,8 @@ void initCollisions( btDynamicsWorld *world ){
 
 	world->setInternalTickCallback( &collisionCallback,0,false );
 	
-	gContactAddedCallback=&contactAddedCallback;
+//	gContactAddedCallback=&contactAddedCallback;
+	
 //	gContactProcessedCallback=&contactProcessedCallback;
 //	gContactDestroyedCallback=&contactDestroyedCallback;
 }

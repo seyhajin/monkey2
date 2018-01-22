@@ -60,11 +60,11 @@ Class PbrMaterial Extends Material
 		
 		ColorFactor=Color.White
 		EmissiveFactor=Color.Black
-		MetalnessFactor=0.0
+		MetalnessFactor=1.0
 		RoughnessFactor=1.0
 	End
 	
-	Method New( color:Color,metalness:Float=0.0,roughness:Float=1.0,boned:Bool=False )
+	Method New( color:Color,metalness:Float=1.0,roughness:Float=1.0,boned:Bool=False )
 		Self.New( boned )
 		
 		ColorFactor=color
@@ -87,6 +87,20 @@ Class PbrMaterial Extends Material
 		Return New PbrMaterial( Self )
 	End
 	
+	Method GetOpaqueShader:Shader() Override
+		
+		ValidateShaders()
+		
+		Return _opaqueShader
+	End
+	
+	Method GetTransparentShader:Shader() Override
+		
+		ValidateShaders()
+		
+		Return _transparentShader
+	End
+	
 	'***** textures *****
 	
 	Property ColorTexture:Texture()
@@ -97,7 +111,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "ColorTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+		If (Uniforms.NumTextures<>0)<>_textured _dirty=True
 	End
 	
 	Property EmissiveTexture:Texture()
@@ -108,7 +122,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "EmissiveTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+		If (Uniforms.NumTextures<>0)<>_textured _dirty=True
 	End
 	
 	Property MetalnessTexture:Texture()
@@ -119,7 +133,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "MetalnessTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+		If (Uniforms.NumTextures<>0)<>_textured _dirty=true
 	End
 
 	Property RoughnessTexture:Texture()
@@ -130,7 +144,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "RoughnessTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+		If (Uniforms.NumTextures<>0)<>_textured _dirty=true
 	End
 	
 	Property OcclusionTexture:Texture()
@@ -141,7 +155,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "OcclusionTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured InvalidateShader()
+		If (Uniforms.NumTextures<>0)<>_textured _dirty=true
 	End
 	
 	Property NormalTexture:Texture()
@@ -152,7 +166,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "NormalTexture",texture )
 		
-		If (texture<>null)<>_bumpmapped InvalidateShader()
+		If (texture<>null)<>_bumpmapped _dirty=true
 	End
 	
 	'***** factors *****
@@ -237,7 +251,7 @@ Class PbrMaterial Extends Material
 		Endif
 		
 		texture=Texture.Load( path+"/normal.png",textureFlags )
-'		If Not texture texture=Texture.Load( path+"/unormal.png",textureFlags|TextureFlags.InvertGreen )
+		If Not texture texture=Texture.Load( path+"/unormal.png",textureFlags,True )
 		If texture
 			material.NormalTexture=texture
 		Endif
@@ -259,7 +273,15 @@ Class PbrMaterial Extends Material
 	Field _bumpmapped:Bool
 	Field _boned:Bool
 	
-	Method OnValidateShader:Shader() Override
+	Field _opaqueShader:Shader
+	Field _transparentShader:Shader
+	Field _shadowShader:Shader
+	
+	Field _dirty:=True
+	
+	Method ValidateShaders()
+		
+		If Not _dirty Return
 		
 		_textured=True'False
 		_bumpmapped=False
@@ -269,9 +291,7 @@ Class PbrMaterial Extends Material
 			_bumpmapped=(Uniforms.GetTexture( "NormalTexture" )<>null)
 		Endif
 		
-		Local renderer:=Renderer.GetCurrent()
-
-		Local defs:=renderer.ShaderDefs
+		Local defs:=Renderer.GetCurrent().ShaderDefs
 		
 		If _textured
 			defs+="MX2_TEXTURED~n"
@@ -279,13 +299,25 @@ Class PbrMaterial Extends Material
 				defs+="MX2_BUMPMAPPED~n"
 			Endif
 		Endif
+		
 		If _boned defs+="MX2_BONED~n"
 			
-		Local shader:="material-pbr-deferred"
-		If Cast<ForwardRenderer>( renderer ) shader="material-pbr-forward"
+		_transparentShader=Shader.Open( "material-pbr-forward",defs )
+		
+		If Renderer.GetCurrent().Deferred
 			
-		Return Shader.Open( shader,defs )
+			_opaqueShader=Shader.Open( "material-pbr-deferred",defs )
+		
+		Else
+			
+			_opaqueShader=_transparentShader
+			
+		Endif
+		
+		_shadowShader=_opaqueShader
+		
+		_dirty=False
+		
 	End
-	
 	
 End

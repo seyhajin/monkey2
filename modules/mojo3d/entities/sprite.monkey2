@@ -108,8 +108,7 @@ Class Sprite Extends Renderable
 	End
 	
 	Method OnRender( rq:RenderQueue ) Override
-	
-		rq.AddSprite( Self )
+		rq.AddSpriteOp( Self )
 	End
 	
 	Private

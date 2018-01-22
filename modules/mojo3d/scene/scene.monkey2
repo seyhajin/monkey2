@@ -6,8 +6,13 @@ Namespace mojo3d
 Class Scene
 
 	#rem monkeydoc Creates a new scene.
+	
+	If there is no current scene when a new scene is created, the new scene becomes the current scene.
+		
 	#end
 	Method New()
+		
+		If Not _current _current=Self
 		
 		_clearColor=Color.Sky
 
@@ -84,6 +89,42 @@ Class Scene
 		_clearColor=color
 	End
 	
+	Property FogColor:Color()
+		
+		Return _fogColor
+	
+	Setter( color:Color )
+		
+		_fogColor=color
+	End
+	
+	Property FogNear:Float()
+		
+		Return _fogNear
+	
+	Setter( near:Float )
+		
+		_fogNear=near
+	End
+	
+	Property FogFar:Float()
+		
+		Return _fogFar
+	
+	Setter( far:Float )
+		
+		_fogFar=far
+	End
+	
+	Property ShadowAlpha:Float()
+		
+		Return _shadowAlpha
+	
+	Setter( alpha:Float )
+		
+		_shadowAlpha=alpha
+	End
+	
 	#rem monkeydoc Scene update rate.
 	#end
 	Property UpdateRate:Float()
@@ -104,6 +145,23 @@ Class Scene
 	Setter( color:Color )
 		
 		_ambientDiffuse=color
+	End
+	
+	#rem monkeydoc Array containing the cascaded shadow map frustum splits for directional light shadows.
+	
+	Defaults to Float[]( 8.0,16.0,64.0,256.0 )
+	
+	Must have length 4.
+		
+	#end
+	Property CSMSplits:Float[]()
+		
+		Return _csmSplits
+		
+	Setter( splits:Float[] )
+		Assert( splits.Length=4,"CSMSplits array must have 4 elements" )
+		
+		_csmSplits=splits.Slice( 0 )
 	End
 	
 	#rem monkeydoc Adds a post effect to the scene.
@@ -157,27 +215,12 @@ Class Scene
 	
 	#rem monkeydoc Renders the scene to	a canvas.
 	#end
-	Method Render( canvas:Canvas,camera:Camera=Null )
+	Method Render( canvas:Canvas )
 		
-		If camera
+		For Local camera:=Eachin _cameras
 			
-			camera.Viewport=canvas.Viewport
-			
-			canvas.Flush()
-		
-			Local renderer:=Renderer.GetCurrent()
-		
-			renderer.Render( Self,camera,canvas.GraphicsDevice )	
-			
-			Return
-			
-		Endif
-		
-		canvas.Flush()
-		
-		Local renderer:=Renderer.GetCurrent()
-		
-		renderer.Render( Self,canvas )
+			camera.Render( canvas )
+		Next
 	End
 	
 	Method RayCast:RayCastResult( rayFrom:Vec3f,rayTo:Vec3f,collisionMask:Int )
@@ -193,6 +236,9 @@ Class Scene
 	End
 	
 	#rem monkeydoc Sets the current scene.
+	
+	All newly created entities (including entites created using Entity.Copy]]) are automatically added to the current scene.
+	
 	#end
 	Function SetCurrent( scene:Scene )
 		
@@ -200,10 +246,13 @@ Class Scene
 	End
 	
 	#rem monkeydoc Gets the current scene.
+	
+	If there is no current scene, a new scene is automatically created and made current.
+		
 	#end
 	Function GetCurrent:Scene()
 
-		If Not _current _current=New Scene
+		If Not _current New Scene
 			
 		Return _current
 	End
@@ -243,18 +292,24 @@ Class Scene
 	Private
 	
 	Global _current:Scene
-	
 	Global _defaultEnv:Texture
 	
 	Field _skyTexture:Texture
-	
 	Field _envTexture:Texture
 	Field _envColor:Color
 	
 	Field _clearColor:Color
 	Field _ambientDiffuse:Color
 	
+	Field _fogColor:Color
+	Field _fogNear:Float
+	Field _fogFar:Float
+	
+	Field _shadowAlpha:Float=1
+
 	Field _updateRate:Float=60
+	
+	Field _csmSplits:=New Float[]( 8.0,16.0,64.0,256.0 )
 	
 	Field _rootEntities:=New Stack<Entity>
 	Field _cameras:=New Stack<Camera>

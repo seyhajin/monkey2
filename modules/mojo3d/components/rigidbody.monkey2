@@ -58,6 +58,12 @@ Class RigidBody Extends Component
 		Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
 		
 		_btbody=New btRigidBody( _mass,_btmotion,collider?.Validate(),inertia )
+
+'		If Cast<MeshCollider>( collider )
+'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+'		Else
+'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() & ~btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+'		Endif
 		
 		Restitution=0
 		RollingFriction=0
@@ -194,31 +200,43 @@ Class RigidBody Extends Component
 	Method ApplyForce( force:Vec3f )
 		
 		_btbody.applyCentralForce( force )
+		
+		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Method ApplyForce( force:Vec3f,offset:Vec3f )
 		
 		_btbody.applyForce( force,offset )
+		
+		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Method ApplyImpulse( impulse:Vec3f )
 		
 		_btbody.applyCentralImpulse( impulse )
+		
+		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Method ApplyImpulse( impulse:Vec3f,offset:Vec3f )
 		
 		_btbody.applyForce( impulse,offset )
+		
+		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Method ApplyTorque( torque:Vec3f )
 		
 		_btbody.applyTorque( torque )
+		
+		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 		
 	Method ApplyTorqueImpulse( torque:Vec3f )
 
 		_btbody.applyTorqueImpulse( torque )
+		
+		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Protected
@@ -307,6 +325,14 @@ Class RigidBody Extends Component
 			Local collider:=Entity.Collider
 			
 			_btbody.setCollisionShape( collider?.Validate() )
+
+'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_KINEMATIC_OBJECT )
+			
+'			If Cast<MeshCollider>( collider )
+'				_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+'			Else
+'				_btbody.setCollisionFlags( _btbody.getCollisionFlags() & ~btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+'			Endif
 			
 			Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
 			

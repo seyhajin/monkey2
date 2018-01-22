@@ -6,18 +6,18 @@ Namespace mojo3d
 Class SpriteBuffer
 	
 	Method New()
+		
 		_vbuffer=New VertexBuffer( Vertex3f.Format,0 )
 		
 		_ibuffer=New IndexBuffer( IndexFormat.UINT32,0 )
 	End
 	
-	Method AddSprites( rq:RenderQueue,camera:Camera )
-	
-		Local sprites:=rq.Sprites
+	Method InsertRenderOps( rq:RenderQueue,invViewMatrix:AffineMat4f )
 		
-		If sprites.Empty Return
+		Local spriteOps:=rq.SpriteOps
+		If spriteOps.Empty Return
 		
-		Local n:=sprites.Length
+		Local n:=spriteOps.Length
 		
 		If n*4>_vbuffer.Length
 			_vbuffer.Resize( Max( _vbuffer.Length*3/2,n*4 ) )
@@ -42,29 +42,74 @@ Class SpriteBuffer
 		
 		Local vp:=Cast<Vertex3f Ptr>( _vbuffer.Lock() )
 		
-		'Sort sprites by distance from camera. Only really need to do this for transparent sprites, but meh...
-		'
-		sprites.Sort( Lambda:Int( x:Sprite,y:Sprite )
-			Return camera.Position.Distance( y.Position ) <=> camera.Position.Distance( x.Position )
-		End )
-
-		Local cmaterial:=sprites[0].Material
-		Local i0:=0,i:=0
+		Local renderOps:=rq.TransparentOps
 		
-		For Local sprite:=Eachin sprites
+		_renderOps.Clear()
+		
+		Local spritei:=0,renderi:=0
+	
+		_material=spriteOps[0].sprite.Material
+		_distance=spriteOps[0].distance
+		_i0=0
+		_i=0
+		
+		Repeat
 			
-			Local material:=sprite.Material
-			If material<>cmaterial
-				rq.AddSpriteOp( cmaterial,Null,Null,_vbuffer,_ibuffer,3,(i-i0)*2,i0*6 )
-				cmaterial=material
-				i0=i
+			'out of sprites?
+			If spritei=spriteOps.Length
+				
+				'flush sprites
+				Flush()
+
+				'copy remaining renderops
+				For Local i:=renderi Until renderOps.Length
+					_renderOps.Add( renderOps[i] )
+				Next
+				
+				'done!
+				Exit
 			Endif
 			
-			Local r:=camera.Basis
+			'more renderops?
+			If renderi<renderOps.Length
+				
+				'sprite closer than next renderop?
+				If spriteOps[spritei].distance<renderOps[renderi].distance
+
+					'flush sprites
+					Flush()
+				
+					'add renderop before any more sprites
+					_renderOps.Add( renderOps[renderi] )
+					renderi+=1
+					
+					'next!
+					Continue
+				Endif
+			
+			Endif
+
+			Local sprite:=spriteOps[spritei].sprite
+			
+			Local material:=sprite.Material
+			
+			If material<>_material
+				
+				'flush sprites
+				Flush()
+				
+				_material=material
+				_distance=spriteOps[spritei].distance
+			Endif
+	
+			'done with spriteOp
+			spritei+=1
+			
+			'construct vertices...
+			Local r:=invViewMatrix.m
 			
 			Select sprite.Mode
 			Case SpriteMode.Upright
-	
 				r.j=New Vec3f( 0,1,0 ) ; r.i=r.j.Cross( r.k ).Normalize()
 			End
 			
@@ -84,21 +129,49 @@ Class SpriteBuffer
 			vp[3].position=matrix * New Vec3f( -handle.x,-handle.y,0 )
 			vp[3].texCoord0=New Vec2f( texrect.min.x,texrect.max.y )
 			
+			'bump vertex/index
 			vp+=4
-			i+=1
-		Next
-		
-		rq.AddSpriteOp( cmaterial,Null,Null,_vbuffer,_ibuffer,3,(i-i0)*2,i0*6 )
+			_i+=1
+
+		Forever
 		
 		_vbuffer.Invalidate()
 		
 		_vbuffer.Unlock()
+		
+		renderOps.Swap( _renderOps )
+		
+		_renderOps.Clear()
 	End
 
 	Private
 	
 	Field _vbuffer:VertexBuffer
-	
 	Field _ibuffer:IndexBuffer
+	Field _renderOps:=New Stack<RenderOp>
+	Field _material:Material
+	Field _distance:Float
+	Field _i0:Int
+	Field _i:Int
+	
+	Method Flush()
+		
+		If _i=_i0 Return
+		
+		Local op:=New RenderOp
+		op.material=_material
+		op.vbuffer=_vbuffer
+		op.ibuffer=_ibuffer
+		op.order=3
+		op.count=(_i-_i0)*2
+		op.first=_i0*6
+		
+		_i0=_i
+		
+		op.blendMode=_material.BlendMode
+		op.distance=_distance
+		
+		_renderOps.Add( op )
+	End
 	
 End

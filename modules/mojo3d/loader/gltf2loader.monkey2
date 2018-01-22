@@ -166,17 +166,17 @@ Class Gltf2Loader
 		
 		If _materialCache.Contains( material ) Return _materialCache[material]
 		
-		Local colorTexture:Texture
+		Local baseColorTexture:Texture
 		Local metallicRoughnessTexture:Texture
-		Local occlusionTexture:Texture
 		Local emissiveTexture:Texture
+		Local occlusionTexture:Texture
 		Local normalTexture:Texture
 		
 		If textured
-			colorTexture=GetTexture( material.baseColorTexture )
+			baseColorTexture=GetTexture( material.baseColorTexture )
 			metallicRoughnessTexture=GetTexture( material.metallicRoughnessTexture )
-			occlusionTexture=GetTexture( material.occlusionTexture )
 			emissiveTexture=GetTexture( material.emissiveTexture )
+			occlusionTexture=GetTexture( material.occlusionTexture )
 			normalTexture=GetTexture( material.normalTexture )
 		Endif
 			
@@ -184,13 +184,17 @@ Class Gltf2Loader
 		
 		mat.Uniforms.LinearColors=True
 		
-		mat.ColorFactor=New Color( material.baseColorFactor.x,material.baseColorFactor.y,material.baseColorFactor.z )
+		If baseColorTexture mat.ColorTexture=baseColorTexture
+		mat.ColorFactor=New Color( material.baseColorFactor )
+			
+		If metallicRoughnessTexture
+			mat.MetalnessTexture=metallicRoughnessTexture
+			mat.RoughnessTexture=metallicRoughnessTexture
+		Endif
+		
 		mat.MetalnessFactor=material.metallicFactor
 		mat.RoughnessFactor=material.roughnessFactor
 
-		If colorTexture mat.ColorTexture=colorTexture
-		If metallicRoughnessTexture mat.MetalnessTexture=metallicRoughnessTexture ; mat.RoughnessTexture=metallicRoughnessTexture
-		If occlusionTexture mat.OcclusionTexture=occlusionTexture
 		If emissiveTexture 
 			mat.EmissiveTexture=emissiveTexture
  			If material.emissiveFactor<>Null
@@ -202,7 +206,9 @@ Class Gltf2Loader
 			mat.EmissiveTexture=Texture.ColorTexture( Color.White )
 			mat.EmissiveFactor=New Color( material.emissiveFactor.x,material.emissiveFactor.y,material.emissiveFactor.z )
 		Endif
-		
+
+		If occlusionTexture mat.OcclusionTexture=occlusionTexture
+			
 		If normalTexture mat.NormalTexture=normalTexture
 			
 		_materialCache[material]=mat
@@ -350,7 +356,13 @@ Class Gltf2Loader
 			Next
 		Endif
 		
-		Return New Mesh( vertices,indices )
+		Local mesh:=New Mesh( vertices,indices )
+		
+		If prim.TEXCOORD_0 And prim.NORMAL
+			mesh.UpdateTangents()
+		Endif
+		
+		Return mesh
 	End
 	
 	Method LoadMesh( node:Gltf2Node,mesh:Mesh,materials:Stack<Material> )
@@ -708,6 +720,7 @@ Class Gltf2Mojo3dLoader Extends Mojo3dLoader
 		Case ".glb"
 			
 			Local stream:=Stream.Open( path,"r" )
+			If Not stream Return Null
 			
 			Local json:=""
 				

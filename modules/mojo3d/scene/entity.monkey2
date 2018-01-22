@@ -106,9 +106,12 @@ Class Entity Extends DynamicObject
 		
 		Assert( Not parent Or parent._scene=_scene )
 		
+		Local matrix:AffineMat4f=parent ? LocalMatrix Else Matrix
+		
 		If _parent
 			_parent._children.Remove( Self )
 		Else
+			matrix=Matrix
 			_scene.RootEntities.Remove( Self )
 		Endif
 		
@@ -116,13 +119,13 @@ Class Entity Extends DynamicObject
 		
 		If _parent 
 			_parent._children.Add( Self )
+			LocalMatrix=matrix
 		Else
 			_scene.RootEntities.Add( Self )
+			Matrix=matrix
 		Endif
 		
 		UpdateVisibility()
-			
-		Invalidate()
 	End
 	
 	#rem monkeydoc Number of child entities.
@@ -167,7 +170,18 @@ Class Entity Extends DynamicObject
 		
 		Return _lastCopy
 	End
-
+	
+	#rem monkeydoc Master alpha level.
+	#end
+	Property Alpha:Float()
+		
+		Return _alpha
+		
+	Setter( alpha:Float )
+		
+		_alpha=alpha
+	End
+	
 	'***** World space properties *****
 	
 	#rem monkeydoc World space transformation matrix.
@@ -394,6 +408,8 @@ Class Entity Extends DynamicObject
 		Local c:=New T( Self )
 		
 		AddComponent( c )
+		
+		Return c
 	End
 	
 	Protected
@@ -445,6 +461,8 @@ Class Entity Extends DynamicObject
 		Next
 		
 		copy.Visible=Visible
+		
+		copy.Alpha=Alpha
 		
 		Copied( copy )
 	End
@@ -526,6 +544,7 @@ Private
 	Field _lastCopy:Entity
 	Field _rvisible:Bool
 	Field _visible:Bool
+	Field _alpha:Float=1
 	
 	Field _t:Vec3f=New Vec3f
 	Field _r:Mat3f=New Mat3f

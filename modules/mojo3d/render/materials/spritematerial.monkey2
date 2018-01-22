@@ -9,11 +9,6 @@ Class SpriteMaterial Extends Material
 	#end	
 	Method New()
 		
-		Local shader:="material-sprite"
-		Local defs:=Renderer.GetCurrent().ShaderDefs
-			
-		SetShader( Shader.Open( shader,defs ) )
-		
 		BlendMode=BlendMode.Alpha
 		CullMode=CullMode.None
 		
@@ -33,6 +28,37 @@ Class SpriteMaterial Extends Material
 	Method Copy:SpriteMaterial() Override
 	
 		Return New SpriteMaterial( Self )
+	End
+	
+	Method GetOpaqueShader:Shader() Override
+		
+		Global _shader:Shader
+		
+		If Not _shader
+			
+			Local shader:="material-sprite"
+			
+			Local defs:=Renderer.GetCurrent().ShaderDefs
+				
+			_shader=Shader.Open( shader,defs )
+		Endif
+		
+		Return _shader
+	End
+	
+	Method GetTransparentShader:Shader() Override
+		
+		Return GetOpaqueShader()
+	End
+	
+	Method GetSpriteShader:Shader() Override
+		
+		Return GetOpaqueShader()
+	End
+	
+	Method GetShadowShader:Shader() Override
+		
+		Return GetOpaqueShader()
 	End
 	
 	Property ColorTexture:Texture()

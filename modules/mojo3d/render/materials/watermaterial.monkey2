@@ -8,9 +8,6 @@ Class WaterMaterial Extends Material
 	#rem monkeydoc Creates a new water material.
 	#end
 	Method New()
-		Assert( Cast<DeferredRenderer>( Renderer.GetCurrent() ),"Water material requires deferred renderer" )
-		
-		SetShader( Shader.Open( "material-water" ) )
 		
 		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.SeaGreen
@@ -35,6 +32,20 @@ Class WaterMaterial Extends Material
 	Method Copy:WaterMaterial() Override
 	
 		Return New WaterMaterial( Self )
+	End
+	
+	Method GetOpaqueShader:Shader() Override
+		
+		Global _shader:=Shader.Open( "material-water" )
+		
+		Assert( _shader )
+
+		Return _shader
+	End
+	
+	Method GetShadowShader:Shader() Override
+		
+		Return Null
 	End
 	
 	Property ColorTexture:Texture()

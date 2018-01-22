@@ -5,34 +5,9 @@ Namespace mojo3d
 #end
 Class Material Extends Resource
 	
-	Method New()
-
-		_shader=Null	
-		_uniforms=New UniformBlock( 3,True )
-		_blendMode=BlendMode.Opaque
-		_cullMode=CullMode.Back
-		
-		TextureMatrix=New AffineMat3f
-	End		
-	
-	#rem monkeydoc Creates a new material
-	#end
-	Method New( shader:Shader )
-		Self.new()
-		
-		_shader=shader
-	End
-	
 	#rem monkeydoc Creates a copy of the material.
 	#end
 	Method Copy:Material() abstract
-	
-	#rem monkeydoc The material shader.
-	#end
-	Property Shader:Shader()
-		
-		Return _shader
-	End
 	
 	#Rem monkeydoc @hidden The material uniforms.
 	
@@ -43,7 +18,7 @@ Class Material Extends Resource
 	
 		Return _uniforms
 	End
-
+	
 	#Rem monkeydoc The material blendmode.
 	#End
 	Property BlendMode:BlendMode()
@@ -107,36 +82,48 @@ Class Material Extends Resource
 		
 		TextureMatrix=TextureMatrix.Scale( sx,sy )
 	End
-	
-	Method ValidateShader:Shader()
-		
-		If Not _shader _shader=OnValidateShader()
-			
-		Return _shader
-	End
 
-	Protected
+	#rem monkeydoc Gets material's opaque shader.
+	#end
+	Method GetOpaqueShader:Shader() Virtual
 	
-	Method OnValidateShader:Shader() Virtual
-		
-		RuntimeError( "Material.OnValidateShader unimplemented" )
+		Return Null
+	End
+	
+	#rem monkeydoc Gets material's transparent shader.
+	#end
+	Method GetTransparentShader:Shader() Virtual
 		
 		Return Null
 	End
 	
-	Method InvalidateShader()
+	#rem monkeydoc Gets material's sprite shader.
+	#end
+	Method GetSpriteShader:Shader() Virtual
 		
-		_shader=Null
+		Return GetTransparentShader()
 	End
 	
-	Method SetShader( shader:Shader )
-		
-		_shader=shader
+	#rem monkeydoc Gets material's shadow shader.
+	#end
+	Method GetShadowShader:Shader() Virtual
+	
+		Return GetOpaqueShader()
 	End
+	
+	Protected
+	
+	Method New()
+
+		_uniforms=New UniformBlock( 3,True )
+		_blendMode=BlendMode.Opaque
+		_cullMode=CullMode.Back
+		
+		TextureMatrix=New AffineMat3f
+	End		
 	
 	Method New( material:Material )
 
-		_shader=material._shader
 		_uniforms=New UniformBlock( material._uniforms )
 
 		_blendMode=material._blendMode
@@ -147,7 +134,6 @@ Class Material Extends Resource
 	
 	Private
 
-	Field _shader:Shader
 	Field _uniforms:UniformBlock
 	Field _blendMode:BlendMode
 	Field _cullMode:CullMode

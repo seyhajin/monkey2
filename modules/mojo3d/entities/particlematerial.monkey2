@@ -9,11 +9,6 @@ Class ParticleMaterial Extends Material
 	#end	
 	Method New()
 
-		Local shader:="material-particle"
-		Local defs:=Renderer.GetCurrent().ShaderDefs
-			
-		SetShader( Shader.Open( shader,defs ) )
-		
 		BlendMode=BlendMode.Additive
 		CullMode=CullMode.None
 		
@@ -22,7 +17,6 @@ Class ParticleMaterial Extends Material
 		Gravity=New Vec3f( 0,-9.81,0 )
 		Duration=10.0
 		Fade=0.0
-		
 	End
 	
 	Method New( material:ParticleMaterial )
@@ -35,6 +29,23 @@ Class ParticleMaterial Extends Material
 	Method Copy:ParticleMaterial() Override
 	
 		Return New ParticleMaterial( Self )
+	End
+	
+	Method GetTransparentShader:Shader() Override
+		
+		Global _shader:Shader
+		
+		If Not _shader
+			
+			Local shader:="material-particle"
+			Local defs:=Renderer.GetCurrent().ShaderDefs
+				
+			_shader=Shader.Open( shader,defs )
+		
+		Endif
+		
+		Return _shader
+		
 	End
 	
 	Property ColorTexture:Texture()

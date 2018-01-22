@@ -154,7 +154,7 @@ Class ParticleBuffer
 
 		Endif
 		
-		rq.AddSpriteOp( material,_uniforms,instance,_vbuffer,Null,1,_length,0 )
+		rq.AddRenderOp( material,_uniforms,instance,_vbuffer,Null,1,_length,0 )
 	End		
 	
 	Private

@@ -71,10 +71,9 @@ Class Gltf2Material
 	Field metallicRoughnessTexture:Gltf2Texture
 	Field metallicFactor:Float=1
 	Field roughnessFactor:Float=1
-	Field occlusionTexture:Gltf2Texture
-	Field occlusionFactor:Vec3f=New Vec3f(1)
 	Field emissiveTexture:Gltf2Texture
 	Field emissiveFactor:Vec3f=New Vec3f(0)
+	Field occlusionTexture:Gltf2Texture
 	Field normalTexture:Gltf2Texture
 End
 
@@ -411,6 +410,10 @@ Class Gltf2Asset
 			Local jarr:=jmaterial.GetArray( "emissiveFactor" )
 			If jarr
 				material.emissiveFactor=GetVec3f( jarr )
+			Endif
+			jobj=jmaterial.GetObject( "occlusionTexture" )
+			If jobj
+				material.occlusionTexture=textures[jobj.GetNumber( "index" )]
 			Endif
 			jobj=jmaterial.GetObject( "normalTexture" )
 			If jobj
