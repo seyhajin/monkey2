@@ -300,10 +300,18 @@ Class Texture Extends Resource
 		Return Null
 	End
 
-	Function Load:Texture( path:String,flags:TextureFlags )
+	Function Load:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
 
 		Local pixmap:=Pixmap.Load( path,,True )
 		If Not pixmap Return Null
+		
+		If flipNormalY
+			For Local y:=0 Until pixmap.Height
+				For Local x:=0 Until pixmap.Width
+					pixmap.SetPixelARGB( x,y,pixmap.GetPixelARGB( x,y ) ~ $ff00 )
+				Next
+			Next
+		Endif
 		
 		Local texture:=New Texture( pixmap,flags )
 		
@@ -391,7 +399,7 @@ Class Texture Extends Resource
 	#end
 	Method Bind( unit:Int )
 		
-		Assert( Not _cubeMap )
+'		Assert( unit<7 And Not _cubeMap )
 		
 		Local gltex:=ValidateGLTexture()
 		

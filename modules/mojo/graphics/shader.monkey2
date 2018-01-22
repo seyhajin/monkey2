@@ -363,7 +363,6 @@ Class Shader
 		
 		Local chunks:=New String[3]
 		
-		#rem
 		'Find //@imports in common section
 		Repeat
 			Local i:=cs.Find( "~n//@import" )
@@ -383,7 +382,6 @@ Class Shader
 			chunks[2]+=tchunks[2]
 			
 		Forever
-		#end
 		
 		chunks[0]+=cs
 		chunks[1]+=vs

@@ -306,6 +306,8 @@ Class GraphicsDevice
 	Method Render( order:Int,count:Int,offset:Int=0 )
 		
 		Validate2()
+		
+		If Not _shaderValid Return
 	
 		Local n:=order*count
 	
@@ -327,6 +329,8 @@ Class GraphicsDevice
 	Method RenderIndexed( order:Int,count:Int,offset:Int=0 )
 		
 		Validate2()
+
+		If Not _shaderValid Return
 		
 		Local n:=order*count
 		
@@ -334,15 +338,9 @@ Class GraphicsDevice
 		
 		Select _indexBuffer.Format
 		Case IndexFormat.UINT16
-'			For Local i:=0 Until n
-'				If Cast<UShort Ptr>( _indexBuffer.Data )[i]>=_vertexBuffer.Length DebugStop()
-'			Next
 			gltype=GL_UNSIGNED_SHORT
 			pitch=2
 		Case IndexFormat.UINT32
-'			For Local i:=0 Until n
-'				If Cast<UInt Ptr>( _indexBuffer.Data )[i]>=_vertexBuffer.Length DebugStop()
-'			Next
 			gltype=GL_UNSIGNED_INT
 			pitch=4
 		Default 
@@ -410,6 +408,7 @@ Class GraphicsDevice
 	Field _indexBuffer:IndexBuffer
 	Field _ublocks:=New UniformBlock[8]
 	Field _shader:Shader
+	Field _shaderValid:Bool
 	Field _rpass:Int
 	
 	Global _glSeq:Int
@@ -644,15 +643,17 @@ Class GraphicsDevice
 		If _dirty2 & Dirty.Shader
 			
 			_ublocks[0]=_shader.Uniforms
+			
+			_shaderValid=_shader.RenderPassMask & 1 Shl _rpass <> 0
 		
-			_shader.Bind( _rpass )
+			If _shaderValid _shader.Bind( _rpass )
 		Endif
 		
 		_vertexBuffer.Validate()
 		
 		If _indexBuffer _indexBuffer.Validate()
 
-		_shader.ValidateUniforms( _rpass,_ublocks )
+		If _shaderValid _shader.ValidateUniforms( _rpass,_ublocks )
 		
 		glCheck()
 		

@@ -46,11 +46,15 @@ Class Vertex2fFormat Extends VertexFormat
 	End
 
 	Method UpdateGLAttribs() Override
-		
 		glEnableVertexAttribArray( A_POSITION ) ; glVertexAttribPointer( A_POSITION,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 0 ) )
 		glEnableVertexAttribArray( A_TEXCOORD0 ) ; glVertexAttribPointer( A_TEXCOORD0,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 8 ) )
 		glEnableVertexAttribArray( A_TEXCOORD1 ) ; glVertexAttribPointer( A_TEXCOORD1,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 16 ) )
 		glEnableVertexAttribArray( A_COLOR ) ; glVertexAttribPointer( A_COLOR,4,GL_UNSIGNED_BYTE,True,Pitch,Cast<Void Ptr>( 24 ) )
+		'Need these to shut up android emulator.
+		glDisableVertexAttribArray( A_NORMAL )
+		glDisableVertexAttribArray( A_TANGENT )
+		glDisableVertexAttribArray( A_WEIGHTS )
+		glDisableVertexAttribArray( A_BONES )
 	End
 	
 End
