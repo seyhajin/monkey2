@@ -324,4 +324,12 @@ Struct Color
 		Return New Color( r,g,b,a )
 	End
 	
+	#rem monkeydoc Creates a random color.
+	#end
+	Function Rnd:Color()
+		
+		Return FromHSV( random.Rnd(6),1,1 )
+		
+	End
+
 End
