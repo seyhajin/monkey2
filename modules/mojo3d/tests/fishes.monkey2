@@ -6,8 +6,6 @@ Namespace myapp
 
 #Import "assets/fish.glb"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -20,8 +18,6 @@ Class MyWindow Extends Window
 	
 	Field _light:Light
 	
-	Field _light2:Light
-	
 	Field _ground:Model
 	
 	Field _ducks:=New Stack<Model>
@@ -32,18 +28,21 @@ Class MyWindow Extends Window
 		
 		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )
 		
-		'SwapInterval=0
+'		SetConfig( "MOJO3D_RENDERER_DEFERRED",1 )
+		
+		SwapInterval=1
 		
 		'create scene
 		'		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
 		_scene.ClearColor=Color.Sky
 		
+		_scene.ShadowAlpha=.5
+		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Viewport=New Recti( 0,0,640,480 )
+		_camera=New Camera( Self )
 		_camera.Near=.1
 		_camera.Far=50
 		_camera.FOV=90
@@ -54,7 +53,6 @@ Class MyWindow Extends Window
 		'create light
 		_light=New Light
 		_light.Rotate( 75,15,0 )
-		_light.Move( 0,20,0 )
 		_light.Range=40
 		_light.CastsShadow=True
 
@@ -110,7 +108,7 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		

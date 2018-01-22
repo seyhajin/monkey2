@@ -7,8 +7,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -21,8 +19,6 @@ Class MyWindow Extends Window
 	
 	Field _camera:Camera
 	
-	Field _light:Light
-	
 	Field _ground:Model
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
@@ -33,24 +29,19 @@ Class MyWindow Extends Window
 		
 		'create scene
 		'		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
-		_scene.EnvColor=Color.Black
-		_scene.ClearColor=Color.Black
-		_scene.AmbientLight=Color.Black
+		'for a totally 'black' scene
+		_scene.ClearColor=Color.Black		'clears screen to black
+		_scene.AmbientLight=Color.Black		'disables all ambient light
+		_scene.EnvColor=Color.Black			'disables all environmental reflections
 
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=1
-		_camera.Far=1000
+		_camera=New Camera( Self )
 		_camera.Move( 0,2,0 )
+		New FlyBehaviour( _camera )
 
-		'create light
-		'
-		'_light=New Light
-		'_light.RotateX( 90 )
-		
 		'createa simple 'grid' texture
 		'
 		Local pixmap:=New Pixmap( 16,16 )
@@ -75,12 +66,12 @@ Class MyWindow Extends Window
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
-
+		
 		RequestRender()
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 	End
 	
 End

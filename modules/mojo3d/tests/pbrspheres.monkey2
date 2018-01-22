@@ -7,8 +7,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -29,16 +27,17 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( Self )
+		_camera.Near=.01
 		_camera.Move( 0,10,-10 )
+		
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
@@ -62,14 +61,14 @@ Class MyWindow Extends Window
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
-	
+		
 		RequestRender()
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
-		canvas.DrawText( "FPS="+App.FPS,Width/2,0,.5,0 )
+		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End
 	
 End

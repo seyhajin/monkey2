@@ -7,11 +7,18 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
+
+Function Main()
+	
+	New AppInstance
+	
+	New MyWindow
+	
+	App.Run()
+End
 
 Class MyWindow Extends Window
 	
@@ -27,21 +34,23 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		_scene=Scene.GetCurrent()
+		SetConfig( "MOJO3D_RENDERER","forward" )
+		
+		_scene=New Scene
 		
 		_scene.ClearColor=Color.Sky
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( Self )
 		_camera.Move( 0,10,-10 )
+		
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 90 )
+		_light.Rotate( 75,15,0 )
 		
 		'create donut - metallic silver...
 		
@@ -56,24 +65,14 @@ Class MyWindow Extends Window
 	
 		RequestRender()
 		
-		If Keyboard.KeyHit( Key.Space ) _donut.Visible=Not _donut.Visible
-		
 		_donut.Rotate( .1,.2,.3 )
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas )',_camera )
+		_camera.Render( canvas )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End
 
-Function Main()
-
-	New AppInstance
-	
-	New MyWindow
-	
-	App.Run()
-End

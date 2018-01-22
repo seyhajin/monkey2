@@ -30,9 +30,7 @@ Class MyWindow Extends Window
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( Self )
 		_camera.Move( 0,10,-5 )
 		
 		New FlyBehaviour( _camera )
@@ -50,7 +48,7 @@ Class MyWindow Extends Window
 		
 		_model.Animator.Animate( 0 )
 		
-		_model.Move( 0,10,0 )
+		_model.Move( 0,7,0 )
 		
 '		_model.Mesh.FitVertices( New Boxf( -1,1 ),False )
 	End
@@ -61,9 +59,9 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	
 End

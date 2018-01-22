@@ -59,11 +59,13 @@ Class MyWindow Extends Window
 	
 		RequestRender()
 		
+		_camera.Viewport=Rect
+		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End
 	
 End

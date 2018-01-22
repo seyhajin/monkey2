@@ -7,8 +7,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -96,20 +94,23 @@ Class MyWindow Extends Window
 		
 		'create scene
 		'		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
 		_scene.ClearColor=Color.Sky
 		
 		'create camera
 		'
 		_camera=New Camera
+		
 		_camera.Move( 0,0,-5 )
+		
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 90 )
-		_light.CastsShadow=True
+		
+		_light.Rotate( 75,15,0 )
 		
 		Local mesh1:=Mesh.CreateBox( New Boxf( -1,1 ),8,8,8 )
 		
@@ -126,6 +127,7 @@ Class MyWindow Extends Window
 		Local material:=New PbrMaterial( Color.Green )
 		
 		_morpher=New Morpher( mesh1,mesh2,material )
+		
 		_morpher.Visible=True
 		
 	End
@@ -133,10 +135,10 @@ Class MyWindow Extends Window
 	Method OnRender( canvas:Canvas ) Override
 
 		RequestRender()
-
-		util.Fly( _camera,Self )
 		
-		_scene.Render( canvas,_camera )
+		_camera.Viewport=Rect
+
+		_scene.Render( canvas )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		

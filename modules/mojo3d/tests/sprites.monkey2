@@ -7,17 +7,22 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
 
+Function Main()
+	
+	New AppInstance
+	
+	New MyWindow
+	
+	App.Run()
+End
+
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
-	
-	Field _fog:FogEffect
 	
 	Field _camera:Camera
 	
@@ -31,32 +36,28 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		Print opengl.glGetString( opengl.GL_VERSION )
+'		SetConfig( "MOJO3D_RENDERER","forward" )
 		
-		SwapInterval=0
-		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
-		'create fog
-		'
-		_fog=New FogEffect
-		_fog.Near=0
-		_fog.Far=50
-		_scene.AddPostEffect( _fog )
+		_scene.FogColor=Color.Sky
+		_scene.FogNear=10
+		_scene.FogFar=30
 		
 		'create camera
 		'
-		_camera=New Camera
+		_camera=New Camera( Self )
 		_camera.Near=.1
 		_camera.Far=100
 		_camera.Move( 0,10,-10 )
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-		_light.Rotate( 60,45,0 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.Rotate( 60,45,0 )
 		
 		'create ground
 		'
@@ -68,13 +69,13 @@ Class MyWindow Extends Window
 		
 		material.AlphaDiscard=1.0/255.0
 		
-		For Local i:=0 Until 10000
+		For Local i:=0 Until 1000
 			
 			Local sprite:=New Sprite( material )
 			
 			sprite.Move( Rnd(-50,50),0,Rnd(-50,50) )
 			
-			sprite.Scale=New Vec3f( Rnd(2,3),Rnd(4,5),1 )
+			sprite.Scale=New Vec3f( Rnd(4,5),Rnd(5,6),1 )
 			
 			sprite.Handle=New Vec2f( .5,0 )
 			
@@ -83,11 +84,11 @@ Class MyWindow Extends Window
 			_sprites.Push( sprite )
 		Next
 		
-		For Local i:=0 Until 100
+		For Local i:=0 Until 1'00
 			
-'			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
+			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 			
-'			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
+			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
 
 		next			
 		
@@ -97,22 +98,12 @@ Class MyWindow Extends Window
 	
 		RequestRender()
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End
 
-Function Main()
-	
-'	SetConfig( "MOJO_OPENGL_PROFILE","es" )
-	
-	New AppInstance
-	
-	New MyWindow
-	
-	App.Run()
-End

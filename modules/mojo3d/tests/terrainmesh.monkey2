@@ -5,9 +5,11 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#import "assets/terrain_256.png"
+#Import "assets/miramar-skybox.jpg"
 
-#Import "util"
+#Import "assets/terrain_256.png"
+#Import "assets/mossy-ground1.pbr@/mossy-ground1.pbr"
+
 
 Using std..
 Using mojo..
@@ -29,8 +31,11 @@ Class MyWindow Extends Window
 		
 		'create scene
 		'		
-		_scene=Scene.GetCurrent()
-		_scene.ClearColor=Color.Sky
+		_scene=New Scene
+		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+		_scene.FogColor=Color.White *.7
+		_scene.FogNear=75
+		_scene.FogFar=100
 		
 		'create camera
 		'
@@ -38,23 +43,28 @@ Class MyWindow Extends Window
 		_camera.Near=.1
 		_camera.Far=100
 		_camera.Move( 0,15,-20 )
-		Local fly:=New FlyBehaviour( _camera )
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 60 )
+		_light.RotateX( 45 )
 
 		'create terrain
 		'
+		'box
+		Local terrainBox:=New Boxf( -256,0,-256,256,32,256 )
+		
 		'heightmap
-		Local terrain_hmap:=Pixmap.Load( "asset::terrain_256.png" )
+		Local terrainHMap:=Pixmap.Load( "asset::terrain_256.png" )
 
 		'material		
-		Local terrain_material:=New PbrMaterial( Color.Green )
+		Local terrainMaterial:=PbrMaterial.Load( "asset::mossy-ground1.pbr" )
+		terrainMaterial.ScaleTextureMatrix( 64,64 )
 		
 		'model+mesh
-		_terrain=Model.CreateTerrain( terrain_hmap,New Boxf( -256,0,-256,256,32,256 ),terrain_material )
+		_terrain=Model.CreateTerrain( terrainHMap,terrainBox,terrainMaterial )
+
 		_terrain.CastsShadow=False
 		
 	End
@@ -63,13 +73,15 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
+		_camera.Viewport=Rect
+		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End
 	
 End

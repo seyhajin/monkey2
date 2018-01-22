@@ -1,4 +1,9 @@
 
+#rem
+
+Very simple demo showing how to make a custom mesh.
+
+#end
 #Import "<std>"
 #Import "<mojo>"
 #Import "<mojo3d>"
@@ -19,39 +24,34 @@ Class MyWindow Extends Window
 	
 	Method New()
 		
-		'get scene
+		'create scene
 		'
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( Self )
 		_camera.Move( 0,0,-2.5 )
 		
 		'create light
 		'
 		_light=New Light
+		_light.Rotate( 60,30,0 )
 		
 		'create quad mesh
 		'
-		Local vertices:=New Vertex3f[4]
-		vertices[0].position=New Vec3f( -1, 1,0 )
-		vertices[1].position=New Vec3f(  1, 1,0 )
-		vertices[2].position=New Vec3f(  1,-1,0 )
-		vertices[3].position=New Vec3f( -1,-1,0 )
+		Local vertices:=New Vertex3f[](
+			New Vertex3f( -1, 1,0 ),
+			New Vertex3f(  1, 1,0 ),
+			New Vertex3f(  1,-1,0 ),
+			New Vertex3f( -1,-1,0 ) )
 
-		Local indices:=New UInt[6]
-		indices[0]=0
-		indices[1]=1
-		indices[2]=2
-		indices[3]=0
-		indices[4]=2
-		indices[5]=3
+		Local indices:=New UInt[]( 0,1,2,0,2,3 )
 		
 		Local mesh:=New Mesh( vertices,indices )
 		
+		'Update mesh normals since we haven't provided them ourselves
+		'
 		mesh.UpdateNormals()
 		
 		'create model for the mesh
@@ -64,12 +64,12 @@ Class MyWindow Extends Window
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
-
+		
 		RequestRender()
 		
 		_model.RotateY( 1 )
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End

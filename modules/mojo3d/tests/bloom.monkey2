@@ -6,8 +6,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -38,15 +36,13 @@ Class MyWindow Extends Window
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( self )
 		_camera.Move( 0,10,-10 )
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-
 		_light.RotateX( 90 )
 		
 		Local material:=New PbrMaterial( Color.Black )
@@ -58,18 +54,15 @@ Class MyWindow Extends Window
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
-	
-		RequestRender()
 		
-		If Keyboard.KeyHit( Key.Space ) _donut.Visible=Not _donut.Visible
+		RequestRender()
 		
 		_donut.Rotate( .1,.2,.3 )
 		
-		util.Fly( _camera,Self )
+		_scene.Render( canvas )
 		
-		_scene.Render( canvas,_camera )
+		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End
 	
 End

@@ -6,8 +6,6 @@ Namespace myapp
 
 #Import "assets/platform.glb"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -32,9 +30,7 @@ Class MyWindow Extends Window
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( Self )
 		_camera.Move( 0,10,-10 )
 		
 		New FlyBehaviour( _camera )
@@ -57,7 +53,7 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End

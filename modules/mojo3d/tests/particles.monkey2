@@ -6,8 +6,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -32,12 +30,16 @@ Class MyWindow Extends Window
 		
 		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
+		_scene.FogColor=Color.Sky
+		_scene.FogNear=20
+		_scene.FogFar=1000
+		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( Self )
+		_camera.Near=.01
 		_camera.Move( 0,1,-1 )
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
@@ -46,7 +48,7 @@ Class MyWindow Extends Window
 		
 		'create ground
 		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Brown*.5 ) )
+		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green * .5 ) )
 		
 		_particles=New ParticleSystem( 15000 )
 		_particles.RotateX( -90 )	'point upwards!
@@ -60,26 +62,20 @@ Class MyWindow Extends Window
 		pbuffer.Fade=0.0			'how long before paticle starts fading out in seconds.
 		pbuffer.Colors=New Color[]( Color.White,Color.Yellow,Color.Orange,Color.Red )
 		pbuffer.ConeAngle=30		'angle of particle emission cone.
-		pbuffer.MinVelocity=10.0	'min particle velocity.
-		pbuffer.MaxVelocity=10.0	'max particle velocity.
-		pbuffer.MinSize=24.0		'min particle size.
-		pbuffer.MaxSize=32.0		'max particle size.
-		
+		pbuffer.MinVelocity=15.0	'min particle velocity.
+		pbuffer.MaxVelocity=20.0	'max particle velocity.
+		pbuffer.MinSize=32.0		'min particle size.
+		pbuffer.MaxSize=64.0		'max particle size.
 		
 		For Local an:=0 Until 360 Step 45
+			
 			Local pivot:=New Entity
 			pivot.RotateY( an )
 			pivot.MoveZ( 20 )
+			pivot.Visible=True
 			
 			_particles.Copy( pivot )
 		Next
-		
-		_particles.SetDynamicProperty( "blah",New IntStack )
-		
-		_particles.GetDynamicProperty<IntStack>( "blah" ).Push( 10 )
-		
-		
-		'particles.AddParticles( 5000 )
 		
 	End
 	
@@ -87,9 +83,9 @@ Class MyWindow Extends Window
 	
 		RequestRender()
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End

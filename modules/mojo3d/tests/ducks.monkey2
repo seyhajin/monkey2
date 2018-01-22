@@ -7,8 +7,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -21,8 +19,6 @@ Class MyWindow Extends Window
 	
 	Field _light:Light
 	
-	Field _light2:Light
-	
 	Field _ground:Model
 	
 	Field _ducks:=New Stack<Model>
@@ -31,34 +27,29 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )
-		
-		'SwapInterval=0
+		SetConfig( "MOJO3D_RENDERER","forward" )
 		
 		'create scene
 		'		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
-		_scene.ClearColor=Color.Sky
+		'for softer shadows
+		'
+		_scene.ShadowAlpha=.6
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Viewport=New Recti( 0,0,640,480 )
-		_camera.Near=.1
-		_camera.Far=50
-		_camera.FOV=90
+		_camera=New Camera( Self )
 		_camera.Move( 0,15,-20 )
 		
 		New FlyBehaviour( _camera )
 		
 		'create light
+		'
 		_light=New Light
-		_light.Rotate( 75,15,0 )
-		_light.Move( 0,20,0 )
-		_light.Range=40
 		_light.CastsShadow=True
-
+		_light.Rotate( 75,15,0 )
+		
 		'create ground
 		'
 		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,1 ) )
@@ -84,8 +75,10 @@ Class MyWindow Extends Window
 				copy.RotateY( i )
 				
 				copy.Move( 0,0,6+m*16 )
-				
+
 				copy.Scale=New Vec3f( 1 )
+				
+'				copy.Alpha=1-m
 				
 				For Local j:=0 Until copy.Materials.Length
 				
@@ -95,6 +88,7 @@ Class MyWindow Extends Window
 					material.RoughnessFactor=i/360.0
 					
 					copy.Materials[j]=material
+					
 				Next
 				
 				_ducks.Push( copy )
@@ -109,19 +103,19 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
+		_ducks[0].Rotate( 0,-.01,0 )
+		
 		_scene.Update()
 		
-		_scene.Render( canvas )
+		_camera.Render( canvas )
 
-		canvas.Scale( Width/640.0,Height/480.0 )
-		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End
 	
 End
 
 Function Main()
-
+	
 	New AppInstance
 	
 	New MyWindow

@@ -6,8 +6,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -26,26 +24,25 @@ Class MyWindow Extends Window
 		
 		Print opengl.glGetString( opengl.GL_VERSION )
 		
-		SwapInterval=0
-		
 		_scene=Scene.GetCurrent()
 		
 		_scene.ClearColor=Color.Sky
 		
 		'create camera
 		'
-		_camera=New Camera
+		_camera=New Camera( Self )
 		_camera.Near=.1
-		_camera.Far=100
+		_camera.Far=1000
 		_camera.Move( 0,10,-10 )
+		
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-
 		_light.Rotate( 30,60,0 )
 		
-		'Create donut - metallic silver...
+		'Create cube
 		'
 		Local cube:=Model.CreateBox( New Boxf( -1,1 ),1,1,1,New PbrMaterial( Color.White ) )
 		
@@ -59,16 +56,15 @@ Class MyWindow Extends Window
 		Next
 		
 		cube.Destroy()
-		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
-	
+		
 		RequestRender()
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_scene.Render( canvas )
 		
 		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
 	End

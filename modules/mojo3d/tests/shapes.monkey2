@@ -7,8 +7,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -59,6 +57,7 @@ Class MyWindow Extends Window
 		'
 		_light=New Light
 		_light.RotateX( 75,15 )
+		_light.CastsShadow=true
 		
 		'create ground
 		'

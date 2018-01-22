@@ -7,8 +7,6 @@ Namespace myapp
 
 #Import "assets/"
 
-#Import "util"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -33,15 +31,15 @@ Class MyWindow Extends Window
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Near=.1
-		_camera.Far=100
+		_camera=New Camera( self )
 		_camera.Move( 0,10,-10 )
+		
+		New FlyBehaviour( _camera )
 		
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 90 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.Rotate( 54,144,0 )	'calibrated so specular highlight matches sun on sky texture!
 		
 		'create water material
 		'
@@ -68,11 +66,9 @@ Class MyWindow Extends Window
 	
 		RequestRender()
 		
-		util.Fly( _camera,Self )
+		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
-		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		_camera.Render( canvas )
 	End
 	
 End
