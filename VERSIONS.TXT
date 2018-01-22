@@ -1,4 +1,20 @@
 
+Mojo3d camera's can now be attached to a view, which will take care of autoresizing camera viewport etc.
+
+Camera param removed from Scene.Render. Scene.Render now renders all cameras in a scene. Add Camera.Render for just rendering a single camera - this is now recommended way to render a scene, multiple cameras not dealt with yet.
+
+Moved fog settings to Scene, ie: FogColor, FogNear, FogFar. Fog is now built-in and FogEffect has been removed.
+
+Added Scene.ShadowAlpha for faking soft shadows. Set to <1 for softer shadows.
+
+Added experimental Entity.Alpha for master entity alpha control.
+
+Merged forward/deferred renderers into single Renderer class. Added transparency support: materials with non opaque blend modes are depth sorted (only by instance for now) and rendered in a separate forward pass. Note: transparent materials can only currently be lit by a single light and are unshadowed.
+
+Fixed some potentially serious GC issues that have have not, surprisingly, caused any issues so far. But it was just a matter of time... Hopefully no ones code will be affected - rebuildall2go recommend for this one.
+
+Added Window.OnCreateWindow() virtual method. If Window.ClearEnabled is true (the default), the window is also cleared to Window.ClearColor before OnCreate is called. OnCreateWindow is where any slow initialization code should be placed instead of in Window constructor.
+
 Fixed dots in filenames problems.
 
 Added reflection support for type extensions and enum. Add reflection helper module - see modules/reflection/tests. Still WIP!
