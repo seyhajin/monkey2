@@ -663,13 +663,19 @@ Class Stack<T> Implements IContainer<T>
 		Return New Stack( _data.Slice( index1,index2 ) )
 	End
 	
-	#rem monkeydoc Swaps 2 elements in the stack.
+	#rem monkeydoc Swaps 2 elements in the stack, or 2 stacks.
+	
+	This method can be used to either swap 2 elements in the stack, or 2 entire stacks.
 	
 	In debug builds, a runtime error will occur if `index1` or `index2` is out of range.
+	
+	Swapping entire stacks simply swaps the storage arrays and lengths of the 2 stacks, and is therefore very fast.
 	
 	@param index1 The index of the first element.
 	
 	@param index2 The index of the second element.
+	
+	@param stack The stack to swap with.
 	
 	#end
 	Method Swap( index1:Int,index2:Int )
@@ -678,6 +684,14 @@ Class Stack<T> Implements IContainer<T>
 		Local t:=_data[index1]
 		_data[index1]=_data[index2]
 		_data[index2]=t
+	End
+	
+	Method Swap( stack:Stack )
+		Local data:=_data,length:=_length
+		_data=stack._data
+		_length=stack._length
+		stack._data=data
+		stack._length=length
 	End
 	
 	#rem monkeydoc Sorts the stack.
