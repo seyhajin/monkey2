@@ -72,6 +72,12 @@ Struct AffineMat3<T>
 		Return New Vec2<T>( i.x*v.x + j.x*v.y + t.x , i.y*v.x + j.y*v.y + t.y )
 	End
 	
+	#rem monkeydoc Multiplies a rect by the matrix.
+	#end
+	Operator*:Rect<T>( r:Rect<T> )
+		Return New Rect<T>( Self * r.min,Self * r.max )
+	End
+	
 	#rem monkeydoc Multiplies the matrix by another matrix.
 	#end
 	Operator*:AffineMat3( m:AffineMat3 )
