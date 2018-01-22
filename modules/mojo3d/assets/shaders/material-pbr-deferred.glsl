@@ -1,13 +1,14 @@
-
-//@renderpasses 0,16,17
+//@renderpasses 1,4,12
 
 //renderpasses:
 //
-// 0 = ambient + gbuffers.
-// 16 = directional light shadowcasters.
-// 17 = point light shadowcasters.
+// 1 = ambient
+// 4 = directional shadows
+// 12 = point shadows
 
-#define MX2_COLORPASS (MX2_RENDERPASS==0)
+#define MX2_COLORPASS ((MX2_RENDERPASS&3)!=0)
+#define MX2_POINT_LIGHT ((MX2_RENDERPASS&8)!=0)
+#define MX2_DIRECTIONAL_LIGHT ((MX2_RENDERPASS&8)==0)
  
 //material uniforms
 
@@ -42,7 +43,7 @@ varying mat3 v_TanMatrix;
 
 #else	//MX2_COLORPASS
 
-#if MX2_RENDERPASS==17
+#if MX2_POINT_LIGHT
 uniform float r_LightRange;
 #endif
 
@@ -191,26 +192,29 @@ void pbrWriteFragData( vec3 color,vec3 emissive,float metalness,float roughness,
 	vec3 diffuse=color * (1.0-metalness);
 	vec3 specular=(color-color0) * metalness + color0;
 	
-	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
-	
-	float lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-	
-	if( lod>0.0 ) lod=textureCube( r_EnvTexture,rvec ).a * 255.0;
-	
-	vec3 env=pow( textureCube( r_EnvTexture,rvec,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
-
 	vec3 vvec=normalize( -v_Position );
-	
 	float ndotv=max( dot( normal,vvec ),0.0 );
 	
-	vec3 fschlick=specular + (1.0-specular) * pow( 1.0-ndotv,5.0 ) * glosiness;
+	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
 
-	vec3 ambdiff=diffuse * r_AmbientDiffuse.rgb;
+	float lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
+	if( lod>0.0 ) lod=textureCube( r_EnvTexture,rvec ).a * 255.0;
+
+//	float lod=textureCube( r_EnvTexture,rvec ).a * 255.0;
+//	if( lod==0.0 ) lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
+
+	vec3 ambEnv=pow( textureCube( r_EnvTexture,rvec,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+
+	vec3 fschlick0=specular + (1.0-specular) * pow( 1.0-ndotv,5.0 ) * glosiness;
+
+	vec3 ambDiffuse=diffuse * r_AmbientDiffuse.rgb;
 		
-	vec3 ambspec=env * fschlick;
-
+	vec3 ambSpecular=fschlick0 * ambEnv;
+	
+	vec3 frag=(ambDiffuse + ambSpecular) * occlusion + emissive;
+	
 	//write ambient
-	gl_FragData[0]=vec4( min( (ambdiff+ambspec) * occlusion + emissive,8.0 ),1.0 );
+	gl_FragData[0]=vec4( min( frag,8.0 ),1.0 );
 	
 	//write color/metalness
 	gl_FragData[1]=vec4( color,metalness );
@@ -229,7 +233,9 @@ uniform sampler2D m_EmissiveTexture;
 uniform sampler2D m_MetalnessTexture;
 uniform sampler2D m_RoughnessTexture;
 uniform sampler2D m_OcclusionTexture;
+#ifdef MX2_BUMPMAPPED
 uniform sampler2D m_NormalTexture;
+#endif
 #endif
 
 uniform vec4 m_ColorFactor;
@@ -247,15 +253,13 @@ void main(){
 	float roughness=texture2D( m_RoughnessTexture,v_TexCoord0 ).g * m_RoughnessFactor;
 	float occlusion=texture2D( m_OcclusionTexture,v_TexCoord0 ).r;
 	
-//	emissive=vec3( 1.0,1.0,0.0 );
-	
 #ifdef MX2_BUMPMAPPED
 	vec3 normal=texture2D( m_NormalTexture,v_TexCoord0 ).xyz * 2.0 - 1.0;
 	normal=normalize( v_TanMatrix * normal );
 #else
 	vec3 normal=normalize( v_Normal );
 #endif
-	
+
 #else
 
 	vec3 color=m_ColorFactor.rgb;
@@ -274,12 +278,18 @@ void main(){
 
 void main(){
 
-#if MX2_RENDERPASS==17
+#if MX2_POINT_LIGHT
+
 	gl_FragColor=FloatToRGBA( length( v_Position )/r_LightRange );
+	
 #elif defined( MX2_RGBADEPTHTEXTURES )
+
 	gl_FragColor=FloatToRGBA( gl_FragCoord.z );
+
 #else
+
 	gl_FragColor=vec4( vec3( gl_FragCoord.z ),1.0 );
+	
 #endif
 
 }

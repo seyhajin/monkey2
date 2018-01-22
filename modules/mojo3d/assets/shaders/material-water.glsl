@@ -1,5 +1,4 @@
-
-//@renderpasses 0
+//@renderpasses 1
 
 //material uniforms
 
@@ -80,8 +79,10 @@ void main0( vec3 color,vec3 emissive,float metalness,float roughness,float occlu
 	vec3 ambdiff=diffuse * r_AmbientDiffuse.rgb;
 		
 	vec3 ambspec=env * fschlick;
-
-	gl_FragData[0]=vec4( min( (ambdiff+ambspec) * occlusion + emissive,8.0 ),1.0 );
+	
+	vec3 frag=(ambdiff+ambspec) * occlusion + emissive;
+	
+	gl_FragData[0]=vec4( min( frag,8.0 ),1.0 );
 	
 	gl_FragData[1]=vec4( color,metalness );
 	
@@ -121,5 +122,4 @@ void main(){
 	float occlusion=1.0;
 
 	main0( color,emissive,metalness,roughness,occlusion,normal );
-
 }

@@ -1,9 +1,9 @@
 
 //@renderpasses 0
 
-uniform sampler2D r_SourceTexture;
+uniform sampler2D r_AccumBuffer;
 
-uniform vec2 r_SourceCoordScale;
+uniform vec2 r_BufferCoordScale;
 
 varying vec2 v_TexCoord0;
 
@@ -13,7 +13,7 @@ attribute vec2 a_Position;	//0...1 (1=viewport size)
 
 void main(){
 
-	v_TexCoord0=a_Position * r_SourceCoordScale;
+	v_TexCoord0=a_Position * r_BufferCoordScale;
 
 	gl_Position=vec4( a_Position * 2.0 - 1.0,-1.0,1.0 );
 }
@@ -22,5 +22,5 @@ void main(){
 
 void main(){
 
-	gl_FragColor=vec4( pow( texture2D( r_SourceTexture,v_TexCoord0 ).rgb,vec3( 1.0/2.2 ) ),1.0 );
+	gl_FragColor=vec4( pow( texture2D( r_AccumBuffer,v_TexCoord0 ).rgb,vec3( 1.0/2.2 ) ),1.0 );
 }
