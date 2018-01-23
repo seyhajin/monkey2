@@ -75,7 +75,7 @@ Function Mix_GetChunk:Mix_Chunk Ptr( channel:Int )
 
 'music
 
-Function Mix_LoadMUS:Mix_Music Ptr( file:CString Ptr )
+Function Mix_LoadMUS:Mix_Music Ptr( file:CString )
 
 Function Mix_FreeMusic( music:Mix_Music Ptr )
 
