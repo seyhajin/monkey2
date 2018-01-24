@@ -75,6 +75,7 @@ Class Gltf2Material
 	Field emissiveFactor:Vec3f=New Vec3f(0)
 	Field occlusionTexture:Gltf2Texture
 	Field normalTexture:Gltf2Texture
+	Field alphaMode:String
 End
 
 #rem monkeydoc @hidden
@@ -419,6 +420,7 @@ Class Gltf2Asset
 			If jobj
 				material.normalTexture=textures[jobj.GetNumber( "index" )]
 			Endif
+			material.alphaMode=jmaterial.GetString( "alphaMode" )
 
 		Next
 		

@@ -211,6 +211,10 @@ Class Gltf2Loader
 			
 		If normalTexture mat.NormalTexture=normalTexture
 			
+		Select material.alphaMode
+		Case "BLEND" mat.BlendMode=BlendMode.Alpha
+		End
+			
 		_materialCache[material]=mat
 		Return mat
 	End
