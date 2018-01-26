@@ -10,14 +10,16 @@ Function AppInit()="bbApp::init"
 
 Public
 
-'#Import "assets/Roboto-Regular.ttf@/mojo"
-'#Import "assets/RobotoMono-Regular.ttf@/mojo"
-
 #rem monkeydoc The global AppInstance instance.
 #end
 Global App:AppInstance
 
-#rem monkeydoc @hidden
+#rem monkeydoc Display mode structure.
+
+Contains information describing a display mode.
+
+See [[AppInstance.DisplayMode]] for more information.
+
 #end
 Struct DisplayMode
 	
@@ -305,10 +307,7 @@ Class AppInstance
 		Return _hoverView
 	End
 	
-	#rem monkeydoc @deprecated The desktop size.
-	
-	This method is deprecated, please use [[DesktopMode]] instead.
-	
+	#rem monkeydoc The desktop size.
 	#end	
 	Property DesktopSize:Vec2i()
 		
