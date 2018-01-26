@@ -167,6 +167,7 @@ Class aiMesh Extends Void
 	Field mNormals:aiVector3D Ptr
 	Field mTangents:aiVector3D Ptr
 	Field mBitangents:aiVector3D Ptr
+	Field mColors:aiColor4D Ptr Ptr
 	Field mTextureCoords:aiVector3D Ptr Ptr
 	Field mBones:aiBone Ptr
 	Field mFaces:aiFace Ptr
@@ -178,7 +179,6 @@ Class aiMesh Extends Void
 	Field mNumUVComponents:UInt Ptr
 	Field mNumBones:UInt
 	Field mNumFaces:UInt
-
 End
 
 Class aiNode Extends Void
@@ -193,7 +193,6 @@ Class aiNode Extends Void
 	
 	Field mNumChildren:UInt
 	Field mNumMeshes:UInt
-
 End
 
 Class aiScene Extends Void="const aiScene"
@@ -207,7 +206,6 @@ Class aiScene Extends Void="const aiScene"
 	Field mNumAnimations:uint	
 	Field mNumMaterials:UInt
 	Field mNumMeshes:UInt
-	
 End
 
 Class aiPropertyStore Extends Void
