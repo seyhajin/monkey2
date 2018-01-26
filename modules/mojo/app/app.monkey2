@@ -20,9 +20,16 @@ Global App:AppInstance
 #rem monkeydoc @hidden
 #end
 Struct DisplayMode
+	
 	Field width:Int
 	Field height:Int
+	Field depth:Int
 	Field hertz:Int
+	
+	Operator To:String()
+		Return "DisplayMode("+width+","+height+","+depth+","+hertz+")"
+	End
+	
 End
 
 #rem monkeydoc The AppInstance class.
@@ -298,20 +305,25 @@ Class AppInstance
 		Return _hoverView
 	End
 	
-	#rem monkeydoc The desktop size
+	#rem monkeydoc @deprecated The desktop size.
+	
+	This method is deprecated, please use [[DesktopMode]] instead.
+	
 	#end	
 	Property DesktopSize:Vec2i()
-	
-#If __TARGET__="emscripten"
+		
+		Local mode:=DesktopMode
+		Return New Vec2i( mode.width,mode.height )
+	End
 
-		Return New Vec2i( 1280,960 )
+	#rem monkeydoc The desktop display mode.
+	#end
+	Property DesktopMode:DisplayMode()
 
-#Else
-		Local dm:SDL_DisplayMode
-		If SDL_GetDesktopDisplayMode( 0,Varptr dm ) Return New Vec2i
-		Return New Vec2i( dm.w,dm.h )
-#Endif
-
+		Local sdlMode:SDL_DisplayMode
+		SDL_GetDesktopDisplayMode( 0,Varptr sdlMode )
+		
+		Return CreateDisplayMode( Varptr sdlMode )
 	End
 	
 	#rem monkeydoc True if app is active.
@@ -409,24 +421,7 @@ Class AppInstance
 	
 #Endif
 	
-	#rem monkeydoc @hidden
-	#end
-	Method GetDisplayModes:DisplayMode[]()
-	
-		Local n:=SDL_GetNumDisplayModes( 0 )
-		Local modes:=New DisplayMode[n]
-		For Local i:=0 Until n
-			Local mode:SDL_DisplayMode
-			SDL_GetDisplayMode( 0,i,Varptr mode )
-			modes[i].width=mode.w
-			modes[i].height=mode.h
-			modes[i].hertz=mode.refresh_rate
-		Next
-
-		Return modes
-	End
-	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Puts app into modal mode.
 	#end
 	Method BeginModal( view:View )
 	
@@ -437,7 +432,7 @@ Class AppInstance
 		RequestRender()
 	End
 	
-	#rem monkeydoc @hidden
+	#rem monkeydoc Exits app from modal mode.
 	#end
 	Method EndModal()
 		
@@ -588,6 +583,35 @@ Class AppInstance
 		_renderingSuspended=Max( _renderingSuspended-1,0 )
 	End
 
+	#rem monkeydoc Enumerate the available display modes
+	#end
+	Method EnumDisplayModes:DisplayMode[]( displayIndex:Int=0 )
+		
+		Local n:=SDL_GetNumDisplayModes( displayIndex )
+		If Not n Return Null
+		
+		Local modes:=New Stack<DisplayMode>
+		
+		For Local i:=0 Until n
+			
+			Local sdlMode:SDL_DisplayMode
+			SDL_GetDisplayMode( displayIndex,i,Varptr sdlMode )
+			
+			Local mode:=CreateDisplayMode( Varptr sdlMode )
+			
+			Local found:=False
+			For Local mode2:=Eachin modes
+				If mode2.width<>mode.width Or mode2.height<>mode.height Or mode2.hertz<>mode.hertz Continue
+				found=True
+				Exit
+			Next
+			
+			If Not found modes.Add( mode )
+		Next
+		
+		Return modes.ToArray()
+	End
+	
 	Internal
 	
 	Method DispatchEvents()
@@ -1156,4 +1180,20 @@ Class AppInstance
 		Return 1
 	End
 	
+	Method CreateDisplayMode:DisplayMode( sdlMode:SDL_DisplayMode Ptr )
+		
+		Local mode:=New DisplayMode
+
+#If __TARGET__="emscripten"
+		mode.width=640
+		mode.height=480
+#else
+		mode.width=sdlMode->w
+		mode.height=sdlMode->h
+		mode.depth=SDL_BYTESPERPIXEL( sdlMode->format )*8
+		mode.hertz=sdlMode->refresh_rate
+#endif
+		Return mode
+	End
+		
 End
