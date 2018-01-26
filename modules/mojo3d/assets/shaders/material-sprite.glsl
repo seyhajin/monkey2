@@ -24,7 +24,6 @@ uniform float i_Alpha;
 //varyings...
 
 varying vec3 v_Position;
-
 varying vec2 v_TexCoord0;
 
 //@vertex

@@ -98,7 +98,7 @@ float shadowColor(){
 //	vec3 vn=vec4( cross( dx,dy ),0.0 );
 //	vec4 vpos=vec4( v_Position + v_Normal*0.01,1.0 );
 
-	if( v_Position.z>=r_ShadowCSMSplits.w ) return r_ShadowAlpha*0.5;
+	if( v_Position.z>=r_ShadowCSMSplits.w ) return 1.0;//(1.0-r_ShadowAlpha)*0.5;
 	
 	vec4 vpos=vec4( v_Position,1.0 );
 	vec2 off;

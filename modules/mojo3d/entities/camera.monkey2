@@ -164,6 +164,7 @@ Class Camera Extends Entity
 		
 		Local targetSize:=canvas.GraphicsDevice.RenderTargetSize
 		
+'		Local viewport:=canvas.RenderMatrix * Viewport
 		Local viewport:=canvas.RenderBounds
 		
 		canvas.Flush()

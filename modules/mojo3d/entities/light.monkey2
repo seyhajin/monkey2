@@ -67,6 +67,7 @@ Class Light Extends Entity
 		_type=type
 	End
 	
+	#rem
 	#rem monkeydoc The light color.
 	#end
 	Property Color:Color()
@@ -77,6 +78,7 @@ Class Light Extends Entity
 	
 		_color=color
 	End
+	#end
 	
 	#rem monkeydoc The light range.
 	#end

@@ -557,6 +557,7 @@ Class Renderer
 				_iuniforms.SetMat4f( "ModelViewMatrix",modelViewMat )
 				_iuniforms.SetMat3f( "ModelViewNormalMatrix",modelViewNormMat )
 				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
+				_iuniforms.SetColor( "Color",instance ? instance.Color Else Color.White )
 				_iuniforms.SetFloat( "Alpha",instance ? instance.Alpha Else 1.0 )
 				
 			Endif

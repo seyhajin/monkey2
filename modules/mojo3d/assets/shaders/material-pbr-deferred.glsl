@@ -24,6 +24,9 @@ uniform mat3 i_ModelViewNormalMatrix;
 
 #if MX2_COLORPASS
 
+uniform vec4  i_Color;
+uniform float i_Alpha;
+
 uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_EnvTexture;
 uniform float r_EnvTextureMaxLod;
@@ -34,6 +37,7 @@ uniform mat3 r_EnvMatrix;
 
 varying vec3 v_Position;
 varying vec3 v_Normal;
+varying vec4 v_Color;
 #ifdef MX2_TEXTURED
 varying vec2 v_TexCoord0;
 #ifdef MX2_BUMPMAPPED
@@ -68,6 +72,7 @@ attribute vec4 a_Bones;
 #if MX2_COLORPASS
 
 attribute vec3 a_Normal;
+attribute vec4 a_Color;
 #ifdef MX2_TEXTURED
 attribute vec2 a_TexCoord0;
 #ifdef MX2_BUMPMAPPED
@@ -119,6 +124,10 @@ void main(){
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * b_Normal;
 	
+	// vertex color
+	v_Color=a_Color * i_Color;
+	v_Color.a*=i_Alpha;
+	
 #ifdef MX2_TEXTURED
 	// texture coord0
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
@@ -146,6 +155,10 @@ void main(){
 
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * a_Normal;
+	
+	// vertex color
+	v_Color=a_Color * i_Color;
+	v_Color.a*=i_Alpha;
 	
 #ifdef MX2_TEXTURED
 	// texture coord0
@@ -271,7 +284,7 @@ void main(){
 
 #endif
 
-	pbrWriteFragData( color,emissive,metalness,roughness,occlusion,normal );
+	pbrWriteFragData( color*v_Color.rgb,emissive,metalness,roughness,occlusion,normal );
 }
 	
 #else	//MX2_COLORPASS

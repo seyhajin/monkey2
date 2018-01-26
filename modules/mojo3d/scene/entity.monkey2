@@ -171,7 +171,18 @@ Class Entity Extends DynamicObject
 		Return _lastCopy
 	End
 	
-	#rem monkeydoc Master alpha level.
+	#rem monkeydoc Master color.
+	#end
+	Property Color:Color()
+		
+		Return _color
+		
+	Setter( color:Color )
+			
+		_color=color
+	End
+	
+	#rem monkeydoc Master alpha.
 	#end
 	Property Alpha:Float()
 		
@@ -544,6 +555,7 @@ Private
 	Field _lastCopy:Entity
 	Field _rvisible:Bool
 	Field _visible:Bool
+	Field _color:Color=std.graphics.Color.White
 	Field _alpha:Float=1
 	
 	Field _t:Vec3f=New Vec3f

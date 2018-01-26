@@ -185,12 +185,31 @@ Class AssimpLoader
 		
 		Local vp:=aimesh.mVertices
 		Local np:=aimesh.mNormals
+		Local cp:=aimesh.mColors[0]
 		Local tp:=aimesh.mTextureCoords[0]
 		
 		For Local i:=0 Until vertices.Length
+			
 			vertices[i].position=New Vec3f( vp[i].x,vp[i].y,vp[i].z )
-			vertices[i].normal=New Vec3f( np[i].x,np[i].y,np[i].z )
-			If tp vertices[i].texCoord0=New Vec2f( tp[i].x,tp[i].y )
+			
+			If np
+				vertices[i].normal=New Vec3f( np[i].x,np[i].y,np[i].z )
+			Endif
+			
+			If cp
+				Local color:=cp[i]
+				Print "r="+color.r+", g="+color.g+", b="+color.b+", a="+color.a
+				color.r=1
+				color.g=1
+				color.b=0
+				color.a=1
+				Local a:=color.a * 255.0
+				vertices[i].color=UInt(a) Shl 24 | UInt(color.b*a) Shl 16 | UInt(color.g*a) Shl 8 | UInt(color.r*a)
+			Endif
+
+			If tp 
+				vertices[i].texCoord0=New Vec2f( tp[i].x,tp[i].y )
+			Endif
 		Next
 		
 		Local indices:=New UInt[ aimesh.mNumFaces*3 ]

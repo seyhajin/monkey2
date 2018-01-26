@@ -1214,5 +1214,9 @@ Function SDL_ThreadID:SDL_threadID()
 'FILE="sdl2/SDL_fileystem.h"
 
 Function SDL_GetPrefPath:CString( org:CString,app:CString )
+	
+'FILE="sdl2/SDL_pixels.h"
+
+Function SDL_BYTESPERPIXEL:Int( format:Int )
 
 '${END}

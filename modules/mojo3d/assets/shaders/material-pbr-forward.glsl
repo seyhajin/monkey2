@@ -26,12 +26,13 @@ uniform mat3 i_ModelViewNormalMatrix;
 uniform mat4 i_ModelBoneMatrices[96];
 #endif
 
-//material uniforms
-
 #if MX2_COLORPASS
+uniform vec4  i_Color;
 uniform float i_Alpha;
 #endif
 
+//material uniforms
+//
 #if MX2_COLORPASS && defined( MX2_TEXTURED )
 uniform mat3 m_TextureMatrix;
 #endif
@@ -82,6 +83,7 @@ uniform float r_LightRange;
 //
 varying vec3 v_Position;
 varying vec3 v_Normal;
+varying vec4 v_Color;
 #if MX2_COLORPASS && defined( MX2_TEXTURED )
 varying vec2 v_TexCoord0;
 #if defined( MX2_BUMPMAPPED )
@@ -95,6 +97,7 @@ attribute vec4 a_Position;
 
 #if MX2_COLORPASS
 attribute vec3 a_Normal;
+attribute vec4 a_Color;
 #if defined( MX2_TEXTURED )
 attribute vec2 a_TexCoord0;
 #if defined( MX2_BUMPMAPPED )
@@ -148,6 +151,10 @@ void main(){
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * b_Normal;
 	
+	// vertex color
+	v_Color=a_Color * i_Color;
+	v_Color.a*=i_Alpha;
+	
 #if MX2_COLORPASS && defined( MX2_TEXTURED )
 	// texture coord0
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
@@ -175,6 +182,10 @@ void main(){
 
 	// viewspace normal
 	v_Normal=i_ModelViewNormalMatrix * a_Normal;
+	
+	// vertex color
+	v_Color=a_Color * i_Color;
+	v_Color.a*=i_Alpha;
 	
 #if defined( MX2_TEXTURED )
 	// texture coord0
@@ -224,7 +235,7 @@ uniform vec4 r_FogColor;
 
 float shadowColor(){
 
-	if( v_Position.z>=r_ShadowCSMSplits.w ) return r_ShadowAlpha*0.5;
+	if( v_Position.z>=r_ShadowCSMSplits.w ) return 1.0;//(1.0-r_ShadowAlpha)*0.5;
 
 	vec4 vpos=vec4( v_Position,1.0 );
 	vec2 off;
@@ -397,9 +408,9 @@ void main(){
 #endif
 
 	//perform lighting
-	vec3 frag=lighting( color,emissive,metalness,roughness,occlusion,normal );
+	vec3 frag=lighting( color*v_Color.rgb,emissive,metalness,roughness,occlusion,normal );
 	
-	alpha*=i_Alpha;
+	alpha*=v_Color.a;
 	
 	frag*alpha;
 	
