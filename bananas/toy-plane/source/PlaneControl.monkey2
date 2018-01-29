@@ -45,28 +45,28 @@ Class PlaneControl Extends Behaviour
 		If Keyboard.KeyDown( Key.Left )
 			_azimuthGoal += turnRate
 			_yaw = maxYaw
-			_roll = maxRoll
+			_roll = -maxRoll
 		Else If Keyboard.KeyDown( Key.Right )
 			_azimuthGoal -= turnRate
 			_yaw = -maxYaw
-			_roll = -maxRoll
+			_roll = maxRoll
 		Else
 			_yaw = 0
 			_roll = 0
 		Endif
 		
 		If Keyboard.KeyDown( Key.Up )
-			_pitch = maxPitch
+			_pitch = -maxPitch
 			_ySpeedGoal = -ascentionRate * 2.0
 		Else If Keyboard.KeyDown( Key.Down )
-			_pitch = -maxPitch
+			_pitch = maxPitch
 			_ySpeedGoal = ascentionRate
 		Else
 			_ySpeedGoal = 0
 			_pitch = 0
 		Endif
 
-		_zSpeed = speed * _throttle * delta
+		_zSpeed = -speed * _throttle * delta
 		_ySpeed = Smooth( _ySpeed, _ySpeedGoal, lag, delta )
 		
 		entity.Move( 0, _ySpeed, _zSpeed )
@@ -80,7 +80,7 @@ Class PlaneControl Extends Behaviour
 		
 		camera.LocalRz = plane.LocalRz/2.0
 		
-		target.LocalX = Smooth( target.LocalX, -_yaw/4.0, lag, delta )
+		target.LocalX = Smooth( target.LocalX, _yaw/4.0, lag, delta )
 		
 	End
 	
