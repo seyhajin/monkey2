@@ -280,12 +280,14 @@ Class Gltf2Loader
 					vertices[i].normal.z=-vertices[i].normal.z
 					datap+=stride
 				Next
+			Else
+				Print "Unsupported gltf2 primitive NORMAL format"
 			Endif
 		Endif
 		
 		If prim.COLOR_0 
 			If prim.COLOR_0.componentType=GLTF_FLOAT And prim.COLOR_0.type="VEC4"
-				Print "Gltf2 primitive has colors"
+'				Print "Gltf2 primitive has colors"
 				Local datap:=GetData( prim.COLOR_0 )
 				Local stride:=prim.COLOR_0.bufferView.byteStride ?Else 16
 				For Local i:=0 Until vcount
@@ -295,6 +297,8 @@ Class Gltf2Loader
 					vertices[i].color=UInt(a) Shl 24 | UInt(color.z*a) Shl 16 | UInt(color.y*a) Shl 8 | UInt(color.x*a)
 					datap+=stride
 				Next
+			Else
+				Print "Unsupported gltf2 primitive COLOR_0 format"
 			Endif
 		Endif
 		
@@ -307,6 +311,8 @@ Class Gltf2Loader
 					vertices[i].texCoord0=Cast<Vec2f Ptr>( datap )[0]
 					datap+=stride
 				Next
+			Else
+				Print "Unsupported gltf2 primitive TEXCOORD_0 format"
 			Endif
 		Endif
 		
@@ -328,6 +334,8 @@ Class Gltf2Loader
 					vertices[i].bones=cptr[3] Shl 24 | cptr[2] Shl 16 | cptr[1] Shl 8 | cptr[0]
 					datap+=stride
 				Next
+			Else
+				Print "Unsupported gltf2 primitive JOINTS_0 format"
 			Endif
 		Endif
 		
@@ -340,6 +348,8 @@ Class Gltf2Loader
 					vertices[i].weights=Cast<Vec4f Ptr>( datap )[0]
 					datap+=stride
 				Next
+			Else
+				Print "Unsupported gltf2 primitive WEIGHTS_0 format"
 			Endif
 		Endif
 		
@@ -377,10 +387,12 @@ Class Gltf2Loader
 		
 		Local mesh:=New Mesh( vertices,indices )
 		
-		If prim.TEXCOORD_0 And prim.NORMAL
-			mesh.UpdateTangents()
-		Endif
-		
+		If Not prim.NORMAL mesh.UpdateNormals()
+				
+		If prim.TEXCOORD_0 mesh.UpdateTangents()
+
+'		If prim.TEXCOORD_0 And prim.NORMAL mesh.UpdateTangents()
+			
 		Return mesh
 	End
 	

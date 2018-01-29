@@ -117,8 +117,6 @@ Class Renderer
 		
 		RenderTransparent()
 		
-'		RenderSprites()
-		
 		RenderPostEffects()
 		
 		RenderCopy()
