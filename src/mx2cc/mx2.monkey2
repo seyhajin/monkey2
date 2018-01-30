@@ -43,11 +43,5 @@ Using std.filesystem
 Using std.collections
 Using libc
 
-' Messy, but to update version:
-'
-' 1) Update MX2CC_VERSION below
-' 2) ./updatemx2cc
-' 3) edit .sh and .bat files to use new version (common.sh, common.bat)
-' 4) ./rebuildall
-'
-Const MX2CC_VERSION:="1.1.09"
+'Make sure to rebuildall after changing this!
+Const MX2CC_VERSION:="1.1.10"
