@@ -163,7 +163,7 @@ Function Main()
 	
 	'initial theme
 	'
-	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-warm" )
+	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-prime-blue-regular" )
 
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
 	
