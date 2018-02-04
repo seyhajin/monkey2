@@ -425,7 +425,8 @@ Class GccBuildProduct Extends BuildProduct
 						If i1=-1 Exit
 						tmp=tmp.Slice( 0,i0+1 )+tmp.Slice( i1+1 )
 					Forever
-					tmp+=" -arch armv7"
+					
+					If opts.arch<>"x64" tmp+=" -arch armv7"
 					
 				Endif
 				

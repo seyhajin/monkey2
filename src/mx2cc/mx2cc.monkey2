@@ -24,7 +24,7 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods -target=ios"' monkey libc"
  
 'Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"
 
@@ -65,16 +65,6 @@ Function Main()
 	args=AppArgs()
 #endif
 
-	For Local i:=0 Until args.Length
-		If args[i]="-target=ios"
-			system( "xcrun --sdk iphoneos --show-sdk-path >tmp/_p.txt" )
-			Local p:=LoadString( "tmp/_p.txt" ).Trim()
-			SetEnv( "MX2_IOS_SDK",p )
-			'Print "MX2_IOS_SDK="+p
-			Exit
-		Endif
-	Next
-	
 	LoadEnv( env )
 	
 	Local moddirs:=New StringStack
@@ -517,7 +507,9 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		
 	Case "ios"
 		
-		opts.arch="arm64"
+		opts.arch="armv7 arm64"
+		
+		If Int( GetEnv( "MX2_IOS_USE_SIMULATOR" ) ) opts.arch="x64"
 		
 	Default
 		
@@ -646,10 +638,38 @@ Function ReplaceEnv:String( str:String,lineid:Int )
 		If i2=-1 Fail( "Env config file error at line "+lineid )
 		
 		Local name:=str.Slice( i1+2,i2 ).Trim()
+		
 		Local value:=GetEnv( name )
+		
+		If Not value
+			
+			Select name
+			Case "MX2_IOS_SDK"
+				
+				Local sdk:="iphoneos"
+				
+				If Int( GetEnv( "MX2_IOS_USE_SIMULATOR" ) ) sdk="iphonesimulator"
+		
+				system( "xcrun --sdk "+sdk+" --show-sdk-path >tmp/_p.txt" )
+				
+				value=LoadString( "tmp/_p.txt" ).Trim()
+				
+				SetEnv( "MX2_IOS_SDK",value )
+				
+			Case "MX2_IOS_ARCHS"
+				
+				value="-arch armv7 -arch arm64"
+				
+				If Int( GetEnv( "MX2_IOS_USE_SIMULATOR" ) ) value="-arch x86_64"
+			End
+			
+			If value SetEnv( name,value )
+			
+		Endif
 		
 		str=str.Slice( 0,i1 )+value+str.Slice( i2+1 )
 		i0=i1+value.Length
+		
 	Forever
 	Return ""
 End

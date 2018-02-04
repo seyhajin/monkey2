@@ -124,6 +124,10 @@ Class BuilderInstance
 				
 			If opts.arch="x64" profileName+="_x64"
 				
+		Elseif opts.target="ios"
+			
+			If opts.arch="x64" profileName+="_x64"
+				
 		Endif
 		
 		If opts.productType="app" APP_DIR=ExtractDir( opts.mainSource )

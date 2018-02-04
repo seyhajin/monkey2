@@ -101,6 +101,10 @@ MX2_ANDROID_APP_STL=c++_static
 
 '***** IOS TARGET *****
 
+'Note: must appear BEFORE first use of MX2_IOS_SDK
+'
+MX2_IOS_USE_SIMULATOR=1
+
 'This is now set for you by mx2cc.
 '
 'MX2_IOS_SDK=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.1.sdk
@@ -108,16 +112,20 @@ MX2_ANDROID_APP_STL=c++_static
 MX2_IOS_DEPLOYMENT_TARGET=8.0
 
 'LD options
-MX2_LD_OPTS_IOS=-arch armv7 -arch arm64 -isysroot ${MX2_IOS_SDK}
+MX2_LD_OPTS_IOS=${MX2_IOS_ARCHS} -isysroot ${MX2_IOS_SDK}
 MX2_LD_OPTS_IOS_DEBUG=
 MX2_LD_OPTS_IOS_RELEASE=-O3 
 
 'C compiler options
-MX2_CC_OPTS_IOS=-std=gnu99 -arch armv7 -arch arm64 -miphoneos-version-min=${MX2_IOS_DEPLOYMENT_TARGET} -isysroot ${MX2_IOS_SDK} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+'
+MX2_CC_OPTS_IOS=-std=gnu99 ${MX2_IOS_ARCHS} -miphoneos-version-min=${MX2_IOS_DEPLOYMENT_TARGET} -isysroot ${MX2_IOS_SDK} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+
 MX2_CC_OPTS_IOS_DEBUG=
 MX2_CC_OPTS_IOS_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
-MX2_CPP_OPTS_IOS=-std=c++14 -arch armv7 -arch arm64 -miphoneos-version-min=${MX2_IOS_DEPLOYMENT_TARGET} -isysroot ${MX2_IOS_SDK} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+'
+MX2_CPP_OPTS_IOS=-std=c++11 ${MX2_IOS_ARCHS} -miphoneos-version-min=${MX2_IOS_DEPLOYMENT_TARGET} -isysroot ${MX2_IOS_SDK} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+
 MX2_CPP_OPTS_IOS_DEBUG=-O0 -g
 MX2_CPP_OPTS_IOS_RELEASE=-O3 -DNDEBUG
