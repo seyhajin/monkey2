@@ -103,7 +103,7 @@ MX2_ANDROID_APP_STL=c++_static
 
 'Note: must appear BEFORE first use of MX2_IOS_SDK
 '
-MX2_IOS_USE_SIMULATOR=1
+MX2_IOS_USE_SIMULATOR=0
 
 'This is now set for you by mx2cc.
 '
