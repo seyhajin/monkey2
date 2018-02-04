@@ -16,6 +16,8 @@
     
     #if TARGET_IPHONE_SIMULATOR
     
+    	#define BB_IOS 1
+    
     #elif TARGET_OS_IPHONE
     
     	#define BB_IOS 1
