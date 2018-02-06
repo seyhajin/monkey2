@@ -1,0 +1,5 @@
+openvr/openvr-sdk/bin
+openvr/openvr-sdk/lib
+*.buildv*
+*.products
+
