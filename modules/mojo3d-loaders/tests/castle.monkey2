@@ -38,7 +38,7 @@ Class MyWindow Extends Window
 		
 		'create camera
 		'
-		_camera=New Camera
+		_camera=New Camera( Self )
 		_camera.Near=.1
 		_camera.Far=100
 		_camera.Move( 0,10,-10 )
@@ -71,11 +71,9 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_camera.Render( canvas )
 
-		canvas.Scale( Width/640.0,Height/480.0 )
-		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,1,0,Width,0 )
 	End
 	
 End

@@ -37,7 +37,7 @@ Class MyWindow Extends Window
 		
 		'create camera
 		'
-		_camera=New Camera
+		_camera=New Camera( Self )
 		_camera.AddComponent<FlyBehaviour>()
 		_camera.Near=.1
 		_camera.Far=100
@@ -97,7 +97,7 @@ Class MyWindow Extends Window
 	
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_camera.Render( canvas )
 		
 		canvas.Scale( Width/640.0,Height/480.0 )
 		

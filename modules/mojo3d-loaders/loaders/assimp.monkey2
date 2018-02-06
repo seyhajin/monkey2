@@ -28,7 +28,9 @@ Struct aiMatrix4x4 Extension
 	End
 	
 	Operator To:AffineMat4f()
-		If d1<>0 Or d2<>0 Or d3<>0 Or d4<>1 Print "WARNING! Assimp node matrix is not affine!"
+	
+'		If d1<>0 Or d2<>0 Or d3<>0 Or d4<>1 Print "WARNING! Assimp node matrix is not affine! d1="+d1+", d2="+d2+", d3="+d3+", d4="+d4
+			
 		Return New AffineMat4f(
 			New Vec3f( a1,b1,c1 ),
 			New Vec3f( a2,b2,c2 ),
@@ -96,17 +98,11 @@ Class AssimpLoader
 	
 	Method LoadBonedModel:Model()
 		
-'		#rem
 		Local model:=New Model
 
-'		_nodes[""]=model
-'		_entityIds[""]=_entities.Length
-'		_entities.Add( model )
+		CreateNodes( _scene.mRootNode,model )
 		
-		LoadNode( _scene.mRootNode,model )
-'		#end
-		
-'		Local model:=LoadNode( _scene.mRootNode,Null )
+		LoadNodes( _scene.mRootNode )
 		
 		LoadAnimator( model )
 		
@@ -165,18 +161,16 @@ Class AssimpLoader
 					bp[k]=i0+i
 					Exit
 				Next
+				
 				If k=4 Print "Too many vertex weights"
-
 			Next
-		
+			
 			bones[i0+i].entity=_entities[ _entityIds[ aibone.mName.data ] ]
 			
 			bones[i0+i].offset=Cast<AffineMat4f>( aibone.mOffsetMatrix )
 		Next
 		
 		model.Bones=bones
-		
-		'Print "bones.Length="+bones.Length
 	End
 	
 	Method LoadMesh( aimesh:aiMesh,mesh:Mesh,model:Model,boned:bool )
@@ -198,11 +192,6 @@ Class AssimpLoader
 			
 			If cp
 				Local color:=cp[i]
-				Print "r="+color.r+", g="+color.g+", b="+color.b+", a="+color.a
-				color.r=1
-				color.g=1
-				color.b=0
-				color.a=1
 				Local a:=color.a * 255.0
 				vertices[i].color=UInt(a) Shl 24 | UInt(color.b*a) Shl 16 | UInt(color.g*a) Shl 8 | UInt(color.r*a)
 			Endif
@@ -283,30 +272,25 @@ Class AssimpLoader
 		Next
 	End
 	
-	Method LoadNode:Model( node:aiNode,parent:Model )
-		
+	Method CreateNodes( node:aiNode,parent:Model )
+
 		Local model:=New Model( parent )
-		
 		model.Name=node.mName.data
+		model.LocalMatrix=Cast<AffineMat4f>( node.mTransformation )
 		
-		Local matrix:=Cast<AffineMat4f>( node.mTransformation )
-
-		Local scl:=matrix.m.GetScaling()
-		Local rot:=matrix.m.Scale( 1/scl.x,1/scl.y,1/scl.z )
-		Local pos:=matrix.t
-
-		model.LocalPosition=pos
-		model.LocalBasis=rot
-		model.LocalScale=scl
-		
-		_nodes[ node.mName.data ]=model
-		_entityIds[ node.mName.data ]=_entities.Length
+		_nodes[ model.Name ]=model
+		_entityIds[ model.Name ]=_entities.Length
 		_entities.Push( model )
 		
 		For Local i:=0 Until node.mNumChildren
 			
-			LoadNode( node.mChildren[i],model )
+			CreateNodes( node.mChildren[i],model )
 		Next
+	End
+	
+	Method LoadNodes( node:aiNode )
+		
+		Local model:=Cast<Model>( _nodes[ node.mName.data ] )
 		
 		Local mesh:=New Mesh
 		
@@ -318,9 +302,11 @@ Class AssimpLoader
 			
 			mesh.AddMaterials( 1 )
 			
-			LoadMesh( aimesh,mesh,model,aimesh.mNumBones>0 )
+			Local boned:=aimesh.mNumBones>0
 			
-			materials.Push( LoadMaterial( aimesh,aimesh.mNumBones>0 ) )
+			LoadMesh( aimesh,mesh,model,boned )
+			
+			materials.Push( LoadMaterial( aimesh,boned ) )
 		Next
 		
 		If materials.Length
@@ -328,8 +314,12 @@ Class AssimpLoader
 			model.Mesh=mesh
 			model.Materials=materials.ToArray()
 		Endif
+		
+		For Local i:=0 Until node.mNumChildren
 			
-		Return model
+			LoadNodes( node.mChildren[i] )
+		Next
+		
 	End
 	
 	Method LoadAnimationChannel:AnimationChannel( aichan:aiNodeAnim )
@@ -383,8 +373,9 @@ Class AssimpLoader
 			channels[id]=channel
 			
 '			Print "channel "+id+", numposkeys="+channel.PositionKeys.Length+", numrotkeys="+channel.RotationKeys.Length+", numsclkeys="+channel.ScaleKeys.Length
-		
 		Next
+		
+'		Print "duration="+aianim.mDuration+", mTicksPerSecond="+aianim.mTicksPerSecond
 		
 		Local animation:=New Animation( aianim.mName.data,channels,aianim.mDuration,aianim.mTicksPerSecond,AnimationMode.Looping )
 		
@@ -392,6 +383,8 @@ Class AssimpLoader
 	End
 	
 	Method LoadAnimator:Animator( entity:Entity )
+		
+'		Print "mNumAnimations="+_scene.mNumAnimations
 		
 		If Not _scene.mNumAnimations Return Null
 		
@@ -476,9 +469,11 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 '		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
 		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
 '		flags|=aiProcess_SplitByBoneCount
-		flags|=aiProcess_LimitBoneWeights
-		flags|=aiProcess_FindInvalidData
-		flags|=aiProcess_OptimizeMeshes
+
+'		flags|=aiProcess_LimitBoneWeights
+'		flags|=aiProcess_FindInvalidData
+'		flags|=aiProcess_OptimizeMeshes
+
 '		flags|=aiProcess_OptimizeGraph	'fails quite spectacularly!
 		
 		Local scene:=LoadScene( path,flags )
@@ -498,9 +493,13 @@ Class AssimpMojo3dLoader Extends Mojo3dLoader
 		flags|=aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder | aiProcess_FlipUVs
 		'flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_SortByPType
 		flags|=aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SortByPType
+		
 '		flags|=aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals | aiProcess_Triangulate
+
 		flags|=aiProcess_GenSmoothNormals |aiProcess_Triangulate
+
 '		flags|=aiProcess_SplitByBoneCount
+
 		flags|=aiProcess_LimitBoneWeights
 		flags|=aiProcess_FindInvalidData
 		flags|=aiProcess_OptimizeMeshes

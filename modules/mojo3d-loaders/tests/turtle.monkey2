@@ -31,19 +31,13 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		Print opengl.glGetString( opengl.GL_VERSION )
-		
-		SwapInterval=0
-		
 		'create scene
 		'		
 		_scene=Scene.GetCurrent()
 		
-		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
-		
 		'create camera
 		'
-		_camera=New Camera
+		_camera=New Camera( Self )
 		_camera.Near=.1
 		_camera.Far=100
 		_camera.Move( 0,10,-20 )
@@ -84,7 +78,7 @@ Class MyWindow Extends Window
 			
 		Next
 		
-		_turtle.Animator.Animate( "Walk",1 )
+		_turtle.Animator.Animate( "Walk" )
 	End
 		
 	Method OnRender( canvas:Canvas ) Override
@@ -93,7 +87,7 @@ Class MyWindow Extends Window
 
 		_scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_camera.Render( canvas )
 		
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
