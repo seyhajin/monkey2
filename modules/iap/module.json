@@ -1,0 +1,8 @@
+{
+	"module":"iap",
+	"about":"In App Purchases",
+	"author":"Mark Sibly",
+	"version":"1.0.04",
+	"support":"http://monkeycoder.co.nz",
+	"depends":["jni","mojo"]
+}
