@@ -35,27 +35,16 @@ __NEWPAGES__/
 /src/ted2go-master
 /src/ted2go-github
 
-/modules/cmark
-/modules/lua
-/modules/wdw-game2d
+# Stuff in module manager (TODO: install to different modules dir)
+/modules/html-ws
+/modules/tinyaes
 /modules/portmidi
 /modules/png2polygon
-/modules/linq
-/modules/spine
+/modules/timelinefx
 /modules/pyro-framework
 /modules/pyro-gui
 /modules/pyro-scenegraph
 /modules/pyro-tiled
-/modules/gles30
-/modules/timelinefx
-/modules/admob
-/modules/iap
-/modules/win32
-/modules/tinyaes
-
-/modules/mojo3d-vr
-/modules/steamworks
-/modules/mojolabs
 
 /modules/module-manager/backups
 
