@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -52,9 +53,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef ASSIMP_BUILD_NO_3D_IMPORTER
 
 #include "UnrealLoader.h"
-#include "StreamReader.h"
-#include "ParsingUtils.h"
-#include "fast_atof.h"
+#include <assimp/StreamReader.h>
+#include <assimp/ParsingUtils.h>
+#include <assimp/fast_atof.h>
 #include "ConvertToLHProcess.h"
 
 #include <assimp/Importer.hpp>
@@ -157,7 +158,7 @@ void UnrealImporter::InternReadFile( const std::string& pFile,
     DefaultLogger::get()->debug("UNREAL: uc file is "   + uc_path);
 
     // and open the files ... we can't live without them
-    IOStream* p = pIOHandler->Open(d_path);
+    std::unique_ptr<IOStream> p(pIOHandler->Open(d_path));
     if (!p)
         throw DeadlyImportError("UNREAL: Unable to open _d file");
     StreamReaderLE d_reader(pIOHandler->Open(d_path));
@@ -203,7 +204,7 @@ void UnrealImporter::InternReadFile( const std::string& pFile,
         d_reader.IncPtr(1);
     }
 
-    p = pIOHandler->Open(a_path);
+    p.reset(pIOHandler->Open(a_path));
     if (!p)
         throw DeadlyImportError("UNREAL: Unable to open _a file");
     StreamReaderLE a_reader(pIOHandler->Open(a_path));

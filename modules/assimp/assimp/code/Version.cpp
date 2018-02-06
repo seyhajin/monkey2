@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -46,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ScenePrivate.h"
 
 static const unsigned int MajorVersion = 4;
-static const unsigned int MinorVersion = 0;
+static const unsigned int MinorVersion = 1;
 
 // --------------------------------------------------------------------------------
 // Legal information string - dont't remove this.
@@ -107,34 +108,37 @@ ASSIMP_API unsigned int aiGetCompileFlags ()    {
 #include "revision.h"
 
 // ------------------------------------------------------------------------------------------------
-ASSIMP_API unsigned int aiGetVersionRevision ()
-{
+ASSIMP_API unsigned int aiGetVersionRevision() {
     return GitVersion;
+}
+
+ASSIMP_API const char *aiGetBranchName() {
+    return GitBranch;
 }
 
 // ------------------------------------------------------------------------------------------------
 ASSIMP_API aiScene::aiScene()
 : mFlags(0)
-, mRootNode(NULL)
+, mRootNode(nullptr)
 , mNumMeshes(0)
-, mMeshes(NULL)
+, mMeshes(nullptr)
 , mNumMaterials(0)
-, mMaterials(NULL)
+, mMaterials(nullptr)
 , mNumAnimations(0)
-, mAnimations(NULL)
+, mAnimations(nullptr)
 , mNumTextures(0)
-, mTextures(NULL)
+, mTextures(nullptr)
 , mNumLights(0)
-, mLights(NULL)
+, mLights(nullptr)
 , mNumCameras(0)
-, mCameras(NULL)
+, mCameras(nullptr)
+, mMetaData(nullptr)
 , mPrivate(new Assimp::ScenePrivateData()) {
 	// empty
 }
 
 // ------------------------------------------------------------------------------------------------
-ASSIMP_API aiScene::~aiScene()
-{
+ASSIMP_API aiScene::~aiScene() {
     // delete all sub-objects recursively
     delete mRootNode;
 
@@ -171,5 +175,9 @@ ASSIMP_API aiScene::~aiScene()
             delete mCameras[a];
     delete [] mCameras;
 
+    aiMetadata::Dealloc(mMetaData);
+    mMetaData = nullptr;
+
     delete static_cast<Assimp::ScenePrivateData*>( mPrivate );
 }
+

@@ -2,7 +2,8 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -47,7 +48,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define INCLUDED_AI_BLEND_DNA_INL
 
 #include <memory>
-#include "TinyFormatter.h"
+#include <assimp/TinyFormatter.h>
 
 namespace Assimp {
 namespace Blender {
@@ -585,11 +586,14 @@ template <> inline void Structure :: Convert<int>    (int& dest,const FileDataba
 }
 
 // ------------------------------------------------------------------------------------------------
-template <> inline void Structure :: Convert<short>  (short& dest,const FileDatabase& db) const
+template<> inline void Structure :: Convert<short>  (short& dest,const FileDatabase& db) const
 {
     // automatic rescaling from short to float and vice versa (seems to be used by normals)
     if (name == "float") {
-        dest = static_cast<short>(db.reader->GetF4() * 32767.f);
+        float f = db.reader->GetF4();
+        if ( f > 1.0f )
+            f = 1.0f;
+        dest = static_cast<short>( f * 32767.f);
         //db.reader->IncPtr(-4);
         return;
     }

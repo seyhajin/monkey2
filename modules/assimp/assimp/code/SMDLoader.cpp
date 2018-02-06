@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -49,8 +50,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // internal headers
 #include "SMDLoader.h"
-#include "fast_atof.h"
-#include "SkeletonMeshBuilder.h"
+#include <assimp/fast_atof.h>
+#include <assimp/SkeletonMeshBuilder.h>
 #include <assimp/Importer.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/scene.h>
@@ -450,7 +451,9 @@ void SMDImporter::CreateOutputMeshes()
 // add bone child nodes
 void SMDImporter::AddBoneChildren(aiNode* pcNode, uint32_t iParent)
 {
-    ai_assert(NULL != pcNode && 0 == pcNode->mNumChildren && NULL == pcNode->mChildren);
+    ai_assert( NULL != pcNode );
+    ai_assert( 0 == pcNode->mNumChildren );
+    ai_assert( NULL == pcNode->mChildren);
 
     // first count ...
     for (unsigned int i = 0; i < asBones.size();++i)
@@ -648,12 +651,14 @@ void SMDImporter::ComputeAbsoluteBoneTransformations()
 // create output materials
 void SMDImporter::CreateOutputMaterials()
 {
+    ai_assert( nullptr != pScene );
+
     pScene->mNumMaterials = (unsigned int)aszTextures.size();
     pScene->mMaterials = new aiMaterial*[std::max(1u, pScene->mNumMaterials)];
 
-    for (unsigned int iMat = 0; iMat < pScene->mNumMaterials;++iMat)
-    {
+    for (unsigned int iMat = 0; iMat < pScene->mNumMaterials; ++iMat) {
         aiMaterial* pcMat = new aiMaterial();
+        ai_assert( nullptr != pcMat );
         pScene->mMaterials[iMat] = pcMat;
 
         aiString szName;

@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -448,7 +449,8 @@ void HMPImporter::CreateOutputFaceList(unsigned int width,unsigned int height)
 void HMPImporter::ReadFirstSkin(unsigned int iNumSkins, const unsigned char* szCursor,
     const unsigned char** szCursorOut)
 {
-    ai_assert(0 != iNumSkins && NULL != szCursor);
+    ai_assert( 0 != iNumSkins );
+    ai_assert( nullptr != szCursor);
 
     // read the type of the skin ...
     // sometimes we need to skip 12 bytes here, I don't know why ...

@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -48,7 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "PretransformVertices.h"
 #include "ProcessHelper.h"
 #include <assimp/SceneCombiner.h>
-#include "Exceptional.h"
+#include <assimp/Exceptional.h>
 
 using namespace Assimp;
 
@@ -104,7 +105,7 @@ unsigned int PretransformVertices::CountNodes( aiNode* pcNode )
 
 // ------------------------------------------------------------------------------------------------
 // Get a bitwise combination identifying the vertex format of a mesh
-unsigned int PretransformVertices::GetMeshVFormat(aiMesh* pcMesh)
+unsigned int PretransformVertices::GetMeshVFormat( aiMesh* pcMesh )
 {
     // the vertex format is stored in aiMesh::mBones for later retrieval.
     // there isn't a good reason to compute it a few hundred times
@@ -160,6 +161,11 @@ void PretransformVertices::CollectData( aiScene* pcScene, aiNode* pcNode, unsign
             unsigned int& num_ref = num_refs[pcNode->mMeshes[i]];
             ai_assert(0 != num_ref);
             --num_ref;
+            // Save the name of the last mesh
+            if (num_ref==0)
+            {
+                pcMeshOut->mName = pcMesh->mName;
+            }
 
             if (identity)   {
                 // copy positions without modifying them
@@ -626,9 +632,10 @@ void PretransformVertices::Execute( aiScene* pScene)
 
         // now delete all nodes in the scene and build a new
         // flat node graph with a root node and some level 1 children
+        aiNode* newRoot = new aiNode();
+        newRoot->mName = pScene->mRootNode->mName;
         delete pScene->mRootNode;
-        pScene->mRootNode = new aiNode();
-        pScene->mRootNode->mName.Set("<dummy_root>");
+        pScene->mRootNode = newRoot;
 
         if (1 == pScene->mNumMeshes && !pScene->mNumLights && !pScene->mNumCameras)
         {
@@ -644,9 +651,10 @@ void PretransformVertices::Execute( aiScene* pScene)
             // generate mesh nodes
             for (unsigned int i = 0; i < pScene->mNumMeshes;++i,++nodes)
             {
-                aiNode* pcNode = *nodes = new aiNode();
+                aiNode* pcNode = new aiNode();
+                *nodes = pcNode;
                 pcNode->mParent = pScene->mRootNode;
-                pcNode->mName.length = ::ai_snprintf(pcNode->mName.data,MAXLEN,"mesh_%u",i);
+                pcNode->mName = pScene->mMeshes[i]->mName;
 
                 // setup mesh indices
                 pcNode->mNumMeshes = 1;
@@ -656,7 +664,8 @@ void PretransformVertices::Execute( aiScene* pScene)
             // generate light nodes
             for (unsigned int i = 0; i < pScene->mNumLights;++i,++nodes)
             {
-                aiNode* pcNode = *nodes = new aiNode();
+                aiNode* pcNode = new aiNode();
+                *nodes = pcNode;
                 pcNode->mParent = pScene->mRootNode;
                 pcNode->mName.length = ai_snprintf(pcNode->mName.data, MAXLEN, "light_%u",i);
                 pScene->mLights[i]->mName = pcNode->mName;
@@ -664,7 +673,8 @@ void PretransformVertices::Execute( aiScene* pScene)
             // generate camera nodes
             for (unsigned int i = 0; i < pScene->mNumCameras;++i,++nodes)
             {
-                aiNode* pcNode = *nodes = new aiNode();
+                aiNode* pcNode = new aiNode();
+                *nodes = pcNode;
                 pcNode->mParent = pScene->mRootNode;
                 pcNode->mName.length = ::ai_snprintf(pcNode->mName.data,MAXLEN,"cam_%u",i);
                 pScene->mCameras[i]->mName = pcNode->mName;

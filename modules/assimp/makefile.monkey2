@@ -13,6 +13,7 @@ Namespace assimp
 #Import "assimp/code/Assimp.cpp"
 #Import "assimp/code/BaseImporter.cpp"
 #Import "assimp/code/BaseProcess.cpp"
+#Import "assimp/code/EmbedTexturesProcess.cpp"
 #Import "assimp/code/PostStepRegistry.cpp"
 #Import "assimp/code/ImporterRegistry.cpp"
 #Import "assimp/code/DefaultIOStream.cpp"

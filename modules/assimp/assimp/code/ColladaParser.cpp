@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -49,13 +50,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sstream>
 #include <stdarg.h>
 #include "ColladaParser.h"
-#include "fast_atof.h"
-#include "ParsingUtils.h"
-#include "StringUtils.h"
+#include <assimp/fast_atof.h>
+#include <assimp/ParsingUtils.h>
+#include <assimp/StringUtils.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/light.h>
-#include "TinyFormatter.h"
+#include <assimp/TinyFormatter.h>
 
 #include <memory>
 
@@ -224,7 +225,7 @@ void ColladaParser::ReadStructure()
 }
 
 // ------------------------------------------------------------------------------------------------
-// Reads asset informations such as coordinate system informations and legal blah
+// Reads asset information such as coordinate system information and legal blah
 void ColladaParser::ReadAssetInfo()
 {
     if( mReader->isEmptyElement())
@@ -2231,7 +2232,7 @@ void ColladaParser::ReadIndexData( Mesh* pMesh)
     }
 
 #ifdef ASSIMP_BUILD_DEBUG
-	if (primType != Prim_TriFans && primType != Prim_TriStrips &&
+	if (primType != Prim_TriFans && primType != Prim_TriStrips && primType != Prim_LineStrip &&
         primType != Prim_Lines) { // this is ONLY to workaround a bug in SketchUp 15.3.331 where it writes the wrong 'count' when it writes out the 'lines'.
         ai_assert(actualPrimitives == numPrimitives);
     }
@@ -2400,6 +2401,10 @@ size_t ColladaParser::ReadPrimitives( Mesh* pMesh, std::vector<InputChannel>& pP
         size_t numberOfVertices = indices.size() / numOffsets;
         numPrimitives = numberOfVertices - 2;
     }
+    if (pPrimType == Prim_LineStrip) {
+        size_t numberOfVertices = indices.size() / numOffsets;
+        numPrimitives = numberOfVertices - 1;
+    }
 
     pMesh->mFaceSize.reserve( numPrimitives);
     pMesh->mFacePosIndices.reserve( indices.size() / numOffsets);
@@ -2415,6 +2420,11 @@ size_t ColladaParser::ReadPrimitives( Mesh* pMesh, std::vector<InputChannel>& pP
                 numPoints = 2;
                 for (size_t currentVertex = 0; currentVertex < numPoints; currentVertex++)
                     CopyVertex(currentVertex, numOffsets, numPoints, perVertexOffset, pMesh, pPerIndexChannels, currentPrimitive, indices);
+                break;
+            case Prim_LineStrip:
+                numPoints = 2;
+                for (size_t currentVertex = 0; currentVertex < numPoints; currentVertex++)
+                    CopyVertex(currentVertex, numOffsets, 1, perVertexOffset, pMesh, pPerIndexChannels, currentPrimitive, indices);
                 break;
             case Prim_Triangles:
                 numPoints = 3;
@@ -2460,8 +2470,7 @@ void ColladaParser::CopyVertex(size_t currentVertex, size_t numOffsets, size_t n
     size_t baseOffset = currentPrimitive * numOffsets * numPoints + currentVertex * numOffsets;
 
     // don't overrun the boundaries of the index list
-    size_t maxIndexRequested = baseOffset + numOffsets - 1;
-    ai_assert(maxIndexRequested < indices.size());
+    ai_assert((baseOffset + numOffsets - 1) < indices.size());
 
     // extract per-vertex channels using the global per-vertex offset
     for (std::vector<InputChannel>::iterator it = pMesh->mPerVertexData.begin(); it != pMesh->mPerVertexData.end(); ++it)

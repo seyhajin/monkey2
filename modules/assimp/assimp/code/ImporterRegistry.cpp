@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -48,7 +49,7 @@ corresponding preprocessor flag to selectively disable formats.
 */
 
 #include <vector>
-#include "BaseImporter.h"
+#include <assimp/BaseImporter.h>
 
 // ------------------------------------------------------------------------------------------------
 // Importers
@@ -169,7 +170,7 @@ corresponding preprocessor flag to selectively disable formats.
 #   include "NDOLoader.h"
 #endif
 #ifndef ASSIMP_BUILD_NO_IFC_IMPORTER
-#   include "IFCLoader.h"
+#   include "Importer/IFC/IFCLoader.h"
 #endif
 #ifndef ASSIMP_BUILD_NO_XGL_IMPORTER
 #   include "XGLLoader.h"
@@ -182,6 +183,7 @@ corresponding preprocessor flag to selectively disable formats.
 #endif
 #ifndef ASSIMP_BUILD_NO_GLTF_IMPORTER
 #   include "glTFImporter.h"
+#   include "glTF2Importer.h"
 #endif
 #ifndef ASSIMP_BUILD_NO_C4D_IMPORTER
 #   include "C4DImporter.h"
@@ -336,6 +338,7 @@ void GetImporterInstanceList(std::vector< BaseImporter* >& out)
 #endif
 #if ( !defined ASSIMP_BUILD_NO_GLTF_IMPORTER )
     out.push_back( new glTFImporter() );
+    out.push_back( new glTF2Importer() );
 #endif
 #if ( !defined ASSIMP_BUILD_NO_C4D_IMPORTER )
     out.push_back( new C4DImporter() );

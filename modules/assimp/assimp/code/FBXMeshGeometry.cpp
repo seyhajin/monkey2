@@ -2,7 +2,8 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -243,7 +244,6 @@ const unsigned int* MeshGeometry::ToOutputVertexIndex( unsigned int in_index, un
     ai_assert( m_mapping_counts.size() == m_mapping_offsets.size() );
     count = m_mapping_counts[ in_index ];
 
-//    ai_assert( count != 0 );
     ai_assert( m_mapping_offsets[ in_index ] + count <= m_mappings.size() );
 
     return &m_mappings[ m_mapping_offsets[ in_index ] ];
@@ -434,7 +434,11 @@ void ResolveVertexDataArray(std::vector<T>& data_out, const Scope& source,
     // deal with this more elegantly and with less redundancy, but right
     // now it seems unavoidable.
     if (MappingInformationType == "ByVertice" && ReferenceInformationType == "Direct") {
-		std::vector<T> tempData;
+        if ( !HasElement( source, indexDataElementName ) ) {
+            return;
+        }
+
+        std::vector<T> tempData;
 		ParseVectorDataArray(tempData, GetRequiredElement(source, dataElementName));
 
         data_out.resize(vertex_count);
@@ -451,10 +455,12 @@ void ResolveVertexDataArray(std::vector<T>& data_out, const Scope& source,
 		ParseVectorDataArray(tempData, GetRequiredElement(source, dataElementName));
 
         data_out.resize(vertex_count);
+        if ( !HasElement( source, indexDataElementName ) ) {
+            return;
+        }
 
         std::vector<int> uvIndices;
         ParseVectorDataArray(uvIndices,GetRequiredElement(source,indexDataElementName));
-
         for (size_t i = 0, e = uvIndices.size(); i < e; ++i) {
 
             const unsigned int istart = mapping_offsets[i], iend = istart + mapping_counts[i];

@@ -325,6 +325,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     "PP_FD_REMOVE"
 
 // ---------------------------------------------------------------------------
+/**
+ *  @brief  Configures the #aiProcess_FindDegenerates to check the area of a
+ *  trinagle to be greates than e-6. If this is not the case the triangle will
+ *  be removed if #AI_CONFIG_PP_FD_REMOVE is set to true.
+ */
+#define AI_CONFIG_PP_FD_CHECKAREA \
+    "PP_FD_CHECKAREA"
+
+// ---------------------------------------------------------------------------
 /** @brief Configures the #aiProcess_OptimizeGraph step to preserve nodes
  * matching a name in a given list.
  *
@@ -690,17 +699,15 @@ enum aiComponent
 #define AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES \
     "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES"
 
-
 // ---------------------------------------------------------------------------
-/** @brief Set whether the fbx importer will search for embedded loaded textures, where no embedded texture data is provided.
+/** @brief Set whether the fbx importer will use the legacy embedded texture naming.
 *
 * The default value is false (0)
 * Property type: bool
 */
-#define AI_CONFIG_IMPORT_FBX_SEARCH_EMBEDDED_TEXTURES \
-	"IMPORT_FBX_SEARCH_EMBEDDED_TEXTURES"
-	
-	
+#define AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING \
+	"AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING"
+
 // ---------------------------------------------------------------------------
 /** @brief  Set the vertex animation keyframe to be imported
  *

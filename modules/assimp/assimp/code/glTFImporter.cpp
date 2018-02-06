@@ -2,7 +2,8 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -42,8 +43,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef ASSIMP_BUILD_NO_GLTF_IMPORTER
 
 #include "glTFImporter.h"
-#include "StringComparison.h"
-#include "StringUtils.h"
+#include <assimp/StringComparison.h>
+#include <assimp/StringUtils.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -98,26 +99,21 @@ const aiImporterDesc* glTFImporter::GetInfo() const
     return &desc;
 }
 
-bool glTFImporter::CanRead(const std::string& pFile, IOSystem* pIOHandler, bool checkSig) const
+bool glTFImporter::CanRead(const std::string& pFile, IOSystem* pIOHandler, bool /* checkSig */) const
 {
-    const std::string& extension = GetExtension(pFile);
+    const std::string &extension = GetExtension(pFile);
 
-    if (extension == "gltf" || extension == "glb")
-        return true;
+    if (extension != "gltf" && extension != "glb")
+        return false;
 
-    if ((checkSig || !extension.length()) && pIOHandler) {
-        char buffer[4];
-
-        std::unique_ptr<IOStream> pStream(pIOHandler->Open(pFile));
-        if (pStream && pStream->Read(buffer, sizeof(buffer), 1) == 1) {
-            if (memcmp(buffer, AI_GLB_MAGIC_NUMBER, sizeof(buffer)) == 0) {
-                return true; // Has GLB header
-            }
-            else if (memcmp(buffer, "{\r\n ", sizeof(buffer)) == 0
-                    || memcmp(buffer, "{\n  ", sizeof(buffer)) == 0) {
-                // seems a JSON file, and we're the only format that can read them
-                return true;
-            }
+    if (pIOHandler) {
+        glTF::Asset asset(pIOHandler);
+        try {
+            asset.Load(pFile, extension == "glb");
+            std::string version = asset.asset.version;
+            return !version.empty() && version[0] == '1';
+        } catch (...) {
+            return false;
         }
     }
 
@@ -159,7 +155,7 @@ static void CopyValue(const glTF::mat4& v, aiMatrix4x4& o)
     o.a4 = v[12]; o.b4 = v[13]; o.c4 = v[14]; o.d4 = v[15];
 }
 
-inline void SetMaterialColorProperty(std::vector<int>& embeddedTexIdxs, Asset& r, glTF::TexProperty prop, aiMaterial* mat,
+inline void SetMaterialColorProperty(std::vector<int>& embeddedTexIdxs, Asset& /*r*/, glTF::TexProperty prop, aiMaterial* mat,
     aiTextureType texType, const char* pKey, unsigned int type, unsigned int idx)
 {
     if (prop.texture) {
@@ -179,9 +175,7 @@ inline void SetMaterialColorProperty(std::vector<int>& embeddedTexIdxs, Asset& r
     else {
         aiColor4D col;
         CopyValue(prop.color, col);
-        if (col.r != 1.f || col.g != 1.f || col.b != 1.f || col.a != 1.f) {
-            mat->AddProperty(&col, 1, pKey, type, idx);
-        }
+        mat->AddProperty(&col, 1, pKey, type, idx);
     }
 }
 
@@ -241,6 +235,7 @@ static inline void SetFace(aiFace& face, int a, int b, int c)
     face.mIndices[2] = c;
 }
 
+#ifdef ASSIMP_BUILD_DEBUG
 static inline bool CheckValidFacesIndices(aiFace* faces, unsigned nFaces, unsigned nVerts)
 {
     for (unsigned i = 0; i < nFaces; ++i) {
@@ -252,6 +247,7 @@ static inline bool CheckValidFacesIndices(aiFace* faces, unsigned nFaces, unsign
     }
     return true;
 }
+#endif // ASSIMP_BUILD_DEBUG
 
 void glTFImporter::ImportMeshes(glTF::Asset& r)
 {
@@ -621,7 +617,7 @@ void glTFImporter::ImportEmbeddedTextures(glTF::Asset& r)
 
     // Add the embedded textures
     for (size_t i = 0; i < r.images.Size(); ++i) {
-        Image img = r.images[i];
+        Image &img = r.images[i];
         if (!img.HasData()) continue;
 
         int idx = mScene->mNumTextures++;
@@ -677,7 +673,7 @@ void glTFImporter::InternReadFile(const std::string& pFile, aiScene* pScene, IOS
     //pScene->mFlags |= AI_SCENE_FLAGS_NON_VERBOSE_FORMAT;
 	MakeVerboseFormatProcess process;
     process.Execute(pScene);
-    
+
 
     if (pScene->mNumMeshes == 0) {
         pScene->mFlags |= AI_SCENE_FLAGS_INCOMPLETE;
