@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.08"
+Const MX2CC_VERSION:="1.1.10"
 
 Const RELEASE_SUFFIX:=""
 
@@ -14,12 +14,8 @@ Const OUTPUT:="Monkey2-v"+MX2CC_VERSION+RELEASE_SUFFIX
 Const IGNORE:="
 .gitignore
 src/c2mx2
+src/ted2go-github
 src/createrelease
-modules/admob
-modules/iap
-modules/win32
-modules/linq
-modules/gles30
 bin/ted2.state.json
 bin/ted2_windows/state.json
 bin/ted2_macos.app/Contents/MacOS/state.json
@@ -71,7 +67,22 @@ Function CopyFiles( dir:String )
 			Else If file.EndsWith( ".products" )
 				
 				Continue
-			
+				
+			Else If dir.EndsWith( "/openvr-sdk/bin" )
+				
+#If __TARGET__="windows"
+				If Not file.EndsWith( "win32" ) And Not file.EndsWith( "win64" ) Continue
+#else				
+				Continue
+#endif
+			Else If dir.EndsWith( "/openvr-sdk/lib" )
+				
+#If __TARGET__="windows"
+				If Not file.EndsWith( "win32" ) And Not file.EndsWith( "win64" ) Continue
+#else				
+				Continue
+#endif
+				
 			Else If file.Contains( ".buildv" )
 				
 				If ExtractDir( dir )<>"modules/" Or Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
@@ -82,6 +93,7 @@ Function CopyFiles( dir:String )
 				If file.StartsWith( "android_" ) Continue
 				If file.StartsWith( "ios_" ) Continue
 				If file.EndsWith( "_msvc" )  Continue
+				If file.EndsWith( "_x64" ) Continue
 				If file="build" Continue
 				If file="src" Continue
 			
