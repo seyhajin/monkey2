@@ -75,28 +75,23 @@ Class MyWindow Extends Window
 		
 		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )
 		
-		'Enables VR: must happen before Renderer.GetCurrent()!
+		'Enables VR
 		'
 		_renderer=New VRRenderer
 		
-		'Use more detailed CSM shadow split distances to compensate for the much nearer near clip plane.
-		'
-		_renderer.CSMSplits=New Float[]( 2,4,16,256 )
-		
 		_renderer.TrackingSpace=VRTrackingSpace.Standing
 		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 
-		'very dark!		
-		'_scene.EnvColor=Color.Black
-		'_scene.ClearColor=Color.Black
-		'_scene.AmbientLight=Color.Black
-		
+		'Use more detailed CSM shadow split distances to compensate for the much nearer near clip plane.
+		'
+		_scene.CSMSplits=New Float[]( 2,4,16,256 )
+
 		'create camera
 		'
 		_camera=New Camera
-		_camera.Near=.01		'Note: near clip plane 1 centimeter from camera so we can look at things nice and close up.
-		_camera.Far=100			'camera far/near ratio is probably a bit much
+		_camera.Near=.01		'near clip plane 1 centimeter from camera so we can look at things nice and close up.
+		_camera.Far=100			'camera far/near ratio is probably a bit much here, might give FP precision problems...
 		
 		'create light
 		'
@@ -104,17 +99,14 @@ Class MyWindow Extends Window
 		_light.Rotate( 75,15,0 )
 		_light.CastsShadow=True
 		
-		'ground material
-		'
-		Local groundMaterial:=New PbrMaterial( Color.Green,0,1 )
-		
 		'create ground
 		'
+		Local groundMaterial:=New PbrMaterial( Color.Green,0,1 )
 		Local groundBox:=New Boxf( -50,-.1,-50,50,0,50 )
 		_ground=Model.CreateBox( groundBox,1,1,1,groundMaterial )
 		_ground.CastsShadow=False
 		
-		'purple rain!
+		'create particles - a bit crappy, need to offer particle algorithms.
 		'
 		_particles=New ParticleSystem( 15000 )
 		_particles.Move( 0,2,0 )
@@ -165,8 +157,6 @@ Class MyWindow Extends Window
 		Local ctrlModel:=Model.Load( "asset::vivecontroller.gltf" )
 		ctrlModel.Mesh.TransformVertices( AffineMat4f.Rotation( -Pi/2,0,0 ) )
 		
-'		Local ctrlMaterial:=New PbrMaterial( Color.Black,0.0,1.0 )
-'		_ctrlModel=Model.CreateCylinder( .03,.23,Axis.Z,24,ctrlMaterial )
 		
 		_ctrls[0]=ctrlModel
 		_ctrls[1]=ctrlModel.Copy()
@@ -194,10 +184,9 @@ Class MyWindow Extends Window
 		
 		If _renderer.Active _scene.Update()
 		
-		_scene.Render( canvas,_camera )
+		_camera.Render( canvas )
 
 		'Done!
-'		_renderer.LeftEyeImage.Scale=New Vec2f( -1,-1 )
 		canvas.DrawRect( 0,Height,Width,-Height,_renderer.LeftEyeImage )
 
 		canvas.Scale( Width/640.0,Height/480.0 )
