@@ -1,4 +1,8 @@
 
+***** Monkey2 v1.1.10 *****
+
+Cleaned up dependency system in mx2cc a bit - you'll need to rebuild all.
+
 Added simple support for iphone simulator. Alas, I've had to implement this as a sort of pseudo target: set MX2_IOS_USE_SIMULATOR=1 in env_macos.txt to enable simulator and rebuild modules. You'll need to change this env var to switch between simulator/hardware builds, you don't have to rebuild modules each time you switch though. Also note that apps builds to the same product project. Far from elegant sorry, I may be able to do something with lipo etc eventually.
 
 Mojo3d camera's can now be attached to a view, which will take care of autoresizing camera viewport etc.
