@@ -181,7 +181,7 @@ End
 
 Function Main()
 
-	Print "Hello World!"
+	Print "Creating release..."
 
 	ChangeDir( AppDir() )
 	
@@ -197,9 +197,6 @@ Function Main()
 #else
 	desktop=String.FromCString( getenv( "HOME" ) )+"/Desktop/"
 #endif
-	
-	Print "current="+CurrentDir()
-	Print "desktop="+desktop
 	
 	output=desktop+OUTPUT
 

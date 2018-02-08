@@ -449,12 +449,15 @@ Class GccBuildProduct Extends BuildProduct
 				SaveString( buf.Join( "~n" ),deps )
 				
 				uptodate=True
-				
 			Endif
 			
 			If uptodate
-			
-				Local lines:=LoadString( deps ).Split( "~n" )
+				
+				Local str:=LoadString( deps )
+				
+				If Not str Return obj
+				
+				Local lines:=str.Split( "~n" )
 				
 				For Local line:=Eachin lines
 					
