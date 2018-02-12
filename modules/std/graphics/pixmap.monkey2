@@ -55,6 +55,14 @@ Class Pixmap Extends Resource
 		_data=data
 		_pitch=pitch
 	End
+	
+	#rem monkeydoc The width and height of the pixmap.
+	
+	#end
+	Property Size:Vec2i()
+		
+		Return New Vec2i( _width,_height )
+	End
 
 	#rem monkeydoc The pixmap width.
 	
