@@ -52,8 +52,8 @@ Class BloomEffect Extends PostEffect
 			_target0?.Discard()
 			_target1?.Discard()
 			
-			_texture0=New Texture( rsize.x,rsize.y,rtexture.Format,Null )
-			_texture1=New Texture( rsize.x,rsize.y,rtexture.Format,Null )
+			_texture0=New Texture( rsize.x,rsize.y,rtexture.Format,TextureFlags.Dynamic|TextureFlags.Filter )
+			_texture1=New Texture( rsize.x,rsize.y,rtexture.Format,TextureFlags.Dynamic|TextureFlags.Filter )
 
 			_target0=New RenderTarget( New Texture[]( _texture0 ),Null )
 			_target1=New RenderTarget( New Texture[]( _texture1 ),Null )
