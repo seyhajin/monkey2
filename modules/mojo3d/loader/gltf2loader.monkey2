@@ -182,6 +182,8 @@ Class Gltf2Loader
 			
 		Local mat:=New PbrMaterial( boned )
 		
+		mat.Name=material.name
+		
 		mat.Uniforms.LinearColors=True
 		
 		If baseColorTexture mat.ColorTexture=baseColorTexture

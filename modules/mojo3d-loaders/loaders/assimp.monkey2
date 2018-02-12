@@ -256,6 +256,8 @@ Class AssimpLoader
 
 		Local material:=New PbrMaterial( boned )
 		
+		material.Name=name
+		
 		If diffuseTexture material.ColorTexture=diffuseTexture
 		material.ColorFactor=diffuseColor
 		

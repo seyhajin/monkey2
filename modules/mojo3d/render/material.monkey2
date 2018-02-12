@@ -9,6 +9,17 @@ Class Material Extends Resource
 	#end
 	Method Copy:Material() abstract
 	
+	#rem monkeydoc Material name.
+	#end
+	Property Name:String()
+		
+		Return _name
+	
+	Setter( name:String )
+		
+		_name=name
+	End
+	
 	#Rem monkeydoc @hidden The material uniforms.
 	
 	TODO: Should really be protected...
@@ -133,7 +144,8 @@ Class Material Extends Resource
 	End
 	
 	Private
-
+	
+	Field _name:String
 	Field _uniforms:UniformBlock
 	Field _blendMode:BlendMode
 	Field _cullMode:CullMode
