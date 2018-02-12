@@ -298,7 +298,7 @@ Class GraphicsDevice
 		
 		If Not _scissorTest glDisable( GL_SCISSOR_TEST )
 		
-		_modified=true
+		_modified=True
 
 		glCheck()
 	End
@@ -321,7 +321,7 @@ Class GraphicsDevice
 			Next
 		End
 		
-		_modified=true
+		_modified=True
 
 		glCheck()
 	End
