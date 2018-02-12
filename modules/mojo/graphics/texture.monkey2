@@ -67,19 +67,97 @@ Function glType:GLenum( format:PixelFormat )
 	Return GL_UNSIGNED_BYTE
 End
 
+Function ClearTexImage2D( glTarget:GLenum,width:Int,height:Int,format:PixelFormat,color:Color )
+	
+	glCheck()
+	
+	Local gliformat:=glInternalFormat( format )
+	Local glformat:=glFormat( format )
+	Local gltype:=glType( format )
+	
+	glTexImage2D( glTarget,0,gliformat,width,height,0,glformat,gltype,Null )
+	
+	If Not IsDepth( format )
+		
+		Local image:=New Pixmap( width,1,format )
+		image.Clear( color )
+		
+		For Local iy:=0 Until height
+			glTexSubImage2D( glTarget,0,0,iy,width,1,glformat,gltype,image.Data )
+		Next
+		
+		glFlush() 'macos nvidia bug!
+	
+	Endif
+	
+	glCheck()
+End
+
+Function UploadTexImage2D( glTarget:GLenum,image:Pixmap,mipmap:Bool,envface:Bool )
+	
+	glCheck()
+	
+	Local format:=image.Format
+	
+	Local gliformat:=glInternalFormat( format )
+	Local glformat:=glFormat( format )
+	Local gltype:=glType( format )
+	
+	Local mip:=0
+	
+	Repeat
+		
+		Local width:=image.Width,height:=image.Height
+
+		If envface		
+			For Local y:=0 until height
+				Local p:=image.PixelPtr( 0,y )
+				'write miplevel to alpha!
+				For Local x:=0 Until width
+					p[x*4+3]=mip
+				Next
+			Next
+		Endif
+		
+		If image.Pitch=width * image.Depth
+			glTexImage2D( glTarget,mip,gliformat,width,height,0,glformat,gltype,image.Data )
+			glCheck()
+		Else
+			glTexImage2D( glTarget,mip,gliformat,width,height,0,glformat,gltype,Null )
+			glCheck()
+			For Local y:=0 Until height
+				glTexSubImage2D( glTarget,mip,0,y,width,1,glformat,gltype,image.PixelPtr( 0,y ) )
+				glCheck()
+			Next
+		Endif
+		
+		glFlush() 'macos nvidia bug!
+		
+		If Not mipmap Or Not envface Exit
+		
+		If image.Width=1 And image.Height=1 Exit
+		image=image.MipHalve()
+		mip+=1
+	Forever
+	
+	If mipmap And Not envface glGenerateMipmap( glTarget )
+	
+	glCheck()
+End
+
 Public
 
 #rem monkeydoc Texture flags.
 
 | TextureFlags	| Description
 |:--------------|:-----------
-| Dynamic		| Texture is frequently updated. This flag should be set if the texture contents are regularly updated and don't need to be preserved.
 | WrapS			| Wrap S texture coordinates
 | WrapT			| Wrap T texture coordinates
+| WrapST		| Enable WrapS and WrapT.
 | Filter		| Enable magnification filtering
 | Mipmap		| Enable minification mipmapping, and minification filtering if Filter enabled.
-| WrapST		| Enable WrapS and WrapT.
 | FilterMipmap	| Enable Filter and Mipmap.
+| Dynamic		| Texture is frequently updated. This flag should be set if the texture contents are regularly updated and don't need to be preserved.
 #end
 Enum TextureFlags
 	None=			$0000
@@ -88,8 +166,8 @@ Enum TextureFlags
 	Filter=			$0004
 	Mipmap=			$0008
 	
-	Dynamic=		$00100
-	Cubemap=		$00200
+	Dynamic=		$0100
+	Cubemap=		$0200
 	
 	WrapST=			WrapS|WrapT
 	FilterMipmap=	Filter|Mipmap
@@ -110,113 +188,57 @@ End
 #end
 Class Texture Extends Resource
 	
-	Private
-	
-	#rem monkeydoc Creates a new texture.
-	
-	The config setting "MOJO\_TEXTURE\_MAX\_ANISOTROPY" can be used to set the new texture's max anisotropy value.
-
-	If this config setting does not exist, the texture's max anisotropy is set to the max level.
-		
-	Config settings may be changed using the [[std::std.filesystem.SetConfig|SetConfig]] function.
-	
-	#end
-	Method New( face:GLenum,cubeMap:Texture )
-		
-		_size=cubeMap._size
-		_format=cubeMap._format
-		_flags=cubeMap._flags
-		
-		_glTarget=face
-		_glInternalFormat=cubeMap._glInternalFormat
-		_glFormat=cubeMap._glFormat
-		_glType=cubeMap._glType
-
-		_cubeMap=cubeMap
-	End
-	
-	Public
-	
-	Method New( pixmap:Pixmap,flags:TextureFlags )
-
-		_managed=pixmap
-		_size=New Vec2i( pixmap.Width,pixmap.Height )
-		_format=pixmap.Format
-		_flags=flags
-		
-		_glTarget=_flags & TextureFlags.Cubemap ? GL_TEXTURE_CUBE_MAP Else GL_TEXTURE_2D
-		_glInternalFormat=glInternalFormat( _format )
-		_glFormat=glFormat( _format )
-		_glType=glType( _format )
-		
-		If _flags & TextureFlags.Cubemap
-			
-			If _size.x/4*3=_size.y
-				_size.x/=4
-				_size.y/=3
-			Else If _size.x<>_size.y
-				RuntimeError( "Invalid Cubemap size" )
-			Endif
-			
-		Endif
-		
-#If Not __DESKTOP_TARGET__
-		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
-#Endif
-
-		If _flags & TextureFlags.Dynamic
-			PastePixmap( _managed,0,0 )
-		Endif
-	End
-	
 	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
 		
-		If flags & TextureFlags.Cubemap
-			Assert( width=height,"Invalid cubemap size" )
-			Assert( flags & TextureFlags.Dynamic,"Cubemaps must be dynamic" )
-		Endif
-
-		_managed=Null
-		_size=New Vec2i( width,height )
-		_format=format
-		_flags=flags
-
-		_glTarget=_flags & TextureFlags.Cubemap ? GL_TEXTURE_CUBE_MAP Else GL_TEXTURE_2D
-		_glInternalFormat=glInternalFormat( _format )
-		_glFormat=glFormat( _format )
-		_glType=glType( _format )
+		If Not flags DebugStop()
 		
-		#rem
-		If _flags & TextureFlags.Cubemap
+		Init( width,height,format,flags )
+	End
+	
+	Method New( pixmap:Pixmap,flags:TextureFlags )
+		
+		If flags & TextureFlags.Cubemap
+
+			'Nasty: cubemap mips always have mip level in alpha channel for env maps
+			'
+			If flags & TextureFlags.Mipmap And pixmap.Format<>PixelFormat.RGBA8
+				
+				pixmap=pixmap.Convert( PixelFormat.RGBA8 )
+			Endif
+
+			Local size:=pixmap.Size
 			
-			If _size.x/4*3=_size.y
-				_size.x/=4
-				_size.y/=3
-			Else If _size.x<>_size.y
-				RuntimeError( "Invalid Cubemap size" )
+			If size.x=size.y			'1x1?
+				
+				Init( size.x,size.y,pixmap.Format,flags )
+				
+				For Local i:=0 Until 6
+					_cubeFaces[i].PastePixmap( pixmap,0,0 )
+				Next
+				
+			Else If size.x/4*3=size.y	'4x3?
+				
+				size=New Vec2i( size.x/4,size.y/3 )
+				
+				Init( size.x,size.y,pixmap.Format,flags )
+				
+				Const offsets:=New Int[]( 2,1, 0,1, 1,0, 1,2, 1,1, 3,1 )
+				
+				For Local i:=0 Until 6
+					Local face:=pixmap.Window( offsets[i*2]*size.x,offsets[i*2+1]*size.y,size.x,size.y )
+					_cubeFaces[i].PastePixmap( face,0,0 )
+				Next
+				
+			Else
+				RuntimeError( "Invalid Cubemap image size" )
 			Endif
 			
-		Endif
-		#end
-
-#If Not __DESKTOP_TARGET__
-		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
-#Endif
-		If _flags & TextureFlags.Cubemap
-
-			_cubeFaces=New Texture[6]
-			For Local i:=0 Until 6
-				_cubeFaces[i]=New Texture( GL_TEXTURE_CUBE_MAP_POSITIVE_X+i,Self )
-			Next
+		Else
 			
+			Init( pixmap.Width,pixmap.Height,pixmap.Format,flags )
+			
+			PastePixmap( pixmap,0,0 )
 		Endif
-		
-		#rem		
-		If Not (_flags & TextureFlags.Dynamic)
-			_managed=New Pixmap( width,height,format )
-			_managed.Clear( Color.Magenta )
-		Endif
-		#end
 	End
 	
 	Property Size:Vec2i()
@@ -253,44 +275,34 @@ Class Texture Extends Resource
 		
 		_flags=(_flags & ~mask) | (flags & mask)
 		
-		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps Else _dirty &=~Dirty.Mipmaps
+		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps Else _dirty&=~Dirty.Mipmaps
 		
 		_dirty|=Dirty.TexParams
 	End
 	
 	Method PastePixmap( pixmap:Pixmap,x:Int,y:Int )
 		
-		Assert( NOT _cubeMap )
-		
 		If _managed
-
 			_managed.Paste( pixmap,x,y )
-			
-			If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
-				
 			_dirty|=Dirty.TexImage
-		Else
-
-			If _flags & TextureFlags.Mipmap _dirty&=~Dirty.Mipmaps
-				
-'			glPushTexture( _glTarget,ValidateGLTexture() )
-			glActiveTexture( GL_TEXTURE7 )
-			glBindTexture( _glTarget,ValidateGLTexture() )
-			
-			If pixmap.Pitch=pixmap.Width*pixmap.Depth
-				glTexSubImage2D( GL_TEXTURE_2D,0,x,y,pixmap.Width,pixmap.Height,glFormat( _format ),GL_UNSIGNED_BYTE,pixmap.Data )
-			Else
-				For Local iy:=0 Until pixmap.Height
-					glTexSubImage2D( GL_TEXTURE_2D,0,x,y+iy,pixmap.Width,1,glFormat( _format ),GL_UNSIGNED_BYTE,pixmap.PixelPtr( 0,iy ) )
-				Next
-			Endif
-			
-'			glPopTexture()
-
-			If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
-			
+			Return
 		Endif
-	
+
+		_dirty&=~Dirty.Mipmaps	'don't bother generating mipmaps when validating texture...
+			
+		glActiveTexture( GL_TEXTURE7 )
+		
+		glBindTexture( _cubeMap ? _cubeMap._glTarget Else _glTarget,ValidateGLTexture() )
+		
+		If pixmap.Pitch=pixmap.Width*pixmap.Depth
+			glTexSubImage2D( _glTarget,0,x,y,pixmap.Width,pixmap.Height,glFormat( _format ),GL_UNSIGNED_BYTE,pixmap.Data )
+		Else
+			For Local iy:=0 Until pixmap.Height
+				glTexSubImage2D( _glTarget,0,x,y+iy,pixmap.Width,1,glFormat( _format ),GL_UNSIGNED_BYTE,pixmap.PixelPtr( 0,iy ) )
+			Next
+		Endif
+		
+		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
 	End
 	
 	Method GetCubeFace:Texture( face:CubeFace )
@@ -387,12 +399,12 @@ Class Texture Extends Resource
 	#end
 	Method Modified( r:Recti )
 		
-		If _cubeMap Return	'laters...
-		
-		If _managed glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
+		If _managed 
+			DebugStop()
+			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
+		Endif
 
 		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
-			
 	End
 	
 	#rem monkeydoc @hidden
@@ -430,8 +442,6 @@ Class Texture Extends Resource
 			_dirty=Dirty.All
 		Endif
 		
-'		glPushTexture( _glTarget,_glTexture )
-
 		glActiveTexture( GL_TEXTURE7 )
 		glBindTexture( _glTarget,_glTexture )
 
@@ -485,49 +495,49 @@ Class Texture Extends Resource
 		
 		If _dirty & Dirty.TexImage
 			
-			If _glTarget=GL_TEXTURE_CUBE_MAP
-
-				Const cubeFaces:=New GLenum[]( 
-					GL_TEXTURE_CUBE_MAP_NEGATIVE_X,GL_TEXTURE_CUBE_MAP_POSITIVE_Z,GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-					GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,GL_TEXTURE_CUBE_MAP_POSITIVE_Y,GL_TEXTURE_CUBE_MAP_NEGATIVE_Y )
-					
-				Const offsets:=New Int[]( 0,1, 1,1, 2,1, 3,1, 1,0, 1,2 )
+			Local mipmap:=(_flags & TextureFlags.Mipmap)<>0
 				
-				For Local i:=0 Until 6
-					If _managed
-						Local image:=_managed.Window( offsets[i*2]*Width,offsets[i*2+1]*Height,Width,Height )
-						If _flags & TextureFlags.Mipmap
-							UploadTexImageCubeMap( cubeFaces[i],image )
-							_dirty&=~Dirty.Mipmaps
-						Else
-							UploadTexImage2D( cubeFaces[i],image )
-						Endif
-					Else
-						ClearTexImage2D( cubeFaces[i] )
-					Endif
-				Next
-			Else
+			Select _glTarget
+			Case GL_TEXTURE_2D
+				
 				If _managed
-					UploadTexImage2D( _glTarget,_managed )
-				Else
-					ClearTexImage2D( _glTarget )
+					UploadTexImage2D( _glTarget,_managed,mipmap,False )
+					_dirty&=~Dirty.Mipmaps
+				else
+					ClearTexImage2D( _glTarget,_size.x,_size.y,_format,Color.Black )
+					If mipmap _dirty|=Dirty.Mipmaps
 				Endif
-			Endif
+					
+			Case GL_TEXTURE_CUBE_MAP
+				
+				Local envface:=mipmap
+				
+				If _cubeFaces[0]._managed
+					For Local i:=0 Until 6
+						Local face:=_cubeFaces[i]
+						UploadTexImage2D( face._glTarget,face._managed,mipmap,envface )
+					Next
+					_dirty&=~Dirty.Mipmaps
+				Else
+					For Local i:=0 Until 6
+						Local face:=_cubeFaces[i]
+						ClearTexImage2D( face._glTarget,face._size.x,face._size.y,face._format,Color.Black )
+					Next
+					If mipmap _dirty|=Dirty.Mipmaps
+				Endif
+			End
 			
-			glCheck()
-		
 		Endif
 		
 		If _dirty & Dirty.Mipmaps
 			
-			If _flags & TextureFlags.Mipmap glGenerateMipmap( _glTarget )
-				
-			glCheck()
+			If _flags & TextureFlags.Mipmap 
+				glGenerateMipmap( _glTarget )
+				glCheck()
+			Endif
 		End
 		
 		_dirty=Null
-		
-		'glPopTexture()
 		
 		glCheck()
 
@@ -579,9 +589,6 @@ Class Texture Extends Resource
 	Field _cubeFaces:Texture[]
 	
 	Field _glTarget:GLenum
-	Field _glInternalFormat:GLenum
-	Field _glFormat:GLenum
-	Field _glType:GLenum
 	
 	Field _discarded:Bool
 	Field _retroMode:Bool
@@ -591,94 +598,39 @@ Class Texture Extends Resource
 	Field _glSeq:Int	
 	Field _glTexture:GLuint
 	
-	Method UploadTexImageCubeMap( glTarget:GLenum,image:Pixmap )
+	Method Init( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
 		
-		Assert( Not _cubeMap )
-	
-		Local format:=PixelFormat.RGBA32
-		Local gliformat:=glInternalFormat( format )
-		Local glformat:=glFormat( format )
-		Local gltype:=glType( format )
-	
-		Local data:=image.Convert( format )
+		If flags & TextureFlags.Cubemap
+			Assert( width=height,"Cubemaps must be square" )
+		Endif
+
+		_size=New Vec2i( width,height )
+		_format=format
+		_flags=flags
 		
-		Local width:=Width,height:=Height,mip:=0
-		
-		While width>=1 And height>=1
-		
-'			Print "Uploading cube texture, width="+width+", height="+height+", mip="+mip
-		
-			glTexImage2D( glTarget,mip,gliformat,width,height,0,glformat,gltype,Null )
+		_glTarget=_flags & TextureFlags.Cubemap ? GL_TEXTURE_CUBE_MAP Else GL_TEXTURE_2D
+
+#If Not __DESKTOP_TARGET__
+		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
+#Endif
+		If _flags & TextureFlags.Cubemap
 			
-			For Local y:=0 Until height
-				
-				Local p:=data.PixelPtr( 0,y )
-				
-				'write miplevel to alpha!
-				For Local x:=0 Until width
-					p[x*4+3]=mip
-				Next
-		
-				glTexSubImage2D( glTarget,mip,0,y,width,1,glformat,gltype,p )
+			_cubeFaces=New Texture[6]
+			
+			For Local i:=0 Until 6
+				Local face:=New Texture( _size.x,_size.y,_format,_flags & ~TextureFlags.Cubemap )
+				face._glTarget=GL_TEXTURE_CUBE_MAP_POSITIVE_X+i
+				face._cubeMap=Self
+				_cubeFaces[i]=face
 			Next
 			
-			glFlush() 'macos nvidia bug!
-		
-			If width=1 And height=1 Exit
+		Else If Not (_flags & TextureFlags.Dynamic)
 			
-			Local hdata:=data.MipHalve()
-			data=hdata
-			width/=2
-			height/=2
-			mip+=1
-		
-		Wend
-
-	End
-	
-	Method UploadTexImage2D( glTarget:GLenum,image:Pixmap )
-		
-		Assert( Not _cubeMap )
-		
-		glCheck()
-		
-		Local width:=image.Width,height:=image.Height
-
-		If image.Pitch=width*image.Depth
-			glTexImage2D( glTarget,0,_glInternalFormat,width,height,0,_glFormat,_glType,image.Data )
-		Else
-			glTexImage2D( glTarget,0,_glInternalFormat,width,height,0,_glFormat,_glType,Null )
-			For Local y:=0 Until height
-				glTexSubImage2D( glTarget,0,0,y,width,1,_glFormat,_glType,image.PixelPtr( 0,y ) )
-			Next
+			_managed=New Pixmap( width,height,format )
+			_managed.Clear( Color.Magenta )
+			
 		Endif
 		
-		glFlush() 'macos nvidia bug!
-		
-		glCheck()
-	End
-	
-	Method ClearTexImage2D( glTarget:GLenum )
-		glCheck()
-		
-		Local width:=_size.x,height:=_size.y
-		
-		glTexImage2D( glTarget,0,_glInternalFormat,width,height,0,_glFormat,_glType,Null )
-		
-		If Not IsDepth( _format )
-			
-			Local image:=New Pixmap( width,1,Format )
-			image.Clear( Color.Magenta )
-			
-			For Local iy:=0 Until height
-				glTexSubImage2D( glTarget,0,0,iy,width,1,_glFormat,_glType,image.Data )
-			Next
-			
-			glFlush() 'macos nvidia bug!
-		
-		Endif
-		
-		glCheck()
 	End
 	
 End
