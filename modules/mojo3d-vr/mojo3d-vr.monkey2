@@ -1,7 +1,9 @@
 
 namespace mojo3d
 
-#If __DESKTOP_TARGET__
+'FIXME: Problems with openvr.h on linux...
+'
+#If __DESKTOP_TARGET__ And __TARGET__<>"linux"
 
 #Import "<std>"
 #Import "<mojo>"
