@@ -418,8 +418,6 @@ Class Entity Extends DynamicObject
 		
 		Local c:=New T( Self )
 		
-		AddComponent( c )
-		
 		Return c
 	End
 	
