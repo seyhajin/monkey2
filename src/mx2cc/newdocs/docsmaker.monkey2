@@ -313,12 +313,17 @@ Class DocsMaker
 			
 			Local module:=ctype.transFile.module
 			
-			Local path:=type.Name
-'			If path="Typeinfo" path="monkey.types.TypeInfo"	'need to fix @typeinfo keyword!
+			Local outer:=""
+			Local cscope:=Cast<ClassScope>( ctype.scope.outer )
+			If cscope And Not name outer=TypeName( cscope.ctype )+"."
 			
+			Local path:=ctype.Name
 			Local i:=path.Find( "<" )
-			If i<>-1 path=path.Slice( 0,i )
-				
+			If i<>-1
+				Local i2:=path.Find( ">",i+1 )
+				If i2<>-1 path=path.Slice( 0,i )+path.Slice( i2+1 )
+			Endif
+
 			If Not name 
 				name=path
 				If _module=ctype.transFile.module
@@ -327,7 +332,7 @@ Class DocsMaker
 				Endif
 			Endif
 			
-			Return "[["+module.name+":"+path+"|"+name+"]]"+types
+			Return outer+"[["+module.name+":"+path+"|"+name+"]]"+types
 		Endif
 		
 		Local gtype:=Cast<GenArgType>( type )
