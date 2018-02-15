@@ -396,17 +396,26 @@ Class Window Extends View
 	Global _newWindows:=New Stack<Window>
 	
 	Method SetMinSize( size:Vec2i )
-		size/=_mouseScale
+		
+'		size/=_mouseScale
+		size=Cast<Vec2f>( size )/_mouseScale
+		
 		SDL_SetWindowMinimumSize( _sdlWindow,size.x,size.y )
 	End
 
 	Method SetMaxSize( size:Vec2i )
-		size/=_mouseScale
+		
+'		size/=_mouseScale
+		size=Cast<Vec2f>( size )/_mouseScale
+		
 		SDL_SetWindowMaximumSize( _sdlWindow,size.x,size.y )
 	End
 	
 	Method SetFrame( rect:Recti )
-		rect/=_mouseScale
+		
+'		rect/=_mouseScale
+		rect=Cast<Rectf>( rect )/_mouseScale
+		
 		SDL_SetWindowPosition( _sdlWindow,rect.X,rect.Y )
 		SDL_SetWindowSize( _sdlWindow,rect.Width,rect.Height )
 	End
@@ -414,20 +423,26 @@ Class Window Extends View
 	Method GetMinSize:Vec2i()
 		Local w:Int,h:Int
 		SDL_GetWindowMinimumSize( _sdlWindow,Varptr w,Varptr h )
-		Return New Vec2i( w,h ) * _mouseScale
+
+'		Return New Vec2i( w,h ) * _mouseScale
+		Return New Vec2f( w,h ) * _mouseScale
 	End
 	
 	Method GetMaxSize:Vec2i()
 		Local w:Int,h:Int
 		SDL_GetWindowMaximumSize( _sdlWindow,Varptr w,Varptr h )
-		Return New Vec2i( w,h ) * _mouseScale
+
+'		Return New Vec2i( w,h ) * _mouseScale
+		Return New Vec2f( w,h ) * _mouseScale
 	End
 
 	Method GetFrame:Recti()
 		Local x:Int,y:Int,w:Int,h:Int
 		SDL_GetWindowPosition( _sdlWindow,Varptr x,Varptr y )
 		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
-		Return New Recti( x,y,x+w,y+h ) * _mouseScale
+		
+'		Return New Recti( x,y,x+w,y+h ) * _mouseScale
+		Return New Rectf( x,y,x+w,y+h ) * _mouseScale
 	End
 	
 	Method UpdateMouseScale()
@@ -588,10 +603,12 @@ Class Window Extends View
 
 		'UGLY!!!!!
 		If _mouseScale.x<>1 Or _mouseScale.y<>1
-			Local x:=(flags & WindowFlags.CenterX) ? SDL_WINDOWPOS_CENTERED Else rect.X/_mouseScale.x
-			Local y:=(flags & WindowFlags.CenterY) ? SDL_WINDOWPOS_CENTERED Else rect.Y/_mouseScale.y
-			Local w:=rect.Width/_mouseScale.x
-			Local h:=rect.Height/_mouseScale.y
+			
+			Local x:Int=(flags & WindowFlags.CenterX) ? SDL_WINDOWPOS_CENTERED Else rect.X/_mouseScale.x
+			Local y:Int=(flags & WindowFlags.CenterY) ? SDL_WINDOWPOS_CENTERED Else rect.Y/_mouseScale.y
+			Local w:Int=rect.Width/_mouseScale.x
+			Local h:Int=rect.Height/_mouseScale.y
+			
 			SDL_SetWindowPosition( _sdlWindow,x,y )
 			SDL_SetWindowSize( _sdlWindow,w,h )
 		Endif
