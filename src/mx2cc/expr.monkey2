@@ -606,16 +606,20 @@ Class CastExpr Extends Expr
 		Local castOp:=value.FindValue( "cast" )
 		If castOp value=castOp.Invoke( Null )
 
-		'simple upcast?		
+		'simple upcast - probably shouldn't?		
 		If value.type.DistanceToType( type )>=0
+			
 			'special case variant->bool
 			If value.type.Equals( Type.VariantType ) And type.Equals( Type.BoolType )
-				Return New ExplicitCastValue( type,value )
+				
+				Return New ExplicitCastValue( type,value.ToRValue() )
+			
 			Endif
+			
 			Return value.UpCast( type )
+			
 		Endif
 
-		'nope...		
 		value=value.ToRValue()
 		
 		If Not value.type.CanCastToType( type ) 
