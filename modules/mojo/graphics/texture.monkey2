@@ -190,8 +190,6 @@ Class Texture Extends Resource
 	
 	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
 		
-		If Not flags DebugStop()
-		
 		Init( width,height,format,flags )
 	End
 	
@@ -400,7 +398,6 @@ Class Texture Extends Resource
 	Method Modified( r:Recti )
 		
 		If _managed 
-			DebugStop()
 			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
 		Endif
 
