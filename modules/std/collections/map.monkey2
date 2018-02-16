@@ -119,6 +119,10 @@ Class Map<K,V>
 	End
 	
 	Struct Iterator
+		
+		Property AtEnd:Bool()
+			Return _node=Null
+		End
 	
 		Property Valid:Bool()
 			Return _node
@@ -144,6 +148,10 @@ Class Map<K,V>
 	
 	Struct KeyIterator
 	
+		Property AtEnd:Bool()
+			Return _node=Null
+		End
+	
 		Property Valid:Bool()
 			Return _node
 		End
@@ -167,6 +175,10 @@ Class Map<K,V>
 	End
 	
 	Struct ValueIterator
+	
+		Property AtEnd:Bool()
+			Return _node=Null
+		End
 	
 		Property Valid:Bool()
 			Return _node
