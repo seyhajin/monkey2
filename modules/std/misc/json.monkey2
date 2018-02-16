@@ -66,7 +66,7 @@ Class JsonValue
 	Property IsObject:Bool() Virtual
 		Return False
 	End
-
+	
 	#rem monkeydoc Gets bool value.
 	
 	If the value is a bool, returns its actual value.
@@ -186,16 +186,22 @@ End
 #rem monkeydoc JsonBool class.
 #end
 Class JsonBool Extends JsonValue
-
+	
+	#rem monkeydoc Instance of true value.
+	#end
 	Const TrueValue:JsonBool=New JsonBool( True )
 	
+	#rem monkeydoc Instance of true value.
+	#end
 	Const FalseValue:JsonBool=New JsonBool( False )
-
+	
+	#rem monkeydoc Creates a new JsonBool value.
+	#end
 	Method New( data:Bool=False )
 		_data=data
 	End
 	
-	#rem monkeydoc @hidden Deprecated!
+	#rem monkeydoc The underlying boolean value.
 	#end
 	Property Data:Bool()
 		Return _data
@@ -241,7 +247,7 @@ Class JsonNumber Extends JsonValue
 		_data=data
 	End
 	
-	#rem monkeydoc @hidden Deprecated!
+	#rem monkeydoc The underlying numeric value.
 	#end
 	Property Data:Double()
 		Return _data
@@ -286,7 +292,7 @@ Class JsonString Extends JsonValue
 		_data=data
 	End
 	
-	#rem monkeydoc @hidden Deprecated!
+	#rem monkeydoc The underlying string value.
 	#end
 	Property Data:String()
 		Return _data
@@ -343,7 +349,7 @@ Class JsonArray Extends JsonValue
 		_data=data
 	End
 	
-	#rem monkeydoc @hidden Deprecated!
+	#rem monkeydoc The underlying interal array data.
 	#end
 	Property Data:Stack<JsonValue>()
 		Return _data
@@ -628,7 +634,7 @@ Class JsonObject Extends JsonValue
 		_data=data
 	End
 	
-	#rem monkeydoc @hidden Deprecated!
+	#rem monkeydoc The underlying interal object data.
 	#end
 	Property Data:StringMap<JsonValue>()
 		Return _data
@@ -846,7 +852,7 @@ Class JsonObject Extends JsonValue
 		Return _data.Contains( key )
 	End
 	
-	#rem monkeydoc Gets an iterator to all json values in the object.
+	#rem monkeydoc Gets an iterator to all the json values in the object.
 	#end
 	Method All:StringMap<JsonValue>.Iterator()
 		Return _data.All()
