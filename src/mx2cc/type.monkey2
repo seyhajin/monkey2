@@ -74,7 +74,7 @@ Class Type Extends SNode
 	End
 	
 	Method FindType:Type( ident:String ) Virtual
-		Throw New SemantEx( "Type '"+ToString()+"' has no scope" )
+		Throw New SemantEx( "Type '"+ToString()+"' has no inner type named '"+ident+"'" )
 		Return Null
 	End
 	

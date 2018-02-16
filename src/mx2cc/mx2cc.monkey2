@@ -24,6 +24,8 @@ Global opts_time:Bool
 
 Global StartDir:String
 
+'Const TestArgs:="mx2cc makedocs std"
+ 
 'Const TestArgs:="mx2cc makemods -target=ios"' monkey libc"
  
 Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"

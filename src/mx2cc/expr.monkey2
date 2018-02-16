@@ -192,6 +192,11 @@ Class MemberExpr Extends Expr
 		
 		Local tvalue:=Cast<TypeValue>( evalue )
 		
+		If Not tvalue And TCast<EnumType>( evalue.type )
+			
+			tvalue=New TypeValue( expr.SemantType( scope ) )
+		Endif
+		
 		If tvalue
 			
 			Local ctype:=TCast<ClassType>( tvalue.ttype )
@@ -206,7 +211,6 @@ Class MemberExpr Extends Expr
 			If Not value Throw New SemantEx( "Type '"+tvalue.ttype.Name+"' has no member named '"+ident+"'" )
 				
 			Return value
-		
 		Endif
 		
 		Local value:=evalue.FindValue( ident )

@@ -1,6 +1,14 @@
-Namespace test
+
+Namespace myapp
+
+Enum E
+	A,B,C
+End
 
 Function Main()
 	
-	Print "Hello world"
+	Local e:=E.A.B
+	
+	Print Int(e)
+
 End
