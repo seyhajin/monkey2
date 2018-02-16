@@ -236,7 +236,7 @@ Class Pixmap Extends Resource
 		Select _format
 		Case PixelFormat.A8
 			p[0]=color Shr 24
-		Case Format.I8
+		Case PixelFormat.I8
 			p[0]=color Shr 16
 		Case PixelFormat.IA16
 			p[0]=color Shr 24
