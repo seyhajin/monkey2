@@ -49,7 +49,7 @@ Class KeyboardDevice
 	
 	#end	
 	Method KeyName:String( key:Key )
-		If key & key.Raw
+		If key & Key.Raw
 			key=TranslateKey( key&~Key.Raw ) & ~Key.Raw
 		Endif
 		If key<=Key.None Or key>=Key.Max Return "?????"

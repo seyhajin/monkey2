@@ -568,7 +568,7 @@ Private
 	
 	Method InvalidateWorld()
 		
-		If _dirty & _dirty.W Return
+		If _dirty & Dirty.W Return
 		
 		_dirty|=Dirty.W|Dirty.IW
 		
