@@ -1,4 +1,9 @@
 
+***** Monkey2 v1.1.11 *****
+
+You can no longer access enum members via an enum member, eg: WindowFlags.Resizable.Maximized no longer works.
+
+
 ***** Monkey2 v1.1.10 *****
 
 Cleaned up dependency system in mx2cc a bit - you'll need to rebuild all.
