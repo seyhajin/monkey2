@@ -275,6 +275,8 @@ class bbCString{
 	
 	public:
 
+	bbCString():_data(0){}
+	
 	bbCString( const bbString &str );
 	
 	~bbCString();
@@ -290,6 +292,8 @@ class bbWString{
 	wchar_t *_data;
 	
 	public:
+	
+	bbWString():_data(0){}
 	
 	bbWString( const bbString &str );
 	

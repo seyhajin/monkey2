@@ -555,6 +555,10 @@ Class @TypeInfo Extends Void="bbTypeInfo"
 	
 	#end
 	Property Kind:String()="getKind"
+
+	#rem monkeydoc A variant containing a null value of this type.
+	#end		
+	Property NullValue:Variant()="nullValue"
 	
 	#rem monkeydoc Pointer pointee type.
 	

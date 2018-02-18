@@ -1,4 +1,5 @@
 
+#include "bbvariant.h"
 #include "bbtypeinfo_r.h"
 #include "bbdeclinfo.h"
 
@@ -84,6 +85,11 @@ bbVariant bbTypeInfo::makeEnum( int ){
 
 int bbTypeInfo::getEnum( bbVariant ){
 	bbRuntimeError( "Type '"+name+"' is not an enum type" );
+	return {};
+}
+
+bbVariant bbTypeInfo::nullValue(){
+	bbRuntimeError( "Type '"+name+"' has no null value" );
 	return {};
 }
 

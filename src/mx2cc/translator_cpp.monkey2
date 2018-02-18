@@ -1226,7 +1226,12 @@ Class Translator_CPP Extends Translator
 			Emit( "}" )
 		Endif
 		
-		Emit( "};" )
+		'nullvalue
+		Emit( "bbVariant nullValue(){" )
+		Emit( "return bbVariant( ("+cname+"*)0 );")
+		Emit( "}" )
+		
+		Emit( "};" )		
 		
 		Emit( rcname+" "+rcname+"::instance;" )
 		
@@ -2223,6 +2228,13 @@ Class Translator_CPP Extends Translator
 		Case "=","<>","<",">","<=",">="
 		
 			If op="=" op="==" Else If op="<>" op="!="
+				
+			Local ptype:=TCast<PrimType>( value.lhs.type )
+			
+			If ptype And ptype=Type.VariantType
+				
+				Return "(bbCompare("+Trans( value.lhs )+","+Trans( value.rhs )+")"+op+"0)"
+			Endif
 			
 			Local ctype:=TCast<ClassType>( value.lhs.type )
 			Local ftype:=TCast<FuncType>( value.lhs.type )

@@ -35,7 +35,7 @@ struct bbVariant{
 		}
 		
 		virtual bbTypeInfo *getType(){
-			return &bbVoidTypeInfo::instance;
+			return 0;
 		}
 		
 		virtual bbObject *getObject(){

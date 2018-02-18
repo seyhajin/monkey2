@@ -2,7 +2,7 @@
 #ifndef BB_TYPEINFO_R_H
 #define BB_TYPEINFO_R_H
 
-#include "bbtypeinfo.h"
+#include "bbtypeinfo_t.h"
 
 struct bbClassTypeInfo;
 

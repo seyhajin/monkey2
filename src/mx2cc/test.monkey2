@@ -1,14 +1,21 @@
 
-Namespace myapp
+#reflect test
 
-Enum E
-	A,B,C
+Namespace test
+
+Class C
+
 End
 
 Function Main()
 	
-	Local e:=E.A.B
-	
-	Print Int(e)
+'	Local c:C'=New C
 
+	Local v:=Typeof<C>.NullValue
+	
+	Local c:=Cast<C>( v )
+	
+	If c Print "no null" Else Print "null"
+		
+	Print Typeof(c)=Typeof<C>
 End

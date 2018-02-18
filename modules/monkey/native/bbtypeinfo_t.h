@@ -1,93 +1,8 @@
 
-#ifndef BB_TYPEINFO_H
-#define BB_TYPEINFO_H
+#ifndef BB_TYPEINFO_T_H
+#define BB_TYPEINFO_T_H
 
-#include "bbassert.h"
-#include "bbobject.h"
-#include "bbarray.h"
-#include "bbfunction.h"
-
-//struct bbClassTypeInfo;
-
-struct bbTypeInfo{
-
-	bbString name;
-	bbString kind;
-	
-	bbString getName(){
-		return name;
-	}
-	
-	bbString getKind(){
-		return kind;
-	}
-	
-	virtual bbString toString();
-
-	virtual bbTypeInfo *pointeeType();
-	
-	virtual bbTypeInfo *elementType();
-	
-	virtual int arrayRank();
-	
-	virtual bbTypeInfo *returnType();
-	
-	virtual bbArray<bbTypeInfo*> paramTypes();
-	
-	virtual bbTypeInfo *superType();
-	
-	virtual bbArray<bbTypeInfo*> interfaceTypes();
-	
-	virtual bbBool extendsType( bbTypeInfo *type );
-	
-	virtual bbArray<bbDeclInfo*> getDecls();
-	
-	virtual bbVariant makeEnum( int value );
-	
-	virtual int getEnum( bbVariant );
-	
-	virtual bbVariant nullValue();
-	
-	
-	bbDeclInfo *getDecl( bbString name );
-	
-	bbDeclInfo *getDecl( bbString name,bbTypeInfo *type );
-	
-	bbArray<bbDeclInfo*> getDecls( bbString name );
-	
-	static bbTypeInfo *getType( bbString cname );
-	
-	static bbArray<bbTypeInfo*> getTypes();
-};
-
-template<class T> bbTypeInfo *bbGetType();
-
-struct bbUnknownTypeInfo : public bbTypeInfo{
-
-	bbUnknownTypeInfo();
-};
-
-struct bbVoidTypeInfo : public bbTypeInfo{
-
-	static bbVoidTypeInfo instance;
-
-	bbVoidTypeInfo();
-};
-
-struct bbObjectTypeInfo : public bbTypeInfo{
-
-	static bbObjectTypeInfo instance;
-
-	bbObjectTypeInfo();
-	
-	bbTypeInfo *superType();
-	
-	bbBool extendsType( bbTypeInfo *type );
-	
-	bbArray<bbDeclInfo*> getDecls();
-};
-
-/*
+#include "bbtypeinfo.h"
 
 template<class T> struct bbPrimTypeInfo : public bbTypeInfo{
 
@@ -96,6 +11,9 @@ template<class T> struct bbPrimTypeInfo : public bbTypeInfo{
 		this->kind="Primitive";
 	}
 	
+	bbVariant nullValue(){
+		return bbVariant( T{} );
+	}
 };
 
 template<class T> struct bbPointerTypeInfo : public bbTypeInfo{
@@ -108,7 +26,10 @@ template<class T> struct bbPointerTypeInfo : public bbTypeInfo{
 	bbTypeInfo *pointeeType(){
 		return bbGetType<T>();
 	}
-	
+
+	bbVariant nullValue(){
+		return bbVariant( (T*)0 );
+	}
 };
 
 template<class T,int D> struct bbArrayTypeInfo : public bbTypeInfo{
@@ -125,6 +46,11 @@ template<class T,int D> struct bbArrayTypeInfo : public bbTypeInfo{
 	int arrayRank(){
 		return D;
 	}
+
+	bbVariant nullValue(){
+		return bbVariant( bbArray<T,D>{} );
+	}
+	
 };
 
 template<class R,class...A> struct bbFunctionTypeInfo : public bbTypeInfo{
@@ -142,6 +68,9 @@ template<class R,class...A> struct bbFunctionTypeInfo : public bbTypeInfo{
 		return bbArray<bbTypeInfo*>( { bbGetType<A>()... },int(sizeof...(A)) );
 	}
 
+	bbVariant nullValue(){
+		return bbVariant( bbFunction<R(A...)>{} );
+	}
 };
 
 template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
@@ -159,6 +88,9 @@ template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
 		return bbArray<bbTypeInfo*>( { bbGetType<A>()... },int(sizeof...(A)) );
 	}
 
+	bbVariant nullValue(){
+		return bbVariant( bbFunction<void(A...)>{} );
+	}
 };
 
 #define BB_GETTYPE_DECL( TYPE ) bbTypeInfo *bbGetType( TYPE const& );
@@ -229,7 +161,5 @@ template<> inline bbTypeInfo *bbGetType<void>(){
 template<class T> bbTypeInfo *bbGetType(){
 	return bbGetType( *(T*)0 );
 }
-
-*/
 
 #endif
