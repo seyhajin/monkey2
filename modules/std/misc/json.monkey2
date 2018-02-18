@@ -97,6 +97,7 @@ Class JsonValue
 	
 	#end	
 	Method ToString:String() Virtual
+		If Self=NullValue Return "null"
 		Return ""
 	End
 	
@@ -125,6 +126,7 @@ Class JsonValue
 	#rem monkeydoc Converts the value to a JSON string.
 	#end	
 	Method ToJson:String() Virtual
+		If Self=NullValue Return "null"
 		Local buf:=New StringStack
 		PushJson( buf )
 		Return buf.Join( "" )
@@ -230,8 +232,7 @@ Class JsonBool Extends JsonValue
 	End
 	
 	Method ToJson:String() Override
-		If _data Return "true"
-		Return "false"
+		Return _data ? "true" Else "false"
 	End
 
 	Private
@@ -276,7 +277,7 @@ Class JsonNumber Extends JsonValue
 	End
 	
 	Method ToJson:String() Override
-		Return String( _data )
+		Return _data
 	End
 
 	Private
