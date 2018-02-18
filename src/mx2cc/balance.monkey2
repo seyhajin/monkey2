@@ -37,12 +37,24 @@ Function BalancePrimTypes:Type( lhs:PrimType,rhs:PrimType )
 	
 	If Not lhs lhs=rhs Else If Not rhs rhs=lhs
 
+	'variant->bool has priority over bool->variant
+	'
+	If lhs=Type.BoolType And rhs=Type.VariantType Return Type.BoolType
+	
+	If rhs=Type.BoolType And lhs=Type.VariantType Return Type.BoolType
+
+	'whatever->variant
+	'
 	If lhs=Type.VariantType Or rhs=Type.VariantType Return Type.VariantType
 
+	'whatever->string
+	'	
 	If lhs=Type.StringType Or rhs=Type.StringType Return Type.StringType
 	
+	'whatever->bool
+	'
 	If lhs=Type.BoolType Or rhs=Type.BoolType Return Type.BoolType
-	
+
 	Return BalanceNumericTypes( lhs,rhs )
 End
 
