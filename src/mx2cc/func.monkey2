@@ -396,6 +396,28 @@ Class FuncValue Extends Value
 		
 	End
 	
+	Method IsSimpleType:Bool( type:Type )
+		
+		If TCast<PrimType>( type ) Return True
+		
+		Local atype:=TCast<ArrayType>( type )
+		If atype Return IsSimpleType( atype.elemType )
+		
+		local vtype:=TCast<PointerType>( type )
+		If vtype Return IsSimpleType( vtype.elemType )
+		
+		Local ftype:=TCast<FuncType>( type )
+		If ftype
+			If Not IsSimpleType( ftype.retType ) Return False
+			For Local argty:=Eachin ftype.argTypes
+				If Not IsSimpleType( argty ) Return False
+			Next
+			Return True
+		End
+		
+		Return False
+	End
+	
 	Method SemantStmts()
 
 		If block.IsGeneric SemantError( "FuncValue.SemantStmts(1)" )
@@ -430,8 +452,7 @@ Class FuncValue Extends Value
 				If retstmt
 					Local mvar:=Cast<MemberVarValue>( retstmt.value )
 					If mvar And mvar.instance=selfValue
-						simpleGetter=True
-'						Print "Return Self."+mvar.member.ToString()
+						simpleGetter=IsSimpleType( ftype.retType )
 					Endif
 				Endif
 			Endif
