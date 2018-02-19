@@ -171,19 +171,6 @@ struct bbVariant{
 	
 };
 
-extern template struct bbVariant::Rep<bbBool>;
-extern template struct bbVariant::Rep<bbByte>;
-extern template struct bbVariant::Rep<bbUByte>;
-extern template struct bbVariant::Rep<bbShort>;
-extern template struct bbVariant::Rep<bbUShort>;
-extern template struct bbVariant::Rep<bbInt>;
-extern template struct bbVariant::Rep<bbUInt>;
-extern template struct bbVariant::Rep<bbLong>;
-extern template struct bbVariant::Rep<bbULong>;
-extern template struct bbVariant::Rep<bbFloat>;
-extern template struct bbVariant::Rep<bbDouble>;
-extern template struct bbVariant::Rep<bbString>;
-
 inline void bbGCMark( const bbVariant &v ){
 
 	v._rep->gcMark();

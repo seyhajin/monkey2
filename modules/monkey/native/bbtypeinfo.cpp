@@ -118,11 +118,11 @@ bbArray<bbDeclInfo*> bbTypeInfo::getDecls( bbString name ){
 	}
 	if( !n ) return {};
 	
-	bbArray<bbDeclInfo*> rdecls;
+	bbArray<bbDeclInfo*> rdecls( n );
 	
 	int j=0;
 	for( int i=0;i<decls.length();++i ){
-		if( decls[i]->name==name) rdecls[j++]=decls[i];
+		if( decls[i]->name==name ) rdecls[j++]=decls[i];
 	}
 	return rdecls;
 }

@@ -93,23 +93,6 @@ template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
 	}
 };
 
-#define BB_GETTYPE_DECL( TYPE ) bbTypeInfo *bbGetType( TYPE const& );
-
-BB_GETTYPE_DECL( bbBool )
-BB_GETTYPE_DECL( bbByte )
-BB_GETTYPE_DECL( bbUByte )
-BB_GETTYPE_DECL( bbShort )
-BB_GETTYPE_DECL( bbUShort )
-BB_GETTYPE_DECL( bbInt )
-BB_GETTYPE_DECL( bbUInt )
-BB_GETTYPE_DECL( bbLong )
-BB_GETTYPE_DECL( bbULong )
-BB_GETTYPE_DECL( bbFloat )
-BB_GETTYPE_DECL( bbDouble )
-BB_GETTYPE_DECL( bbString )
-BB_GETTYPE_DECL( bbCString )
-BB_GETTYPE_DECL( bbVariant )
-
 inline bbTypeInfo *bbGetType( bbObject* const& ){
 	return &bbObjectTypeInfo::instance;
 }
@@ -156,10 +139,6 @@ template<class T> bbTypeInfo *bbGetType( bbGCVar<T> const& ){
 
 template<> inline bbTypeInfo *bbGetType<void>(){
 	return &bbVoidTypeInfo::instance;
-}
-
-template<class T> bbTypeInfo *bbGetType(){
-	return bbGetType( *(T*)0 );
 }
 
 #endif

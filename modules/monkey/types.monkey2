@@ -551,7 +551,7 @@ Class @TypeInfo Extends Void="bbTypeInfo"
 	
 	#rem monkeydoc Type kind.
 	
-	Will be one of: Unknown, Primitve, Pointer, Array, Function, Class, Interface, Struct, Namespace.
+	Will be one of: Unknown, Primitive, Pointer, Array, Function, Class, Interface, Struct, Namespace.
 	
 	#end
 	Property Kind:String()="getKind"
