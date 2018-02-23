@@ -205,15 +205,8 @@ void main(){
 	vec4 vpos4=r_InverseProjectionMatrix * vec4( v_ClipPosition,-1.0,1.0 );
 	
 	vec3 vpos=vpos4.xyz/vpos4.w;
-
-	//debug vpos x/y
-	//
-	if( abs( vpos.x )>=1.0 || abs( vpos.y )>=1.0 ){
-		gl_FragColor=vec4( 0.0,0.0,1.0,1.0 );
-		return;
-	}
 	
-	//debug z
+	//debug z coord...
 	//
 	if( abs( vpos.z-r_DepthNear)>0.00001 ){
 		gl_FragColor=vec4( 1.0,0.0,0.0,1.0 );
