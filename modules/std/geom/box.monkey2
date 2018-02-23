@@ -1,12 +1,8 @@
 
 Namespace std.geom
 
-#rem monkeydoc @hidden
-#end
 Alias Boxf:Box<Float>
 
-#rem monkeydoc @hidden
-#end
 Struct Box<T>
 
 	Const FullBounds:=New Box( -1000000,-1000000,-1000000,1000000,1000000,1000000 )
