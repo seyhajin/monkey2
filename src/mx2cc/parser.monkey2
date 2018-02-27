@@ -187,8 +187,9 @@ Class Parser
 				Case "global"
 					ParseVars( decls,flags )
 				Case "field"
-					If flags & DECL_EXTENSION Error( "Fields cannot be declared in extension classes" )
-					If fileScope Error( "Fields can only be declared inside a class, struct or interface" )
+					If flags & DECL_IFACEMEMBER Error( "Interfaces cannot have fields" )
+					If flags & DECL_EXTENSION Error( "Type extensions cannot have fields" )
+					If fileScope Error( "Fields must be declared within a class, struct or interface" )
 					ParseVars( decls,flags )
 				Case "local"
 					Error( "Locals can only be declared in a statement block" )
