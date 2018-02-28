@@ -223,35 +223,34 @@ Class PbrMaterial Extends Material
 		
 		Local material:=New PbrMaterial
 		
-		Local texture:=Texture.Load( path+"/color.png",textureFlags )
+		Local texture:=LoadTexture( path,"color",textureFlags )
 		If texture
 			material.ColorTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/emissive.png",textureFlags )
+		texture=LoadTexture(path,"emissive",textureFlags )
 		If texture
 			material.EmissiveTexture=texture
 			material.EmissiveFactor=Color.White
 		Endif
 		
-		texture=Texture.Load( path+"/metalness.png",textureFlags )
+		texture=LoadTexture( path,"metalness",textureFlags )
 		If texture
 			material.MetalnessTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/roughness.png",textureFlags )
+		texture=LoadTexture( path,"roughness",textureFlags )
 		If texture
 			material.RoughnessTexture=texture
-			Print "Loaded roughness:"+path
 		Endif
 		
-		texture=Texture.Load( path+"/occlusion.png",textureFlags )
+		texture=LoadTexture( path,"occlusion",textureFlags )
 		If texture
 			material.OcclusionTexture=texture
 		Endif
 		
-		texture=Texture.Load( path+"/normal.png",textureFlags )
-		If Not texture texture=Texture.Load( path+"/unormal.png",textureFlags,True )
+		texture=LoadTexture( path,"normal",textureFlags )
+		If Not texture texture=LoadTexture( path,"unormal",textureFlags,True )
 		If texture
 			material.NormalTexture=texture
 		Endif
@@ -278,6 +277,15 @@ Class PbrMaterial Extends Material
 	Field _shadowShader:Shader
 	
 	Field _dirty:=True
+	
+	Function LoadTexture:Texture( path:String,name:String,flags:TextureFlags,flipy:Bool=False )
+		
+		Local texture:=Texture.Load( path+"/"+name+".png",flags,flipy )
+		
+		If Not texture texture=Texture.Load( path+"/"+name+".jpg",flags,flipy )
+			
+		Return texture
+	End
 	
 	Method ValidateShaders()
 		
