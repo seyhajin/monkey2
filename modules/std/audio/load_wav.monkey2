@@ -8,22 +8,18 @@ Private
 Using std.stream
 
 Struct WAV_Header
-	'
 	Field RIFF:Int
 	Field len:Int
 	Field WAVE:Int
-	'
 End
 
 Struct FMT_Chunk
-	
 	Field compType:Short
 	Field numChannels:Short
 	Field samplesPerSec:Int
 	Field avgBytesPerSec:Int
 	Field blockalignment:Short
 	Field bitsPerSample:Short
-	
 End
 
 Function ReadWAV:AudioData( stream:std.stream.Stream )
@@ -74,19 +70,22 @@ Function ReadWAV:AudioData( stream:std.stream.Stream )
 			Endif
 			
 			hertz=fmt.samplesPerSec
-
+			
 			Continue
 			
 		Case $61746164		'DATA
 			
 			If Not format Return null
+			
+			Local bps:=BytesPerSample( format )
+			
+			Local length:=aligned_size/bps
+			
+			Local data:=New AudioData( length,format,hertz )
 
-			Local data:=New AudioData( size/BytesPerSample( format ),format,hertz )
-
-			stream.Read( data.Data,size )
+			stream.Read( data.Data,length*bps )
 			
 			Return data
-		
 		End
 		
 		'skip to next chunk
