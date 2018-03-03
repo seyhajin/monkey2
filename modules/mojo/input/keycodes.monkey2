@@ -7,11 +7,10 @@ By default, key codes refer to 'virtual' keys. For example, `Key.W` refers to th
 be in the same physical location on all users' keyboards, due to OS language and keyboard settings.
 
 To deal with this, mojo also provides support for 'raw' keys. A raw key code is simply a virtual key code 'or'ed with the special key code
-`Key.Raw`. For example, 'Key.Q|Key.Raw' refers to the key with 'Q' printed on it on a QWERTY keyboard. `Key.Raw` is to be used with the
-[[Keboard]] Class only. For example `Keyboard.KeyPressed(Key.A|Key.Raw)`.
-
+`Key.Raw`.
 A raw key represents the physical location of a key on US keyboards. For example, `Key.Q|Key.Raw` indicates the key at the top left of the
 'qwerty' (or 'azerty' etc) keys regardless of the current OS settings.
+`Key.Raw` is to be used with the [[KeyboardDevice]] Class only. For example `Keyboard.KeyPressed(Key.A|Key.Raw)`.
 
 | Key
 |:---
