@@ -1,4 +1,3 @@
-
 'Use msvc 2017 community edition (mainly for x64 support, but it's also the latest/greatest).
 '
 MX2_USE_MSVC=0
@@ -96,39 +95,42 @@ MX2_MSVC_LIB_X64=${MX2_MSVC_TOOLS_DIR}\lib\x64;
 MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x64;
 MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x64;
 
-
 '***** EMSCRIPTEN TARGET *****
 
-'example env vars for sdk-incoming-64bit
+'This is for the emsdk download available at http://monkeycoder.co.nz/monkey2-files/
 '
-'EMSDK=D:/devtools/emsdk-portable-64bit
-'PATH=${EMSDK}\clang\fastcomp\build_incoming_vs2015_64\RelWithDebInfo\bin;${PATH}
-'PATH=${EMSDK}\emscripten\incoming;${PATH}
+'If you have a different emscripten installation installed that you want to use, comment this lot out.
+'
+EMSDK=${MX2_HOME}\devtools\emsdk-1.37.35_64bit
+EM_CONFIG=${EMSDK}\.emscripten
+BINARYEN_ROOT = ${EMSDK}\clang\e1.37.35_64bit\binaryen
+JAVA_HOME = ${EMSDK}\java\8.152_64bit
+EMSCRIPTEN = ${EMSDK}\emscripten\1.37.35
+
+PATH=${EMSDK};${PATH}
+PATH=${EMSDK}\clang\e1.37.35_64bit;${PATH}
+PATH=${EMSDK}\node\8.9.1_64bit\bin;${PATH}
+PATH=${EMSDK}\python\2.7.5.3_64bit;${PATH}
+PATH=${EMSDK}\java\8.152_64bit\bin;${PATH}
+PATH=${EMSDK}\emscripten\1.37.35;${PATH}
 
 'Add mserver_winnt emscripten mini-server/launcher.
 '
 MX2_MSERVER="${MX2_HOME}\devtools\mserver-v86c\mserver_winnt.exe"
 
 'Linker options
-MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=536870912 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_LD_OPTS_EMSCRIPTEN_WASM=-s BINARYEN=1
 MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-O2 -s ASSERTIONS=2
 MX2_LD_OPTS_EMSCRIPTEN_RELEASE=-O3
 
-'extra LD opts for 1.37.26 - if you're using 1.37.26 or earlier, you may need to enable these lines.
-'
-'leave these disabled for later versions, eg: emsdk-portable-64bit
-'
-'MX2_LD_OPTS_EMSCRIPTEN=${MX2_LD_OPTS_EMSCRIPTEN} -s EXTRA_EXPORTED_RUNTIME_METHODS="['Pointer_stringify']"
-'MX2_LD_OPTS_EMSCRIPTEN_WASM=${MX2_LD_OPTS_EMSCRIPTEN_WASM} -s BINARYEN_TRAP_MODE='allow'
-
 'C Compiler options
-MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_CC_OPTS_EMSCRIPTEN=-std=gnu99 -s USE_SDL=2 -s TOTAL_MEMORY=536870912 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 'C++ Compiler options
-MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -Wno-all -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -Wno-all -s USE_SDL=2 -s TOTAL_MEMORY=536870912 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
