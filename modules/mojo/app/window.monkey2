@@ -262,8 +262,8 @@ Class Window Extends View
 		Case EventType.WindowMinimized
 		Case EventType.WindowRestored
 		Case EventType.WindowMoved,EventType.WindowResized
-			_frame=GetFrame()
-			Frame=_frame
+			Frame=GetFrame()
+			_frame=Frame
 			_weirdHack=True
 		End
 		
@@ -395,68 +395,78 @@ Class Window Extends View
 	Global _windowsByID:=New Map<UInt,Window>
 	Global _newWindows:=New Stack<Window>
 	
-	Method SetMinSize( size:Vec2i )
-		
-'		size/=_mouseScale
-		size=Cast<Vec2f>( size )/_mouseScale
-		
-		SDL_SetWindowMinimumSize( _sdlWindow,size.x,size.y )
-	End
+	Method GetDrawableSize:Vec2i()
 
-	Method SetMaxSize( size:Vec2i )
+		Local w:Int,h:Int
 		
-'		size/=_mouseScale
-		size=Cast<Vec2f>( size )/_mouseScale
-		
-		SDL_SetWindowMaximumSize( _sdlWindow,size.x,size.y )
+#If __TARGET__="emscripten"
+		Local d:Int
+		emscripten_get_canvas_size( Varptr w,Varptr h,Varptr d )
+#Else
+		SDL_GL_GetDrawableSize( _sdlWindow,Varptr w,Varptr h )
+#Endif
+		Return New Vec2i( w,h )
 	End
 	
-	Method SetFrame( rect:Recti )
+	'Note: also updates _mouseScale
+	'
+	Method GetFrame:Recti()
 		
-'		rect/=_mouseScale
-		rect=Cast<Rectf>( rect )/_mouseScale
+		Local dsize:=GetDrawableSize()
 		
-		SDL_SetWindowPosition( _sdlWindow,rect.X,rect.Y )
-		SDL_SetWindowSize( _sdlWindow,rect.Width,rect.Height )
+		Local w:Int,h:Int
+		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
+
+		_mouseScale=Cast<Vec2f>( dsize )/New Vec2f( w,h )
+		
+#If __DESKTOP_TARGET__
+		Local x:Int,y:Int
+		SDL_GetWindowPosition( _sdlWindow,Varptr x,Varptr y )
+		Local dpos:Vec2i=New Vec2f( x,y ) * _mouseScale
+
+		Return New Recti( dpos,dpos+dsize )
+#else
+		Return New Recti( 0,0,dsize )
+#endif
 	End
 	
 	Method GetMinSize:Vec2i()
+		
 		Local w:Int,h:Int
 		SDL_GetWindowMinimumSize( _sdlWindow,Varptr w,Varptr h )
-
-'		Return New Vec2i( w,h ) * _mouseScale
 		Return New Vec2f( w,h ) * _mouseScale
 	End
 	
 	Method GetMaxSize:Vec2i()
+
 		Local w:Int,h:Int
 		SDL_GetWindowMaximumSize( _sdlWindow,Varptr w,Varptr h )
-
-'		Return New Vec2i( w,h ) * _mouseScale
 		Return New Vec2f( w,h ) * _mouseScale
 	End
-
-	Method GetFrame:Recti()
-		Local x:Int,y:Int,w:Int,h:Int
-		SDL_GetWindowPosition( _sdlWindow,Varptr x,Varptr y )
-		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
+	
+	Method SetFrame( rect:Recti )
 		
-'		Return New Recti( x,y,x+w,y+h ) * _mouseScale
-		Return New Rectf( x,y,x+w,y+h ) * _mouseScale
+#If __DESKTOP_TARGET__
+		rect=Cast<Rectf>( rect )/_mouseScale
+		SDL_SetWindowPosition( _sdlWindow,rect.X,rect.Y )
+		SDL_SetWindowSize( _sdlWindow,rect.Width,rect.Height )
+#endif
 	End
 	
-	Method UpdateMouseScale()
-	
-		Local w:Int,h:Int,dw:Int,dh:Int,fs:Int
+	Method SetMinSize( size:Vec2i )
 		
-		SDL_GetWindowSize( _sdlWindow,Varptr w,Varptr h )
+#If __DESKTOP_TARGET__
+		size=Cast<Vec2f>( size )/_mouseScale
+		SDL_SetWindowMinimumSize( _sdlWindow,size.x,size.y )
+#endif
+	End
+
+	Method SetMaxSize( size:Vec2i )
 		
-#If __TARGET__="emscripten"
-		emscripten_get_canvas_size( Varptr dw,Varptr dh,Varptr fs )
-#Else
-		SDL_GL_GetDrawableSize( _sdlWindow,Varptr dw,Varptr dh )
-#Endif
-		_mouseScale=New Vec2f( Float(dw)/w,Float(dh)/h )
+#If __DESKTOP_TARGET__
+		size=Cast<Vec2f>( size )/_mouseScale
+		SDL_SetWindowMaximumSize( _sdlWindow,size.x,size.y )
+#endif
 	End
 	
 	Method LayoutWindow()
@@ -465,6 +475,13 @@ Class Window Extends View
 		'		
 #If __DESKTOP_TARGET__
 
+		If Frame<>_frame
+			SetFrame( Frame )
+			Frame=GetFrame()
+			_frame=Frame
+			_weirdHack=True
+		Endif
+		
 		If MinSize<>_minSize
 			SetMinSize( MinSize )
 			MinSize=GetMinSize()
@@ -476,23 +493,10 @@ Class Window Extends View
 			MaxSize=GetMaxSize()
 			_maxSize=MaxSize
 		Endif
-
-		If Frame<>_frame
-			SetFrame( Frame )
-			Frame=GetFrame()
-			_frame=Frame
-			_weirdHack=True
-		Endif
-		
-#Else if __WEB_TARGET__
-
-		Local dw:Int,dh:Int,fs:Int
-		emscripten_get_canvas_size( Varptr dw,Varptr dh,Varptr fs )
-		Frame=New Recti( 0,0,dw,dh )
-#Else
-		_frame=GetFrame()
-		Frame=_frame
-#Endif
+#else
+		Frame=GetFrame()
+		_frame=Frame
+#endif
 		Measure()
 		
 		UpdateLayout()
@@ -597,11 +601,12 @@ Class Window Extends View
 		_newWindows.Push( Self )
 		_windowsByID[SDL_GetWindowID( _sdlWindow )]=Self
 		If Not (flags & WindowFlags.Hidden) _visibleWindows.Push( Self )
-		
-		'Would much rather know this *before* we open the window!
-		UpdateMouseScale()
+
+		Frame=GetFrame()
+		_frame=Frame
 
 		'UGLY!!!!!
+#If __DESKTOP_TARGET__
 		If _mouseScale.x<>1 Or _mouseScale.y<>1
 			
 			Local x:Int=(flags & WindowFlags.CenterX) ? SDL_WINDOWPOS_CENTERED Else rect.X/_mouseScale.x
@@ -611,16 +616,17 @@ Class Window Extends View
 			
 			SDL_SetWindowPosition( _sdlWindow,x,y )
 			SDL_SetWindowSize( _sdlWindow,w,h )
+			
+			Frame=GetFrame()
+			_frame=Frame
 		Endif
+#endif
 		
 		MinSize=GetMinSize()
 		_minSize=MinSize
 		
 		MaxSize=GetMaxSize()
 		_maxSize=MaxSize
-		
-		Frame=GetFrame()
-		_frame=Frame
 		
 		_clearColor=App.Theme.GetColor( "windowClearColor" )
 		

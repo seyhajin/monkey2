@@ -167,7 +167,13 @@ UIKit_GL_CreateContext(_THIS, SDL_Window * window)
             /* Set the scale to the natural scale factor of the screen - the
              * backing dimensions of the OpenGL view will match the pixel
              * dimensions of the screen rather than the dimensions in points. */
+             
+			// Mark was here! Always use screen.scale, ignore screen.nativeScale...
+			
+            scale = data.uiwindow.screen.scale;
+/*            
 #ifdef __IPHONE_8_0
+
             if ([data.uiwindow.screen respondsToSelector:@selector(nativeScale)]) {
                 scale = data.uiwindow.screen.nativeScale;
             } else
@@ -175,6 +181,7 @@ UIKit_GL_CreateContext(_THIS, SDL_Window * window)
             {
                 scale = data.uiwindow.screen.scale;
             }
+*/
         }
 
         context = [[SDLEAGLContext alloc] initWithAPI:api sharegroup:sharegroup];
