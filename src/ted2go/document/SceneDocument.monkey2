@@ -108,7 +108,7 @@ Class SceneDocument Extends Ted2Document
 		_camera.Near=.01
 		_camera.Far=10
 		_camera.MoveZ( -2.5 )
-			
+		
 		_light=New Light
 		_light.RotateX( Pi/2 )
 		
