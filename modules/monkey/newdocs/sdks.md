@@ -5,6 +5,7 @@
 
 Monkey2 target SDKs.
 
+
 @#### The Windows Desktop Target
 
 Monkey2 can use either the mingw or msvc express 2015 compilers to build desktop apps.
@@ -42,11 +43,15 @@ sudo apt-get install g++-multilib libglu1-mesa-dev libopenal-dev libxi-dev libxr
 ```
 
 
-@#### The Emscripten and Wasm Targets
+@#### The Emscripten Target
 
-Monkey2 uses the emscripten sdk compilers and tools to build emscripten and wasm apps.
+Monkey2 uses the emscripten sdk compilers and tools to build wasm and asm.js apps.
 
-To install the emscripten sdk, please see this page: [[https://github.com/juj/emsdk/blob/master/README.md]].
+For 64 bit windows, there is an experimental emscripten sdk download available from [[http://monkeycoder.co.nz/monkey2-files/]].
+
+For all other desktop targets, you will need to install emscripten yourself. More info here: [[https://github.com/juj/emsdk/blob/master/README.md]].
+
+You will also need the mserver ('mini server') app if you want to be able to launch emscripten apps from Ted2 or Ted2go. This can also be downloaded from [[http://monkeycoder.co.nz/monkey2-files/]].
 
 
 @#### The Android Target
