@@ -63,6 +63,30 @@ Function MakeIncludePath:String( path:String,baseDir:String )
 	Return path
 End
 
+Function HashPath:String( path:String )
+	
+'	Print "Hash path:"+path
+	
+	Local cs:UInt=0
+	
+	For Local i:=0 Until path.Length
+		cs=cs*31+path[i]
+	Next
+	
+	Local name:=StripDir( StripExt( path ) )
+
+	Local i:=name.FindLast( "_" )
+	If i<>-1
+		If i+1<name.Length And IsDigit( name[i+1] ) i+=1
+		name=name.Slice( i+1 )
+	Endif
+	Local hash:=name+Hex( cs ).ToLower()+ExtractExt( path )
+	
+'	Print "hash="+hash+" ("+path+")"
+	
+	Return hash
+End
+
 Function MungPath:String( path:String )
 	Local id:=path
 	id=id.Replace( "_","_0" )
@@ -74,31 +98,6 @@ Function MungPath:String( path:String )
 	Return id
 End
 
-#rem
-Function MungPath:String( path:String )
-	
-	path=path.Replace( "_","_0" )
-	
-	Local i0:=0
-	Repeat
-		Local i:=path.Find( "../",i0 )
-		If i=-1 Exit
-		i0=i
-		Repeat
-			i+=3
-			If path.Slice( i,i+3 )<>"../" Exit
-		Forever
-		Local rep:="_"+String( (i-i0)/3+1 )
-		path=path.Slice( 0,i0 )+rep+path.Slice( i )
-		i0+=rep.Length
-	Forever
-		
-	path=path.Replace( "/","_1" )
-	
-	return path
-End
-#end
-
 Function Identize:String( str:String )
 	
 	str=MungPath( str )
@@ -109,7 +108,7 @@ Function Identize:String( str:String )
 		
 		Local rep:="_"+String( str[i]+6 )
 		
-		str=str.Slice( 0,i )+rep+str.Slice( i+1 ) 
+		str=str.Slice( 0,i )+rep+str.Slice( i+1 )
 		
 		i+=rep.Length-1
 	
@@ -123,9 +122,11 @@ Function CSaveString( str:String,path:String )
 	If t<>str stringio.SaveString( str,path )
 End
 
+'Should probably just use absolute path if path is outside monkey2 home dir?
+'
 Function MakeRelativePath:String( path:String,baseDir:String )
 
-	If Not baseDir.EndsWith( "/" ) 
+	If Not baseDir.EndsWith( "/" )
 		Print "Invalid baseDir:"+baseDir
 		baseDir+="/"
 	End
@@ -137,7 +138,7 @@ Function MakeRelativePath:String( path:String,baseDir:String )
 	While Not path.StartsWith( baseDir )
 		Local tdir:=baseDir
 		baseDir=ExtractDir( baseDir )
-		If baseDir=tdir 
+		If baseDir=tdir
 '			Print "MakeRelativePath Error! baseDir="+baseDir
 			Return path
 		Endif

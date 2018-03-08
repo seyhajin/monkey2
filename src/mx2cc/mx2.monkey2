@@ -44,4 +44,4 @@ Using std.collections
 Using libc
 
 'Make sure to rebuildall after changing this!
-Const MX2CC_VERSION:="1.1.10"
+Const MX2CC_VERSION:="1.1.11"

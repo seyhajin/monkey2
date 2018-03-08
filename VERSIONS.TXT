@@ -1,6 +1,8 @@
 
 ***** Monkey2 v1.1.11 *****
 
+Major change to name munging for tmp files to make them shorter.
+
 PbrMaterial.Load now handles jpg files too.
 
 Had another shot at an emscripten SDK and updated env_windows.txt to use it. Note if you were using a different version of emscripten, you'll need to removed the new env_windows.txt stuff or it'll conflict. The new SDK can be downloaded from http://monkeycoder.co.nz/monkey2-files/

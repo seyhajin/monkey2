@@ -162,7 +162,7 @@ Class BuilderInstance
 		
 		If name="monkey" And opts.productType="module" modulesMap["monkey"]=module
 		
-		If opts.clean 
+		If opts.clean
 			DeleteDir( module.outputDir,True )
 			DeleteDir( module.cacheDir,True )
 		Endif
@@ -203,8 +203,15 @@ Class BuilderInstance
 			Local path:=MX2_SRCS.Pop()
 			
 			If opts.verbose>0 Print "Parsing "+path
-				
-			Local ident:=module.ident+"_"+Identize( MakeRelativePath( StripExt( path ),module.baseDir ) )
+#rem				
+			Local ipath:=RealPath( path )
+			If path.StartsWith( module.baseDir )
+				ipath=ipath.Slice( module.baseDir.Length )
+			Endif
+#end
+			Local ipath:=MakeRelativePath( StripExt( path ),module.baseDir )
+
+			Local ident:=module.ident+"_"+Identize( ipath )
 			
 			Local parser:=New Parser
 			
@@ -298,7 +305,7 @@ Class BuilderInstance
 		
 			Local module:=modules[modules.Length-i-1]
 			
-			If module<>mainModule 
+			If module<>mainModule
 				product.imports.Push( module )
 			Endif
 		Next
@@ -808,7 +815,7 @@ Class BuilderInstance
 			
 		Case ".c",".cc",".cxx",".cpp",".m",".mm",".asm",".s"
 		
-			If parsingModule=mainModule 
+			If parsingModule=mainModule
 				product.SRC_FILES.Push( path )
 			Endif
 		

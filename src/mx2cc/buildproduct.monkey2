@@ -184,7 +184,7 @@ Class BuildProduct
 			Local ext:=ExtractExt( src )
 			If ext
 				Local rdir:=GetEnv( "MX2_APP_DIR_"+ext.Slice( 1 ).ToUpper() )
-				If rdir 
+				If rdir
 					dir=RealPath( dir+rdir )
 					If Not dir.EndsWith( "/" ) dir+="/"
 				Endif
@@ -388,8 +388,8 @@ Class GccBuildProduct Extends BuildProduct
 			
 			isasm=True
 		End
-			
-		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
+		
+		Local obj:=module.cacheDir+HashPath( MakeRelativePath( src,module.cfileDir ) )
 
 		If src.EndsWith( "/_r.cpp" ) obj+="_r"
 			
@@ -550,9 +550,20 @@ Class GccBuildProduct Extends BuildProduct
 		
 		Local objs:=New StringStack
 		
-		For Local src:=Eachin srcs
+		Local done:=New StringMap<Bool>
 		
-			objs.Push( CompileSource( src ) )
+		For Local src:=Eachin srcs
+			
+			Local obj:=CompileSource( src )
+			
+			If done.Contains( obj )
+				Print "OOPS! HASH COLLISION! CONTACT MARK!"
+				libc.exit_( -1 )
+			Endif
+			
+			done[obj]=True
+			
+			objs.Push( obj )
 		Next
 		
 		objs.AddAll( OBJ_FILES )
@@ -600,7 +611,7 @@ Class GccBuildProduct Extends BuildProduct
 
 		Else
 
-#If __TARGET__="windows"			
+#If __TARGET__="windows"
 
 			Local tmp:=AllocTmpFile( "libFiles" )
 			SaveString( args,tmp )

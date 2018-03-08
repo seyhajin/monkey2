@@ -24,11 +24,13 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makedocs std"
+Const TestArgs:="mx2cc makemods pyro-framework"
  
+'Const TestArgs:="mx2cc makeapp D:\Plane-Demo-master\Plane.monkey2"
+
 'Const TestArgs:="mx2cc makemods -target=ios"' monkey libc"
  
-Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"
 
 Function Main()
 	
@@ -190,7 +192,7 @@ Function MakeApp:Bool( args:String[] )
 	New BuilderInstance( opts )
 	
 	Builder.Parse()
-	If opts.passes=1 
+	If opts.passes=1
 		If opts.geninfo
 			Local gen:=New ParseInfoGenerator
 			Local jobj:=gen.GenParseInfo( Builder.mainModule.fileDecls[0] )
@@ -208,7 +210,7 @@ Function MakeApp:Bool( args:String[] )
 	
 	Builder.Translate()
 	If Builder.errors.Length Return False
-	If opts.passes=3 
+	If opts.passes=3
 		Return True
 	Endif
 	
@@ -296,7 +298,7 @@ Function MakeDocs:Bool( args:String[] )
 	
 	opts.clean=False
 	
-	If Not args 
+	If Not args
 		args=EnumModules()
 		DeleteDir( "docs/modules",True )
 	Endif
@@ -381,7 +383,7 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		Local arg:=args[i]
 	
 		Local j:=arg.Find( "=" )
-		If j=-1 
+		If j=-1
 			Select arg
 			Case "-run"
 				opts.passes=5
@@ -571,7 +573,7 @@ Function EnumModules:String[]()
 			If Not str Continue
 			
 			Local obj:=JsonObject.Parse( str )
-			If Not obj 
+			If Not obj
 				Print "Error parsing json:"+dir+"module.json"
 				Continue
 			Endif

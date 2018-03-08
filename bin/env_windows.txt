@@ -116,7 +116,7 @@ PATH=${EMSDK}\emscripten\1.37.35;${PATH}
 
 'Add mserver_winnt emscripten mini-server/launcher.
 '
-MX2_MSERVER="${MX2_HOME}\devtools\mserver-v86c\mserver_winnt.exe"
+MX2_MSERVER="${EMSDK}\mserver-v86c\mserver_winnt.exe"
 
 'Linker options
 MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=536870912 -s DISABLE_EXCEPTION_CATCHING=1
