@@ -76,6 +76,8 @@ Class JNIEnv Extends Void
 	Method CallBooleanMethod:Bool( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallBooleanMethod"
 
 	Method CallIntMethod:Int( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallIntMethod"
+		
+	Method CallFloatMethod:Float( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallFloatMethod"
 
 	Method CallObjectMethod:jobject( obj:jobject,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallObjectMethod"
 	
@@ -90,6 +92,8 @@ Class JNIEnv Extends Void
 	Method CallStaticBooleanMethod:Bool( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticBooleanMethod"
 
 	Method CallStaticIntMethod:int( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticIntMethod"
+		
+	Method CallStaticFloatMethod:Float( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticFloatMethod"
 
 	Method CallStaticStringMethod:String( clazz:jclass,methodID:jmethodID,args:Variant[] ) Extension="bbJNI::CallStaticStringMethod"
 	
