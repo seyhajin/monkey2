@@ -8,7 +8,7 @@ In Monkey2 pointers are mainly used with external C/C++ code.
 Try not to use pointers unless absolutely necessary. It can lead to bugs if the pointed address is not kept "alive". Pointers to globals are safe, for example.  
 You must have access to the memory you're trying to reach or you'll have a (fatal) memory access violation.
 
-A pointer can point to any kind of type, even garbage collected types. This can lead to bad things too as the garbage collector is not 'aware' of pointers.
+A pointer should not point to a class instance. To get a pointer to your class object, you'll have to cast it to `Void Ptr`. See example below.
 
 @#### Declarations
 
@@ -49,7 +49,7 @@ Note you can use pointer arythmetics with the index operator(`[]`) but you have 
 
 @#### Dereferencing with ->
 
-You can access user defined types fields, methods,.. with the `->` operator. It is equivalent to `[0].`
+You can access a struct fields, methods,.. with the `->` operator. It is equivalent to `[0].`. Note that pointer to class is prohibited.
 
 ```
 Struct str
@@ -72,18 +72,15 @@ You can Cast a pointer and do some explicit conversions with the `Cast` operator
 
 `Cast`<_Type_>(_address_)
 
-An example with a useless conversion from Int to Void to Int:
+An example with a conversion from Class(reference) to Void Ptr to Class:
 ```
-Local i:int=1
+Local foo:=New myFooClass()
 Local myVoidPtr:Void Ptr
 
-myVoidPtr=Cast<Void Ptr>(VarPtr i)
+myVoidPtr=Cast<Void Ptr>(foo)
 
-Local j:int
-Local myIntPtr:Int Ptr
+Local foo2:myFooClass
 
-myIntPtr=Cast<Int Ptr>(myVoidPtr)
-j=myIntPtr[0]
+foo2=Cast<myFooClass>(myVoidPtr)
 ```
-`j` receives the value of `i` but does not have the same address.
-`myIntPtr` and `myVoidPtr` both point to the same address (`VarPtr i`) but have different types.
+"foo" and "foo2" will have the same address(reference). Note that casting to `Void Ptr` is essentially used when dealing with external native code.
