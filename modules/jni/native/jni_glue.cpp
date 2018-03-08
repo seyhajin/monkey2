@@ -180,6 +180,19 @@ namespace bbJNI{
 		return r;
 	}
 
+	bbFloat CallFloatMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbFloat r=env->CallFloatMethodA( obj,methodID,jargs );
+		
+		DeleteStrRefs( env );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
 	bbString CallStringMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
 		
 		jvalue *jargs=makeArgs( env,args );
@@ -239,6 +252,19 @@ namespace bbJNI{
 		jvalue *jargs=makeArgs( env,args );
 		
 		bbInt r=env->CallStaticIntMethodA( clazz,methodID,jargs );
+		
+		DeleteStrRefs( env );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
+	bbFloat CallStaticFloatMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbFloat r=env->CallStaticFloatMethodA( clazz,methodID,jargs );
 		
 		DeleteStrRefs( env );
 		
