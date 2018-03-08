@@ -3,8 +3,8 @@ Namespace mojo.input
 
 #rem monkeydoc Key codes.
 
-By default, key codes refer to 'virtual' keys. For example, `Key.W` refers to the key with 'W' printed on it. However, this key may be not
-be in the same physical location on all users' keyboards, due to OS language and keyboard settings.
+By default, key codes refer to 'virtual' keys. For example, `Key.W` refers to the key with 'W' printed on it. However, this key may not be
+in the same physical location on all users' keyboards, due to OS language and keyboard settings.
 
 To deal with this, mojo also provides support for 'raw' keys. A raw key code is simply a virtual key code 'or'ed with the special key code
 `Key.Raw`.

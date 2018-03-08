@@ -45,11 +45,11 @@ myPtr=VarPtr i
 Print myPtr[0]
 ```
 Will print 1, the value of `i`.
-Note you can use pointer arythmetics with the index operator(`[]`) but you have to be sure you have access to that part of the memory or you'll get a memory access violation!
+Note you can use pointer arithmetics with the index operator(`[]`) but you have to be sure you have access to that part of the memory or you'll get a memory access violation!
 
 @#### Dereferencing with ->
 
-You can access a struct fields, methods,.. with the `->` operator. It is equivalent to `[0].`. Note that pointer to class is prohibited.
+You can access a struct's fields, methods,.. with the `->` operator. It is equivalent to `[0].`. Note that creating a pointer to class is prohibited.
 
 ```
 Struct str
@@ -83,4 +83,4 @@ Local foo2:myFooClass
 
 foo2=Cast<myFooClass>(myVoidPtr)
 ```
-"foo" and "foo2" will have the same address(reference). Note that casting to `Void Ptr` is essentially used when dealing with external native code.
+"foo" and "foo2" will have the same address(reference). Note that casting to `Void Ptr` is commonly used when dealing with external native code.
