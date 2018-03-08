@@ -18,6 +18,8 @@ namespace bbJNI{
 	bbBool CallBooleanMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args );
 
 	bbInt CallIntMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args );
+	
+	bbFloat CallFloatMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args );
 
 	bbString CallStringMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args );
 
@@ -29,6 +31,8 @@ namespace bbJNI{
 	bbBool CallStaticBooleanMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args );
 
 	bbInt CallStaticIntMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args );
+	
+	bbFloat CallStaticFloatMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args );
 
 	bbString CallStaticStringMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args );
 
