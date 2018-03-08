@@ -63,6 +63,7 @@ This function is called *after* global variables (including global Consts) have 
 
 Since modules can't have cyclic dependencies, Mains will always execute in the correct order, eg: if module X imports module Y, then module Y's Main is guaranteed to be called before module X's.
 
+You can use the `Internal` keyword at class or file scope to declare module internal accessibility. 
 
 @#### Importing modules
 

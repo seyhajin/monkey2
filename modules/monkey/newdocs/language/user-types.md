@@ -215,6 +215,8 @@ There are three levels of encapsulation for class and struct members:
 
 -`Private` members can only be accessed by the base class. Code existing in the same source file have acces to `Private` members too.
 
+There is also the `Internal` privacy level, used to declare module internal accessibility.
+
 example:
 ```
 Class Foo
