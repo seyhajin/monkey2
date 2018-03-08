@@ -3,23 +3,31 @@
 
 namespace bbJNI{
 
-	jstring jstring_refs[64];
-	jstring *jstring_refsp=jstring_refs;
+	//64 params max
+	const int MAX_LOCAL_REFS=64;
+
+	jobject local_refs[MAX_LOCAL_REFS];
 	
-	void AddStrRef( jstring jstr ){
-		
-		*jstring_refsp++=jstr;
+	int num_local_refs=0;
+	
+	void AddLocalRef( jobject jobj ){
+	
+		if( num_local_refs==MAX_LOCAL_REFS ) return;
+	
+		local_refs[num_local_refs++]=jobj;
 	}
 	
-	void DeleteStrRefs( JNIEnv *env ){
+	void DeleteLocalRefs( JNIEnv *env ){
 	
-		while( jstring_refsp!=jstring_refs ){
+		while( num_local_refs ){
 			
-			jstring jstr=*--jstring_refsp;
+			jobject jobj=local_refs[--num_local_refs];
 			
-			env->DeleteLocalRef( (jobject)jstr );
+			env->DeleteLocalRef( jobj );
 		}
 	}
+	
+	// ***** Utility *****
 
 	bbString JStringToString( JNIEnv *env,jstring jstr ){
 	
@@ -73,11 +81,17 @@ namespace bbJNI{
 				
 				jarg->i=val;
 			
-			}else if( type==bbGetType<jobject>() ){
+			}else if( type==bbGetType<bbFloat>() ){
 			
-				jobject jobj=arg.get<jobject>();
+				bbFloat val=arg.get<bbFloat>();
+				
+				jarg->f=val;
 			
-				jarg->l=jobj;
+			}else if( type==bbGetType<bbDouble>() ){
+			
+				bbDouble val=arg.get<bbDouble>();
+				
+				jarg->d=val;
 			
 			}else if( type==bbGetType<bbString>() ){
 			
@@ -85,9 +99,15 @@ namespace bbJNI{
 				
 				jstring jstr=StringToJString( env,str );
 				
-				AddStrRef( jstr );
+				AddLocalRef( (jobject)jstr );
 				
 				jarg->l=jstr;
+
+			}else if( type==bbGetType<jobject>() ){
+			
+				jobject jobj=arg.get<jobject>();
+			
+				jarg->l=jobj;
 /*				
 			}else if( type==bbGetType<bbArray<bbBool>>() ){
 			
@@ -132,6 +152,8 @@ namespace bbJNI{
 		return jargs;
 	}
 	
+	// ***** Instance fields *****
+	
 	bbString GetStringField( JNIEnv *env,jobject obj,jfieldID fieldID ){
 	
 		jstring jstr=(jstring)env->GetObjectField( obj,fieldID );
@@ -142,6 +164,21 @@ namespace bbJNI{
 		
 		return r;
 	}
+	
+	// ***** Static fields *****
+
+	bbString GetStaticStringField( JNIEnv *env,jclass clazz,jfieldID fieldID ){
+	
+		jstring jstr=(jstring)env->GetStaticObjectField( clazz,fieldID );
+		
+		bbString r=JStringToString( env,jstr );
+		
+		env->DeleteLocalRef( jstr );
+		
+		return r;
+	}
+	
+	// ***** Instance methods *****
 
 	void CallVoidMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
 		
@@ -149,7 +186,7 @@ namespace bbJNI{
 		
 		env->CallVoidMethodA( obj,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 	}
@@ -160,7 +197,7 @@ namespace bbJNI{
 		
 		bbBool r=env->CallBooleanMethodA( obj,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -173,7 +210,7 @@ namespace bbJNI{
 		
 		bbInt r=env->CallIntMethodA( obj,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -186,7 +223,20 @@ namespace bbJNI{
 		
 		bbFloat r=env->CallFloatMethodA( obj,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+
+	bbDouble CallDoubleMethod( JNIEnv *env,jobject obj,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbDouble r=env->CallDoubleMethodA( obj,methodID,jargs );
+		
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -203,7 +253,7 @@ namespace bbJNI{
 		
 		env->DeleteLocalRef( jstr );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -216,12 +266,14 @@ namespace bbJNI{
 		
 		jobject r=env->CallObjectMethodA( obj,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
 		return r;
 	}
+	
+	// ***** Static methods *****
 
 	void CallStaticVoidMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
 		
@@ -229,7 +281,7 @@ namespace bbJNI{
 		
 		env->CallStaticVoidMethodA( clazz,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 	}
@@ -240,7 +292,7 @@ namespace bbJNI{
 		
 		bbBool r=env->CallStaticBooleanMethodA( clazz,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -253,7 +305,7 @@ namespace bbJNI{
 		
 		bbInt r=env->CallStaticIntMethodA( clazz,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -266,7 +318,20 @@ namespace bbJNI{
 		
 		bbFloat r=env->CallStaticFloatMethodA( clazz,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
+		
+		delete[] jargs;
+		
+		return r;
+	}
+	
+	bbDouble CallStaticDoubleMethod( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
+		
+		jvalue *jargs=makeArgs( env,args );
+		
+		bbDouble r=env->CallStaticDoubleMethodA( clazz,methodID,jargs );
+		
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -283,7 +348,7 @@ namespace bbJNI{
 		
 		env->DeleteLocalRef( jstr );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
@@ -296,12 +361,14 @@ namespace bbJNI{
 		
 		jobject r=env->CallStaticObjectMethodA( clazz,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
 		return r;
 	}
+	
+	// ***** ctors *****
 	
 	jobject NewObject( JNIEnv *env,jclass clazz,jmethodID methodID,bbArray<bbVariant> args ){
 
@@ -309,7 +376,7 @@ namespace bbJNI{
 		
 		jobject r=env->NewObjectA( clazz,methodID,jargs );
 		
-		DeleteStrRefs( env );
+		DeleteLocalRefs( env );
 		
 		delete[] jargs;
 		
