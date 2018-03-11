@@ -203,7 +203,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 					
 					Local ok:=ctrl
 					#If __TARGET__="macos"
-					ok=ok And shift
+					If Not shift ok=Null
 					#Endif
 					
 					If ok ' duplicate line or selection
@@ -889,7 +889,7 @@ Class CodeDocument Extends Ted2Document
 			For Local get:=0 Until _errors.Length
 				Local err:=_errors[get]
 				If err.line>=first
-					If err.line<first+removed 
+					If err.line<first+removed
 						err.removed=True
 						Continue
 					Endif
@@ -1690,7 +1690,7 @@ Class CodeDocument Extends Ted2Document
 		Local line:=_codeView.LineTextAtCursor
 		Local pos:=_codeView.PosInLineAtCursor
 		Local lower:=line.Trim().ToLower()
-		Local skip:=lower.StartsWith( "function " ) Or lower.StartsWith( "method " ) Or 
+		Local skip:=lower.StartsWith( "function " ) Or lower.StartsWith( "method " ) Or
 						lower.StartsWith( "operator " ) Or lower.StartsWith( "property " )
 		If Not skip
 			Local i1:=line.Find( "(" )
@@ -2051,7 +2051,7 @@ Class CodeItemIcons
 		_icons["warning"]=Load( "warning.png" )
 		_icons["inherited"]=Load( "class.png" )
 				
-		_iconDefault=Load( "other.png" ) 
+		_iconDefault=Load( "other.png" )
 		
 	End
 	
