@@ -166,7 +166,7 @@ Function Main()
 	
 	'initial theme
 	'
-	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-prime-blue-regular" )
+	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-hollow" )
 
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
 	
@@ -184,7 +184,7 @@ Function Main()
 
 	Local rect:Recti
 	
-	If jobj.Contains( "windowRect" ) 
+	If jobj.Contains( "windowRect" )
 		rect=ToRecti( jobj["windowRect"] )
 	Else
 		Local w:=Min( 1480,App.DesktopSize.x-40 )

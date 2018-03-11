@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.10"
+Const MX2CC_VERSION:="1.1.11"
 
 Const RELEASE_SUFFIX:=""
 
@@ -72,14 +72,14 @@ Function CopyFiles( dir:String )
 				
 #If __TARGET__="windows"
 				If Not file.EndsWith( "win32" ) And Not file.EndsWith( "win64" ) Continue
-#else				
+#else
 				Continue
 #endif
 			Else If dir.EndsWith( "/openvr-sdk/lib" )
 				
 #If __TARGET__="windows"
 				If Not file.EndsWith( "win32" ) And Not file.EndsWith( "win64" ) Continue
-#else				
+#else
 				Continue
 #endif
 				
@@ -202,7 +202,7 @@ Function Main()
 
 	CopyRelease()
 	
-#if __TARGET__="windows"	
+#if __TARGET__="windows"
 
 	MakeInno()
 	
