@@ -42,9 +42,11 @@ Using mojo..
 
 '2d graphics stuff
 #Import "graphics/canvas"
+#Import "graphics/image"
 #Import "graphics/font"
 #Import "graphics/freetypefont"
-#Import "graphics/image"
+#Import "graphics/imagefont"
+#Import "graphics/angelfont"
 #Import "graphics/shadowcaster"
 
 #Import "input/keyboard"
