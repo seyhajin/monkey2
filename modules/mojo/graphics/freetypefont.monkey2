@@ -51,10 +51,22 @@ Class FreeTypeFont Extends Font
 		Return gpage.image
 	End
 	
-	Function Load:FreeTypeFont( path:String,height:Float,shader:Shader,textureFlags:TextureFlags )
-	
-		If Not shader shader=Shader.Open( "font" )
+	Method GetKerning:Float( firstChar:Int,secondChar:Int ) Override
 		
+		If Not _hasKerning Return 0
+
+		Local firstGlyph:=FT_Get_Char_Index( _face,firstChar )
+		Local secondGlyph:=FT_Get_Char_Index( _face,secondChar )
+		
+		Local delta:FT_Vector
+		
+		FT_Get_Kerning( _face,firstGlyph,secondGlyph,0,Varptr delta )
+		
+		Return delta.x Shr 6
+	End
+	
+	Function Load:FreeTypeFont( path:String,height:Float,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
+	
 		If Not FreeType And FT_Init_FreeType( Varptr FreeType ) Return Null
 		
 		Local data:=DataBuffer.Load( path )
@@ -68,6 +80,8 @@ Class FreeTypeFont Extends Font
 			data.Discard()
 			Return Null
 		Endif
+		
+		If Not shader shader=Shader.Open( "font" )
 		
 		Local font:=New FreeTypeFont( data,face,height,shader,textureFlags )
 		
@@ -97,6 +111,7 @@ Class FreeTypeFont Extends Font
 	Field _face:FT_Face
 	Field _shader:Shader
 	Field _textureFlags:TextureFlags
+	Field _hasKerning:Bool
 	
 	Field _height:Int
 	Field _ascent:Int
@@ -149,7 +164,7 @@ Class FreeTypeFont Extends Font
 		texw=1 Shl Int( Ceil( Log2( texw ) ) )
 		texh=1 Shl Int( Ceil( Log2( texh ) ) )
 		
-		Local pixmap:=New Pixmap( texw,texh,PixelFormat.A8 )
+		Local pixmap:=New Pixmap( texw,texh,PixelFormat.I8 )
 		pixmap.Clear( Color.None )
 	
 		Local glyphs:=New Glyph[numChars],glyph:Glyph,nullGlyph:Glyph
@@ -170,7 +185,7 @@ Class FreeTypeFont Extends Font
 			Local gw:=Int( slot->bitmap.width )
 			Local gh:=Int( slot->bitmap.rows )
 	
-			Local tmp:=New Pixmap( gw,gh,PixelFormat.A8,slot->bitmap.buffer,slot->bitmap.pitch )
+			Local tmp:=New Pixmap( gw,gh,PixelFormat.I8,slot->bitmap.buffer,slot->bitmap.pitch )
 			
 			If tx+gw+1>pixmap.Width
 				ty+=maxh
@@ -204,7 +219,8 @@ Class FreeTypeFont Extends Font
 		_face=face
 		_shader=shader
 		_textureFlags=textureFlags
-
+		_hasKerning=FT_HAS_KERNING( _face )
+		
 		Local size_req:FT_Size_RequestRec
 		
 		size_req.type=FT_SIZE_REQUEST_TYPE_REAL_DIM

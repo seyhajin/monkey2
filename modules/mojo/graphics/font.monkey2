@@ -62,6 +62,7 @@ Class Font Extends Resource
 	Method GetKerning:Float( firstChar:Int,secondChar:Int ) Virtual
 		Return 0
 	End
+	
 	#rem monkeydoc Measures the width of some text when rendered by the font.
 	#end
 	Method TextWidth:Float( text:String )
@@ -69,7 +70,7 @@ Class Font Extends Resource
 		Local w:=0.0,lastChar:=0
 
 		For Local char:=Eachin text
-			w+=GetGlyph( char ).advance+GetKerning( lastChar,char )
+			w+=GetKerning( lastChar,char )+GetGlyph( char ).advance
 			lastChar=char
 		Next
 		
@@ -80,7 +81,22 @@ Class Font Extends Resource
 	#end
 	Function Load:Font( path:String,size:Float,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 		
-		Return FreeTypeFont.Load( path,size,shader,textureFlags )
+		Local font:Font
+		
+		Select ExtractExt( path )
+		Case ".ttf",".otf",".fon"
+			font=FreeTypeFont.Load( path,size,shader,textureFlags )
+		Case ".fnt"
+			font=AngelFont.Load( path,shader,textureFlags )
+		Case ""
+			font=FreeTypeFont.Load( path+".ttf",size,shader,textureFlags )
+			If Not font 
+				font=FreeTypeFont.Load( path+".otf",size,shader,textureFlags )
+				If Not font font=FreeTypeFont.Load( path+".fon",size,shader,textureFlags )
+			Endif
+		End
+		
+		Return font
 	End
 	
 	Protected

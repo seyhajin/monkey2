@@ -1107,6 +1107,8 @@ Class Canvas
 			For Local i:=i0 Until i1
 				
 				Local char:=text[i]
+
+				tx+=_font.GetKerning( lastChar,char )	'add kerning before render
 			
 				Local g:=_font.GetGlyph( char )
 			
@@ -1125,10 +1127,8 @@ Class Canvas
 				AddVertex( x1,y1,s1,t1 )
 				AddVertex( x0,y1,s0,t1 )
 				
-				tx+=g.advance
+				tx+=g.advance							'add advance after render
 
-				tx+=_font.GetKerning( lastChar,char )
-				
 				lastChar=char
 			Next
 			

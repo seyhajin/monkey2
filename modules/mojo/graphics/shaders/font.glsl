@@ -29,7 +29,7 @@ uniform sampler2D m_ImageTexture0;
 
 void main(){
 
-	float alpha=texture2D( m_ImageTexture0,v_TexCoord0 ).a;
+	float alpha=texture2D( m_ImageTexture0,v_TexCoord0 ).r;
 
 #if MX2_RENDERPASS==0
 

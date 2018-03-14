@@ -1,4 +1,11 @@
 
+***** Monkey2 v1.1.12 *****
+
+Added AngelFont and ImageFont support. Font.Load tries to guess correct font type via file extension but you can use ImageFont.Load and AngelFont.Load directly if you want. Changed monochrome font texture format to I8.
+
+Fixed PATH growing when updating modules in ted2go.
+
+
 ***** Monkey2 v1.1.11 *****
 
 Major change to name munging for tmp files to make them shorter.

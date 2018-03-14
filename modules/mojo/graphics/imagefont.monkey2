@@ -73,8 +73,10 @@ Class ImageFont Extends Font
 			If Not ExtractRootDir( path ) pixmap=Pixmap.Load( "font::"+path,Null,True )
 			If Not pixmap Return Null
 		Endif
+		
+		Local pshader:=shader ?Else (pixmap.Format=PixelFormat.I8 ? Shader.Open( "font" ) Else Shader.Open( "sprite" ))
 
-		Local font:=New ImageFont( pixmap,charWidth,charHeight,firstChar,numChars,padding,shader,textureFlags )
+		Local font:=New ImageFont( pixmap,charWidth,charHeight,firstChar,numChars,padding,pshader,textureFlags )
 		
 		Return font
 	End

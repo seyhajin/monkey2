@@ -67,8 +67,6 @@ Class AngelFont Extends Font
 	
 	Function Load:AngelFont( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
 		
-		If Not shader shader=Shader.Open( "font" )
-		
 		Local fnt:=LoadString( path,True )
 		If Not fnt
 			If Not ExtractRootDir( path ) fnt=LoadString( "font::"+path,True )
@@ -108,9 +106,11 @@ Class AngelFont Extends Font
 				
 				Local fpath:=dir+file.Slice( 1,-1 )
 				
-				Local pixmap:=Pixmap.Load( fpath,PixelFormat.A8,True )
+				Local pixmap:=Pixmap.Load( fpath,Null,True )
 				
-				Local image:=New Image( pixmap,textureFlags,shader )
+				Local pshader:=shader ?Else (pixmap.Format=PixelFormat.I8 ? Shader.Open( "font" ) Else Shader.Open( "sprite" ))
+				
+				Local image:=New Image( pixmap,textureFlags,pshader )
 				
 				If id>=pages.Length pages.Resize( id+1 )
 					
