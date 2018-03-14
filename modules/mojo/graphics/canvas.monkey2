@@ -94,7 +94,7 @@ Class Canvas
 	#end	
 	Method EndRender()
 	
-		If _lighting EndLighting() 
+		If _lighting EndLighting()
 		
 		Flush()
 		
@@ -208,7 +208,7 @@ Class Canvas
 		Flush()
 
 		_device.RetroMode=rmode
-	End	
+	End
 	
 	#rem monkeydoc The current point size for use with DrawPoint.
 	#end
@@ -851,7 +851,7 @@ Class Canvas
 
 		If _outlineMode=OutlineMode.None Or order<3 Return
 		
-		For Local i:=0 Until order-1 
+		For Local i:=0 Until order-1
 			
 			Local k:=i*2
 			DrawOutlineLine( vertices[k],vertices[k+1],vertices[k+2],vertices[k+3] )
@@ -929,7 +929,7 @@ Class Canvas
 
 		If image
 			AddDrawOp( image.Shader,image.Material,image.BlendMode,order,count )
-		Else		
+		Else
 			AddDrawOp( _shader,_material,_blendMode,order,count )
 		Endif
 		
@@ -1084,12 +1084,12 @@ Class Canvas
 		Local sx:Float,sy:Float
 		Local tw:Float,th:Float
 		
-		Local i0:=0
+		Local i0:=0,lastChar:=0
 		
 		while i0<text.Length
 		
 			Local i1:=i0+1
-			Local page:GlyphPage
+			Local page:Image
 			
 			While i1<text.Length
 			
@@ -1099,14 +1099,16 @@ Class Canvas
 				i1+=1
 			Wend
 
-			Local image:=gpage.image
+			Local image:=gpage
 			sx=image.Rect.min.x;sy=image.Rect.min.y
 			tw=image.Texture.Width;th=image.Texture.Height
 			AddDrawOp( image.Shader,image.Material,image.BlendMode,4,i1-i0 )
 			
 			For Local i:=i0 Until i1
+				
+				Local char:=text[i]
 			
-				Local g:=_font.GetGlyph( text[i] )
+				Local g:=_font.GetGlyph( char )
 			
 				Local s0:=Float(g.rect.min.x+sx)/tw
 				Local t0:=Float(g.rect.min.y+sy)/th
@@ -1124,6 +1126,10 @@ Class Canvas
 				AddVertex( x0,y1,s0,t1 )
 				
 				tx+=g.advance
+
+				tx+=_font.GetKerning( lastChar,char )
+				
+				lastChar=char
 			Next
 			
 			gpage=page
@@ -1864,7 +1870,7 @@ Class Canvas
 				_device.Clear( Color.White )
 				_device.Render( 3,n/3,0 )
 				
-				_device.RenderPass=5				
+				_device.RenderPass=5
 				_device.RenderTarget=_rtarget
 				_device.BlendMode=BlendMode.Additive
 				_device.ColorMask=ColorMask.All
