@@ -1,11 +1,80 @@
 
 #include "bbstring.h"
 #include "bbarray.h"
+#include "bbplatform.h"
+#include "bbmonkey.h"
+
+#include <cwctype>
+#include <clocale>
 
 bbString::Rep bbString::_nullRep;
 
+#if BB_ANDROID
+
+#include <jni.h>
+
+//FIXME: SDL2 dependancy!
+extern "C" void *SDL_AndroidGetJNIEnv();
+
+#endif
+
 namespace{
 
+#if BB_ANDROID
+	jclass jclass_lang;
+	
+	jmethodID jmethod_toUpper;
+	jmethodID jmethod_toLower;
+	jmethodID jmethod_capitalize;
+
+	bbString JStringToString( JNIEnv *env,jstring jstr ){
+	
+		if( !jstr ) return "";
+	
+		const char *cstr=env->GetStringUTFChars( jstr,0 );
+		
+		bbString str=bbString::fromCString( cstr );
+		
+		env->ReleaseStringUTFChars( jstr,cstr );
+		
+		return str;
+	}
+	
+	jstring StringToJString( JNIEnv *env,bbString str ){
+	
+		int n=str.utf8Length()+1;
+		
+		char *buf=new char[n];
+		
+		str.toCString( buf,n );
+		
+		jstring jstr=env->NewStringUTF( buf );
+		
+		return jstr;
+	}
+#endif
+	
+	void initLocale(){
+	
+		static bool inited;
+		if( inited ) return;
+		inited=true;
+		
+#if BB_ANDROID
+		JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
+		jclass_lang=env->FindClass( "com/monkey2/lib/Monkey2Lang" );
+		jmethod_toUpper=env->GetStaticMethodID( jclass_lang,"toUpper","(Ljava/lang/String;)Ljava/lang/String;" );
+		jmethod_toLower=env->GetStaticMethodID( jclass_lang,"toLower","(Ljava/lang/String;)Ljava/lang/String;" );
+		jmethod_capitalize=env->GetStaticMethodID( jclass_lang,"capitalize","(Ljava/lang/String;)Ljava/lang/String;" );
+		bb_printf( "initLocale: env=%p\n",env );
+#elif BB_WINDOWS
+		std::setlocale( LC_ALL,"English" );
+//		std::setlocale( LC_CTYPE,"English" );
+#else
+		std::setlocale( LC_CTYPE,"en_US.UTF-8" );
+#endif
+	}
+	
 	template<class C> int t_memcmp( const C *p1,const C *p2,int count ){
 		return memcmp( p1,p2,count*sizeof(C) );
 	}
@@ -448,23 +517,41 @@ bbString bbString::slice( int from,int term )const{
 }
 
 bbString bbString::toUpper()const{
+	initLocale();
+#if BB_ANDROID
+	JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
+	return JStringToString( env,(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod_toUpper,StringToJString( env,*this ) ) );
+#else
 	Rep *rep=Rep::alloc( length() );
-	for( int i=0;i<length();++i ) rep->data[i]=std::toupper( data()[i] );
+	for( int i=0;i<length();++i ) rep->data[i]=::towupper( data()[i] );
 	return rep;
+#endif
 }
 
 bbString bbString::toLower()const{
+	initLocale();
+#if BB_ANDROID
+	JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
+	return JStringToString( env,(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod_toLower,StringToJString( env,*this ) ) );
+#else
 	Rep *rep=Rep::alloc( length() );
-	for( int i=0;i<length();++i ) rep->data[i]=std::tolower( data()[i] );
+	for( int i=0;i<length();++i ) rep->data[i]=::towlower( data()[i] );
 	return rep;
+#endif
 }
 
 bbString bbString::capitalize()const{
+	initLocale();
+#if BB_ANDROID
+	JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
+	return JStringToString( env,(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod_capitalize,StringToJString( env,*this ) ) );
+#else
 	if( !length() ) return &_nullRep;
 	Rep *rep=Rep::alloc( length() );
-	rep->data[0]=std::toupper( data()[0] );
+	rep->data[0]=::towupper( data()[0] );
 	for( int i=1;i<length();++i ) rep->data[i]=data()[i];
 	return rep;
+#endif
 }
 
 bbString bbString::trim()const{

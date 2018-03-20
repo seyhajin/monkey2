@@ -1,6 +1,10 @@
 
 ***** Monkey2 v1.1.12 *****
 
+String.ToUpper, String.ToLower and String.Capitalize now use java equivalents internally on android 'coz NDK doesn't support locales.
+
+Updated MX2_MSVC_TOOLS_DIR in env_windows.txt for latest Visual Studio Community Edition 2017 update (15.6.2).
+
 Added AngelFont and ImageFont support. Font.Load tries to guess correct font type via file extension but you can use ImageFont.Load and AngelFont.Load directly if you want. Changed monochrome font texture format to I8.
 
 Fixed PATH growing when updating modules in ted2go.
