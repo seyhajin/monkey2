@@ -34,7 +34,7 @@ Class MyWindow Extends Window
 		'Example of loading a ttf font directly
 '		Style.Font=FreeTypeFont.Load( "asset::fonts/DejaVuSans.ttf",32 )
 		
-		'Example of loading a simple image font where chars are 5x12
+		'Example of loading a simple image font where chars are 15x36
 '		Style.Font=ImageFont.Load( "asset::gnsh-bitmapfont-colour1.png",15,36 )
 
 		'Example of loading a monochrome angel font
