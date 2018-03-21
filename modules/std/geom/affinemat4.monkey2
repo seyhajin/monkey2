@@ -110,6 +110,16 @@ Struct AffineMat4<T>
 			m.i.y*v.x+m.j.y*v.y+m.k.y*v.z+t.y,
 			m.i.z*v.x+m.j.z*v.y+m.k.z*v.z+t.z )
 	End
+	
+	#rem monkeydoc Multiplies a box by the matrix.
+	#end
+	Operator*:Box<T>( box:Box<T> )
+		Local r:=Box<T>.EmptyBounds
+		For Local i:=0 Until 8
+			r|=Self * box.Corner( i )
+		Next
+		Return r	
+	End
 
 	#rem monkeydoc Applies a translation transformation to the matrix.
 	#end
