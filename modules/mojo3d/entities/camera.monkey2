@@ -183,6 +183,8 @@ Class Camera Extends Entity
 		Local ndc_coords:=clip_coords.XY/clip_coords.w
 		
 		Local vp_coords:=Cast<Vec2f>( Viewport.Size ) * (ndc_coords * 0.5 + 0.5)
+		
+		vp_coords.y=Viewport.Height-vp_coords.y-1
 	
 		Return vp_coords
 	End
@@ -190,6 +192,8 @@ Class Camera Extends Entity
 	#rem monkeydoc Converts a point from viewport coordinates to world coordinates.
 	#end
 	Method UnprojectFromViewport:Vec3f( viewportCoords:Vec2f )
+
+		viewportCoords.y=Viewport.Height-viewportCoords.y-1
 	
 		Local vp_coords:=viewportCoords / Cast<Vec2f>( Viewport.Size ) * 2.0 - 1.0
 	
