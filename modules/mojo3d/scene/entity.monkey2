@@ -142,6 +142,22 @@ Class Entity Extends DynamicObject
 		Return _children.ToArray()
 	End
 
+#rem	
+	#rem monkeydoc Number of attached components.
+	#end
+	Property NumComponents:Int()
+		
+		Return _components.Length
+	End
+#end
+	
+	#rem monkeydoc Array of attached components.
+	#end
+	Property Components:Component[]()
+		
+		Return _components.ToArray()
+	End
+
 	#rem monkeydoc Visibility flag.
 	#end
 	Property Visible:Bool()
