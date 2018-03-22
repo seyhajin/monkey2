@@ -164,11 +164,10 @@ bbArray<bbTypeInfo*> bbTypeInfo::getTypes(){
 
 // ***** bbUnknownTypeInfo *****
 
-bbUnknownTypeInfo::bbUnknownTypeInfo(){
-	this->name=BB_T("Unknown@")+bbString( bbLong( this ) );
+bbUnknownTypeInfo::bbUnknownTypeInfo( const char *name ){
+	this->name=name ? name : BB_T("Unknown@")+bbString( bbLong( this ) );
 	this->kind="Unknown";
 }
-
 
 // ***** bbVoidTypeInfo *****
 

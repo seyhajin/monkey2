@@ -84,7 +84,7 @@ template<class T> bbTypeInfo *bbGetType(){
 
 struct bbUnknownTypeInfo : public bbTypeInfo{
 	
-	bbUnknownTypeInfo();
+	bbUnknownTypeInfo( const char *name );
 };
 
 struct bbVoidTypeInfo : public bbTypeInfo{

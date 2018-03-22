@@ -97,8 +97,8 @@ inline bbTypeInfo *bbGetType( bbObject* const& ){
 	return &bbObjectTypeInfo::instance;
 }
 
-template<class T> bbTypeInfo *bbGetUnknownType(){
- 	static bbUnknownTypeInfo info;
+template<class T> bbTypeInfo *bbGetUnknownType( const char *name=0 ){
+ 	static bbUnknownTypeInfo info( name );
 	
 	return &info;
 }

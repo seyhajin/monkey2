@@ -153,7 +153,7 @@ Class Translator_CPP Extends Translator
 		Local ename:=EnumName( etype )
 		
 		Emit( "bbTypeInfo *bbGetType("+ename+" const&){" )
-		Emit( "return bbGetUnknownType<"+ename+">();" )
+		Emit( "return bbGetUnknownType<"+ename+">(~q"+etype.Name+"~q);" )
 		Emit( "}" )
 	End
 	
@@ -167,11 +167,19 @@ Class Translator_CPP Extends Translator
 			Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
 		Endif
 
-		Emit( "return bbGetUnknownType<"+cname+">();" )
+		Emit( "return bbGetUnknownType<"+cname+">(~q"+ctype.Name+"~q);" )
+		
 		Emit( "}" )
 		
 		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
-		Emit( "return bbGetUnknownType<"+cname+">();" )
+		Emit( "return bbGetUnknownType<"+cname+">(~q"+ctype.Name+"~q);" )
+		#rem
+		If ctype.IsStruct
+			Emit( "return bbGetType(*this);" )
+		Else
+			Emit( "return bbGetType(this);" )
+		Endif
+		#end
 		Emit( "}" )
 	End
 	
