@@ -73,6 +73,7 @@ Class Invocation
 			
 			Local match:=True
 			For Local i:=0 Until args.Length
+				
 				If args[i]
 					
 					If args[i].Type.ExtendsType( ftype.ParamTypes[i] ) Continue

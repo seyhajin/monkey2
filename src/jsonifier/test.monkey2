@@ -39,9 +39,7 @@ Class Component
 	
 	Protected
 	
-	Method OnCopy( entity:Entity ) Virtual
-		
-	End
+	Method OnCopy:Component( entity:Entity ) Abstract
 	
 	Method SaveInitialState()
 		
@@ -92,9 +90,9 @@ Class Behaviour Extends Component
 	
 	Internal
 	
-	Method OnCopy( entity:Entity ) Override
+	Method OnCopy:Behaviour( entity:Entity ) Override
 		
-		New Behaviour( Self,entity )
+		Return New Behaviour( Self,entity )
 	End
 	
 	Private
@@ -420,7 +418,7 @@ Function Main()
 	Local saved2:=SaveScene()
 	
 	If CompareJson( saved1,saved2 )=0
-		Print saved1.ToJson()+"~nOkay!"
+		Print saved1.ToJson()+"~nSuccess!"
 	Else
 		Print "saved1:~n"+saved1.ToJson()+"~nsaved2:~n"+saved2.ToJson()+"~nError!"
 	Endif
