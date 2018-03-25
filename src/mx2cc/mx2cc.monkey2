@@ -18,19 +18,17 @@ Using libc..
 Using std..
 Using mx2..
 
-Const MX2CC_VERSION_EXT:=""
-
 Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods pyro-framework"
+'Const TestArgs:="mx2cc makemods"' pyro-framework"
  
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+
 'Const TestArgs:="mx2cc makeapp D:\Plane-Demo-master\Plane.monkey2"
 
 'Const TestArgs:="mx2cc makemods -target=ios"' monkey libc"
- 
-'Const TestArgs:="mx2cc makeapp -clean src/mx2cc/test.monkey2"
 
 Function Main()
 	

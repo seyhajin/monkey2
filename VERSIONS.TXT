@@ -1,5 +1,9 @@
 
-***** Monkey2 v1.1.12 *****
+***** Monkey2 v2018.03 *****
+
+Big version numbering system change! Now just YYYY.VV Uses 2 digits for version so stringized versions can sort properly in github.
+
+Typeinfo.Name now always returns proper typename even if reflection info disabled and even for generic types. Typeinfo.Name used to return a 'unknown@12345678' style string.
 
 String.ToUpper, String.ToLower and String.Capitalize now use java equivalents internally on android 'coz NDK doesn't support locales.
 

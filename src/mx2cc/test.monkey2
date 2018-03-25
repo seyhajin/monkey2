@@ -1,21 +1,22 @@
 
-#reflect test
-
 Namespace test
 
 Class C
+End
 
+Struct S<T>
+End
+
+Alias Si:S<Int>
+
+Function Get<T>:TypeInfo()
+	Return Typeof( Cast<T>( Null ) )
 End
 
 Function Main()
 	
-'	Local c:C'=New C
-
-	Local v:=Typeof<C>.NullValue
+	Print Typeof<C>
 	
-	Local c:=Cast<C>( v )
+	Print Typeof<Si>
 	
-	If c Print "no null" Else Print "null"
-		
-	Print Typeof(c)=Typeof<C>
 End
