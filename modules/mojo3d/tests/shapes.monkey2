@@ -71,8 +71,11 @@ Class MyWindow Extends Window
 '			Print "Ground hit: "+body.Entity.Name
 		End
 		
-		Local groundCollider:=New BoxCollider( _ground )
-		groundCollider.Box=groundBox
+'		Local groundCollider:=New BoxCollider( _ground )
+'		groundCollider.Box=groundBox
+
+		Local groundCollider:=New MeshCollider( _ground )
+		groundCollider.Mesh=_ground.Mesh
 		
 		Local groundBody:=New RigidBody( _ground )
 		groundBody.Mass=0
@@ -126,7 +129,6 @@ Class MyWindow Extends Window
 		
 		Local models:=New Model[]( model0,model1,model2,model3,model4 )
 		
-		#rem
 		For Local x:=-40 To 40 Step 8
 			
 			For Local z:=-40 To 40 Step 8
@@ -141,17 +143,10 @@ Class MyWindow Extends Window
 			Next
 		
 		Next
-		#end
-		
-		Local x:=0.0
 		
 		For Local model:=Eachin models
 			
-			model.Move( x,10,0 )
-			
-			x+=5.0
-			
-			'model.Destroy()
+			model.Destroy()
 		Next
 		
 		_marker=Model.CreateCone( 1,2,Axis.Y,12,New PbrMaterial( Color.Red ),Null )
