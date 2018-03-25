@@ -337,13 +337,13 @@ Class Translator
 				Local cname:=ClassName( ctype )
 				Emit( "struct "+cname+";" )
 				
-				If GenTypeInfo( ctype ) 
+'				If GenTypeInfo( ctype ) 
 					If ctype.IsStruct 
 						Emit( "bbTypeInfo *bbGetType("+cname+" const&);" )
 					Else
 						Emit( "bbTypeInfo *bbGetType("+cname+"* const&);" )
 					Endif
-				Endif
+'				Endif
 				
 				If _debug
 					Local tname:=cname
@@ -362,9 +362,9 @@ Class Translator
 				Local ename:=EnumName( etype )
 				Emit( "enum class "+ename+";" )
 				
-				If GenTypeInfo( etype ) 
+'				If GenTypeInfo( etype ) 
 					Emit( "bbTypeInfo *bbGetType("+ename+" const&);" )
-				Endif
+'				Endif
 				
 				If _debug
 					Emit( "bbString bbDBType("+ename+"*);" )

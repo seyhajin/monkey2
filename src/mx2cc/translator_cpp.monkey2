@@ -93,17 +93,35 @@ Class Translator_CPP Extends Translator
 		
 				For Local etype:=Eachin fdecl.enums
 					
-					If Not GenTypeInfo( etype ) Continue
+					If GenTypeInfo( etype )
+						EmitTypeInfo( etype )
+					Else
+						EmitNullTypeInfo( etype )
+					Endif
 					
-					EmitTypeInfo( etype )
+'					If Not GenTypeInfo( etype ) Continue
+					
+'					EmitTypeInfo( etype )
 				
 				Next
 				
 				For Local ctype:=Eachin fdecl.classes
-				
-					If Not GenTypeInfo( ctype ) Continue
 					
-					EmitTypeInfo( ctype )
+'					Print "ctype="+ctype.Name+" transFile="+ctype.transFile.path+" hfile="+ctype.transFile.hfile
+					
+'					UsesRefInfo( ctype )
+				
+'					Uses( ctype.transFile )
+					
+					If GenTypeInfo( ctype )
+						EmitTypeInfo( ctype )
+					Else
+						EmitNullTypeInfo( ctype )
+					Endif
+					
+'					If Not GenTypeInfo( ctype ) Continue
+					
+'					EmitTypeInfo( ctype )
 					
 				Next
 				
@@ -117,7 +135,7 @@ Class Translator_CPP Extends Translator
 		
 				For Local etype:=Eachin fdecl.enums
 					
-					If Not GenTypeInfo( etype ) Continue
+'					If Not GenTypeInfo( etype ) Continue
 					
 					EmitNullTypeInfo( etype )
 				
@@ -125,7 +143,7 @@ Class Translator_CPP Extends Translator
 				
 				For Local ctype:=Eachin fdecl.classes
 				
-					If Not GenTypeInfo( ctype ) Continue
+'					If Not GenTypeInfo( ctype ) Continue
 					
 					EmitNullTypeInfo( ctype )
 					
@@ -150,37 +168,51 @@ Class Translator_CPP Extends Translator
 
 	Method EmitNullTypeInfo( etype:EnumType )
 		
-		Local ename:=EnumName( etype )
+		UsesRefInfo( etype )
 		
+		Local ename:=EnumName( etype ),rename:="r"+ename
+		
+		Emit( "static bbUnknownTypeInfo "+rename+"(~q"+ename+"~q);" )
+
+		Emit( "bbTypeInfo *bbGetType("+ename+" const&){" )
+		Emit( "return &"+rename+";" )
+		Emit( "}" )
+#rem		
 		Emit( "bbTypeInfo *bbGetType("+ename+" const&){" )
 		Emit( "return bbGetUnknownType<"+ename+">(~q"+etype.Name+"~q);" )
 		Emit( "}" )
+#end
 	End
 	
 	Method EmitNullTypeInfo( ctype:ClassType )
+		
+		UsesRefInfo( ctype )
 
-		Local cname:=ClassName( ctype )
+		Local cname:=ClassName( ctype ),rcname:="r"+cname
+		Local ptype:=ctype.IsStruct ? " " Else "*"
 
+		Emit( "static bbUnknownTypeInfo "+rcname+"(~q"+cname+"~q);" )
+
+		Emit( "bbTypeInfo *bbGetType("+cname+ptype+"const&){" )
+		Emit( "return &"+rcname+";" )
+		Emit( "}" )
+		
+		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
+		Emit( "return &"+rcname+";" )
+		Emit( "}" )
+#rem		
 		If ctype.IsStruct
 			Emit( "bbTypeInfo *bbGetType("+cname+" const&){" )
 		Else
 			Emit( "bbTypeInfo *bbGetType("+cname+"* const&){" )
 		Endif
-
 		Emit( "return bbGetUnknownType<"+cname+">(~q"+ctype.Name+"~q);" )
-		
 		Emit( "}" )
 		
 		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
 		Emit( "return bbGetUnknownType<"+cname+">(~q"+ctype.Name+"~q);" )
-		#rem
-		If ctype.IsStruct
-			Emit( "return bbGetType(*this);" )
-		Else
-			Emit( "return bbGetType(this);" )
-		Endif
-		#end
 		Emit( "}" )
+#end
 	End
 	
 	Method TranslateFile( fdecl:FileDecl )
@@ -227,9 +259,9 @@ Class Translator_CPP Extends Translator
 			
 			Emit( "enum class "+ename+";" )
 			
-			If GenTypeInfo( etype )
+'			If GenTypeInfo( etype )
 				Emit( "bbTypeInfo *bbGetType("+ename+" const&);" )
-			Endif
+'			Endif
 			
 			If _debug
 				Emit( "bbString bbDBType("+ename+"*);" )
@@ -567,9 +599,9 @@ Class Translator_CPP Extends Translator
 			Next
 		Endif
 
-		If GenTypeInfo( ctype )
+'		If GenTypeInfo( ctype )
 			Emit( "bbTypeInfo *typeof()const;" )
-		Endif
+'		Endif
 		
 		Emit( "const char *typeName()const{return ~q"+cname+"~q;}" )
 		
@@ -691,13 +723,7 @@ Class Translator_CPP Extends Translator
 
 		Emit( "};" )
 		
-		If GenTypeInfo( ctype )
-			If ctype.IsStruct
-				Emit( "bbTypeInfo *bbGetType("+cname+" const&);" )
-			Else
-				Emit( "bbTypeInfo *bbGetType("+cname+"* const&);" )
-			Endif
-		Endif
+		Emit( "bbTypeInfo *bbGetType("+cname+(ctype.IsStruct ? " " Else "*")+"const&);" )
 		
 		If _debug
 			Local tname:=cname
