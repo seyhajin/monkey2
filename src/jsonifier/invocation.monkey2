@@ -29,11 +29,44 @@ Class Invocation
 		Return _decl.Invoke( _inst,_args )
 	End
 	
-	Function Ctor:Invocation( inst:Object,args:Variant[]=Null )
+	Function Ctor:Invocation( obj:Object,args:Variant[] )
 		
-		Local type:=inst.DynamicType
+		Return Ctor( obj,"New",args )
+		
+		#rem
+		
+		Local type:=obj.DynamicType
 		
 		For Local decl:=Eachin type.GetDecls( "New" )
+			
+			Local ftype:=decl.Type
+			If ftype.ParamTypes.Length<>args.Length Continue
+			
+			Local match:=True
+			For Local i:=0 Until args.Length
+				If args[i]
+					If args[i].Type.ExtendsType( ftype.ParamTypes[i] ) Continue
+				Else
+					If ftype.ParamTypes[i].Kind="Class" Continue
+				Endif
+				match=False
+				Exit
+			Next
+			
+			If match Return New Invocation( type,decl,Null,args )
+		Next
+		
+		RuntimeError( "Can't find matching ctor for args" )
+		
+		Return Null
+		#end
+	End
+	
+	Function Ctor:Invocation( obj:Object,dname:String,args:Variant[] )
+		
+		Local type:=obj.DynamicType
+
+		For Local decl:=Eachin type.GetDecls( dname )
 			
 			Local ftype:=decl.Type
 			If ftype.ParamTypes.Length<>args.Length Continue

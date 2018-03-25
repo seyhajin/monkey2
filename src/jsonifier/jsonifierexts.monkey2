@@ -81,7 +81,7 @@ Class InvocationJsonifierExt Extends JsonifierExt
 			jobj.SetString( "scope",v.Scope.Name )
 			jobj.SetString( "decl",v.Decl.Name )
 			jobj.SetString( "type",v.Decl.Type )
-			If v.Inst jobj.SetValue( "inst",jsonifier.Jsonify( v.Inst ) )
+			jobj.SetValue( "inst",jsonifier.Jsonify( v.Inst ) )
 			jobj.SetValue( "args",jsonifier.JsonifyArray( v.Args ) )
 			
 			Return jobj
@@ -111,7 +111,9 @@ Class InvocationJsonifierExt Extends JsonifierExt
 				Exit
 			Next
 			
-			Local inst:=jsonifier.Dejsonify( jinst,decl.Type.ReturnType )
+			Local type:=dname="New" ? scope Else decl.Type.ReturnType
+			
+			Local inst:=jsonifier.Dejsonify( jinst,type )
 			
 			Local args:=New Variant[jargs.Length]
 			For Local i:=0 Until args.Length
@@ -119,6 +121,7 @@ Class InvocationJsonifierExt Extends JsonifierExt
 			Next
 			
 			Local ctor:=New Invocation( scope,decl,inst,args )
+			
 			Return ctor
 		End
 		

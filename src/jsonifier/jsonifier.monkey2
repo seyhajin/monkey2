@@ -18,6 +18,16 @@ Class Jsonifier
 		_insts.Add( inst )
 	End
 	
+	Method AddInstance( obj:Object,args:Variant[] )
+		
+		AddInstance( obj,Invocation.Ctor( obj,args ) )
+	end
+	
+	Method AddInstance( obj:Object,name:String,args:Variant[] )
+		
+		AddInstance( obj,Invocation.Ctor( obj,name,args ) )
+	End
+	
 	Method JsonifyInstances:JsonObject()
 		
 		Local jobj:=New JsonObject
@@ -31,7 +41,18 @@ Class Jsonifier
 			
 			jobj["type"]=New JsonString( inst.obj.DynamicType.Name )
 			jobj["ctor"]=Jsonify( inst.ctor )
-			jobj["initialState"]=JsonifyState( inst.obj )
+			
+			Local state:=JsonifyState( inst.obj ),dstate:=New JsonObject
+			
+			For Local it:=Eachin state.All()
+				
+				Local x:=it.Value
+				Local y:=inst.initialState.GetValue( it.Key )
+				
+				If CompareJson( x,y )<>0 dstate[it.Key]=x
+			Next
+			
+			jobj["state"]=dstate
 			
 			jinsts[i]=jobj
 		Next
@@ -41,7 +62,7 @@ Class Jsonifier
 		Return jobj
 	End
 	
-	Method Dejsonify( jobj:JsonObject )
+	Method DejsonifyInstances( jobj:JsonObject )
 		
 		Local jinsts:=jobj.GetArray( "instances" )
 		
@@ -54,13 +75,16 @@ Class Jsonifier
 			
 			_dejsonified.Add( obj )
 			
-			DejsonifyState( obj,jobj.GetObject( "initialState" ),obj.DynamicType )
+			DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType )
 		Next
 	End
 	
 	Method Jsonify:JsonValue( value:Variant )
 		
+		If Not value Return JsonValue.NullValue
+		
 		Local type:=value.Type
+		Assert( type )
 		
 		'handle primitive types
 		Select type
@@ -200,7 +224,7 @@ Class Jsonifier
 			
 			If d.Kind<>"Property" Continue
 			'Note: Add DeclInfo.Access property so we can do public fields only?
-			If Not d.Gettable Or Not d.Settable Continue
+			If Not d.Gettable Or Not d.Settable Or Not jobj.Contains( d.Name ) Continue
 			
 			d.Set( obj,Dejsonify( jobj.GetValue( d.Name ),d.Type ) )
 		Next
