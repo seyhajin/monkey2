@@ -8,7 +8,7 @@ Class Jsonifier
 		
 		Local inst:=New Instance
 		inst.obj=obj
-		inst.id=_insts.Length
+		inst.id="@"+String(_insts.Length)
 		inst.ctor=ctor
 		inst.initialState=JsonifyState( obj )
 		
@@ -39,6 +39,7 @@ Class Jsonifier
 			Local inst:=_insts[i]
 			Local jobj:=New JsonObject
 			
+			jobj["id"]=New JsonString( inst.id )
 			jobj["type"]=New JsonString( inst.obj.DynamicType.Name )
 			jobj["ctor"]=Jsonify( inst.ctor )
 			
@@ -137,7 +138,7 @@ Class Jsonifier
 			If jvalue.IsNull
 				Return type.NullValue
 			Elseif jvalue.IsString
-				Local id:=Int( jvalue.ToString() )
+				Local id:=Int( jvalue.ToString().Slice( 1 ) )
 				Assert( id>=0 And id<_dejsonified.Length,"Dejsonify error" )
 				Return _dejsonified[id]
 			Endif
@@ -180,7 +181,7 @@ Class Jsonifier
 	
 	Class Instance
 		Field obj:Object
-		Field id:Int
+		Field id:String
 		Field ctor:Invocation
 		Field initialState:JsonObject
 	End
@@ -188,7 +189,7 @@ Class Jsonifier
 	Field _insts:=New Stack<Instance>
 	
 	Field _instsByObj:=New Map<Object,Instance>
-	Field _instsById:=New Map<Int,Instance>
+	Field _instsById:=New StringMap<Instance>
 	
 	Field _dejsonified:=New Stack<Object>
 	

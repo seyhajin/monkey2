@@ -18,11 +18,18 @@ Global jsonifier:=New Jsonifier
 
 Class Component
 	
+	'simple contructor
 	Method New( entity:Entity )
 		
 		_entity=entity
 		
 		_entity.AddComponent( Self )
+	End
+
+	'copy contructor
+	Method New( component:Component,entity:Entity )
+		
+		Self.New( entity )
 	End
 	
 	Property Entity:Entity()
@@ -32,9 +39,18 @@ Class Component
 	
 	Protected
 	
+	Method OnCopy( entity:Entity ) Virtual
+		
+	End
+	
 	Method SaveInitialState()
 		
 		If editing jsonifier.AddInstance( Self,New Variant[]( _entity ) )
+	End
+	
+	Method SaveInitialState( component:Component )
+		
+		If editing jsonifier.AddInstance( Self,New Variant[]( component,_entity ) )
 	End
 	
 	Private
@@ -45,11 +61,24 @@ End
 
 Class Behaviour Extends Component
 	
+	'simple contructor
 	Method New( entity:Entity )
 		
 		Super.New( entity )
+		
+		Color=graphics.Color.White
 			
 		SaveInitialState()
+	End
+	
+	'copy constructor
+	Method New( behaviour:Behaviour,entity:Entity )
+		
+		Super.New( entity )
+		
+		Color=behaviour.Color
+		
+		SaveInitialState( behaviour )
 	End
 	
 	Property Color:Color()
@@ -61,17 +90,32 @@ Class Behaviour Extends Component
 		_color=color
 	End
 	
+	Internal
+	
+	Method OnCopy( entity:Entity ) Override
+		
+		New Behaviour( Self,entity )
+	End
+	
 	Private
 	
-	Field _color:Color=graphics.Color.White
-	
+	Field _color:Color
 End
 
 Class Entity
 	
+	'simple ctor
 	Method New( parent:Entity )
 		
 		_parent=parent
+		
+		If _parent _parent._children.Add( Self )
+	End
+	
+	'copy ctor
+	Method New( entity:Entity,parent:Entity )
+		
+		Self.New( parent )
 	End
 	
 	Property Visible:Bool()
@@ -83,6 +127,15 @@ Class Entity
 		_visible=visible
 	End
 	
+	Method Copy:Entity( parent:Entity ) Virtual
+		
+		Local copy:=OnCopy( parent )
+		
+		CopyTo( copy )
+		
+		Return copy
+	End
+	
 	Method AddComponent<T>:T()
 		
 		Local component:=New T( Self )
@@ -92,14 +145,39 @@ Class Entity
 	
 	Protected
 	
+	Method OnCopy:Entity( parent:Entity ) Virtual
+		
+		Return New Entity( Self,parent )
+	End
+	
+	Method CopyTo( copy:Entity )
+		
+		For Local child:=Eachin _children
+			
+			child.CopyTo( child.OnCopy( copy ) )
+		Next
+		
+		For Local c:=Eachin _components
+			
+			c.OnCopy( copy )
+		Next
+	End
+	
 	Method SaveInitialState()
 		
 		If editing jsonifier.AddInstance( Self,New Variant[]( _parent ) )
+	End
+
+	Method SaveInitialState( entity:Entity )
+		
+		If editing jsonifier.AddInstance( Self,New Variant[]( entity,_parent ) )
 	End
 	
 	Private
 	
 	Field _parent:Entity
+	
+	Field _children:=New Stack<Entity>
 	
 	Field _visible:Bool
 	
@@ -118,10 +196,52 @@ Class Camera Extends Entity
 
 		Super.New( parent )
 		
+		FOV=90
+		
 		SaveInitialState()
 		
 		Visible=True
 	End
+	
+	Method New( camera:Camera,parent:Entity )
+		
+		Super.New( camera,parent )
+		
+		FOV=camera.FOV
+		
+		SaveInitialState( camera )
+		
+		Visible=True
+	End
+	
+	Property FOV:Float()
+	
+		Return _fov
+	
+	Setter( fov:Float )
+		
+		_fov=fov
+	End
+	
+	Method Copy:Camera( parent:Entity ) Override
+		
+		Local camera:=OnCopy( parent )
+		
+		CopyTo( camera )
+		
+		Return camera
+	End
+
+	Protected
+		
+	Method OnCopy:Camera( parent:Entity ) Override
+		
+		Return New Camera( Self,parent )
+	End
+	
+	Private
+	
+	Field _fov:Float
 	
 End
 
@@ -136,6 +256,31 @@ Class Light Extends Entity
 		Visible=True
 	End
 
+	Method New( light:Light,parent:Entity )
+		
+		Super.New( parent )
+		
+		SaveInitialState( light )
+		
+		Visible=True
+	End
+
+	Method Copy:Light( parent:Entity ) Override
+		
+		Local light:=OnCopy( parent )
+		
+		CopyTo( light )
+		
+		Return light
+	End
+
+	Protected
+		
+	Method OnCopy:Light( parent:Entity ) Override
+		
+		Return New Light( Self,parent )
+	End
+	
 End
 
 Class Model Extends Entity
@@ -144,21 +289,63 @@ Class Model Extends Entity
 		
 		Super.New( parent )
 		
+		Mesh=""
+		
 		SaveInitialState()
 		
 		Visible=True
+	End
+	
+	Method New( model:Model,parent:Entity )
+		
+		Super.New( parent )
+		
+		Mesh=model.Mesh
+		
+		SaveInitialState( model )
+		
+		Visible=True
+	End
+	
+	Property Mesh:String()
+		
+		Return _mesh
+		
+	Setter( mesh:String )
+		
+		_mesh=mesh
 	End
 	
 	Function Load:Model( path:String,parent:Entity )
 		
 		Local model:=New Model( parent,True )
 		
+		model.Mesh="<"+path+">"
+		
 		If editing jsonifier.AddInstance( model,"Load",New Variant[]( path,parent ) )
 		
 		Return model
 	End
 	
+	Method Copy:Model( parent:Entity ) Override
+		
+		Local model:=OnCopy( parent )
+		
+		CopyTo( model )
+		
+		Return model
+	End
+
+	Protected
+		
+	Method OnCopy:Model( parent:Entity ) Override
+		
+		Return New Model( Self,parent )
+	End
+	
 	Private
+	
+	Field _mesh:String
 	
 	Method New( parent:Entity,loading:Bool )
 		
@@ -168,6 +355,20 @@ Class Model Extends Entity
 End
 
 Function CreateScene()
+	
+	Print "CreateScene"
+
+	jsonifier=New Jsonifier
+	
+	Local model1:=Model.Load( "model1.png",Null )
+	
+	Local behavour1:=New Behaviour( model1 )
+	
+	Local model2:=model1.Copy( Null )
+	
+End
+
+Function CreateScene2()
 	
 	Print "CreateScene"
 
@@ -185,6 +386,8 @@ Function CreateScene()
 		
 		Local component:=New Behaviour( model )
 	Next
+	
+	Local copy:=root.Copy( Null )
 	
 End
 
