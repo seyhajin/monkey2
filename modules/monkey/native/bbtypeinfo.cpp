@@ -15,7 +15,7 @@ namespace{
 
 BB_PRIM_GETTYPE( bbBool,"Bool" )
 BB_PRIM_GETTYPE( bbByte,"Byte" )
-BB_PRIM_GETTYPE( bbUByte,"UShort" )
+BB_PRIM_GETTYPE( bbUByte,"UByte" )
 BB_PRIM_GETTYPE( bbShort,"Short" )
 BB_PRIM_GETTYPE( bbUShort,"UShort" )
 BB_PRIM_GETTYPE( bbInt,"Int" )
