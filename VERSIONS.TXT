@@ -1,7 +1,15 @@
 
-***** Monkey2 v2018.03 *****
+***** Monkey2 v2018.03 Mx2cc v1.1.12 *****
 
-Big version numbering system change! Now just YYYY.VV Uses 2 digits for version so stringized versions can sort properly in github.
+Experimental mojo3d scene loading and saving added. Only very minimal support right now, eg: physics components are not yet supported and no texture or model loading support.
+
+See mojo3d/tests/loadscene.monkey2 for a demo. This should also create a test-scene.mojo3d file in your monkey2 dir which you can double click to open in latest ted2go (the version included in the monkey2 repos).
+
+To save a scene, you need to enabled mojo3d reflection by adding this to your file:
+
+#Reflect mojo3d
+
+You also need to enable 'editing' mode in your code with something like _scene.Editing=True before creating scene contents. Once you've created your scene, save it using the Scene.Save( path:String ) method. Ditto you can load a scene using the Scene.Load:Scene( path:String ) function.
 
 Typeinfo.Name now always returns proper typename even if reflection info disabled and even for generic types. Typeinfo.Name used to return a 'unknown@12345678' style string.
 
