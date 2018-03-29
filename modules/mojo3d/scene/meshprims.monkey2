@@ -3,6 +3,18 @@ Namespace mojo3d
 
 Private
 
+Function Editing:Bool()
+	
+	Return Scene.GetCurrent().Editing
+End
+
+Function AddInstance( instance:Mesh,ctor:String,args:Variant[] )
+	
+	Local scene:=Scene.GetCurrent()
+	
+	If scene?.Editing scene.Jsonifier.AddInstance( instance,ctor,args )
+End
+
 Struct TerrainData
 	
 	Field heightMap:Pixmap
@@ -58,7 +70,7 @@ Class Mesh Extension
 	
 	Function CreateRect:Mesh( rect:Rectf )
 
-		Local data:=New Mesh( 
+		Local mesh:=New Mesh( 
 			New Vertex3f[](
 				New Vertex3f( rect.min.x,rect.max.y,0 ),
 				New Vertex3f( rect.max.x,rect.max.y,0 ),
@@ -67,10 +79,12 @@ Class Mesh Extension
 			New UInt[](
 				0,1,2,
 				0,2,3 ) )
+				
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateRect",New Variant[]( rect ) )
 		
-		data.UpdateTangents()
+		mesh.UpdateTangents()
 		
-		Return data
+		Return mesh
 	End
 
 	Function CreateBox:Mesh( box:Boxf,xsegs:Int=1,ysegs:Int=1,zsegs:Int=1 )
@@ -139,11 +153,13 @@ Class Mesh Extension
 			v0+=zsegs+1
 		Next
 		
-		Local data:=New Mesh( vertices,indices )
+		Local mesh:=New Mesh( vertices,indices )
 		
-		data.UpdateTangents()
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateBox",New Variant[]( box,xsegs,ysegs,zsegs ) )
 		
-		Return data
+		mesh.UpdateTangents()
+		
+		Return mesh
 	End
 
 	Function CreateSphere:Mesh( radius:float,hsegs:Int=24,vsegs:Int=12 )
@@ -191,11 +207,13 @@ Class Mesh Extension
 			vdata[i].normal=vdata[i].position.Normalize()
 		Next
 		
-		Local data:=New Mesh( vertices.ToArray(),indices.ToArray() )
+		Local mesh:=New Mesh( vertices.ToArray(),indices.ToArray() )
 		
-		data.UpdateTangents()
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateSphere",New Variant[]( radius,hsegs,vsegs ) )
 		
-		Return data
+		mesh.UpdateTangents()
+		
+		Return mesh
 	End
 	
 	Function CreateTorus:Mesh( outerRadius:Float,innerRadius:Float,outerSegs:Int=24,innerSegs:Int=12 )
@@ -246,11 +264,13 @@ Class Mesh Extension
 			Next
 		Next
 		
-		Local data:=New Mesh( vertices,indices )
+		Local mesh:=New Mesh( vertices,indices )
 		
-		data.UpdateTangents()
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateTorus",New Variant[]( outerRadius,innerRadius,outerSegs,innerSegs ) )
 		
-		Return data
+		mesh.UpdateTangents()
+		
+		Return mesh
 	End
 	
 	Function CreateCylinder:Mesh( radius:Float,length:Float,axis:Axis,segs:Int )
@@ -294,6 +314,8 @@ Class Mesh Extension
 		Next
 		
 		Local mesh:=New Mesh( vertices.ToArray(),triangles.ToArray() )
+		
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateCylinder",New Variant[]( radius,length,axis,segs ) )
 		
 		Select axis
 		Case Axis.X
@@ -383,6 +405,8 @@ Class Mesh Extension
 		
 		Local mesh:=New Mesh( vertices.ToArray(),triangles.ToArray() )
 		
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateCapsule",New Variant[]( radius,length,axis,segs ) )
+		
 		Select axis
 		Case Axis.X
 			mesh.TransformVertices( New AffineMat4f( 0,1,0, 1,0,0, 0,0,1, 0,0,0 ) )
@@ -430,6 +454,8 @@ Class Mesh Extension
 		Next
 		
 		Local mesh:=New Mesh( vertices.ToArray(),triangles.ToArray() )
+		
+		If Editing() AddInstance( mesh,"mojo3d.Mesh.CreateCone",New Variant[]( radius,length,axis,segs ) )
 		
 		Select axis
 		Case Axis.X
@@ -497,49 +523,63 @@ Class Model Extension
 		
 		Local mesh:=mojo3d.Mesh.CreateBox( box,xsegs,ysegs,zsegs )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+		
+		Return model
 	End
 	
 	Function CreateSphere:Model( radius:Float,hsegs:Int,vsegs:Int,material:Material,parent:Entity=Null )
 		
 		Local mesh:=mojo3d.Mesh.CreateSphere( radius,hsegs,vsegs )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+
+		Return model
 	End
 	
 	Function CreateTorus:Model( outerRadius:Float,innerRadius:Float,outerSegs:Int,innerSegs:Int,material:Material,parent:Entity=Null )
 		
 		Local mesh:=mojo3d.Mesh.CreateTorus( outerRadius,innerRadius,outerSegs,innerSegs )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+		
+		Return model
 	End
 	
 	Function CreateCylinder:Model( radius:Float,length:Float,axis:Axis,segs:Int,material:Material,parent:Entity=null )
 		
 		Local mesh:=mojo3d.Mesh.CreateCylinder( radius,length,axis,segs )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+
+		Return model
 	End
 	
 	Function CreateCapsule:Model( radius:Float,length:Float,axis:Axis,segs:Int,material:Material,parent:Entity=null )
 		
 		Local mesh:=mojo3d.Mesh.CreateCapsule( radius,length,axis,segs )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+
+		Return model
 	End
 	
 	Function CreateCone:Model( radius:Float,length:Float,axis:Axis,segs:Int,material:Material,parent:Entity=null )
 		
 		Local mesh:=mojo3d.Mesh.CreateCone( radius,length,axis,segs )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+
+		Return model
 	End
 	
 	Function CreateTerrain:Model( heightMap:Pixmap,bounds:Boxf,material:Material,parent:Entity=Null )
 		
 		Local mesh:=mojo3d.Mesh.CreateTerrain( heightMap,bounds )
 		
-		Return New Model( mesh,material,parent )
+		Local model:=New Model( mesh,material,parent )
+
+		Return model
 	End
 	
 End

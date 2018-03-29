@@ -21,13 +21,23 @@ Class Sprite Extends Renderable
 	#rem monkeydoc Creates a new sprite.
 	#end
 	Method New( parent:Entity=Null )
+		
 		Super.New( parent )
+		
+		Name="Sprite"
+		
+		AddInstance()
 	End
 
 	Method New( material:Material,parent:Entity=Null )
 		Self.New( parent )
 		
 		_material=material
+		
+		Name="Sprite"
+		Material=material
+		
+		AddInstance( New Variant[]( material,parent ) )
 		
 		Visible=True
 	End

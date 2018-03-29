@@ -125,7 +125,7 @@ Class Material Extends Resource
 	Protected
 	
 	Method New()
-
+		
 		_uniforms=New UniformBlock( 3,True )
 		_blendMode=BlendMode.Opaque
 		_cullMode=CullMode.Back
@@ -134,13 +134,27 @@ Class Material Extends Resource
 	End		
 	
 	Method New( material:Material )
-
+		
 		_uniforms=New UniformBlock( material._uniforms )
 
 		_blendMode=material._blendMode
 		_cullMode=material._cullMode
 
 		TextureMatrix=material.TextureMatrix
+	End
+	
+	Method AddInstance( args:Variant[] )
+		
+		Local scene:=Scene.GetCurrent()
+		
+		If scene.Editing scene.Jsonifier.AddInstance( Self,args )
+	End
+	
+	Method AddInstance( material:Material )
+		
+		Local scene:=Scene.GetCurrent()
+		
+		If scene.Editing scene.Jsonifier.AddInstance( Self,New Variant[]( material ) )
 	End
 	
 	Private

@@ -24,12 +24,15 @@ Class Light Extends Entity
 	#rem monkeydoc Creates a new light.
 	#end
 	Method New( parent:Entity=Null )
+		
 		Super.New( parent )
 		
+		Name="Light"
 		Type=LightType.Directional
-		Color=Color.White
-		Range=10
 		CastsShadow=False
+		Range=10
+		
+		AddInstance()
 		
 		Visible=True
 	End
@@ -38,22 +41,11 @@ Class Light Extends Entity
 	#end
 	Method Copy:Light( parent:Entity=Null ) Override
 		
-		Local copy:=New Light( Self,parent )
+		Local copy:=OnCopy( parent )
 		
 		CopyTo( copy )
 		
 		Return copy
-	End
-	
-	#rem monkeydoc Light shadows enabled flag.
-	#end
-	Property CastsShadow:Bool()
-		
-		Return _castsShadow
-		
-	Setter( shadows:Bool )
-		
-		_castsShadow=shadows
 	End
 	
 	#rem monkeydoc The light type.
@@ -67,21 +59,21 @@ Class Light Extends Entity
 		_type=type
 	End
 	
-	#rem
-	#rem monkeydoc The light color.
+	#rem monkeydoc Light shadows enabled flag.
 	#end
-	Property Color:Color()
-	
-		Return _color
-	
-	Setter( color:Color )
-	
-		_color=color
+	[jsonify=1]
+	Property CastsShadow:Bool()
+		
+		Return _castsShadow
+		
+	Setter( shadows:Bool )
+		
+		_castsShadow=shadows
 	End
-	#end
 	
 	#rem monkeydoc The light range.
 	#end
+	[jsonify=1]
 	Property Range:Float()
 	
 		Return _range
@@ -93,25 +85,29 @@ Class Light Extends Entity
 	
 	Protected
 
-	#rem monkeydoc @hidden
-	#end	
 	Method New( light:Light,parent:Entity )
+		
 		Super.New( light,parent )
 		
 		Type=light.Type
 		Color=light.Color
 		Range=light.Range
+		
+		AddInstance( light )
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
+	Method OnCopy:Light( parent:Entity ) Override
+		
+		Return New Light( Self,parent )
+	End
+	
 	Method OnShow() Override
+		
 		Scene.Lights.Add( Self )
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
 	Method OnHide() Override
+		
 		Scene.Lights.Remove( Self )
 	End
 

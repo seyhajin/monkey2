@@ -4,8 +4,8 @@ Namespace mojo3d
 Class Renderable Extends Entity Abstract
 
 	Method New( parent:Entity=Null )
+		
 		Super.New( parent )
-
 	End
 	
 	Property CastsShadow:bool()
@@ -23,7 +23,7 @@ Class Renderable Extends Entity Abstract
 	
 		Super.New( renderable,parent )
 		
-		_castsShadow=renderable.CastsShadow
+		CastsShadow=renderable.CastsShadow
 	End
 	
 	Method OnShow() Override

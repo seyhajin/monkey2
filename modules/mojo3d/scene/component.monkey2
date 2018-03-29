@@ -73,6 +73,15 @@ Class Component
 		_type=Null
 	End
 	
+Protected
+
+	Method AddInstance()
+		
+		Local scene:=_entity.Scene
+		
+		If scene.Editing scene.Jsonifier.AddInstance( Self,New Variant[]( _entity ) )
+	End
+	
 Internal
 
 	Method OnCopy:Component( entity:Entity ) Virtual

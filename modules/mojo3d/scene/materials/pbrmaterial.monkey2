@@ -65,19 +65,25 @@ Class PbrMaterial Extends Material
 	End
 	
 	Method New( color:Color,metalness:Float=1.0,roughness:Float=1.0,boned:Bool=False )
+		
 		Self.New( boned )
 		
 		ColorFactor=color
 		MetalnessFactor=metalness
 		RoughnessFactor=roughness
+		
+		AddInstance( New Variant[]( color,metalness,roughness,boned ) )
 	End
 	
 	Method New( material:PbrMaterial )
+		
 		Super.New( material )
 		
 		_textured=material._textured
 		_bumpmapped=material._bumpmapped
 		_boned=material._boned
+		
+		AddInstance( material )
 	End
 	
 	#rem monkeydoc Creates a copy of the pbr material.
@@ -170,7 +176,7 @@ Class PbrMaterial Extends Material
 	End
 	
 	'***** factors *****
-
+	[jsonify=1]
 	Property ColorFactor:Color()
 	
 		Return Uniforms.GetColor( "ColorFactor" )
@@ -180,6 +186,7 @@ Class PbrMaterial Extends Material
 		Uniforms.SetColor( "ColorFactor",color )
 	End
 	
+	[jsonify=1]
 	Property EmissiveFactor:Color()
 	
 		Return Uniforms.GetColor( "EmissiveFactor" )
@@ -189,6 +196,7 @@ Class PbrMaterial Extends Material
 		Uniforms.SetColor( "EmissiveFactor",color )
 	End
 	
+	[jsonify=1]
 	Property MetalnessFactor:Float()
 	
 		Return Uniforms.GetFloat( "MetalnessFactor" )
@@ -198,6 +206,7 @@ Class PbrMaterial Extends Material
 		Uniforms.SetFloat( "MetalnessFactor",factor )
 	End
 	
+	[jsonify=1]
 	Property RoughnessFactor:Float()
 	
 		Return Uniforms.GetFloat( "RoughnessFactor" )
@@ -222,6 +231,11 @@ Class PbrMaterial Extends Material
 	Function Load:PbrMaterial( path:String,textureFlags:TextureFlags=TextureFlags.WrapST|TextureFlags.FilterMipmap )
 		
 		Local material:=New PbrMaterial
+		
+		Local scene:=Scene.GetCurrent()
+		If scene.Editing 
+			scene.Jsonifier.AddInstance( material,"mojo3d.PbrMaterial.Load",New Variant[]( path,textureFlags ) )
+		Endif
 		
 		Local texture:=LoadTexture( path,"color",textureFlags )
 		If texture

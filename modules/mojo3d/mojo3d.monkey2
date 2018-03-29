@@ -5,42 +5,16 @@ Namespace mojo3d
 #Import "<mojo>"
 #Import "<opengl>"
 #import "<bullet>"
+#Import "<reflection>"
 
 Using std..
 Using mojo..
+Using mojo3d..
 Using opengl..
 Using bullet..
+Using reflection..
 
 #Import "assets/"
-
-#Import "components/animation"
-#Import "components/animator"
-#Import "components/rigidbody"
-#Import "components/collider"
-#Import "components/behaviour"
-#Import "components/flybehaviour"
-
-#Import "entities/camera"
-#Import "entities/light"
-#Import "entities/model"
-#Import "entities/particlebuffer"
-#Import "entities/particlematerial"
-#Import "entities/particlesystem"
-#Import "entities/renderable"
-#Import "entities/sprite"
-
-#Import "render/material"
-#Import "render/renderer"
-#Import "render/renderqueue"
-#Import "render/spritebuffer"
-#Import "render/posteffect"
-
-#Import "render/materials/pbrmaterial"
-#Import "render/materials/spritematerial"
-#Import "render/materials/watermaterial"
-
-#Import "render/effects/bloomeffect"
-#Import "render/effects/monochromeeffect"
 
 #Import "scene/raycastresult"
 #Import "scene/component"
@@ -49,15 +23,51 @@ Using bullet..
 #Import "scene/entityexts"
 #Import "scene/scene"
 #Import "scene/world"
+#Import "scene/material"
+#Import "scene/posteffect"
+
+#Import "scene/components/animation"
+#Import "scene/components/animator"
+#Import "scene/components/rigidbody"
+#Import "scene/components/collider"
+#Import "scene/components/behaviour"
+#Import "scene/components/flybehaviour"
+#Import "scene/components/movebehaviour"
+#Import "scene/components/rotatebehaviour"
+
+#Import "scene/entities/camera"
+#Import "scene/entities/light"
+#Import "scene/entities/model"
+#Import "scene/entities/particlebuffer"
+#Import "scene/entities/particlematerial"
+#Import "scene/entities/particlesystem"
+#Import "scene/entities/renderable"
+#Import "scene/entities/sprite"
+
+#Import "scene/materials/pbrmaterial"
+#Import "scene/materials/spritematerial"
+#Import "scene/materials/watermaterial"
+
+#Import "scene/effects/bloomeffect"
+#Import "scene/effects/monochromeeffect"
+
+#Import "scene/jsonifier/jsonifier"
+#Import "scene/jsonifier/invocation"
+#Import "scene/jsonifier/jsonifierexts"
+#Import "scene/jsonifier/comparejson"
+
+#Import "scene/mesh"
+#Import "scene/meshprims"
+#Import "scene/bttypeconvs"
+'#Import "scene/util3d"
+
+#Import "render/renderer"
+#Import "render/renderqueue"
+#Import "render/spritebuffer"
 
 #Import "loader/loader"
 #Import "loader/gltf2"
 #Import "loader/gltf2loader"
-
-#Import "geometry/mesh"
-#Import "geometry/meshprims"
-'#Import "geometry/util3d"
-#Import "geometry/bttypeconvs"
 
 Function Main()
 	

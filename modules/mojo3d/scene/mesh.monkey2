@@ -75,6 +75,21 @@ Class Mesh Extends Resource
 		Return _bounds
 	End
 	
+	#rem monkeydoc Compacts the mesh.
+	
+	Compacts all internal data used by the mesh so they occupy as little memory as possible.
+	
+	#end
+	Method Compact()
+		
+		_vertices.Compact()
+		_materials.Compact()
+		
+		For Local material:=Eachin _materials
+			material.indices.Compact()
+		Next
+	End
+	
 	#rem monkeydoc Clears the mesh.
 	
 	Removes all vertices and primitives from the mesh, and resets the number of logical materials to '1'.
@@ -90,6 +105,8 @@ Class Mesh Extends Resource
 		InvalidateVertices()
 	End
 	
+	#rem monkeydoc Clear the mesh vertices.
+	#end
 	Method ClearVertices()
 		
 		ResizeVertices( 0 )

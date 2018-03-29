@@ -1,5 +1,7 @@
 Namespace myapp
 
+#Reflect mojo3d
+
 #Import "<std>"
 #Import "<mojo>"
 #Import "<mojo3d>"
@@ -24,13 +26,16 @@ Class MyWindow Extends Window
 		
 		Print opengl.glGetString( opengl.GL_VERSION )
 		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
+		
+		_scene.Editing=True
 		
 		_scene.ClearColor=Color.Sky
 		
 		'create camera
 		'
 		_camera=New Camera( Self )
+		_camera.Name="Camera"
 		_camera.Near=.1
 		_camera.Far=1000
 		_camera.Move( 0,10,-10 )
@@ -56,6 +61,8 @@ Class MyWindow Extends Window
 		Next
 		
 		cube.Destroy()
+		
+		_scene.Save( "cubes-scene.mojo3d" )
 	End
 	
 	Method OnRender( canvas:Canvas ) Override

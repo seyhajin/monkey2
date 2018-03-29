@@ -21,6 +21,14 @@ Class Scene
 		_envColor=Color.White
 		
 		_world=New World( Self )
+		
+		Local type:=TypeInfo.GetType( "mojo3d.Scene" )
+		If type And type.Kind="Class"
+			_jsonifier=New Jsonifier
+			_jsonifier.AddInstance( Self,New Variant[0] )
+		Endif
+		
+		_editing=False
 	End
 	
 	#rem monkeydoc The sky texture.
@@ -32,6 +40,7 @@ Class Scene
 	This must currently be a valid cubemap texture.
 	
 	#end
+'	[jsonify=1]
 	Property SkyTexture:Texture()
 		
 		Return _skyTexture
@@ -52,6 +61,7 @@ Class Scene
 	This must currently be a valid cubemap texture.
 	
 	#end
+'	[jsonify=1]
 	Property EnvTexture:Texture()
 		
 		Return _envTexture
@@ -64,6 +74,7 @@ Class Scene
 	#rem monkey The environment color.
 	
 	#end
+	[jsonify=1]
 	Property EnvColor:Color()
 		
 		Return _envColor
@@ -80,6 +91,7 @@ Class Scene
 	The clear color is only used if there is no sky texture.
 	
 	#end
+	[jsonify=1]
 	Property ClearColor:Color()
 		
 		Return _clearColor
@@ -89,6 +101,7 @@ Class Scene
 		_clearColor=color
 	End
 	
+	[jsonify=1]
 	Property FogColor:Color()
 		
 		Return _fogColor
@@ -98,6 +111,7 @@ Class Scene
 		_fogColor=color
 	End
 	
+	[jsonify=1]
 	Property FogNear:Float()
 		
 		Return _fogNear
@@ -107,6 +121,7 @@ Class Scene
 		_fogNear=near
 	End
 	
+	[jsonify=1]
 	Property FogFar:Float()
 		
 		Return _fogFar
@@ -116,6 +131,7 @@ Class Scene
 		_fogFar=far
 	End
 	
+	[jsonify=1]
 	Property ShadowAlpha:Float()
 		
 		Return _shadowAlpha
@@ -127,6 +143,7 @@ Class Scene
 	
 	#rem monkeydoc Scene update rate.
 	#end
+	[jsonify=1]
 	Property UpdateRate:Float()
 		
 		Return _updateRate
@@ -138,6 +155,7 @@ Class Scene
 	
 	#rem monkeydoc Ambient diffuse lighting.
 	#end
+	[jsonify=1]
 	Property AmbientLight:Color()
 		
 		Return _ambientDiffuse
@@ -154,6 +172,7 @@ Class Scene
 	Must have length 4.
 		
 	#end
+	[jsonify=1]
 	Property CSMSplits:Float[]()
 		
 		Return _csmSplits
@@ -162,6 +181,60 @@ Class Scene
 		Assert( splits.Length=4,"CSMSplits array must have 4 elements" )
 		
 		_csmSplits=splits.Slice( 0 )
+	End
+	
+	Property Editing:Bool()
+		
+		Return _editing
+	
+	Setter( editing:Bool )
+		
+		If editing And Not _jsonifier RuntimeError( "Scene is not editable" )
+		
+		_editing=editing
+	End
+	
+	Property Jsonifier:Jsonifier()
+		
+		Return _jsonifier
+	End
+	
+	Method PauseEditing()
+		
+		_editingPaused+=1
+	End
+	
+	Method ResumeEditing:Bool()
+		
+		_editingPaused-=1
+		
+		Return Editing
+	End
+	
+	Method LoadTexture:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
+		
+		Local texture:=Texture.Load( path,flags,flipNormalY )
+		If Not texture Return Null
+		
+		If Editing Jsonifier.AddInstance( texture,"mojo3d.Scene.LoadTexture",Self,New Variant[]( path,flags,flipNormalY ) )
+			
+		Return texture
+	End
+
+	#rem monkeydoc Finds an entity in the scene.
+	
+	Finds an entity in the scene with the given name.
+	
+	#end
+	Method FindEntity:Entity( name:String )
+		
+		For Local entity:=Eachin _rootEntities
+			
+			Local found:=entity.Find( name )
+			If found Return found
+		Next
+		
+		Return Null
 	End
 	
 	#rem monkeydoc Adds a post effect to the scene.
@@ -235,6 +308,19 @@ Class Scene
 		Return _rootEntities.ToArray()
 	End
 	
+	#rem monkeydoc Saves the scene to a mojo3d scene file
+	#end
+	Method Save( path:String )
+		
+		Assert( _jsonifier,"Scene is not editable" )
+		
+		Local jobj:=_jsonifier.JsonifyInstances()
+		
+		Local json:=jobj.ToJson()
+		
+		SaveString( json,path )
+	End
+	
 	#rem monkeydoc Sets the current scene.
 	
 	All newly created entities (including entites created using Entity.Copy]]) are automatically added to the current scene.
@@ -255,6 +341,25 @@ Class Scene
 		If Not _current New Scene
 			
 		Return _current
+	End
+	
+	#rem monkeydoc Loads a mojo3d scene file and makes it current
+	#end
+	Function Load:Scene( path:String )
+
+		Local json:=LoadString( path )
+		If Not json Return Null
+		
+		Local jobj:=JsonObject.Parse( json )
+		If Not jobj Return Null
+		
+		Local scene:=New Scene
+		
+		SetCurrent( scene )
+		
+		scene.Jsonifier.DejsonifyInstances( jobj )
+		
+		Return scene
 	End
 	
 	Internal
@@ -318,6 +423,12 @@ Class Scene
 	Field _postEffects:=New Stack<PostEffect>
 	
 	Field _world:World
+	
+	Field _jsonifier:Jsonifier
+	
+	Field _editing:Bool
+	
+	Field _editingPaused:=0
 	
 	Method Update( elapsed:Float )
 		

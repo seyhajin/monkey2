@@ -15,16 +15,27 @@ Class Model Extends Renderable
 	#rem monkeydoc Creates a new model.
 	#end
 	Method New( parent:Entity=Null )
+		
 		Super.New( parent )
+		
+		Name="Model"
+		
+		AddInstance()
 		
 		Visible=True
 	End
 	
 	Method New( mesh:Mesh,material:Material,parent:Entity=Null )
-		super.New( parent )
 		
-		_mesh=mesh
-		_materials=New Material[]( material )
+		Super.New( parent )
+		
+		Name="Model"
+		
+		AddInstance( New Variant[]( mesh,material,parent ) )
+		
+		Mesh=mesh
+		Materials=New Material[]( material )
+		Material=material
 		
 		Visible=True
 	End
@@ -33,7 +44,7 @@ Class Model Extends Renderable
 	#end	
 	Method Copy:Model( parent:Entity=Null ) Override
 		
-		Local copy:=New Model( Self,parent )
+		Local copy:=OnCopy( parent )
 		
 		CopyTo( copy )
 		
@@ -48,7 +59,8 @@ Class Model Extends Renderable
 	End
 
 	#rem monkeydoc The mesh rendered by the model.
-	#end	
+	#end
+	[jsonify=1]
 	Property Mesh:Mesh()
 		
 		Return _mesh
@@ -58,19 +70,8 @@ Class Model Extends Renderable
 		_mesh=mesh
 	End
 	
-	#rem monkeydoc The default material to use for rendering.
-	#end
-	Property Material:Material()
-		
-		Return _material
-	
-	Setter( material:Material )
-		
-		_material=material
-	End
-
 	#rem monkeydoc The materials to use for rendering.
-	#end	
+	#end
 	Property Materials:Material[]()
 		
 		Return _materials
@@ -80,6 +81,18 @@ Class Model Extends Renderable
 		_materials=materials
 	End
 	
+	#rem monkeydoc The default material to use for rendering.
+	#end
+	[jsonify=1]
+	Property Material:Material()
+		
+		Return _material
+	
+	Setter( material:Material )
+		
+		_material=material
+	End
+
 	#rem monkeydoc @hidden
 	#end
 	Property Bones:Bone[]()
@@ -113,7 +126,11 @@ Class Model Extends Renderable
 		
 			Local model:=loader.LoadModel( path )
 			
-			If model Return model
+			If Not model Continue
+			
+			If model.Scene.Editing model.Scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
+				
+			Return model
 		Next
 		
 		Return Null
@@ -150,13 +167,21 @@ Class Model Extends Renderable
 	Protected
 
 	Method New( model:Model,parent:Entity )
+		
 		Super.New( model,parent )
 		
-		_mesh=model._mesh
+		Mesh=model.Mesh
 		
-		_material=model._material
+		Materials=model.Materials
 		
-		_materials=model._materials.Slice( 0 )
+		Material=model.Material
+		
+		AddInstance( model )
+	End
+	
+	Method OnCopy:Model( parent:Entity ) Override
+		
+		Return New Model( Self,parent )
 	End
 	
 	Internal

@@ -6,8 +6,11 @@ Class FlyBehaviour Extends Behaviour
 	Method New( entity:Entity )
 		
 		Super.New( entity )
+		
+		AddInstance()
 	End
 	
+	[jsonify=1]
 	Property Speed:Float()
 		
 		Return _speed
@@ -17,6 +20,7 @@ Class FlyBehaviour Extends Behaviour
 		_speed=speed
 	End
 	
+	[jsonify=1]
 	Property RotSpeed:Float()
 		
 		Return _rspeed
@@ -52,6 +56,7 @@ Class FlyBehaviour Extends Behaviour
 			entity.MoveZ( -_speed * 60 * elapsed )
 		Endif
 		
+#If __MOBILE_TARGET__
 		If Mouse.ButtonDown( MouseButton.Left )
 			If Mouse.X<view.Width/3
 				entity.RotateY( rspeed,True )
@@ -61,6 +66,7 @@ Class FlyBehaviour Extends Behaviour
 				entity.Move( New Vec3f( 0,0,_speed * 60 * elapsed ) )
 			Endif
 		Endif
+#endif
 		
 	End
 	
