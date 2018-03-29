@@ -172,7 +172,7 @@ Class Translator_CPP Extends Translator
 		
 		Local ename:=EnumName( etype ),rename:="r"+ename
 		
-		Emit( "static bbUnknownTypeInfo "+rename+"(~q"+ename+"~q);" )
+		Emit( "static bbUnknownTypeInfo "+rename+"(~q"+etype.Name+"~q);" )
 
 		Emit( "bbTypeInfo *bbGetType("+ename+" const&){" )
 		Emit( "return &"+rename+";" )
@@ -191,7 +191,7 @@ Class Translator_CPP Extends Translator
 		Local cname:=ClassName( ctype ),rcname:="r"+cname
 		Local ptype:=ctype.IsStruct ? " " Else "*"
 
-		Emit( "static bbUnknownTypeInfo "+rcname+"(~q"+cname+"~q);" )
+		Emit( "static bbUnknownTypeInfo "+rcname+"(~q"+ctype.Name+"~q);" )
 
 		Emit( "bbTypeInfo *bbGetType("+cname+ptype+"const&){" )
 		Emit( "return &"+rcname+";" )
@@ -2603,4 +2603,3 @@ Function GenTypeInfo:Bool( ctype:ClassType )
 	
 	Return True
 End
-
