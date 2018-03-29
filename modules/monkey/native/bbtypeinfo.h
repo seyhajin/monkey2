@@ -77,6 +77,8 @@ BB_GETTYPE_DECL( bbString )
 BB_GETTYPE_DECL( bbCString )
 BB_GETTYPE_DECL( bbVariant )
 
+template<class T> bbTypeInfo *bbGetType( T* const& );
+
 template<class T> bbTypeInfo *bbGetType(){
 
 	return bbGetType( *(T*)0 );
