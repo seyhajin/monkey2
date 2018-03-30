@@ -72,6 +72,7 @@ Class Model Extends Renderable
 	
 	#rem monkeydoc The materials to use for rendering.
 	#end
+	[jsonify=1]
 	Property Materials:Material[]()
 		
 		Return _materials
@@ -83,7 +84,6 @@ Class Model Extends Renderable
 	
 	#rem monkeydoc The default material to use for rendering.
 	#end
-	[jsonify=1]
 	Property Material:Material()
 		
 		Return _material

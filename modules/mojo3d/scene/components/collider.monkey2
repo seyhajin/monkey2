@@ -84,6 +84,7 @@ End
 Class ConvexCollider Extends Collider
 	
 	Method New( Entity:Entity )
+		
 		Super.New( Entity )
 	End
 	
@@ -91,12 +92,25 @@ End
 
 Class BoxCollider Extends ConvexCollider
 	
-	Method New( Entity:Entity )
-		Super.New( Entity )
+	Method New( entity:Entity )
+		
+		Super.New( entity )
 		
 		Box=New Boxf( -1,1 )
+		
+		AddInstance()
 	End
 	
+	Method New( entity:Entity,collider:BoxCollider )
+		
+		Super.New( entity )
+		
+		Box=collider.Box
+		
+		AddInstance( collider )
+	End
+	
+	[jsonify=1]
 	Property Box:Boxf()
 		
 		Return _box
@@ -112,9 +126,7 @@ Class BoxCollider Extends ConvexCollider
 	
 	Method OnCopy:BoxCollider( entity:Entity ) Override
 		
-		Local collider:=New BoxCollider( entity )
-		
-		collider.Box=Box
+		local collider:=New BoxCollider( entity,Self )
 		
 		Return collider
 	End
@@ -133,11 +145,24 @@ End
 
 Class SphereCollider Extends ConvexCollider
 	
-	Method New( Entity:Entity )
+	Method New( entity:Entity )
 		
-		Super.New( Entity )
+		Super.New( entity )
+		
+		AddInstance()
 	End
 	
+	Method New( entity:Entity,collider:SphereCollider )
+		
+		Super.New( entity )
+		
+		Radius=collider.Radius
+		Origin=collider.Origin
+		
+		AddInstance( collider )
+	End
+	
+	[jsonify=1]
 	Property Radius:Float()
 		
 		Return _radius
@@ -149,6 +174,7 @@ Class SphereCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Origin:Vec3f()
 		
 		Return _origin
@@ -164,10 +190,7 @@ Class SphereCollider Extends ConvexCollider
 	
 	Method OnCopy:SphereCollider( entity:Entity ) Override
 		
-		Local collider:=New SphereCollider( entity )
-		
-		collider.Radius=Radius
-		collider.Origin=Origin
+		Local collider:=New SphereCollider( entity,Self )
 		
 		Return collider
 	End
@@ -190,9 +213,25 @@ End
 Class CylinderCollider Extends ConvexCollider
 	
 	Method New( entity:Entity )
+		
 		Super.New( entity )
+		
+		AddInstance()
 	End
 	
+	Method New( entity:Entity,collider:CylinderCollider )
+		
+		Super.New( entity )
+		
+		Radius=collider.Radius
+		Length=collider.Length
+		Axis=collider.Axis
+		Origin=collider.Origin
+		
+		AddInstance( collider )
+	End
+	
+	[jsonify=1]
 	Property Radius:Float()
 		
 		Return _radius
@@ -204,6 +243,7 @@ Class CylinderCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Length:Float()
 		
 		Return _length
@@ -215,6 +255,7 @@ Class CylinderCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Axis:Axis()
 		
 		Return _axis
@@ -226,6 +267,7 @@ Class CylinderCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Origin:Vec3f()
 		
 		Return _origin
@@ -281,9 +323,25 @@ End
 Class CapsuleCollider Extends ConvexCollider
 	
 	Method New( entity:Entity )
+		
 		Super.New( entity )
+		
+		AddInstance()
 	End
 	
+	Method New( entity:Entity,collider:CapsuleCollider )
+		
+		Super.New( entity )
+		
+		Radius=collider.Radius
+		Length=collider.Length
+		Axis=collider.Axis
+		Origin=collider.Origin
+		
+		AddInstance( collider )
+	End
+	
+	[jsonify=1]
 	Property Radius:Float()
 		
 		Return _radius
@@ -295,6 +353,7 @@ Class CapsuleCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Length:Float()
 		
 		Return _length
@@ -306,6 +365,7 @@ Class CapsuleCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Axis:Axis()
 		
 		Return _axis
@@ -317,6 +377,7 @@ Class CapsuleCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Origin:Vec3f()
 		
 		Return _origin
@@ -332,12 +393,7 @@ Class CapsuleCollider Extends ConvexCollider
 	
 	Method OnCopy:CapsuleCollider( entity:Entity ) Override
 		
-		Local collider:=New CapsuleCollider( entity )
-		
-		collider.Radius=Radius
-		collider.Length=Length
-		collider.Axis=Axis
-		collider.Origin=Origin
+		Local collider:=New CapsuleCollider( entity,Self )
 		
 		Return collider
 	End
@@ -372,9 +428,25 @@ End
 Class ConeCollider Extends ConvexCollider
 	
 	Method New( entity:Entity )
+		
 		Super.New( entity )
+		
+		AddInstance()
+	End
+
+	Method New( entity:Entity,collider:ConeCollider )
+		
+		Super.New( entity )
+		
+		Radius=collider.Radius
+		Length=collider.Length
+		Axis=collider.Axis
+		Origin=collider.Origin
+		
+		AddInstance( collider )
 	End
 	
+	[jsonify=1]
 	Property Radius:Float()
 		
 		Return _radius
@@ -386,6 +458,7 @@ Class ConeCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Length:Float()
 		
 		Return _length
@@ -397,6 +470,7 @@ Class ConeCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Axis:Axis()
 		
 		Return _axis
@@ -408,6 +482,7 @@ Class ConeCollider Extends ConvexCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Origin:Vec3f()
 		
 		Return _origin
@@ -423,12 +498,7 @@ Class ConeCollider Extends ConvexCollider
 	
 	Method OnCopy:ConeCollider( entity:Entity ) Override
 		
-		Local collider:=New ConeCollider( entity )
-		
-		collider.Radius=Radius
-		collider.Length=Length
-		collider.Axis=Axis
-		collider.Origin=Origin
+		Local collider:=New ConeCollider( entity,Self )
 		
 		Return collider
 	End
@@ -463,6 +533,7 @@ End
 Class ConcaveCollider Extends Collider
 
 	Method New( entity:Entity )
+		
 		Super.New( entity )
 	End
 	
@@ -471,7 +542,19 @@ End
 Class MeshCollider Extends ConcaveCollider
 	
 	Method New( entity:Entity )
+		
 		Super.New( entity )
+		
+		AddInstance()
+	End
+	
+	Method New( entity:Entity,collider:MeshCollider )
+		
+		Super.New( entity )
+		
+		Mesh=collider.Mesh
+		
+		AddInstance( collider )
 	End
 	
 	Property Mesh:Mesh()
@@ -489,9 +572,7 @@ Class MeshCollider Extends ConcaveCollider
 	
 	Method OnCopy:MeshCollider( entity:Entity ) Override
 		
-		Local collider:=New MeshCollider( entity )
-		
-		collider.Mesh=Mesh
+		Local collider:=New MeshCollider( entity,Self )
 		
 		Return collider
 	End

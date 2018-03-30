@@ -9,6 +9,15 @@ Class MoveBehaviour Extends Behaviour
 		AddInstance()
 	End
 	
+	Method New( entity:Entity,move:MoveBehaviour )
+		
+		Super.New( entity )
+		
+		Speed=move.Speed
+		
+		AddInstance( move )
+	End
+	
 	[jsonify=1]
 	Property Speed:Vec3f()
 		

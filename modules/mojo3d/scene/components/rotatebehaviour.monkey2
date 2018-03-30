@@ -9,6 +9,13 @@ Class RotateBehaviour Extends Behaviour
 		AddInstance()
 	End
 	
+	Method New( entity:Entity,rotate:RotateBehaviour )
+		
+		Super.New( entity )
+		
+		AddInstance( rotate )
+	End
+	
 	[jsonify=1]
 	Property Speed:Vec3f()
 		

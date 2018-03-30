@@ -10,6 +10,16 @@ Class FlyBehaviour Extends Behaviour
 		AddInstance()
 	End
 	
+	Method New( entity:Entity,fly:FlyBehaviour )
+		
+		Super.New( entity )
+		
+		Speed=fly.Speed
+		RotSpeed=fly.RotSpeed
+		
+		AddInstance( fly )
+	End
+	
 	[jsonify=1]
 	Property Speed:Float()
 		

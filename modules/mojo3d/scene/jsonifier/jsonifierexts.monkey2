@@ -31,6 +31,8 @@ Class StdJsonifierExt Extends JsonifierExt
 		Case Typeof<Color>
 			Local v:=Cast<Color>( value )
 			Return jsonifier.JsonifyArray( New Float[]( v.r,v.g,v.b,v.a ) )
+		Case typeof<Axis>
+			Return New JsonNumber( Int( Cast<Axis>( value ) ) )
 		End
 		
 		Return Null
@@ -63,6 +65,8 @@ Class StdJsonifierExt Extends JsonifierExt
 		Case Typeof<Color>
 			Local v:=jsonifier.DejsonifyArray<Float>( jvalue )
 			Return New Color( v[0],v[1],v[2],v[3] )
+		Case Typeof<Axis>
+			Return Cast<Axis>( Int( jvalue.ToNumber() ) )
 		End
 		
 		Return Null
@@ -160,5 +164,38 @@ Class InvocationJsonifierExt Extends JsonifierExt
 	End
 	
 End
+
+'need to fix array handling!
+ 
+Class Mojo3dJsonifierExt Extends JsonifierExt
+	
+	Const instance:=New Mojo3dJsonifierExt
+	
+	Method Jsonify:JsonValue( value:Variant,jsonifier:Jsonifier ) Override
+		
+		Select value.Type
+		Case Typeof<Material[]>
+			Return jsonifier.JsonifyArray( Cast<Material[]>( value ) )
+		End
+		
+		Return Null
+	End
+	
+	Method Dejsonify:Variant( jvalue:JsonValue,type:TypeInfo,jsonifier:Jsonifier ) Override
+		
+		Select type
+		Case Typeof<Material[]>
+			Return jsonifier.DejsonifyArray<Material>( jvalue )
+		End
+
+		Return Null
+	End
+
+End	
+	
+			
+			
+	
+	
 
 

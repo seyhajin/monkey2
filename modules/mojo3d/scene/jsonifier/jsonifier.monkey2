@@ -86,6 +86,8 @@ Class Jsonifier
 		
 		For Local i:=0 Until jinsts.Length
 			
+			Local jobj:=jinsts.GetObject( i )
+			
 			Local obj:Object
 						
 			If i<_insts.Length
@@ -93,23 +95,25 @@ Class Jsonifier
 				obj=_insts[i].obj
 				
 			Else
-				Local jobj:=jinsts.GetObject( i )
-				
 				Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
 			
 				obj=Cast<Object>( ctor.Execute() )
 			Endif
 			
 			_dejsonified.Add( obj )
+			
+			'set value type state only on this pass.
+			DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,False )
 		Next
-		
+
+		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?
 		For Local i:=0 Until _dejsonified.Length
 			
 			Local jobj:=jinsts.GetObject( i )
 			
 			Local obj:=_dejsonified[i]
 			
-			DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType )
+			DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,True )
 		Next
 	End
 	
@@ -124,6 +128,8 @@ Class Jsonifier
 		Select type
 		Case Typeof<Bool>
 			Return New JsonBool( Cast<Bool>( value ) )
+		Case Typeof<Short>
+			Return New JsonNumber( Cast<Short>( value ) )
 		Case Typeof<Int>
 			Return New JsonNumber( Cast<Int>( value ) )
 		Case Typeof<Float>
@@ -167,6 +173,8 @@ Class Jsonifier
 		Select type
 		Case Typeof<Bool>
 			Return jvalue.ToBool()
+		Case Typeof<Short>
+			Return Short( jvalue.ToNumber() )
 		Case Typeof<Int>
 			Return Int( jvalue.ToNumber() )
 		Case Typeof<Float>
@@ -274,12 +282,12 @@ Class Jsonifier
 		Next
 		
 	End
-	
-	Method DejsonifyState( obj:Object,jobj:JsonObject,type:TypeInfo  )
+
+	Method DejsonifyState( obj:Object,jobj:JsonObject,type:TypeInfo,refs:Bool )
 		
 		If type.Kind<>"Class" Return
 		
-		If type.SuperType DejsonifyState( obj,jobj,type.SuperType )
+		If type.SuperType DejsonifyState( obj,jobj,type.SuperType,refs )
 
 		For Local d:=Eachin type.GetDecls()
 			
@@ -288,6 +296,14 @@ Class Jsonifier
 			If Not d.Gettable Or Not d.Settable Or Not jobj.Contains( d.Name ) Continue
 			
 			If Not Int( d.GetMetaValue( "jsonify" ) ) Continue
+			
+			Local type:=d.Type
+			
+			Local isref:=type.Kind="Class"
+			
+			If Not isref And type.Kind="Array" And type.ElementType.Kind="Class" isref=True
+				
+			If isref<>refs Continue
 			
 			d.Set( obj,Dejsonify( jobj.GetValue( d.Name ),d.Type ) )
 		Next

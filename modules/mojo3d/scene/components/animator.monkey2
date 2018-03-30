@@ -19,17 +19,23 @@ Class Animator Extends Component
 	Field Finished:Void()
 	
 	Method New( entity:Entity )
+		
 		Super.New( entity,Type )
+		
+		AddInstance()
 	End
 	
 	Method New( entity:Entity,animator:Animator )
-		Self.New( entity )
+		
+		Super.New( entity,Type )
 
 		_skeleton=animator._skeleton.Slice( 0 )
 		For Local i:=0 Until _skeleton.Length
 			_skeleton[i]=_skeleton[i].LastCopy
 		End
 		_animations=animator._animations
+		
+		AddInstance( animator )
 	End
 	
 	Property Skeleton:Entity[]()

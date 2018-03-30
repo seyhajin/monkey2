@@ -59,23 +59,26 @@ Class RigidBody Extends Component
 		
 		_btbody=New btRigidBody( _mass,_btmotion,collider?.Validate(),inertia )
 
-'		If Cast<MeshCollider>( collider )
-'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
-'		Else
-'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() & ~btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
-'		Endif
-		
 		Restitution=0
-		RollingFriction=0
 		Friction=1
+		RollingFriction=0
 		CollisionGroup=1
 		CollisionMask=1
+		
+		AddInstance()
 	End
 	
 	Method New( entity:Entity,body:RigidBody )
 		
-		Self.New( entity )
+		Super.New( entity,Type )
 		
+		_btmotion=New MotionState( entity )
+		
+		Local collider:=entity.Collider
+		Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
+		
+		_btbody=New btRigidBody( _mass,_btmotion,collider?.Validate(),inertia )
+
 		Kinematic=body.Kinematic
 		Mass=body.Mass
 		Restitution=body.Restitution
@@ -83,8 +86,11 @@ Class RigidBody Extends Component
 		RollingFriction=body.RollingFriction
 		CollisionGroup=body.CollisionGroup
 		CollisionMask=body.CollisionMask
+		
+		AddInstance( body )
 	End
 
+	[jsonify=1]
 	Property Kinematic:Bool()
 		
 		Return _kinematic
@@ -104,6 +110,7 @@ Class RigidBody Extends Component
 		Endif
 	End
 	
+	[jsonify=1]
 	Property Mass:Float()
 		
 		Return _mass
@@ -120,6 +127,7 @@ Class RigidBody Extends Component
 		_btbody.setMassProps( _mass,inertia )
 	End
 
+	[jsonify=1]
 	Property Restitution:Float()
 		
 		Return _btbody.getRestitution()
@@ -129,6 +137,7 @@ Class RigidBody Extends Component
 		_btbody.setRestitution( restitution )
 	End
 	
+	[jsonify=1]
 	Property Friction:Float()
 		
 		Return _btbody.getFriction()
@@ -138,6 +147,7 @@ Class RigidBody Extends Component
 		_btbody.setFriction( friction )
 	End
 	
+	[jsonify=1]
 	Property RollingFriction:Float()
 		
 		Return _btbody.getRollingFriction()
@@ -145,6 +155,30 @@ Class RigidBody Extends Component
 	Setter( friction:Float )
 		
 		_btbody.setRollingFriction( friction )
+	End
+	
+	[jsonify=1]
+	Property CollisionGroup:Short()
+		
+		Return _collGroup
+		
+	Setter( collGroup:Short )
+		
+		_collGroup=collGroup
+		
+		_dirty|=Dirty.Collisions
+	End
+	
+	[jsonify=1]
+	Property CollisionMask:Short()
+		
+		Return _collMask
+		
+	Setter( collMask:Short )
+		
+		_collMask=collMask
+		
+		_dirty|=Dirty.Collisions
 	End
 	
 	Property LinearVelocity:Vec3f()
@@ -165,28 +199,6 @@ Class RigidBody Extends Component
 		_btbody.setAngularVelocity( avelocity )
 	End
 
-	Property CollisionGroup:Short()
-		
-		Return _collGroup
-		
-	Setter( collGroup:Short )
-		
-		_collGroup=collGroup
-		
-		_dirty|=Dirty.Collisions
-	End
-	
-	Property CollisionMask:Short()
-		
-		Return _collMask
-		
-	Setter( collMask:Short )
-		
-		_collMask=collMask
-		
-		_dirty|=Dirty.Collisions
-	End
-	
 	Property btBody:btRigidBody()
 	
 		Return _btbody
@@ -243,7 +255,9 @@ Class RigidBody Extends Component
 	
 	Method OnCopy:RigidBody( entity:Entity ) Override
 		
-		Return New RigidBody( entity,Self )
+		Local body:=New RigidBody( entity,Self )
+		
+		Return body
 	End
 
 	Method OnBeginUpdate() Override
