@@ -113,14 +113,14 @@ Class KeyboardDevice
 		Local scode:=ScanCode( key )
 		
 		If repeating 
-			Local pressed:=_keys[scode].rpressed<>0
+			Local pressed:=_keys[scode].rpressed=_frame
 			
 			_keys[scode].rpressed=0
 			
 			Return pressed
 		Endif
 
-		Local pressed:=_keys[scode].pressed<>0
+		Local pressed:=_keys[scode].pressed=_frame
 		
 		_keys[scode].pressed=0
 		
@@ -140,9 +140,9 @@ Class KeyboardDevice
 	
 		Local scode:=ScanCode( key )
 		
-		Local released:=_keys[scode].released<>0
+		Local released:=_keys[scode].released=_frame
 		
-		_keys[scode].released=0
+		_keys[scode].released=_frame
 		
 		Return released
 	End
@@ -179,6 +179,13 @@ Class KeyboardDevice
 	Method FlushChars()
 		_charPut=0
 		_charGet=0
+	End
+	
+	#rem monkeydoc Flushes all keyboard input.
+	#end
+	Method FlushKeys()
+		FlushChars()
+		_frame+=1
 	End
 	
 	Internal
@@ -232,8 +239,6 @@ Class KeyboardDevice
 	End
 	
 	Method Update()
-		_frame+=1
-		FlushChars()
 	End
 	
 	Method SendEvent( event:SDL_Event Ptr )
