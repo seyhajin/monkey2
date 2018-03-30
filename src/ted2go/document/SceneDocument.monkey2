@@ -6,7 +6,6 @@ Namespace ted2go
 
 'just too brutal in debug mode!
 #If __RELEASE__
-#Reflect mojo.graphics
 #Reflect mojo3d
 #Endif
 
