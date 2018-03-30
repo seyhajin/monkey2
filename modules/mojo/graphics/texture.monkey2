@@ -190,7 +190,7 @@ Class Texture Extends Resource
 	
 	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
 		
-		Init( width,height,format,flags )
+		Init( width,height,format,flags,Null )
 	End
 	
 	Method New( pixmap:Pixmap,flags:TextureFlags )
@@ -208,7 +208,7 @@ Class Texture Extends Resource
 			
 			If size.x=size.y			'1x1?
 				
-				Init( size.x,size.y,pixmap.Format,flags )
+				Init( size.x,size.y,pixmap.Format,flags,Null )
 				
 				For Local i:=0 Until 6
 					_cubeFaces[i].PastePixmap( pixmap,0,0 )
@@ -218,7 +218,7 @@ Class Texture Extends Resource
 				
 				size=New Vec2i( size.x/4,size.y/3 )
 				
-				Init( size.x,size.y,pixmap.Format,flags )
+				Init( size.x,size.y,pixmap.Format,flags,Null )
 				
 				Const offsets:=New Int[]( 2,1, 0,1, 1,0, 1,2, 1,1, 3,1 )
 				
@@ -231,10 +231,13 @@ Class Texture Extends Resource
 				RuntimeError( "Invalid Cubemap image size" )
 			Endif
 			
+			Return
+		Endif
+			
+		If Not (flags & TextureFlags.Dynamic)
+			Init( pixmap.Width,pixmap.Height,pixmap.Format,flags,pixmap )
 		Else
-			
-			Init( pixmap.Width,pixmap.Height,pixmap.Format,flags )
-			
+			Init( pixmap.Width,pixmap.Height,pixmap.Format,flags,Null )
 			PastePixmap( pixmap,0,0 )
 		Endif
 	End
@@ -595,11 +598,9 @@ Class Texture Extends Resource
 	Field _glSeq:Int	
 	Field _glTexture:GLuint
 	
-	Method Init( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
+	Method Init( width:Int,height:Int,format:PixelFormat,flags:TextureFlags,managed:Pixmap )
 		
-		If flags & TextureFlags.Cubemap
-			Assert( width=height,"Cubemaps must be square" )
-		Endif
+		If flags & TextureFlags.Cubemap Assert( width=height,"Cubemaps must be square" )
 
 		_size=New Vec2i( width,height )
 		_format=format
@@ -621,11 +622,12 @@ Class Texture Extends Resource
 				_cubeFaces[i]=face
 			Next
 			
-		Else If Not (_flags & TextureFlags.Dynamic)
-			
-			_managed=New Pixmap( width,height,format )
-			_managed.Clear( Color.Magenta )
-			
+			Return
+		Endif
+		
+		If Not (_flags & TextureFlags.Dynamic)
+			If Not managed managed=New Pixmap( width,height,format )
+			_managed=managed
 		Endif
 		
 	End
