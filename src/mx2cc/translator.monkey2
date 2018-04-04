@@ -114,6 +114,8 @@ Class Translator
 	
 		Local buf:=_insertStack.Pop()
 		
+		If _buf.Length And Not _buf.Top And buf.Length And Not buf[0] buf=buf.Slice( 1 )
+		
 		_buf.Append( buf )
 	End
 	
@@ -148,7 +150,6 @@ Class Translator
 	End
 	
 	Method BeginGCFrame()
-
 		_gcframe=New GCFrame( _gcframe,InsertPos )
 	End
 	
@@ -179,7 +180,7 @@ Class Translator
 
 				Local varty:=TransType( varval.type )
 				Local varid:=VarName( varval )
-			
+				
 				Emit( varty+" "+varid+"{};" )
 				
 				If varval.vdecl.kind="param"
@@ -191,6 +192,7 @@ Class Translator
 			Next
 			
 			For Local tmp:=Eachin _gcframe.tmps
+				
 				Emit( TransType( tmp.type )+" "+tmp.ident+"{};" )
 			Next
 			
@@ -206,16 +208,16 @@ Class Translator
 
 			For Local vvar:=Eachin _gcframe.vars.Values
 
-				Marks( vvar.type )
-
 				Emit( "bbGCMark("+VarName( vvar )+");" )
+
+				MarksType( vvar.type )
 			Next
 			
 			For Local tmp:=Eachin _gcframe.tmps
 			
-				Marks( tmp.type )
-				
 				Emit( "bbGCMark("+tmp.ident+");" )
+				
+				MarksType( tmp.type )
 			Next
 			
 			Emit( "}" )
@@ -254,7 +256,7 @@ Class Translator
 	End
 	
 	Method InsertGCTmp:String( vvar:VarValue )
-	
+		
 		_gcframe.vars[vvar.vdecl.ident]=vvar
 		Return _gcframe.ident+"."+VarName( vvar )
 	End
@@ -278,11 +280,12 @@ Class Translator
 
 	Class Deps
 		Field depsPos:Int
+
+		Field included:=New Map<FileDecl,Bool>
 		
-		Field incs:=New Map<FileDecl,Bool>
 		Field usesFiles:=New Map<FileDecl,Bool>
+		Field includes:=New Stack<FileDecl>
 		
-		Field uses:=New Map<SNode,Bool>
 		Field refs:=New Map<SNode,Bool>
 		
 		Field refsVars:=New Stack<VarValue>
@@ -292,9 +295,21 @@ Class Translator
 	
 	Field _deps:Deps
 	
-	Method BeginDeps()
+	Method Included:Bool( fdecl:FileDecl )
 	
-		_deps=New Deps
+		Return _deps.included[fdecl]
+	End
+	
+	Method EmitInclude( fdecl:FileDecl,baseDir:String )
+	
+		If _deps.included[fdecl] Return
+
+		Emit( "#include ~q"+MakeIncludePath( fdecl.hfile,baseDir )+"~q" )
+		
+		_deps.included[fdecl]=True
+	End
+	
+	Method BeginDeps()
 	
 		_deps.depsPos=InsertPos
 	End
@@ -303,21 +318,18 @@ Class Translator
 	
 		BeginInsert( _deps.depsPos )
 
-		'sort usesfiles		
-		Local usesFiles:=New Stack<FileDecl>
-		For Local fdecl:=Eachin _deps.usesFiles.Keys
-			usesFiles.Push( fdecl )
-		Next
-		usesFiles.Sort( Lambda:Int( x:FileDecl,y:FileDecl )
+		'sort usesfiles	
+		Local includes:=New Stack<FileDecl>( _deps.includes )
+		includes.Sort( Lambda:Int( x:FileDecl,y:FileDecl )
 			Return x.hfile<=>y.hfile
 		End )
+		_deps.includes.Clear()
 		
 		'Emit includes	
 		EmitBr()
-		For Local fdecl:=Eachin usesFiles
+		For Local fdecl:=Eachin includes
 			EmitInclude( fdecl,baseDir )
 		Next
-		_deps.usesFiles.Clear()
 		
 		'sort refsTypes
 		Local refsTypes:=New Stack<Type>( _deps.refsTypes )
@@ -335,23 +347,13 @@ Class Translator
 				If Included( ctype.transFile ) Continue
 				
 				Local cname:=ClassName( ctype )
-				Emit( "struct "+cname+";" )
 				
-'				If GenTypeInfo( ctype ) 
-					If ctype.IsStruct 
-						Emit( "bbTypeInfo *bbGetType("+cname+" const&);" )
-					Else
-						Emit( "bbTypeInfo *bbGetType("+cname+"* const&);" )
-					Endif
-'				Endif
-				
-				If _debug
-					Local tname:=cname
-					If Not ctype.IsStruct tname+="*"
-					Emit( "bbString bbDBType("+tname+"*);" )
-					Emit( "bbString bbDBValue("+tname+"*);" )
+				If ctype.IsStruct
+					Emit( "BB_STRUCT("+cname+")" )
+				Else
+					Emit( "BB_CLASS("+cname+")" )
 				Endif
-					
+				
 				Continue
 			Endif
 			
@@ -360,16 +362,8 @@ Class Translator
 				If Included( etype.transFile ) Continue
 				
 				Local ename:=EnumName( etype )
-				Emit( "enum class "+ename+";" )
 				
-'				If GenTypeInfo( etype ) 
-					Emit( "bbTypeInfo *bbGetType("+ename+" const&);" )
-'				Endif
-				
-				If _debug
-					Emit( "bbString bbDBType("+ename+"*);" )
-					Emit( "bbString bbDBValue("+ename+"*);" )
-				Endif
+				Emit( "BB_ENUM("+ename+")" )
 				
 				Continue
 			Endif
@@ -404,24 +398,11 @@ Class Translator
 		
 		EndInsert()
 		
-		_deps=Null
+		_deps.depsPos=InsertPos
 	End
 	
-	Method Included:Bool( fdecl:FileDecl )
-	
-		Return _deps.incs[fdecl]
-	End
-	
-	Method EmitInclude( fdecl:FileDecl,baseDir:String )
-	
-		If _deps.incs[fdecl] Return
-
-		Emit( "#include ~q"+MakeIncludePath( fdecl.hfile,baseDir )+"~q" )
-		
-		_deps.incs[fdecl]=True
-	End
-	
-	Method AddRef:Bool( node:SNode )
+	#rem
+Method AddRef:Bool( node:SNode )
 		If _deps.refs[node] Return True
 		_deps.refs[node]=True
 		Return False
@@ -497,7 +478,7 @@ Class Translator
 	End
 	
 	Method Uses( type:Type )
-
+		
 		Local ctype:=TCast<ClassType>( type )
 		If ctype
 			_deps.uses[ctype]=True 
@@ -509,6 +490,7 @@ Class Translator
 	End
 	
 	Method Uses( fdecl:FileDecl )
+		
 		_deps.usesFiles[fdecl]=True
 	End
 	
@@ -563,7 +545,7 @@ Class Translator
 		
 		Uses( func.transFile )
 	End
-	
+
 	Method Marks( type:Type )
 	
 		Local ctype:=TCast<ClassType>( type )
@@ -608,5 +590,137 @@ Class Translator
 			Decls( type )
 		Next
 	End
+	#end
 	
+	'***** New versions of these monstrosities! *****
+	
+	Method UsesFile( fdecl:FileDecl )
+		If _deps.usesFiles[fdecl] Return
+		_deps.usesFiles[fdecl]=True
+		_deps.includes.Add( fdecl )
+	End
+	
+	Method AddRef:Bool( node:SNode )
+		If _deps.refs[node] Return False
+		_deps.refs[node]=True
+		Return True
+	End
+	
+	Method RefsVar( vvar:VarValue )
+	
+		If vvar.vdecl.IsExtern 
+			UsesFile( vvar.transFile )
+			Return
+		Endif
+		
+		If vvar.IsStatic
+			If Not AddRef( vvar ) Return
+			_deps.refsVars.Push( vvar )
+		End
+		
+		RefsType( vvar.type )
+	End
+	
+	Method RefsFunc( func:FuncValue )
+	
+		If func.fdecl.IsExtern UsesFile( func.transFile ) ; Return
+		
+		If func.IsStatic
+			If Not AddRef( func ) Return
+			_deps.refsFuncs.Push( func )
+		Endif
+		
+		RefsType( func.ftype )
+	End
+	
+	Method DeclsFunc( type:FuncType )
+		
+		DeclsVar( type.retType )
+		For Local argty:=Eachin type.argTypes
+			DeclsVar( argty )
+		Next
+	End
+	
+	Method DeclsVar( type:Type )
+		
+		Local ctype:=TCast<ClassType>( type )
+		If ctype And ctype.IsStruct
+			UsesType( ctype )
+			Return
+		Endif
+		
+		RefsType( type )
+	End
+	
+	Method MarksType( type:Type )
+		
+		#rem don't need to do this as using an array uses element type anyway...
+		Local atype:=TCast<ArrayType>( type )
+		If atype
+			'need to see full type of element type when marking an array of values.
+			Local ctype:=TCast<ClassType>( atype.elemType )
+			If ctype And ctype.IsStruct UsesType( ctype )
+			Return
+		Endif
+		#end
+
+		UsesType( type )
+	End
+	
+	Method UsesType( type:Type )
+		
+		Local ctype:=TCast<ClassType>( type )
+		If ctype
+			UsesFile( ctype.transFile )
+			Return
+		Endif
+		
+		Local atype:=TCast<ArrayType>( type )
+		If atype
+			'would rather not have to use array element type too, but it's complicated...
+			UsesType( atype.elemType )
+			Return
+		Endif
+		
+		RefsType( type )
+	End
+	
+	Method RefsType( type:Type )
+		
+		Local ctype:=TCast<ClassType>( type )
+		If ctype
+			'Note: Have to include extern type definitons
+			If ctype.cdecl.IsExtern UsesFile( ctype.transFile ) ; Return
+			If AddRef( ctype ) _deps.refsTypes.Push( ctype )
+			Return
+		Endif
+		
+		Local etype:=TCast<EnumType>( type )
+		If etype
+			If AddRef( etype ) _deps.refsTypes.Push( etype )
+			Return
+		Endif
+		
+		Local ftype:=TCast<FuncType>( type )
+		If ftype
+			RefsType( ftype.retType )
+			For Local type:=Eachin ftype.argTypes
+				RefsType( type )
+			Next
+			Return
+		Endif
+		
+		Local atype:=TCast<ArrayType>( type )
+		If atype
+			RefsType( atype.elemType )
+			Return
+		Endif
+		
+		Local ptype:=TCast<PointerType>( type )
+		If ptype
+			RefsType( ptype.elemType )
+			Return
+		Endif
+		
+	End
 End

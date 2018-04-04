@@ -84,14 +84,13 @@ Function BalanceBinaryopTypes:Type( op:String,lhs:Type,rhs:Type,argTypes:Type[] 
 	
 	Select op
 	Case "+"
-
 		If TCast<PointerType>( lhs )
 			type=lhs
 			rtype=BalanceIntegralTypes( prhs,prhs )
 		Else If TCast<PointerType>( rhs )
 			type=rhs
 			ltype=BalanceIntegralTypes( plhs,plhs )
-		Else If plhs=Type.StringType Or prhs=Type.StringType
+		Else If (plhs and plhs=Type.StringType) Or (prhs and prhs=Type.StringType)
 			type=BalancePrimTypes( plhs,prhs )
 		Else
 			type=BalanceNumericTypes( plhs,prhs )

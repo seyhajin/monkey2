@@ -1,22 +1,12 @@
+#Import "<std>"
 
-Namespace test
+Using std..
 
-Class C
-End
-
-Struct S<T>
-End
-
-Alias Si:S<Int>
-
-Function Get<T>:TypeInfo()
-	Return Typeof( Cast<T>( Null ) )
+Function Test( v:Variant )
 End
 
 Function Main()
 	
-	Print Typeof<C>
-	
-	Print Typeof<Si>
+	Test( New Vec2i[10] )
 	
 End
