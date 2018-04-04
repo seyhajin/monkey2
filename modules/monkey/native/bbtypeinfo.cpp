@@ -89,7 +89,10 @@ int bbTypeInfo::getEnum( bbVariant ){
 }
 
 bbVariant bbTypeInfo::nullValue(){
-	bbRuntimeError( "Type '"+name+"' has no null value" );
+	return {};
+}
+
+bbVariant bbTypeInfo::newArray( int length ){
 	return {};
 }
 

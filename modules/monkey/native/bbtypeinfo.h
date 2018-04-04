@@ -47,7 +47,8 @@ struct bbTypeInfo{
 	virtual int getEnum( bbVariant );
 	
 	virtual bbVariant nullValue();
-	
+
+	virtual bbVariant newArray( int length );
 	
 	bbDeclInfo *getDecl( bbString name );
 	

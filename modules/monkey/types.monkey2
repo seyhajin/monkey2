@@ -430,6 +430,29 @@ Struct @Variant="bbVariant"
 	
 	#end
 	Property EnumValue:Int()="enumValue"
+		
+	#rem monkeydoc Gets the length of an array.
+	
+	The type of the variant must be an array type, or a runtime error will occur.
+	
+	#end
+	Method GetArrayLength:Int()="getArrayLength"
+		
+	#rem monkeydoc Gets an element from an array.
+	
+	The type of the variant must be an array type, or a runtime error will occur.
+	
+	#end
+	Method GetArrayElement:Variant( index:Int )="getArrayElement"
+		
+	#rem monkeydoc Sets an element of an array.
+	
+	The type of the variant must be an array type, or a runtime error will occur.
+	
+	#end
+	Method SetArrayElement( index:Int,value:Variant )="setArrayElement"
+		
+	
 End
 
 #rem monkeydoc Primtive array type.
@@ -661,6 +684,12 @@ Class @TypeInfo Extends Void="bbTypeInfo"
 	
 	#end
 	Method MakeEnum:Variant( enumValue:Int )="makeEnum"
+		
+	
+	#rem monkeydoc Creates a new array of this type.
+	#end
+	Method NewArray:Variant( length:Int )="newArray"
+
 
 	#rem monkeydoc Gets a user defined type by name.
 	

@@ -4,19 +4,35 @@
 
 #include "bbtypeinfo.h"
 
-template<class T> struct bbPrimTypeInfo : public bbTypeInfo{
+template<class T> struct bbBaseTypeInfo : public bbTypeInfo{
+
+	bbVariant nullValue(){
+		return bbVariant( T{} );
+	}
+
+	bbVariant newArray( int length ){
+		return bbVariant( bbArray<T>( length ) );
+	}
+};
+
+template<class T> struct bbPrimTypeInfo : public bbBaseTypeInfo<T>{
 
 	bbPrimTypeInfo( bbString name ){
 		this->name=name;
 		this->kind="Primitive";
 	}
-	
+/*
 	bbVariant nullValue(){
 		return bbVariant( T{} );
 	}
+
+	bbVariant newArray( int length ){
+		return bbVariant( bbArray<T>{ length } );
+	}
+*/
 };
 
-template<class T> struct bbPointerTypeInfo : public bbTypeInfo{
+template<class T> struct bbPointerTypeInfo : public bbBaseTypeInfo<T*>{
 
 	bbPointerTypeInfo(){
 		this->name=bbGetType<T>()->name+" Ptr";
@@ -26,13 +42,18 @@ template<class T> struct bbPointerTypeInfo : public bbTypeInfo{
 	bbTypeInfo *pointeeType(){
 		return bbGetType<T>();
 	}
-
+/*	
 	bbVariant nullValue(){
 		return bbVariant( (T*)0 );
 	}
+	
+	bbVariant newArray( int length ){
+		return bbVariant( bbArray<T*>{ length } );
+	}
+*/
 };
 
-template<class T,int D> struct bbArrayTypeInfo : public bbTypeInfo{
+template<class T,int D> struct bbArrayTypeInfo : public bbTypeInfo{	//bbBaseTypeInfo<bbArray<T,D>>{
 
 	bbArrayTypeInfo(){
 		this->name=bbGetType<T>()->name+"["+BB_T(",").dup(D-1)+"]";
@@ -50,10 +71,14 @@ template<class T,int D> struct bbArrayTypeInfo : public bbTypeInfo{
 	bbVariant nullValue(){
 		return bbVariant( bbArray<T,D>{} );
 	}
-	
+/*
+	bbVariant newArray( int length )
+		return bbVariant( bbArray<T>{ length } );
+	}
+*/
 };
 
-template<class R,class...A> struct bbFunctionTypeInfo : public bbTypeInfo{
+template<class R,class...A> struct bbFunctionTypeInfo : public bbTypeInfo{	//bbBaseTypeInfo<bbFunction<R(A...)>>{
 
 	bbFunctionTypeInfo(){
 		this->name=bbGetType<R>()->name+"("+BB_T(",").join( bbArray<bbString>( { bbGetType<A>()->name... },int(sizeof...(A)) ) )+")";
@@ -71,9 +96,14 @@ template<class R,class...A> struct bbFunctionTypeInfo : public bbTypeInfo{
 	bbVariant nullValue(){
 		return bbVariant( bbFunction<R(A...)>{} );
 	}
+/*
+	bbVariant newArray( int length ){
+		return bbVariant( bbArray<bbFunction<R(A...)>>{ length } );
+	}
+*/
 };
 
-template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
+template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{	//bbBaseTypeInfo<bbFunction<void(A...)>>{
 
 	bbFunctionTypeInfo(){
 		this->name=BB_T("Void(")+BB_T(",").join( bbArray<bbString>( { bbGetType<A>()->name... },int(sizeof...(A)) ) )+")";
@@ -91,6 +121,11 @@ template<class...A> struct bbFunctionTypeInfo<void,A...> : public bbTypeInfo{
 	bbVariant nullValue(){
 		return bbVariant( bbFunction<void(A...)>{} );
 	}
+/*
+	bbVariant newArray( int length ){
+		return bbVariant( bbArray<bbFunction<void(A...)>>{ length } );
+	}	
+*/
 };
 
 inline bbTypeInfo *bbGetType( bbObject* const& ){

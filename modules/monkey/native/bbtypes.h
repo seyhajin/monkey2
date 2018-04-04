@@ -54,4 +54,34 @@ template<class X,class Y> int bbCompare( const X &x,const Y &y ){
 	return y<x;
 }
 
+#ifdef NDEBUG
+
+#define BB_CLASS(X) struct X; \
+bbTypeInfo *bbGetType(X*const&);
+
+#define BB_STRUCT(X) struct X; \
+bbTypeInfo *bbGetType(X const&); 
+
+#define BB_ENUM(X) enum class X; \
+bbTypeInfo *bbGetType(X const&);
+
+#else
+ 
+#define BB_CLASS(X) struct X; \
+bbTypeInfo *bbGetType(X*const&); \
+bbString bbDBType(X**); \
+bbString bbDBValue(X**);
+
+#define BB_STRUCT(X) struct X; \
+bbTypeInfo *bbGetType(X const&); \
+bbString bbDBType(X*); \
+bbString bbDBValue(X*);
+
+#define BB_ENUM(X) enum class X; \
+bbTypeInfo *bbGetType(X const&); \
+bbString bbDBType(X*); \
+bbString bbDBValue(X*);
+
+#endif
+
 #endif
