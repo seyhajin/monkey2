@@ -363,6 +363,25 @@ Class GraphicsDevice
 		
 		glCheck()
 	End
+
+	Method FlushTarget()
+		
+		If Not _modified Return
+		
+		_modified=False
+		
+		If Not _rtarget Or Not _rtarget.NumColorTextures Return
+			
+'		Validate()
+			
+		For Local i:=0 Until _rtarget.NumColorTextures
+			
+			Local texture:=_rtarget.GetColorTexture( i )
+			
+			texture.Modified( _viewport & _scissor )
+		Next
+		
+	End
 	
 	Private
 	
@@ -445,25 +464,6 @@ Class GraphicsDevice
 		Endif
 			
 		glCheck()
-	End
-	
-	Method FlushTarget()
-		
-		If Not _modified Return
-		
-		_modified=False
-		
-		If Not _rtarget Or Not _rtarget.NumColorTextures Return
-			
-'		Validate()
-			
-		For Local i:=0 Until _rtarget.NumColorTextures
-			
-			Local texture:=_rtarget.GetColorTexture( i )
-			
-			texture.Modified( _viewport & _scissor )
-		Next
-		
 	End
 	
 	Method Validate()

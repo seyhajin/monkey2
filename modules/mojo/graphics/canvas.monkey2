@@ -1281,9 +1281,13 @@ Class Canvas
 		DebugAssert( Not _lighting,"Canvas.Clear() cannot be used while lighting" )
 		If _lighting Return
 		
-		Flush()
+		Validate()
 			
 		_device.Clear( color )
+
+		_drawNV=0
+		_drawOps.Clear()
+		_drawOp=New DrawOp
 	End
 	
 	#rem monkeydoc Flushes drawing commands.
@@ -1294,10 +1298,12 @@ Class Canvas
 	
 	#end
 	Method Flush()
-	
-		Validate()
 		
+		_device.FlushTarget()
+	
 		If _drawOps.Empty Return
+		
+		Validate()
 		
 		_drawVB.Invalidate( 0,_drawNV )
 		
@@ -1761,7 +1767,6 @@ Class Canvas
 		Endif
 		
 		_dirty=Null
-		
 	End
 	
 	Method RenderDrawOps( rpass:Int )
