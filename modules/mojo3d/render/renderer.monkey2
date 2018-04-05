@@ -476,7 +476,11 @@ Class Renderer
 		_gdevice.Shader=_copyShader
 		_gdevice.RenderPass=0
 		
-		RenderQuad()
+		If _outputRenderTarget
+			RenderInvertedQuad()
+		Else
+			RenderQuad()
+		Endif
 		
 		_gdevice.RenderTarget=Null
 		_gdevice.Resize( Null )
@@ -485,10 +489,23 @@ Class Renderer
 	Method RenderQuad()
 
 		Global _vertices:=New VertexBuffer( New Vertex3f[](
-			New Vertex3f( 0,1,0 ),
-			New Vertex3f( 1,1,0 ),
-			New Vertex3f( 1,0,0 ),
-			New Vertex3f( 0,0,0 ) ) )
+			New Vertex3f( 0,1,0,0,1 ),
+			New Vertex3f( 1,1,0,1,1 ),
+			New Vertex3f( 1,0,0,1,0 ),
+			New Vertex3f( 0,0,0,0,0 ) ) )
+			
+		_gdevice.VertexBuffer=_vertices
+		
+		_gdevice.Render( 4,1 )
+	End
+	
+	Method RenderInvertedQuad()
+
+		Global _vertices:=New VertexBuffer( New Vertex3f[](
+			New Vertex3f( 0,1,0,0,0 ),
+			New Vertex3f( 1,1,0,1,0, ),
+			New Vertex3f( 1,0,0,1,1 ),
+			New Vertex3f( 0,0,0,0,1 ) ) )
 			
 		_gdevice.VertexBuffer=_vertices
 		
