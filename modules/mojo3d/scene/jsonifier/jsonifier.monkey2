@@ -1,7 +1,7 @@
 Namespace mojo3d.jsonifier
 
 Class Jsonifier
-	
+
 	Method AddInstance( obj:Object,ctor:Invocation )
 		
 		Assert( Not _instsByObj.Contains( obj ) )
@@ -36,28 +36,22 @@ Class Jsonifier
 		AddInstance( obj,New Invocation( decl,Null,args ) )
 	End
 
-	#rem
-	'function/method call	
-	Method AddInstance( obj:Object,name:String,args:Variant[] )
-		
-		AddInstance( obj,New Invocation( name,args ) )
-	End
-	
-	#end
-	
 	Method JsonifyInstances:JsonObject()
 		
 		Local jobj:=New JsonObject
 		
+		jobj["assetsDir"]=New JsonString( AssetsDir() )
+		
 		Local jinsts:=New JsonArray( _insts.Length )
 		
-		For Local i:=0 Until jinsts.Length
+		For Local i:=0 Until _insts.Length
 			
 			Local inst:=_insts[i]
 			Local jobj:=New JsonObject
 			
 			jobj["id"]=New JsonString( inst.id )
 			jobj["type"]=New JsonString( inst.obj.DynamicType.Name )
+			
 			jobj["ctor"]=Jsonify( inst.ctor )
 			
 			Local state:=JsonifyState( inst.obj ),dstate:=New JsonObject
@@ -71,7 +65,7 @@ Class Jsonifier
 			Next
 			
 			jobj["state"]=dstate
-			
+				
 			jinsts[i]=jobj
 		Next
 
@@ -81,6 +75,10 @@ Class Jsonifier
 	End
 	
 	Method DejsonifyInstances( jobj:JsonObject )
+		
+		Local assetsDir:=AssetsDir()
+		
+		If jobj.Contains( "assetsDir" ) SetAssetsDir( jobj.GetString( "assetsDir" ) )
 		
 		Local jinsts:=jobj.GetArray( "instances" )
 		
@@ -95,15 +93,17 @@ Class Jsonifier
 				obj=_insts[i].obj
 				
 			Else
+				
 				Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
 			
 				obj=Cast<Object>( ctor.Execute() )
+				
 			Endif
 			
 			_dejsonified.Add( obj )
 			
 			'set value type state only on this pass.
-			DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,False )
+			If jobj.Contains( "state" ) DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,False )
 		Next
 
 		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?
@@ -113,8 +113,10 @@ Class Jsonifier
 			
 			Local obj:=_dejsonified[i]
 			
-			DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,True )
+			If jobj.Contains( "state" ) DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,True )
 		Next
+		
+		SetAssetsDir( assetsDir )
 	End
 	
 	Method Jsonify:JsonValue( value:Variant )
@@ -162,6 +164,11 @@ Class Jsonifier
 			Local jvalue:=jext.Jsonify( value,Self )
 			If jvalue Return jvalue
 		Next
+
+		Select type.Kind
+		Case "Class"
+			Return JsonValue.NullValue
+		End
 		
 		RuntimeError( "TODO: No jsonifier found for type '"+type+"'" )
 		Return Null
@@ -211,8 +218,14 @@ Class Jsonifier
 			Local value:=jext.Dejsonify( jvalue,type,Self )
 			If value Return value
 		Next
+
+		Select type.Kind
+		Case "Class"
+			Return type.NullValue
+		End
 		
 		RuntimeError( "No dejsonifier found for type '"+type+"'" )
+		
 		Return Null
 	End
 	
@@ -283,11 +296,11 @@ Class Jsonifier
 		
 	End
 
-	Method DejsonifyState( obj:Object,jobj:JsonObject,type:TypeInfo,refs:Bool )
+	Method DejsonifyState( obj:Object,jobj:JsonObject,type:TypeInfo,insts:Bool )
 		
 		If type.Kind<>"Class" Return
 		
-		If type.SuperType DejsonifyState( obj,jobj,type.SuperType,refs )
+		If type.SuperType DejsonifyState( obj,jobj,type.SuperType,insts )
 
 		For Local d:=Eachin type.GetDecls()
 			
@@ -299,11 +312,11 @@ Class Jsonifier
 			
 			Local type:=d.Type
 			
-			Local isref:=type.Kind="Class"
+			Local isinst:=type.Kind="Class"
 			
-			If Not isref And type.Kind="Array" And type.ElementType.Kind="Class" isref=True
+			If Not isinst And type.Kind="Array" And type.ElementType.Kind="Class" isinst=True
 				
-			If isref<>refs Continue
+			If isinst<>insts Continue
 			
 			d.Set( obj,Dejsonify( jobj.GetValue( d.Name ),d.Type ) )
 		Next

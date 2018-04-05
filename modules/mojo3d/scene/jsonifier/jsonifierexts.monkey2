@@ -112,9 +112,6 @@ Class InvocationJsonifierExt Extends JsonifierExt
 			
 			Local jobj:=Cast<JsonObject>( jvalue )
 			
-'			Local scope:=TypeInfo.GetType( jobj.GetString( "scope" ) )
-'			Local dname:=jobj.GetString( "decl" )
-
 			Local dname:=jobj.GetString( "decl" )
 			Local dtype:=jobj.GetString( "type" )
 			Local jinst:=jobj.Contains( "inst" ) ? jobj.GetValue( "inst" ) Else JsonValue.NullValue
@@ -166,7 +163,6 @@ Class InvocationJsonifierExt Extends JsonifierExt
 End
 
 'need to fix array handling!
- 
 Class Mojo3dJsonifierExt Extends JsonifierExt
 	
 	Const instance:=New Mojo3dJsonifierExt
@@ -192,10 +188,3 @@ Class Mojo3dJsonifierExt Extends JsonifierExt
 	End
 
 End	
-	
-			
-			
-	
-	
-
-

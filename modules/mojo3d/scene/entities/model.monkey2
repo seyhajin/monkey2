@@ -121,19 +121,29 @@ Class Model Extends Renderable
 	
 	#end
 	Function Load:Model( path:String )
-	
-		For Local loader:=Eachin Mojo3dLoader.Instances
 		
-			Local model:=loader.LoadModel( path )
+		Local scene:=mojo3d.Scene.GetCurrent()
+		
+		Local editing:=scene.Editing
+		
+		scene.Editing=False
+		
+		Local model:Model
+		
+		For Local loader:=Eachin Mojo3dLoader.Instances
+			
+			model=loader.LoadModel( path )
 			
 			If Not model Continue
 			
-			If model.Scene.Editing model.Scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
+			If editing scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
 				
-			Return model
+			Exit
 		Next
+
+		scene.Editing=editing
 		
-		Return Null
+		Return model
 	End
 	
 	#rem monkeydoc Loads a boned model from a file path.
