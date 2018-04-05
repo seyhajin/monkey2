@@ -50,11 +50,15 @@ Class MyWindow Extends Window
 		
 		_scene=New Scene
 		
+		_scene.UpdateRate=90
+		
+		_scene.MaxSubSteps=2
+		
 		'Use more detailed CSM shadow split distances to compensate for the much nearer near clip plane.
 		'
 		_scene.CSMSplits=New Float[]( 2,4,16,256 )
 		
-		_scene.UpdateRate=90
+		'_scene.UpdateRate=90
 
 		'create camera
 		'
@@ -76,16 +80,20 @@ Class MyWindow Extends Window
 		'
 		Local groundBox:=New Boxf( -10,-.1,-10,10,.1,10 )
 		
-		_ground=Model.CreateBox( groundBox,16,1,16,groundMaterial )
+		_ground=Model.CreateBox( groundBox,1,1,1,groundMaterial )
 		_ground.CastsShadow=False
-		_ground.Move( 0,-1,0 )
+'		_ground.Move( 0,-1,0 )
 		
-		Local groundCollider:=New BoxCollider( _ground )
-		groundCollider.Box=groundBox
+'		Local groundCollider:=New BoxCollider( _ground )
+'		groundCollider.Box=groundBox
+
+		Local groundCollider:=New ConvexHullCollider( _ground )
+		groundCollider.Mesh=_ground.Mesh
 
 		'***** bullet mesh collisions suck badly, big problem? *****
-		'Local groundCollider:=New MeshCollider( _ground )
-		'groundCollider.Mesh=_ground.Mesh
+'		Local groundCollider:=New MeshCollider( _ground )
+'		groundCollider.UseInternalEdgeInfo=True
+'		groundCollider.Mesh=_ground.Mesh
 
 		Local groundBody:=New RigidBody( _ground )
 '		groundBody.Kinematic=True
