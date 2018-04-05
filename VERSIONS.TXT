@@ -1,6 +1,14 @@
 
 ***** Monkey2 v2018.03 Mx2cc v1.1.12 *****
 
+Updated my anroid dev system to: Android Studio 3.1 ; Android SDK Tools 26.1.1 ; NDK 16.1.4479499 ; Android SDK 27 (Oreo 8.1)
+
+Removed the ComponentType param overloads from NumComponents and GetComponent in Entity. Use NumComponents<T> and GetComponent<T> instead. Duh. Also added GetComponents<T>:T[]().
+
+Added Variant.GetArrayLength, Variant.GetArrayElement, Variant.SetArrayElement and TypeInfo.NewArray.
+
+MAJOR overhaul of the mx2cc 'dependancies' logic - may potentially cause the dreaded 'forward reference to incomplete type' c++ build error, but should be considerably more efficient (ie: #include fewer headers for faster(ish) builds). I also think I actually understand how it works this time around so it should be easier to find problems with this stuff in future.
+
 Experimental mojo3d scene loading and saving added. Only very minimal support right now, eg: physics components are not yet supported and no texture or model loading support.
 
 See mojo3d/tests/loadscene.monkey2 for a demo. This should also create a test-scene.mojo3d file in your monkey2 dir which you can double click to open in latest ted2go (the version included in the monkey2 repos).
