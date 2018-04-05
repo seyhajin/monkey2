@@ -28,6 +28,11 @@ Class Collider Extends Component
 		Super.New( entity,Type )
 	End
 	
+	Method New( entity:Entity,collider:Collider )
+		
+		Super.New( entity,Type )
+	End
+
 	Property Margin:Float()
 		
 		Return Validate().getMargin()
@@ -43,9 +48,11 @@ Class Collider Extends Component
 	End
 	
 	Method Validate:btCollisionShape()
-
-		If Not _btshape _btshape=OnCreate()
-	
+		
+		If _btshape Return _btshape
+		
+		_btshape=OnCreate()
+		
 		Return _btshape
 	End
 	
@@ -55,10 +62,9 @@ Protected
 	
 	Method Invalidate()
 		
-		If Not _btshape Return
+		If Not _btshape  Return
 		
 		_btshape.destroy()
-		
 		_btshape=Null
 		
 		Entity.RigidBody?.ColliderInvalidated()
@@ -88,6 +94,11 @@ Class ConvexCollider Extends Collider
 		Super.New( Entity )
 	End
 	
+	Method New( entity:Entity,collider:ConvexCollider )
+		
+		Super.New( entity,collider )
+	End
+	
 End
 
 Class BoxCollider Extends ConvexCollider
@@ -103,7 +114,7 @@ Class BoxCollider Extends ConvexCollider
 	
 	Method New( entity:Entity,collider:BoxCollider )
 		
-		Super.New( entity )
+		Super.New( entity,collider )
 		
 		Box=collider.Box
 		
@@ -154,7 +165,7 @@ Class SphereCollider Extends ConvexCollider
 	
 	Method New( entity:Entity,collider:SphereCollider )
 		
-		Super.New( entity )
+		Super.New( entity,collider )
 		
 		Radius=collider.Radius
 		Origin=collider.Origin
@@ -221,7 +232,7 @@ Class CylinderCollider Extends ConvexCollider
 	
 	Method New( entity:Entity,collider:CylinderCollider )
 		
-		Super.New( entity )
+		Super.New( entity,collider )
 		
 		Radius=collider.Radius
 		Length=collider.Length
@@ -331,7 +342,7 @@ Class CapsuleCollider Extends ConvexCollider
 	
 	Method New( entity:Entity,collider:CapsuleCollider )
 		
-		Super.New( entity )
+		Super.New( entity,collider )
 		
 		Radius=collider.Radius
 		Length=collider.Length
@@ -436,7 +447,7 @@ Class ConeCollider Extends ConvexCollider
 
 	Method New( entity:Entity,collider:ConeCollider )
 		
-		Super.New( entity )
+		Super.New( entity,collider )
 		
 		Radius=collider.Radius
 		Length=collider.Length
@@ -530,6 +541,59 @@ Class ConeCollider Extends ConvexCollider
 	
 End
 
+Class ConvexHullCollider Extends ConvexCollider
+	
+	Method New( entity:Entity )
+		
+		Super.New( entity )
+		
+		AddInstance()
+	End
+	
+	Method New( entity:Entity,collider:ConvexHullCollider )
+		
+		Super.New( entity,collider )
+		
+		Mesh=collider.Mesh
+		
+		AddInstance( collider )
+	End
+	
+	Property Mesh:Mesh()
+		
+		Return _mesh
+	
+	Setter( mesh:Mesh ) 
+		
+		If mesh=_mesh Return
+		
+		_mesh=mesh
+		
+		Invalidate()
+	End
+
+	Private
+	
+	Field _mesh:Mesh	
+	Field _vertices:btScalar[]
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		Local vertices:=_mesh.GetVertices()
+		
+		Local points:=New btScalar[vertices.Length*3]
+		
+		For Local i:=0 Until vertices.Length
+			libc.memcpy( points.Data+i*3,Varptr( vertices[i].position ),12 )
+		Next
+		
+		Local shape:=New btConvexHullShape( points.Data,points.Length/3,12 )
+		
+		Return shape
+	End
+	
+End
+
 Class ConcaveCollider Extends Collider
 
 	Method New( entity:Entity )
@@ -537,6 +601,11 @@ Class ConcaveCollider Extends Collider
 		Super.New( entity )
 	End
 	
+	Method New( entity:Entity,collider:ConcaveCollider )
+		
+		Super.New( entity,collider )
+	End
+		
 End
 
 Class MeshCollider Extends ConcaveCollider
@@ -550,18 +619,32 @@ Class MeshCollider Extends ConcaveCollider
 	
 	Method New( entity:Entity,collider:MeshCollider )
 		
-		Super.New( entity )
+		Super.New( entity,collider )
 		
+		UseInternalEdgeInfo=collider.UseInternalEdgeInfo
 		Mesh=collider.Mesh
 		
 		AddInstance( collider )
+	End
+	
+	Property UseInternalEdgeInfo:Bool()
+		
+		Return _internalEdgeInfo
+	
+	Setter( internalEdgeInfo:Bool )
+		If internalEdgeInfo=_internalEdgeInfo Return
+		
+		_internalEdgeInfo=internalEdgeInfo
+		
+		Invalidate()
 	End
 	
 	Property Mesh:Mesh()
 		
 		Return _mesh
 	
-	Setter( mesh:Mesh ) 
+	Setter( mesh:Mesh )
+		If mesh=_mesh Return
 		
 		_mesh=mesh
 		
@@ -581,27 +664,19 @@ Class MeshCollider Extends ConcaveCollider
 		
 		Local vertices:=_mesh.GetVertices()
 		_vertices=New btScalar[vertices.Length*3]
-		
 		For Local i:=0 Until vertices.Length
-			_vertices[i*3]=vertices[i].position.x
-			_vertices[i*3+1]=vertices[i].position.y
-			_vertices[i*3+2]=vertices[i].position.z
+			libc.memcpy( _vertices.Data+i*3,Varptr( vertices[i].position ),12 )
 		Next
 		
 		Local indices:=_mesh.GetAllIndices()
 		_indices=New Int[indices.Length]
-		
-		For Local i:=0 Until indices.Length Step 3
-			_indices[i+0]=indices[1]
-			_indices[i+1]=indices[i+1]
-			_indices[i+2]=indices[i+2]
-		Next
+		libc.memcpy( _indices.Data,indices.Data,_indices.Length*4 )
 		
 		_btmesh=New btTriangleIndexVertexArray( _indices.Length/3,_indices.Data,12,_vertices.Length,_vertices.Data,12 )
 		
 		Local shape:=New btBvhTriangleMeshShape( _btmesh,True,True )
 		
-'		CreateInternalEdgeInfo( shape )
+		If _internalEdgeInfo CreateInternalEdgeInfo( shape )
 		
 		Return shape
 	End
@@ -610,9 +685,9 @@ Class MeshCollider Extends ConcaveCollider
 	
 	Field _mesh:Mesh
 	Field _vertices:btScalar[]
-	'Field _vertices:btVector3[]
 	Field _indices:Int[]
 	Field _btmesh:btTriangleIndexVertexArray
+	Field _internalEdgeInfo:Bool
 	
 End
 
