@@ -5,7 +5,7 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
+#Import "assets/duck.gltf/@/duck.gltf"
 
 Using std..
 Using mojo..
@@ -26,8 +26,6 @@ Class MyWindow Extends Window
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
-		
-		SetConfig( "MOJO3D_RENDERER","forward" )
 		
 		'create scene
 		'		
