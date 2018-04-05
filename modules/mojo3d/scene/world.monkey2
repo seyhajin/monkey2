@@ -28,6 +28,12 @@ Class World
 		Local solver:=New btSequentialImpulseConstraintSolver()
 		
 		_btworld=New btDiscreteDynamicsWorld( dispatcher,broadphase,solver,config )
+
+'	//from BenchmarkDemo.cpp!		
+'	///the following 3 lines increase the performance dramatically, with a little bit of loss of quality
+'	m_dynamicsWorld->getSolverInfo().m_solverMode |=SOLVER_ENABLE_FRICTION_DIRECTION_CACHING; //don't recalculate friction values each frame
+'	m_dynamicsWorld->getSolverInfo().m_numIterations = 5; //few solver iterations 
+'	//m_defaultContactProcessingThreshold = 0.f;//used when creating bodies: body->setContactProcessingThreshold(...);
 		
 		initCollisions( _btworld )
 
@@ -82,7 +88,7 @@ Class World
 		
 		resetCollisions()
 		
-		_btworld.stepSimulation( 1.0/_scene.UpdateRate )
+		_btworld.stepSimulation( elapsed )',_scene.MaxSubSteps,1.0/_scene.UpdateRate )
 		
 		Local n:=getNumCollisions()
 		

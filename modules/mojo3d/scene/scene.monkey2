@@ -141,7 +141,7 @@ Class Scene
 		_shadowAlpha=alpha
 	End
 	
-	#rem monkeydoc Scene update rate.
+	#rem monkeydoc Update rate.
 	#end
 	[jsonify=1]
 	Property UpdateRate:Float()
@@ -151,6 +151,18 @@ Class Scene
 	Setter( updateRate:Float )
 		
 		_updateRate=updateRate
+	End
+	
+	[jsonify=1]
+	#rem monkeydoc Number of update steps.
+	#end
+	Property MaxSubSteps:Int()
+		
+		Return _maxSubSteps
+	
+	Setter( maxSubSteps:Int )
+		
+		_maxSubSteps=maxSubSteps
 	End
 	
 	#rem monkeydoc Ambient diffuse lighting.
@@ -413,6 +425,7 @@ Class Scene
 	Field _shadowAlpha:Float=1
 
 	Field _updateRate:Float=60
+	Field _maxSubSteps:Int=1
 	
 	Field _csmSplits:=New Float[]( 8.0,16.0,64.0,256.0 )
 	
