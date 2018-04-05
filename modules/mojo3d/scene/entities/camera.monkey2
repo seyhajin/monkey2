@@ -59,7 +59,6 @@ Class Camera Extends Entity
 		_view=view
 		
 		If _view SetViewport( _view.Rect )
-		
 	End
 
 	#rem monkeydoc Viewport.
@@ -75,7 +74,7 @@ Class Camera Extends Entity
 		
 	Setter( viewport:Recti )
 		
-		Assert( Not _view,"Viewport cannot be manually modified for a camera with view" )
+		Assert( Not _view,"Viewport cannot be manually modified for a camera with a view" )
 		
 		SetViewport( viewport )
 	End
@@ -169,26 +168,11 @@ Class Camera Extends Entity
 	#end
 	Method Render( canvas:Canvas )
 		
-		If _view
-			SetViewport( _view.Rect )
-		Else
-			SetViewport( New Recti( 0,0,canvas.RenderBounds.Size ) )
-		Endif
+		If _view SetViewport( _view.Rect )
+			
+		Local gdevice:=canvas.GraphicsDevice
 		
-		Local target:=canvas.GraphicsDevice.RenderTarget
-		
-		Local targetSize:=canvas.GraphicsDevice.RenderTargetSize
-		
-'		Local viewport:=canvas.RenderMatrix * Viewport
-		Local viewport:=canvas.RenderBounds
-		
-'		Print "camera viewport="+viewport
-		
-		canvas.Flush()
-		
-		Local renderer:=Renderer.GetCurrent()
-		
-		renderer.Render( target,targetSize,viewport,Scene,InverseMatrix,ProjectionMatrix,Near,Far )
+		Renderer.GetCurrent().Render( gdevice.RenderTarget,gdevice.RenderTargetSize,Viewport,Scene,InverseMatrix,ProjectionMatrix,Near,Far )
 	End
 	
 	#rem monkeydoc Converts a point from world coordinates to viewport coordinates.
