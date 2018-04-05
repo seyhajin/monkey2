@@ -211,6 +211,10 @@ Function SetConfig( name:String,value:String )
 	If value _config[name]=value Else _config.Remove( name )
 End
 
+Private 
+Global _assetsDir:String
+Public
+
 #rem monkeydoc Gets the filesystem directory of the app's assets directory.
 
 Note that only the desktop and web targets have an assets directory. Other targets will return an empty string.
@@ -219,16 +223,28 @@ Note that only the desktop and web targets have an assets directory. Other targe
 
 #end
 Function AssetsDir:String()
+	If Not _assetsDir
 #If __TARGET__="macos"
-	Return AppDir()+"../Resources/"
-	'Return ExtractDir( AppDir() )+"/Resources/"	'enable me!
+		_assetsDir=ExtractDir( AppDir() )+"Resources/"	'enable me!
 #Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
-	Return AppDir()+"assets/"
+		_assetsDir=AppDir()+"assets/"
 #Else If __TARGET__="ios"
-	Return GetSpecialDir( "assets" )
+		_assetsDir=GetSpecialDir( "assets" )
 #Else
-	Return "asset::"
+		_assetsDir="asset::"
 #Endif
+	Endif
+	Return _assetsDir
+End
+
+#rem monkeydoc Changes the assets dir.
+
+Set to an empty string to use the default assets dir.
+
+#end
+Function SetAssetsDir( dir:String )
+	If dir dir=RealPath( FixFilePath( dir ) )+"/"
+	_assetsDir=dir
 End
 
 #rem monkeydoc Gets the filesystem directory of the user's desktop directory.
@@ -311,7 +327,7 @@ A root directory is a directory path that:
  
 #end
 Function ExtractRootDir:String( path:String )
-
+	
 	If path.StartsWith( "//" ) Return "//"
 	
 	Local i:=path.Find( "/" )
@@ -329,7 +345,6 @@ Function ExtractRootDir:String( path:String )
 	If j>0 And j<i Return path.Slice( 0,j+2 )
 	
 	Return ""
-	
 End
 
 #rem monkeydoc Checks if a path is a root directory.
