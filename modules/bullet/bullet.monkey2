@@ -343,6 +343,14 @@ Class btConeShapeZ Extends btConeShape
 			
 End
 
+Class btConvexHullShape Extends btConvexShape
+	
+	Method New( points:btScalar Ptr,numPoints:Int,stride:Int )
+		
+'	Method addPoint( point:btVector3,recalculateLocalAabb:Bool=True )
+	
+End
+
 Enum PHY_ScalarType
 End
 
