@@ -10,10 +10,11 @@ varying vec2 v_TexCoord0;
 //@vertex
 
 attribute vec2 a_Position;	//0...1 (1=viewport size)
+attribute vec2 a_TexCoord0;	//0...1 (1=viewport size)
 
 void main(){
 
-	v_TexCoord0=a_Position * r_BufferCoordScale;
+	v_TexCoord0=a_TexCoord0 * r_BufferCoordScale;
 
 	gl_Position=vec4( a_Position * 2.0 - 1.0,-1.0,1.0 );
 }
