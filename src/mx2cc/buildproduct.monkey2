@@ -407,61 +407,14 @@ Class GccBuildProduct Extends BuildProduct
 		
 			If isasm Return obj
 			
-			Local uptodate:=GetFileType( deps )=FileType.File
-			
-			If Not uptodate And opts.toolchain="gcc"
-
-				If opts.verbose>0 Print "Scanning "+src
-					
-				Local tmp:=cmd
+			If GetFileType( deps )=FileType.File
 				
-				'A bit dodgy - rip out -arch's from ios
-				If opts.target="ios"
-					
-					Repeat
-						Local i0:=tmp.Find( " -arch "  )
-						If i0=-1 Exit
-						Local i1:=tmp.Find( " ",i0+7 )
-						If i1=-1 Exit
-						tmp=tmp.Slice( 0,i0+1 )+tmp.Slice( i1+1 )
-					Forever
-					
-					If opts.arch<>"x64" tmp+=" -arch armv7"
-				Endif
+				Local uptodate:=True
 				
-				tmp+=" -MM ~q"+src+"~q >~q"+deps+"~q"
+				Local srcs:=LoadString( deps )
+				If Not srcs Return obj
 				
-				Exec( tmp )
-				
-				Local buf:=New StringStack
-				
-				Local lines:=LoadString( deps ).Split( " \" )
-				
-				For Local i:=1 Until lines.Length
-					
-					Local line:=lines[i].Trim().Replace( "\ "," " )
-					
-					If Not line Or line=src Continue
-					
-					buf.Add( line )
-				Next
-				
-				SaveString( buf.Join( "~n" ),deps )
-				
-				uptodate=True
-			Endif
-			
-			If uptodate
-				
-				Local str:=LoadString( deps )
-				
-				If Not str Return obj
-				
-				Local lines:=str.Split( "~n" )
-				
-				For Local line:=Eachin lines
-					
-					Local src:=line
+				For Local src:=Eachin srcs.Split( "~n" )
 					
 					Local time:=GetFileTime( src )
 					
@@ -470,22 +423,54 @@ Class GccBuildProduct Extends BuildProduct
 						uptodate=False
 						Exit
 					Endif
-							
 				Next
 				
 				If uptodate Return obj
 				
 			Endif
-				
 		Else
-			
 			DeleteFile( deps )
-
 		Endif
 			
 		If opts.verbose>0 Print StripDir( src )
+			
+		If opts.toolchain<>"msvc"
+			
+			If isasm
+				cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
+				Exec( cmd )
+				Return obj
+			Endif
+			
+			'A bit dodgy - rip out -arch's from ios
+			If opts.target="ios"
+				Repeat
+					Local i0:=cmd.Find( " -arch "  )
+					If i0=-1 Exit
+					Local i1:=cmd.Find( " ",i0+7 )
+					If i1=-1 Exit
+					cmd=cmd.Slice( 0,i0+1 )+cmd.Slice( i1+1 )
+				Forever
+				If opts.arch<>"x64" cmd+=" -arch armv7"
+			Endif
+			
+			cmd+=" -MMD -MF~q"+deps+"~q"
+			cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
+			If opts.verbose>2 Print cmd
+			Exec( cmd )
+			
+			Local buf:=New StringStack
+			Local lines:=LoadString( deps ).Split( " \" )
+			For Local i:=1 Until lines.Length
+				Local line:=lines[i].Trim().Replace( "\ "," " )
+				If Not line Or line=src Continue
+				buf.Add( line )
+			Next
+			SaveString( buf.Join( "~n" ),deps )
+			
+			Return obj
 				
-		If opts.toolchain="msvc"
+		Else If opts.toolchain="msvc"
 
 			If isasm
 				cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
@@ -494,55 +479,36 @@ Class GccBuildProduct Extends BuildProduct
 			Endif
 			
 			Local fstdout:=AllocTmpFile( "stdout" )
-			
 			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >"+fstdout
 			
 			If opts.verbose>2 Print cmd
-				
 			Local fstderr:=AllocTmpFile( "stderr" )
-			
 			If system( cmd+" 2>"+fstderr )
-
 				Local buf:=New StringStack
-				
 				For Local line:=Eachin LoadString( fstdout,True ).Split( "~n" )
-					
 					If Not line.StartsWith( "Note: including file:" ) buf.Add( line )
 				Next
-				
 				Local err:="System command failed:~n~n"+cmd+"~n~n"+buf.Join( "~n" )+"~n"
-				
 				err+=LoadString( fstderr,True )
-				
 				Throw New BuildEx( err )
 			Endif
 			
 			Local buf:=New StringStack
-			
 			Local lines:=LoadString( fstdout ).Split( "~n" )
-			
 			For Local line:=Eachin lines
-				
 				If Not line.StartsWith( "Note: including file:" ) Continue
-				
 				line=line.Slice( 21 ).Trim()
-				
 				If line.ToLower().Contains( "\program files (x86)\" ) Continue
-				
 				line=line.Replace( "\","/" )
-				
 				buf.Add( line )
 			Next
-			
 			SaveString( buf.Join( "~n" ),deps )
 			
 			Return obj
 		Endif
 
 		cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
-				
 		Exec( cmd )
-			
 		Return obj
 	End
 	

@@ -1,7 +1,9 @@
 
 ***** Monkey2 v2018.03 Mx2cc v1.1.12 *****
 
-Updated my anroid dev system to: Android Studio 3.1 ; Android SDK Tools 26.1.1 ; NDK 16.1.4479499 ; Android SDK 27 (Oreo 8.1)
+Tweaked mx2cc's gcc dependancy checking so it happens while compiling (just like msvc's) so there should now only be 1 'slow build' under mingw instead of 2. Sometimes it's just a matter of knowing that a certain command line option even exists!
+
+Updated my anroid dev system to: Android Studio 3.1 ; Android SDK Tools 26.1.1 ; NDK 16.1.4479499 ; Android SDK 27 (Oreo 8.1) so you should do the same if you haven't yet.
 
 Removed the ComponentType param overloads from NumComponents and GetComponent in Entity. Use NumComponents<T> and GetComponent<T> instead. Duh. Also added GetComponents<T>:T[]().
 
