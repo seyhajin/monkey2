@@ -133,7 +133,8 @@ Class SceneDocument Extends Ted2Document
 			_scene=Scene.Load( Path )
 			
 			_camera=Cast<Camera>( _scene.FindEntity( "Camera" ) )
-'			If _camera _camera.View=_view
+			
+			If _camera _camera.View=_view
 				
 			Return True
 		Endif

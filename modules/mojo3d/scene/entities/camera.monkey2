@@ -172,7 +172,9 @@ Class Camera Extends Entity
 			
 		Local gdevice:=canvas.GraphicsDevice
 		
-		Renderer.GetCurrent().Render( gdevice.RenderTarget,gdevice.RenderTargetSize,Viewport,Scene,InverseMatrix,ProjectionMatrix,Near,Far )
+		Local rviewport:=canvas.RenderMatrix * Self.Viewport
+			
+		Renderer.GetCurrent().Render( gdevice.RenderTarget,gdevice.RenderTargetSize,rviewport,Scene,InverseMatrix,ProjectionMatrix,Near,Far )
 	End
 	
 	#rem monkeydoc Converts a point from world coordinates to viewport coordinates.
