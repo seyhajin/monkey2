@@ -106,8 +106,8 @@ Operator overloading allows you to customize the behavior of the built-in monkey
 You overload an operator by writing an 'operator method', which is effectively just a special kind of method. Operators must appear inside classes/structs - they cannot currently be 'global'.
 
 Here is a simple example:
-<pre>
- Struct Vec2
+```
+Struct Vec2
 
    Field x:Float
    Field y:Float
@@ -127,17 +127,17 @@ Here is a simple example:
    End
 
 End
-</pre>
+```
 
 The 'Operator+' declaration here defines an addition operator for Vec2. This is then used whenever a Vec2 appears as the 'left hand side' of an addition. For example:
-<pre>
+```
 Function Main()
    Local v1:=New Vec2( 10.0,20.0 )
    Local v2:=New Vec2( 30.0,40.0 )
    Local v3:=v1+v2    'note: calls Operator+ in Vec2.
    Print v3.ToString()
 End
-</pre>
+```
 
 The following unary operators can be overloaded: `+` `-` `~`
 
@@ -155,7 +155,7 @@ The `[]` and `[]=` operators allow you to define 'indexing' like behaviour. The 
 
 Here is an example of some indexing operators for the Vec2 class above:
 
-<pre>
+```
 Struct Vec2
 
    ...as above...
@@ -170,10 +170,11 @@ Struct Vec2
       If index=0 Then x=value Else y=value
    End
 End
-</pre>
+```
 
 With these additions, you can access Vec2 coordinates 'by index', eg:
-<pre>
+
+```
 Function Main()
 	Local v:=New Vec2
 	v[0]=10.0
@@ -181,10 +182,11 @@ Function Main()
 	Print v[0]
 	Print v[1]
 End
-</pre>
+```
 
 You can also overload assignment operators, for example:
-<pre>
+
+```
 Struct Vec2
 
 	...as above...
@@ -194,6 +196,6 @@ Struct Vec2
 		y+=v.y
 	End
 End
-</pre>
+```
 
 If you have already written an Operator+ (as is the case here) this is not strictly necessary, as monkey2 will generate the code for Operator+= for you. However, you may still want to provide a custom version for Operator+= if your code can do so in a more efficient way.
