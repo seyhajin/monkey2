@@ -3,6 +3,8 @@ Namespace mojo3d
 
 Private
 
+Global emptyShape:=New btEmptyShape
+
 Class MotionState Extends btMotionState
 	
 	Method New( entity:Entity )
@@ -54,11 +56,9 @@ Class RigidBody Extends Component
 		
 		_btmotion=New MotionState( entity )
 		
-		Local collider:=entity.Collider
-		Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
+		_btbody=New btRigidBody( _mass,_btmotion,Null,Null )
 		
-		_btbody=New btRigidBody( _mass,_btmotion,collider?.Validate(),inertia )
-
+		Kinematic=False
 		Restitution=0
 		Friction=1
 		RollingFriction=0
@@ -72,15 +72,13 @@ Class RigidBody Extends Component
 		
 		Super.New( entity,Type )
 		
+		_mass=body.Mass
+		
 		_btmotion=New MotionState( entity )
 		
-		Local collider:=entity.Collider
-		Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
-		
-		_btbody=New btRigidBody( _mass,_btmotion,collider?.Validate(),inertia )
+		_btbody=New btRigidBody( _mass,_btmotion,Null,Null )
 
 		Kinematic=body.Kinematic
-		Mass=body.Mass
 		Restitution=body.Restitution
 		Friction=body.Friction
 		RollingFriction=body.RollingFriction
@@ -121,10 +119,7 @@ Class RigidBody Extends Component
 		
 		_mass=mass
 		
-		Local collider:=Entity.Collider
-		Local inertia:=collider?.CalculateLocalInertia( _mass )
-		
-		_btbody.setMassProps( _mass,inertia )
+		_dirty|=Dirty.Mass
 	End
 
 	[jsonify=1]
@@ -300,8 +295,10 @@ Class RigidBody Extends Component
 	Private
 	
 	Enum Dirty
-		Collider=1
-		Collisions=2
+		Mass=1
+		Collider=2
+		Collisions=4
+		All=7
 	End
 	
 	Field _mass:Float=1
@@ -311,8 +308,7 @@ Class RigidBody Extends Component
 
 	Field _btmotion:MotionState
 	Field _btbody:btRigidBody
-	Field _dirty:Dirty=Null
-	
+	Field _dirty:Dirty=Dirty.All
 	Field _colliderseq:Int
 	Field _rvisible:Bool
 	Field _seq:Int
@@ -327,14 +323,14 @@ Class RigidBody Extends Component
 		
 		'Have to remove/add bodies from world if collision shape changes. http://bulletphysics.org/Bullet/phpBB3/viewtopic.php?t=5194
 		'
-		If _rvisible
+		If _rvisible And (_dirty & Dirty.Collider)
 			
 			World.Remove( Self )
 			
 			_rvisible=False
 		Endif
 		
-		If _dirty & Dirty.Collider
+		If _dirty & (Dirty.Collider|Dirty.Mass)
 			
 			Local collider:=Entity.Collider
 			
@@ -351,6 +347,8 @@ Class RigidBody Extends Component
 			Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
 			
 			_btbody.setMassProps( _mass,inertia )
+			
+			_btbody.updateInertiaTensor()
 		Endif
 	
 		If _rvisible<>rvisible

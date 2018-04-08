@@ -274,6 +274,10 @@ End
 Class btPolyhedralConvexShape Extends btConvexInternalShape
 End
 
+Class btEmptyShape Extends btConcaveShape
+	
+End
+
 Class btBoxShape Extends btPolyhedralConvexShape
 	
 	Method New( boxHalfExtents:btVector3 )
@@ -528,6 +532,8 @@ Class btRigidBody Extends btCollisionObject
 	Method clearForces()
 		
 	Method setMassProps( mass:btScalar,inertia:btVector3 )
+		
+	Method updateInertiaTensor()
 		
 	Method getInvMass:btScalar()
 		

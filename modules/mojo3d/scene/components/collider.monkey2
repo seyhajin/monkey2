@@ -559,6 +559,7 @@ Class ConvexHullCollider Extends ConvexCollider
 		AddInstance( collider )
 	End
 	
+	[jsonify=1]
 	Property Mesh:Mesh()
 		
 		Return _mesh
@@ -575,7 +576,6 @@ Class ConvexHullCollider Extends ConvexCollider
 	Private
 	
 	Field _mesh:Mesh	
-	Field _vertices:btScalar[]
 	
 	Method OnCreate:btCollisionShape() Override
 		
@@ -627,6 +627,7 @@ Class MeshCollider Extends ConcaveCollider
 		AddInstance( collider )
 	End
 	
+	[jsonify=1]
 	Property UseInternalEdgeInfo:Bool()
 		
 		Return _internalEdgeInfo
@@ -639,6 +640,7 @@ Class MeshCollider Extends ConcaveCollider
 		Invalidate()
 	End
 	
+	[jsonify=1]
 	Property Mesh:Mesh()
 		
 		Return _mesh
