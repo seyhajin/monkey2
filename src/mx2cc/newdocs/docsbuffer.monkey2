@@ -29,7 +29,21 @@ Class DocsBuffer
 	
 	Method EmitLine( line:String )
 		
-		line=line.Trim()
+		Local tline:=line.Trim()
+		
+		If tline.StartsWith( "```" )
+			If _pre=-1
+				_lines.Push( tline )
+				_pre=_lines.Length
+			Else
+				FixIndent( _pre,_lines.Length )
+				_lines.Push( tline )
+				_pre=-1
+			Endif
+			Return
+		Endif
+
+		If _pre=-1 line=tline Else Print line
 		
 		If Not line And _lines.Length And Not _lines.Top Return
 		
@@ -37,18 +51,22 @@ Class DocsBuffer
 	End
 	
 	Method EmitLines( lines:String[] )
-				
+		
 		Local i:=0
 		
 		While i<lines.Length
-		
-			Local line:=lines[i].Trim()
-			i+=1
 			
-			If Not line.StartsWith( "@" )
+			Local line:=lines[i]
+			i+=1
+
+			Local tline:=line.Trim()
+			
+			If Not tline.StartsWith( "@" )
 				EmitLine( line )
 				Continue
 			Endif
+			
+			line=tline
 			
 			Local j:=line.Find( " " )
 			If j=-1 j=line.Length
@@ -99,17 +117,14 @@ Class DocsBuffer
 				
 				Local i0:=i
 				While i<lines.Length And lines[i].Trim()<>"@end"
-					
 					EmitLine( lines[i] )
 					i+=1
 				Wend
 				
-'				FixIndent( i0,i )
-
 				EmitLine( "```" )
-
+				
 				If i<lines.Length i+=1
-					
+
 			Case "#","##","###","####","#####"
 				
 				Local label:=arg
@@ -196,6 +211,7 @@ Class DocsBuffer
 		_lines.Clear()
 		_label=""
 		_return=""
+		_pre=-1
 		
 		Return markdown
 	End
@@ -208,6 +224,7 @@ Class DocsBuffer
 	Field _label:String
 	Field _params:=New StringStack
 	Field _return:String
+	Field _pre:Int=-1
 	
 	Method FixIndent( i0:Int,i1:Int )
 		

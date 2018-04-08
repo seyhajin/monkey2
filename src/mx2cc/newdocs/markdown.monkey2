@@ -20,13 +20,13 @@ Class MarkdownConvertor
 		_buf.Clear()
 		
 		For Local i:=0 Until _lines.Length
-	
 			_lines[i]=_lines[i].TrimEnd()
 		Next
 		
 		While Not AtEnd
 		
-			Local line:=NextLine()
+			Local line:=NextLine().Trim()
+			If Not line Continue
 		
 			If line.StartsWith( "#" )
 			
@@ -40,19 +40,19 @@ Class MarkdownConvertor
 			
 				EmitList( line )
 				
-			Else If line.StartsWith( "```" )
+			Else If line.StartsWith( "<" )
 			
-				EmitCode( line )
+				Emit( line+"\" )
 				
 			Else If line.StartsWith( "---" )
 			
 				Emit( "<hr class="+_cls+">" )
 				
-			Else If line.StartsWith( "<" )
+			Else If line.StartsWith( "```" ) Or line.ToLower().StartsWith( "<pre>" )
 			
-				Emit( line+"\" )
+				EmitCode( line )
 				
-			Else If line
+			Else
 			
 				If _lineNum>1 And _lines[_lineNum-2]=""
 					Emit( "<p class="+_cls+">"+Escape( line ) )
@@ -60,20 +60,8 @@ Class MarkdownConvertor
 					Emit( Escape( line ) )
 				Endif
 
-			Else
-			
-'				If Not _buf.Empty And _buf.Top<>"<p>" Emit( "<p>" )
-				
 			Endif
 				
-'			Else 
-			
-'				If _buf.Empty Or _buf.Top="" Emit( "<p>" )
-			
-'				Emit( Escape( line ) )
-			
-'			Endif
-			
 		Wend
 		
 		Local html:=_buf.Join( "~n" )
@@ -459,12 +447,13 @@ Class MarkdownConvertor
 		Emit( "<pre class="+_cls+"><code class="+_cls+">\" )
 	
 		While Not AtEnd
-		
+			
 			line=NextLine()
-			If line.StartsWith( "```" ) Exit
+			Local tline:=line.Trim()
+			
+			If tline.StartsWith( "```" ) Or tline.ToLower().StartsWith( "</pre>" ) Exit
 			
 			Emit( EscapeHtml( line ) )
-			
 		Wend
 		
 		Emit( "</code></pre>" )

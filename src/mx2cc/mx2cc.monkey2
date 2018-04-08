@@ -22,7 +22,7 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods -clean -config=debug pyro-framework"
+Const TestArgs:="mx2cc makedocs monkey"	'mods -clean -config=debug pyro-framework"
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
