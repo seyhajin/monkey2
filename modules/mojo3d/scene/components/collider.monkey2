@@ -7,7 +7,11 @@ Namespace mojo3d
 Extern Private
  
 Function CreateInternalEdgeInfo( mesh:btBvhTriangleMeshShape )="bbBullet::createInternalEdgeInfo"
+
+Private
 	
+Global emptyShape:=New btEmptyShape
+
 Public
 	
 Class Entity Extension
@@ -565,7 +569,6 @@ Class ConvexHullCollider Extends ConvexCollider
 		Return _mesh
 	
 	Setter( mesh:Mesh ) 
-		
 		If mesh=_mesh Return
 		
 		_mesh=mesh
@@ -578,6 +581,8 @@ Class ConvexHullCollider Extends ConvexCollider
 	Field _mesh:Mesh	
 	
 	Method OnCreate:btCollisionShape() Override
+		
+		If Not _mesh Return emptyShape
 		
 		Local vertices:=_mesh.GetVertices()
 		
@@ -663,6 +668,8 @@ Class MeshCollider Extends ConcaveCollider
 	End
 	
 	Method OnCreate:btCollisionShape() Override
+		
+		If Not _mesh Return emptyShape
 		
 		Local vertices:=_mesh.GetVertices()
 		_vertices=New btScalar[vertices.Length*3]

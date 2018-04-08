@@ -3,8 +3,6 @@ Namespace mojo3d
 
 Private
 
-Global emptyShape:=New btEmptyShape
-
 Class MotionState Extends btMotionState
 	
 	Method New( entity:Entity )
