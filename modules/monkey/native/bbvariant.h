@@ -16,6 +16,7 @@ struct bbVariant{
 	template<class T,int D> static int _getArrayLength( bbArray<T,D> v ){ return v.length(); }
 	template<class T,int D> static bbVariant _getArrayElement( bbArray<T,D> v,int index );
 	template<class T,int D> static void _setArrayElement( bbArray<T,D> v,int index,bbVariant value );
+	template<class T,int D> static void _setArrayElement( bbArray<bbGCVar<T>,D> v,int index,bbVariant value );
  
 	struct RepBase{
 	
@@ -154,22 +155,6 @@ struct bbVariant{
 		return _ref<T>( 0 );
 	}
 
-	/*
-	template<class T> T *_ref( typename T::bb_object_type *p )const{
-		return get<T>();
-	}
-	
-	template<class T> T *_ref( T *p )const{
-		Rep<T> *r=dynamic_cast<Rep<T>*>( _rep );
-		if( !r ) bbRuntimeError( "Variant cast failed" );
-		return &r->value;
-	}
-	
-	template<class T> T *ref()const{
-		return _ref<T>( 0 );
-	}
-	*/
-	
 	bbTypeInfo *getType()const{
 		return _rep->getType();
 	}
@@ -214,6 +199,10 @@ template<class T,int D> bbVariant bbVariant::_getArrayElement( bbArray<T,D> v,in
 
 template<class T,int D> void bbVariant::_setArrayElement( bbArray<T,D> v,int index,bbVariant value ){
 	v[index]=value.get<T>();
+}
+
+template<class T,int D> void bbVariant::_setArrayElement( bbArray<bbGCVar<T>,D> v,int index,bbVariant value ){
+	v[index]=value.get<T*>();
 }
 
 #endif
