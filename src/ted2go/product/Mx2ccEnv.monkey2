@@ -55,7 +55,7 @@ End
 Public
 
 Function LoadEnv()
-
+	
 	Local e_path:=GetEnv( "PATH" )
 
 	Local path:="bin/env_"+HostOS+".txt"
@@ -86,7 +86,7 @@ Function LoadEnv()
 	Next
 	
 	SetEnv( "PATH",e_path )
-
+	
 	Local moddirs:=New StringStack
 	moddirs.Add( CurrentDir()+"modules/" )
 	For Local moddir:=Eachin GetEnv( "MX2_MODULE_DIRS" ).Split( ";" )
