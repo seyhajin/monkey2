@@ -2,36 +2,38 @@ Namespace mojo3d.jsonifier
 
 Class Jsonifier
 
-	Method AddInstance( obj:Object,ctor:Invocation )
+	Method AddInstance( obj:Variant,ctor:Invocation )
 		
-		Assert( Not _instsByObj.Contains( obj ) )
+		Local tobj:=Cast<Object>( obj )
+		
+		Assert( Not _instsByObj.Contains( tobj ) )
 		
 		Local inst:=New Instance
 		inst.obj=obj
 		inst.id="@"+String(_insts.Length)
 		inst.ctor=ctor
-		inst.initialState=JsonifyState( obj )
+		inst.initialState=JsonifyState( tobj )
 		
-		_instsByObj[inst.obj]=inst
+		_instsByObj[tobj]=inst
 		_instsById[inst.id]=inst
 
 		_insts.Add( inst )
 	End
 
 	'ctor via ctor
-	Method AddInstance( obj:Object,args:Variant[] )
+	Method AddInstance( obj:Variant,args:Variant[] )
 		
 		AddInstance( obj,New Invocation( obj.DynamicType,"New",Null,args ) )
 	end
 
 	'ctor via method call
-	Method AddInstance( obj:Object,decl:String,inst:Variant,args:Variant[] )
+	Method AddInstance( obj:Variant,decl:String,inst:Variant,args:Variant[] )
 		
 		AddInstance( obj,New Invocation( decl,inst,args ) )
 	End
 
 	'ctor via function call
-	Method AddInstance( obj:Object,decl:String,args:Variant[] )
+	Method AddInstance( obj:Variant,decl:String,args:Variant[] )
 		
 		AddInstance( obj,New Invocation( decl,Null,args ) )
 	End
@@ -46,15 +48,18 @@ Class Jsonifier
 		
 		For Local i:=0 Until _insts.Length
 			
-			Local inst:=_insts[i]
 			Local jobj:=New JsonObject
 			
+			Local inst:=_insts[i]
+			Local tobj:=Cast<Object>( inst.obj )
+			
 			jobj["id"]=New JsonString( inst.id )
-			jobj["type"]=New JsonString( inst.obj.DynamicType.Name )
+			
+			jobj["type"]=New JsonString( tobj.DynamicType.Name )
 			
 			jobj["ctor"]=Jsonify( inst.ctor )
 			
-			Local state:=JsonifyState( inst.obj ),dstate:=New JsonObject
+			Local state:=JsonifyState( tobj ),dstate:=New JsonObject
 			
 			For Local it:=Eachin state.All()
 				
@@ -86,24 +91,23 @@ Class Jsonifier
 			
 			Local jobj:=jinsts.GetObject( i )
 			
-			Local obj:Object
+			Local obj:Variant
 						
 			If i<_insts.Length
 				
 				obj=_insts[i].obj
-				
 			Else
-				
 				Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
 			
-				obj=Cast<Object>( ctor.Execute() )
-				
+				obj=ctor.Execute()
 			Endif
-			
+
 			_dejsonified.Add( obj )
 			
+			Local tobj:=Cast<Object>( obj )
+			
 			'set value type state only on this pass.
-			If jobj.Contains( "state" ) DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,False )
+			If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,False )
 		Next
 
 		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?
@@ -113,7 +117,9 @@ Class Jsonifier
 			
 			Local obj:=_dejsonified[i]
 			
-			If jobj.Contains( "state" ) DejsonifyState( obj,jobj.GetObject( "state" ),obj.DynamicType,True )
+			Local tobj:=Cast<Object>( obj )
+			
+			If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,True )
 		Next
 		
 		SetAssetsDir( assetsDir )
@@ -138,14 +144,6 @@ Class Jsonifier
 			Return New JsonNumber( Cast<Float>( value ) )
 		Case Typeof<String>
 			Return New JsonString( Cast<String>( value ) )
-		Case Typeof<Bool[]>
-			Return JsonifyArray( Cast<Bool[]>( value ) )
-		Case Typeof<Int[]>
-			Return JsonifyArray( Cast<Int[]>( value ) )
-		Case Typeof<Float[]>
-			Return JsonifyArray( Cast<Float[]>( value ) )
-		Case Typeof<String[]>
-			Return JsonifyArray( Cast<String[]>( value ) )
 		End
 		
 		'handle enums+references
@@ -168,10 +166,22 @@ Class Jsonifier
 		Select type.Kind
 		Case "Class"
 			Return JsonValue.NullValue
+		Case "Array"
+			Local n:=value.GetArrayLength()
+			Local jarray:=New JsonArray( n )
+			For Local i:=0 Until n
+				jarray[i]=Jsonify( value.GetArrayElement( i ) )
+			Next
+			Return jarray
 		End
 		
 		RuntimeError( "TODO: No jsonifier found for type '"+type+"'" )
 		Return Null
+	End
+	
+	Method Dejsonify<T>:T( jvalue:JsonValue )
+		
+		Return Cast<T>( Dejsonify( jvalue,Typeof<T> ) )
 	End
 	
 	Method Dejsonify:Variant( jvalue:JsonValue,type:TypeInfo )
@@ -188,14 +198,6 @@ Class Jsonifier
 			Return Float( jvalue.ToNumber() )
 		Case Typeof<String>
 			Return jvalue.ToString()
-		Case Typeof<Bool[]>
-			Return DejsonifyArray<Bool>( jvalue )
-		Case Typeof<Int[]>
-			Return DejsonifyArray<Int>( jvalue )
-		Case Typeof<Float[]>
-			Return DejsonifyArray<Float>( jvalue )
-		Case Typeof<String[]>
-			Return DejsonifyArray<String>( jvalue )
 		End
 		
 		'handle references
@@ -206,8 +208,8 @@ Class Jsonifier
 			Elseif jvalue.IsString
 				Local id:=Int( jvalue.ToString().Slice( 1 ) )
 				Assert( id>=0 And id<_dejsonified.Length,"Dejsonify error" )
-				Local obj:=_dejsonified[id]
-				Return obj
+				Local inst:=_dejsonified[id]
+				Return inst
 			Endif
 		Case "Enum"
 			Return type.MakeEnum( jvalue.ToNumber() )
@@ -222,6 +224,15 @@ Class Jsonifier
 		Select type.Kind
 		Case "Class"
 			Return type.NullValue
+		Case "Array"
+			Local elemType:=type.ElementType
+			Local jarray:=Cast<JsonArray>( jvalue )
+			Local n:=jarray.Length,v:=elemType.NewArray( n )
+			For Local i:=0 Until n
+				Local elem:=Dejsonify( jarray[i],elemType )
+				v.SetArrayElement( i,elem )
+			Next
+			Return v
 		End
 		
 		RuntimeError( "No dejsonifier found for type '"+type+"'" )
@@ -229,33 +240,10 @@ Class Jsonifier
 		Return Null
 	End
 	
-	Method JsonifyArray<C>:JsonArray( values:C[] )
-		
-		Local jvalues:=New JsonArray( values.Length )
-		
-		For Local i:=0 Until jvalues.Length
-			jvalues[i]=Jsonify( values[i] )
-		Next
-		
-		Return jvalues
-	End
-	
-	Method DejsonifyArray<C>:C[]( jvalue:JsonValue )
-		
-		Local jvalues:=jvalue.ToArray()
-		Local values:=New C[jvalues.Length]
-		
-		For Local i:=0 Until values.Length
-			values[i]=Cast<C>( Dejsonify( jvalues[i],Typeof<C> ) )
-		Next
-		
-		Return values
-	End
-	
 	Private
 	
 	Class Instance
-		Field obj:Object
+		Field obj:Variant
 		Field id:String
 		Field ctor:Invocation
 		Field initialState:JsonObject
@@ -266,7 +254,7 @@ Class Jsonifier
 	Field _instsByObj:=New Map<Object,Instance>
 	Field _instsById:=New StringMap<Instance>
 	
-	Field _dejsonified:=New Stack<Object>
+	Field _dejsonified:=New Stack<Variant>
 	
 	Method JsonifyState:JsonObject( obj:Object )
 		
