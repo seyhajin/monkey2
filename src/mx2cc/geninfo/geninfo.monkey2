@@ -17,8 +17,18 @@ Class ParseInfoGenerator
 		Local jarr:=New JsonArray
 		
 		For Local arg:=Eachin args
+'			Local jval:=GenNode( arg )
+'			If jval jarr.Add( jval )
 			Local jval:=GenNode( arg )
-			If jval jarr.Add( jval )
+			If Not jval Continue
+			Local jarr2:=Cast<JsonArray>( jval )
+			If jarr2 
+				For Local jval:=Eachin jarr2
+					jarr.Add( jval )
+				Next
+			Else
+				jarr.Add( jval )
+			Endif
 		Next
 		
 		Return jarr
@@ -171,13 +181,12 @@ Class ParseInfoGenerator
 	
 	Method GenNode:JsonValue( ifStmt:IfStmtExpr )
 
-		Local jarr:=New JsonArray,kind:="if"
+		Local jarr:=New JsonArray
 		While ifStmt
-			Local jobj:=MakeNode( ifStmt,ifStmt.cond ? kind Else "else" )
+			Local jobj:=MakeNode( ifStmt,"block" )
 			jobj.SetValue( "stmts",GenNode( ifStmt.stmts ) )
 			jarr.Add( jobj )
 			ifStmt=ifStmt.succ
-			kind="elseif"
 		Wend
 		Return jarr
 	End
