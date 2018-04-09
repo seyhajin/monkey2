@@ -1,12 +1,9 @@
-#Import "<std>"
-
-Using std..
-
-Function Test( v:Variant )
-End
-
-Function Main()
-	
-	Test( New Vec2i[10] )
-	
+Function Main:Int()
+	Local x:Int
+	Local y:Int
+	If x<10
+		Local t:=100
+	Else
+		Local t:=20
+	Endif
 End
