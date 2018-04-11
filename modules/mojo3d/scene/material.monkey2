@@ -122,6 +122,24 @@ Class Material Extends Resource
 		Return GetOpaqueShader()
 	End
 	
+	Function LoadTexture:Texture( path:String,textureFlags:TextureFlags,flipy:Bool=False )
+		
+		Local scene:=Scene.GetCurrent()
+		
+		Return scene.LoadTexture( path,textureFlags,flipy )
+	End
+	
+	Function LoadTexture:Texture( path:String,name:String,textureFlags:TextureFlags,flipy:Bool=False )
+		
+		Local scene:=Scene.GetCurrent()
+		
+		Local texture:=scene.LoadTexture( path+"/"+name+".png",textureFlags,flipy )
+		
+		If Not texture texture=scene.LoadTexture( path+"/"+name+".jpg",textureFlags,flipy )
+			
+		Return texture
+	End
+	
 	Protected
 	
 	Method New()
@@ -141,6 +159,13 @@ Class Material Extends Resource
 		_cullMode=material._cullMode
 
 		TextureMatrix=material.TextureMatrix
+	End
+	
+	Method AddInstance()
+
+		Local scene:=Scene.GetCurrent()
+		
+		If scene.Editing scene.Jsonifier.AddInstance( Self,New Variant[0] )
 	End
 	
 	Method AddInstance( args:Variant[] )

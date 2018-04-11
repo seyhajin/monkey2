@@ -27,12 +27,13 @@ Class Sprite Extends Renderable
 		Name="Sprite"
 		
 		AddInstance()
+		
+		Visible=True
 	End
 
 	Method New( material:Material,parent:Entity=Null )
-		Self.New( parent )
 		
-		_material=material
+		Super.New( parent )
 		
 		Name="Sprite"
 		Material=material
@@ -42,6 +43,17 @@ Class Sprite Extends Renderable
 		Visible=True
 	End
 
+	Method New( sprite:Sprite,parent:Entity )
+		
+		Super.New( sprite,parent )
+		
+		_material=sprite._material
+		_handle=sprite._handle
+		_mode=sprite._mode
+		
+		AddInstance( sprite )
+	End
+	
 	#rem monkeydoc Copies the sprite.
 	#end	
 	Method Copy:Sprite( parent:Entity=Null ) Override
@@ -58,6 +70,7 @@ Class Sprite Extends Renderable
 	This must currently be an instance of a SpriteMaterial.
 	
 	#end	
+	[jsonify=1]
 	Property Material:Material()
 		
 		Return _material
@@ -70,6 +83,7 @@ Class Sprite Extends Renderable
 	#rem monkeydoc Rect within texture to draw.
 	
 	#end	
+	[jsonify=1]
 	Property TextureRect:Rectf()
 		
 		Return _textureRect
@@ -84,6 +98,7 @@ Class Sprite Extends Renderable
 	Defaults to 0.5,0.5.
 	
 	#end
+	[jsonify=1]
 	Property Handle:Vec2f()
 		
 		Return _handle
@@ -98,6 +113,7 @@ Class Sprite Extends Renderable
 	Defaults to SpriteMode.Billboard.
 	
 	#end
+	[jsonify=1]
 	Property Mode:SpriteMode()
 		
 		Return _mode
@@ -109,15 +125,8 @@ Class Sprite Extends Renderable
 	
 	Protected
 
-	Method New( sprite:Sprite,parent:Entity )
-		Super.New( sprite,parent )
-		
-		_material=sprite._material
-		_handle=sprite._handle
-		_mode=sprite._mode
-	End
-	
 	Method OnRender( rq:RenderQueue ) Override
+		
 		rq.AddSpriteOp( Self )
 	End
 	

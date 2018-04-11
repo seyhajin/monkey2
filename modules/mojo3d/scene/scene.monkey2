@@ -10,9 +10,11 @@ Class Scene
 	If there is no current scene when a new scene is created, the new scene becomes the current scene.
 		
 	#end
-	Method New()
+	Method New( editable:Bool=False )
 		
 		If Not _current _current=Self
+			
+		_editable=editable
 		
 		_clearColor=Color.Sky
 
@@ -22,13 +24,14 @@ Class Scene
 		
 		_world=New World( Self )
 		
-		Local type:=TypeInfo.GetType( "mojo3d.Scene" )
-		If type And type.Kind="Class"
+		If _editable
+			Local type:=TypeInfo.GetType( "mojo3d.Scene" )
+			Assert( type And type.Kind="Class","mojo3d reflection must be enabled for editable scenes" )
 			_jsonifier=New Jsonifier
-			_jsonifier.AddInstance( Self,New Variant[0] )
+			_jsonifier.AddInstance( Self,New Variant[]( true ) )
+			_editing=True
 		Endif
 		
-		_editing=False
 	End
 	
 	#rem monkeydoc The sky texture.
@@ -40,7 +43,7 @@ Class Scene
 	This must currently be a valid cubemap texture.
 	
 	#end
-'	[jsonify=1]
+	[jsonify=1]
 	Property SkyTexture:Texture()
 		
 		Return _skyTexture
@@ -61,7 +64,7 @@ Class Scene
 	This must currently be a valid cubemap texture.
 	
 	#end
-'	[jsonify=1]
+	[jsonify=1]
 	Property EnvTexture:Texture()
 		
 		Return _envTexture
@@ -195,44 +198,6 @@ Class Scene
 		_csmSplits=splits.Slice( 0 )
 	End
 	
-	Property Editing:Bool()
-		
-		Return _editing
-	
-	Setter( editing:Bool )
-		
-		If editing And Not _jsonifier RuntimeError( "Scene is not editable" )
-		
-		_editing=editing
-	End
-	
-	Property Jsonifier:Jsonifier()
-		
-		Return _jsonifier
-	End
-	
-	Method PauseEditing()
-		
-		_editingPaused+=1
-	End
-	
-	Method ResumeEditing:Bool()
-		
-		_editingPaused-=1
-		
-		Return Editing
-	End
-	
-	Method LoadTexture:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
-		
-		Local texture:=Texture.Load( path,flags,flipNormalY )
-		If Not texture Return Null
-		
-		If Editing Jsonifier.AddInstance( texture,"mojo3d.Scene.LoadTexture",Self,New Variant[]( path,flags,flipNormalY ) )
-			
-		Return texture
-	End
-
 	#rem monkeydoc Finds an entity in the scene.
 	
 	Finds an entity in the scene with the given name.
@@ -320,6 +285,39 @@ Class Scene
 		Return _rootEntities.ToArray()
 	End
 	
+	'***** serialization stuff *****
+	
+	Property Editable:Bool()
+		
+		Return _editable
+	End
+	
+	Property Editing:Bool()
+		
+		Return _editing
+	
+	Setter( editing:Bool )
+		
+		If editing And Not _editable RuntimeError( "Scene is not editable" )
+		
+		_editing=editing
+	End
+	
+	Property Jsonifier:Jsonifier()
+		
+		Return _jsonifier
+	End
+	
+	Method LoadTexture:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
+		
+		Local texture:=Texture.Load( path,flags,flipNormalY )
+		If Not texture Return Null
+		
+		If Editing Jsonifier.AddInstance( texture,"mojo3d.Scene.LoadTexture",Self,New Variant[]( path,flags,flipNormalY ) )
+			
+		Return texture
+	End
+
 	#rem monkeydoc Saves the scene to a mojo3d scene file
 	#end
 	Method Save( path:String )
@@ -331,6 +329,25 @@ Class Scene
 		Local json:=jobj.ToJson()
 		
 		SaveString( json,path )
+	End
+
+	#rem monkeydoc Loads a mojo3d scene file and makes it current
+	#end
+	Function Load:Scene( path:String )
+		
+		Local json:=LoadString( path )
+		If Not json Return Null
+		
+		Local jobj:=JsonObject.Parse( json )
+		If Not jobj Return Null
+		
+		Local scene:=New Scene( True )
+		
+		SetCurrent( scene )
+		
+		scene.Jsonifier.DejsonifyInstances( jobj )
+		
+		Return scene
 	End
 	
 	#rem monkeydoc Sets the current scene.
@@ -353,25 +370,6 @@ Class Scene
 		If Not _current New Scene
 			
 		Return _current
-	End
-	
-	#rem monkeydoc Loads a mojo3d scene file and makes it current
-	#end
-	Function Load:Scene( path:String )
-
-		Local json:=LoadString( path )
-		If Not json Return Null
-		
-		Local jobj:=JsonObject.Parse( json )
-		If Not jobj Return Null
-		
-		Local scene:=New Scene
-		
-		SetCurrent( scene )
-		
-		scene.Jsonifier.DejsonifyInstances( jobj )
-		
-		Return scene
 	End
 	
 	Internal
@@ -438,10 +436,8 @@ Class Scene
 	Field _world:World
 	
 	Field _jsonifier:Jsonifier
-	
+	Field _editable:Bool
 	Field _editing:Bool
-	
-	Field _editingPaused:=0
 	
 	Method Update( elapsed:Float )
 		

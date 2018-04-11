@@ -126,7 +126,7 @@ Class Model Extends Renderable
 		
 		Local editing:=scene.Editing
 		
-		scene.Editing=False
+		If editing scene.Jsonifier.BeginLoading()
 		
 		Local model:Model
 		
@@ -134,14 +134,12 @@ Class Model Extends Renderable
 			
 			model=loader.LoadModel( path )
 			
-			If Not model Continue
-			
-			If editing scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
-				
-			Exit
+			If model Exit
 		Next
-
-		scene.Editing=editing
+		
+		If editing scene.Jsonifier.EndLoading()
+		
+		If editing scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
 		
 		Return model
 	End

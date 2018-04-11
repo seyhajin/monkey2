@@ -30,6 +30,30 @@ Public
 #end
 Class PbrMaterial Extends Material
 	
+	Private
+	
+	Method Init( boned:Bool )
+		
+		_boned=boned
+
+		Uniforms.DefaultTexture=Texture.ColorTexture( Color.White )
+		
+		ColorTexture=Null
+		EmissiveTexture=Null
+		MetalnessTexture=Null
+		RoughnessTexture=Null
+		OcclusionTexture=Null
+		NormalTexture=Null
+		
+		ColorFactor=Color.White
+		EmissiveFactor=Color.Black
+		MetalnessFactor=1.0
+		RoughnessFactor=1.0
+	End
+	
+	Public
+	
+	
 	#rem monkeydoc Creates a new pbr material.
 	
 	All properties default to white or '1' except for emissive factor which defaults to black. 
@@ -47,26 +71,14 @@ Class PbrMaterial Extends Material
 	#end
 	Method New( boned:Bool=False )
 		
-		_boned=boned
+		Init( boned )
 		
-		Uniforms.DefaultTexture=Texture.ColorTexture( Color.White )
-		
-		ColorTexture=Null
-		EmissiveTexture=Null
-		MetalnessTexture=Null
-		RoughnessTexture=Null
-		OcclusionTexture=Null
-		NormalTexture=Null
-		
-		ColorFactor=Color.White
-		EmissiveFactor=Color.Black
-		MetalnessFactor=1.0
-		RoughnessFactor=1.0
+		AddInstance( New Variant[]( boned ) )
 	End
 	
 	Method New( color:Color,metalness:Float=1.0,roughness:Float=1.0,boned:Bool=False )
 		
-		Self.New( boned )
+		Init( boned )
 		
 		ColorFactor=color
 		MetalnessFactor=metalness
@@ -230,12 +242,13 @@ Class PbrMaterial Extends Material
 	#end
 	Function Load:PbrMaterial( path:String,textureFlags:TextureFlags=TextureFlags.WrapST|TextureFlags.FilterMipmap )
 		
-		Local material:=New PbrMaterial
+		Local scene:=Scene.GetCurrent(),editing:=scene.Editing
 		
-		Local scene:=Scene.GetCurrent()
-		If scene.Editing 
-			scene.Jsonifier.AddInstance( material,"mojo3d.PbrMaterial.Load",New Variant[]( path,textureFlags ) )
+		If editing 
+			scene.Jsonifier.BeginLoading()
 		Endif
+
+		Local material:=New PbrMaterial
 		
 		Local texture:=LoadTexture( path,"color",textureFlags )
 		If texture
@@ -277,6 +290,11 @@ Class PbrMaterial Extends Material
 			If jobj.Contains( "roughnessFactor" ) material.RoughnessFactor=jobj.GetNumber( "roughnessFactor" )
 		Endif
 		
+		If editing 
+			scene.Jsonifier.EndLoading()
+			scene.Jsonifier.AddInstance( material,"mojo3d.PbrMaterial.Load",New Variant[]( path,textureFlags ) )
+		Endif
+		
 		Return material
 	End
 	
@@ -291,15 +309,6 @@ Class PbrMaterial Extends Material
 	Field _shadowShader:Shader
 	
 	Field _dirty:=True
-	
-	Function LoadTexture:Texture( path:String,name:String,flags:TextureFlags,flipy:Bool=False )
-		
-		Local texture:=Texture.Load( path+"/"+name+".png",flags,flipy )
-		
-		If Not texture texture=Texture.Load( path+"/"+name+".jpg",flags,flipy )
-			
-		Return texture
-	End
 	
 	Method ValidateShaders()
 		
