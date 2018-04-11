@@ -284,6 +284,8 @@ Class Image Extends Resource
 	
 		_textures[index]=texture
 		
+		If Not index _managed=texture?.ManagedPixmap
+		
 		_uniforms.SetTexture( "ImageTexture"+index,texture )
 	End
 	
@@ -292,6 +294,26 @@ Class Image Extends Resource
 	Method GetTexture:Texture( index:Int )
 	
 		Return _textures[index]
+	End
+
+	#rem monkeydoc Gets a pixel color.
+	
+	Returns the color of the pixel at the given coordinates.
+	
+	#end
+	Method GetPixel:Color( x:Int,y:Int )
+		
+		Return _managed.GetPixel( x,y )
+	End
+	
+	#rem monkeydoc Gets a pixel color.
+	
+	Returns the ARGB color of the pixel at the given coordinates.
+	
+	#end
+	Method GetPixelARGB:UInt( x:Int,y:Int )
+		
+		Return _managed.GetPixelARGB( x,y )
 	End
 	
 	#rem monkeydoc Loads an image from file.
@@ -411,6 +433,7 @@ Class Image Extends Resource
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
 	Field _textures:=New Texture[4]
+	Field _managed:Pixmap
 	Field _blendMode:BlendMode
 	Field _shadowCaster:ShadowCaster
 	

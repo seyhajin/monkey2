@@ -1258,14 +1258,53 @@ Class Canvas
 	Method CopyPixmap:Pixmap( rect:Recti )
 		DebugAssert( Not _lighting,"Canvas.CopyPixmap() cannot be used while lighting" )
 		If _lighting Return Null
+		
+		Local pixmap:=New Pixmap( rect.Width,rect.Height,PixelFormat.RGBA32 )
+		
+		CopyPixels( rect,pixmap )
+		
+		Return pixmap
+	End
 	
+	#rem monkeydoc Copies a rectangular region of pixels to a pixmap.
+	#end
+	Method CopyPixels( rect:Recti,pixmap:Pixmap,dstx:Int=0,dsty:Int=0 )
+		DebugAssert( Not _lighting,"Canvas.CopyPixels() cannot be used while lighting" )
+		If _lighting Return
+
 		Flush()
 		
 		rect=TransformRecti( rect,_rmatrix ) & _rbounds
 		
-		Local pixmap:=_device.CopyPixmap( rect )
+		_device.CopyPixels( rect,pixmap,dstx,dsty )
+	End
+	
+	#rem monkeydoc Gets a pixel color.
+	
+	Returns the color of the pixel at the given coordinates.
+	
+	#end
+	Method GetPixel:Color( x:Int,y:Int )
 		
-		Return pixmap
+		Flush()
+		
+		CopyPixels( New Recti( x,y,x+1,y+1 ),_tmpPixmap1x1 )
+		
+		Return _tmpPixmap1x1.GetPixel( 0,0 )
+	End
+	
+	#rem monkeydoc Gets a pixel color.
+	
+	Returns the ARGB color of the pixel at the given coordinates.
+	
+	#end
+	Method GetPixelARGB:UInt( x:Int,y:Int )
+
+		Flush()
+		
+		CopyPixels( New Recti( x,y,x+1,y+1 ),_tmpPixmap1x1 )
+		
+		Return _tmpPixmap1x1.GetPixelARGB( 0,0 )
 	End
 	
 	#rem monkeydoc Clears the viewport.
@@ -1284,7 +1323,7 @@ Class Canvas
 		Validate()
 			
 		_device.Clear( color )
-
+		
 		_drawNV=0
 		_drawOps.Clear()
 		_drawOp=New DrawOp
@@ -1299,9 +1338,10 @@ Class Canvas
 	#end
 	Method Flush()
 		
-		_device.FlushTarget()
-	
-		If _drawOps.Empty Return
+		If _drawOps.Empty 
+			_device.FlushTarget()
+			Return
+		Endif
 		
 		Validate()
 		
@@ -1332,6 +1372,8 @@ Class Canvas
 			_device.RenderTarget=_rtarget
 			
 		Endif
+		
+		_device.FlushTarget()
 		
 		_drawVP0=Cast<Vertex2f Ptr>( _drawVB.Lock() )
 		_drawNV=0
@@ -1489,6 +1531,8 @@ Class Canvas
 		Field firstVert:Int
 	End
 	
+	Global _tmpPixmap1x1:Pixmap
+	
 	Global _quadIndices:IndexBuffer
 	Global _shadowVB:VertexBuffer
 	Global _defaultFont:Font
@@ -1562,6 +1606,8 @@ Class Canvas
 		Global inited:=False
 		If inited Return
 		inited=True
+		
+		_tmpPixmap1x1=New Pixmap( 1,1,PixelFormat.RGBA8 )
 
 		Local nquads:=MaxVertices/4
 		
