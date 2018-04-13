@@ -142,7 +142,7 @@ Class KeyboardDevice
 		
 		Local released:=_keys[scode].released=_frame
 		
-		_keys[scode].released=_frame
+		_keys[scode].released=0
 		
 		Return released
 	End
