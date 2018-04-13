@@ -76,18 +76,19 @@ Class MyWindow Extends Window
 
 				copy.Scale=New Vec3f( 1 )
 				
-'				copy.Alpha=1-m
+				Local materials:=copy.Materials.Slice( 0 )
 				
-				For Local j:=0 Until copy.Materials.Length
+				For Local j:=0 Until materials.Length
 				
-					Local material:=Cast<PbrMaterial>( copy.Materials[j].Copy() )
+					Local material:=Cast<PbrMaterial>( materials[j].Copy() )
 					
 					material.MetalnessFactor=m
 					material.RoughnessFactor=i/360.0
 					
-					copy.Materials[j]=material
-					
+					materials[j]=material
 				Next
+				
+				copy.Materials=materials
 				
 				_ducks.Push( copy )
 			

@@ -68,11 +68,13 @@ Public
 		inst.initialState=JsonifyState( tobj )
 	End
 	
-	Method JsonifyInstances:JsonObject()
+	Method JsonifyInstances:JsonObject( assetsDir:String="" )
+		
+		If Not assetsDir assetsDir=AssetsDir()
 		
 		Local jobj:=New JsonObject
 		
-		jobj["assetsDir"]=New JsonString( AssetsDir() )
+		jobj["assetsDir"]=New JsonString( assetsDir )
 		
 		Local jinsts:=New Stack<JsonValue>
 		
@@ -155,7 +157,6 @@ Public
 			Next
 			
 			id=_insts.Length
-			
 		Next
 		
 		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?

@@ -2,14 +2,11 @@
 	"assetsDir":"D:/dev/monkey2/modules/mojo3d/tests/shapes-scene.products/Windows/assets/",
 	"instances":[{
 		"ctor":{
-			"args":[],
+			"args":[true],
 			"decl":"mojo3d.Scene.New",
-			"type":"Void()"
+			"type":"Void(Bool)"
 		},
-		"id":"@0",
-		"state":{
-
-		},
+		"id":0,
 		"type":"mojo3d.Scene"
 	},{
 		"ctor":{
@@ -17,7 +14,7 @@
 			"decl":"mojo3d.Camera.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@1",
+		"id":1,
 		"state":{
 			"Far":60,
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-10],
@@ -30,10 +27,7 @@
 			"decl":"mojo3d.FlyBehaviour.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@2",
-		"state":{
-
-		},
+		"id":2,
 		"type":"mojo3d.FlyBehaviour"
 	},{
 		"ctor":{
@@ -41,10 +35,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@3",
-		"state":{
-
-		},
+		"id":3,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -52,7 +43,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@4",
+		"id":4,
 		"state":{
 			"CollisionGroup":32,
 			"CollisionMask":127,
@@ -66,7 +57,7 @@
 			"decl":"mojo3d.Light.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@5",
+		"id":5,
 		"state":{
 			"CastsShadow":true,
 			"LocalMatrix":[1,0,0,0,0.25881904363632202,0.96592581272125244,0,-0.96592581272125244,0.25881904363632202,0,0,0],
@@ -79,10 +70,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@6",
-		"state":{
-
-		},
+		"id":6,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -90,10 +78,7 @@
 			"decl":"mojo3d.Mesh.CreateBox",
 			"type":"mojo3d.Mesh(std.geom.Box<monkey.types.Float>,Int,Int,Int)"
 		},
-		"id":"@7",
-		"state":{
-
-		},
+		"id":7,
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
@@ -101,11 +86,10 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":"@8",
+		"id":8,
 		"state":{
 			"Materials":["@6"],
 			"Mesh":"@7",
-			"Name":"Ground",
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
@@ -115,7 +99,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@9",
+		"id":9,
 		"state":{
 			"Box":[-60,-1,-60,60,0,60]
 		},
@@ -126,7 +110,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@10",
+		"id":10,
 		"state":{
 			"CollisionGroup":64,
 			"CollisionMask":127,
@@ -139,10 +123,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@11",
-		"state":{
-
-		},
+		"id":11,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -150,10 +131,7 @@
 			"decl":"mojo3d.Mesh.CreateBox",
 			"type":"mojo3d.Mesh(std.geom.Box<monkey.types.Float>,Int,Int,Int)"
 		},
-		"id":"@12",
-		"state":{
-
-		},
+		"id":12,
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
@@ -161,7 +139,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":"@13",
+		"id":13,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,5,50,0],
 			"Materials":["@516"],
@@ -176,7 +154,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@14",
+		"id":14,
 		"state":{
 			"Box":[-1,-5,-1,1,5,1]
 		},
@@ -187,7 +165,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@15",
+		"id":15,
 		"state":{
 			"CollisionMask":127
 		},
@@ -198,10 +176,7 @@
 			"decl":"mojo3d.Mesh.CreateSphere",
 			"type":"mojo3d.Mesh(Float,Int,Int)"
 		},
-		"id":"@16",
-		"state":{
-
-		},
+		"id":16,
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
@@ -209,7 +184,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":"@17",
+		"id":17,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,10,50,0],
 			"Materials":["@517"],
@@ -224,10 +199,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@18",
-		"state":{
-
-		},
+		"id":18,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -235,7 +207,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@19",
+		"id":19,
 		"state":{
 			"CollisionGroup":2,
 			"CollisionMask":127
@@ -247,10 +219,7 @@
 			"decl":"mojo3d.Mesh.CreateCylinder",
 			"type":"mojo3d.Mesh(Float,Float,std.geom.Axis,Int)"
 		},
-		"id":"@20",
-		"state":{
-
-		},
+		"id":20,
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
@@ -258,7 +227,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":"@21",
+		"id":21,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,15,50,0],
 			"Materials":["@518"],
@@ -273,7 +242,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@22",
+		"id":22,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -285,7 +254,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@23",
+		"id":23,
 		"state":{
 			"CollisionGroup":4,
 			"CollisionMask":127
@@ -297,10 +266,7 @@
 			"decl":"mojo3d.Mesh.CreateCapsule",
 			"type":"mojo3d.Mesh(Float,Float,std.geom.Axis,Int)"
 		},
-		"id":"@24",
-		"state":{
-
-		},
+		"id":24,
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
@@ -308,7 +274,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":"@25",
+		"id":25,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,20,50,0],
 			"Materials":["@519"],
@@ -323,7 +289,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@26",
+		"id":26,
 		"state":{
 			"Length":10,
 			"Radius":1
@@ -335,7 +301,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@27",
+		"id":27,
 		"state":{
 			"CollisionGroup":8,
 			"CollisionMask":127
@@ -347,10 +313,7 @@
 			"decl":"mojo3d.Mesh.CreateCone",
 			"type":"mojo3d.Mesh(Float,Float,std.geom.Axis,Int)"
 		},
-		"id":"@28",
-		"state":{
-
-		},
+		"id":28,
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
@@ -358,7 +321,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":"@29",
+		"id":29,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,25,50,0],
 			"Materials":["@520"],
@@ -373,7 +336,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@30",
+		"id":30,
 		"state":{
 			"Length":5,
 			"Radius":2.5
@@ -385,7 +348,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@31",
+		"id":31,
 		"state":{
 			"CollisionGroup":16,
 			"CollisionMask":127
@@ -397,10 +360,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@32",
-		"state":{
-
-		},
+		"id":32,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -408,7 +368,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@33",
+		"id":33,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-40],
 			"Materials":["@32"],
@@ -421,7 +381,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@34",
+		"id":34,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -433,10 +393,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@35",
-		"state":{
-
-		},
+		"id":35,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -444,10 +401,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@36",
-		"state":{
-
-		},
+		"id":36,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -455,7 +409,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@37",
+		"id":37,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-32],
 			"Materials":["@36"],
@@ -468,10 +422,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@38",
-		"state":{
-
-		},
+		"id":38,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -479,10 +430,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@39",
-		"state":{
-
-		},
+		"id":39,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -490,10 +438,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@40",
-		"state":{
-
-		},
+		"id":40,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -501,7 +446,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@41",
+		"id":41,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-24],
 			"Materials":["@40"],
@@ -514,10 +459,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@42",
-		"state":{
-
-		},
+		"id":42,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -525,10 +467,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@43",
-		"state":{
-
-		},
+		"id":43,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -536,10 +475,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@44",
-		"state":{
-
-		},
+		"id":44,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -547,7 +483,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@45",
+		"id":45,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-16],
 			"Materials":["@44"],
@@ -560,10 +496,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@46",
-		"state":{
-
-		},
+		"id":46,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -571,10 +504,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@47",
-		"state":{
-
-		},
+		"id":47,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -582,10 +512,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@48",
-		"state":{
-
-		},
+		"id":48,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -593,7 +520,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@49",
+		"id":49,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-8],
 			"Materials":["@48"],
@@ -606,7 +533,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@50",
+		"id":50,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -618,10 +545,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@51",
-		"state":{
-
-		},
+		"id":51,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -629,10 +553,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@52",
-		"state":{
-
-		},
+		"id":52,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -640,7 +561,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@53",
+		"id":53,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,0],
 			"Materials":["@52"],
@@ -653,10 +574,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@54",
-		"state":{
-
-		},
+		"id":54,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -664,10 +582,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@55",
-		"state":{
-
-		},
+		"id":55,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -675,10 +590,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@56",
-		"state":{
-
-		},
+		"id":56,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -686,7 +598,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@57",
+		"id":57,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,8],
 			"Materials":["@56"],
@@ -699,7 +611,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@58",
+		"id":58,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -711,10 +623,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@59",
-		"state":{
-
-		},
+		"id":59,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -722,10 +631,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@60",
-		"state":{
-
-		},
+		"id":60,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -733,7 +639,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@61",
+		"id":61,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,16],
 			"Materials":["@60"],
@@ -746,10 +652,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@62",
-		"state":{
-
-		},
+		"id":62,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -757,10 +660,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@63",
-		"state":{
-
-		},
+		"id":63,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -768,10 +668,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@64",
-		"state":{
-
-		},
+		"id":64,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -779,7 +676,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@65",
+		"id":65,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,24],
 			"Materials":["@64"],
@@ -792,10 +689,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@66",
-		"state":{
-
-		},
+		"id":66,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -803,10 +697,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@67",
-		"state":{
-
-		},
+		"id":67,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -814,10 +705,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@68",
-		"state":{
-
-		},
+		"id":68,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -825,7 +713,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@69",
+		"id":69,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,32],
 			"Materials":["@68"],
@@ -838,10 +726,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@70",
-		"state":{
-
-		},
+		"id":70,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -849,10 +734,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@71",
-		"state":{
-
-		},
+		"id":71,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -860,10 +742,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@72",
-		"state":{
-
-		},
+		"id":72,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -871,7 +750,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@73",
+		"id":73,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,40],
 			"Materials":["@72"],
@@ -884,10 +763,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@74",
-		"state":{
-
-		},
+		"id":74,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -895,10 +771,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@75",
-		"state":{
-
-		},
+		"id":75,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -906,10 +779,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@76",
-		"state":{
-
-		},
+		"id":76,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -917,7 +787,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@77",
+		"id":77,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-40],
 			"Materials":["@76"],
@@ -930,10 +800,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@78",
-		"state":{
-
-		},
+		"id":78,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -941,10 +808,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@79",
-		"state":{
-
-		},
+		"id":79,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -952,10 +816,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@80",
-		"state":{
-
-		},
+		"id":80,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -963,7 +824,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@81",
+		"id":81,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-32],
 			"Materials":["@80"],
@@ -976,10 +837,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@82",
-		"state":{
-
-		},
+		"id":82,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -987,10 +845,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@83",
-		"state":{
-
-		},
+		"id":83,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -998,10 +853,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@84",
-		"state":{
-
-		},
+		"id":84,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1009,7 +861,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@85",
+		"id":85,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-24],
 			"Materials":["@84"],
@@ -1022,10 +874,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@86",
-		"state":{
-
-		},
+		"id":86,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -1033,10 +882,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@87",
-		"state":{
-
-		},
+		"id":87,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1044,10 +890,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@88",
-		"state":{
-
-		},
+		"id":88,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1055,7 +898,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@89",
+		"id":89,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-16],
 			"Materials":["@88"],
@@ -1068,10 +911,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@90",
-		"state":{
-
-		},
+		"id":90,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -1079,10 +919,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@91",
-		"state":{
-
-		},
+		"id":91,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1090,10 +927,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@92",
-		"state":{
-
-		},
+		"id":92,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1101,7 +935,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@93",
+		"id":93,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-8],
 			"Materials":["@92"],
@@ -1114,10 +948,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@94",
-		"state":{
-
-		},
+		"id":94,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -1125,10 +956,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@95",
-		"state":{
-
-		},
+		"id":95,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1136,10 +964,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@96",
-		"state":{
-
-		},
+		"id":96,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1147,7 +972,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@97",
+		"id":97,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,0],
 			"Materials":["@96"],
@@ -1160,10 +985,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@98",
-		"state":{
-
-		},
+		"id":98,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1171,10 +993,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@99",
-		"state":{
-
-		},
+		"id":99,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1182,10 +1001,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@100",
-		"state":{
-
-		},
+		"id":100,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1193,7 +1009,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@101",
+		"id":101,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,8],
 			"Materials":["@100"],
@@ -1206,7 +1022,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@102",
+		"id":102,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -1218,10 +1034,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@103",
-		"state":{
-
-		},
+		"id":103,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1229,10 +1042,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@104",
-		"state":{
-
-		},
+		"id":104,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1240,7 +1050,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@105",
+		"id":105,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,16],
 			"Materials":["@104"],
@@ -1253,10 +1063,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@106",
-		"state":{
-
-		},
+		"id":106,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1264,10 +1071,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@107",
-		"state":{
-
-		},
+		"id":107,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1275,10 +1079,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@108",
-		"state":{
-
-		},
+		"id":108,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1286,7 +1087,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@109",
+		"id":109,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,24],
 			"Materials":["@108"],
@@ -1299,10 +1100,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@110",
-		"state":{
-
-		},
+		"id":110,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1310,10 +1108,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@111",
-		"state":{
-
-		},
+		"id":111,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1321,10 +1116,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@112",
-		"state":{
-
-		},
+		"id":112,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1332,7 +1124,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@113",
+		"id":113,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,32],
 			"Materials":["@112"],
@@ -1345,10 +1137,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@114",
-		"state":{
-
-		},
+		"id":114,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1356,10 +1145,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@115",
-		"state":{
-
-		},
+		"id":115,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1367,10 +1153,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@116",
-		"state":{
-
-		},
+		"id":116,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1378,7 +1161,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@117",
+		"id":117,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,40],
 			"Materials":["@116"],
@@ -1391,10 +1174,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@118",
-		"state":{
-
-		},
+		"id":118,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1402,10 +1182,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@119",
-		"state":{
-
-		},
+		"id":119,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1413,10 +1190,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@120",
-		"state":{
-
-		},
+		"id":120,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1424,7 +1198,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@121",
+		"id":121,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-40],
 			"Materials":["@120"],
@@ -1437,7 +1211,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@122",
+		"id":122,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -1449,10 +1223,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@123",
-		"state":{
-
-		},
+		"id":123,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1460,10 +1231,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@124",
-		"state":{
-
-		},
+		"id":124,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1471,7 +1239,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@125",
+		"id":125,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-32],
 			"Materials":["@124"],
@@ -1484,10 +1252,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@126",
-		"state":{
-
-		},
+		"id":126,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1495,10 +1260,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@127",
-		"state":{
-
-		},
+		"id":127,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1506,10 +1268,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@128",
-		"state":{
-
-		},
+		"id":128,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1517,7 +1276,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@129",
+		"id":129,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-24],
 			"Materials":["@128"],
@@ -1530,10 +1289,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@130",
-		"state":{
-
-		},
+		"id":130,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1541,10 +1297,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@131",
-		"state":{
-
-		},
+		"id":131,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1552,10 +1305,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@132",
-		"state":{
-
-		},
+		"id":132,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1563,7 +1313,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@133",
+		"id":133,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-16],
 			"Materials":["@132"],
@@ -1576,10 +1326,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@134",
-		"state":{
-
-		},
+		"id":134,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1587,10 +1334,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@135",
-		"state":{
-
-		},
+		"id":135,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1598,10 +1342,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@136",
-		"state":{
-
-		},
+		"id":136,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1609,7 +1350,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@137",
+		"id":137,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-8],
 			"Materials":["@136"],
@@ -1622,10 +1363,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@138",
-		"state":{
-
-		},
+		"id":138,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -1633,10 +1371,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@139",
-		"state":{
-
-		},
+		"id":139,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1644,10 +1379,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@140",
-		"state":{
-
-		},
+		"id":140,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1655,7 +1387,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@141",
+		"id":141,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,0],
 			"Materials":["@140"],
@@ -1668,10 +1400,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@142",
-		"state":{
-
-		},
+		"id":142,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -1679,10 +1408,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@143",
-		"state":{
-
-		},
+		"id":143,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1690,10 +1416,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@144",
-		"state":{
-
-		},
+		"id":144,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1701,7 +1424,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@145",
+		"id":145,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,8],
 			"Materials":["@144"],
@@ -1714,10 +1437,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@146",
-		"state":{
-
-		},
+		"id":146,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -1725,10 +1445,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@147",
-		"state":{
-
-		},
+		"id":147,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1736,10 +1453,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@148",
-		"state":{
-
-		},
+		"id":148,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1747,7 +1461,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@149",
+		"id":149,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,16],
 			"Materials":["@148"],
@@ -1760,7 +1474,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@150",
+		"id":150,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -1772,10 +1486,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@151",
-		"state":{
-
-		},
+		"id":151,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1783,10 +1494,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@152",
-		"state":{
-
-		},
+		"id":152,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1794,7 +1502,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@153",
+		"id":153,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,24],
 			"Materials":["@152"],
@@ -1807,10 +1515,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@154",
-		"state":{
-
-		},
+		"id":154,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1818,10 +1523,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@155",
-		"state":{
-
-		},
+		"id":155,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1829,10 +1531,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@156",
-		"state":{
-
-		},
+		"id":156,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1840,7 +1539,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@157",
+		"id":157,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,32],
 			"Materials":["@156"],
@@ -1853,10 +1552,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@158",
-		"state":{
-
-		},
+		"id":158,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -1864,10 +1560,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@159",
-		"state":{
-
-		},
+		"id":159,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1875,10 +1568,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@160",
-		"state":{
-
-		},
+		"id":160,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1886,7 +1576,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@161",
+		"id":161,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,40],
 			"Materials":["@160"],
@@ -1899,10 +1589,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@162",
-		"state":{
-
-		},
+		"id":162,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -1910,10 +1597,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@163",
-		"state":{
-
-		},
+		"id":163,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1921,10 +1605,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@164",
-		"state":{
-
-		},
+		"id":164,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1932,7 +1613,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@165",
+		"id":165,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-40],
 			"Materials":["@164"],
@@ -1945,10 +1626,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@166",
-		"state":{
-
-		},
+		"id":166,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -1956,10 +1634,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@167",
-		"state":{
-
-		},
+		"id":167,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -1967,10 +1642,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@168",
-		"state":{
-
-		},
+		"id":168,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1978,7 +1650,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@169",
+		"id":169,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-32],
 			"Materials":["@168"],
@@ -1991,10 +1663,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@170",
-		"state":{
-
-		},
+		"id":170,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2002,10 +1671,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@171",
-		"state":{
-
-		},
+		"id":171,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2013,10 +1679,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@172",
-		"state":{
-
-		},
+		"id":172,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2024,7 +1687,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@173",
+		"id":173,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-24],
 			"Materials":["@172"],
@@ -2037,10 +1700,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@174",
-		"state":{
-
-		},
+		"id":174,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2048,10 +1708,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@175",
-		"state":{
-
-		},
+		"id":175,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2059,10 +1716,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@176",
-		"state":{
-
-		},
+		"id":176,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2070,7 +1724,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@177",
+		"id":177,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-16],
 			"Materials":["@176"],
@@ -2083,10 +1737,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@178",
-		"state":{
-
-		},
+		"id":178,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -2094,10 +1745,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@179",
-		"state":{
-
-		},
+		"id":179,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2105,10 +1753,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@180",
-		"state":{
-
-		},
+		"id":180,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2116,7 +1761,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@181",
+		"id":181,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-8],
 			"Materials":["@180"],
@@ -2129,10 +1774,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@182",
-		"state":{
-
-		},
+		"id":182,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2140,10 +1782,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@183",
-		"state":{
-
-		},
+		"id":183,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2151,10 +1790,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@184",
-		"state":{
-
-		},
+		"id":184,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2162,7 +1798,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@185",
+		"id":185,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,0],
 			"Materials":["@184"],
@@ -2175,7 +1811,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@186",
+		"id":186,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -2187,10 +1823,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@187",
-		"state":{
-
-		},
+		"id":187,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2198,10 +1831,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@188",
-		"state":{
-
-		},
+		"id":188,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2209,7 +1839,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@189",
+		"id":189,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,8],
 			"Materials":["@188"],
@@ -2222,10 +1852,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@190",
-		"state":{
-
-		},
+		"id":190,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2233,10 +1860,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@191",
-		"state":{
-
-		},
+		"id":191,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2244,10 +1868,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@192",
-		"state":{
-
-		},
+		"id":192,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2255,7 +1876,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@193",
+		"id":193,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,16],
 			"Materials":["@192"],
@@ -2268,10 +1889,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@194",
-		"state":{
-
-		},
+		"id":194,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2279,10 +1897,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@195",
-		"state":{
-
-		},
+		"id":195,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2290,10 +1905,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@196",
-		"state":{
-
-		},
+		"id":196,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2301,7 +1913,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@197",
+		"id":197,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,24],
 			"Materials":["@196"],
@@ -2314,10 +1926,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@198",
-		"state":{
-
-		},
+		"id":198,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2325,10 +1934,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@199",
-		"state":{
-
-		},
+		"id":199,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2336,10 +1942,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@200",
-		"state":{
-
-		},
+		"id":200,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2347,7 +1950,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@201",
+		"id":201,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,32],
 			"Materials":["@200"],
@@ -2360,10 +1963,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@202",
-		"state":{
-
-		},
+		"id":202,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2371,10 +1971,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@203",
-		"state":{
-
-		},
+		"id":203,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2382,10 +1979,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@204",
-		"state":{
-
-		},
+		"id":204,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2393,7 +1987,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@205",
+		"id":205,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,40],
 			"Materials":["@204"],
@@ -2406,10 +2000,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@206",
-		"state":{
-
-		},
+		"id":206,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -2417,10 +2008,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@207",
-		"state":{
-
-		},
+		"id":207,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2428,10 +2016,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@208",
-		"state":{
-
-		},
+		"id":208,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2439,7 +2024,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@209",
+		"id":209,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-40],
 			"Materials":["@208"],
@@ -2452,10 +2037,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@210",
-		"state":{
-
-		},
+		"id":210,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2463,10 +2045,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@211",
-		"state":{
-
-		},
+		"id":211,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2474,10 +2053,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@212",
-		"state":{
-
-		},
+		"id":212,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2485,7 +2061,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@213",
+		"id":213,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-32],
 			"Materials":["@212"],
@@ -2498,10 +2074,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@214",
-		"state":{
-
-		},
+		"id":214,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2509,10 +2082,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@215",
-		"state":{
-
-		},
+		"id":215,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2520,10 +2090,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@216",
-		"state":{
-
-		},
+		"id":216,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2531,7 +2098,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@217",
+		"id":217,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-24],
 			"Materials":["@216"],
@@ -2544,7 +2111,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@218",
+		"id":218,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -2556,10 +2123,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@219",
-		"state":{
-
-		},
+		"id":219,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2567,10 +2131,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@220",
-		"state":{
-
-		},
+		"id":220,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2578,7 +2139,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@221",
+		"id":221,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-16],
 			"Materials":["@220"],
@@ -2591,10 +2152,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@222",
-		"state":{
-
-		},
+		"id":222,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -2602,10 +2160,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@223",
-		"state":{
-
-		},
+		"id":223,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2613,10 +2168,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@224",
-		"state":{
-
-		},
+		"id":224,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2624,7 +2176,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@225",
+		"id":225,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-8],
 			"Materials":["@224"],
@@ -2637,10 +2189,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@226",
-		"state":{
-
-		},
+		"id":226,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2648,10 +2197,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@227",
-		"state":{
-
-		},
+		"id":227,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2659,10 +2205,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@228",
-		"state":{
-
-		},
+		"id":228,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2670,7 +2213,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@229",
+		"id":229,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,0],
 			"Materials":["@228"],
@@ -2683,10 +2226,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@230",
-		"state":{
-
-		},
+		"id":230,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2694,10 +2234,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@231",
-		"state":{
-
-		},
+		"id":231,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2705,10 +2242,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@232",
-		"state":{
-
-		},
+		"id":232,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2716,7 +2250,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@233",
+		"id":233,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,8],
 			"Materials":["@232"],
@@ -2729,10 +2263,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@234",
-		"state":{
-
-		},
+		"id":234,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2740,10 +2271,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@235",
-		"state":{
-
-		},
+		"id":235,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2751,10 +2279,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@236",
-		"state":{
-
-		},
+		"id":236,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2762,7 +2287,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@237",
+		"id":237,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,16],
 			"Materials":["@236"],
@@ -2775,10 +2300,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@238",
-		"state":{
-
-		},
+		"id":238,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -2786,10 +2308,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@239",
-		"state":{
-
-		},
+		"id":239,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2797,10 +2316,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@240",
-		"state":{
-
-		},
+		"id":240,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2808,7 +2324,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@241",
+		"id":241,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,24],
 			"Materials":["@240"],
@@ -2821,10 +2337,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@242",
-		"state":{
-
-		},
+		"id":242,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2832,10 +2345,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@243",
-		"state":{
-
-		},
+		"id":243,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2843,10 +2353,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@244",
-		"state":{
-
-		},
+		"id":244,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2854,7 +2361,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@245",
+		"id":245,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,32],
 			"Materials":["@244"],
@@ -2867,10 +2374,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@246",
-		"state":{
-
-		},
+		"id":246,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -2878,10 +2382,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@247",
-		"state":{
-
-		},
+		"id":247,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2889,10 +2390,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@248",
-		"state":{
-
-		},
+		"id":248,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2900,7 +2398,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@249",
+		"id":249,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,40],
 			"Materials":["@248"],
@@ -2913,10 +2411,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@250",
-		"state":{
-
-		},
+		"id":250,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2924,10 +2419,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@251",
-		"state":{
-
-		},
+		"id":251,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2935,10 +2427,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@252",
-		"state":{
-
-		},
+		"id":252,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2946,7 +2435,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@253",
+		"id":253,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-40],
 			"Materials":["@252"],
@@ -2959,10 +2448,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@254",
-		"state":{
-
-		},
+		"id":254,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -2970,10 +2456,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@255",
-		"state":{
-
-		},
+		"id":255,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -2981,10 +2464,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@256",
-		"state":{
-
-		},
+		"id":256,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2992,7 +2472,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@257",
+		"id":257,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-32],
 			"Materials":["@256"],
@@ -3005,10 +2485,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@258",
-		"state":{
-
-		},
+		"id":258,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -3016,10 +2493,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@259",
-		"state":{
-
-		},
+		"id":259,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3027,10 +2501,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@260",
-		"state":{
-
-		},
+		"id":260,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3038,7 +2509,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@261",
+		"id":261,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-24],
 			"Materials":["@260"],
@@ -3051,10 +2522,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@262",
-		"state":{
-
-		},
+		"id":262,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -3062,10 +2530,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@263",
-		"state":{
-
-		},
+		"id":263,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3073,10 +2538,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@264",
-		"state":{
-
-		},
+		"id":264,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3084,7 +2546,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@265",
+		"id":265,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-16],
 			"Materials":["@264"],
@@ -3097,7 +2559,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@266",
+		"id":266,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -3109,10 +2571,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@267",
-		"state":{
-
-		},
+		"id":267,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3120,10 +2579,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@268",
-		"state":{
-
-		},
+		"id":268,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3131,7 +2587,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@269",
+		"id":269,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-8],
 			"Materials":["@268"],
@@ -3144,10 +2600,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@270",
-		"state":{
-
-		},
+		"id":270,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -3155,10 +2608,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@271",
-		"state":{
-
-		},
+		"id":271,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3166,10 +2616,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@272",
-		"state":{
-
-		},
+		"id":272,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3177,7 +2624,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@273",
+		"id":273,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,0],
 			"Materials":["@272"],
@@ -3190,10 +2637,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@274",
-		"state":{
-
-		},
+		"id":274,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -3201,10 +2645,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@275",
-		"state":{
-
-		},
+		"id":275,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3212,10 +2653,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@276",
-		"state":{
-
-		},
+		"id":276,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3223,7 +2661,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@277",
+		"id":277,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,8],
 			"Materials":["@276"],
@@ -3236,7 +2674,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@278",
+		"id":278,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -3248,10 +2686,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@279",
-		"state":{
-
-		},
+		"id":279,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3259,10 +2694,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@280",
-		"state":{
-
-		},
+		"id":280,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3270,7 +2702,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@281",
+		"id":281,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,16],
 			"Materials":["@280"],
@@ -3283,10 +2715,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@282",
-		"state":{
-
-		},
+		"id":282,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -3294,10 +2723,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@283",
-		"state":{
-
-		},
+		"id":283,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3305,10 +2731,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@284",
-		"state":{
-
-		},
+		"id":284,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3316,7 +2739,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@285",
+		"id":285,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,24],
 			"Materials":["@284"],
@@ -3329,7 +2752,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@286",
+		"id":286,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -3341,10 +2764,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@287",
-		"state":{
-
-		},
+		"id":287,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3352,10 +2772,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@288",
-		"state":{
-
-		},
+		"id":288,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3363,7 +2780,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@289",
+		"id":289,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,32],
 			"Materials":["@288"],
@@ -3376,10 +2793,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@290",
-		"state":{
-
-		},
+		"id":290,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -3387,10 +2801,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@291",
-		"state":{
-
-		},
+		"id":291,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3398,10 +2809,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@292",
-		"state":{
-
-		},
+		"id":292,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3409,7 +2817,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@293",
+		"id":293,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,40],
 			"Materials":["@292"],
@@ -3422,7 +2830,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@294",
+		"id":294,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -3434,10 +2842,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@295",
-		"state":{
-
-		},
+		"id":295,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3445,10 +2850,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@296",
-		"state":{
-
-		},
+		"id":296,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3456,7 +2858,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@297",
+		"id":297,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-40],
 			"Materials":["@296"],
@@ -3469,10 +2871,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@298",
-		"state":{
-
-		},
+		"id":298,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -3480,10 +2879,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@299",
-		"state":{
-
-		},
+		"id":299,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3491,10 +2887,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@300",
-		"state":{
-
-		},
+		"id":300,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3502,7 +2895,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@301",
+		"id":301,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-32],
 			"Materials":["@300"],
@@ -3515,10 +2908,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@302",
-		"state":{
-
-		},
+		"id":302,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -3526,10 +2916,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@303",
-		"state":{
-
-		},
+		"id":303,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3537,10 +2924,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@304",
-		"state":{
-
-		},
+		"id":304,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3548,7 +2932,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@305",
+		"id":305,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-24],
 			"Materials":["@304"],
@@ -3561,7 +2945,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@306",
+		"id":306,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -3573,10 +2957,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@307",
-		"state":{
-
-		},
+		"id":307,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3584,10 +2965,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@308",
-		"state":{
-
-		},
+		"id":308,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3595,7 +2973,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@309",
+		"id":309,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-16],
 			"Materials":["@308"],
@@ -3608,10 +2986,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@310",
-		"state":{
-
-		},
+		"id":310,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -3619,10 +2994,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@311",
-		"state":{
-
-		},
+		"id":311,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3630,10 +3002,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@312",
-		"state":{
-
-		},
+		"id":312,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3641,7 +3010,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@313",
+		"id":313,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-8],
 			"Materials":["@312"],
@@ -3654,10 +3023,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@314",
-		"state":{
-
-		},
+		"id":314,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -3665,10 +3031,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@315",
-		"state":{
-
-		},
+		"id":315,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3676,10 +3039,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@316",
-		"state":{
-
-		},
+		"id":316,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3687,7 +3047,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@317",
+		"id":317,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,0],
 			"Materials":["@316"],
@@ -3700,10 +3060,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@318",
-		"state":{
-
-		},
+		"id":318,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -3711,10 +3068,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@319",
-		"state":{
-
-		},
+		"id":319,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3722,10 +3076,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@320",
-		"state":{
-
-		},
+		"id":320,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3733,7 +3084,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@321",
+		"id":321,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,8],
 			"Materials":["@320"],
@@ -3746,10 +3097,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@322",
-		"state":{
-
-		},
+		"id":322,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -3757,10 +3105,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@323",
-		"state":{
-
-		},
+		"id":323,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3768,10 +3113,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@324",
-		"state":{
-
-		},
+		"id":324,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3779,7 +3121,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@325",
+		"id":325,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,16],
 			"Materials":["@324"],
@@ -3792,10 +3134,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@326",
-		"state":{
-
-		},
+		"id":326,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -3803,10 +3142,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@327",
-		"state":{
-
-		},
+		"id":327,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3814,10 +3150,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@328",
-		"state":{
-
-		},
+		"id":328,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3825,7 +3158,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@329",
+		"id":329,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,24],
 			"Materials":["@328"],
@@ -3838,10 +3171,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@330",
-		"state":{
-
-		},
+		"id":330,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -3849,10 +3179,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@331",
-		"state":{
-
-		},
+		"id":331,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3860,10 +3187,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@332",
-		"state":{
-
-		},
+		"id":332,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3871,7 +3195,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@333",
+		"id":333,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,32],
 			"Materials":["@332"],
@@ -3884,10 +3208,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@334",
-		"state":{
-
-		},
+		"id":334,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -3895,10 +3216,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@335",
-		"state":{
-
-		},
+		"id":335,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3906,10 +3224,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@336",
-		"state":{
-
-		},
+		"id":336,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3917,7 +3232,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@337",
+		"id":337,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,40],
 			"Materials":["@336"],
@@ -3930,7 +3245,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@338",
+		"id":338,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -3942,10 +3257,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@339",
-		"state":{
-
-		},
+		"id":339,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3953,10 +3265,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@340",
-		"state":{
-
-		},
+		"id":340,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3964,7 +3273,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@341",
+		"id":341,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-40],
 			"Materials":["@340"],
@@ -3977,10 +3286,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@342",
-		"state":{
-
-		},
+		"id":342,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -3988,10 +3294,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@343",
-		"state":{
-
-		},
+		"id":343,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -3999,10 +3302,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@344",
-		"state":{
-
-		},
+		"id":344,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4010,7 +3310,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@345",
+		"id":345,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-32],
 			"Materials":["@344"],
@@ -4023,10 +3323,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@346",
-		"state":{
-
-		},
+		"id":346,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -4034,10 +3331,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@347",
-		"state":{
-
-		},
+		"id":347,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4045,10 +3339,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@348",
-		"state":{
-
-		},
+		"id":348,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4056,7 +3347,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@349",
+		"id":349,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-24],
 			"Materials":["@348"],
@@ -4069,7 +3360,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@350",
+		"id":350,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4081,10 +3372,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@351",
-		"state":{
-
-		},
+		"id":351,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4092,10 +3380,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@352",
-		"state":{
-
-		},
+		"id":352,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4103,7 +3388,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@353",
+		"id":353,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-16],
 			"Materials":["@352"],
@@ -4116,10 +3401,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@354",
-		"state":{
-
-		},
+		"id":354,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -4127,10 +3409,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@355",
-		"state":{
-
-		},
+		"id":355,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4138,10 +3417,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@356",
-		"state":{
-
-		},
+		"id":356,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4149,7 +3425,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@357",
+		"id":357,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-8],
 			"Materials":["@356"],
@@ -4162,7 +3438,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@358",
+		"id":358,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4174,10 +3450,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@359",
-		"state":{
-
-		},
+		"id":359,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4185,10 +3458,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@360",
-		"state":{
-
-		},
+		"id":360,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4196,7 +3466,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@361",
+		"id":361,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,0],
 			"Materials":["@360"],
@@ -4209,10 +3479,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@362",
-		"state":{
-
-		},
+		"id":362,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -4220,10 +3487,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@363",
-		"state":{
-
-		},
+		"id":363,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4231,10 +3495,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@364",
-		"state":{
-
-		},
+		"id":364,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4242,7 +3503,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@365",
+		"id":365,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,8],
 			"Materials":["@364"],
@@ -4255,10 +3516,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@366",
-		"state":{
-
-		},
+		"id":366,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -4266,10 +3524,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@367",
-		"state":{
-
-		},
+		"id":367,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4277,10 +3532,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@368",
-		"state":{
-
-		},
+		"id":368,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4288,7 +3540,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@369",
+		"id":369,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,16],
 			"Materials":["@368"],
@@ -4301,10 +3553,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@370",
-		"state":{
-
-		},
+		"id":370,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -4312,10 +3561,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@371",
-		"state":{
-
-		},
+		"id":371,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4323,10 +3569,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@372",
-		"state":{
-
-		},
+		"id":372,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4334,7 +3577,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@373",
+		"id":373,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,24],
 			"Materials":["@372"],
@@ -4347,10 +3590,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@374",
-		"state":{
-
-		},
+		"id":374,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -4358,10 +3598,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@375",
-		"state":{
-
-		},
+		"id":375,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4369,10 +3606,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@376",
-		"state":{
-
-		},
+		"id":376,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4380,7 +3614,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@377",
+		"id":377,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,32],
 			"Materials":["@376"],
@@ -4393,7 +3627,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@378",
+		"id":378,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4405,10 +3639,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@379",
-		"state":{
-
-		},
+		"id":379,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4416,10 +3647,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@380",
-		"state":{
-
-		},
+		"id":380,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4427,7 +3655,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@381",
+		"id":381,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,40],
 			"Materials":["@380"],
@@ -4440,10 +3668,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@382",
-		"state":{
-
-		},
+		"id":382,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -4451,10 +3676,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@383",
-		"state":{
-
-		},
+		"id":383,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4462,10 +3684,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@384",
-		"state":{
-
-		},
+		"id":384,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4473,7 +3692,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@385",
+		"id":385,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-40],
 			"Materials":["@384"],
@@ -4486,10 +3705,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@386",
-		"state":{
-
-		},
+		"id":386,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -4497,10 +3713,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@387",
-		"state":{
-
-		},
+		"id":387,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4508,10 +3721,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@388",
-		"state":{
-
-		},
+		"id":388,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4519,7 +3729,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@389",
+		"id":389,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-32],
 			"Materials":["@388"],
@@ -4532,10 +3742,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@390",
-		"state":{
-
-		},
+		"id":390,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -4543,10 +3750,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@391",
-		"state":{
-
-		},
+		"id":391,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4554,10 +3758,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@392",
-		"state":{
-
-		},
+		"id":392,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4565,7 +3766,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@393",
+		"id":393,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-24],
 			"Materials":["@392"],
@@ -4578,10 +3779,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@394",
-		"state":{
-
-		},
+		"id":394,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -4589,10 +3787,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@395",
-		"state":{
-
-		},
+		"id":395,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4600,10 +3795,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@396",
-		"state":{
-
-		},
+		"id":396,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4611,7 +3803,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@397",
+		"id":397,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-16],
 			"Materials":["@396"],
@@ -4624,7 +3816,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@398",
+		"id":398,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4636,10 +3828,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@399",
-		"state":{
-
-		},
+		"id":399,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4647,10 +3836,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@400",
-		"state":{
-
-		},
+		"id":400,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4658,7 +3844,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@401",
+		"id":401,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-8],
 			"Materials":["@400"],
@@ -4671,7 +3857,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@402",
+		"id":402,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4683,10 +3869,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@403",
-		"state":{
-
-		},
+		"id":403,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4694,10 +3877,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@404",
-		"state":{
-
-		},
+		"id":404,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4705,7 +3885,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@405",
+		"id":405,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,0],
 			"Materials":["@404"],
@@ -4718,7 +3898,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@406",
+		"id":406,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4730,10 +3910,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@407",
-		"state":{
-
-		},
+		"id":407,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4741,10 +3918,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@408",
-		"state":{
-
-		},
+		"id":408,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4752,7 +3926,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@409",
+		"id":409,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,8],
 			"Materials":["@408"],
@@ -4765,7 +3939,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@410",
+		"id":410,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4777,10 +3951,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@411",
-		"state":{
-
-		},
+		"id":411,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4788,10 +3959,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@412",
-		"state":{
-
-		},
+		"id":412,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4799,7 +3967,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@413",
+		"id":413,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,16],
 			"Materials":["@412"],
@@ -4812,10 +3980,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@414",
-		"state":{
-
-		},
+		"id":414,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -4823,10 +3988,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@415",
-		"state":{
-
-		},
+		"id":415,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4834,10 +3996,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@416",
-		"state":{
-
-		},
+		"id":416,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4845,7 +4004,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@417",
+		"id":417,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,24],
 			"Materials":["@416"],
@@ -4858,10 +4017,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@418",
-		"state":{
-
-		},
+		"id":418,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -4869,10 +4025,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@419",
-		"state":{
-
-		},
+		"id":419,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4880,10 +4033,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@420",
-		"state":{
-
-		},
+		"id":420,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4891,7 +4041,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@421",
+		"id":421,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,32],
 			"Materials":["@420"],
@@ -4904,10 +4054,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@422",
-		"state":{
-
-		},
+		"id":422,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -4915,10 +4062,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@423",
-		"state":{
-
-		},
+		"id":423,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4926,10 +4070,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@424",
-		"state":{
-
-		},
+		"id":424,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4937,7 +4078,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@425",
+		"id":425,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,40],
 			"Materials":["@424"],
@@ -4950,10 +4091,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@426",
-		"state":{
-
-		},
+		"id":426,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -4961,10 +4099,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@427",
-		"state":{
-
-		},
+		"id":427,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -4972,10 +4107,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@428",
-		"state":{
-
-		},
+		"id":428,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4983,7 +4115,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@429",
+		"id":429,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-40],
 			"Materials":["@428"],
@@ -4996,10 +4128,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@430",
-		"state":{
-
-		},
+		"id":430,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -5007,10 +4136,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@431",
-		"state":{
-
-		},
+		"id":431,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5018,10 +4144,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@432",
-		"state":{
-
-		},
+		"id":432,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5029,7 +4152,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@433",
+		"id":433,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-32],
 			"Materials":["@432"],
@@ -5042,10 +4165,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@434",
-		"state":{
-
-		},
+		"id":434,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -5053,10 +4173,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@435",
-		"state":{
-
-		},
+		"id":435,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5064,10 +4181,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@436",
-		"state":{
-
-		},
+		"id":436,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5075,7 +4189,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@437",
+		"id":437,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-24],
 			"Materials":["@436"],
@@ -5088,10 +4202,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@438",
-		"state":{
-
-		},
+		"id":438,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -5099,10 +4210,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@439",
-		"state":{
-
-		},
+		"id":439,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5110,10 +4218,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@440",
-		"state":{
-
-		},
+		"id":440,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5121,7 +4226,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@441",
+		"id":441,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-16],
 			"Materials":["@440"],
@@ -5134,10 +4239,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@442",
-		"state":{
-
-		},
+		"id":442,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -5145,10 +4247,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@443",
-		"state":{
-
-		},
+		"id":443,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5156,10 +4255,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@444",
-		"state":{
-
-		},
+		"id":444,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5167,7 +4263,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@445",
+		"id":445,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-8],
 			"Materials":["@444"],
@@ -5180,10 +4276,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@446",
-		"state":{
-
-		},
+		"id":446,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -5191,10 +4284,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@447",
-		"state":{
-
-		},
+		"id":447,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5202,10 +4292,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@448",
-		"state":{
-
-		},
+		"id":448,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5213,7 +4300,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@449",
+		"id":449,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,0],
 			"Materials":["@448"],
@@ -5226,7 +4313,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@450",
+		"id":450,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -5238,10 +4325,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@451",
-		"state":{
-
-		},
+		"id":451,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5249,10 +4333,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@452",
-		"state":{
-
-		},
+		"id":452,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5260,7 +4341,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@453",
+		"id":453,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,8],
 			"Materials":["@452"],
@@ -5273,10 +4354,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@454",
-		"state":{
-
-		},
+		"id":454,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -5284,10 +4362,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@455",
-		"state":{
-
-		},
+		"id":455,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5295,10 +4370,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@456",
-		"state":{
-
-		},
+		"id":456,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5306,7 +4378,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@457",
+		"id":457,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,16],
 			"Materials":["@456"],
@@ -5319,10 +4391,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@458",
-		"state":{
-
-		},
+		"id":458,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -5330,10 +4399,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@459",
-		"state":{
-
-		},
+		"id":459,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5341,10 +4407,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@460",
-		"state":{
-
-		},
+		"id":460,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5352,7 +4415,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@461",
+		"id":461,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,24],
 			"Materials":["@460"],
@@ -5365,10 +4428,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@462",
-		"state":{
-
-		},
+		"id":462,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -5376,10 +4436,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@463",
-		"state":{
-
-		},
+		"id":463,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5387,10 +4444,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@464",
-		"state":{
-
-		},
+		"id":464,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5398,7 +4452,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@465",
+		"id":465,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,32],
 			"Materials":["@464"],
@@ -5411,10 +4465,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@466",
-		"state":{
-
-		},
+		"id":466,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -5422,10 +4473,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@467",
-		"state":{
-
-		},
+		"id":467,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5433,10 +4481,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@468",
-		"state":{
-
-		},
+		"id":468,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5444,7 +4489,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@469",
+		"id":469,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,40],
 			"Materials":["@468"],
@@ -5457,10 +4502,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@470",
-		"state":{
-
-		},
+		"id":470,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -5468,10 +4510,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@471",
-		"state":{
-
-		},
+		"id":471,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5479,10 +4518,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@472",
-		"state":{
-
-		},
+		"id":472,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5490,7 +4526,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@473",
+		"id":473,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-40],
 			"Materials":["@472"],
@@ -5503,10 +4539,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@474",
-		"state":{
-
-		},
+		"id":474,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -5514,10 +4547,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@475",
-		"state":{
-
-		},
+		"id":475,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5525,10 +4555,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@476",
-		"state":{
-
-		},
+		"id":476,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5536,7 +4563,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@477",
+		"id":477,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-32],
 			"Materials":["@476"],
@@ -5549,10 +4576,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@478",
-		"state":{
-
-		},
+		"id":478,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -5560,10 +4584,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@479",
-		"state":{
-
-		},
+		"id":479,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5571,10 +4592,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@480",
-		"state":{
-
-		},
+		"id":480,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5582,7 +4600,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@481",
+		"id":481,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-24],
 			"Materials":["@480"],
@@ -5595,10 +4613,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@482",
-		"state":{
-
-		},
+		"id":482,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -5606,10 +4621,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@483",
-		"state":{
-
-		},
+		"id":483,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5617,10 +4629,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@484",
-		"state":{
-
-		},
+		"id":484,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5628,7 +4637,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@485",
+		"id":485,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-16],
 			"Materials":["@484"],
@@ -5641,10 +4650,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@486",
-		"state":{
-
-		},
+		"id":486,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -5652,10 +4658,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@487",
-		"state":{
-
-		},
+		"id":487,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5663,10 +4666,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@488",
-		"state":{
-
-		},
+		"id":488,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5674,7 +4674,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@489",
+		"id":489,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-8],
 			"Materials":["@488"],
@@ -5687,10 +4687,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@490",
-		"state":{
-
-		},
+		"id":490,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -5698,10 +4695,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@491",
-		"state":{
-
-		},
+		"id":491,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5709,10 +4703,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@492",
-		"state":{
-
-		},
+		"id":492,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5720,7 +4711,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@493",
+		"id":493,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,0],
 			"Materials":["@492"],
@@ -5733,10 +4724,7 @@
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":"@494",
-		"state":{
-
-		},
+		"id":494,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
@@ -5744,10 +4732,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@495",
-		"state":{
-
-		},
+		"id":495,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5755,10 +4740,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@496",
-		"state":{
-
-		},
+		"id":496,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5766,7 +4748,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@497",
+		"id":497,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,8],
 			"Materials":["@496"],
@@ -5779,7 +4761,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@498",
+		"id":498,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -5791,10 +4773,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@499",
-		"state":{
-
-		},
+		"id":499,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5802,10 +4781,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@500",
-		"state":{
-
-		},
+		"id":500,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5813,7 +4789,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@501",
+		"id":501,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,16],
 			"Materials":["@500"],
@@ -5826,10 +4802,7 @@
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":"@502",
-		"state":{
-
-		},
+		"id":502,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
@@ -5837,10 +4810,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@503",
-		"state":{
-
-		},
+		"id":503,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5848,10 +4818,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@504",
-		"state":{
-
-		},
+		"id":504,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5859,7 +4826,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@505",
+		"id":505,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,24],
 			"Materials":["@504"],
@@ -5872,7 +4839,7 @@
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":"@506",
+		"id":506,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -5884,10 +4851,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@507",
-		"state":{
-
-		},
+		"id":507,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5895,10 +4859,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@508",
-		"state":{
-
-		},
+		"id":508,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5906,7 +4867,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@509",
+		"id":509,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,32],
 			"Materials":["@508"],
@@ -5919,10 +4880,7 @@
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":"@510",
-		"state":{
-
-		},
+		"id":510,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
@@ -5930,10 +4888,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@511",
-		"state":{
-
-		},
+		"id":511,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5941,10 +4896,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@512",
-		"state":{
-
-		},
+		"id":512,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5952,7 +4904,7 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":"@513",
+		"id":513,
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,40],
 			"Materials":["@512"],
@@ -5965,10 +4917,7 @@
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":"@514",
-		"state":{
-
-		},
+		"id":514,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
@@ -5976,10 +4925,7 @@
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":"@515",
-		"state":{
-
-		},
+		"id":515,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
@@ -5987,10 +4933,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@516",
-		"state":{
-
-		},
+		"id":516,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -5998,10 +4941,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@517",
-		"state":{
-
-		},
+		"id":517,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -6009,10 +4949,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@518",
-		"state":{
-
-		},
+		"id":518,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -6020,10 +4957,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@519",
-		"state":{
-
-		},
+		"id":519,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -6031,10 +4965,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float,Bool)"
 		},
-		"id":"@520",
-		"state":{
-
-		},
+		"id":520,
 		"type":"mojo3d.PbrMaterial"
 	}]
 }

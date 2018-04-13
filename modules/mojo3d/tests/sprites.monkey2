@@ -36,12 +36,8 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-'		SetConfig( "MOJO3D_RENDERER","forward" )
-		
 		_scene=New Scene
-		
-		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
-		
+		_scene.SkyTexture=_scene.LoadTexture( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		_scene.FogColor=Color.Sky
 		_scene.FogNear=10
 		_scene.FogFar=30
@@ -74,7 +70,7 @@ Class MyWindow Extends Window
 			Local sprite:=New Sprite( material )
 			
 			sprite.Move( Rnd(-50,50),0,Rnd(-50,50) )
-			
+
 			sprite.Scale=New Vec3f( Rnd(4,5),Rnd(5,6),1 )
 			
 			sprite.Handle=New Vec2f( .5,0 )
@@ -84,13 +80,12 @@ Class MyWindow Extends Window
 			_sprites.Push( sprite )
 		Next
 		
-		For Local i:=0 Until 1'00
+		For Local i:=0 Until 100
 			
 			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 			
 			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
-
-		next			
+		next	
 		
 	End
 	

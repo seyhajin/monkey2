@@ -320,11 +320,11 @@ Class Scene
 
 	#rem monkeydoc Saves the scene to a mojo3d scene file
 	#end
-	Method Save( path:String )
+	Method Save( path:String,assetsDir:String="" )
 		
 		Assert( _jsonifier,"Scene is not editable" )
 		
-		Local jobj:=_jsonifier.JsonifyInstances()
+		Local jobj:=_jsonifier.JsonifyInstances( assetsDir )
 		
 		Local json:=jobj.ToJson()
 		
