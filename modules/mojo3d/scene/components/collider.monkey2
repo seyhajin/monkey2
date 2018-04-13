@@ -700,21 +700,102 @@ Class MeshCollider Extends ConcaveCollider
 	
 End
 
-#rem
 Class TerrainCollider Extends ConcaveCollider
 
-	Method New( box:Boxf,data:Pixmap )
-	
-		Local shape:=New btHeightfieldTerrainShape( data.Width,data.Height,data.Data,1.0/255.0,0.0,1.0,1,PHY_UCHAR,False )
+	Method New( entity:Entity )
 		
-		shape.setUseDiamondSubdivision( True )
+		Super.New( entity )
 		
-		_btshape=shape
+		Bounds=New Boxf( -1,1 )
 		
-		_btshape.setLocalScaling( New Vec3f( box.Width/data.Width,box.Height,box.Depth/data.Height ) )
-		
-		SetOrigin( box.Center )
+		AddInstance()
 	End
+	
+	Method New( entity:Entity,collider:TerrainCollider )
+		
+		Super.New( entity,collider )
+		
+		Heightmap=collider.Heightmap
+		Bounds=collider.Bounds
+		UseDiamondSubdivision=collider.UseDiamondSubdivision
+		UseZigzagSubdivision=collider.UseZigzagSubdivision
+		
+		AddInstance( collider )
+	End
+	
+	Property Heightmap:Pixmap()
+		
+		Return _heightmap
+		
+	Setter( heightmap:Pixmap )
+		
+		If heightmap=_heightmap Return
+		
+		Assert( heightmap.Format=PixelFormat.I8,"Heightmap must be in I8 format" )
+		
+		_heightmap=heightmap
+		
+		Invalidate()
+		
+		_shape=Null
+	End
+	
+	Property Bounds:Boxf()
+		
+		Return _bounds
+	
+	Setter( bounds:Boxf )
+		
+		_bounds=bounds
+		
+		Invalidate()
+	End
+	
+	Property UseDiamondSubdivision:Bool()
+		
+		Return _diamondSubdiv
+		
+	Setter( diamondSubdiv:Bool )
+			
+		_diamondSubdiv=diamondSubdiv
+		
+		If _shape _shape.setUseDiamondSubdivision( _diamondSubdiv )
+	End
+	
+	Property UseZigzagSubdivision:Bool()
+		
+		Return _zigzagSubdiv
+	
+	Setter( zigzagSubdiv:Bool )
+		
+		_zigzagSubdiv=zigzagSubdiv
+
+		If _shape _shape.setUseZigzagSubdivision( _zigzagSubdiv )
+	End
+	
+	Protected
+	
+	Method OnCreate:btCollisionShape() Override
+		
+		If Not _shape
+			_shape=New btHeightfieldTerrainShape( _heightmap.Width,_heightmap.Height,_heightmap.Data,1.0/255.0,0.0,1.0,1,PHY_UCHAR,False )
+			_shape.setUseDiamondSubdivision( _diamondSubdiv )
+			_shape.setUseZigzagSubdivision( _zigzagSubdiv )
+		Endif
+		
+		_shape.setLocalScaling( New Vec3f( _bounds.Width/_heightmap.Width,_bounds.Height,_bounds.Depth/_heightmap.Height ) )
+		
+		Return SetOrigin( _shape,_bounds.Center )
+	End
+	
+	Private
+	
+	Field _heightmap:Pixmap
+	Field _bounds:Boxf
+	
+	Field _diamondSubdiv:Bool
+	Field _zigzagSubdiv:Bool
+	
+	Field _shape:btHeightfieldTerrainShape
 
 End
-#end

@@ -443,6 +443,7 @@ Class GccBuildProduct Extends BuildProduct
 			Endif
 			
 			'A bit dodgy - rip out -arch's from ios
+			#rem
 			If opts.target="ios"
 				Repeat
 					Local i0:=cmd.Find( " -arch "  )
@@ -453,6 +454,7 @@ Class GccBuildProduct Extends BuildProduct
 				Forever
 				If opts.arch<>"x64" cmd+=" -arch armv7"
 			Endif
+			#end
 			
 			cmd+=" -MMD -MF~q"+deps+"~q"
 			cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"

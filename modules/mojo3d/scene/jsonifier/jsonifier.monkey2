@@ -2,24 +2,175 @@ Namespace mojo3d.jsonifier
 
 Class Jsonifier
 
+Private
+	
+	Class Instance
+		Field id:Int
+		Field obj:Variant
+		Field ctor:Invocation
+		Field initialState:JsonObject
+		
+		Operator To:String()
+			Return "Instance(type="+obj.Type+" dynamic type="+obj.DynamicType+")"
+		End
+	End
+	
+	Field _loading:Int
+	Field _instLoading:Int
+	Field _instsByObj:=New Map<Object,Instance>
+	Field _insts:=New Stack<Instance>
+	
+Public
+
+	Method BeginLoading()
+		
+		_loading+=1
+
+		If _loading>1 Return
+
+		_instLoading=_insts.Length
+	End
+	
+	Method EndLoading()
+		
+		_loading-=1
+		
+		If _loading Return
+		
+		For Local i:=_instLoading Until _insts.Length
+			Local inst:=_insts[i]
+			Local tobj:=Cast<Object>( inst.obj )
+			inst.initialState=JsonifyState( tobj )
+		next
+	End
+	
 	Method AddInstance( obj:Variant,ctor:Invocation )
 		
 		Local tobj:=Cast<Object>( obj )
 		
-		Assert( Not _instsByObj.Contains( tobj ) )
-		
-		Local inst:=New Instance
+		Local inst:=_instsByObj[tobj]
+		If inst
+			If inst.ctor Print "Warning: overwriting instance ctor for "+inst
+			inst.ctor=ctor
+			Return
+		Endif
+			
+		inst=New Instance
+		inst.id=_insts.Length
 		inst.obj=obj
-		inst.id="@"+String(_insts.Length)
+		
+		_insts.Add( inst )
+		_instsByObj[tobj]=inst
+		
+		If _loading Return
+
 		inst.ctor=ctor
 		inst.initialState=JsonifyState( tobj )
-		
-		_instsByObj[tobj]=inst
-		_instsById[inst.id]=inst
-
-		_insts.Add( inst )
 	End
+	
+	Method JsonifyInstances:JsonObject( assetsDir:String="" )
+		
+		If Not assetsDir assetsDir=AssetsDir()
+		
+		Local jobj:=New JsonObject
+		
+		jobj["assetsDir"]=New JsonString( assetsDir )
+		
+		Local jinsts:=New Stack<JsonValue>
+		
+		For Local i:=0 Until _insts.Length
+			
+'			Print "Jsonifying "+i
+			
+			Local inst:=_insts[i]
+			Local tobj:=Cast<Object>( inst.obj )
 
+			'compute delta state
+			Local state:=JsonifyState( tobj )
+			
+			Local dstate:=New JsonObject
+			
+			For Local it:=Eachin state.All()
+				
+				Local x:=it.Value
+				Local y:=inst.initialState.GetValue( it.Key )
+				
+				If CompareJson( x,y )<>0 dstate[it.Key]=x
+			Next
+			
+			If Not inst.ctor And dstate.Empty Continue
+			
+			Local jobj:=New JsonObject
+			jobj["type"]=New JsonString( tobj.DynamicType.Name )	'not actually used, cool for debug
+			
+			jobj["id"]=New JsonNumber( inst.id )
+			If inst.ctor jobj["ctor"]=Jsonify( inst.ctor )
+			If Not dstate.Empty jobj["state"]=dstate
+				
+			jinsts.Add( jobj )
+		Next
+
+		jobj["instances"]=New JsonArray( jinsts )
+		
+		Return jobj
+	End
+	
+	Method DejsonifyInstances( jobj:JsonObject )
+		
+		Local assetsDir:=AssetsDir()
+		
+		If jobj.Contains( "assetsDir" ) SetAssetsDir( jobj.GetString( "assetsDir" ) )
+		
+		Local jinsts:=jobj.GetArray( "instances" )
+
+		Local jobjsById:=New IntMap<JsonObject>
+		
+		For Local i:=0 Until jinsts.Length
+			
+			Local jobj:=jinsts.GetObject( i )
+			Assert( jobj.Contains( "id" ) )
+			
+			Local id:=jobj.GetNumber( "id" )
+			Assert( Not jobjsById.Contains( id ) )
+			
+			jobjsById[id]=jobj
+		Next
+		
+		'copy of insts alreday created (ie: initial Scene)
+		Local tinsts:=_insts.ToArray(),id:=0
+		
+		For Local i:=0 Until jinsts.Length
+			
+			Local jobj:=jinsts.GetObject( i )
+			If Not jobj.Contains( "ctor" ) Continue
+			
+			Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
+			ctor.Execute()
+			
+			For Local j:=id Until _insts.Length
+				
+				If Not jobjsById.Contains( j ) Continue
+
+				Local jobj:=jobjsById[j]
+				Local tobj:=Cast<Object>( _insts[j].obj )
+				If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,False )
+			Next
+			
+			id=_insts.Length
+		Next
+		
+		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?
+		For Local i:=0 Until _insts.Length
+			
+			If Not jobjsById.Contains( i ) Continue
+			
+			Local jobj:=jobjsById[i]
+			Local tobj:=Cast<Object>( _insts[i].obj )
+			If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,True )
+		Next
+		
+		SetAssetsDir( assetsDir )
+	End
 	'ctor via ctor
 	Method AddInstance( obj:Variant,args:Variant[] )
 		
@@ -37,93 +188,6 @@ Class Jsonifier
 		
 		AddInstance( obj,New Invocation( decl,Null,args ) )
 	End
-
-	Method JsonifyInstances:JsonObject()
-		
-		Local jobj:=New JsonObject
-		
-		jobj["assetsDir"]=New JsonString( AssetsDir() )
-		
-		Local jinsts:=New JsonArray( _insts.Length )
-		
-		For Local i:=0 Until _insts.Length
-			
-			Local jobj:=New JsonObject
-			
-			Local inst:=_insts[i]
-			Local tobj:=Cast<Object>( inst.obj )
-			
-			jobj["id"]=New JsonString( inst.id )
-			
-			jobj["type"]=New JsonString( tobj.DynamicType.Name )
-			
-			jobj["ctor"]=Jsonify( inst.ctor )
-			
-			Local state:=JsonifyState( tobj ),dstate:=New JsonObject
-			
-			For Local it:=Eachin state.All()
-				
-				Local x:=it.Value
-				Local y:=inst.initialState.GetValue( it.Key )
-				
-				If CompareJson( x,y )<>0 dstate[it.Key]=x
-			Next
-			
-			jobj["state"]=dstate
-				
-			jinsts[i]=jobj
-		Next
-
-		jobj["instances"]=jinsts
-		
-		Return jobj
-	End
-	
-	Method DejsonifyInstances( jobj:JsonObject )
-		
-		Local assetsDir:=AssetsDir()
-		
-		If jobj.Contains( "assetsDir" ) SetAssetsDir( jobj.GetString( "assetsDir" ) )
-		
-		Local jinsts:=jobj.GetArray( "instances" )
-		
-		For Local i:=0 Until jinsts.Length
-			
-			Local jobj:=jinsts.GetObject( i )
-			
-			Local obj:Variant
-						
-			If i<_insts.Length
-				
-				obj=_insts[i].obj
-			Else
-				Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
-			
-				obj=ctor.Execute()
-			Endif
-
-			_dejsonified.Add( obj )
-			
-			Local tobj:=Cast<Object>( obj )
-			
-			'set value type state only on this pass.
-			If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,False )
-		Next
-
-		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?
-		For Local i:=0 Until _dejsonified.Length
-			
-			Local jobj:=jinsts.GetObject( i )
-			
-			Local obj:=_dejsonified[i]
-			
-			Local tobj:=Cast<Object>( obj )
-			
-			If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,True )
-		Next
-		
-		SetAssetsDir( assetsDir )
-	End
 	
 	Method Jsonify:JsonValue( value:Variant )
 		
@@ -131,7 +195,7 @@ Class Jsonifier
 		
 		Local type:=value.Type
 		Assert( type )
-		
+
 		'handle primitive types
 		Select type
 		Case Typeof<Bool>
@@ -152,7 +216,7 @@ Class Jsonifier
 			Local obj:=Cast<Object>( value )
 			If Not obj Return JsonValue.NullValue
 			Local inst:=_instsByObj[obj]
-			If inst Return New JsonString( inst.id )
+			If inst Return New JsonString( "@"+inst.id )
 		Case "Enum"
 			Return New JsonNumber( value.EnumValue )
 		End
@@ -164,6 +228,11 @@ Class Jsonifier
 		Next
 
 		Select type.Kind
+		Case "Unknown"
+			Local obj:=Cast<Object>( value )
+			If Not obj Return JsonValue.NullValue
+			Local inst:=_instsByObj[obj]
+			If inst Return New JsonString( "@"+inst.id )
 		Case "Class"
 			Return JsonValue.NullValue
 		Case "Array"
@@ -207,9 +276,8 @@ Class Jsonifier
 				Return type.NullValue
 			Elseif jvalue.IsString
 				Local id:=Int( jvalue.ToString().Slice( 1 ) )
-				Assert( id>=0 And id<_dejsonified.Length,"Dejsonify error" )
-				Local inst:=_dejsonified[id]
-				Return inst
+				Assert( id>=0 And id<_insts.Length,"Dejsonify error" )
+				Return _insts[id].obj
 			Endif
 		Case "Enum"
 			Return type.MakeEnum( jvalue.ToNumber() )
@@ -222,6 +290,12 @@ Class Jsonifier
 		Next
 
 		Select type.Kind
+		Case "Unknown"
+			If jvalue.IsString
+				Local id:=Int( jvalue.ToString().Slice( 1 ) )
+				Assert( id>=0 And id<_insts.Length,"Dejsonify error" )
+				Return _insts[id].obj
+			Endif
 		Case "Class"
 			Return type.NullValue
 		Case "Array"
@@ -241,20 +315,6 @@ Class Jsonifier
 	End
 	
 	Private
-	
-	Class Instance
-		Field obj:Variant
-		Field id:String
-		Field ctor:Invocation
-		Field initialState:JsonObject
-	End
-	
-	Field _insts:=New Stack<Instance>
-	
-	Field _instsByObj:=New Map<Object,Instance>
-	Field _instsById:=New StringMap<Instance>
-	
-	Field _dejsonified:=New Stack<Variant>
 	
 	Method JsonifyState:JsonObject( obj:Object )
 		
@@ -300,7 +360,7 @@ Class Jsonifier
 			
 			Local type:=d.Type
 			
-			Local isinst:=type.Kind="Class"
+			Local isinst:=type.Kind="Class" Or type.Kind="Unknown"
 			
 			If Not isinst And type.Kind="Array" And type.ElementType.Kind="Class" isinst=True
 				

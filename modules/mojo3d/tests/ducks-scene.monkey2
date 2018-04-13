@@ -5,6 +5,8 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
+#Reflect mojo3d
+
 #Import "assets/duck.gltf/@/duck.gltf"
 
 Using std..
@@ -29,7 +31,7 @@ Class MyWindow Extends Window
 		
 		'create scene
 		'		
-		_scene=New Scene
+		_scene=New Scene( True )
 		
 		'for softer shadows
 		'
@@ -39,7 +41,6 @@ Class MyWindow Extends Window
 		'
 		_camera=New Camera( Self )
 		_camera.Move( 0,15,-20 )
-		
 		New FlyBehaviour( _camera )
 		
 		'create light
@@ -91,22 +92,29 @@ Class MyWindow Extends Window
 				copy.Materials=materials
 				
 				_ducks.Push( copy )
-			
 			Next
 		Next
 		
 		duck.Destroy()
+		
+		_ducks[0].AddComponent<RotateBehaviour>().Speed=New Vec3f( 0,.01,0 )
+		
+		Print "Saving.."
+		
+		_scene.Save( "ducks-scene.mojo3d","modules/mojo3d/tests/assets/" )	'note: assets path is a bit of a hack! Need access to compile time assets dir path.
+		
+		Print "Loading..."
+		
+		_scene=Scene.Load( "ducks-scene.mojo3d" )
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 
 		RequestRender()
 		
-		_ducks[0].Rotate( 0,-.01,0 )
-		
 		_scene.Update()
 		
-		_camera.Render( canvas )
+		_scene.Render( canvas )
 
 		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End

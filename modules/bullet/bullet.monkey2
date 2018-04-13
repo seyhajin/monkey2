@@ -371,7 +371,7 @@ Class btHeightfieldTerrainShape Extends btConcaveShape
 
 	Method setUseDiamondSubdivision( useDiamondSubdivision:Bool=True )	
 
-	Method setUseZigZagSubdivision( useZigZagSubdivision:Bool=True )	
+	Method setUseZigzagSubdivision( useZigZagSubdivision:Bool=True )	
 End
 
 Class btTriangleMeshShape Extends btConcaveShape

@@ -326,13 +326,35 @@ Class DocsMaker
 
 			If Not name 
 				name=path
-				If _module=ctype.transFile.module
+				If module=_module
 					Local i:=name.FindLast( "." )
 					If i<>-1 name=name.Slice( i+1 )
 				Endif
 			Endif
 			
 			Return outer+"[["+module.name+":"+path+"|"+name+"]]"+types
+		Endif
+		
+		Local etype:=Cast<EnumType>( type )
+		If etype
+			
+			Local module:=etype.transFile.module
+			
+			Local outer:=""
+			Local cscope:=Cast<ClassScope>( etype.scope.outer )
+			If cscope And Not name outer=TypeName( cscope.ctype )+"."
+			
+			Local path:=etype.Name
+			
+			If Not name
+				name=path
+				If module=_module
+					Local i:=name.FindLast( "." )
+					If i<>-1 name=name.Slice( i+1 )
+				Endif
+			Endif
+			
+			Return outer+"[["+module.name+":"+path+"|"+name+"]]"
 		Endif
 		
 		Local gtype:=Cast<GenArgType>( type )

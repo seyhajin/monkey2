@@ -5,11 +5,13 @@
 Using libc..
 Using std..
 
-Const MX2CC_VERSION:="1.1.11"
+Const MONKEY2_VERSION:="2018.04"
+
+Const MX2CC_VERSION:="1.1.12"
 
 Const RELEASE_SUFFIX:=""
 
-Const OUTPUT:="Monkey2-v"+MX2CC_VERSION+RELEASE_SUFFIX
+Const OUTPUT:="Monkey2-v"+MONKEY2_VERSION+RELEASE_SUFFIX
 
 Const IGNORE:="
 .gitignore
@@ -130,6 +132,11 @@ Function CopyRelease()
 	Copy( "VERSIONS.TXT" )
 	Copy( "LICENSE.TXT" )
 	Copy( "README.TXT" )
+	
+	Copy( "ducks-scene.mojo3d" )
+	Copy( "shapes-scene.mojo3d" )
+	Copy( "sprites-scene.mojo3d" )
+	Copy( "test-scene.mojo3d" )
 	
 #If __TARGET__="windows"
 	Copy( "Monkey2 (Windows).exe" )

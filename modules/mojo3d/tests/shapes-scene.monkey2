@@ -4,6 +4,7 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
+'Need this to be able to create an 'editable' scene
 #Reflect mojo3d
 
 Using std..
@@ -13,34 +14,26 @@ Using mojo3d..
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
-	
 	Field _camera:Camera
-	
-	Field _light:Light
-	
-	Field _ground:Model
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
-'#rem
-		_scene=New Scene
-		
-		_scene.Editing=True
+		Local scene:=New Scene( True )	'True to create an 'editable' scene.
 		
 		'create camera
 		'
-		_camera=New Camera
-		_camera.Name="Camera"
-		_camera.Near=.1
-		_camera.Far=60
-		_camera.Move( 0,10,-10 )
-		New FlyBehaviour( _camera )
+		Local camera:=New Camera( Self )
+		camera.Name="Camera"	'so we can find camera later after loading
+		camera.Near=.1
+		camera.Far=60
+		camera.Move( 0,10,-10 )
+		New FlyBehaviour( camera )
 		
-		Local camCollider:=New SphereCollider( _camera )
+		Local camCollider:=New SphereCollider( camera )
 		camCollider.Radius=1
-		Local camBody:=New RigidBody( _camera )
+		Local camBody:=New RigidBody( camera )
 		camBody.Kinematic=True
 		camBody.Mass=0
 		camBody.CollisionGroup=32
@@ -48,32 +41,35 @@ Class MyWindow Extends Window
 		
 		'create light
 		'
-		_light=New Light
-		_light.RotateX( 75,15 )
-		_light.CastsShadow=true
+		Local light:=New Light
+		light.RotateX( 75,15 )
+		light.CastsShadow=true
 		
 		'create ground
 		'
 		Local groundBox:=New Boxf( -60,-1,-60,60,0,60 )
 		
-		_ground=Model.CreateBox( groundBox,16,16,16,New PbrMaterial( Color.Green ) )
-		_ground.Name="Ground"
+		Local ground:=Model.CreateBox( groundBox,16,16,16,New PbrMaterial( Color.Green ) )
 		
-		_ground.Collided+=Lambda( body:RigidBody )
+		ground.Collided+=Lambda( body:RigidBody )
 		
 '			Print "Ground hit: "+body.Entity.Name
 		End
-		
-		Local groundCollider:=New BoxCollider( _ground )
+
+		'3 ways to create a ground collider!
+		Local groundCollider:=New BoxCollider( ground )
 		groundCollider.Box=groundBox
+		
+'		Local groundCollider:=New ConvexHullCollider( _ground )
+'		groundCollider.Mesh=_ground.Mesh
 
 '		Local groundCollider:=New MeshCollider( _ground )
 '		groundCollider.Mesh=_ground.Mesh
 		
-		Local groundBody:=New RigidBody( _ground )
-		groundBody.Mass=0
+		Local groundBody:=New RigidBody( ground )
 		groundBody.CollisionGroup=64
 		groundBody.CollisionMask=127
+		groundBody.Mass=0	'static body
 		
 		Local material:=New PbrMaterial( Color.White )
 
@@ -151,11 +147,15 @@ Class MyWindow Extends Window
 '			model.Destroy()
 		Next
 		
-		_scene.Save( "shapes-scene.mojo3d" )
+		Print "Saving scene..."
 		
-'#end
+		scene.Save( "shapes-scene.mojo3d" )
+		
+		Print "Loading scene..."
 		
 		_scene=Scene.Load( "shapes-scene.mojo3d" )
+		_camera=Cast<Camera>( _scene.FindEntity( "Camera" ) )
+		_camera.View=Self
 	End
 	
 	Method OnRender( canvas:Canvas ) Override

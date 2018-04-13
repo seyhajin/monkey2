@@ -5,6 +5,8 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
+#Reflect mojo3d
+
 #Import "assets/"
 
 Using std..
@@ -36,7 +38,8 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		_scene=New Scene
+		_scene=New Scene( True )
+		
 		_scene.SkyTexture=_scene.LoadTexture( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		_scene.FogColor=Color.Sky
 		_scene.FogNear=10
@@ -87,6 +90,9 @@ Class MyWindow Extends Window
 			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
 		next	
 		
+		_scene.Save( "sprites-scene.mojo3d","modules/mojo3d/tests/assets/" )
+		
+		_scene=Scene.Load( "sprites-scene.mojo3d" )
 	End
 	
 	Method OnRender( canvas:Canvas ) Override

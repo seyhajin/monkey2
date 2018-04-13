@@ -42,7 +42,7 @@ Class MyWindow Extends Window
 		_camera=New Camera
 		_camera.Near=.1
 		_camera.Far=100
-		_camera.Move( 0,15,-20 )
+		_camera.Move( 0,16,0 )
 		New FlyBehaviour( _camera )
 		
 		'create light
@@ -56,7 +56,7 @@ Class MyWindow Extends Window
 		Local terrainBox:=New Boxf( -256,0,-256,256,32,256 )
 		
 		'heightmap
-		Local terrainHMap:=Pixmap.Load( "asset::terrain_256.png" )
+		Local terrainHMap:=Pixmap.Load( "asset::terrain_256.png",PixelFormat.I8 )
 
 		'material		
 		Local terrainMaterial:=PbrMaterial.Load( "asset::mossy-ground1.pbr" )
@@ -64,8 +64,30 @@ Class MyWindow Extends Window
 		
 		'model+mesh
 		_terrain=Model.CreateTerrain( terrainHMap,terrainBox,terrainMaterial )
-
 		_terrain.CastsShadow=False
+		
+		Local collider:=New TerrainCollider( _terrain )
+		collider.Heightmap=terrainHMap'.Convert( PixelFormat.I8 )
+		collider.Bounds=terrainBox
+		Local body:=New RigidBody( _terrain )
+		body.Mass=0
+		
+		Local material:=New PbrMaterial( Color.Sky,1,.5 )
+		
+		For Local i:=0 Until 360 Step 3
+			
+			Local box:=New Boxf( -.5,.5 )
+		
+			Local model:=Model.CreateBox( box,1,1,1,material )
+			Local collider:=New BoxCollider( model )
+			Local body:=New RigidBody( model )
+
+			collider.Box=box
+			
+			model.Rotate( 0,i,0 )
+			model.Move( 0,32,Rnd( 5,10 ) )
+			
+		Next			
 		
 	End
 	

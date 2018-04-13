@@ -43,7 +43,7 @@ Class DocsBuffer
 			Return
 		Endif
 
-		If _pre=-1 line=tline Else Print line
+		If _pre=-1 line=tline
 		
 		If Not line And _lines.Length And Not _lines.Top Return
 		

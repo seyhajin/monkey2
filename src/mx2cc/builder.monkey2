@@ -235,6 +235,7 @@ Class BuilderInstance
 				
 				Local path:=fdecl.imports[imp]
 				
+				
 				Local i:=path.FindLast( "[" )
 				If i<>-1 And path.EndsWith( "]" )
 					BuildEx.srcpos=Int( path.Slice( i+1,-1 ) )
@@ -417,7 +418,7 @@ Class BuilderInstance
 				Endif
 			Endif
 			
-			'Ugly stuff for generic instances - needs more FIXING!
+			'Ugly stuff for generic instances - but hey, it works!
 			'
 			Local transFiles:=New StringMap<FileDecl>
 			
@@ -441,7 +442,7 @@ Class BuilderInstance
 				Endif
 				
 				If Not transFile Or transFile.module=module Continue
-
+				
 				Local transFile2:=transFile
 
 				transFile=transFiles[transFile2.ident]
@@ -463,7 +464,6 @@ Class BuilderInstance
 					transFile.exhfile=transFile2.hfile
 					transFile.hfile=module.hfileDir+transFile.ident+".h"
 					transFile.cfile=module.cfileDir+transFile.ident+".cpp"
-'					transFile.rfile=module.cfileDir+"r_"+transFile.ident+".cpp"
 					
 					transFiles[transFile2.ident]=transFile
 					

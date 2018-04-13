@@ -281,6 +281,11 @@ Class Texture Extends Resource
 		_dirty|=Dirty.TexParams
 	End
 	
+	Property ManagedPixmap:Pixmap()
+		
+		Return _managed
+	End
+	
 	Method PastePixmap( pixmap:Pixmap,x:Int,y:Int )
 		
 		If _managed
@@ -401,6 +406,7 @@ Class Texture Extends Resource
 	Method Modified( r:Recti )
 		
 		If _managed 
+			Print "Texture Modified - Update managed"
 			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
 		Endif
 

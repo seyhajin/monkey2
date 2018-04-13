@@ -1,5 +1,9 @@
 
-***** Monkey2 v2018.03 Mx2cc v1.1.12 *****
+***** Monkey-v2018.04 Mx2cc-v1.1.12 Ted2go-2.10 *****
+
+Added GetPixel and GetPixelARGB to both Image and Canvas classes - canvas version will be slow as hell, eg: 3 secs for 16x16! Image versions still relies on the 'managed pixmap hack', but I should be able to improve on the speed of this for desktop targets.
+
+Fixed makedocs links to enums.
 
 Tweaked mx2cc's gcc dependancy checking so it happens while compiling (just like msvc's) so there should now only be 1 'slow build' under mingw instead of 2. Sometimes it's just a matter of knowing that a certain command line option even exists!
 

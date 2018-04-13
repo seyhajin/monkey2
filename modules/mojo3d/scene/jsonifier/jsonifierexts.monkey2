@@ -1,5 +1,31 @@
 Namespace mojo3d.jsonifier
 
+Class MojoJsonifierExt Extends JsonifierExt
+	
+	Const Instance:=New MojoJsonifierExt
+
+	Method Jsonify:JsonValue( value:Variant,jsonifier:Jsonifier ) Override
+		
+		Select value.Type
+		Case Typeof<TextureFlags>
+			Return New JsonNumber( Int( Cast<TextureFlags>( value ) ) )
+		End
+		
+		Return Null
+	End
+
+	Method Dejsonify:Variant( jvalue:JsonValue,type:TypeInfo,jsonifier:Jsonifier ) Override
+		
+		Select type
+		Case Typeof<TextureFlags>
+			Return Cast<TextureFlags>( Int( jvalue.ToNumber() ) )
+		End
+		
+		Return Null
+	End
+	
+End
+
 Class StdJsonifierExt Extends JsonifierExt
 	
 	Const Instance:=New StdJsonifierExt
