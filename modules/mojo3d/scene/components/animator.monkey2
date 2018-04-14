@@ -1,15 +1,6 @@
 
 Namespace mojo3d
 
-Class Entity Extension
-	
-	Property Animator:Animator()
-		
-		Return GetComponent<Animator>()
-	End
-	
-End
-
 #rem monkeydoc The Animator class.
 #end
 Class Animator Extends Component

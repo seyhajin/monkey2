@@ -35,15 +35,6 @@ End
 
 Public
 
-Class Entity Extension
-	
-	Property RigidBody:RigidBody()
-		
-		Return GetComponent<RigidBody>()
-	End
-	
-End
-
 Class RigidBody Extends Component
 	
 	Const Type:=New ComponentType( "RigidBody",-10,ComponentTypeFlags.Singleton )

@@ -1,9 +1,11 @@
 
-Namespace mojo3d
+Namespace mojo3d.bullet
 
 Public
 
-Struct Vec3<T> Extension
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
+Struct Vec3f Extension
 
 	Operator To:btVector3()
 
@@ -11,6 +13,8 @@ Struct Vec3<T> Extension
 	End
 End
 
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
 Struct btVector3 Extension
 
 	Operator To:Vec3f()
@@ -19,13 +23,18 @@ Struct btVector3 Extension
 	End
 End
 
-Struct Vec4<T> Extension
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
+Struct Vec4f Extension
+	
 	Operator To:btVector4()
 
 		Return New btVector4( x,y,z,w )
 	End
 End
 
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
 Struct btVector4 Extension
 
 	Operator To:Vec4f()
@@ -34,6 +43,8 @@ Struct btVector4 Extension
 	End
 End
 
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
 Struct Mat3f Extension
 
 	Operator To:btMatrix3x3()
@@ -42,6 +53,8 @@ Struct Mat3f Extension
 	End
 End
 
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
 Struct btMatrix3x3 Extension
 
 	Operator To:Mat3f()
@@ -50,8 +63,9 @@ Struct btMatrix3x3 Extension
 	End
 End
 
-
-Struct AffineMat4f<T> Extension
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
+Struct AffineMat4f Extension
 	
 	Operator To:btTransform()
 	
@@ -60,6 +74,8 @@ Struct AffineMat4f<T> Extension
 
 End
 
+#rem monkeydoc Extension methods for bullet type conversions.
+#end
 Struct btTransform Extension
 	
 	Operator To:AffineMat4f()
@@ -68,7 +84,3 @@ Struct btTransform Extension
 	End
 
 End
-
-
-
-
