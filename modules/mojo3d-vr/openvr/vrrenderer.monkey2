@@ -327,6 +327,13 @@ Class VRRenderer Extends Renderer
 		VRCompositor().PostPresentHandoff()
 	End
 	
+	Protected
+	
+	Method RenderCopyQuad() Override
+		
+		Super.RenderQuad()
+	end
+	
 	Private
 	
 	'VR
