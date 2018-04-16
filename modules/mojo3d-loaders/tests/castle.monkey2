@@ -6,7 +6,7 @@ Namespace myapp
 #Import "<mojo3d-loaders>"
 
 #Import "assets/castle/@/castle"
-#Import "../../mojo3d/tests/assets/heightmap_256.png"
+#Import "../../mojo3d/tests/assets/heightmap_256.BMP"
 #Import "../../mojo3d/tests/assets/mossy-ground1.pbr@/mossy-ground1.pbr"
 
 '#Import "../../mojo3d/tests/assets/miramar-skybox.jpg"
@@ -213,7 +213,7 @@ Class MyWindow Extends Window
 		
 		Local box:=New Boxf( -256,-32,-256,256,0,256 )
 		
-		Local hmap:=Pixmap.Load( "asset::heightmap_256.png",PixelFormat.I8 )
+		Local hmap:=Pixmap.Load( "asset::heightmap_256.BMP",PixelFormat.I8 )
 
 		Local material:=PbrMaterial.Load( "asset::mossy-ground1.pbr" )
 		material.ScaleTextureMatrix( 64,64 )
