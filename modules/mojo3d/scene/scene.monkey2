@@ -34,6 +34,11 @@ Class Scene
 		
 	End
 	
+	Property World:World()
+		
+		Return _world
+	End
+	
 	#rem monkeydoc The sky texture.
 	
 	The sky texture is used to clear the scene. 
@@ -397,11 +402,6 @@ Class Scene
 	Property Renderables:Stack<Renderable>()
 	
 		Return _renderables
-	End
-	
-	Property World:World()
-		
-		Return _world
 	End
 	
 	Private
