@@ -130,11 +130,17 @@ Class OverloadEx Extends SemantEx
 End
 
 Function SemantError( func:String )
+#If __CONFIG__="debug"
+	DebugStop()
+#endif
 	Print "~n".Join( GetDebugStack() )
 	Throw New SemantEx( func+" Internal Error" )
 End
 
 Function TransError( func:String )
+#If __CONFIG__="debug"
+	DebugStop()
+#endif
 	Print "~n".Join( GetDebugStack() )
 	Throw New SemantEx( func+" Internal Error" )
 End

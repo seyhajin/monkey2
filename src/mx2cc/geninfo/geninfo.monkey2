@@ -140,7 +140,9 @@ Class ParseInfoGenerator
 		If decl.type node.SetValue( "type",GenNode( decl.type ) )
 		
 		If decl.init node.SetValue( "init",GenNode( decl.init ) )
-		
+			
+		If decl.semtype node.SetString( "semtype",decl.semtype.Name )
+			
 		Return node
 	End
 	
@@ -330,5 +332,5 @@ Class ParseInfoGenerator
 		
 		Return node
 	End
-
+	
 End

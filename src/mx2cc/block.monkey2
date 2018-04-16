@@ -26,13 +26,11 @@ Class Block Extends Scope
 		inex=outer.inex
 	End
 	
-'	Property IsGeneric:Bool() Override
-
-'		If func.IsGeneric Return True
-
-'		Return Super.IsGeneric
-'	End
-
+	Property IsInstanceOf:Bool() Override
+		
+		Return func.instanceOf<>Null ?Else Super.IsInstanceOf
+	End
+	
 	Method FindValue:Value( ident:String ) Override
 
 		Local node:=FindNode( ident )

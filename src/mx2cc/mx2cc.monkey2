@@ -22,10 +22,10 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makedocs mojo"
+'Const TestArgs:="mx2cc makemods"
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
-Const TestArgs:="mx2cc makeapp -parse -geninfo src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp -semant -geninfo src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makeapp -verbose src/mx2cc/catan/main.monkey2"
 
@@ -206,6 +206,11 @@ Function MakeApp:Bool( args:String[] )
 	Builder.Semant()
 	If Builder.errors.Length Return False
 	If opts.passes=2
+		If opts.geninfo
+			Local gen:=New ParseInfoGenerator
+			Local jobj:=gen.GenParseInfo( Builder.mainModule.fileDecls[0] )
+			Print jobj.ToJson()
+		Endif
 		Return True
 	Endif
 	
