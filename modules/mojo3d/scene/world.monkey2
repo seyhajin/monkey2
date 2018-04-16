@@ -68,9 +68,12 @@ Class World
 		Return New RayCastResult( Varptr btresult )
 	End
 	
-	Method ConvexSweep:RayCastResult( collider:ConvexCollider,castFrom:AffineMat4f,castTo:AffineMat4f )
+	Method ConvexSweep:RayCastResult( collider:ConvexCollider,castFrom:AffineMat4f,castTo:AffineMat4f,collisionMask:Int )
 		
 		Local btresult:=New btCollisionWorld.ClosestConvexResultCallback( castFrom.t,castTo.t )
+
+		btresult.m_collisionFilterGroup=collisionMask
+		btresult.m_collisionFilterMask=collisionMask
 		
 		_btworld.convexSweepTest( Cast<btConvexShape>( collider.Validate() ),castFrom,castTo,Cast<btCollisionWorld.ConvexResultCallback Ptr>( Varptr btresult ),0 )
 		
@@ -79,9 +82,9 @@ Class World
 		Return New RayCastResult( Varptr btresult )
 	End
 	
-	Method ConvexSweep:RayCastResult( collider:ConvexCollider,castFrom:Vec3f,castTo:Vec3f )
+	Method ConvexSweep:RayCastResult( collider:ConvexCollider,castFrom:Vec3f,castTo:Vec3f,collisionMask:Int )
 		
-		Return ConvexSweep( collider,AffineMat4f.Translation( castFrom ),AffineMat4f.Translation( castTo ) )
+		Return ConvexSweep( collider,AffineMat4f.Translation( castFrom ),AffineMat4f.Translation( castTo ),collisionMask )
 	End
 
 	Method Update( elapsed:Float )

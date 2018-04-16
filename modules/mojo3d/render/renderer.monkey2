@@ -459,6 +459,14 @@ Class Renderer
 		
 	End
 	
+	Method RenderCopyQuad() Virtual
+		If _outputRenderTarget
+			RenderInvertedQuad()
+		Else
+			RenderQuad()
+		Endif
+	End
+	
 	Method RenderCopy()
 		
 		If _direct Return
@@ -476,11 +484,7 @@ Class Renderer
 		_gdevice.Shader=_copyShader
 		_gdevice.RenderPass=0
 		
-		If _outputRenderTarget
-			RenderInvertedQuad()
-		Else
-			RenderQuad()
-		Endif
+		RenderCopyQuad()
 		
 		_gdevice.RenderTarget=Null
 		_gdevice.Resize( Null )

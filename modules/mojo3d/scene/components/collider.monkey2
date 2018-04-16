@@ -14,15 +14,6 @@ Global emptyShape:=New btEmptyShape
 
 Public
 	
-Class Entity Extension
-	
-	Property Collider:Collider()
-		
-		Return GetComponent<Collider>()
-	End
-	
-End
-
 Class Collider Extends Component
 	
 	Const Type:=New ComponentType( "Collider",10,ComponentTypeFlags.Singleton )

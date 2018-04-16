@@ -17,6 +17,8 @@ Class MarkdownConvertor
 
 		_lineNum=0
 
+		_para=False
+		
 		_buf.Clear()
 		
 		For Local i:=0 Until _lines.Length
@@ -29,40 +31,54 @@ Class MarkdownConvertor
 			If Not line Continue
 		
 			If line.StartsWith( "#" )
+				
+				EndPara()
 			
 				EmitHeader( line )
 			
 			Else If line.StartsWith( "|" )
 			
+				EndPara()
+			
 				EmitTable( line )
 				
 			Else If line.StartsWith( "*" )
+			
+				EndPara()
 			
 				EmitList( line )
 				
 			Else If line.StartsWith( "<" )
 			
+				EndPara()
+			
 				Emit( line+"\" )
 				
 			Else If line.StartsWith( "---" )
+			
+				EndPara()
 			
 				Emit( "<hr class="+_cls+">" )
 				
 			Else If line.StartsWith( "```" ) Or line.ToLower().StartsWith( "<pre>" )
 			
+				EndPara()
+			
 				EmitCode( line )
 				
 			Else
 			
-				If _lineNum>1 And _lines[_lineNum-2]=""
-					Emit( "<p class="+_cls+">"+Escape( line ) )
-				Else
-					Emit( Escape( line ) )
+				If Not _para Or (_lineNum>1 And _lines[_lineNum-2]="")
+					EndPara()
+					BeginPara()
 				Endif
-
+				
+				Emit( Escape( line ) )
 			Endif
 				
 		Wend
+		
+		EndPara()
 		
 		Local html:=_buf.Join( "~n" )
 		
@@ -87,8 +103,22 @@ Class MarkdownConvertor
 	Field _lineNum:=0
 	Field _buf:=New StringStack
 	
+	Field _para:Bool=False
+	
 	Property AtEnd:Bool()
 		Return _lineNum>=_lines.Length
+	End
+
+	Method BeginPara()
+		If _para Return
+		Emit( "<p class="+_cls+">" )
+		_para=True
+	End
+	
+	Method EndPara()
+		If Not _para Return
+		Emit( "</p>" )
+		_para=False
 	End
 	
 	Method Emit( str:String )

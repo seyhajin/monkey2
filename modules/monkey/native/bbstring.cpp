@@ -28,29 +28,29 @@ namespace{
 	jmethodID jmethod_capitalize;
 
 	bbString JStringToString( JNIEnv *env,jstring jstr ){
-	
 		if( !jstr ) return "";
-	
 		const char *cstr=env->GetStringUTFChars( jstr,0 );
-		
 		bbString str=bbString::fromCString( cstr );
-		
 		env->ReleaseStringUTFChars( jstr,cstr );
-		
 		return str;
 	}
 	
 	jstring StringToJString( JNIEnv *env,bbString str ){
-	
 		int n=str.utf8Length()+1;
-		
 		char *buf=new char[n];
-		
 		str.toCString( buf,n );
-		
 		jstring jstr=env->NewStringUTF( buf );
-		
 		return jstr;
+	}
+	
+	bbString invokeStaticStringMethod( jmethodID jmethod,bbString arg ){
+		JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
+		jstring jarg=StringToJString( env,arg );
+		jstring jres=(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod,jarg );
+		bbString res=JStringToString( env,jres );
+		env->DeleteLocalRef( jres );
+		env->DeleteLocalRef( jarg );
+		return res;
 	}
 #endif
 	
@@ -519,8 +519,7 @@ bbString bbString::slice( int from,int term )const{
 bbString bbString::toUpper()const{
 	initLocale();
 #if BB_ANDROID
-	JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
-	return JStringToString( env,(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod_toUpper,StringToJString( env,*this ) ) );
+	return invokeStaticStringMethod( jmethod_toUpper,*this );
 #else
 	Rep *rep=Rep::alloc( length() );
 	for( int i=0;i<length();++i ) rep->data[i]=::towupper( data()[i] );
@@ -531,8 +530,7 @@ bbString bbString::toUpper()const{
 bbString bbString::toLower()const{
 	initLocale();
 #if BB_ANDROID
-	JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
-	return JStringToString( env,(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod_toLower,StringToJString( env,*this ) ) );
+	return invokeStaticStringMethod( jmethod_toLower,*this );
 #else
 	Rep *rep=Rep::alloc( length() );
 	for( int i=0;i<length();++i ) rep->data[i]=::towlower( data()[i] );
@@ -543,8 +541,7 @@ bbString bbString::toLower()const{
 bbString bbString::capitalize()const{
 	initLocale();
 #if BB_ANDROID
-	JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
-	return JStringToString( env,(jstring)env->CallStaticObjectMethod( jclass_lang,jmethod_capitalize,StringToJString( env,*this ) ) );
+	return invokeStaticStringMethod( jmethod_capitalize,*this );
 #else
 	if( !length() ) return &_nullRep;
 	Rep *rep=Rep::alloc( length() );

@@ -9,9 +9,30 @@ Const RadiansToDegrees:=180.0/Pi
 
 Public
 
-#rem monkeydoc Entity extension methods.
+#rem monkeydoc Utility extension methods for entities.
 #end
 Class Entity Extension
+	
+	#rem monkeydoc The rigid body attached to the entity.
+	#end
+	Property RigidBody:RigidBody()
+		
+		Return GetComponent<RigidBody>()
+	End
+	
+	#rem monkeydoc The collider attached to the entity.
+	#end
+	Property Collider:Collider()
+		
+		Return GetComponent<Collider>()
+	End
+
+	#rem monkeydoc The animator attached to the entity.
+	#end
+	Property Animator:Animator()
+		
+		Return GetComponent<Animator>()
+	End
 
 	#rem monkeydoc World space rotation in degrees.
 	#end
@@ -438,5 +459,6 @@ Class Entity Extension
 		
 		PointAt( target.LocalPosition )
 	End
+	
 	
 End
