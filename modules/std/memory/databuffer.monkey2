@@ -603,18 +603,12 @@ Class DataBuffer Extends std.resource.Resource
 		dest.PokeUInt( 4,~Length )
 		Local destLenOut:=destLen
 		Local r:=zlib.compress2( dest.Data+8,Cast<zlib.z_uLong Ptr>( Varptr destLenOut ),Data,Length,compressionLevel )
-		If r<>zlib.Z_OK
-			RuntimeError( "Error compressing data: zlib return code="+r)
-			dest.Discard()
-			Return Null
-		Endif
-		If destLenOut<>destLen
-			Local tmp:=New DataBuffer( destLenOut+8 )
-			dest.CopyTo( tmp,0,0,destLenOut+8 )
-			dest.Discard()
-			dest=tmp
-		Endif
-		Return dest
+		If r<>zlib.Z_OK RuntimeError( "Error compressing data: zlib return code="+r )
+		If destLenOut=destLen Return dest
+		Local dest2:=New DataBuffer( destLenOut+8 )
+		dest.CopyTo( dest2,0,0,destLenOut+8 )
+		dest.Discard()
+		Return dest2
 	End
 	
 	#rem monkeydoc Decompresses data buffer.
