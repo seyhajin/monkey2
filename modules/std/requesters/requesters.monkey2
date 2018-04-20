@@ -121,4 +121,12 @@ Function OpenUrl( url:String )="bbRequesters::OpenUrl"
 	
 Public
 
+#Elseif __TARGET__="emscripten"
+
+Function OpenUrl( url:String )
+	
+	emscripten.emscripten_run_script( "window.location.href='"+url+"'" )
+	
+End
+
 #Endif

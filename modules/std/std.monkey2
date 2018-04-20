@@ -15,6 +15,10 @@ Namespace std
 #Endif
 #Endif
 
+#If __WEB_TARGET__
+#Import "<emscripten>"
+#endif
+
 #Import "collections/container"
 #Import "collections/stack"
 #Import "collections/list"
