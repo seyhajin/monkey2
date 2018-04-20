@@ -2,6 +2,7 @@
 Namespace assimp
 
 #Import "<libc>"
+#Import "<zlib>"
 
 #Import "makefile"
 

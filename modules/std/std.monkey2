@@ -6,6 +6,7 @@ Namespace std
 #Import "<stb-image-write>"
 #import "<stb-vorbis>"
 #Import "<miniz>"
+#Import "<zlib>"
 
 #If __MOBILE_TARGET__
 #Import "<sdl2>"
