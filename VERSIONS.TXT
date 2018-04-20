@@ -1,4 +1,10 @@
 
+***** Monkey-v2018.05 Mx2cc-v1.1.12 Ted2go-2.10 *****
+
+Added low budget OpenUrl for emscripten. It just replaces current page with the given URL so effectively ends app too.
+
+Added zlib module and DataBuffer.Compress and DataBuffer.Decompress.
+
 ***** Monkey-v2018.04 Mx2cc-v1.1.12 Ted2go-2.10 *****
 
 Added GetPixel and GetPixelARGB to both Image and Canvas classes - canvas version will be slow as hell, eg: 3 secs for 16x16! Image versions still relies on the 'managed pixmap hack', but I should be able to improve on the speed of this for desktop targets.
