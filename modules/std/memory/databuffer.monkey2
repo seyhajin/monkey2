@@ -602,26 +602,36 @@ Class DataBuffer Extends std.resource.Resource
 		dest.PokeUInt( 0,Length )
 		dest.PokeUInt( 4,~Length )
 		Local destLenOut:=destLen
-		zlib.compress2( dest.Data+8,Cast<zlib.z_uLong Ptr>( Varptr destLenOut ),Data,Length,compressionLevel )
-		If destLenOut<>destLen
-			Local r:=New DataBuffer( destLenOut+8 )
-			dest.CopyTo( r,0,0,destLenOut+8 )
+		Local r:=zlib.compress2( dest.Data+8,Cast<zlib.z_uLong Ptr>( Varptr destLenOut ),Data,Length,compressionLevel )
+		If r<>zlib.Z_OK
+			RuntimeError( "Error compressing data: zlib return code="+r)
 			dest.Discard()
-			dest=r
+			Return Null
+		Endif
+		If destLenOut<>destLen
+			Local tmp:=New DataBuffer( destLenOut+8 )
+			dest.CopyTo( tmp,0,0,destLenOut+8 )
+			dest.Discard()
+			dest=tmp
 		Endif
 		Return dest
 	End
 	
 	#rem monkeydoc Decompresses data buffer.
 	
-	The data buffer must have been originally compressed using the [[Compress]] method or a runtime error will occur.
+	If there was an error decompressing the data, null is returned. Erros can occur if the compressed data 
+	has somehow been corrupted.
 	
 	#end
 	Method Decompress:DataBuffer()
-		Assert( Length>8 And PeekUInt(0)=~PeekUInt(4),"DataBuffer does not appear to contain valid compressed data" )
+		If Length<8 Or PeekUInt( 0 )<>~PeekUInt( 4 ) Return Null
 		Local destLen:=PeekUInt( 0 )
 		Local dest:=New DataBuffer( destLen )
-		zlib.uncompress( dest.Data,Cast<zlib.z_uLong Ptr>( Varptr destLen ),Data+8,Length-8 )
+		Local r:=zlib.uncompress( dest.Data,Cast<zlib.z_uLong Ptr>( Varptr destLen ),Data+8,Length-8 )
+		If r<>zlib.Z_OK
+			dest.Discard()
+			Return Null
+		Endif
 		Return dest
 	End
 	

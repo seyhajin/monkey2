@@ -15,7 +15,7 @@ Namespace zlib
 #Import "zlib-1.2.11/inftrees.c"
 #Import "zlib-1.2.11/trees.c"
 #Import "zlib-1.2.11/uncompr.c"
-'#Import "zlib-1.2.11/zutil.c"
+#Import "zlib-1.2.11/zutil.c"
 
 #Import "zlib-1.2.11/*.h"
 #Import "<zlib.h>"
@@ -25,6 +25,16 @@ Extern
 'PITA zlib ulong define
 Struct z_uLong="uLong"
 End
+
+Const Z_OK:Int
+Const Z_STREAM_END:Int
+Const Z_NEED_DICT:Int
+Const Z_ERRNO:Int
+Const Z_STREAM_ERROR:Int
+Const Z_DATA_ERROR:Int
+Const Z_MEM_ERROR:Int
+Const Z_BUF_ERROR:Int
+Const Z_VERSION_ERROR:Int
 
 Function compress:Int( dest:UByte Ptr,destLen:z_uLong Ptr,source:UByte Ptr,sourceLen:UInt )
 Function compress2:Int( dest:UByte Ptr,destLen:z_uLong Ptr,source:UByte Ptr,sourceLen:UInt,level:Int )
