@@ -325,8 +325,6 @@ Class RigidBody Extends Component
 			
 			_btbody.setCollisionShape( collider?.Validate() )
 
-'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_KINEMATIC_OBJECT )
-			
 '			If Cast<MeshCollider>( collider )
 '				_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
 '			Else

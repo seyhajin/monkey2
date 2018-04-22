@@ -10,6 +10,15 @@ namespace bbBullet{
 	
 	btTransform getWorldTransform( btMotionState *self );
 	
+	struct Point2PointConstraint : public btPoint2PointConstraint{
+		
+		Point2PointConstraint(btRigidBody* rbA,btRigidBody* rbB, const btVector3& pivotInA,const btVector3& pivotInB):
+		btPoint2PointConstraint(*rbA,*rbB,pivotInA,pivotInB){}
+
+		Point2PointConstraint(btRigidBody* rbA,const btVector3& pivotInA):
+		btPoint2PointConstraint(*rbA,pivotInA){}
+	};
+	
 	struct MotionState : public btMotionState{
 		
 		virtual void setWorldTransform( btTransform *worldTrans ){

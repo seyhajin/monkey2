@@ -30,6 +30,7 @@ Using reflection..
 #Import "scene/components/animator"
 #Import "scene/components/rigidbody"
 #Import "scene/components/collider"
+#Import "scene/components/constraint"
 #Import "scene/components/behaviour"
 #Import "scene/components/flybehaviour"
 #Import "scene/components/movebehaviour"

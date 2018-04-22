@@ -229,6 +229,9 @@ Class btDynamicsWorld Extends btCollisionWorld
 		
 	Method removeRigidBody( body:btRigidBody ) Virtual
 		
+	Method addConstraint( constraint:btTypedConstraint,disableCollisionsBetweenLinkedBodies:Bool=False )
+		
+	Method removeConstraint( constraint:btTypedConstraint )
 End
 
 Class btDiscreteDynamicsWorld Extends btDynamicsWorld
@@ -564,4 +567,29 @@ Class btRigidBody Extends btCollisionObject
 	Method applyTorqueImpulse( torque:btVector3 )
 		
 End
+
+Class btTypedConstraint Extends btObject
+	
+End
+
+Class btPoint2PointConstraint Extends btTypedConstraint="bbBullet::Point2PointConstraint"
+	
+	Method New( rbA:btRigidBody,rbB:btRigidBody,pivotInA:btVector3,pivotInB:btVector3 )
+
+	Method New( rbA:btRigidBody,pivotInA:btVector3 )
+		
+	Method setPivotA( pivotA:btVector3 )
+		
+	Method setPivotB( pivotB:btVector3 )
+		
+	Method getPivotA:btVector3()
+		
+	Method getPivotB:btVector3()
+		
+	Method setParam( num:Int,value:btScalar,axis:Int=-1 )
+
+	Method getParam:btScalar( num:Int,axis:Int=-1 )
+		
+End
+
 

@@ -91,7 +91,7 @@ Class World
 		
 		resetCollisions()
 		
-		_btworld.stepSimulation( elapsed )',_scene.MaxSubSteps,1.0/_scene.UpdateRate )
+		_btworld.stepSimulation( elapsed,_scene.MaxSubSteps,1.0/_scene.UpdateRate )
 		
 		Local n:=getNumCollisions()
 		
@@ -116,7 +116,6 @@ Class World
 		Next
 		
 		resetCollisions()
-		
 	End
 	
 	Property btWorld:btDynamicsWorld()
@@ -135,6 +134,8 @@ Class World
 		Local btbody:=body.btBody
 		
 		btbody.setUserPointer( Cast<Void Ptr>( body ) )
+		
+'		btbody.setWorldTransform( body.Entity.Matrix )
 		
 		_btworld.addRigidBody( btbody,body.CollisionGroup,body.CollisionMask )
 	End
@@ -158,8 +159,8 @@ Class World
 	
 	Field _btworld:btDynamicsWorld
 	
-	Field _newBodies:=New Stack<RigidBody>
-	
 	Field _bodies:=New Stack<RigidBody>
+	
+	Field _constraints:=New Stack<Constraint>
 
 End
