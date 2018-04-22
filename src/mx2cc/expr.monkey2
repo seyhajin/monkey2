@@ -475,7 +475,16 @@ Class NewArrayExpr Extends Expr
 		If Not atype SemantError( "NewArrayExpr.OnSemant()" )
 		
 		If atype.IsGeneric Return New LiteralValue( atype,"" )
+
+		Local sizes:=SemantArgs( Self.sizes,scope )
+		sizes=UpCast( sizes,Type.IntType )
+
+		Local inits:=SemantArgs( Self.inits,scope )
+		inits=UpCast( inits,atype.elemType )
 		
+		Return New NewArrayValue( atype,sizes,inits )
+		
+		#rem
 '		If atype.elemType.IsGeneric Throw New SemantEx( "Array element type '"+atype.elemType.Name+"' is generic" )
 		
 		Local sizes:Value[],inits:Value[]
@@ -492,6 +501,7 @@ Class NewArrayExpr Extends Expr
 		Endif
 		
 		Return New NewArrayValue( atype,sizes,inits )
+		#end
 	End
 		
 	Method ToString:String() Override

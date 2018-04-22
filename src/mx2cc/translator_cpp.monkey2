@@ -2200,7 +2200,12 @@ Class Translator_CPP Extends Translator
 		'Uses( atype.elemType )
 		UsesType( atype.elemType )
 		
-		If value.inits Return ArrayName( atype )+"({"+TransArgs( value.inits )+"},"+value.inits.Length+")"
+		If value.inits 
+			If value.sizes
+				Return ArrayName( atype )+"({"+TransArgs( value.inits )+"},"+TransArgs( value.sizes )+")"
+			Endif
+			Return ArrayName( atype )+"({"+TransArgs( value.inits )+"},"+value.inits.Length+")"
+		Endif
 		
 		Return ArrayName( atype )+"("+TransArgs( value.sizes )+")"
 	End

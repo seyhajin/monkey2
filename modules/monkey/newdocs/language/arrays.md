@@ -34,13 +34,18 @@ Declaring an array does not actually create an array. To do that you must use `N
 
 The syntax for creating an initialized array is:
 
-`New` _ElementType_[]( _Element0_`,`_Element1_`,`...etc )
+`New` _ElementType_`[` _DimensionSizes_ `]`( _Element0_`,`_Element1_`,`...etc )
+
+One dimesnional arrays can omit DimensionSizes when creating an initialized array:
+
+`New` _ElementType_`[` `]`( _Element0_`,`_Element1_`,`...etc )
 
 Here are some examples:
 
 ```
 Local ints:Int[]=New Int[10]				'Creates a ten element integer array.
 Local flts:=New Float[]( 1.0,3,5.1,7,9.2 )	'Creates a 5 element float array initialized to 1.0,3,5.1,7,9.2 
+Local flts2:=New Float[2,2]( 1,2,3,4 )		'Creates a 2x2 element float array initialized to 1,2,3,4
 ```
 
 @#### Iterating through arrays
