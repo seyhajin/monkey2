@@ -19,6 +19,11 @@ Struct Line<T>
 		Self.o=o;Self.d=d
 	End
 	
+	Operator To:String()
+		Return "Line("+o+","+d+")"
+	End
+	
+	
 	Operator-:Line()
 		Return New Line( o,-d )
 	End
@@ -33,6 +38,10 @@ Struct Line<T>
 	
 	Operator*:Vec3<T>( time:Double )
 		Return o+d*time
+	End
+	
+	Method TNearest:Float( p:Vec3<T> )
+		Return ( d.Dot( p-o )/d.Dot( d ) )
 	End
 	
 	Method Nearest:Vec3<T>( p:Vec3<T> )
