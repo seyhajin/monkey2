@@ -51,8 +51,7 @@ Function QCollide:QResult( collider:ConvexCollider,src:Vec3f,dst:Vec3f,moving:Bo
 	
 '		debug+=", "
 		
-		If cresult.normal.y>.7071
-'			Print "hitground "+cresult.normal
+		If cresult.normal.y>.7'9
 			qresult.hitground=True
 		Endif
 		
@@ -62,46 +61,53 @@ Function QCollide:QResult( collider:ConvexCollider,src:Vec3f,dst:Vec3f,moving:Bo
 			
 		Local plane:=New Planef( cresult.point,cresult.normal )
 		plane.d-=margin
-		
+
 		Local d0:=plane.Distance( src ),d1:=plane.Distance( dst )
 		
 		Local tline:=New Linef( src,dst-src )
 		
 		Local t:=plane.TIntersect( tline )
 		
-		If t>0 src=tline * t
+		If t>0 
+			src=tline * t
+		Endif
 		
 		If Not moving Or t>=1
 			dst=src
 			Exit
 		Endif
-			
+
 		Select state
 		Case 0
-			dst=plane.Nearest( dst )
-'			debug+="A "+P( plane )
+			
+			Local tdst:=plane.Nearest( dst )
+			
+			If plane.n.y<.1 And tdst.y>src.y
+				dst=src
+				Exit
+				Local t:=(tdst.y-src.y)/(tdst-src).Length
+				tdst=(tdst-src)*t+src
+				Print "Here!"
+			Endif
+			
+			dst=tdst
+			
 			plane0=plane
 			state=1
 		Case 1
 			Local v:=plane0.n.Cross( plane.n )
-			If v.Length>.001
+			
+			If v.Length>.00001
 				Local groove:=New Linef( src,v )
-'				Local d0:=plane0.Distance( dst )
 				dst=groove.Nearest( dst )
-'				debug+="B "+P( plane )+" d0="+F(d0)+" sd0="+F(plane0.Distance(src))+" dd0="+F(plane0.Distance(dst))
 				plane1=plane
 				state=2
 			Else
 				Print "QCollide OOPS2"
-'				debug+="C "+P( plane )
-				dst=plane.Nearest( dst )
-				plane0=plane
-				state=1
+				dst=src
+				Exit
 			Endif
 		Case 2
-'			Local d0:=plane0.Distance( dst )
-'			Local d1:=plane1.Distance( dst )
-'			debug+="D "+P( plane )+" d0="+F(d0)+" d1="+F(d1)
 			dst=src
 			Exit
 		End
@@ -128,6 +134,11 @@ Class CharacterController Extends Behaviour
 		Return _onground
 	End
 	
+	Property OnWall:Bool()
+		
+		Return _onwall
+	End
+	
 	Property StepDown:Float()
 		
 		Return _stepDown
@@ -144,6 +155,8 @@ Class CharacterController Extends Behaviour
 	Field _stepDown:Float=.5	'50 cms
 	
 	Field _onground:Bool
+	
+	Field _onwall:Bool
 	
 	Field _vel:Vec3f
 	
@@ -180,21 +193,25 @@ Class CharacterController Extends Behaviour
 		
 		Local dst:=Entity.Position
 		
-		Local qres:=QCollide( Cast<ConvexCollider>( Entity.Collider ),src,dst,moving Or Not _onground )
+		Local qres:=QCollide( Cast<ConvexCollider>( Entity.Collider ),src,dst,True )'moving Or Not _onground )
 		dst=qres.position
-		
+#rem
 		If Not _jumping And Not qres.hitground And _onground
 			src=dst
 			dst.y-=_stepDown
 			qres=QCollide( Cast<ConvexCollider>( Entity.Collider ),src,dst,False )
 			dst=qres.position
 		Endif
-		
+#end		
 		_onground=qres.hitground
-
-		If _onground _jumping=False
+		_onwall=qres.hitwall
 		
-		_vel.y=dst.y-src.y
+		If _onground 
+			_jumping=False
+			_vel.y=0
+		Else
+			_vel.y=dst.y-src.y
+		Endif
 		
 		Entity.Position=dst
 	End
@@ -318,7 +335,7 @@ Class MyWindow Extends Window
 		Local controller:=_player.GetComponent<CharacterController>()
 
 '		canvas.DrawText( "y="+_player.Position.y+" onground="+controller.OnGround+" FPS="+App.FPS,0,0 )
-		canvas.DrawText( " onground="+controller.OnGround+" FPS="+App.FPS,0,0 )
+		canvas.DrawText( " onground="+controller.OnGround+" onwall="+controller.OnWall+" FPS="+App.FPS,0,0 )
 	End
 	
 End

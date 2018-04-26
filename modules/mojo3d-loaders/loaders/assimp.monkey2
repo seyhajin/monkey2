@@ -254,7 +254,8 @@ Class AssimpLoader
 		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
 		diffuseColor=New Color( Pow( aicolor.r,2.2 ),Pow( aicolor.g,2.2 ),Pow( aicolor.b,2.2 ),aicolor.a )
 
-		Local material:=New PbrMaterial( boned )
+		Local material:=New PbrMaterial
+		If boned material.Flags|=MaterialFlags.Boned
 		
 		material.Name=name
 		
