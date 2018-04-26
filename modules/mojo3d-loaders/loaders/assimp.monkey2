@@ -255,7 +255,7 @@ Class AssimpLoader
 		diffuseColor=New Color( Pow( aicolor.r,2.2 ),Pow( aicolor.g,2.2 ),Pow( aicolor.b,2.2 ),aicolor.a )
 
 		Local material:=New PbrMaterial
-		If boned material.Flags|=MaterialFlags.Boned
+		material.Boned=boned
 		
 		material.Name=name
 		
