@@ -230,7 +230,6 @@ Class UniformBlock Extends Resource
 	End
 
 	Method GetTexture:Texture( uniform:String )
-		
 		Local id:=GetUniformId( uniform,Type.Texture )
 		Return _uniforms[id].texture
 	End
@@ -297,7 +296,7 @@ Class UniformBlock Extends Resource
 
 #If __DEBUG__		
 		Assert( id,"Uniform '"+name+"' not found" )
-		Assert( _uniforms[id].type,"Uniform '"+name+"' does not found in UniformBlock" )
+		Assert( _uniforms[id].type,"Uniform '"+name+"' not found in UniformBlock" )
 		Assert( _uniforms[id].type=type,"Uniform '"+name+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
 #endif
 		Return id

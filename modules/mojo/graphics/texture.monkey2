@@ -406,7 +406,7 @@ Class Texture Extends Resource
 	Method Modified( r:Recti )
 		
 		If _managed 
-			Print "Texture Modified - Update managed"
+'			Print "Texture Modified - Update managed"
 			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
 		Endif
 
