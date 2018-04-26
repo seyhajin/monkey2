@@ -568,8 +568,16 @@ Class btRigidBody Extends btCollisionObject
 		
 End
 
+Const BT_CONSTRAINT_ERP:Int
+Const BT_CONSTRAINT_STOP_ERP:Int
+Const BT_CONSTRAINT_CFM:Int
+Const BT_CONSTRAINT_STOP_CFM:Int
+
 Class btTypedConstraint Extends btObject
 	
+	Method setParam( num:Int,value:btScalar,axis:Int=-1 )
+
+	Method getParam:btScalar( num:Int,axis:Int=-1 )
 End
 
 Class btPoint2PointConstraint Extends btTypedConstraint="bbBullet::Point2PointConstraint"
@@ -585,10 +593,6 @@ Class btPoint2PointConstraint Extends btTypedConstraint="bbBullet::Point2PointCo
 	Method getPivotA:btVector3()
 		
 	Method getPivotB:btVector3()
-		
-	Method setParam( num:Int,value:btScalar,axis:Int=-1 )
-
-	Method getParam:btScalar( num:Int,axis:Int=-1 )
 		
 End
 
