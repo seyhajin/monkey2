@@ -70,9 +70,9 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_camera.Render( canvas )
+		_scene.Render( canvas )
 		
-		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
+		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	
 End

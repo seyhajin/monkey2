@@ -9,7 +9,7 @@ Class MonochromeEffect Extends PostEffect
 	#end
 	Method New( level:Float=1.0 )
 		
-		_shader=Shader.Open( "effect-monochrome" )
+		_shader=Shader.Open( "effects/monochrome" )
 		
 		_uniforms=New UniformBlock( 3 )
 		
@@ -32,29 +32,10 @@ Class MonochromeEffect Extends PostEffect
 
 	Protected
 	
-	#rem monkeydoc @hidden
-	#end	
 	Method OnRender() Override
 		
-		Local rsize:=Device.Viewport.Size
-		Local rtarget:=Device.RenderTarget
-		Local rtexture:=rtarget.GetColorTexture( 0 )
-		
-		If Not _target Or rsize.x>_target.Size.x Or rsize.y>_target.Size.y
-			
-			_target?.Discard()
-			_texture?.Discard()
-			
-			_texture=New Texture( rsize.x,rsize.y,rtexture.Format,Null )
-			_target=New RenderTarget( New Texture[]( _texture ),Null )
-		End
-					
-		_uniforms.SetTexture( "SourceTexture",rtexture )
-		_uniforms.SetVec2f( "SourceTextureSize",rsize )
-		_uniforms.SetVec2f( "SourceCoordScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( rtexture.Size ) )
-		
-		Device.RenderTarget=_target
 		Device.Shader=_shader
+		
 		Device.BindUniformBlock( _uniforms )
 		
 		RenderQuad()
@@ -64,7 +45,5 @@ Class MonochromeEffect Extends PostEffect
 	
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
-	Field _target:RenderTarget
-	Field _texture:Texture
 	
 End

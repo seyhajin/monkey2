@@ -4,8 +4,6 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
-
 Using std..
 Using mojo..
 Using mojo3d..
@@ -28,7 +26,7 @@ Class MyWindow Extends Window
 		
 		_scene=Scene.GetCurrent()
 		
-		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+'		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
 		_scene.FogColor=Color.Sky
 		_scene.FogNear=20
@@ -54,7 +52,7 @@ Class MyWindow Extends Window
 		_particles.RotateX( -90 )	'point upwards!
 		
 		Local pmaterial:=_particles.Material
-		pmaterial.ColorTexture=Texture.Load( "asset::bluspark.png",TextureFlags.FilterMipmap )
+'		pmaterial.ColorTexture=Texture.Load( "asset::bluspark.png",TextureFlags.FilterMipmap )
 		
 		Local pbuffer:=_particles.ParticleBuffer
 		pbuffer.Gravity=New Vec3f( 0,-9.81,0 )	'gravity in world space in m/s^2.
@@ -64,8 +62,8 @@ Class MyWindow Extends Window
 		pbuffer.ConeAngle=30		'angle of particle emission cone.
 		pbuffer.MinVelocity=15.0	'min particle velocity.
 		pbuffer.MaxVelocity=20.0	'max particle velocity.
-		pbuffer.MinSize=32.0		'min particle size.
-		pbuffer.MaxSize=64.0		'max particle size.
+		pbuffer.MinSize=8.0		'min particle size.
+		pbuffer.MaxSize=12.0		'max particle size.
 		
 		For Local an:=0 Until 360 Step 45
 			

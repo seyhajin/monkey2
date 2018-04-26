@@ -1,58 +1,9 @@
 
 Namespace mojo3d
 
-Private
-
-Function MakeColor:Color( jobj:JsonObject )
-	
-	Local r:=jobj.Contains( "r" ) ? jobj.GetNumber( "r" ) Else 1.0
-	Local g:=jobj.Contains( "g" ) ? jobj.GetNumber( "g" ) Else 1.0
-	Local b:=jobj.Contains( "b" ) ? jobj.GetNumber( "b" ) Else 1.0
-	Local a:=jobj.Contains( "a" ) ? jobj.GetNumber( "a" ) Else 1.0
-	
-	Return New Color( r,g,b,a )
-End
-
-Class JsonObject Extension
-
-	Method GetColor:Color( key:String )
-		
-		Local jobj:=GetObject( key )
-		If Not jobj Return Color.White
-		
-		Return MakeColor( jobj )
-	End
-End
-
-Public
-
 #rem monkeydoc The PbrMaterial class.
 #end
 Class PbrMaterial Extends Material
-	
-	Private
-	
-	Method Init( boned:Bool )
-		
-		_boned=boned
-
-		Uniforms.DefaultTexture=Texture.ColorTexture( Color.White )
-		
-		ColorTexture=Null
-		EmissiveTexture=Null
-		MetalnessTexture=Null
-		RoughnessTexture=Null
-		OcclusionTexture=Null
-		NormalTexture=Null
-		
-		ColorFactor=Color.White
-		EmissiveFactor=Color.Black
-		MetalnessFactor=1.0
-		RoughnessFactor=1.0
-	End
-	
-	Public
-	
 	
 	#rem monkeydoc Creates a new pbr material.
 	
@@ -69,31 +20,27 @@ Class PbrMaterial Extends Material
 	The above last 3 rules allow you to pack metalness, roughness and occlusion into a single texture.
 	
 	#end
-	Method New( boned:Bool=False )
+	Method New()
 		
-		Init( boned )
+		Init()
 		
-		AddInstance( New Variant[]( boned ) )
+		AddInstance()
 	End
 	
-	Method New( color:Color,metalness:Float=1.0,roughness:Float=1.0,boned:Bool=False )
+	Method New( color:Color,metalness:Float=1.0,roughness:Float=1.0 )
 		
-		Init( boned )
+		Init()
 		
 		ColorFactor=color
 		MetalnessFactor=metalness
 		RoughnessFactor=roughness
 		
-		AddInstance( New Variant[]( color,metalness,roughness,boned ) )
+		AddInstance( New Variant[]( color,metalness,roughness ) )
 	End
 	
 	Method New( material:PbrMaterial )
 		
 		Super.New( material )
-		
-		_textured=material._textured
-		_bumpmapped=material._bumpmapped
-		_boned=material._boned
 		
 		AddInstance( material )
 	End
@@ -105,21 +52,16 @@ Class PbrMaterial Extends Material
 		Return New PbrMaterial( Self )
 	End
 	
-	Method GetOpaqueShader:Shader() Override
-		
-		ValidateShaders()
-		
-		Return _opaqueShader
-	End
-	
-	Method GetTransparentShader:Shader() Override
-		
-		ValidateShaders()
-		
-		Return _transparentShader
-	End
-	
 	'***** textures *****
+	
+	Property Boned:Bool()
+		
+		Return (AttribMask & 192)=192
+		
+	Setter( boned:Bool )
+		
+		If boned AttribMask|=192 Else AttribMask&=~192
+	End
 	
 	Property ColorTexture:Texture()
 	
@@ -129,7 +71,18 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "ColorTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured _dirty=True
+		UpdateAttribMask()
+	End
+	
+	Property AmbientTexture:Texture()
+		
+		Return Uniforms.GetTexture( "AmbientTexture" )
+	
+	Setter( texture:Texture )
+		
+		Uniforms.SetTexture( "AmbientTexture",texture )
+
+		UpdateAttribMask()
 	End
 	
 	Property EmissiveTexture:Texture()
@@ -140,7 +93,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "EmissiveTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured _dirty=True
+		UpdateAttribMask()
 	End
 	
 	Property MetalnessTexture:Texture()
@@ -151,7 +104,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "MetalnessTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured _dirty=true
+		UpdateAttribMask()
 	End
 
 	Property RoughnessTexture:Texture()
@@ -162,7 +115,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "RoughnessTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured _dirty=true
+		UpdateAttribMask()
 	End
 	
 	Property OcclusionTexture:Texture()
@@ -173,7 +126,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "OcclusionTexture",texture )
 		
-		If (Uniforms.NumTextures<>0)<>_textured _dirty=true
+		UpdateAttribMask()
 	End
 	
 	Property NormalTexture:Texture()
@@ -184,7 +137,9 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetTexture( "NormalTexture",texture )
 		
-		If (texture<>null)<>_bumpmapped _dirty=true
+		If texture AttribMask|=32 Else AttribMask&=~32
+			
+		UpdateAttribMask()
 	End
 	
 	'***** factors *****
@@ -196,6 +151,16 @@ Class PbrMaterial Extends Material
 	Setter( color:Color )
 	
 		Uniforms.SetColor( "ColorFactor",color )
+	End
+	
+	[jsonify=1]
+	Property AmbientFactor:Color()
+	
+		Return Uniforms.GetColor( "AmbientFactor" )
+		
+	Setter( color:Color )
+	
+		Uniforms.SetColor( "AmbientFactor",color )
 	End
 	
 	[jsonify=1]
@@ -227,7 +192,7 @@ Class PbrMaterial Extends Material
 	
 		Uniforms.SetFloat( "RoughnessFactor",factor )
 	End
-
+	
 	#rem monkeydoc Loads a PbrMaterial from a 'file'.
 	
 	A .pbr file is actually a directory containing a number of textures in png format. These textures are:
@@ -250,12 +215,18 @@ Class PbrMaterial Extends Material
 
 		Local material:=New PbrMaterial
 		
-		Local texture:=LoadTexture( path,"color",textureFlags )
+		Local texture:=scene.LoadTexture( path,textureFlags )
+		If texture
+			material.ColorTexture=texture
+			Return material
+		Endif
+		
+		texture=LoadTexture( path,"color",textureFlags )
 		If texture
 			material.ColorTexture=texture
 		Endif
 		
-		texture=LoadTexture(path,"emissive",textureFlags )
+		texture=LoadTexture( path,"emissive",textureFlags )
 		If texture
 			material.EmissiveTexture=texture
 			material.EmissiveFactor=Color.White
@@ -298,57 +269,59 @@ Class PbrMaterial Extends Material
 		Return material
 	End
 	
-	Protected
+	Private
 	
-	Field _textured:Bool
-	Field _bumpmapped:Bool
 	Field _boned:Bool
 	
-	Field _opaqueShader:Shader
-	Field _transparentShader:Shader
-	Field _shadowShader:Shader
+	Method Init()
+		
+		Uniforms.DefaultTexture=Texture.ColorTexture( Color.White )
+		
+		ShaderName="materials/pbr-default"
+		AttribMask=1|2|4
+		
+		ColorTexture=Null
+		AmbientTexture=Null
+		EmissiveTexture=Null
+		MetalnessTexture=Null
+		RoughnessTexture=Null
+		OcclusionTexture=Null
+		NormalTexture=Null
+		
+		ColorFactor=Color.White
+		AmbientFactor=Color.Black
+		EmissiveFactor=Color.Black
+		MetalnessFactor=1.0
+		RoughnessFactor=1.0
+	End
 	
-	Field _dirty:=True
-	
-	Method ValidateShaders()
+	Method UpdateAttribMask()
 		
-		If Not _dirty Return
-		
-		_textured=True'False
-		_bumpmapped=False
-		
-		If Uniforms.NumTextures
-			_textured=True
-			_bumpmapped=(Uniforms.GetTexture( "NormalTexture" )<>null)
-		Endif
-		
-		Local defs:=Renderer.GetCurrent().ShaderDefs
-		
-		If _textured
-			defs+="MX2_TEXTURED~n"
-			If _bumpmapped
-				defs+="MX2_BUMPMAPPED~n"
-			Endif
-		Endif
-		
-		If _boned defs+="MX2_BONED~n"
-			
-		_transparentShader=Shader.Open( "material-pbr-forward",defs )
-		
-		If Renderer.GetCurrent().Deferred
-			
-			_opaqueShader=Shader.Open( "material-pbr-deferred",defs )
-		
-		Else
-			
-			_opaqueShader=_transparentShader
-			
-		Endif
-		
-		_shadowShader=_opaqueShader
-		
-		_dirty=False
-		
+		If Uniforms.NumTextures<>0 AttribMask|=24 Else AttribMask&=~24
 	End
 	
 End
+
+Private
+
+Function MakeColor:Color( jobj:JsonObject )
+	
+	Local r:=jobj.Contains( "r" ) ? jobj.GetNumber( "r" ) Else 1.0
+	Local g:=jobj.Contains( "g" ) ? jobj.GetNumber( "g" ) Else 1.0
+	Local b:=jobj.Contains( "b" ) ? jobj.GetNumber( "b" ) Else 1.0
+	Local a:=jobj.Contains( "a" ) ? jobj.GetNumber( "a" ) Else 1.0
+	
+	Return New Color( r,g,b,a )
+End
+
+Class JsonObject Extension
+
+	Method GetColor:Color( key:String )
+		
+		Local jobj:=GetObject( key )
+		If Not jobj Return Color.White
+		
+		Return MakeColor( jobj )
+	End
+End
+

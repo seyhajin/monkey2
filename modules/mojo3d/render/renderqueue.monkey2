@@ -22,6 +22,7 @@ Class RenderOp
 	
 	Field blendMode:BlendMode
 	Field distance:Float
+	Field shader:Shader
 End
 
 Public
@@ -61,6 +62,11 @@ Class RenderQueue
 		Return _opaqueOps
 	End
 	
+	Property SelfIlluminatedOps:Stack<RenderOp>()
+		
+		Return _selfillumOps
+	End
+	
 	Property TransparentOps:Stack<RenderOp>()
 	
 		Return _transparentOps
@@ -78,6 +84,7 @@ Class RenderQueue
 
 	Method Clear()
 		_opaqueOps.Clear()
+		_selfillumOps.Clear()
 		_transparentOps.Clear()
 		_shadowOps.Clear()
 		_spriteOps.Clear()	
@@ -88,16 +95,27 @@ Class RenderQueue
 		op.blendMode=op.material.BlendMode
 		If op.instance And op.instance.Alpha<1 And op.blendMode=BlendMode.Opaque op.blendMode=BlendMode.Alpha
 			
+		Local stack:Stack<RenderOp>
+		
 		If op.blendMode=BlendMode.Opaque
-			DebugAssert( op.material.GetOpaqueShader(),"Material has no opaque shader" )
-			_opaqueOps.Push( op )
+			stack=_opaqueOps
+			op.shader=op.material.GetRenderShader()
 		Else
-			DebugAssert( op.material.GetTransparentShader(),"Material has no transparent shader" )
+			stack=_transparentOps
+			op.shader=op.material.GetRenderShader()
 			op.distance=op.instance ? op.instance.Position.Distance( _eyePos ) Else _eyeLen
-			_transparentOps.Push( op )
 		Endif
-			
-		If _castsShadow And op.material.GetShadowShader() _shadowOps.Push( op )
+		
+		If op.material.SelfIlluminated
+			Assert( False )
+			stack=_selfillumOps
+		Endif
+		
+		If Not op.shader Return
+
+		stack.Add( op )
+		
+		If _castsShadow And op.material.GetRenderShader() _shadowOps.Push( op )
 	End
 	
 	Method AddSpriteOp( op:SpriteOp )
@@ -154,7 +172,7 @@ Class RenderQueue
 	End
 	
 	Method AddSpriteOp( sprite:Sprite )
-		DebugAssert( sprite.Material.GetTransparentShader(),"Sprites must be transparent!" )
+		DebugAssert( sprite.Material.GetRenderShader(),"Sprites must be transparent!" )
 		Local op:=New SpriteOp
 		op.sprite=sprite
 		AddSpriteOp( op )
@@ -169,6 +187,7 @@ Class RenderQueue
 	Field _castsShadow:Bool
 	
 	Field _opaqueOps:=New Stack<RenderOp>
+	Field _selfillumOps:=New Stack<RenderOp>
 	Field _transparentOps:=New Stack<RenderOp>
 	Field _shadowOps:=New Stack<RenderOp>
 	

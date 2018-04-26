@@ -38,6 +38,7 @@ Class MyWindow Extends Window
 		'create camera
 		'
 		_camera=New Camera( Self )
+		
 		_camera.Move( 0,15,-20 )
 		
 		New FlyBehaviour( _camera )
@@ -46,7 +47,7 @@ Class MyWindow Extends Window
 		'
 		_light=New Light
 		_light.CastsShadow=True
-		_light.Rotate( 75,15,0 )
+		_light.Rotate( 90,0,0 )'75,15,0 )
 		
 		'create ground
 		'
@@ -63,6 +64,8 @@ Class MyWindow Extends Window
 		root.Scale=New Vec3f( 3 )
 		
 		_ducks.Push( root )
+		
+		_ducks[0].AddComponent<RotateBehaviour>().Speed=New Vec3f( 0,-.01,0 )
 		
 		For Local m:=0.0 To 1.0 Step .125
 		
@@ -102,11 +105,9 @@ Class MyWindow Extends Window
 
 		RequestRender()
 		
-		_ducks[0].Rotate( 0,-.01,0 )
-		
 		_scene.Update()
 		
-		_camera.Render( canvas )
+		_scene.Render( canvas )
 
 		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End

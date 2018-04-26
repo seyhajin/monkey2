@@ -5,7 +5,8 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
+#Import "assets/miramar-skybox.jpg"
+#Import "assets/Acadia-Tree-Sprite.png"
 
 Using std..
 Using mojo..
@@ -62,16 +63,15 @@ Class MyWindow Extends Window
 		'create sprites
 		'
 		Local material:=SpriteMaterial.Load( "asset::Acadia-Tree-Sprite.png" )
-		
-		material.AlphaDiscard=1.0/255.0
-		
+'		material.AlphaDiscard=1.0/255.0
+
 		For Local i:=0 Until 1000
 			
 			Local sprite:=New Sprite( material )
 			
 			sprite.Move( Rnd(-50,50),0,Rnd(-50,50) )
-
-			sprite.Scale=New Vec3f( Rnd(4,5),Rnd(5,6),1 )
+			
+			sprite.Scale=New Vec3f( Rnd( 1,2 ),Rnd( 2,3 ),1 )
 			
 			sprite.Handle=New Vec2f( .5,0 )
 			
@@ -82,7 +82,9 @@ Class MyWindow Extends Window
 		
 		For Local i:=0 Until 100
 			
-			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
+			Local sx:=Rnd( 1,2 )
+
+			Local box:=Model.CreateBox( New Boxf( -sx,0,-sx,sx,Rnd( 2,10 ),sx ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 			
 			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
 		next	

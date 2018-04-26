@@ -20,6 +20,7 @@ Class SpriteBuffer
 		Local n:=spriteOps.Length
 		
 		If n*4>_vbuffer.Length
+			Local len:=_vbuffer.Length
 			_vbuffer.Resize( Max( _vbuffer.Length*3/2,n*4 ) )
 		Endif
 		
@@ -119,15 +120,19 @@ Class SpriteBuffer
 			
 			vp[0].position=matrix * New Vec3f( -handle.x,1-handle.y,0 )
 			vp[0].texCoord0=New Vec2f( texrect.min.x,texrect.min.y )
+			vp[0].color=~0
 			
 			vp[1].position=matrix * New Vec3f( 1-handle.x,1-handle.y,0 )
 			vp[1].texCoord0=New Vec2f( texrect.max.x,texrect.min.y )
+			vp[1].color=~0
 
 			vp[2].position=matrix * New Vec3f( 1-handle.x,-handle.y,0 )
 			vp[2].texCoord0=New Vec2f( texrect.max.x,texrect.max.y )
+			vp[2].color=~0
 			
 			vp[3].position=matrix * New Vec3f( -handle.x,-handle.y,0 )
 			vp[3].texCoord0=New Vec2f( texrect.min.x,texrect.max.y )
+			vp[3].color=~0
 			
 			'bump vertex/index
 			vp+=4
@@ -170,6 +175,7 @@ Class SpriteBuffer
 		
 		op.blendMode=_material.BlendMode
 		op.distance=_distance
+		op.shader=_material.GetRenderShader()
 		
 		_renderOps.Add( op )
 	End

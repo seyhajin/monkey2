@@ -162,7 +162,11 @@ Class Gltf2Loader
 	
 	Method GetMaterial:Material( material:Gltf2Material,textured:Bool,boned:Bool )
 		
-		If Not material Return New PbrMaterial( Color.Magenta,0,1,boned )
+		If Not material
+			Local mat:=New PbrMaterial( Color.Magenta,0,1 )
+			mat.Boned=boned
+			Return mat
+		Endif
 		
 		If _materialCache.Contains( material ) Return _materialCache[material]
 		
@@ -180,7 +184,8 @@ Class Gltf2Loader
 			normalTexture=GetTexture( material.normalTexture )
 		Endif
 			
-		Local mat:=New PbrMaterial( boned )
+		Local mat:=New PbrMaterial
+		mat.Boned=boned
 		
 		mat.Name=material.name
 		

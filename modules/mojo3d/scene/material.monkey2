@@ -5,6 +5,18 @@ Namespace mojo3d
 #end
 Class Material Extends Resource
 	
+	enum Attrib
+		Position=1
+		Normal=2
+		Color=4
+		TexCoord0=8
+		TexCoord1=16
+		Tangent=32
+		Weights=64
+		Bones=128
+	End
+		
+	
 	#rem monkeydoc Creates a copy of the material.
 	#end
 	Method Copy:Material() abstract
@@ -20,14 +32,41 @@ Class Material Extends Resource
 		_name=name
 	End
 	
-	#Rem monkeydoc @hidden The material uniforms.
+	Property ShaderName:String()
+		
+		Return _shaderName
 	
-	TODO: Should really be protected...
+	Setter( name:String )
+		
+		If name=_shaderName Return
+		
+		_shaderName=name
+		
+		Invalidate()
+	End
+	
+	Property AttribMask:Int()
+		
+		Return _attribMask
 
-	#End
-	Property Uniforms:UniformBlock()
+	Setter( mask:Int )
+		
+		If mask=_attribMask Return
+		
+		_attribMask=mask
+		
+		Invalidate()
+	End
 	
-		Return _uniforms
+	Property SelfIlluminated:Bool()
+		
+		Return _selfillum
+	
+	Setter( selfillum:Bool )
+		
+		If selfillum=_selfillum Return
+		
+		_selfillum=selfillum
 	End
 	
 	#Rem monkeydoc The material blendmode.
@@ -93,33 +132,24 @@ Class Material Extends Resource
 		
 		TextureMatrix=TextureMatrix.Scale( sx,sy )
 	End
+	
+	#Rem monkeydoc @hidden The material uniforms.
+	
+	TODO: Should really be protected...
 
-	#rem monkeydoc Gets material's opaque shader.
-	#end
-	Method GetOpaqueShader:Shader() Virtual
+	#End
+	Property Uniforms:UniformBlock()
 	
-		Return Null
+		Return _uniforms
 	End
-	
-	#rem monkeydoc Gets material's transparent shader.
+
+	#rem monkeydoc Gets material's shader for rendering.
 	#end
-	Method GetTransparentShader:Shader() Virtual
+	Method GetRenderShader:Shader()
 		
-		Return Null
-	End
-	
-	#rem monkeydoc Gets material's sprite shader.
-	#end
-	Method GetSpriteShader:Shader() Virtual
+		Validate()
 		
-		Return GetTransparentShader()
-	End
-	
-	#rem monkeydoc Gets material's shadow shader.
-	#end
-	Method GetShadowShader:Shader() Virtual
-	
-		Return GetOpaqueShader()
+		Return _shader
 	End
 	
 	Function LoadTexture:Texture( path:String,textureFlags:TextureFlags,flipy:Bool=False )
@@ -142,21 +172,39 @@ Class Material Extends Resource
 	
 	Protected
 	
-	Method New()
+	Method OnValidate() Virtual
+	End
+	
+	Method Invalidate()
 		
-		_uniforms=New UniformBlock( 3,True )
+		_shader=Null
+	End
+	
+	Method New()
+
+		_name="Material"
+		_attribMask=1
 		_blendMode=BlendMode.Opaque
 		_cullMode=CullMode.Back
+		_selfillum=False
+
+		_uniforms=New UniformBlock( 3,True )
 		
 		TextureMatrix=New AffineMat3f
 	End		
 	
 	Method New( material:Material )
 		
-		_uniforms=New UniformBlock( material._uniforms )
-
+		_name=material._name
+		_shaderName=material._shaderName
+		_attribMask=material._attribMask
 		_blendMode=material._blendMode
 		_cullMode=material._cullMode
+		_selfillum=material._selfillum
+		_shader=material._shader
+		_dirty=material._dirty
+
+		_uniforms=New UniformBlock( material._uniforms )
 
 		TextureMatrix=material.TextureMatrix
 	End
@@ -183,10 +231,28 @@ Class Material Extends Resource
 	End
 	
 	Private
-	
-	Field _name:String
-	Field _uniforms:UniformBlock
-	Field _blendMode:BlendMode
-	Field _cullMode:CullMode
 
+	Field _name:String
+	Field _shaderName:String
+	Field _attribMask:Int
+	Field _selfillum:Bool
+	Field _cullMode:CullMode
+	Field _blendMode:BlendMode
+	Field _uniforms:UniformBlock
+	Field _shader:Shader
+	Field _dirty:Bool=True
+	
+	Method Validate()
+		
+		If _shader Return
+
+		Local defs:=Renderer.GetCurrent().ShaderDefs
+		
+		defs+=";MX2_ATTRIBMASK "+_attribMask
+		
+		Local shaderName:=_shaderName ?Else "materials/default"
+			
+		_shader=mojo.graphics.Shader.Open( shaderName,defs )
+	End
+	
 End

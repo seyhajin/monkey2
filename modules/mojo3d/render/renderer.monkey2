@@ -14,20 +14,14 @@ Class Renderer
 		
 		Select GetConfig( "MOJO3D_RENDERER" )
 		Case "deferred"
-			
 			_deferred=True
-			
 		Case "forward"
-			
 			_deferred=False
-		
 		Default
 			
 #If __DESKTOP_TARGET__ Or __WEB_TARGET__
-
 			_deferred=True
 #else
-
 			_deferred=False
 #endif
 		End
@@ -39,6 +33,10 @@ Class Renderer
 		Else
 			Print "Renderer is using forward rendering"
 		Endif
+		
+		If _deferred _defs="MX2_DEFERREDRENDERER" Else _defs="MX2_FORWARDRENDERER"
+		
+		_defs+=";MX2_LINEAROUTPUT"
 	End
 	
 	#rem monkeydoc True if renderer is using deferred rendering.
@@ -52,7 +50,7 @@ Class Renderer
 	#end
 	Property ShaderDefs:String()
 		
-		Return "MX2_LINEAROUTPUT=1~n"'MX2_RGBADEPTHTEXTURES=1~n"
+		Return _defs
 	End
 	
 	#rem monkeydoc Size of the cascaded shadow map texture.
@@ -156,13 +154,14 @@ Class Renderer
 	
 	Method RenderDeferredLighting( light:Light )
 		
-		Local renderPass:=2
+		Local renderPass:=0
 		
 		Select light.Type
 		Case LightType.Directional
-			If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=4
+			If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=16
+			renderPass|=4
 		Case LightType.Point
-			If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=4
+			If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=16
 			renderPass|=8
 		End
 		
@@ -211,13 +210,14 @@ Class Renderer
 		
 		For Local light:=Eachin _scene.Lights
 			
-			Local renderPass:=first ? 3 Else 2
+			Local renderPass:=2
 			
 			Select light.Type
 			Case LightType.Directional			
-				If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=4
+				If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=16
+				renderPass|=4
 			Case LightType.Point
-				If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=4
+				If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=16
 				renderPass|=8
 			End
 			
@@ -241,7 +241,7 @@ Class Renderer
 			_gdevice.DepthMask=True
 			_gdevice.DepthFunc=DepthFunc.LessEqual
 			_gdevice.BlendMode=BlendMode.Opaque
-			_gdevice.RenderPass=1
+			_gdevice.RenderPass=2
 			
 			RenderOpaqueOps()
 		Endif
@@ -276,6 +276,16 @@ Class Renderer
 			RenderOpaqueForward()
 		Endif
 	End
+	
+	Method RenderSelfIlluminated()
+		
+		_gdevice.ColorMask=ColorMask.All
+		_gdevice.DepthMask=True
+		_gdevice.DepthFunc=DepthFunc.LessEqual
+		_gdevice.RenderPass=1
+		
+		RenderSelfIlluminatedOps()
+	End
 
 	Method RenderTransparent()
 
@@ -283,13 +293,14 @@ Class Renderer
 		
 		For Local light:=Eachin _scene.Lights
 			
-			Local renderPass:=first ? 3 Else 2	'amgient+light or just light
+			Local renderPass:=2
 			
 			Select light.Type
 			Case LightType.Directional			
-	'			If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=4
+	'			If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=16
+				renderPass|=4
 			Case LightType.Point
-	'			If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=4
+	'			If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=16
 				renderPass|=8
 			End
 			
@@ -313,7 +324,7 @@ Class Renderer
 			_gdevice.ColorMask=ColorMask.All
 			_gdevice.DepthMask=False
 			_gdevice.DepthFunc=DepthFunc.LessEqual
-			_gdevice.RenderPass=1
+			_gdevice.RenderPass=2
 			
 			RenderTransparentOps()
 		Endif
@@ -339,7 +350,7 @@ Class Renderer
 		_gdevice.DepthFunc=DepthFunc.LessEqual
 		_gdevice.BlendMode=BlendMode.Opaque
 		_gdevice.CullMode=CullMode.Front
-		_gdevice.RenderPass=4
+		_gdevice.RenderPass=3|4
 
 		Local invLightMatrix:=light.InverseMatrix
 		
@@ -411,7 +422,7 @@ Class Renderer
 		_gdevice.DepthFunc=DepthFunc.LessEqual
 		_gdevice.BlendMode=BlendMode.Opaque
 		_gdevice.CullMode=CullMode.Back'Front
-		_gdevice.RenderPass=12
+		_gdevice.RenderPass=3|8
 		
 		Local lnear:=0.1
 		
@@ -440,37 +451,63 @@ Class Renderer
 		_gdevice.Scissor=t_scissor
 	End
 	
+	Method FlipEffectBuffers()
+		
+		If _direct Return
+		
+		Local rsize:=_gdevice.Viewport.Size
+		Local rtarget:=_gdevice.RenderTarget
+		Local rtexture:=rtarget.GetColorTexture( 0 )
+		_runiforms.SetTexture( "SourceBuffer",rtexture )
+		_runiforms.SetVec2f( "SourceBufferSize",Cast<Vec2f>( rsize ) )
+		_runiforms.SetVec2f( "SourceBufferScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( rtexture.Size ) )
+		
+		If Not _effectBuffer Or rsize.x>_effectBuffer.Size.x Or rsize.y>_effectBuffer.Size.y
+			_effectTarget?.Discard()
+			_effectBuffer?.Discard()
+			_effectBuffer=New Texture( rsize.x,rsize.y,rtexture.Format,TextureFlags.Dynamic|TextureFlags.Filter )
+			_effectTarget=New RenderTarget( New Texture[]( _effectBuffer ),Null )
+		Endif
+		
+		rtarget=rtarget<>_effectTarget ? _effectTarget Else _renderTarget1
+		
+		_gdevice.RenderTarget=rtarget
+	End
+	
 	Method RenderPostEffects()
 		
-		_gdevice.ColorMask=ColorMask.All
-		_gdevice.DepthMask=False
-		_gdevice.DepthFunc=DepthFunc.Always
-		_gdevice.CullMode=CullMode.None
-
+		PostEffect.BeginRendering( _gdevice,Self )
+		
 		For Local effect:=Eachin _scene.PostEffects
 			
 			If Not effect.Enabled Continue
 			
+			FlipEffectBuffers()
+
+			_gdevice.ColorMask=ColorMask.All
+			_gdevice.DepthMask=False
+			_gdevice.DepthFunc=DepthFunc.Always
+			_gdevice.CullMode=CullMode.None
 			_gdevice.BlendMode=BlendMode.Opaque
 			_gdevice.RenderPass=0
 			
-			effect.Render( _gdevice )
+			effect.Render()
 		Next
-		
-	End
-	
-	Method RenderCopyQuad() Virtual
-		If _outputRenderTarget
-			RenderInvertedQuad()
-		Else
-			RenderQuad()
-		Endif
+
+		PostEffect.EndRendering()
 	End
 	
 	Method RenderCopy()
 		
 		If _direct Return
 		
+		Local rsize:=_gdevice.Viewport.Size
+		Local rtarget:=_gdevice.RenderTarget
+		Local rtexture:=rtarget.GetColorTexture( 0 )
+		_runiforms.SetTexture( "SourceBuffer",rtexture )
+		_runiforms.SetVec2f( "SourceBufferSize",Cast<Vec2f>( rsize ) )
+		_runiforms.SetVec2f( "SourceBufferScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( rtexture.Size ) )
+
 		_gdevice.RenderTarget=_outputRenderTarget
 		_gdevice.Resize( _outputRenderTargetSize )
 		_gdevice.Viewport=_outputViewport
@@ -489,18 +526,14 @@ Class Renderer
 		_gdevice.RenderTarget=Null
 		_gdevice.Resize( Null )
 	End
+	
+	Method RenderCopyQuad() Virtual	'So VRRenderer can override, ie: cheeze it for now!
 
-	Method RenderQuad()
-
-		Global _vertices:=New VertexBuffer( New Vertex3f[](
-			New Vertex3f( 0,1,0,0,1 ),
-			New Vertex3f( 1,1,0,1,1 ),
-			New Vertex3f( 1,0,0,1,0 ),
-			New Vertex3f( 0,0,0,0,0 ) ) )
-			
-		_gdevice.VertexBuffer=_vertices
-		
-		_gdevice.Render( 4,1 )
+		If _outputRenderTarget
+			RenderInvertedQuad()
+		Else
+			RenderQuad()
+		Endif
 	End
 	
 	Method RenderInvertedQuad()
@@ -510,6 +543,19 @@ Class Renderer
 			New Vertex3f( 1,1,0,1,0, ),
 			New Vertex3f( 1,0,0,1,1 ),
 			New Vertex3f( 0,0,0,0,1 ) ) )
+			
+		_gdevice.VertexBuffer=_vertices
+		
+		_gdevice.Render( 4,1 )
+	End
+	
+	Method RenderQuad()
+
+		Global _vertices:=New VertexBuffer( New Vertex3f[](
+			New Vertex3f( 0,1,0,0,1 ),
+			New Vertex3f( 1,1,0,1,1 ),
+			New Vertex3f( 1,0,0,1,0 ),
+			New Vertex3f( 0,0,0,0,0 ) ) )
 			
 		_gdevice.VertexBuffer=_vertices
 		
@@ -541,6 +587,11 @@ Class Renderer
 		RenderRenderOps( _renderQueue.OpaqueOps,_viewMatrix,_projMatrix )
 	End
 	
+	Method RenderSelfIlluminatedOps()
+		
+		RenderRenderOps( _renderQueue.SelfIlluminatedOps,_viewMatrix,_projMatrix )
+	End
+	
 	Method RenderTransparentOps()
 		
 		RenderRenderOps( _renderQueue.TransparentOps,_viewMatrix,_projMatrix )
@@ -554,7 +605,7 @@ Class Renderer
 		_runiforms.SetMat4f( "ProjectionMatrix",projMatrix )
 		_runiforms.SetMat4f( "ViewProjectionMatrix",viewProjMatrix )
 		_runiforms.SetMat4f( "InverseProjectionMatrix",-projMatrix )
-		
+
 		Local instance:Entity=Null,first:=True
 		Local material:Material
 		Local bones:Mat4f[]
@@ -578,26 +629,21 @@ Class Renderer
 				_iuniforms.SetMat4f( "ModelViewProjectionMatrix",modelViewProjMat )
 				_iuniforms.SetColor( "Color",instance ? instance.Color Else Color.White )
 				_iuniforms.SetFloat( "Alpha",instance ? instance.Alpha Else 1.0 )
-				
 			Endif
 				
-			If op.bones _iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
+			If op.bones
+				_iuniforms.SetMat4fArray( "ModelBoneMatrices",op.bones )
+			Endif
 				
-			If op.uniforms _gdevice.BindUniformBlock( op.uniforms )
+			If op.uniforms 
+				_gdevice.BindUniformBlock( op.uniforms )
+			Endif
 						
 			If op.material<>material
-				
 				material=op.material
-				
-				If op.blendMode=BlendMode.Opaque
-					_gdevice.Shader=material.GetOpaqueShader()
-				Else
-					_gdevice.Shader=material.GetTransparentShader()
-				Endif
-				
+				_gdevice.Shader=op.shader
 				_gdevice.BindUniformBlock( material.Uniforms )
 				_gdevice.CullMode=material.CullMode
-				
 			Endif
 
 			_gdevice.BlendMode=op.blendMode
@@ -650,7 +696,7 @@ Class Renderer
 						
 			If op.material<>material
 				material=op.material
-				_gdevice.Shader=material.GetShadowShader()
+				_gdevice.Shader=material.GetRenderShader()
 				_gdevice.BindUniformBlock( material.Uniforms )
 			Endif
 			
@@ -671,6 +717,7 @@ Class Renderer
 	
 	Field _direct:Bool=False
 	Field _deferred:Bool=True
+	Field _defs:String
 	
 	Field _gdevice:GraphicsDevice
 	
@@ -696,6 +743,9 @@ Class Renderer
 
 	Field _renderTarget0:RenderTarget	'all buffers
 	Field _renderTarget1:RenderTarget	'accum buffer only
+
+	Field _effectBuffer:Texture
+	Field _effectTarget:RenderTarget
 	
 	Field _csmSize:=2048
 	Field _csmSplits:Float[]
@@ -744,16 +794,15 @@ Class Renderer
 		
 		_defaultEnv=Texture.Load( "asset::textures/env_default.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		
-		_copyShader=Shader.Open( "copy" )
+		_skyboxShader=Shader.Open( "misc/skybox",ShaderDefs )
+
+		_copyShader=Shader.Open( "misc/copy" )
 		
 		If _deferred 
-			_skyboxShader=Shader.Open( "skybox-deferred",ShaderDefs )
-			_deferredLightingShader=Shader.Open( "lighting-deferred",ShaderDefs )
-			_deferredFogShader=Shader.Open( "fog-deferred",ShaderDefs )
-		Else
-			_skyboxShader=Shader.Open( "skybox",ShaderDefs )
+			_deferredLightingShader=Shader.Open( "misc/lighting-deferred",ShaderDefs )
+			_deferredFogShader=Shader.Open( "misc/fog-deferred",ShaderDefs )
 		Endif
-		
+
 		_renderQueue=New RenderQueue
 		
 		_psmFaceTransforms=New Mat3f[]( 
@@ -766,7 +815,7 @@ Class Renderer
 			
 		ValidateSize( New Vec2i( 1920,1080 ) )
 	End
-
+	
 	Method ValidateSize( size:Vec2i )
 		
 		If _direct Return

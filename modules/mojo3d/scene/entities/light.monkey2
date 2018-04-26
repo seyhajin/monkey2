@@ -120,5 +120,7 @@ Class Light Extends Entity
 	Field _range:Float
 	
 	Field _castsShadow:bool
+	
+	Field _dynamic:Bool
 
 End

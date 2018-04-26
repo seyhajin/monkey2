@@ -18,46 +18,39 @@ Class PostEffect
 		
 		_enabled=enabled
 	End
-
+	
+	
 	#rem monkeydoc @hidden
 	#end	
-	Method Render( device:GraphicsDevice ) Virtual
-		
-		_device=device
+	Method Render()
 		
 		OnRender()
+	End
+	
+	Function BeginRendering( device:GraphicsDevice,renderer:Renderer )
+		_device=device
+		_renderer=renderer
+	End
+	
+	Function EndRendering()
 	End
 
 	Protected
 	
 	#rem monkeydoc @hidden
 	#end	
-	Method OnRender() Virtual
-	End
+	Method OnRender() Abstract
 	
-	#rem monkeydoc @hidden
-	#end	
 	Property Device:GraphicsDevice()
 		
 		Return _device
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
-	Property SourceRect:Recti()
+	Method Flip()
 		
-		Return _device.Viewport
+		_renderer.FlipEffectBuffers()
 	End
 	
-	#rem monkeydoc @hidden
-	#end	
-	Property SourceTexture:Texture()
-		
-		Return _device.RenderTarget.GetColorTexture( 0 )
-	End
-	
-	#rem monkeydoc @hidden
-	#end	
 	Method RenderQuad()
 
 		Global _vertices:VertexBuffer
@@ -71,12 +64,16 @@ Class PostEffect
 		Endif
 			
 		_device.VertexBuffer=_vertices
+		
 		_device.Render( 4,1 )
 	End
-		
+	
+	#rem monkeydoc @hidden
+	#end	
 	Private
 	
 	Global _device:GraphicsDevice
+	Global _renderer:Renderer
 	
 	Field _enabled:Bool=True
 	
