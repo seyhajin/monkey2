@@ -165,6 +165,26 @@ Class RigidBody Extends Component
 		_dirty|=Dirty.Collisions
 	End
 	
+	[jsonify=1]
+	Property LinearDamping:Float()
+		
+		Return _btbody.getLinearDamping()
+		
+	Setter( damping:Float )
+		
+		_btbody.setDamping( damping,_btbody.getAngularDamping() )
+	End
+	
+	[jsonify=1]
+	Property AngularDamping:Float()
+		
+		Return _btbody.getAngularDamping()
+	
+	Setter( damping:Float )
+		
+		_btbody.setDamping( _btbody.getLinearDamping(),damping )
+	End
+	
 	Property LinearVelocity:Vec3f()
 		
 		Return _btbody.getLinearVelocity()
@@ -182,7 +202,7 @@ Class RigidBody Extends Component
 		
 		_btbody.setAngularVelocity( avelocity )
 	End
-
+	
 	Property btBody:btRigidBody()
 	
 		Return _btbody

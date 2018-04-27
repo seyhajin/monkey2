@@ -548,10 +548,10 @@ Class btRigidBody Extends btCollisionObject
 		
 	Method setLinearVelocity( lin_vel:btVector3 )
 		
-	Method setAngularVelocity( ang_vel:btVector3 )
-	
 	Method getLinearVelocity:btVector3()
 		
+	Method setAngularVelocity( ang_vel:btVector3 )
+	
 	Method getAngularVelocity:btVector3()
 		
 	Method applyForce( force:btVector3,rel_pos:btVector3 )
@@ -565,6 +565,12 @@ Class btRigidBody Extends btCollisionObject
 	Method applyTorque( torque:btVector3 )
 		
 	Method applyTorqueImpulse( torque:btVector3 )
+		
+	Method setDamping( lin_damping:btScalar,ang_damping:btScalar )
+		
+	Method getLinearDamping:btScalar()
+		
+	Method getAngularDamping:btScalar()
 		
 End
 
