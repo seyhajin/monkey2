@@ -32,9 +32,11 @@ Class MyWindow Extends Window
 		_scene.ClearColor=Color.Black
 		
 		_bloom=New BloomEffect
+		_bloom.Enabled=True
 		_scene.AddPostEffect( _bloom )
 		
 		_mono=New MonochromeEffect
+		_mono.Enabled=False
 		_scene.AddPostEffect( _mono )
 		
 		'create camera
@@ -48,8 +50,7 @@ Class MyWindow Extends Window
 		_light=New Light
 		_light.RotateX( 90 )
 		
-		Local material:=New PbrMaterial( Color.Black )
-		material.EmissiveFactor=New Color( 0,2,0 )
+		Local material:=New PbrMaterial( New Color( 2,1,0,1 ) )
 		
 		_donut=Model.CreateTorus( 2,.5,48,24,material )
 		_donut.AddComponent<RotateBehaviour>().Speed=New Vec3f( .1,.2,.3 )

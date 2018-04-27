@@ -36,20 +36,37 @@ Class BloomEffect Extends PostEffect
 	
 	Protected
 	
-	Method OnRender() Override
+	Method OnRender( target:RenderTarget,viewport:Recti ) Override
+		
+		Local size:=viewport.Size
+		Local source:=target.GetColorTexture( 0 )
+		
+		If Not _target0 Or size.x>_target0.Size.x Or size.y>_target0.Size.y
+			_target0=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
+			_target1=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
+		Endif
 		
 		Device.Shader=_shader
-		
 		Device.BindUniformBlock( _uniforms )
+		
+		Local rtarget:=_target0
 		
 		For Local i:=0 Until _passes
 			
-			If i Flip()
-			
+			Super.SetRenderTarget( rtarget,New Recti( 0,0,size ) )
 			Device.RenderPass=i ? 2-(i&1) Else 0	'0,1,2,1,2,1,2...
 			
 			RenderQuad()
-		End
+			
+			rtarget=rtarget=_target0 ? _target1 Else _target0
+		Next
+		
+		Super.SetRenderTarget( target,viewport )
+		
+		Device.BlendMode=BlendMode.Additive
+		Device.RenderPass=3
+		
+		RenderQuad()
 	End
 	
 	Private
@@ -57,5 +74,7 @@ Class BloomEffect Extends PostEffect
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
 	Field _passes:Int=4
+	Field _target0:RenderTarget
+	Field _target1:RenderTarget
 	
 End

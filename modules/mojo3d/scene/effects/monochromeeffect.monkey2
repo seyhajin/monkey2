@@ -32,10 +32,18 @@ Class MonochromeEffect Extends PostEffect
 
 	Protected
 	
-	Method OnRender() Override
+	Method OnRender( target:RenderTarget,viewport:Recti ) Override
 		
+		Local size:=viewport.Size
+		Local source:=target.GetColorTexture( 0 )
+		
+		If Not _target Or size.x>_target.Size.x Or size.y>_target.Size.y
+			_target=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
+		End
+		
+		Super.SetRenderTarget( _target,New Recti( 0,0,size ) )
+
 		Device.Shader=_shader
-		
 		Device.BindUniformBlock( _uniforms )
 		
 		RenderQuad()
@@ -45,5 +53,6 @@ Class MonochromeEffect Extends PostEffect
 	
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
+	Field _target:RenderTarget
 	
 End

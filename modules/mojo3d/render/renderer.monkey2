@@ -451,43 +451,18 @@ Class Renderer
 		_gdevice.Scissor=t_scissor
 	End
 	
-	Method FlipEffectBuffers()
-		
-		If _direct Return
-		
-		Local rsize:=_gdevice.Viewport.Size
-		Local rtarget:=_gdevice.RenderTarget
-		Local rtexture:=rtarget.GetColorTexture( 0 )
-		_runiforms.SetTexture( "SourceBuffer",rtexture )
-		_runiforms.SetVec2f( "SourceBufferSize",Cast<Vec2f>( rsize ) )
-		_runiforms.SetVec2f( "SourceBufferScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( rtexture.Size ) )
-		
-		If Not _effectBuffer Or rsize.x>_effectBuffer.Size.x Or rsize.y>_effectBuffer.Size.y
-			_effectTarget?.Discard()
-			_effectBuffer?.Discard()
-			_effectBuffer=New Texture( rsize.x,rsize.y,rtexture.Format,TextureFlags.Dynamic|TextureFlags.Filter )
-			_effectTarget=New RenderTarget( New Texture[]( _effectBuffer ),Null )
-		Endif
-		
-		rtarget=rtarget<>_effectTarget ? _effectTarget Else _renderTarget1
-		
-		_gdevice.RenderTarget=rtarget
-	End
-	
 	Method RenderPostEffects()
 		
-		PostEffect.BeginRendering( _gdevice,Self )
+		PostEffect.BeginRendering( _gdevice,_runiforms )
 		
 		For Local effect:=Eachin _scene.PostEffects
 			
 			If Not effect.Enabled Continue
 			
-			FlipEffectBuffers()
-
 			_gdevice.ColorMask=ColorMask.All
 			_gdevice.DepthMask=False
-			_gdevice.DepthFunc=DepthFunc.Always
 			_gdevice.CullMode=CullMode.None
+			_gdevice.DepthFunc=DepthFunc.Always
 			_gdevice.BlendMode=BlendMode.Opaque
 			_gdevice.RenderPass=0
 			

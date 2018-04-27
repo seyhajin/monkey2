@@ -16,13 +16,7 @@ Class ReflectionEffect Extends PostEffect
 	
 	Protected
 	
-	Method OnRender() Override
-		
-		Device.Shader=_shader
-		
-		Device.BindUniformBlock( _uniforms )
-		
-		RenderQuad()
+	Method OnRender( target:RenderTarget,viewport:Recti ) Override
 	End
 	
 	Private

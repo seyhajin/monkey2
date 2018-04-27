@@ -16,6 +16,8 @@ Class WaterMaterial Extends Material
 		
 		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.SeaGreen
+		Metalness=0
+		Roughness=0
 		NormalTextures=New Texture[]( Texture.FlatNormal(),Texture.FlatNormal() )
 		Velocities=New Vec2f[]( New Vec2f( 0,0 ),New Vec2f( 0,0 ) )
 	End
@@ -48,6 +50,24 @@ Class WaterMaterial Extends Material
 	Setter( color:Color )
 	
 		Uniforms.SetColor( "ColorFactor",color )
+	End
+	
+	Property Metalness:Float()
+		
+		Return Uniforms.GetFloat( "Metalness" )
+	
+	Setter( metalness:Float )
+		
+		Uniforms.SetFloat( "Metalness",metalness )
+	End
+	
+	property Roughness:Float()
+		
+		Return Uniforms.GetFloat( "Roughness" )
+	
+	Setter( roughness:Float )
+		
+		Uniforms.SetFloat( "Roughness",roughness )
 	End
 	
 	Property NormalTextures:Texture[]()

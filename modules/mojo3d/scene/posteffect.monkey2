@@ -24,31 +24,50 @@ Class PostEffect
 	#end	
 	Method Render()
 		
-		OnRender()
+		OnRender( _gdevice.RenderTarget,_gdevice.Viewport )
 	End
 	
-	Function BeginRendering( device:GraphicsDevice,renderer:Renderer )
-		_device=device
-		_renderer=renderer
+	Function BeginRendering( gdevice:GraphicsDevice,runiforms:UniformBlock )
+
+		_gdevice=gdevice
+		_runiforms=runiforms
 	End
 	
 	Function EndRendering()
+		
+		_gdevice=Null
+		_runiforms=Null
 	End
 
 	Protected
 	
 	#rem monkeydoc @hidden
 	#end	
-	Method OnRender() Abstract
+	Method OnRender( target:RenderTarget,viewport:Recti ) Abstract
 	
 	Property Device:GraphicsDevice()
 		
-		Return _device
+		Return _gdevice
 	End
 	
-	Method Flip()
+	Method CreateRenderTarget:RenderTarget( size:Vec2i,format:PixelFormat,flags:TextureFlags )
 		
-		_renderer.FlipEffectBuffers()
+		Local texture:=New Texture( size.x,size.y,format,flags )
+		Local target:=New RenderTarget( New Texture[]( texture ),Null )
+		Return target
+	End
+	
+	Method SetRenderTarget( target:RenderTarget,viewport:Recti )
+		
+		Local rsize:=_gdevice.Viewport.Size
+		Local rtarget:=_gdevice.RenderTarget
+		Local rtexture:=rtarget.GetColorTexture( 0 )
+		_runiforms.SetTexture( "SourceBuffer",rtexture )
+		_runiforms.SetVec2f( "SourceBufferSize",Cast<Vec2f>( rsize ) )
+		_runiforms.SetVec2f( "SourceBufferScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( rtexture.Size ) )
+		
+		_gdevice.RenderTarget=target
+		_gdevice.Viewport=viewport
 	End
 	
 	Method RenderQuad()
@@ -63,17 +82,17 @@ Class PostEffect
 			New Vertex3f( 0,0,0 ) ) )
 		Endif
 			
-		_device.VertexBuffer=_vertices
+		_gdevice.VertexBuffer=_vertices
 		
-		_device.Render( 4,1 )
+		_gdevice.Render( 4,1 )
 	End
 	
 	#rem monkeydoc @hidden
 	#end	
 	Private
 	
-	Global _device:GraphicsDevice
-	Global _renderer:Renderer
+	Global _gdevice:GraphicsDevice
+	Global _runiforms:UniformBlock
 	
 	Field _enabled:Bool=True
 	
