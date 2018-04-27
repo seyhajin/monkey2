@@ -181,12 +181,3 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 }
 
 #endif
-
-#if MX2_SHADOWPASS
-
-void main(){
-
-	emitShadowFragment();
-}
-
-#endif

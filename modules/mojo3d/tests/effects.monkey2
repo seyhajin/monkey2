@@ -50,7 +50,7 @@ Class MyWindow Extends Window
 		_light=New Light
 		_light.RotateX( 90 )
 		
-		Local material:=New PbrMaterial( New Color( 2,1,0,1 ) )
+		Local material:=New PbrMaterial( New Color( 2,.5,0,1 ),0,1 )
 		
 		_donut=Model.CreateTorus( 2,.5,48,24,material )
 		_donut.AddComponent<RotateBehaviour>().Speed=New Vec3f( .1,.2,.3 )

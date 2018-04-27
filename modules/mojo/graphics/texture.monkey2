@@ -327,7 +327,7 @@ Class Texture Extends Resource
 		Return Null
 	End
 
-	Function Load:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
+	Function Load:Texture( path:String,flags:TextureFlags=TextureFlags.FilterMipmap,flipNormalY:Bool=False )
 
 		Local pixmap:=Pixmap.Load( path,,True )
 		If Not pixmap Return Null

@@ -12,7 +12,7 @@ void main(){
 
 //@fragment
 
-#if MX2_COLORPASS
+#if MX2_COLORPASS	//is this a color pass?
 
 #if MX2_TEXTURED
 uniform sampler2D m_ColorTexture;
@@ -74,6 +74,13 @@ void main(){
 #endif
 
 	emitPbrFragment( color,ambient,emissive,metalness,roughness,occlusion,normal );
+}
+
+#else	//if not a color pass, must be a shadow pass...
+
+void main(){
+
+	emitShadowFragment();
 }
 
 #endif

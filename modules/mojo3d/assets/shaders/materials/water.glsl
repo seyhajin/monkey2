@@ -12,8 +12,6 @@ void main(){
 
 //@fragment
 
-#if MX2_COLORPASS
-
 uniform sampler2D m_ColorTexture;
 uniform vec4 m_ColorFactor;
 
@@ -50,5 +48,3 @@ void main(){
 
 	emitPbrFragment( color,ambient,emissive,metalness,roughness,occlusion,normal );
 }
-
-#endif
