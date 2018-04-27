@@ -1,6 +1,18 @@
 
 ***** Monkey-v2018.05 Mx2cc-v1.1.12 Ted2go-2.10 *****
 
+Added LinearDamping and AngularDamping properties to RigidBody, but can't get them to do anything so far - please have a play James!
+
+Added 'offset' version of ApplyImpulse to RigidBody.
+
+Added AmbientTexture and AmbientFactor to PbrMaterial. Like EmissiveFactor, AmbientFactor defaults to black so needs to be set to white to enable AmbientTexture.
+
+Major clean up of mojo3d material system. Minor cleanup of post effect system, mainly just added some helper methods in base PostEffect class.
+
+Added multidimensional array initializers, eg: New Int[2,2]( 1,2,3,4 ). Array length much match number of elements exactly or runtime error.
+
+Added first physics constraint component to mojo3d - should probably be renamed joint IMO. Stay tuned...
+
 Added low budget OpenUrl for emscripten. It just replaces current page with the given URL so effectively ends app too.
 
 Added zlib module and DataBuffer.Compress and DataBuffer.Decompress.
