@@ -153,11 +153,12 @@ Public
 |:--------------|:-----------
 | WrapS			| Wrap S texture coordinates
 | WrapT			| Wrap T texture coordinates
-| WrapST		| Enable WrapS and WrapT.
+| WrapST		| Wrap bot S and T coordinates
 | Filter		| Enable magnification filtering
 | Mipmap		| Enable minification mipmapping, and minification filtering if Filter enabled.
-| FilterMipmap	| Enable Filter and Mipmap.
-| Dynamic		| Texture is frequently updated. This flag should be set if the texture contents are regularly updated and don't need to be preserved.
+| FilterMipmap	| Enable both filterin and mipmapping.
+| Dynamic		| The texture contents are regularly updated and don't need to be preserved.
+| Cubemap		| The texture is a cubmap.
 #end
 Enum TextureFlags
 	None=			$0000
@@ -185,9 +186,17 @@ Enum CubeFace
 End
 
 #rem monkeydoc The Texture class.
+
+The "MOJO_TEXTURE_MAX_ANISOTROPY" config setting control the max anisotropy of mipmapped textures.
+
 #end
 Class Texture Extends Resource
 	
+	#rem monkeydoc Creates a new texture.
+	
+	The "MOJO_TEXTURE_MAX_ANISOTROPY" config setting control the max anisotropy of mipmapped textures.
+
+	#end
 	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
 		
 		Init( width,height,format,flags,Null )

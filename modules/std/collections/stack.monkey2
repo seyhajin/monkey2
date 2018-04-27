@@ -19,7 +19,7 @@ A stack is an 'array like' container that grows dynamically as necessary.
 
 It is very cheap to add values to the end of a stack, but insertion or removal of values requires higher indexed values to be 'shifted' up or down so is slower.
 
-Stacks implement the [[IContainer]] interface so can be used with [[Eachin]] loops.
+Stacks implement the [[IContainer]] interface so can be used with Eachin loops.
 
 #end
 Class Stack<T> Implements IContainer<T>
@@ -225,7 +225,7 @@ Class Stack<T> Implements IContainer<T>
 
 	#rem monkeydoc Gets an iterator for visiting stack values.
 	
-	Returns an iterator suitable for use with [[Eachin]], or for manual iteration.
+	Returns an iterator suitable for use with Eachin, or for manual iteration.
 	
 	@return A stack iterator.
 	
@@ -236,7 +236,7 @@ Class Stack<T> Implements IContainer<T>
 	
 	#rem monkeydoc Gets an iterator for visiting stack values in reverse order.
 	
-	Returns an iterator suitable for use with [[Eachin]], or for manual iteration.
+	Returns an iterator suitable for use with Eachin, or for manual iteration.
 
 	@return A backwards stack iterator.
 		

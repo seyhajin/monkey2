@@ -1,9 +1,19 @@
 
 Namespace mojo3d
 
+#rem monkeydoc The mojo3d Renderer class.
+
+A renderer is an object that renders scenes. There is normally only ever one renderer created and it is created for you automatically when required so you don't normally need to worry about renderers at all.
+
+When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be used to control the type of renderer created. Use "deferred" to create a deferred renderer and "foward" to create a forward renderer. See [[std:std.filesystem.SetConfig|SetConfig]] for more information about config settings. By default, a deferred renderer is created for desktop and web targets and a forward renderer for mobile targets.
+
+#end
 Class Renderer
 
-	#rem monkeydoc Creates a new renderer
+	#rem monkeydoc Creates a new renderer.
+
+When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be used to control the type of renderer created. Use "deferred" to create a deferred renderer and "foward" to create a forward renderer. See [[std:std.filesystem.SetConfig|SetConfig]] for more information about config settings. By default, a deferred renderer is created for desktop and web targets and a forward renderer for mobile targets.
+	
 	#end
 	Method New()
 		
@@ -12,18 +22,22 @@ Class Renderer
 		_direct=False
 		_deferred=False
 		
-		Select GetConfig( "MOJO3D_RENDERER" )
+		Local cfg:=GetConfig( "MOJO3D_RENDERER" )
+		
+		Select cfg
 		Case "deferred"
 			_deferred=True
 		Case "forward"
 			_deferred=False
-		Default
-			
+		Case ""
 #If __DESKTOP_TARGET__ Or __WEB_TARGET__
 			_deferred=True
 #else
 			_deferred=False
 #endif
+		Default
+			RuntimeError( "Unrecognized MOJO3D_RENDERER config setting value '"+cfg+"'" )
+		
 		End
 		
 		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )

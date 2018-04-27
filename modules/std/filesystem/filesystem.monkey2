@@ -191,19 +191,18 @@ End
 
 #rem monkeydoc Sets a global config setting.
 
-Currently known built-in config settings:
+Currently recognized built-in config settings:
 
-| Name									| More information
-|:--------------------------------------|:----------------
-| "MOJO\_OPENGL\_PROFILE"				| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_OPENGL\_VERSION\_MAJOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_OPENGL\_VERSION\_MINOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_COLOR\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_DEPTH\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_STENCIL\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_TEXTURE\_MAX\_ANISOTROPY"		| [[mojo:mojo.graphics.Texture.New|Texture.New]]
-| "MOJO3D\_DEFAULT\_RENDERER"			| [[mojo3d:mojo3d.Renderer.GetCurrent|Renderer.GetCurrent]]
-| "MOJO3D\_FORWARD\_RENDERER\_DIRECT"	| [[mojo3d:mojo3d.ForwardRenderer.New|ForwardRenderer.New]]
+| Name								| More information
+|:----------------------------------|:----------------
+| "MOJO\_OPENGL\_PROFILE"			| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_OPENGL\_VERSION\_MAJOR"	| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_OPENGL\_VERSION\_MINOR"	| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_COLOR\_BUFFER\_BITS"		| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_DEPTH\_BUFFER\_BITS"		| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_STENCIL\_BUFFER\_BITS"		| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_TEXTURE\_MAX\_ANISOTROPY"	| [[mojo:mojo.graphics.Texture|mojo.Texture]]
+| "MOJO3D\_RENDERER"				| [[mojo3d:mojo3d.Renderer|mojo3d.Renderer]]
 
 See also: [[GetConfig]].
 

@@ -17,9 +17,9 @@ Alias StringDeque:Deque<String>
 
 A deque is a 'double ended queue' (usually pronounced 'deck').
 
-You can efficiently add items to either end of a deque using [[Deque.AddFirst]] and [[Deque.AddLast]], and remove items using [[RemoveFirst]] and [[RemoveLast]].
+You can efficiently add items to either end of a deque using [[AddFirst]] and [[AddLast]], and remove items using [[RemoveFirst]] and [[RemoveLast]].
 
-Deques implement the [[IContainer]] interface so can be used with [[Eachin]] loops.
+Deques implement the [[IContainer]] interface so can be used with Eachin loops.
 
 Note that you should NOT modify a deque while iterating through it with an eachin loop. Doing so while cause a 'concurrent deque modification' runtime error in debug mode. Please see [[IContainer]] for more information.
 
@@ -175,7 +175,7 @@ Class Deque<T> Implements IContainer<T>
 	
 	#rem monkeydoc Gets an iterator for visiting deque values.
 	
-	Returns an iterator suitable for use with [[Eachin]], or for manual iteration.
+	Returns an iterator suitable for use with Eachin, or for manual iteration.
 	
 	@return A deque iterator.
 	
