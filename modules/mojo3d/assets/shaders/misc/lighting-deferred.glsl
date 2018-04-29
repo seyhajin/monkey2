@@ -1,5 +1,5 @@
 
-//@renderpasses 4,8,20,24
+//@renderpasses 4,8,12, 20,24,28
 
 //@import "pbr"
 

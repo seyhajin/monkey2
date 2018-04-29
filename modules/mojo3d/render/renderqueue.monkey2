@@ -48,13 +48,13 @@ Class RenderQueue
 		_eyeLen=_eyePos.Length
 	End
 	
-	Property CastsShadow:Bool()
+	Property AddShadowOps:Bool()
 		
-		Return _castsShadow
+		Return _addShadowOps
 		
-	Setter( castsShadow:Bool )
+	Setter( addShadowOps:Bool )
 		
-		_castsShadow=castsShadow
+		_addShadowOps=addShadowOps
 	End
 
 	Property OpaqueOps:Stack<RenderOp>()
@@ -100,22 +100,14 @@ Class RenderQueue
 		If op.blendMode=BlendMode.Opaque
 			stack=_opaqueOps
 			op.shader=op.material.GetRenderShader()
+			If _addShadowOps _shadowOps.Add( op )
 		Else
 			stack=_transparentOps
 			op.shader=op.material.GetRenderShader()
 			op.distance=op.instance ? op.instance.Position.Distance( _eyePos ) Else _eyeLen
 		Endif
 		
-		If op.material.SelfIlluminated
-			Assert( False )
-			stack=_selfillumOps
-		Endif
-		
-		If Not op.shader Return
-
 		stack.Add( op )
-		
-		If _castsShadow And op.material.GetRenderShader() _shadowOps.Push( op )
 	End
 	
 	Method AddSpriteOp( op:SpriteOp )
@@ -184,7 +176,7 @@ Class RenderQueue
 	
 	Field _eyePos:Vec3f
 	Field _eyeLen:Float
-	Field _castsShadow:Bool
+	Field _addShadowOps:Bool
 	
 	Field _opaqueOps:=New Stack<RenderOp>
 	Field _selfillumOps:=New Stack<RenderOp>

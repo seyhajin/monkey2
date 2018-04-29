@@ -162,7 +162,6 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 			color.b=Pow( color.b,2.2 )
 		
 			_gdevice.Clear( color,1.0 )
-
 		Endif
 	End
 	
@@ -172,16 +171,25 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 		Select light.Type
 		Case LightType.Directional
-			If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=16
+			If light.CastsShadow RenderDirectionalShadows( light ) ; renderPass|=16
 			renderPass|=4
 		Case LightType.Point
-			If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=16
+			If light.CastsShadow RenderPointShadows( light ) ; renderPass|=16
 			renderPass|=8
+		Case LightType.Spot
+			If light.CastsShadow RenderSpotShadows( light ) ; renderPass|=16
+			renderPass|=12
+		Default
+			Return
 		End
 		
+		Local lvmatrix:=_viewMatrix * light.Matrix
+		
+		_runiforms.SetMat4f( "LightViewMatrix",lvmatrix )
 		_runiforms.SetColor( "LightColor",light.Color )
 		_runiforms.SetFloat( "LightRange",light.Range )
-		_runiforms.SetMat4f( "LightViewMatrix",_viewMatrix * light.Matrix )
+		_runiforms.SetFloat( "LightInnerAngle",light.InnerAngle*Pi/180.0 )
+		_runiforms.SetFloat( "LightOuterAngle",light.OuterAngle*Pi/180.0 )
 		
 		_runiforms.SetMat4f( "InverseProjectionMatrix",_invProjMatrix )
 		
@@ -228,11 +236,14 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 			
 			Select light.Type
 			Case LightType.Directional			
-				If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=16
+				If light.CastsShadow RenderDirectionalShadows( light ) ; renderPass|=16
 				renderPass|=4
 			Case LightType.Point
-				If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=16
+				If light.CastsShadow RenderPointShadows( light ) ; renderPass|=16
 				renderPass|=8
+			Case LightType.Spot
+				If light.CastsShadow RenderSpotShadows( light ) ; renderPass|=16
+				renderPass|=12
 			End
 			
 			_runiforms.SetColor( "LightColor",light.Color )
@@ -311,11 +322,14 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 			
 			Select light.Type
 			Case LightType.Directional			
-	'			If light.CastsShadow RenderCSMShadows( light ) ; renderPass|=16
+	'			If light.CastsShadow RenderDirectionalShadows( light ) ; renderPass|=16
 				renderPass|=4
 			Case LightType.Point
-	'			If light.CastsShadow RenderPSMShadows( light ) ; renderPass|=16
+	'			If light.CastsShadow RenderPointShadows( light ) ; renderPass|=16
 				renderPass|=8
+			Case LightType.Spot
+	'			If light.CastsShadow RenderSpotShadows( light ) ; renderPass|=16
+				renderPass|=12
 			End
 			
 			_runiforms.SetColor( "LightColor",light.Color )
@@ -345,7 +359,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 	End
 	
-	Method RenderCSMShadows( light:Light )
+	Method RenderDirectionalShadows( light:Light )
 		
 		'Perhaps use a different device for CSM...?
 		'
@@ -366,9 +380,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_gdevice.CullMode=CullMode.Front
 		_gdevice.RenderPass=3|4
 
-		Local invLightMatrix:=light.InverseMatrix
-		
-		Local viewLight:=invLightMatrix * -_viewMatrix
+		Local viewLight:=light.InverseMatrix * _invViewMatrix
 		
 		For Local i:=0 Until _csmSplitDepths.Length-1
 			
@@ -412,7 +424,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 			
 			_gdevice.Scissor=_gdevice.Viewport
 				
-			RenderShadowOps( invLightMatrix,lightProj )
+			RenderShadowOps( light.InverseMatrix,lightProj )
 		Next
 		
 		_gdevice.RenderTarget=t_rtarget
@@ -420,7 +432,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_gdevice.Scissor=t_scissor
 	End
 	
-	Method RenderPSMShadows( light:Light )
+	Method RenderPointShadows( light:Light )
 	
 		'Perhaps use a different device for CSM...?
 		'
@@ -438,13 +450,12 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_gdevice.CullMode=CullMode.Back'Front
 		_gdevice.RenderPass=3|8
 		
-		Local lnear:=0.1
-		
-		Local lightProj:=Mat4f.Frustum( -lnear,+lnear,-lnear,+lnear,lnear,light.Range )
-		
-		Local invLightMatrix:=light.InverseMatrix
-		
-		Local viewLight:=invLightMatrix * _invViewMatrix
+		Local near:=0.1
+		Local lightProj:=Mat4f.Frustum( -near,+near,-near,+near,near,light.Range )
+		lightProj.k.z=1'(zfar+znear)/(zfar-znear)
+		lightProj.t.z=0'-(zfar*znear*2)/(zfar-znear)
+
+		Local viewLight:=light.InverseMatrix * _invViewMatrix
 		
 		_runiforms.SetFloat( "LightRange",light.Range )
 		_runiforms.SetMat4f( "ShadowMatrix0",viewLight )
@@ -455,10 +466,44 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 			
 			_gdevice.Clear( Color.White,1.0 )
 			
-			Local viewMatrix:=New AffineMat4f( _psmFaceTransforms[i] ) * invLightMatrix
+			Local viewMatrix:=New AffineMat4f( _psmFaceTransforms[i] ) * light.InverseMatrix
 
 			RenderShadowOps( viewMatrix,lightProj )
 		Next
+
+		_gdevice.RenderTarget=t_rtarget
+		_gdevice.Viewport=t_viewport
+		_gdevice.Scissor=t_scissor
+	End
+	
+	Method RenderSpotShadows( light:Light )
+	
+		Local t_rtarget:=_gdevice.RenderTarget
+		Local t_viewport:=_gdevice.Viewport
+		Local t_scissor:=_gdevice.Scissor
+		
+		Local near:=0.1
+		Local lightProj:=Mat4f.Frustum( -near,+near,-near,+near,near,light.Range )
+		
+		Local viewLight:=light.InverseMatrix * _invViewMatrix
+		
+		_runiforms.SetFloat( "LightRange",light.Range )
+		_runiforms.SetMat4f( "ShadowMatrix0",lightProj * viewLight )
+		
+		_gdevice.RenderTarget=_csmTarget
+		_gdevice.Viewport=New Recti( 0,0,_csmTexture.Size/2 )
+		_gdevice.Scissor=_gdevice.Viewport
+		_gdevice.ColorMask=ColorMask.All
+		_gdevice.DepthMask=True
+		
+		_gdevice.Clear( Color.White,1.0 )
+
+		_gdevice.DepthFunc=DepthFunc.LessEqual
+		_gdevice.BlendMode=BlendMode.Opaque
+		_gdevice.CullMode=CullMode.Front'Back
+		_gdevice.RenderPass=3|12
+
+		RenderShadowOps( light.InverseMatrix,lightProj )
 
 		_gdevice.RenderTarget=t_rtarget
 		_gdevice.Viewport=t_viewport
@@ -989,7 +1034,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 		For Local r:=Eachin _scene.Renderables
 		
-			_renderQueue.CastsShadow=r.CastsShadow
+			_renderQueue.AddShadowOps=r.CastsShadow
 			
 			r.OnRender( _renderQueue )
 		Next

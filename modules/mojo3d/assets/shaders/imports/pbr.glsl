@@ -15,13 +15,31 @@ void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,v
 	vec3 specular=(color-color0) * metalness + color0;
 	
 #if MX2_DIRECTIONALLIGHT
+
 	vec3 lvec=normalize( -r_LightViewMatrix[2].xyz );
 	float atten=1.0;
-#else
+	
+#elif MX2_POINTLIGHT
+
 	// TODO: https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
 	vec3 lvec=r_LightViewMatrix[3].xyz-position;
 	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
 	lvec=normalize( lvec );
+	
+#elif MX2_SPOTLIGHT
+
+	vec3 lvec=r_LightViewMatrix[3].xyz-position;
+	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
+	lvec=normalize( lvec );
+	
+	float cosangle=dot( -lvec,r_LightViewMatrix[2].xyz );
+	if( cosangle<0.0 ) return;				//behind spotlight direction
+	
+	float angle=acos( cosangle );
+	if( angle>r_LightOuterAngle ) return;	//outside outer cone
+
+	atten*=1.0-max( (angle-r_LightInnerAngle)/(r_LightOuterAngle-r_LightInnerAngle),0.0 );
+	
 #endif
 
 	vec3 vvec=normalize( -position );
@@ -146,12 +164,30 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 	float fnorm=(spow+2.0)/8.0;							//normalization factor
 	
 #if MX2_DIRECTIONALLIGHT
+
 	vec3 lvec=normalize( -r_LightViewMatrix[2].xyz );
 	float atten=1.0;
-#else
+	
+#elif MX2_POINTLIGHT
+
 	vec3 lvec=r_LightViewMatrix[3].xyz-v_Position;
 	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
 	lvec=normalize( lvec );
+	
+#elif MX2_SPOTLIGHT
+
+	vec3 lvec=r_LightViewMatrix[3].xyz-v_Position;
+	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
+	lvec=normalize( lvec );
+	
+	float cosangle=dot( -lvec,r_LightViewMatrix[2].xyz );
+	if( cosangle<0.0 ) return;				//behind spotlight direction
+	
+	float angle=acos( cosangle );
+	if( angle>r_LightOuterAngle ) return;	//outside outer cone
+
+	atten*=1.0-max( (angle-r_LightInnerAngle)/(r_LightOuterAngle-r_LightInnerAngle),0.0 );
+	
 #endif
 	vec3 hvec=normalize( lvec+vvec );
 

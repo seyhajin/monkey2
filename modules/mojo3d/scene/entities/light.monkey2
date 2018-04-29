@@ -29,8 +29,11 @@ Class Light Extends Entity
 		
 		Name="Light"
 		Type=LightType.Directional
-		CastsShadow=False
+		Color=Color.White
 		Range=10
+		InnerAngle=15
+		OuterAngle=30
+		CastsShadow=False
 		
 		AddInstance()
 		
@@ -83,6 +86,34 @@ Class Light Extends Entity
 		_range=range
 	End
 	
+	#rem monkeydoc The cone inner angle for spot lights, in degrees.
+	
+	Defaults to 0 degrees.
+		
+	#end
+	Property InnerAngle:Float()
+		
+		Return _innerAngle
+	
+	Setter( angle:Float )
+		
+		_innerAngle=angle
+	End
+	
+	#rem monkeydoc The cone outer angle for spot lights, in degrees.
+	
+	Defaults to 45 degrees.
+		
+	#end
+	Property OuterAngle:Float()
+		
+		Return _outerAngle
+	
+	Setter( angle:Float )
+		
+		_outerAngle=angle
+	End
+	
 	Protected
 
 	Method New( light:Light,parent:Entity )
@@ -92,6 +123,9 @@ Class Light Extends Entity
 		Type=light.Type
 		Color=light.Color
 		Range=light.Range
+		InnerAngle=light.InnerAngle
+		OuterAngle=light.OuterAngle
+		CastsShadow=light.CastsShadow
 		
 		AddInstance( light )
 	End
@@ -114,13 +148,10 @@ Class Light Extends Entity
 	Private
 	
 	Field _type:LightType
-	
 	Field _color:Color
-	
 	Field _range:Float
-	
+	Field _innerAngle:Float
+	Field _outerAngle:Float
 	Field _castsShadow:bool
-	
-	Field _dynamic:Bool
 
 End

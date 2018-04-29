@@ -2,7 +2,7 @@
 // **** MX2_RENDERPASS *****
 //
 // PASSTYPE		'mask=3,  0=quad, 1=deferred, 2=forward, 3=shadow
-// LIGHTTYPE	'mask=12, 0=none, 1=directional, 2=point
+// LIGHTTYPE	'mask=12, 0=none, 1=directional, 2=point, 3=spot
 // SHADOWTYPE	'mask=16, 0=no shadows, 1=shadows
 //
 #ifndef MX2_RENDERPASS
@@ -14,6 +14,7 @@
 
 #define MX2_DIRECTIONALLIGHT	(MX2_LIGHTTYPE==1)
 #define MX2_POINTLIGHT			(MX2_LIGHTTYPE==2)
+#define MX2_SPOTLIGHT			(MX2_LIGHTTYPE==3)
 
 #define MX2_QUADPASS			(MX2_PASSTYPE==0)
 #define MX2_DEFERREDPASS		(MX2_PASSTYPE==1)
@@ -21,7 +22,7 @@
 #define MX2_SHADOWPASS			(MX2_PASSTYPE==3)
 
 #define MX2_AMBIENTPASS			(MX2_PASSTYPE==1 || MX2_PASSTYPE==2)
-#define MX2_LIGHTINGPASS		(MX2_LIGHTTYPE!=0 && !MX2_SHADOWPASS)
+#define MX2_LIGHTINGPASS		(MX2_LIGHTTYPE!=0 && MX2_SHADOWPASS==0)
 #define MX2_COLORPASS			(MX2_AMBIENTPASS || MX2_LIGHTINGPASS)
 
 // ***** MX2_ATTRIBMASK *****
@@ -72,14 +73,19 @@ uniform vec2 r_BufferCoordScale;
 uniform mat4 r_LightViewMatrix;
 uniform vec4 r_LightColor;
 uniform float r_LightRange;
-uniform float r_ShadowAlpha;
+uniform float r_LightInnerAngle;
+uniform float r_LightOuterAngle;
+
+//***** SHADOWS *****
+//
 uniform sampler2D r_ShadowCSMTexture;
-uniform vec4 r_ShadowCSMSplits;
 uniform samplerCube r_ShadowCubeTexture;
+uniform vec4 r_ShadowCSMSplits;
 uniform mat4 r_ShadowMatrix0;
 uniform mat4 r_ShadowMatrix1;
 uniform mat4 r_ShadowMatrix2;
 uniform mat4 r_ShadowMatrix3;
+uniform float r_ShadowAlpha;
 
 //***** INSTANCE *****
 //
@@ -260,8 +266,8 @@ vec3 fragmentPosition(){
 float shadowColor( vec3 position ){
 
 #if MX2_DIRECTIONALLIGHT
-
-	if( position.z>=r_ShadowCSMSplits.w ) return 1.0;//(1.0-r_ShadowAlpha)*0.5;
+ 
+	if( position.z>=r_ShadowCSMSplits.w ) return 1.0;
 	
 	vec4 vpos=vec4( position,1.0 );
 	vec2 off;
@@ -288,7 +294,7 @@ float shadowColor( vec3 position ){
 	
 	return 1.0;
 	
-#else
+#elif MX2_POINTLIGHT
 
 	vec4 vpos=vec4( position,1.0 );
 	
@@ -297,6 +303,18 @@ float shadowColor( vec3 position ){
 	float d=RGBAToFloat( textureCube( r_ShadowCubeTexture,lpos ) );
 	
 	if( length(lpos) > d * r_LightRange ) return 1.0-r_ShadowAlpha;
+	
+	return 1.0;
+	
+#elif MX2_SPOTLIGHT
+
+	vec4 vpos=r_ShadowMatrix0 * vec4( position,1.0 );
+	
+	vec3 spos=vpos.xyz/vpos.w * vec3( 0.25,0.25,0.5 ) + vec3( 0.25,0.25,0.5 );
+
+	float d=texture2D( r_ShadowCSMTexture,spos.xy ).r;
+	
+	if( spos.z>d ) return 1.0-r_ShadowAlpha;
 	
 	return 1.0;
 	
@@ -332,9 +350,9 @@ void emitColorFragment( vec4 color ){
 
 void emitShadowFragment(){
 
-#if MX2_DIRECTIONALLIGHT
+#if MX2_DIRECTIONALLIGHT || MX2_SPOTLIGHT
 	gl_FragColor=vec4( vec3( gl_FragCoord.z ),1.0 );
-#else
+#elif MX2_POINTLIGHT
 	gl_FragColor=FloatToRGBA( min( length( v_Position )/r_LightRange,1.0 ) );
 #endif
 }
