@@ -57,8 +57,22 @@ void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,v
 	vec3 fschlick=specular + (1.0-specular) * pow( 1.0-hdotl,5.0 ) * glosiness;
 	
 	specular=fschlick * pow( ndoth,spow ) * fnorm;
-
+	
 	vec3 light=r_LightColor.rgb * ndotl * atten;
+	
+#if MX2_POINTLIGHT
+
+	vec3 lpos=(r_InverseLightViewMatrix * vec4( position,1.0 )).xyz;
+	light*=pow( textureCube( r_LightCubeTexture,lpos ).rgb,vec3( 2.2 ) );
+
+#elif MX2_SPOTLIGHT
+
+	vec3 lpos=(r_InverseLightViewMatrix * vec4( position,1.0 )).xyz;
+	lpos.xy=lpos.xy/lpos.z * 0.5 + 0.5;
+	lpos.y=1.0-lpos.y;
+	light*=pow( texture2D( r_LightTexture,lpos.xy ).rgb,vec3( 2.2 ) ); 
+
+#endif
 	
 #if MX2_SHADOWTYPE
 	light*=shadowColor( position );

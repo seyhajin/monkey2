@@ -4,10 +4,11 @@ Namespace myapp3d
 #Import "<mojo>"
 #Import "<mojo3d>"
 
+#Import "assets/monkey2-logo.png"
+
 Using std..
 Using mojo..
 Using mojo3d..
-
 
 Class MyWindow Extends Window
 	
@@ -39,6 +40,7 @@ Class MyWindow Extends Window
 		'create light
 		_light=New Light
 		_light.Type=LightType.Spot
+		_light.Texture=Texture.Load( "asset::monkey2-logo.png" )'ColorTexture( Color.Red )
 		_light.Range=25
 		_light.InnerAngle=15
 		_light.OuterAngle=45
@@ -48,14 +50,16 @@ Class MyWindow Extends Window
 		
 		'create ground
 		Local groundBox:=New Boxf( -100,-1,-100,100,0,100 )
-		Local groundMaterial:=New PbrMaterial( Color.White,0,1 )
+		Local groundMaterial:=New PbrMaterial( Color.Brown,0,1 )
 		_ground=Model.CreateBox( groundBox,1,1,1,groundMaterial )
 		_ground.CastsShadow=False
 		
 		'create donut
-		Local donutMaterial:=New PbrMaterial( Color.Red, 0.05, 0.2 )
-		_donut=Model.CreateBox( New Boxf( -1,1 ),1,1,1,donutMaterial )'Model.CreateTorus( 2,.5,48,24,donutMaterial )
+		Local donutMaterial:=New PbrMaterial( Color.White,0,1 )
+		_donut=Model.CreateTorus( 2,.5,48,24,donutMaterial )
 		_donut.Move( 0,2.5,0 )
+		_donut.AddComponent<RotateBehaviour>().Speed=New Vec3f( .2,.4,.6 )
+		
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
@@ -73,9 +77,10 @@ Class MyWindow Extends Window
 			End
 		Endif
 		
-		_donut.Rotate( .2,.4,.6 )
 		_scene.Update()
-		_camera.Render( canvas )
+		
+		_scene.Render( canvas )
+		
 		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	

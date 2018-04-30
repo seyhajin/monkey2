@@ -71,6 +71,9 @@ uniform vec2 r_BufferCoordScale;
 //***** LIGHTING *****
 //
 uniform mat4 r_LightViewMatrix;
+uniform mat4 r_InverseLightViewMatrix;
+uniform samplerCube r_LightCubeTexture;
+uniform sampler2D r_LightTexture;
 uniform vec4 r_LightColor;
 uniform float r_LightRange;
 uniform float r_LightInnerAngle;

@@ -5,6 +5,7 @@ Namespace myapp
 #Import "<mojo3d>"
 
 #Import "assets/fish.glb"
+#Import "assets/monkey2-logo.png"
 
 Using std..
 Using mojo..
@@ -85,14 +86,16 @@ Class MyWindow Extends Window
 		
 		'Create camera
 		Local camera:=New Camera( Self )
-		camera.Move( 0,0,-5 )
+		camera.Move( 0,1,-5 )
 		camera.AddComponent<FlyBehaviour>()
 		
 		'Create light
 		Local light:=New Light
 		light.Type=LightType.Point
+		light.Texture=Texture.Load( "asset::monkey2-logo.png",TextureFlags.Filter|TextureFlags.Cubemap )
 		light.CastsShadow=True
 		light.Range=15
+		light.AddComponent<RotateBehaviour>().Speed=New Vec3f( 0,-.05,0 )
 		
 		CreateRoom()
 		

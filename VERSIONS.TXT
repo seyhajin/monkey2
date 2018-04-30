@@ -1,6 +1,12 @@
 
 ***** Monkey-v2018.05 Mx2cc-v1.1.12 Ted2go-2.10 *****
 
+Added experimental spot and point light texturing via new Light.Texture property. See tests/spotlight and tests/room for demos.
+
+Added RigidBody.LinearFactor and RigidBody.Angular factor properties - untested!
+
+Added support for multiple UVs to gltf2 and assimp loaders.
+
 Streamlined mojo3d tests dir.
 
 Added LinearDamping and AngularDamping properties to RigidBody, but can't get them to do anything so far - please have a play James!
@@ -13,7 +19,7 @@ Major clean up of mojo3d material system. Minor cleanup of post effect system, m
 
 Added multidimensional array initializers, eg: New Int[2,2]( 1,2,3,4 ). Array length much match number of elements exactly or runtime error.
 
-Added first physics constraint component to mojo3d - should probably be renamed joint IMO. Stay tuned...
+Added first physics constraint component to mojo3d, PointToPointConstraint - should probably be renamed joint IMO. Stay tuned...
 
 Added low budget OpenUrl for emscripten. It just replaces current page with the given URL so effectively ends app too.
 

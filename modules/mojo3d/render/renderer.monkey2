@@ -186,12 +186,13 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		Local lvmatrix:=_viewMatrix * light.Matrix
 		
 		_runiforms.SetMat4f( "LightViewMatrix",lvmatrix )
+		_runiforms.SetMat4f( "InverseLightViewMatrix",-lvmatrix )
 		_runiforms.SetColor( "LightColor",light.Color )
 		_runiforms.SetFloat( "LightRange",light.Range )
 		_runiforms.SetFloat( "LightInnerAngle",light.InnerAngle*Pi/180.0 )
 		_runiforms.SetFloat( "LightOuterAngle",light.OuterAngle*Pi/180.0 )
-		
-		_runiforms.SetMat4f( "InverseProjectionMatrix",_invProjMatrix )
+		_runiforms.SetTexture( "LightCubeTexture",light.Texture ?Else _whiteCubeTexture )
+		_runiforms.SetTexture( "LightTexture",light.Texture ?Else _whiteTexture )
 		
 		_gdevice.ColorMask=ColorMask.All
 		_gdevice.DepthMask=False
@@ -203,6 +204,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_gdevice.CullMode=CullMode.None
 		
 		_gdevice.RenderTarget=_renderTarget1
+		
+		_runiforms.SetMat4f( "InverseProjectionMatrix",_invProjMatrix )
 		
 		RenderQuad()
 		
@@ -809,6 +812,9 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	Field _invProjMatrix:Mat4f
 	
 	Field _ambientRendered:Bool
+	
+	Field _whiteCubeTexture:Texture
+	Field _whiteTexture:Texture
 
 	Global _current:Renderer
 	
@@ -846,6 +852,12 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 			New Mat3f( +1,0, 0, 0,0,-1,  0,-1,0 ),	'-Y
 			New Mat3f( +1,0, 0, 0,-1,0,  0,0,+1 ),	'+Z
 			New Mat3f( -1,0, 0, 0,-1,0,  0,0,-1 ) )	'-Z
+			
+		Local pixmap:=New Pixmap( 1,1,PixelFormat.I8 )
+		pixmap.Clear( Color.White )
+		_whiteCubeTexture=New Texture( pixmap,TextureFlags.Cubemap )
+		
+		_whiteTexture=Texture.ColorTexture( Color.White )
 			
 		ValidateSize( New Vec2i( 1920,1080 ) )
 	End
