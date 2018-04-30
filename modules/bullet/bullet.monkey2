@@ -572,6 +572,14 @@ Class btRigidBody Extends btCollisionObject
 		
 	Method getAngularDamping:btScalar()
 		
+	Method getLinearFactor:btVector3()
+		
+	Method setLinearFactor( factor:btVector3 )
+		
+	Method getAngularFactor:btVector3()
+		
+	Method setAngularFactor( factor:btVector3 )
+		
 End
 
 Const BT_CONSTRAINT_ERP:Int

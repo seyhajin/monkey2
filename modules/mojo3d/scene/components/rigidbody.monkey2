@@ -185,6 +185,26 @@ Class RigidBody Extends Component
 		_btbody.setDamping( _btbody.getLinearDamping(),damping )
 	End
 	
+	[jsonify=1]
+	Property LinearFactor:Vec3f()
+		
+		Return _btbody.getLinearFactor()
+	
+	Setter( factor:Vec3f )
+		
+		_btbody.setLinearFactor( factor )
+	End
+
+	[jsonify=1]	
+	Property AngularFactor:Vec3f()
+		
+		Return _btbody.getAngularFactor()
+	
+	Setter( factor:Vec3f )
+		
+		_btbody.setAngularFactor( factor )
+	End
+	
 	Property LinearVelocity:Vec3f()
 		
 		Return _btbody.getLinearVelocity()
