@@ -141,7 +141,7 @@ Class BuilderInstance
 	
 	Method Parse()
 	
-		If opts.verbose=0 Print "Parsing..."
+		If opts.verbose>=0 Print "Parsing..."
 		
 		Local name:=StripDir( StripExt( opts.mainSource ) )
 
@@ -315,7 +315,7 @@ Class BuilderInstance
 
 	Method Semant()
 	
-		If opts.verbose=0 Print "Semanting..."
+		If opts.verbose>=0 Print "Semanting..."
 		
 		SortModules()
 		
@@ -323,12 +323,8 @@ Class BuilderInstance
 		
 			Local module:=modules[i]
 			
-'			Print ""		
-'			Print "Semanting module:"+module.srcPath
-'			Print ""
-			
 			For Local fdecl:=Eachin module.fileDecls
-			
+
 				Local fscope:=New FileScope( fdecl )
 				
 				module.fileScopes.Push( fscope )
@@ -353,10 +349,9 @@ Class BuilderInstance
 			
 			For Local fscope:=Eachin module.fileScopes
 			
-				If opts.verbose>0 Print "Semanting "+fscope.fdecl.path
+				If opts.verbose=2 Print "Semanting "+fscope.fdecl.path
 			
 				fscope.Semant()
-				
 			Next
 			
 			Repeat
@@ -492,7 +487,7 @@ Class BuilderInstance
 	
 	Method Translate()
 	
-		If opts.verbose=0 Print "Translating..."
+		If opts.verbose>=0 Print "Translating..."
 		
 		Local module:=mainModule
 		

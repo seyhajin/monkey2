@@ -22,7 +22,7 @@ Class Translator_CPP Extends Translator
 		
 		For Local fdecl:=Eachin _module.fileDecls
 			
-			If Builder.opts.verbose>0 Print "Translating "+fdecl.path
+			If Builder.opts.verbose=2 Print "Translating "+fdecl.path
 		
 			Try
 			
@@ -2046,9 +2046,8 @@ Class Translator_CPP Extends Translator
 		Return "static_cast<"+cname+"*>(this)"
 	End
 	
-	Method TransMember:String( instance:Value,member:Value )
+	Method TransMember:String( instance:Value,member:Value,invoking:Bool )
 	
-		'Uses( instance.type )
 		UsesType( instance.type )
 		
 		Local supr:=Cast<SuperValue>( instance )
@@ -2057,18 +2056,17 @@ Class Translator_CPP Extends Translator
 		Local tinst:=Trans( instance )
 		Local tmember:=Trans( member )
 		
-		Local func:=Cast<FuncValue>( member )
-		If func And Not func.simpleGetter And IsVolatile( instance )
-			If _gcframe
-				tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
-			Else
-				If TCast<ArrayType>( instance.type ) Throw New TransEx( "Mark TODO 1")
-				tinst="bbGC::tmp("+tinst+")"
-				
-				'Uses( instance.type )
-				UsesType( instance.type )
-				
-				_gctmps+=1
+		If invoking And IsVolatile( instance )
+			Local func:=Cast<FuncValue>( member )
+			If Not func Or Not func.simpleGetter
+				If _gcframe
+					tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
+				Else
+					If TCast<ArrayType>( instance.type ) Throw New TransEx( "Mark TODO 1")
+					tinst="bbGC::tmp("+tinst+")"
+					UsesType( instance.type )
+					_gctmps+=1
+				Endif
 			Endif
 		Endif
 
@@ -2079,11 +2077,7 @@ Class Translator_CPP Extends Translator
 	
 	Method TransInvokeMember:String( instance:Value,member:FuncValue,args:Value[] )
 
-		'Uses( instance.type )
 		UsesType( instance.type )
-			
-'		Local atype:=TCast<ArrayType>( instance.type )
-'		If atype UsesType( atype.elemType )
 			
 		If member.IsExtension
 			
@@ -2094,7 +2088,7 @@ Class Translator_CPP Extends Translator
 					If _gcframe
 						tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
 					Else
-						Throw New TransEx( "Mark TODO 3" )
+						Throw New TransEx( "Mark TODO 2" )
 					Endif
 				Endif
 				tinst="&"+tinst
@@ -2103,7 +2097,7 @@ Class Translator_CPP Extends Translator
 					If _gcframe
 						tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
 					Else
-						Throw New TransEx( "Mark TODO 4" )
+						Throw New TransEx( "Mark TODO 3" )
 					Endif
 				Endif
 						
@@ -2114,7 +2108,7 @@ Class Translator_CPP Extends Translator
 			Return Trans( member )+"("+tinst+TransArgs( args )+")"
 		Endif
 			
-		Return TransMember( instance,member )+"("+TransArgs( args )+")"
+		Return TransMember( instance,member,True )+"("+TransArgs( args )+")"
 	End
 	
 	Method Trans:String( value:InvokeValue )
@@ -2131,7 +2125,7 @@ Class Translator_CPP Extends Translator
 
 	Method Trans:String( value:MemberVarValue )
 	
-		Return TransMember( value.instance,value.member )
+		Return TransMember( value.instance,value.member,False )
 	End
 
 	Method Trans:String( value:MemberFuncValue )
@@ -2429,33 +2423,34 @@ Class Translator_CPP Extends Translator
 
 	'***** Args *****
 	
-	Method IsVolatile:Bool( arg:Value )
+	Method IsVolatileGCType:Bool( arg:Value )
 	
-		If Not IsGCType( arg.type ) Return False
+		Local ucast:=Cast<UpCastValue>( arg )
+		If ucast Return IsVolatileGCType( ucast.value )
 		
-		If arg.IsAssignable
-			
-			Local kind:="?????"
-			Local vvar:=Cast<VarValue>( arg )
-			If vvar kind=vvar.vdecl.kind
-			Local mvar:=Cast<MemberVarValue>( arg )
-			If mvar kind=mvar.member.vdecl.kind
-			Local arr:=Cast<ArrayIndexValue>( arg )
-			If arr kind="element"
-			Local piv:=Cast<PointerIndexValue>( arg )
-			If piv kind="pointer element"
-			Local slf:=Cast<SelfValue>( arg )
-			If slf kind="self"
-			
-			If kind="global" Or kind="field" Or kind="element" 
-				Return True
-			Endif
-			
-			Return False
+		Local ecast:=Cast<ExplicitCastValue>( arg )
+		If ecast Return IsVolatileGCType( ecast.value )
 		
-		Endif
+		Local vvar:=Cast<VarValue>( arg )
+		If vvar Return vvar.vdecl.kind="global" Or vvar.vdecl.kind="field"
 		
-		Return arg.HasSideEffects
+		Local mvar:=Cast<MemberVarValue>( arg )
+		If mvar Return mvar.member.vdecl.kind="global" Or mvar.member.vdecl.kind="field"
+		
+		If Cast<LiteralValue>( arg ) Return False
+		
+		If Cast<SuperValue>( arg ) Return False
+		
+		If Cast<SelfValue>( arg ) Return False
+		
+		Return True
+	End
+	
+	Method IsVolatile:Bool( arg:Value )
+
+		If IsGCType( arg.type ) Return IsVolatileGCType( arg )
+		
+		Return False
 	End
 	
 	Method TransArgs:String( args:Value[] )
@@ -2464,7 +2459,6 @@ Class Translator_CPP Extends Translator
 		
 		For Local arg:=Eachin args
 
-'			Decls( arg.type )
 			DeclsVar( arg.type )
 		
 			Local t:=Trans( arg )
@@ -2473,12 +2467,9 @@ Class Translator_CPP Extends Translator
 				If _gcframe
 					t=AllocGCTmp( arg.type )+"="+t
 				Else
-					If TCast<ArrayType>( arg.type ) Throw New TransEx( "Mark TODO 2" )
+					If TCast<ArrayType>( arg.type ) Throw New TransEx( "Mark TODO 4" )
 					t="bbGC::tmp("+t+")"
-					
-					'Uses( arg.type )
 					UsesType( arg.type )
-					
 					_gctmps+=1
 				Endif
 			Endif
