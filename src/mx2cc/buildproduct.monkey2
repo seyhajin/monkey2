@@ -323,7 +323,7 @@ Class GccBuildProduct Extends BuildProduct
 				CC_CMD= "gcc -c"
 				CXX_CMD="g++ -c"
 				LD_CMD= "g++"
-				AR_CMD= "libtool"
+				AR_CMD= "libtool -o"
 				AS_CMD= "as"
 			Default
 				CC_CMD= "gcc -c"
