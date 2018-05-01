@@ -22,7 +22,7 @@ Class Translator_CPP Extends Translator
 		
 		For Local fdecl:=Eachin _module.fileDecls
 			
-			If Builder.opts.verbose=2 Print "Translating "+fdecl.path
+			If Builder.opts.verbose>=2 Print fdecl.path
 		
 			Try
 			

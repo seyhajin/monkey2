@@ -202,13 +202,8 @@ Class BuilderInstance
 			
 			Local path:=MX2_SRCS.Pop()
 			
-			If opts.verbose>0 Print "Parsing "+path
-#rem				
-			Local ipath:=RealPath( path )
-			If path.StartsWith( module.baseDir )
-				ipath=ipath.Slice( module.baseDir.Length )
-			Endif
-#end
+			If opts.verbose>=2 Print path
+				
 			Local ipath:=MakeRelativePath( StripExt( path ),module.baseDir )
 
 			Local ident:=module.ident+"_"+Identize( ipath )
@@ -349,7 +344,7 @@ Class BuilderInstance
 			
 			For Local fscope:=Eachin module.fileScopes
 			
-				If opts.verbose=2 Print "Semanting "+fscope.fdecl.path
+				If opts.verbose>=2 Print fscope.fdecl.path
 			
 				fscope.Semant()
 			Next
