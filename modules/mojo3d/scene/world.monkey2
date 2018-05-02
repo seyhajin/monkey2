@@ -160,7 +160,5 @@ Class World
 	Field _btworld:btDynamicsWorld
 	
 	Field _bodies:=New Stack<RigidBody>
-	
-	Field _constraints:=New Stack<Constraint>
 
 End

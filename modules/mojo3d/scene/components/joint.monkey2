@@ -1,20 +1,20 @@
 Namespace mojo3d
 
-Class Constraint Extends Component
+Class Joint Extends Component
 	
 	Const ERP:=0		'error reduction parameter - http://bulletphysics.org/mediawiki-1.5.8/index.php/Definitions
 	Const STOP_ERP:=1
 	Const CFM:=2
 	Const STOP_CFM:=3	'constraint force mixing
 	
-	Const Type:=New ComponentType( "Constraint",-20,ComponentTypeFlags.Singleton )
+	Const Type:=New ComponentType( "Joint",-20,ComponentTypeFlags.Singleton )
 	
 	Method New( entity:Entity )
 		
 		Super.New( entity,Type )
 	End
 	
-	Method New( entity:Entity,constraint:Constraint )
+	Method New( entity:Entity,joint:Joint )
 		
 		Super.New( entity,Type )
 	End
@@ -79,7 +79,7 @@ Protected
 	
 End
 
-Class PointToPointConstraint Extends Constraint
+Class BallSocketJoint Extends Joint
 	
 	Method New( entity:Entity )
 		
@@ -88,15 +88,15 @@ Class PointToPointConstraint Extends Constraint
 		AddInstance()
 	End
 	
-	Method New( entity:Entity,constraint:PointToPointConstraint )
+	Method New( entity:Entity,joint:BallSocketJoint )
 		
-		Super.New( entity,constraint )
+		Super.New( entity,joint )
 		
-		Pivot=constraint.Pivot
-		ConnectedBody=constraint.ConnectedBody
-		ConnectedPivot=constraint.ConnectedPivot
+		Pivot=joint.Pivot
+		ConnectedBody=joint.ConnectedBody
+		ConnectedPivot=joint.ConnectedPivot
 		
-		AddInstance( constraint )
+		AddInstance( joint )
 	End
 	
 	[jsonify=1]
@@ -138,11 +138,11 @@ Class PointToPointConstraint Extends Constraint
 	Method OnCreate() Override
 		
 		Local btBody1:=Entity.GetComponent<RigidBody>().btBody
-		Assert( btBody1,"PointToPointConstraint: No rigid body" )
+		Assert( btBody1,"BallSocketJoint: No rigid body" )	'todo: fail nicely
 		
 		If _connected
 			Local btBody2:=_connected.btBody
-			Assert( btBody2,"PointToPointConstraint: No rigid body" )
+			Assert( btBody2,"BallSocketJoint: No rigid body" )	'todo: fail nicely
 			_btconstraint=New btPoint2PointConstraint( btBody1,btBody2,_pivot1,_pivot2 )
 		Else
 			_btconstraint=New btPoint2PointConstraint( btBody1,_pivot1 )

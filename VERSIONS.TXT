@@ -1,6 +1,14 @@
 
 ***** Monkey-v2018.05 Mx2cc-v1.1.12 Ted2go-2.10 *****
 
+Renamed mojo3d Constraint->Joint and PointToPointConstraint->BallSocketJoint.
+
+Added mojo3d support for 'spherical' sky textures. Also added TextureFlags.Envmap which must be used for envmap textures. Previously, cubemap+mipmap implied envmap but this is no longer true.
+
+Fixed a very gnarly bug in garbage collector. Thanks Mac767!
+
+Changed emscripten module builds so they generate .bc files instead of .a for a minor link speed up.
+
 Added experimental spot and point light texturing via new Light.Texture property. See tests/spotlight and tests/room for demos.
 
 Added RigidBody.LinearFactor and RigidBody.Angular factor properties - untested!
