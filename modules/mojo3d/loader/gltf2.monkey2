@@ -476,7 +476,7 @@ Class Gltf2Asset
 					prim.TEXCOORD_0=accessors[jattribs.GetNumber( "TEXCOORD_0" )]
 				Endif
 				If jattribs.Contains( "TEXCOORD_1" )
-					prim.TEXCOORD_0=accessors[jattribs.GetNumber( "TEXCOORD_1" )]
+					prim.TEXCOORD_1=accessors[jattribs.GetNumber( "TEXCOORD_1" )]
 				Endif
 				If jattribs.Contains( "JOINTS_0" )
 					prim.JOINTS_0=accessors[jattribs.GetNumber( "JOINTS_0" )]
