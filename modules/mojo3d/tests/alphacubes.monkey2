@@ -22,8 +22,6 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		SetConfig( "MOJO3D_RENDERER","forward" )
-
 		'create scene
 		'		
 		_scene=New Scene

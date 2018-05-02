@@ -35,9 +35,9 @@ Class Light Extends Entity
 		OuterAngle=30
 		CastsShadow=False
 		
-		AddInstance()
-		
 		Visible=True
+		
+		AddInstance()
 	End
 	
 	#rem monkeydoc Copies the light.

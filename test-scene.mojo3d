@@ -22,8 +22,7 @@
 		},
 		"id":1,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,2.5,-5],
-			"Visible":true
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,2.5,-5]
 		},
 		"type":"mojo3d.Camera"
 	},{
@@ -43,15 +42,14 @@
 		"id":3,
 		"state":{
 			"CastsShadow":true,
-			"LocalMatrix":[0.70710676908493042,0,0.70710676908493042,-0.49999997019767761,0.70710676908493042,0.49999997019767761,-0.49999997019767761,-0.70710676908493042,0.49999997019767761,0,0,0],
-			"Visible":true
+			"LocalMatrix":[0.70710676908493042,0,0.70710676908493042,-0.49999997019767761,0.70710676908493042,0.49999997019767761,-0.49999997019767761,-0.70710676908493042,0.49999997019767761,0,0,0]
 		},
 		"type":"mojo3d.Light"
 	},{
 		"ctor":{
-			"args":[[0.69999998807907104,1,0,1],1,1,false],
+			"args":[[0.69999998807907104,1,0,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":4,
 		"type":"mojo3d.PbrMaterial"
@@ -70,17 +68,12 @@
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
 		"id":6,
-		"state":{
-			"Materials":["@4"],
-			"Mesh":"@5",
-			"Visible":true
-		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":[[1,0,0,1],0.05000000074505806,0.20000000298023224,false],
+			"args":[[1,0,0,1],0.05000000074505806,0.20000000298023224],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":7,
 		"type":"mojo3d.PbrMaterial"
@@ -100,10 +93,7 @@
 		},
 		"id":9,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,2.5,0],
-			"Materials":["@7"],
-			"Mesh":"@8",
-			"Visible":true
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,2.5,0]
 		},
 		"type":"mojo3d.Model"
 	},{

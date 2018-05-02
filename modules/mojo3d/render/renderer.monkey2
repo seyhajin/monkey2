@@ -832,7 +832,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_gdevice.BindUniformBlock( _runiforms )
 		_gdevice.BindUniformBlock( _iuniforms )
 		
-		_defaultEnv=Texture.Load( "asset::textures/env_default.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+		_defaultEnv=Texture.Load( "asset::textures/env_default.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap|TextureFlags.Envmap )
 		
 		_skyboxShader=Shader.Open( "misc/skybox",ShaderDefs )
 

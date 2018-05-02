@@ -1,5 +1,5 @@
 {
-	"assetsDir":"D:/dev/monkey2/modules/mojo3d/tests/shapes-scene.products/Windows/assets/",
+	"assetsDir":"D:/dev/monkey2/modules/mojo3d/tests/shapes.products/Windows/assets/",
 	"instances":[{
 		"ctor":{
 			"args":[true],
@@ -17,8 +17,7 @@
 		"id":1,
 		"state":{
 			"Far":60,
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-10],
-			"Visible":true
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-10]
 		},
 		"type":"mojo3d.Camera"
 	},{
@@ -60,15 +59,14 @@
 		"id":5,
 		"state":{
 			"CastsShadow":true,
-			"LocalMatrix":[1,0,0,0,0.25881904363632202,0.96592581272125244,0,-0.96592581272125244,0.25881904363632202,0,0,0],
-			"Visible":true
+			"LocalMatrix":[1,0,0,0,0.25881904363632202,0.96592581272125244,0,-0.96592581272125244,0.25881904363632202,0,0,0]
 		},
 		"type":"mojo3d.Light"
 	},{
 		"ctor":{
-			"args":[[0,1,0,1],1,1,false],
+			"args":[[0,1,0,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":6,
 		"type":"mojo3d.PbrMaterial"
@@ -88,9 +86,7 @@
 		},
 		"id":8,
 		"state":{
-			"Materials":["@6"],
-			"Mesh":"@7",
-			"Visible":true
+			"Name":"Ground"
 		},
 		"type":"mojo3d.Model"
 	},{
@@ -119,9 +115,9 @@
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[1,1,1,1],1,1,false],
+			"args":[[1,1,1,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":11,
 		"type":"mojo3d.PbrMaterial"
@@ -141,11 +137,8 @@
 		},
 		"id":13,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,5,50,0],
-			"Materials":["@516"],
-			"Mesh":"@12",
 			"Name":"Box",
-			"Visible":true
+			"Visible":false
 		},
 		"type":"mojo3d.Model"
 	},{
@@ -186,11 +179,8 @@
 		},
 		"id":17,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,10,50,0],
-			"Materials":["@517"],
-			"Mesh":"@16",
 			"Name":"Sphere",
-			"Visible":true
+			"Visible":false
 		},
 		"type":"mojo3d.Model"
 	},{
@@ -229,11 +219,8 @@
 		},
 		"id":21,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,15,50,0],
-			"Materials":["@518"],
-			"Mesh":"@20",
 			"Name":"Cylinder",
-			"Visible":true
+			"Visible":false
 		},
 		"type":"mojo3d.Model"
 	},{
@@ -276,11 +263,8 @@
 		},
 		"id":25,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,20,50,0],
-			"Materials":["@519"],
-			"Mesh":"@24",
 			"Name":"Capsule",
-			"Visible":true
+			"Visible":false
 		},
 		"type":"mojo3d.Model"
 	},{
@@ -323,11 +307,8 @@
 		},
 		"id":29,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,25,50,0],
-			"Materials":["@520"],
-			"Mesh":"@28",
 			"Name":"Cone",
-			"Visible":true
+			"Visible":false
 		},
 		"type":"mojo3d.Model"
 	},{
@@ -356,52 +337,44 @@
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.59253692626953125,0.27571108937263489,0.56320899724960327,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
-		},
-		"id":32,
-		"type":"mojo3d.PbrMaterial"
-	},{
-		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":32,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,-40],
+			"Materials":["@35"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@32"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":33,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-40],
-			"Materials":["@32"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@33"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":34,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@33","@23"],
+			"args":["@32","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":35,
+		"id":34,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.44817626476287842,0.51561665534973145,0.18991005420684814,1],1,1,false],
+			"args":[[0.59253692626953125,0.27571108937263489,0.56320899724960327,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":36,
+		"id":35,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -409,36 +382,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":37,
+		"id":36,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-32],
-			"Materials":["@36"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,-32],
+			"Materials":["@39"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@37","@30"],
+			"args":["@36","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":38,
+		"id":37,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@37","@31"],
+			"args":["@36","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":39,
+		"id":38,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.67855590581893921,0.61011695861816406,0.48619696497917175,1],1,1,false],
+			"args":[[0.44817626476287842,0.51561665534973145,0.18991005420684814,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":40,
+		"id":39,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -446,36 +419,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":41,
+		"id":40,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-24],
-			"Materials":["@40"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,-24],
+			"Materials":["@43"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@41","@18"],
+			"args":["@40","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":42,
+		"id":41,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@41","@19"],
+			"args":["@40","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":43,
+		"id":42,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.80796515941619873,0.054855410009622574,0.095923520624637604,1],1,1,false],
+			"args":[[0.67855590581893921,0.61011695861816406,0.48619696497917175,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":44,
+		"id":43,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -483,77 +456,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":45,
+		"id":44,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-16],
-			"Materials":["@44"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,-16],
+			"Materials":["@47"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@45","@30"],
+			"args":["@44","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":46,
+		"id":45,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@45","@31"],
+			"args":["@44","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":47,
+		"id":46,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.43767347931861877,0.86018842458724976,0.97257024049758911,1],1,1,false],
+			"args":[[0.80796515941619873,0.054855410009622574,0.095923520624637604,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":48,
+		"id":47,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":48,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,-8],
+			"Materials":["@51"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@48"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":49,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,-8],
-			"Materials":["@48"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@49"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":50,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@49","@23"],
+			"args":["@48","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":51,
+		"id":50,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.55556482076644897,0.56348139047622681,0.57516604661941528,1],1,1,false],
+			"args":[[0.43767347931861877,0.86018842458724976,0.97257024049758911,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":52,
+		"id":51,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -561,151 +534,151 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":53,
+		"id":52,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,0],
-			"Materials":["@52"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,0],
+			"Materials":["@55"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@53","@14"],
+			"args":["@52","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":54,
+		"id":53,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@53","@15"],
+			"args":["@52","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":55,
+		"id":54,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.71817785501480103,0.32654425501823425,0.052721954882144928,1],1,1,false],
+			"args":[[0.55556482076644897,0.56348139047622681,0.57516604661941528,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":56,
+		"id":55,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":56,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,8],
+			"Materials":["@59"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@56"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":57,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,8],
-			"Materials":["@56"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@57"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":58,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@57","@23"],
+			"args":["@56","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":58,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.71817785501480103,0.32654425501823425,0.052721954882144928,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":59,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.0062910295091569424,0.060640431940555573,0.52169352769851685,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@25",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":60,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,16],
+			"Materials":["@63"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@25",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@60","@26"],
+			"decl":"mojo3d.CapsuleCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
 		"id":61,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,16],
-			"Materials":["@60"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@61","@26"],
-			"decl":"mojo3d.CapsuleCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
+			"args":["@60","@27"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":62,
-		"type":"mojo3d.CapsuleCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@61","@27"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.0062910295091569424,0.060640431940555573,0.52169352769851685,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":63,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.59903740882873535,0.46058759093284607,0.59644609689712524,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":64,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,24],
+			"Materials":["@67"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@64","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":65,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,24],
-			"Materials":["@64"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@65","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":66,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@65","@15"],
+			"args":["@64","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":67,
+		"id":66,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.27641084790229797,0.19697901606559753,0.42436692118644714,1],1,1,false],
+			"args":[[0.59903740882873535,0.46058759093284607,0.59644609689712524,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":68,
+		"id":67,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -713,36 +686,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":69,
+		"id":68,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,32],
-			"Materials":["@68"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,32],
+			"Materials":["@71"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@69","@26"],
+			"args":["@68","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":70,
+		"id":69,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@69","@27"],
+			"args":["@68","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":71,
+		"id":70,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.533641517162323,0.77994233369827271,0.24391604959964752,1],1,1,false],
+			"args":[[0.27641084790229797,0.19697901606559753,0.42436692118644714,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":72,
+		"id":71,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -750,73 +723,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":73,
+		"id":72,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,50,40],
-			"Materials":["@72"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-40,10,40],
+			"Materials":["@75"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@73","@18"],
+			"args":["@72","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":74,
+		"id":73,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@73","@19"],
+			"args":["@72","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":74,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.533641517162323,0.77994233369827271,0.24391604959964752,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":75,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.11810126155614853,0.87502294778823853,0.45904448628425598,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":76,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,-40],
+			"Materials":["@79"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@76","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":77,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-40],
-			"Materials":["@76"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@77","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
-		},
-		"id":78,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@77","@31"],
+			"args":["@76","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":79,
+		"id":78,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.27342686057090759,0.39235830307006836,0.74659085273742676,1],1,1,false],
+			"args":[[0.11810126155614853,0.87502294778823853,0.45904448628425598,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":80,
+		"id":79,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -824,36 +797,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":81,
+		"id":80,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-32],
-			"Materials":["@80"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,-32],
+			"Materials":["@83"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@81","@30"],
+			"args":["@80","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":82,
+		"id":81,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@81","@31"],
+			"args":["@80","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":83,
+		"id":82,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.36739856004714966,0.94387292861938477,0.76741814613342285,1],1,1,false],
+			"args":[[0.27342686057090759,0.39235830307006836,0.74659085273742676,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":84,
+		"id":83,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -861,36 +834,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":85,
+		"id":84,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-24],
-			"Materials":["@84"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,-24],
+			"Materials":["@87"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@85","@26"],
+			"args":["@84","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":86,
+		"id":85,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@85","@27"],
+			"args":["@84","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":87,
+		"id":86,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.89398175477981567,0.32419678568840027,0.15141093730926514,1],1,1,false],
+			"args":[[0.36739856004714966,0.94387292861938477,0.76741814613342285,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":88,
+		"id":87,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -898,36 +871,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":89,
+		"id":88,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-16],
-			"Materials":["@88"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,-16],
+			"Materials":["@91"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@89","@14"],
+			"args":["@88","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":90,
+		"id":89,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@89","@15"],
+			"args":["@88","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":91,
+		"id":90,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.88538438081741333,0.062086012214422226,0.37310025095939636,1],1,1,false],
+			"args":[[0.89398175477981567,0.32419678568840027,0.15141093730926514,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":92,
+		"id":91,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -935,36 +908,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":93,
+		"id":92,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,-8],
-			"Materials":["@92"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,-8],
+			"Materials":["@95"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@93","@26"],
+			"args":["@92","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":94,
+		"id":93,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@93","@27"],
+			"args":["@92","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":95,
+		"id":94,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.82535654306411743,0.8107147216796875,0.29992356896400452,1],1,1,false],
+			"args":[[0.88538438081741333,0.062086012214422226,0.37310025095939636,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":96,
+		"id":95,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -972,188 +945,188 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":97,
+		"id":96,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,0],
-			"Materials":["@96"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,0],
+			"Materials":["@99"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@97","@18"],
+			"args":["@96","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":98,
+		"id":97,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@97","@19"],
+			"args":["@96","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":99,
+		"id":98,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.18338885903358459,0.77452772855758667,0.9363294243812561,1],1,1,false],
+			"args":[[0.82535654306411743,0.8107147216796875,0.29992356896400452,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":100,
+		"id":99,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":100,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,8],
+			"Materials":["@103"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@100"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":101,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,8],
-			"Materials":["@100"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@101"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":102,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@101","@23"],
+			"args":["@100","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":102,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.18338885903358459,0.77452772855758667,0.9363294243812561,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":103,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.43236294388771057,0.04812326654791832,0.41722145676612854,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":104,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,16],
+			"Materials":["@107"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@104","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":105,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,16],
-			"Materials":["@104"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@105","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
+			"args":["@104","@19"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":106,
-		"type":"mojo3d.SphereCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@105","@19"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.43236294388771057,0.04812326654791832,0.41722145676612854,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":107,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.21578091382980347,0.71443074941635132,0.041638083755970001,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":108,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,24],
+			"Materials":["@111"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@108","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":109,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,24],
-			"Materials":["@108"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@109","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
+			"args":["@108","@19"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":110,
-		"type":"mojo3d.SphereCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@109","@19"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.21578091382980347,0.71443074941635132,0.041638083755970001,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":111,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.85165935754776001,0.83237022161483765,0.059129804372787476,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":112,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,32],
+			"Materials":["@115"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@112","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":113,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,32],
-			"Materials":["@112"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@113","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
-		},
-		"id":114,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@113","@19"],
+			"args":["@112","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":115,
+		"id":114,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.25966364145278931,0.50723838806152344,0.76072144508361816,1],1,1,false],
+			"args":[[0.85165935754776001,0.83237022161483765,0.059129804372787476,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":116,
+		"id":115,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1161,151 +1134,151 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":117,
+		"id":116,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,50,40],
-			"Materials":["@116"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-32,10,40],
+			"Materials":["@119"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@117","@18"],
+			"args":["@116","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":118,
+		"id":117,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@117","@19"],
+			"args":["@116","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":119,
+		"id":118,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.61778587102890015,0.27576300501823425,0.10436855256557465,1],1,1,false],
+			"args":[[0.25966364145278931,0.50723838806152344,0.76072144508361816,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":120,
+		"id":119,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":120,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,-40],
+			"Materials":["@123"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@120"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":121,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-40],
-			"Materials":["@120"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@121"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":122,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@121","@23"],
+			"args":["@120","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":122,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.61778587102890015,0.27576300501823425,0.10436855256557465,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":123,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.095086589455604553,0.47904965281486511,0.809783935546875,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":124,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,-32],
+			"Materials":["@127"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@124","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":125,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-32],
-			"Materials":["@124"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@125","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
+			"args":["@124","@19"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":126,
-		"type":"mojo3d.SphereCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@125","@19"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.095086589455604553,0.47904965281486511,0.809783935546875,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":127,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.82644516229629517,0.94196873903274536,0.90336692333221436,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":128,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,-24],
+			"Materials":["@131"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@128","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":129,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-24],
-			"Materials":["@128"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@129","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
-		},
-		"id":130,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@129","@19"],
+			"args":["@128","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":131,
+		"id":130,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.9729190468788147,0.027545521035790443,0.038564160466194153,1],1,1,false],
+			"args":[[0.82644516229629517,0.94196873903274536,0.90336692333221436,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":132,
+		"id":131,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1313,36 +1286,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":133,
+		"id":132,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-16],
-			"Materials":["@132"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,-16],
+			"Materials":["@135"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@133","@18"],
+			"args":["@132","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":134,
+		"id":133,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@133","@19"],
+			"args":["@132","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":135,
+		"id":134,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.1198401153087616,0.45878303050994873,0.7886805534362793,1],1,1,false],
+			"args":[[0.9729190468788147,0.027545521035790443,0.038564160466194153,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":136,
+		"id":135,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1350,36 +1323,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":137,
+		"id":136,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,-8],
-			"Materials":["@136"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,-8],
+			"Materials":["@139"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@137","@26"],
+			"args":["@136","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":138,
+		"id":137,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@137","@27"],
+			"args":["@136","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":139,
+		"id":138,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.40893709659576416,0.84532994031906128,0.37228888273239136,1],1,1,false],
+			"args":[[0.1198401153087616,0.45878303050994873,0.7886805534362793,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":140,
+		"id":139,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1387,36 +1360,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":141,
+		"id":140,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,0],
-			"Materials":["@140"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,0],
+			"Materials":["@143"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@141","@30"],
+			"args":["@140","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":142,
+		"id":141,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@141","@31"],
+			"args":["@140","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":143,
+		"id":142,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.15345111489295959,0.85428261756896973,0.11114314943552017,1],1,1,false],
+			"args":[[0.40893709659576416,0.84532994031906128,0.37228888273239136,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":144,
+		"id":143,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1424,188 +1397,188 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":145,
+		"id":144,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,8],
-			"Materials":["@144"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,8],
+			"Materials":["@147"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@145","@14"],
+			"args":["@144","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":146,
+		"id":145,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@145","@15"],
+			"args":["@144","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":147,
+		"id":146,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.93234080076217651,0.9634966254234314,0.99144738912582397,1],1,1,false],
+			"args":[[0.15345111489295959,0.85428261756896973,0.11114314943552017,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":148,
+		"id":147,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":148,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,16],
+			"Materials":["@151"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@148"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":149,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,16],
-			"Materials":["@148"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@149"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":150,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@149","@23"],
+			"args":["@148","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":150,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.93234080076217651,0.9634966254234314,0.99144738912582397,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":151,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.10898909717798233,0.41096469759941101,0.12517677247524261,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":152,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,24],
+			"Materials":["@155"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@152","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":153,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,24],
-			"Materials":["@152"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@153","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
+			"args":["@152","@19"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":154,
-		"type":"mojo3d.SphereCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@153","@19"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.10898909717798233,0.41096469759941101,0.12517677247524261,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":155,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.36053597927093506,0.8971254825592041,0.21427740156650543,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":156,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,32],
+			"Materials":["@159"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@156","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":157,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,32],
-			"Materials":["@156"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@157","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
+			"args":["@156","@31"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":158,
-		"type":"mojo3d.ConeCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@157","@31"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.36053597927093506,0.8971254825592041,0.21427740156650543,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":159,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.4167630672454834,0.10579859465360641,0.96252065896987915,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":160,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,10,40],
+			"Materials":["@163"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@160","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":161,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-24,50,40],
-			"Materials":["@160"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@161","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":162,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@161","@15"],
+			"args":["@160","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":163,
+		"id":162,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.28644853830337524,0.19027112424373627,0.67863863706588745,1],1,1,false],
+			"args":[[0.4167630672454834,0.10579859465360641,0.96252065896987915,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":164,
+		"id":163,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1613,36 +1586,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":165,
+		"id":164,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-40],
-			"Materials":["@164"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,-40],
+			"Materials":["@167"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@165","@18"],
+			"args":["@164","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":166,
+		"id":165,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@165","@19"],
+			"args":["@164","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":167,
+		"id":166,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.94030743837356567,0.48449274897575378,0.84198111295700073,1],1,1,false],
+			"args":[[0.28644853830337524,0.19027112424373627,0.67863863706588745,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":168,
+		"id":167,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1650,36 +1623,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":169,
+		"id":168,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-32],
-			"Materials":["@168"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,-32],
+			"Materials":["@171"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@169","@30"],
+			"args":["@168","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":170,
+		"id":169,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@169","@31"],
+			"args":["@168","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":171,
+		"id":170,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.89237761497497559,0.7106853723526001,0.87296175956726074,1],1,1,false],
+			"args":[[0.94030743837356567,0.48449274897575378,0.84198111295700073,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":172,
+		"id":171,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1687,36 +1660,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":173,
+		"id":172,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-24],
-			"Materials":["@172"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,-24],
+			"Materials":["@175"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@173","@18"],
+			"args":["@172","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":174,
+		"id":173,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@173","@19"],
+			"args":["@172","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":175,
+		"id":174,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.90358304977416992,0.41713312268257141,0.10513093322515488,1],1,1,false],
+			"args":[[0.89237761497497559,0.7106853723526001,0.87296175956726074,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":176,
+		"id":175,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1724,36 +1697,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":177,
+		"id":176,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-16],
-			"Materials":["@176"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,-16],
+			"Materials":["@179"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@177","@14"],
+			"args":["@176","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":178,
+		"id":177,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@177","@15"],
+			"args":["@176","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":179,
+		"id":178,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.72669374942779541,0.75545322895050049,0.068278491497039795,1],1,1,false],
+			"args":[[0.90358304977416992,0.41713312268257141,0.10513093322515488,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":180,
+		"id":179,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1761,151 +1734,151 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":181,
+		"id":180,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,-8],
-			"Materials":["@180"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,-8],
+			"Materials":["@183"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@181","@30"],
+			"args":["@180","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":182,
+		"id":181,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@181","@31"],
+			"args":["@180","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":183,
+		"id":182,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.42460420727729797,0.65589416027069092,0.23275372385978699,1],1,1,false],
+			"args":[[0.72669374942779541,0.75545322895050049,0.068278491497039795,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":184,
+		"id":183,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":184,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,0],
+			"Materials":["@187"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@184"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":185,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,0],
-			"Materials":["@184"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@185"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":186,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@185","@23"],
+			"args":["@184","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":186,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.42460420727729797,0.65589416027069092,0.23275372385978699,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":187,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.11132075637578964,0.48363623023033142,0.38664847612380981,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":188,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,8],
+			"Materials":["@191"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@188","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":189,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,8],
-			"Materials":["@188"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@189","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
-		},
-		"id":190,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@189","@31"],
+			"args":["@188","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":190,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.11132075637578964,0.48363623023033142,0.38664847612380981,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":191,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.12098578363656998,0.64973908662796021,0.64396071434020996,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":192,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,16],
+			"Materials":["@195"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@192","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":193,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,16],
-			"Materials":["@192"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@193","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
-		},
-		"id":194,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@193","@19"],
+			"args":["@192","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":195,
+		"id":194,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.58588975667953491,0.051572039723396301,0.19019207358360291,1],1,1,false],
+			"args":[[0.12098578363656998,0.64973908662796021,0.64396071434020996,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":196,
+		"id":195,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1913,36 +1886,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":197,
+		"id":196,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,24],
-			"Materials":["@196"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,24],
+			"Materials":["@199"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@197","@18"],
+			"args":["@196","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":198,
+		"id":197,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@197","@19"],
+			"args":["@196","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":199,
+		"id":198,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.38023725152015686,0.3794613778591156,0.43147647380828857,1],1,1,false],
+			"args":[[0.58588975667953491,0.051572039723396301,0.19019207358360291,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":200,
+		"id":199,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1950,36 +1923,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":201,
+		"id":200,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,32],
-			"Materials":["@200"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,32],
+			"Materials":["@203"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@201","@30"],
+			"args":["@200","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":202,
+		"id":201,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@201","@31"],
+			"args":["@200","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":203,
+		"id":202,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.73259967565536499,0.29090738296508789,0.31308948993682861,1],1,1,false],
+			"args":[[0.38023725152015686,0.3794613778591156,0.43147647380828857,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":204,
+		"id":203,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -1987,73 +1960,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":205,
+		"id":204,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,50,40],
-			"Materials":["@204"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-16,10,40],
+			"Materials":["@207"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@205","@14"],
+			"args":["@204","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":206,
+		"id":205,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@205","@15"],
+			"args":["@204","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":206,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.73259967565536499,0.29090738296508789,0.31308948993682861,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":207,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.12279954552650452,0.70603007078170776,0.24274967610836029,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":208,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,-40],
+			"Materials":["@211"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@208","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":209,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-40],
-			"Materials":["@208"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@209","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
-		},
-		"id":210,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@209","@19"],
+			"args":["@208","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":211,
+		"id":210,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.73342835903167725,0.0056894696317613125,0.39064022898674011,1],1,1,false],
+			"args":[[0.12279954552650452,0.70603007078170776,0.24274967610836029,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":212,
+		"id":211,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2061,114 +2034,114 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":213,
+		"id":212,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-32],
-			"Materials":["@212"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,-32],
+			"Materials":["@215"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@213","@18"],
+			"args":["@212","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":214,
+		"id":213,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@213","@19"],
+			"args":["@212","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":215,
+		"id":214,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.50806510448455811,0.50953847169876099,0.55175715684890747,1],1,1,false],
+			"args":[[0.73342835903167725,0.0056894696317613125,0.39064022898674011,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":216,
+		"id":215,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":216,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,-24],
+			"Materials":["@219"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@216"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":217,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-24],
-			"Materials":["@216"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@217"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":218,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@217","@23"],
+			"args":["@216","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":218,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.50806510448455811,0.50953847169876099,0.55175715684890747,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":219,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.077120624482631683,0.30599531531333923,0.61570841073989868,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":220,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,-16],
+			"Materials":["@223"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@220","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":221,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-16],
-			"Materials":["@220"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@221","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":222,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@221","@15"],
+			"args":["@220","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":223,
+		"id":222,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.063400082290172577,0.15443184971809387,0.41440954804420471,1],1,1,false],
+			"args":[[0.077120624482631683,0.30599531531333923,0.61570841073989868,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":224,
+		"id":223,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2176,73 +2149,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":225,
+		"id":224,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,-8],
-			"Materials":["@224"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,-8],
+			"Materials":["@227"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@225","@30"],
+			"args":["@224","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":226,
+		"id":225,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@225","@31"],
+			"args":["@224","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":226,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.063400082290172577,0.15443184971809387,0.41440954804420471,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":227,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.20383194088935852,0.6273961067199707,0.78008103370666504,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":228,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,0],
+			"Materials":["@231"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@228","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":229,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,0],
-			"Materials":["@228"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@229","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
-		},
-		"id":230,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@229","@19"],
+			"args":["@228","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":231,
+		"id":230,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.75505548715591431,0.99711871147155762,0.6478009819984436,1],1,1,false],
+			"args":[[0.20383194088935852,0.6273961067199707,0.78008103370666504,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":232,
+		"id":231,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2250,36 +2223,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":233,
+		"id":232,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,8],
-			"Materials":["@232"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,8],
+			"Materials":["@235"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@233","@18"],
+			"args":["@232","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":234,
+		"id":233,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@233","@19"],
+			"args":["@232","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":235,
+		"id":234,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.27263921499252319,0.35103338956832886,0.81967061758041382,1],1,1,false],
+			"args":[[0.75505548715591431,0.99711871147155762,0.6478009819984436,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":236,
+		"id":235,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2287,36 +2260,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":237,
+		"id":236,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,16],
-			"Materials":["@236"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,16],
+			"Materials":["@239"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@237","@14"],
+			"args":["@236","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":238,
+		"id":237,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@237","@15"],
+			"args":["@236","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":239,
+		"id":238,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.85805428028106689,0.82057458162307739,0.58049136400222778,1],1,1,false],
+			"args":[[0.27263921499252319,0.35103338956832886,0.81967061758041382,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":240,
+		"id":239,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2324,36 +2297,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":241,
+		"id":240,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,24],
-			"Materials":["@240"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,24],
+			"Materials":["@243"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@241","@30"],
+			"args":["@240","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":242,
+		"id":241,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@241","@31"],
+			"args":["@240","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":243,
+		"id":242,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.8111802339553833,0.45699924230575562,0.14338402450084686,1],1,1,false],
+			"args":[[0.85805428028106689,0.82057458162307739,0.58049136400222778,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":244,
+		"id":243,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2361,110 +2334,110 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":245,
+		"id":244,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,32],
-			"Materials":["@244"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,32],
+			"Materials":["@247"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@245","@18"],
+			"args":["@244","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":246,
+		"id":245,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@245","@19"],
+			"args":["@244","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":246,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.8111802339553833,0.45699924230575562,0.14338402450084686,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":247,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.86553555727005005,0.21715027093887329,0.079092778265476227,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":248,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,10,40],
+			"Materials":["@251"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@248","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":249,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,-8,50,40],
-			"Materials":["@248"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@249","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
+			"args":["@248","@31"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":250,
-		"type":"mojo3d.ConeCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@249","@31"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.86553555727005005,0.21715027093887329,0.079092778265476227,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":251,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.97600352764129639,0.29003703594207764,0.41718053817749023,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":252,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-40],
+			"Materials":["@255"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@252","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":253,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-40],
-			"Materials":["@252"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@253","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
-		},
-		"id":254,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@253","@31"],
+			"args":["@252","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":255,
+		"id":254,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.28589993715286255,0.048269666731357574,0.5633774995803833,1],1,1,false],
+			"args":[[0.97600352764129639,0.29003703594207764,0.41718053817749023,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":256,
+		"id":255,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2472,36 +2445,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":257,
+		"id":256,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-32],
-			"Materials":["@256"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-32],
+			"Materials":["@259"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@257","@30"],
+			"args":["@256","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":258,
+		"id":257,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@257","@31"],
+			"args":["@256","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":259,
+		"id":258,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.21607618033885956,0.82108557224273682,0.54239797592163086,1],1,1,false],
+			"args":[[0.28589993715286255,0.048269666731357574,0.5633774995803833,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":260,
+		"id":259,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2509,77 +2482,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":261,
+		"id":260,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-24],
-			"Materials":["@260"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-24],
+			"Materials":["@263"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@261","@26"],
+			"args":["@260","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":262,
+		"id":261,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@261","@27"],
+			"args":["@260","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":263,
+		"id":262,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.98101037740707397,0.62437522411346436,0.10925234854221344,1],1,1,false],
+			"args":[[0.21607618033885956,0.82108557224273682,0.54239797592163086,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":264,
+		"id":263,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":264,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-16],
+			"Materials":["@267"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@264"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":265,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-16],
-			"Materials":["@264"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@265"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":266,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@265","@23"],
+			"args":["@264","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":267,
+		"id":266,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.64345806837081909,0.36572074890136719,0.24503369629383087,1],1,1,false],
+			"args":[[0.98101037740707397,0.62437522411346436,0.10925234854221344,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":268,
+		"id":267,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2587,36 +2560,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":269,
+		"id":268,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,-8],
-			"Materials":["@268"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,-8],
+			"Materials":["@271"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@269","@18"],
+			"args":["@268","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":270,
+		"id":269,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@269","@19"],
+			"args":["@268","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":271,
+		"id":270,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.19176861643791199,0.20406301319599152,0.61723679304122925,1],1,1,false],
+			"args":[[0.64345806837081909,0.36572074890136719,0.24503369629383087,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":272,
+		"id":271,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2624,77 +2597,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":273,
+		"id":272,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,0],
-			"Materials":["@272"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,0],
+			"Materials":["@275"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@273","@26"],
+			"args":["@272","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":274,
+		"id":273,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@273","@27"],
+			"args":["@272","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":275,
+		"id":274,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.25508636236190796,0.36909857392311096,0.37767186760902405,1],1,1,false],
+			"args":[[0.19176861643791199,0.20406301319599152,0.61723679304122925,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":276,
+		"id":275,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":276,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,8],
+			"Materials":["@279"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@276"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":277,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,8],
-			"Materials":["@276"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@277"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":278,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@277","@23"],
+			"args":["@276","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":279,
+		"id":278,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.27119842171669006,0.48148578405380249,0.21105112135410309,1],1,1,false],
+			"args":[[0.25508636236190796,0.36909857392311096,0.37767186760902405,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":280,
+		"id":279,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2702,77 +2675,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":281,
+		"id":280,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,16],
-			"Materials":["@280"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,16],
+			"Materials":["@283"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@281","@14"],
+			"args":["@280","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":282,
+		"id":281,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@281","@15"],
+			"args":["@280","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":283,
+		"id":282,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.070857465267181396,0.83172011375427246,0.036577731370925903,1],1,1,false],
+			"args":[[0.27119842171669006,0.48148578405380249,0.21105112135410309,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":284,
+		"id":283,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":284,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,24],
+			"Materials":["@287"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@284"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":285,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,24],
-			"Materials":["@284"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@285"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":286,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@285","@23"],
+			"args":["@284","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":287,
+		"id":286,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.70479100942611694,0.87101638317108154,0.073613002896308899,1],1,1,false],
+			"args":[[0.070857465267181396,0.83172011375427246,0.036577731370925903,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":288,
+		"id":287,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2780,77 +2753,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":289,
+		"id":288,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,32],
-			"Materials":["@288"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,32],
+			"Materials":["@291"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@289","@26"],
+			"args":["@288","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":290,
+		"id":289,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@289","@27"],
+			"args":["@288","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":291,
+		"id":290,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.23169565200805664,0.6364668607711792,0.79557400941848755,1],1,1,false],
+			"args":[[0.70479100942611694,0.87101638317108154,0.073613002896308899,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":292,
+		"id":291,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":292,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,10,40],
+			"Materials":["@295"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@292"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":293,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,50,40],
-			"Materials":["@292"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@293"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":294,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@293","@23"],
+			"args":["@292","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":295,
+		"id":294,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.22518631815910339,0.26077669858932495,0.99603009223937988,1],1,1,false],
+			"args":[[0.23169565200805664,0.6364668607711792,0.79557400941848755,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":296,
+		"id":295,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2858,36 +2831,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":297,
+		"id":296,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-40],
-			"Materials":["@296"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,-40],
+			"Materials":["@299"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@297","@18"],
+			"args":["@296","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":298,
+		"id":297,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@297","@19"],
+			"args":["@296","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":299,
+		"id":298,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.14233233034610748,0.52324163913726807,0.40008470416069031,1],1,1,false],
+			"args":[[0.22518631815910339,0.26077669858932495,0.99603009223937988,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":300,
+		"id":299,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -2895,114 +2868,114 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":301,
+		"id":300,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-32],
-			"Materials":["@300"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,-32],
+			"Materials":["@303"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@301","@30"],
+			"args":["@300","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":302,
+		"id":301,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@301","@31"],
+			"args":["@300","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":303,
+		"id":302,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.57079213857650757,0.18631951510906219,0.46461114287376404,1],1,1,false],
+			"args":[[0.14233233034610748,0.52324163913726807,0.40008470416069031,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":304,
+		"id":303,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":304,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,-24],
+			"Materials":["@307"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@304"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":305,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-24],
-			"Materials":["@304"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@305"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":306,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@305","@23"],
+			"args":["@304","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":306,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.57079213857650757,0.18631951510906219,0.46461114287376404,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":307,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.60027670860290527,0.3482765257358551,0.1108425110578537,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":308,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,-16],
+			"Materials":["@311"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@308","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":309,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-16],
-			"Materials":["@308"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@309","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":310,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@309","@15"],
+			"args":["@308","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":311,
+		"id":310,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.92541271448135376,0.38129064440727234,0.80693119764328003,1],1,1,false],
+			"args":[[0.60027670860290527,0.3482765257358551,0.1108425110578537,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":312,
+		"id":311,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3010,36 +2983,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":313,
+		"id":312,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,-8],
-			"Materials":["@312"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,-8],
+			"Materials":["@315"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@313","@30"],
+			"args":["@312","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":314,
+		"id":313,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@313","@31"],
+			"args":["@312","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":315,
+		"id":314,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.73567390441894531,0.57010352611541748,0.84707009792327881,1],1,1,false],
+			"args":[[0.92541271448135376,0.38129064440727234,0.80693119764328003,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":316,
+		"id":315,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3047,36 +3020,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":317,
+		"id":316,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,0],
-			"Materials":["@316"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,0],
+			"Materials":["@319"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@317","@14"],
+			"args":["@316","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":318,
+		"id":317,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@317","@15"],
+			"args":["@316","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":319,
+		"id":318,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.21579930186271667,0.11240795254707336,0.31925719976425171,1],1,1,false],
+			"args":[[0.73567390441894531,0.57010352611541748,0.84707009792327881,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":320,
+		"id":319,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3084,36 +3057,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":321,
+		"id":320,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,8],
-			"Materials":["@320"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,8],
+			"Materials":["@323"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@321","@26"],
+			"args":["@320","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":322,
+		"id":321,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@321","@27"],
+			"args":["@320","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":323,
+		"id":322,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.92909818887710571,0.005899522453546524,0.75134360790252686,1],1,1,false],
+			"args":[[0.21579930186271667,0.11240795254707336,0.31925719976425171,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":324,
+		"id":323,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3121,73 +3094,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":325,
+		"id":324,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,16],
-			"Materials":["@324"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,16],
+			"Materials":["@327"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@325","@30"],
+			"args":["@324","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":326,
+		"id":325,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@325","@31"],
+			"args":["@324","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":326,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.92909818887710571,0.005899522453546524,0.75134360790252686,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":327,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.97787606716156006,0.96045303344726563,0.34159278869628906,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@25",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":328,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,24],
+			"Materials":["@331"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@25",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@328","@26"],
+			"decl":"mojo3d.CapsuleCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
 		"id":329,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,24],
-			"Materials":["@328"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@329","@26"],
-			"decl":"mojo3d.CapsuleCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
-		},
-		"id":330,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@329","@27"],
+			"args":["@328","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":331,
+		"id":330,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.60244524478912354,0.5751190185546875,0.38070037961006165,1],1,1,false],
+			"args":[[0.97787606716156006,0.96045303344726563,0.34159278869628906,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":332,
+		"id":331,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3195,114 +3168,114 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":333,
+		"id":332,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,32],
-			"Materials":["@332"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,32],
+			"Materials":["@335"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@333","@26"],
+			"args":["@332","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":334,
+		"id":333,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@333","@27"],
+			"args":["@332","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":335,
+		"id":334,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.035497687757015228,0.92998611927032471,0.27129447460174561,1],1,1,false],
+			"args":[[0.60244524478912354,0.5751190185546875,0.38070037961006165,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":336,
+		"id":335,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":336,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,10,40],
+			"Materials":["@339"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@336"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":337,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,8,50,40],
-			"Materials":["@336"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@337"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":338,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@337","@23"],
+			"args":["@336","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":338,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.035497687757015228,0.92998611927032471,0.27129447460174561,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":339,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.12941321730613708,0.31573969125747681,0.32744896411895752,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":340,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,-40],
+			"Materials":["@343"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@340","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":341,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-40],
-			"Materials":["@340"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@341","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":342,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@341","@15"],
+			"args":["@340","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":343,
+		"id":342,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.66642773151397705,0.71900606155395508,0.389283686876297,1],1,1,false],
+			"args":[[0.12941321730613708,0.31573969125747681,0.32744896411895752,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":344,
+		"id":343,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3310,77 +3283,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":345,
+		"id":344,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-32],
-			"Materials":["@344"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,-32],
+			"Materials":["@347"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@345","@14"],
+			"args":["@344","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":346,
+		"id":345,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@345","@15"],
+			"args":["@344","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":347,
+		"id":346,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.0089102610945701599,0.63239151239395142,0.99442678689956665,1],1,1,false],
+			"args":[[0.66642773151397705,0.71900606155395508,0.389283686876297,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":348,
+		"id":347,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":348,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,-24],
+			"Materials":["@351"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@348"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":349,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-24],
-			"Materials":["@348"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@349"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":350,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@349","@23"],
+			"args":["@348","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":351,
+		"id":350,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.80496543645858765,0.29921099543571472,0.012702168896794319,1],1,1,false],
+			"args":[[0.0089102610945701599,0.63239151239395142,0.99442678689956665,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":352,
+		"id":351,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3388,77 +3361,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":353,
+		"id":352,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-16],
-			"Materials":["@352"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,-16],
+			"Materials":["@355"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@353","@14"],
+			"args":["@352","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":354,
+		"id":353,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@353","@15"],
+			"args":["@352","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":355,
+		"id":354,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.77028465270996094,0.07738407701253891,0.24030181765556335,1],1,1,false],
+			"args":[[0.80496543645858765,0.29921099543571472,0.012702168896794319,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":356,
+		"id":355,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":356,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,-8],
+			"Materials":["@359"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@356"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":357,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,-8],
-			"Materials":["@356"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@357"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":358,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@357","@23"],
+			"args":["@356","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":359,
+		"id":358,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.41902852058410645,0.52027910947799683,0.68127566576004028,1],1,1,false],
+			"args":[[0.77028465270996094,0.07738407701253891,0.24030181765556335,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":360,
+		"id":359,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3466,36 +3439,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":361,
+		"id":360,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,0],
-			"Materials":["@360"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,0],
+			"Materials":["@363"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@361","@30"],
+			"args":["@360","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":362,
+		"id":361,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@361","@31"],
+			"args":["@360","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":363,
+		"id":362,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.13066518306732178,0.7377052903175354,0.19632697105407715,1],1,1,false],
+			"args":[[0.41902852058410645,0.52027910947799683,0.68127566576004028,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":364,
+		"id":363,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3503,36 +3476,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":365,
+		"id":364,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,8],
-			"Materials":["@364"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,8],
+			"Materials":["@367"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@365","@14"],
+			"args":["@364","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":366,
+		"id":365,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@365","@15"],
+			"args":["@364","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":367,
+		"id":366,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.22062350809574127,0.27862229943275452,0.29068973660469055,1],1,1,false],
+			"args":[[0.13066518306732178,0.7377052903175354,0.19632697105407715,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":368,
+		"id":367,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3540,36 +3513,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":369,
+		"id":368,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,16],
-			"Materials":["@368"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,16],
+			"Materials":["@371"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@369","@30"],
+			"args":["@368","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":370,
+		"id":369,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@369","@31"],
+			"args":["@368","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":371,
+		"id":370,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.486794114112854,0.22435136139392853,0.21673606336116791,1],1,1,false],
+			"args":[[0.22062350809574127,0.27862229943275452,0.29068973660469055,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":372,
+		"id":371,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3577,151 +3550,151 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":373,
+		"id":372,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,24],
-			"Materials":["@372"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,24],
+			"Materials":["@375"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@373","@18"],
+			"args":["@372","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":374,
+		"id":373,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@373","@19"],
+			"args":["@372","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":375,
+		"id":374,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.81744784116744995,0.70358175039291382,0.80815136432647705,1],1,1,false],
+			"args":[[0.486794114112854,0.22435136139392853,0.21673606336116791,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":376,
+		"id":375,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":376,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,32],
+			"Materials":["@379"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@376"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":377,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,32],
-			"Materials":["@376"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@377"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":378,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@377","@23"],
+			"args":["@376","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":378,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.81744784116744995,0.70358175039291382,0.80815136432647705,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":379,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.65342378616333008,0.86930263042449951,0.62160933017730713,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":380,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,10,40],
+			"Materials":["@383"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@380","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":381,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,16,50,40],
-			"Materials":["@380"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
+		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@381","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
+			"args":["@380","@15"],
+			"decl":"mojo3d.RigidBody.New",
+			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
 		"id":382,
-		"type":"mojo3d.BoxCollider"
+		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":["@381","@15"],
-			"decl":"mojo3d.RigidBody.New",
-			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+			"args":[[0.65342378616333008,0.86930263042449951,0.62160933017730713,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":383,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.73850291967391968,0.29345732927322388,0.27265405654907227,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":384,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,-40],
+			"Materials":["@387"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@384","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":385,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-40],
-			"Materials":["@384"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@385","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":386,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@385","@15"],
+			"args":["@384","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":387,
+		"id":386,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.72738850116729736,0.40921854972839355,0.5806918740272522,1],1,1,false],
+			"args":[[0.73850291967391968,0.29345732927322388,0.27265405654907227,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":388,
+		"id":387,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3729,36 +3702,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":389,
+		"id":388,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-32],
-			"Materials":["@388"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,-32],
+			"Materials":["@391"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@389","@14"],
+			"args":["@388","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":390,
+		"id":389,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@389","@15"],
+			"args":["@388","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":391,
+		"id":390,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.38239485025405884,0.2604852020740509,0.93114930391311646,1],1,1,false],
+			"args":[[0.72738850116729736,0.40921854972839355,0.5806918740272522,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":392,
+		"id":391,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3766,200 +3739,200 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":393,
+		"id":392,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-24],
-			"Materials":["@392"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,-24],
+			"Materials":["@395"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@393","@18"],
+			"args":["@392","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":394,
+		"id":393,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@393","@19"],
+			"args":["@392","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":395,
+		"id":394,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.118030846118927,0.62869203090667725,0.27886530756950378,1],1,1,false],
+			"args":[[0.38239485025405884,0.2604852020740509,0.93114930391311646,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":396,
+		"id":395,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":396,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,-16],
+			"Materials":["@399"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@396"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":397,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-16],
-			"Materials":["@396"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@397"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":398,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@397","@23"],
+			"args":["@396","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":399,
+		"id":398,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.23456920683383942,0.33150312304496765,0.57824963331222534,1],1,1,false],
+			"args":[[0.118030846118927,0.62869203090667725,0.27886530756950378,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":400,
+		"id":399,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":400,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,-8],
+			"Materials":["@403"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@400"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":401,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,-8],
-			"Materials":["@400"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@401"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":402,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@401","@23"],
+			"args":["@400","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":403,
+		"id":402,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.63789957761764526,0.25082418322563171,0.51527559757232666,1],1,1,false],
+			"args":[[0.23456920683383942,0.33150312304496765,0.57824963331222534,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":404,
+		"id":403,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":404,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,0],
+			"Materials":["@407"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@404"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":405,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,0],
-			"Materials":["@404"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@405"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":406,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@405","@23"],
+			"args":["@404","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":407,
+		"id":406,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.9071851372718811,0.40031954646110535,0.6605374813079834,1],1,1,false],
+			"args":[[0.63789957761764526,0.25082418322563171,0.51527559757232666,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":408,
+		"id":407,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":408,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,8],
+			"Materials":["@411"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@408"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":409,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,8],
-			"Materials":["@408"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@409"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":410,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@409","@23"],
+			"args":["@408","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":411,
+		"id":410,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.37640732526779175,0.3161817193031311,0.65551412105560303,1],1,1,false],
+			"args":[[0.9071851372718811,0.40031954646110535,0.6605374813079834,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":412,
+		"id":411,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -3967,36 +3940,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":413,
+		"id":412,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,16],
-			"Materials":["@412"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,16],
+			"Materials":["@415"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@413","@26"],
+			"args":["@412","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":414,
+		"id":413,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@413","@27"],
+			"args":["@412","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":415,
+		"id":414,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.1742948591709137,0.85109412670135498,0.037889633327722549,1],1,1,false],
+			"args":[[0.37640732526779175,0.3161817193031311,0.65551412105560303,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":416,
+		"id":415,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4004,36 +3977,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":417,
+		"id":416,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,24],
-			"Materials":["@416"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,24],
+			"Materials":["@419"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@417","@30"],
+			"args":["@416","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":418,
+		"id":417,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@417","@31"],
+			"args":["@416","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":419,
+		"id":418,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.14797317981719971,0.5105278491973877,0.42141199111938477,1],1,1,false],
+			"args":[[0.1742948591709137,0.85109412670135498,0.037889633327722549,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":420,
+		"id":419,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4041,73 +4014,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":421,
+		"id":420,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,32],
-			"Materials":["@420"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,32],
+			"Materials":["@423"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@421","@18"],
+			"args":["@420","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":422,
+		"id":421,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@421","@19"],
+			"args":["@420","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":422,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.14797317981719971,0.5105278491973877,0.42141199111938477,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":423,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.96106266975402832,0.6617586612701416,0.54197287559509277,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":424,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,10,40],
+			"Materials":["@427"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@424","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":425,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,24,50,40],
-			"Materials":["@424"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@425","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
-		},
-		"id":426,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@425","@31"],
+			"args":["@424","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":427,
+		"id":426,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.52158594131469727,0.40847861766815186,0.017859727144241333,1],1,1,false],
+			"args":[[0.96106266975402832,0.6617586612701416,0.54197287559509277,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":428,
+		"id":427,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4115,73 +4088,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":429,
+		"id":428,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-40],
-			"Materials":["@428"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,-40],
+			"Materials":["@431"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@429","@30"],
+			"args":["@428","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":430,
+		"id":429,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@429","@31"],
+			"args":["@428","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":430,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.52158594131469727,0.40847861766815186,0.017859727144241333,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":431,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.1865696907043457,0.69451779127120972,0.94321638345718384,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@25",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":432,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,-32],
+			"Materials":["@435"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@25",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@432","@26"],
+			"decl":"mojo3d.CapsuleCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
 		"id":433,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-32],
-			"Materials":["@432"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@433","@26"],
-			"decl":"mojo3d.CapsuleCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
-		},
-		"id":434,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@433","@27"],
+			"args":["@432","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":435,
+		"id":434,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.27789226174354553,0.43721973896026611,0.49737617373466492,1],1,1,false],
+			"args":[[0.1865696907043457,0.69451779127120972,0.94321638345718384,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":436,
+		"id":435,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4189,73 +4162,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":437,
+		"id":436,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-24],
-			"Materials":["@436"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,-24],
+			"Materials":["@439"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@437","@26"],
+			"args":["@436","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":438,
+		"id":437,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@437","@27"],
+			"args":["@436","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":438,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.27789226174354553,0.43721973896026611,0.49737617373466492,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":439,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.45104190707206726,0.38226813077926636,0.25759690999984741,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@13",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":440,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,-16],
+			"Materials":["@443"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@13",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@440","@14"],
+			"decl":"mojo3d.BoxCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
 		"id":441,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-16],
-			"Materials":["@440"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@441","@14"],
-			"decl":"mojo3d.BoxCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
-		},
-		"id":442,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@441","@15"],
+			"args":["@440","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":443,
+		"id":442,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.84150683879852295,0.18641762435436249,0.56780314445495605,1],1,1,false],
+			"args":[[0.45104190707206726,0.38226813077926636,0.25759690999984741,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":444,
+		"id":443,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4263,114 +4236,114 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":445,
+		"id":444,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,-8],
-			"Materials":["@444"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,-8],
+			"Materials":["@447"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@445","@14"],
+			"args":["@444","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":446,
+		"id":445,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@445","@15"],
+			"args":["@444","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":447,
+		"id":446,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.98737269639968872,0.1024099662899971,0.54703277349472046,1],1,1,false],
+			"args":[[0.84150683879852295,0.18641762435436249,0.56780314445495605,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":448,
+		"id":447,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":448,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,0],
+			"Materials":["@451"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@448"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":449,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,0],
-			"Materials":["@448"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@449"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":450,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@449","@23"],
+			"args":["@448","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":450,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.98737269639968872,0.1024099662899971,0.54703277349472046,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":451,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.086441606283187866,0.30782696604728699,0.91991573572158813,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@29",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":452,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,8],
+			"Materials":["@455"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@29",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@452","@30"],
+			"decl":"mojo3d.ConeCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
 		"id":453,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,8],
-			"Materials":["@452"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@453","@30"],
-			"decl":"mojo3d.ConeCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
-		},
-		"id":454,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@453","@31"],
+			"args":["@452","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":455,
+		"id":454,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.8792375922203064,0.97446227073669434,0.16898542642593384,1],1,1,false],
+			"args":[[0.086441606283187866,0.30782696604728699,0.91991573572158813,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":456,
+		"id":455,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4378,36 +4351,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":457,
+		"id":456,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,16],
-			"Materials":["@456"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,16],
+			"Materials":["@459"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@457","@26"],
+			"args":["@456","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":458,
+		"id":457,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@457","@27"],
+			"args":["@456","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":459,
+		"id":458,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.42257007956504822,0.97224968671798706,0.11153146624565125,1],1,1,false],
+			"args":[[0.8792375922203064,0.97446227073669434,0.16898542642593384,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":460,
+		"id":459,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4415,73 +4388,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":461,
+		"id":460,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,24],
-			"Materials":["@460"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,24],
+			"Materials":["@463"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@461","@30"],
+			"args":["@460","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":462,
+		"id":461,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@461","@31"],
+			"args":["@460","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":462,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.42257007956504822,0.97224968671798706,0.11153146624565125,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":463,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.83953607082366943,0.90957432985305786,0.21779473125934601,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@17",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":464,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,32],
+			"Materials":["@467"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@17",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@464","@18"],
+			"decl":"mojo3d.SphereCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
 		"id":465,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,32],
-			"Materials":["@464"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@465","@18"],
-			"decl":"mojo3d.SphereCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
-		},
-		"id":466,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@465","@19"],
+			"args":["@464","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":467,
+		"id":466,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.61497139930725098,0.83361446857452393,0.10892914980649948,1],1,1,false],
+			"args":[[0.83953607082366943,0.90957432985305786,0.21779473125934601,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":468,
+		"id":467,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4489,36 +4462,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":469,
+		"id":468,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,50,40],
-			"Materials":["@468"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,32,10,40],
+			"Materials":["@471"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@469","@14"],
+			"args":["@468","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":470,
+		"id":469,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@469","@15"],
+			"args":["@468","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":471,
+		"id":470,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.78549766540527344,0.99544113874435425,0.33095526695251465,1],1,1,false],
+			"args":[[0.61497139930725098,0.83361446857452393,0.10892914980649948,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":472,
+		"id":471,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4526,36 +4499,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":473,
+		"id":472,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-40],
-			"Materials":["@472"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,-40],
+			"Materials":["@475"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@473","@26"],
+			"args":["@472","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":474,
+		"id":473,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@473","@27"],
+			"args":["@472","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":475,
+		"id":474,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.73649239540100098,0.37060320377349854,0.24355444312095642,1],1,1,false],
+			"args":[[0.78549766540527344,0.99544113874435425,0.33095526695251465,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":476,
+		"id":475,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4563,36 +4536,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":477,
+		"id":476,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-32],
-			"Materials":["@476"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,-32],
+			"Materials":["@479"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@477","@14"],
+			"args":["@476","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":478,
+		"id":477,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@477","@15"],
+			"args":["@476","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":479,
+		"id":478,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.68190848827362061,0.60016286373138428,0.24054069817066193,1],1,1,false],
+			"args":[[0.73649239540100098,0.37060320377349854,0.24355444312095642,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":480,
+		"id":479,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4600,36 +4573,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":481,
+		"id":480,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-24],
-			"Materials":["@480"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,-24],
+			"Materials":["@483"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@481","@18"],
+			"args":["@480","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":482,
+		"id":481,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@481","@19"],
+			"args":["@480","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":483,
+		"id":482,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.87365138530731201,0.06815396249294281,0.64087164402008057,1],1,1,false],
+			"args":[[0.68190848827362061,0.60016286373138428,0.24054069817066193,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":484,
+		"id":483,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4637,73 +4610,73 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":485,
+		"id":484,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-16],
-			"Materials":["@484"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,-16],
+			"Materials":["@487"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@485","@14"],
+			"args":["@484","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":486,
+		"id":485,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@485","@15"],
+			"args":["@484","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
+		},
+		"id":486,
+		"type":"mojo3d.RigidBody"
+	},{
+		"ctor":{
+			"args":[[0.87365138530731201,0.06815396249294281,0.64087164402008057,1],1,1],
+			"decl":"mojo3d.PbrMaterial.New",
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
 		"id":487,
-		"type":"mojo3d.RigidBody"
+		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
-			"args":[[0.9416767954826355,0.40890803933143616,0.074565321207046509,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"args":["@25",null],
+			"decl":"mojo3d.Model.New",
+			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
 		"id":488,
-		"type":"mojo3d.PbrMaterial"
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,-8],
+			"Materials":["@491"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@25",null],
-			"decl":"mojo3d.Model.New",
-			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+			"args":["@488","@26"],
+			"decl":"mojo3d.CapsuleCollider.New",
+			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
 		"id":489,
-		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,-8],
-			"Materials":["@488"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@489","@26"],
-			"decl":"mojo3d.CapsuleCollider.New",
-			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
-		},
-		"id":490,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@489","@27"],
+			"args":["@488","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":491,
+		"id":490,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.60133689641952515,0.50934803485870361,0.77397733926773071,1],1,1,false],
+			"args":[[0.9416767954826355,0.40890803933143616,0.074565321207046509,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":492,
+		"id":491,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4711,77 +4684,77 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":493,
+		"id":492,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,0],
-			"Materials":["@492"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,0],
+			"Materials":["@495"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@493","@26"],
+			"args":["@492","@26"],
 			"decl":"mojo3d.CapsuleCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.CapsuleCollider)"
 		},
-		"id":494,
+		"id":493,
 		"type":"mojo3d.CapsuleCollider"
 	},{
 		"ctor":{
-			"args":["@493","@27"],
+			"args":["@492","@27"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":495,
+		"id":494,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.30913209915161133,0.61819767951965332,0.64997458457946777,1],1,1,false],
+			"args":[[0.60133689641952515,0.50934803485870361,0.77397733926773071,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":496,
+		"id":495,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
 			"args":["@21",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
+		},
+		"id":496,
+		"state":{
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,8],
+			"Materials":["@499"],
+			"Visible":true
+		},
+		"type":"mojo3d.Model"
+	},{
+		"ctor":{
+			"args":["@496"],
+			"decl":"mojo3d.CylinderCollider.New",
+			"type":"Void(mojo3d.Entity)"
 		},
 		"id":497,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,8],
-			"Materials":["@496"],
-			"Visible":true
-		},
-		"type":"mojo3d.Model"
-	},{
-		"ctor":{
-			"args":["@497"],
-			"decl":"mojo3d.CylinderCollider.New",
-			"type":"Void(mojo3d.Entity)"
-		},
-		"id":498,
-		"state":{
 			"Length":8,
 			"Radius":1
 		},
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@497","@23"],
+			"args":["@496","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":499,
+		"id":498,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.31695100665092468,0.72640222311019897,0.57123053073883057,1],1,1,false],
+			"args":[[0.30913209915161133,0.61819767951965332,0.64997458457946777,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":500,
+		"id":499,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4789,36 +4762,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":501,
+		"id":500,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,16],
-			"Materials":["@500"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,16],
+			"Materials":["@503"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@501","@14"],
+			"args":["@500","@14"],
 			"decl":"mojo3d.BoxCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.BoxCollider)"
 		},
-		"id":502,
+		"id":501,
 		"type":"mojo3d.BoxCollider"
 	},{
 		"ctor":{
-			"args":["@501","@15"],
+			"args":["@500","@15"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":503,
+		"id":502,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.51088607311248779,0.58255422115325928,0.15033793449401855,1],1,1,false],
+			"args":[[0.31695100665092468,0.72640222311019897,0.57123053073883057,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":504,
+		"id":503,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4826,20 +4799,20 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":505,
+		"id":504,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,24],
-			"Materials":["@504"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,24],
+			"Materials":["@507"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@505"],
+			"args":["@504"],
 			"decl":"mojo3d.CylinderCollider.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":506,
+		"id":505,
 		"state":{
 			"Length":8,
 			"Radius":1
@@ -4847,19 +4820,19 @@
 		"type":"mojo3d.CylinderCollider"
 	},{
 		"ctor":{
-			"args":["@505","@23"],
+			"args":["@504","@23"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":507,
+		"id":506,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.93275493383407593,0.31899091601371765,0.35939294099807739,1],1,1,false],
+			"args":[[0.51088607311248779,0.58255422115325928,0.15033793449401855,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":508,
+		"id":507,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4867,36 +4840,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":509,
+		"id":508,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,32],
-			"Materials":["@508"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,32],
+			"Materials":["@511"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@509","@18"],
+			"args":["@508","@18"],
 			"decl":"mojo3d.SphereCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.SphereCollider)"
 		},
-		"id":510,
+		"id":509,
 		"type":"mojo3d.SphereCollider"
 	},{
 		"ctor":{
-			"args":["@509","@19"],
+			"args":["@508","@19"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":511,
+		"id":510,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.51085960865020752,0.4643445611000061,0.97623538970947266,1],1,1,false],
+			"args":[[0.93275493383407593,0.31899091601371765,0.35939294099807739,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":512,
+		"id":511,
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -4904,68 +4877,36 @@
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Model,mojo3d.Entity)"
 		},
-		"id":513,
+		"id":512,
 		"state":{
-			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,50,40],
-			"Materials":["@512"],
+			"LocalMatrix":[1,0,0,0,1,0,0,0,1,40,10,40],
+			"Materials":["@515"],
 			"Visible":true
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@513","@30"],
+			"args":["@512","@30"],
 			"decl":"mojo3d.ConeCollider.New",
 			"type":"Void(mojo3d.Entity,mojo3d.ConeCollider)"
 		},
-		"id":514,
+		"id":513,
 		"type":"mojo3d.ConeCollider"
 	},{
 		"ctor":{
-			"args":["@513","@31"],
+			"args":["@512","@31"],
 			"decl":"mojo3d.RigidBody.New",
 			"type":"Void(mojo3d.Entity,mojo3d.RigidBody)"
 		},
-		"id":515,
+		"id":514,
 		"type":"mojo3d.RigidBody"
 	},{
 		"ctor":{
-			"args":[[0.28321406245231628,0.57581007480621338,0.034805413335561752,1],1,1,false],
+			"args":[[0.51085960865020752,0.4643445611000061,0.97623538970947266,1],1,1],
 			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
+			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":516,
-		"type":"mojo3d.PbrMaterial"
-	},{
-		"ctor":{
-			"args":[[0.22796665132045746,0.88475435972213745,0.21138815581798553,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
-		},
-		"id":517,
-		"type":"mojo3d.PbrMaterial"
-	},{
-		"ctor":{
-			"args":[[0.88361293077468872,0.30292403697967529,0.2768140435218811,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
-		},
-		"id":518,
-		"type":"mojo3d.PbrMaterial"
-	},{
-		"ctor":{
-			"args":[[0.56539154052734375,0.72534507513046265,0.53818792104721069,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
-		},
-		"id":519,
-		"type":"mojo3d.PbrMaterial"
-	},{
-		"ctor":{
-			"args":[[0.64812636375427246,0.5395205020904541,0.96833956241607666,1],1,1,false],
-			"decl":"mojo3d.PbrMaterial.New",
-			"type":"Void(std.graphics.Color,Float,Float,Bool)"
-		},
-		"id":520,
+		"id":515,
 		"type":"mojo3d.PbrMaterial"
 	}]
 }
