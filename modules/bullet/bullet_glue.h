@@ -18,6 +18,21 @@ namespace bbBullet{
 		Point2PointConstraint(btRigidBody* rbA,const btVector3& pivotInA):
 		btPoint2PointConstraint(*rbA,pivotInA){}
 	};
+
+	struct HingeConstraint : public btHingeConstraint{
+			
+		HingeConstraint(btRigidBody *rbA, btRigidBody *rbB, const btVector3 &pivotInA, const btVector3 &pivotInB, const btVector3 &axisInA, const btVector3 &axisInB, bool useReferenceFrameA=false):
+		btHingeConstraint(*rbA, *rbB, pivotInA, pivotInB, axisInA, axisInB, useReferenceFrameA){}
+ 
+		HingeConstraint(btRigidBody *rbA, const btVector3 &pivotInA, const btVector3 &axisInA, bool useReferenceFrameA=false):
+		btHingeConstraint(*rbA, pivotInA, axisInA, useReferenceFrameA){}
+ 
+		HingeConstraint(btRigidBody *rbA, btRigidBody *rbB, const btTransform &rbAFrame, const btTransform &rbBFrame, bool useReferenceFrameA=false):
+		btHingeConstraint(*rbA, *rbB, rbAFrame, rbBFrame, useReferenceFrameA){}
+ 
+		HingeConstraint(btRigidBody *rbA, const btTransform &rbAFrame, bool useReferenceFrameA=false):
+		btHingeConstraint(*rbA, rbAFrame, useReferenceFrameA){}
+	};
 	
 	struct MotionState : public btMotionState{
 		

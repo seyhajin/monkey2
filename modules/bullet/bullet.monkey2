@@ -610,4 +610,20 @@ Class btPoint2PointConstraint Extends btTypedConstraint="bbBullet::Point2PointCo
 		
 End
 
+Class btHingeConstraint Extends btTypedConstraint="bbBullet::HingeConstraint"
+
+ 	method New( rbA:btRigidBody,rtB:btRigidBody,pivotInA:btVector3,pivotInB:btVector3,axisInA:btVector3,axisInB:btVector3,useReferenceFrameA:Bool=False)
+ 
+ 	Method New( rbA:btRigidBody,pivotInA:btVector3,axisInA:btVector3,useReferenceFrameA:Bool=False)
+ 
+ 	Method New( rbA:btRigidBody,rbB:btRigidBody,rbAFrame:btTransform,rbBFrame:btTransform,useReferenceFrameA:Bool=False )
+ 	
+ 	Method New( rbA:btRigidBody,rbAFrame:btTransform,useReferenceFrameA:Bool=False )
+	 	
+	Method getFrameOffsetA:btTransform()
+		
+	Method getFrameOffsetB:btTransform()
+End
+
+
 

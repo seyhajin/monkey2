@@ -150,3 +150,103 @@ Class BallSocketJoint Extends Joint
 	End
 		
 End
+
+Class HingeJoint Extends Joint
+
+	Method New( entity:Entity )
+		
+		Super.New( entity )
+		
+		Axis=New Vec3f( 0,1,0 )
+		ConnectedAxis=New Vec3f( 0,1,0 )
+		
+		AddInstance()
+	End
+	
+	Method New( entity:Entity,joint:HingeJoint )
+		
+		Super.New( entity,joint )
+		
+		Pivot=joint.Pivot
+		Axis=joint.Axis
+		ConnectedBody=joint.ConnectedBody
+		ConnectedPivot=joint.ConnectedPivot
+		ConnectedAxis=joint.ConnectedAxis
+		
+		AddInstance( joint )
+	End
+	
+	[jsonify=1]
+	Property Pivot:Vec3f()
+		
+		Return _pivot1
+		
+	Setter( pivot:Vec3f )
+		
+		_pivot1=pivot
+	End
+	
+	[jsonify=1]
+	Property Axis:Vec3f()
+		
+		Return _axis1
+		
+	Setter( axis:Vec3f )
+		
+		_axis1=axis
+	End
+	
+	[jsonify=1]
+	Property ConnectedBody:RigidBody()
+		
+		Return _connected
+		
+	Setter( body:RigidBody )
+		
+		_connected=body
+	End
+	
+	[jsonify=1]
+	Property ConnectedPivot:Vec3f()
+	
+		Return _pivot2
+	
+	Setter( pivot:Vec3f )
+		
+		_pivot2=pivot
+	End
+	
+	[jsonify=1]
+	Property ConnectedAxis:Vec3f()
+		
+		Return _axis2
+		
+	Setter( axis:Vec3f )
+		
+		_axis2=axis
+	End
+	
+	Protected
+	
+	Field _connected:RigidBody
+	Field _pivot1:Vec3f
+	Field _pivot2:Vec3f
+	Field _axis1:Vec3f
+	Field _axis2:Vec3f
+	
+	Method OnCreate() Override
+		
+		Local btBody1:=Entity.GetComponent<RigidBody>().btBody
+		Assert( btBody1,"BallSocketJoint: No rigid body" )	'todo: fail nicely
+		
+		If _connected
+			Local btBody2:=_connected.btBody
+			Assert( btBody2,"BallSocketJoint: No rigid body" )	'todo: fail nicely
+			_btconstraint=New btHingeConstraint( btBody1,btBody2,_pivot1,_pivot2,_axis1,_axis2 )
+		Else
+			_btconstraint=New btHingeConstraint( btBody1,_pivot1,_axis1 )
+		End
+	End
+	
+End
+

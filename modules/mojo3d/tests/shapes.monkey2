@@ -149,6 +149,7 @@ Class MyWindow Extends Window
 		body.CollisionGroup=32
 		body.CollisionMask=127
 		body.Kinematic=True
+		body.Friction=0	'no friction best for kinematic bodies?
 		body.Mass=0
 		
 		'create light

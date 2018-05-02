@@ -1,6 +1,8 @@
 
 ***** Monkey-v2018.05 Mx2cc-v1.1.12 Ted2go-2.10 *****
 
+Added mojo3d HingeJoint. See tests/hingechain.monkey2
+
 Renamed mojo3d Constraint->Joint and PointToPointConstraint->BallSocketJoint.
 
 Added mojo3d support for 'spherical' sky textures. Also added TextureFlags.Envmap which must be used for envmap textures. Previously, cubemap+mipmap implied envmap but this is no longer true.
