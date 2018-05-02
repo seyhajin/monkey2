@@ -130,20 +130,24 @@ Class GLProgram
 			For Local u:=Eachin _uniforms[i]
 			
 				Select u.type
-				Case GL_INT
-				
+				Case GL_BOOL
+
 					glUniform1i( u.location,ublock.GetInt( u.uniformId ) )
-					
+
+				Case GL_INT
+
+					glUniform1i( u.location,ublock.GetInt( u.uniformId ) )
+
 				Case GL_FLOAT
-				
+
 					glUniform1f( u.location,ublock.GetFloat( u.uniformId ) )
-					
+
 				Case GL_FLOAT_VEC2
-				
+
 					glUniform2fv( u.location,1,ublock.GetVec2fv( u.uniformId ) )
-					
+
 				Case GL_FLOAT_VEC3
-				
+
 					glUniform3fv( u.location,1,ublock.GetVec3fv( u.uniformId ) )
 					
 				Case GL_FLOAT_VEC4

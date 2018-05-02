@@ -101,6 +101,9 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 	vec3 vvec=normalize( -v_Position );
 	float ndotv=max( dot( normal,vvec ),0.0 );
 	
+	vec3 ambEnv=sampleEnv( reflect( v_Position,normal ),roughness );
+	
+	/*
 	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
 
 	float lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
@@ -110,6 +113,7 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 //	if( lod==0.0 ) lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 
 	vec3 ambEnv=pow( textureCube( r_EnvTexture,rvec,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+	*/
 
 	vec3 fschlick0=specular + (1.0-specular) * pow( 1.0-ndotv,5.0 ) * glosiness;
 
@@ -152,6 +156,8 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 	
 #if MX2_AMBIENTPASS
 	//ambient color
+	vec3 ambEnv=sampleEnv( reflect( v_Position,normal ),roughness );
+/*	
 	vec3 rvec=r_EnvMatrix * reflect( v_Position,normal );
 	
 	float lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
@@ -161,6 +167,7 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 //	if( lod==0.0 ) lod=textureCube( r_EnvTexture,rvec,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 
 	vec3 ambEnv=pow( textureCube( r_EnvTexture,rvec,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+*/
 	
 	vec3 fschlick0=specular + (1.0-specular) * pow( 1.0-ndotv,5.0 ) * glosiness;
 	

@@ -421,9 +421,25 @@ Class Pixmap Extends Resource
 	#end
 	Method MipHalve:Pixmap()
 		
-		DebugAssert( Width&1=0 And Height&1=0 )
+		If Width=1 And Height=1 Return Null
 		
-		Local dst:=New Pixmap( Width/2,Height/2,Format )
+		Local dst:=New Pixmap( Max( Width/2,1 ),Max( Height/2,1 ),Format )
+		
+		If Width=1
+			For Local y:=0 Until dst.Height
+				Local c0:=GetPixel( 0,y*2 )
+				Local c1:=GetPixel( 0,y*2+1 )
+				dst.SetPixel( 0,y,(c0+c1)*0.5 )
+			Next
+			Return dst
+		Else If Height=1
+			For Local x:=0 Until dst.Width
+				Local c0:=GetPixel( x*2,0 )
+				Local c1:=GetPixel( x*2+1,0 )
+				dst.SetPixel( x,0,(c0+c1)*0.5 )
+			Next
+			Return dst
+		Endif
 
 		Select _format
 		Case PixelFormat.RGBA8

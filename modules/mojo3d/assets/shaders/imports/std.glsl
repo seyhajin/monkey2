@@ -43,15 +43,26 @@
 #define MX2_BUMPMAPPED			((MX2_ATTRIBMASK & 32)==32)
 #define MX2_BONED				((MX2_ATTRIBMASK & 192)==192)
 
+//***** CONSTS *****
+//
+const float pi=3.1415926535897932384626433832795;
+
 //***** RENDER *****
 //
 uniform float r_Time;
 uniform vec4 r_AmbientDiffuse;
-uniform samplerCube r_SkyTexture;
-uniform samplerCube r_EnvTexture;
+
+uniform samplerCube r_SkyTextureCube;
+uniform sampler2D r_SkyTexture2D;
+uniform bool r_SkyCube;
+
+uniform samplerCube r_EnvTextureCube;
+uniform sampler2D r_EnvTexture2D;
+uniform bool r_EnvCube;
 uniform float r_EnvTextureMaxLod;
 uniform vec4 r_EnvColor;
 uniform mat3 r_EnvMatrix;
+
 uniform float r_DepthNear;
 uniform float r_DepthFar;
 uniform float r_FogNear;
@@ -326,6 +337,30 @@ float shadowColor( vec3 position ){
 
 #endif
 
+vec3 sampleEnv( vec3 viewVec,float roughness ){
+
+	vec3 tv=r_EnvMatrix * viewVec;
+
+	if( r_EnvCube ){
+		
+		float lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
+		if( lod>0.0 ) lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
+	
+		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		
+	}else{
+
+		float p=-atan( tv.y,sqrt( tv.x*tv.x+tv.z*tv.z ) ) / (pi/2.0);
+		float y=atan( tv.x,tv.z ) / pi;
+		
+		vec2 tc=vec2( y,p ) *0.5 + 0.5;
+
+		float lod=texture2D( r_EnvTexture2D,tc,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
+		if( lod>0.0 ) lod=texture2D( r_EnvTexture2D,tc ).a * 255.0;
+	
+		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+	}
+}
 
 #if MX2_FORWARDPASS
 

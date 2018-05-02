@@ -980,22 +980,39 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 		_scene=scene
 		
-		_runiforms.SetTexture( "SkyTexture",_scene.SkyTexture )
+		Local sky:=_scene.SkyTexture
+		
+		If sky
+			If sky.Flags & TextureFlags.Cubemap
+				_runiforms.SetTexture( "SkyTextureCube",sky )
+				_runiforms.SetTexture( "SkyTexture2D",_whiteTexture )
+				_runiforms.SetInt( "SkyCube",1 )
+			Else
+				_runiforms.SetTexture( "SkyTextureCube",_whiteCubeTexture )
+				_runiforms.SetTexture( "SkyTexture2D",sky )
+				_runiforms.SetInt( "SkyCube",0 )
+			Endif
+		Else
+			_runiforms.SetTexture( "SkyTextureCube",Null )
+			_runiforms.SetTexture( "SkyTexture2D",Null )
+		Endif
+				
 		_runiforms.SetColor( "ClearColor",_scene.ClearColor )
 		_runiforms.SetColor( "AmbientDiffuse",_scene.AmbientLight )
 		
-		Local env:Texture
+		Local env:=(_scene.EnvTexture ?Else _scene.SkyTexture) ?Else _defaultEnv
 		
-		If _scene.EnvTexture
-			env=_scene.EnvTexture
-		ElseIf _scene.SkyTexture
-			env=_scene.SkyTexture
+		If env.Flags & TextureFlags.Cubemap
+			_runiforms.SetTexture( "EnvTextureCube",env )
+			_runiforms.SetTexture( "EnvTexture2D",_whiteTexture )
+			_runiforms.SetInt( "EnvCube",1 )
 		Else
-			env=_defaultEnv
+			_runiforms.SetTexture( "EnvTextureCube",_whiteCubeTexture )
+			_runiforms.SetTexture( "EnvTexture2D",env )
+			_runiforms.SetInt( "EnvCube",0 )
 		Endif
 		
-		_runiforms.SetTexture( "EnvTexture",env )
-		_runiforms.SetFloat( "EnvTextureMaxLod",Log2( env.Size.x ) )
+		_runiforms.SetFloat( "EnvTextureMaxLod",Log2( env.Size.y ) )
 		_runiforms.SetColor( "EnvColor",_scene.EnvColor )
 		
 		_runiforms.SetColor( "FogColor",_scene.FogColor )
