@@ -6,7 +6,7 @@ Namespace myapp
 #Import "<mojo3d>"
 
 'uncomment this to create a mojo3d scene file in monkey2 dir!
-#Reflect mojo3d
+'#Reflect mojo3d
 
 Using std..
 Using mojo..
@@ -162,7 +162,7 @@ Class MyWindow Extends Window
 		CreateBodies()
 		
 		If _scene.Editable 
-			_scene.Save( "shapes-scene.mojo3d" )
+			_scene.Save( "shapes-scene.mojo3d","modules/mojo3d/tests/assets/" )
 			_scene=Scene.Load( "shapes-scene.mojo3d" )
 			_camera=Cast<Camera>( _scene.FindEntity( "Camera" ) )
 		Endif

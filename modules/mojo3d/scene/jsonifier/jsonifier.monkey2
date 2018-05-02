@@ -197,45 +197,20 @@ Public
 		Local type:=value.Type
 		Assert( type )
 
-		'handle primitive types
-		Select type
-		Case Typeof<Bool>
-			Return New JsonBool( Cast<Bool>( value ) )
-		Case Typeof<Short>
-			Return New JsonNumber( Cast<Short>( value ) )
-		Case Typeof<Int>
-			Return New JsonNumber( Cast<Int>( value ) )
-		Case Typeof<Float>
-			Return New JsonNumber( Cast<Float>( value ) )
-		Case Typeof<String>
-			Return New JsonString( Cast<String>( value ) )
-		End
-		
-		'handle enums+references
 		Select type.Kind
-		Case "Class"
-			Local obj:=Cast<Object>( value )
-			If Not obj Return JsonValue.NullValue
-			Local inst:=_instsByObj[obj]
-			If inst Return New JsonString( "@"+inst.id )
-		Case "Enum"
-			Return New JsonNumber( value.EnumValue )
-		End
-		
-		'try custom jsonifiers
-		For Local jext:=Eachin JsonifierExt.All
-			Local jvalue:=jext.Jsonify( value,Self )
-			If jvalue Return jvalue
-		Next
-
-		Select type.Kind
-		Case "Unknown"
-			Local obj:=Cast<Object>( value )
-			If Not obj Return JsonValue.NullValue
-			Local inst:=_instsByObj[obj]
-			If inst Return New JsonString( "@"+inst.id )
-		Case "Class"
-			Return JsonValue.NullValue
+		Case "Primitive"
+			Select type
+			Case Typeof<Bool>
+				Return New JsonBool( Cast<Bool>( value ) )
+			Case Typeof<Short>
+				Return New JsonNumber( Cast<Short>( value ) )
+			Case Typeof<Int>
+				Return New JsonNumber( Cast<Int>( value ) )
+			Case Typeof<Float>
+				Return New JsonNumber( Cast<Float>( value ) )
+			Case Typeof<String>
+				Return New JsonString( Cast<String>( value ) )
+			End
 		Case "Array"
 			Local n:=value.GetArrayLength()
 			Local jarray:=New JsonArray( n )
@@ -243,9 +218,25 @@ Public
 				jarray[i]=Jsonify( value.GetArrayElement( i ) )
 			Next
 			Return jarray
+		Case "Enum"
+			Return New JsonNumber( value.EnumValue )
 		End
 		
-		RuntimeError( "TODO: No jsonifier found for type '"+type+"'" )
+		If IsInstanceType( type )
+			Local obj:=Cast<Object>( value )
+			If Not obj Return JsonValue.NullValue
+			Local inst:=_instsByObj[obj]
+			If inst Return New JsonString( "@"+inst.id )
+			RuntimeError( "Can't jsonify instance of type '"+type+"'" )
+		Endif
+		
+		'try custom jsonifiers
+		For Local jext:=Eachin JsonifierExt.All
+			Local jvalue:=jext.Jsonify( value,Self )
+			If jvalue Return jvalue
+		Next
+		
+		RuntimeError( "No jsonifier found for type '"+type+"'" )
 		Return Null
 	End
 	

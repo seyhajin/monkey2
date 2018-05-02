@@ -6,7 +6,7 @@ Namespace myapp
 #Import "<mojo3d>"
 
 'uncomment this to create a mojo3d scene file in monkey2 dir!
-#Reflect mojo3d
+'#Reflect mojo3d
 
 #Import "assets/duck.gltf/@/duck.gltf"
 
@@ -105,7 +105,7 @@ Class MyWindow Extends Window
 		
 		CreateDucks()
 		
-		If _scene.Editable _scene.Save( "ducks-scene.mojo3d" ) ; _scene=Scene.Load( "ducks-scene.mojo3d" )
+		If _scene.Editable _scene.Save( "ducks-scene.mojo3d","modules/mojo3d/tests/assets/" ) ; _scene=Scene.Load( "ducks-scene.mojo3d" )
 	End
 	
 	Method OnRender( canvas:Canvas ) Override

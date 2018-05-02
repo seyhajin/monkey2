@@ -310,7 +310,7 @@ Class Scene
 		Return _jsonifier
 	End
 	
-	Method LoadTexture:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
+	Method LoadTexture:Texture( path:String,flags:TextureFlags=TextureFlags.FilterMipmap,flipNormalY:Bool=False )
 		
 		Local texture:=Texture.Load( path,flags,flipNormalY )
 		If Not texture Return Null
