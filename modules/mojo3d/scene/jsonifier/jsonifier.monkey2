@@ -227,7 +227,8 @@ Public
 			If Not obj Return JsonValue.NullValue
 			Local inst:=_instsByObj[obj]
 			If inst Return New JsonString( "@"+inst.id )
-			RuntimeError( "Can't jsonify instance of type '"+type+"'" )
+			Return JsonValue.NullValue	'for objects that weren't added using AddInstance - should really never happen.
+'			RuntimeError( "Can't jsonify instance of type '"+type+"'" )
 		Endif
 		
 		'try custom jsonifiers
