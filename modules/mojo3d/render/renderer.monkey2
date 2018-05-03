@@ -249,9 +249,16 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 				renderPass|=12
 			End
 			
+			Local lvmatrix:=_viewMatrix * light.Matrix
+			
+			_runiforms.SetMat4f( "LightViewMatrix",lvmatrix )
+			_runiforms.SetMat4f( "InverseLightViewMatrix",-lvmatrix )
 			_runiforms.SetColor( "LightColor",light.Color )
 			_runiforms.SetFloat( "LightRange",light.Range )
-			_runiforms.SetMat4f( "LightViewMatrix",_viewMatrix * light.Matrix )
+			_runiforms.SetFloat( "LightInnerAngle",light.InnerAngle*Pi/180.0 )
+			_runiforms.SetFloat( "LightOuterAngle",light.OuterAngle*Pi/180.0 )
+			_runiforms.SetTexture( "LightCubeTexture",light.Texture ?Else _whiteCubeTexture )
+			_runiforms.SetTexture( "LightTexture",light.Texture ?Else _whiteTexture )
 
 			_gdevice.ColorMask=ColorMask.All
 			_gdevice.DepthMask=first

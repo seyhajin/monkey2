@@ -362,7 +362,7 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 	}
 }
 
-#if MX2_FORWARDPASS
+#if MX2_FORWARDRENDERER || MX2_FORWARDPASS
 
 void emitLinearFragment( vec4 color ){
 
