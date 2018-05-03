@@ -68,9 +68,8 @@ Class MyWindow Extends Window
 			
 			If prev
 				Local joint:=copy.AddComponent<BallSocketJoint>()
-				joint.Pivot=New Vec3f( 0,-.5,0 )
 				joint.ConnectedBody=prev.RigidBody
-				joint.ConnectedPivot=New Vec3f( 0,.5,0 )
+				joint.Pivot=New Vec3f( 0,-.5,0 )
 			Endif
 			
 			prev=copy

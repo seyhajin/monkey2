@@ -202,7 +202,6 @@
 		"id":20,
 		"state":{
 			"ConnectedBody":"@16",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -243,7 +242,6 @@
 		"id":24,
 		"state":{
 			"ConnectedBody":"@19",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -284,7 +282,6 @@
 		"id":28,
 		"state":{
 			"ConnectedBody":"@23",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -325,7 +322,6 @@
 		"id":32,
 		"state":{
 			"ConnectedBody":"@27",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -366,7 +362,6 @@
 		"id":36,
 		"state":{
 			"ConnectedBody":"@31",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -407,7 +402,6 @@
 		"id":40,
 		"state":{
 			"ConnectedBody":"@35",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -448,7 +442,6 @@
 		"id":44,
 		"state":{
 			"ConnectedBody":"@39",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -489,7 +482,6 @@
 		"id":48,
 		"state":{
 			"ConnectedBody":"@43",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -530,7 +522,6 @@
 		"id":52,
 		"state":{
 			"ConnectedBody":"@47",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -571,7 +562,6 @@
 		"id":56,
 		"state":{
 			"ConnectedBody":"@51",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -612,7 +602,6 @@
 		"id":60,
 		"state":{
 			"ConnectedBody":"@55",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -653,7 +642,6 @@
 		"id":64,
 		"state":{
 			"ConnectedBody":"@59",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -694,7 +682,6 @@
 		"id":68,
 		"state":{
 			"ConnectedBody":"@63",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -735,7 +722,6 @@
 		"id":72,
 		"state":{
 			"ConnectedBody":"@67",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -776,7 +762,6 @@
 		"id":76,
 		"state":{
 			"ConnectedBody":"@71",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -817,7 +802,6 @@
 		"id":80,
 		"state":{
 			"ConnectedBody":"@75",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -858,7 +842,6 @@
 		"id":84,
 		"state":{
 			"ConnectedBody":"@79",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -899,7 +882,6 @@
 		"id":88,
 		"state":{
 			"ConnectedBody":"@83",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -940,7 +922,6 @@
 		"id":92,
 		"state":{
 			"ConnectedBody":"@87",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -981,7 +962,6 @@
 		"id":96,
 		"state":{
 			"ConnectedBody":"@91",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1022,7 +1002,6 @@
 		"id":100,
 		"state":{
 			"ConnectedBody":"@95",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1063,7 +1042,6 @@
 		"id":104,
 		"state":{
 			"ConnectedBody":"@99",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1104,7 +1082,6 @@
 		"id":108,
 		"state":{
 			"ConnectedBody":"@103",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1145,7 +1122,6 @@
 		"id":112,
 		"state":{
 			"ConnectedBody":"@107",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1186,7 +1162,6 @@
 		"id":116,
 		"state":{
 			"ConnectedBody":"@111",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1227,7 +1202,6 @@
 		"id":120,
 		"state":{
 			"ConnectedBody":"@115",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1268,7 +1242,6 @@
 		"id":124,
 		"state":{
 			"ConnectedBody":"@119",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1309,7 +1282,6 @@
 		"id":128,
 		"state":{
 			"ConnectedBody":"@123",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1350,7 +1322,6 @@
 		"id":132,
 		"state":{
 			"ConnectedBody":"@127",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1391,7 +1362,6 @@
 		"id":136,
 		"state":{
 			"ConnectedBody":"@131",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1432,7 +1402,6 @@
 		"id":140,
 		"state":{
 			"ConnectedBody":"@135",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1473,7 +1442,6 @@
 		"id":144,
 		"state":{
 			"ConnectedBody":"@139",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1514,7 +1482,6 @@
 		"id":148,
 		"state":{
 			"ConnectedBody":"@143",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1555,7 +1522,6 @@
 		"id":152,
 		"state":{
 			"ConnectedBody":"@147",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1596,7 +1562,6 @@
 		"id":156,
 		"state":{
 			"ConnectedBody":"@151",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1637,7 +1602,6 @@
 		"id":160,
 		"state":{
 			"ConnectedBody":"@155",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1678,7 +1642,6 @@
 		"id":164,
 		"state":{
 			"ConnectedBody":"@159",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1719,7 +1682,6 @@
 		"id":168,
 		"state":{
 			"ConnectedBody":"@163",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1760,7 +1722,6 @@
 		"id":172,
 		"state":{
 			"ConnectedBody":"@167",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1801,7 +1762,6 @@
 		"id":176,
 		"state":{
 			"ConnectedBody":"@171",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1842,7 +1802,6 @@
 		"id":180,
 		"state":{
 			"ConnectedBody":"@175",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1883,7 +1842,6 @@
 		"id":184,
 		"state":{
 			"ConnectedBody":"@179",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1924,7 +1882,6 @@
 		"id":188,
 		"state":{
 			"ConnectedBody":"@183",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -1965,7 +1922,6 @@
 		"id":192,
 		"state":{
 			"ConnectedBody":"@187",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2006,7 +1962,6 @@
 		"id":196,
 		"state":{
 			"ConnectedBody":"@191",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2047,7 +2002,6 @@
 		"id":200,
 		"state":{
 			"ConnectedBody":"@195",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2088,7 +2042,6 @@
 		"id":204,
 		"state":{
 			"ConnectedBody":"@199",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2129,7 +2082,6 @@
 		"id":208,
 		"state":{
 			"ConnectedBody":"@203",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2170,7 +2122,6 @@
 		"id":212,
 		"state":{
 			"ConnectedBody":"@207",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2211,7 +2162,6 @@
 		"id":216,
 		"state":{
 			"ConnectedBody":"@211",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2252,7 +2202,6 @@
 		"id":220,
 		"state":{
 			"ConnectedBody":"@215",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2293,7 +2242,6 @@
 		"id":224,
 		"state":{
 			"ConnectedBody":"@219",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2334,7 +2282,6 @@
 		"id":228,
 		"state":{
 			"ConnectedBody":"@223",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2375,7 +2322,6 @@
 		"id":232,
 		"state":{
 			"ConnectedBody":"@227",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2416,7 +2362,6 @@
 		"id":236,
 		"state":{
 			"ConnectedBody":"@231",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2457,7 +2402,6 @@
 		"id":240,
 		"state":{
 			"ConnectedBody":"@235",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2498,7 +2442,6 @@
 		"id":244,
 		"state":{
 			"ConnectedBody":"@239",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2539,7 +2482,6 @@
 		"id":248,
 		"state":{
 			"ConnectedBody":"@243",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2580,7 +2522,6 @@
 		"id":252,
 		"state":{
 			"ConnectedBody":"@247",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2621,7 +2562,6 @@
 		"id":256,
 		"state":{
 			"ConnectedBody":"@251",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2662,7 +2602,6 @@
 		"id":260,
 		"state":{
 			"ConnectedBody":"@255",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2703,7 +2642,6 @@
 		"id":264,
 		"state":{
 			"ConnectedBody":"@259",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2744,7 +2682,6 @@
 		"id":268,
 		"state":{
 			"ConnectedBody":"@263",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2785,7 +2722,6 @@
 		"id":272,
 		"state":{
 			"ConnectedBody":"@267",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2826,7 +2762,6 @@
 		"id":276,
 		"state":{
 			"ConnectedBody":"@271",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2867,7 +2802,6 @@
 		"id":280,
 		"state":{
 			"ConnectedBody":"@275",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2908,7 +2842,6 @@
 		"id":284,
 		"state":{
 			"ConnectedBody":"@279",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2949,7 +2882,6 @@
 		"id":288,
 		"state":{
 			"ConnectedBody":"@283",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -2990,7 +2922,6 @@
 		"id":292,
 		"state":{
 			"ConnectedBody":"@287",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3031,7 +2962,6 @@
 		"id":296,
 		"state":{
 			"ConnectedBody":"@291",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3072,7 +3002,6 @@
 		"id":300,
 		"state":{
 			"ConnectedBody":"@295",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3113,7 +3042,6 @@
 		"id":304,
 		"state":{
 			"ConnectedBody":"@299",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3154,7 +3082,6 @@
 		"id":308,
 		"state":{
 			"ConnectedBody":"@303",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3195,7 +3122,6 @@
 		"id":312,
 		"state":{
 			"ConnectedBody":"@307",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3236,7 +3162,6 @@
 		"id":316,
 		"state":{
 			"ConnectedBody":"@311",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3277,7 +3202,6 @@
 		"id":320,
 		"state":{
 			"ConnectedBody":"@315",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3318,7 +3242,6 @@
 		"id":324,
 		"state":{
 			"ConnectedBody":"@319",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3359,7 +3282,6 @@
 		"id":328,
 		"state":{
 			"ConnectedBody":"@323",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3400,7 +3322,6 @@
 		"id":332,
 		"state":{
 			"ConnectedBody":"@327",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3441,7 +3362,6 @@
 		"id":336,
 		"state":{
 			"ConnectedBody":"@331",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3482,7 +3402,6 @@
 		"id":340,
 		"state":{
 			"ConnectedBody":"@335",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3523,7 +3442,6 @@
 		"id":344,
 		"state":{
 			"ConnectedBody":"@339",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3564,7 +3482,6 @@
 		"id":348,
 		"state":{
 			"ConnectedBody":"@343",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3605,7 +3522,6 @@
 		"id":352,
 		"state":{
 			"ConnectedBody":"@347",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3646,7 +3562,6 @@
 		"id":356,
 		"state":{
 			"ConnectedBody":"@351",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3687,7 +3602,6 @@
 		"id":360,
 		"state":{
 			"ConnectedBody":"@355",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3728,7 +3642,6 @@
 		"id":364,
 		"state":{
 			"ConnectedBody":"@359",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3769,7 +3682,6 @@
 		"id":368,
 		"state":{
 			"ConnectedBody":"@363",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3810,7 +3722,6 @@
 		"id":372,
 		"state":{
 			"ConnectedBody":"@367",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3851,7 +3762,6 @@
 		"id":376,
 		"state":{
 			"ConnectedBody":"@371",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3892,7 +3802,6 @@
 		"id":380,
 		"state":{
 			"ConnectedBody":"@375",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3933,7 +3842,6 @@
 		"id":384,
 		"state":{
 			"ConnectedBody":"@379",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -3974,7 +3882,6 @@
 		"id":388,
 		"state":{
 			"ConnectedBody":"@383",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -4015,7 +3922,6 @@
 		"id":392,
 		"state":{
 			"ConnectedBody":"@387",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -4056,7 +3962,6 @@
 		"id":396,
 		"state":{
 			"ConnectedBody":"@391",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -4097,7 +4002,6 @@
 		"id":400,
 		"state":{
 			"ConnectedBody":"@395",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -4138,7 +4042,6 @@
 		"id":404,
 		"state":{
 			"ConnectedBody":"@399",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -4179,7 +4082,6 @@
 		"id":408,
 		"state":{
 			"ConnectedBody":"@403",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"
@@ -4223,7 +4125,6 @@
 		"id":412,
 		"state":{
 			"ConnectedBody":"@407",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.BallSocketJoint"

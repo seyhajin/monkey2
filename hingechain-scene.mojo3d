@@ -202,9 +202,7 @@
 		"id":20,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@16",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -245,9 +243,7 @@
 		"id":24,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@19",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -288,9 +284,7 @@
 		"id":28,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@23",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -331,9 +325,7 @@
 		"id":32,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@27",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -374,9 +366,7 @@
 		"id":36,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@31",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -417,9 +407,7 @@
 		"id":40,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@35",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -460,9 +448,7 @@
 		"id":44,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@39",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -503,9 +489,7 @@
 		"id":48,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@43",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -546,9 +530,7 @@
 		"id":52,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@47",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -589,9 +571,7 @@
 		"id":56,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@51",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -632,9 +612,7 @@
 		"id":60,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@55",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -675,9 +653,7 @@
 		"id":64,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@59",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -718,9 +694,7 @@
 		"id":68,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@63",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -761,9 +735,7 @@
 		"id":72,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@67",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -804,9 +776,7 @@
 		"id":76,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@71",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -847,9 +817,7 @@
 		"id":80,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@75",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -890,9 +858,7 @@
 		"id":84,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@79",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -933,9 +899,7 @@
 		"id":88,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@83",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -976,9 +940,7 @@
 		"id":92,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@87",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1019,9 +981,7 @@
 		"id":96,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@91",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1062,9 +1022,7 @@
 		"id":100,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@95",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1105,9 +1063,7 @@
 		"id":104,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@99",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1148,9 +1104,7 @@
 		"id":108,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@103",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1191,9 +1145,7 @@
 		"id":112,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@107",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1234,9 +1186,7 @@
 		"id":116,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@111",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1277,9 +1227,7 @@
 		"id":120,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@115",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1320,9 +1268,7 @@
 		"id":124,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@119",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1363,9 +1309,7 @@
 		"id":128,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@123",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1406,9 +1350,7 @@
 		"id":132,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@127",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1449,9 +1391,7 @@
 		"id":136,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@131",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1492,9 +1432,7 @@
 		"id":140,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@135",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1535,9 +1473,7 @@
 		"id":144,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@139",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1578,9 +1514,7 @@
 		"id":148,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@143",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1621,9 +1555,7 @@
 		"id":152,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@147",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1664,9 +1596,7 @@
 		"id":156,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@151",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1707,9 +1637,7 @@
 		"id":160,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@155",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1750,9 +1678,7 @@
 		"id":164,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@159",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1793,9 +1719,7 @@
 		"id":168,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@163",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1836,9 +1760,7 @@
 		"id":172,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@167",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1879,9 +1801,7 @@
 		"id":176,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@171",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1922,9 +1842,7 @@
 		"id":180,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@175",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -1965,9 +1883,7 @@
 		"id":184,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@179",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2008,9 +1924,7 @@
 		"id":188,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@183",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2051,9 +1965,7 @@
 		"id":192,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@187",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2094,9 +2006,7 @@
 		"id":196,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@191",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2137,9 +2047,7 @@
 		"id":200,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@195",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2180,9 +2088,7 @@
 		"id":204,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@199",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2223,9 +2129,7 @@
 		"id":208,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@203",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2266,9 +2170,7 @@
 		"id":212,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@207",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2309,9 +2211,7 @@
 		"id":216,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@211",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2352,9 +2252,7 @@
 		"id":220,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@215",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2395,9 +2293,7 @@
 		"id":224,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@219",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2438,9 +2334,7 @@
 		"id":228,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@223",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2481,9 +2375,7 @@
 		"id":232,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@227",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2524,9 +2416,7 @@
 		"id":236,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@231",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2567,9 +2457,7 @@
 		"id":240,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@235",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2610,9 +2498,7 @@
 		"id":244,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@239",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2653,9 +2539,7 @@
 		"id":248,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@243",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2696,9 +2580,7 @@
 		"id":252,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@247",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2739,9 +2621,7 @@
 		"id":256,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@251",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2782,9 +2662,7 @@
 		"id":260,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@255",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2825,9 +2703,7 @@
 		"id":264,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@259",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2868,9 +2744,7 @@
 		"id":268,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@263",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2911,9 +2785,7 @@
 		"id":272,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@267",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2954,9 +2826,7 @@
 		"id":276,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@271",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -2997,9 +2867,7 @@
 		"id":280,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@275",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3040,9 +2908,7 @@
 		"id":284,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@279",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3083,9 +2949,7 @@
 		"id":288,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@283",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3126,9 +2990,7 @@
 		"id":292,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@287",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3169,9 +3031,7 @@
 		"id":296,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@291",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3212,9 +3072,7 @@
 		"id":300,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@295",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3255,9 +3113,7 @@
 		"id":304,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@299",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3298,9 +3154,7 @@
 		"id":308,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@303",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3341,9 +3195,7 @@
 		"id":312,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@307",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3384,9 +3236,7 @@
 		"id":316,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@311",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3427,9 +3277,7 @@
 		"id":320,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@315",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3470,9 +3318,7 @@
 		"id":324,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@319",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3513,9 +3359,7 @@
 		"id":328,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@323",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3556,9 +3400,7 @@
 		"id":332,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@327",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3599,9 +3441,7 @@
 		"id":336,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@331",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3642,9 +3482,7 @@
 		"id":340,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@335",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3685,9 +3523,7 @@
 		"id":344,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@339",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3728,9 +3564,7 @@
 		"id":348,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@343",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3771,9 +3605,7 @@
 		"id":352,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@347",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3814,9 +3646,7 @@
 		"id":356,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@351",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3857,9 +3687,7 @@
 		"id":360,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@355",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3900,9 +3728,7 @@
 		"id":364,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@359",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3943,9 +3769,7 @@
 		"id":368,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@363",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -3986,9 +3810,7 @@
 		"id":372,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@367",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4029,9 +3851,7 @@
 		"id":376,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@371",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4072,9 +3892,7 @@
 		"id":380,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@375",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4115,9 +3933,7 @@
 		"id":384,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@379",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4158,9 +3974,7 @@
 		"id":388,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@383",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4201,9 +4015,7 @@
 		"id":392,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@387",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4244,9 +4056,7 @@
 		"id":396,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@391",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4287,9 +4097,7 @@
 		"id":400,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@395",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4330,9 +4138,7 @@
 		"id":404,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@399",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4373,9 +4179,7 @@
 		"id":408,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@403",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"
@@ -4419,9 +4223,7 @@
 		"id":412,
 		"state":{
 			"Axis":[1,0,0],
-			"ConnectedAxis":[1,0,0],
 			"ConnectedBody":"@407",
-			"ConnectedPivot":[0,0.5,0],
 			"Pivot":[0,-0.5,0]
 		},
 		"type":"mojo3d.HingeJoint"

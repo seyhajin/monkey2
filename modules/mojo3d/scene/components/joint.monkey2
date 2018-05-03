@@ -92,21 +92,10 @@ Class BallSocketJoint Extends Joint
 		
 		Super.New( entity,joint )
 		
-		Pivot=joint.Pivot
 		ConnectedBody=joint.ConnectedBody
-		ConnectedPivot=joint.ConnectedPivot
+		Pivot=joint.Pivot
 		
 		AddInstance( joint )
-	End
-	
-	[jsonify=1]
-	Property Pivot:Vec3f()
-		
-		Return _pivot1
-		
-	Setter( pivot:Vec3f )
-		
-		_pivot1=pivot
 	End
 	
 	[jsonify=1]
@@ -120,20 +109,19 @@ Class BallSocketJoint Extends Joint
 	End
 	
 	[jsonify=1]
-	Property ConnectedPivot:Vec3f()
-	
-		Return _pivot2
-	
+	Property Pivot:Vec3f()
+		
+		Return _pivot1
+		
 	Setter( pivot:Vec3f )
 		
-		_pivot2=pivot
+		_pivot1=pivot
 	End
 	
 	Protected
 	
 	Field _connected:RigidBody
 	Field _pivot1:Vec3f
-	Field _pivot2:Vec3f
 	
 	Method OnCreate() Override
 		
@@ -143,7 +131,9 @@ Class BallSocketJoint Extends Joint
 		If _connected
 			Local btBody2:=_connected.btBody
 			Assert( btBody2,"BallSocketJoint: No rigid body" )	'todo: fail nicely
-			_btconstraint=New btPoint2PointConstraint( btBody1,btBody2,_pivot1,_pivot2 )
+			Local tform:=_connected.Entity.InverseMatrix * Entity.Matrix
+			Local pivot2:=tform * _pivot1
+			_btconstraint=New btPoint2PointConstraint( btBody1,btBody2,_pivot1,pivot2 )
 		Else
 			_btconstraint=New btPoint2PointConstraint( btBody1,_pivot1 )
 		End
@@ -158,7 +148,6 @@ Class HingeJoint Extends Joint
 		Super.New( entity )
 		
 		Axis=New Vec3f( 0,1,0 )
-		ConnectedAxis=New Vec3f( 0,1,0 )
 		
 		AddInstance()
 	End
@@ -167,13 +156,21 @@ Class HingeJoint Extends Joint
 		
 		Super.New( entity,joint )
 		
+		ConnectedBody=joint.ConnectedBody
 		Pivot=joint.Pivot
 		Axis=joint.Axis
-		ConnectedBody=joint.ConnectedBody
-		ConnectedPivot=joint.ConnectedPivot
-		ConnectedAxis=joint.ConnectedAxis
 		
 		AddInstance( joint )
+	End
+	
+	[jsonify=1]
+	Property ConnectedBody:RigidBody()
+		
+		Return _connected
+		
+	Setter( body:RigidBody )
+		
+		_connected=body
 	End
 	
 	[jsonify=1]
@@ -196,6 +193,49 @@ Class HingeJoint Extends Joint
 		_axis1=axis
 	End
 	
+	Protected
+	
+	Field _connected:RigidBody
+	Field _pivot1:Vec3f
+	Field _axis1:Vec3f
+	
+	Method OnCreate() Override
+		
+		Local btBody1:=Entity.GetComponent<RigidBody>().btBody
+		Assert( btBody1,"BallSocketJoint: No rigid body" )	'todo: fail nicely
+		
+		If _connected
+			Local btBody2:=_connected.btBody
+			Assert( btBody2,"BallSocketJoint: No rigid body" )	'todo: fail nicely
+			Local tform:=_connected.Entity.InverseMatrix * Entity.Matrix
+			Local pivot2:=tform * _pivot1
+			Local axis2:=tform.m * _axis1
+			_btconstraint=New btHingeConstraint( btBody1,btBody2,_pivot1,pivot2,_axis1,axis2 )
+		Else
+			_btconstraint=New btHingeConstraint( btBody1,_pivot1,_axis1 )
+		End
+	End
+	
+End
+
+Class FixedJoint Extends Joint
+
+	Method New( entity:Entity )
+		
+		Super.New( entity )
+		
+		AddInstance()
+	End
+	
+	Method New( entity:Entity,joint:HingeJoint )
+		
+		Super.New( entity,joint )
+		
+		ConnectedBody=joint.ConnectedBody
+		
+		AddInstance( joint )
+	End
+	
 	[jsonify=1]
 	Property ConnectedBody:RigidBody()
 		
@@ -206,46 +246,21 @@ Class HingeJoint Extends Joint
 		_connected=body
 	End
 	
-	[jsonify=1]
-	Property ConnectedPivot:Vec3f()
-	
-		Return _pivot2
-	
-	Setter( pivot:Vec3f )
-		
-		_pivot2=pivot
-	End
-	
-	[jsonify=1]
-	Property ConnectedAxis:Vec3f()
-		
-		Return _axis2
-		
-	Setter( axis:Vec3f )
-		
-		_axis2=axis
-	End
-	
 	Protected
 	
 	Field _connected:RigidBody
-	Field _pivot1:Vec3f
-	Field _pivot2:Vec3f
-	Field _axis1:Vec3f
-	Field _axis2:Vec3f
 	
 	Method OnCreate() Override
 		
-		Local btBody1:=Entity.GetComponent<RigidBody>().btBody
-		Assert( btBody1,"BallSocketJoint: No rigid body" )	'todo: fail nicely
+		Local btBody1:=Entity.GetComponent<RigidBody>()?.btBody
+		Assert( btBody1,"FixedJoint: No rigid body" )	'todo: fail nicely
+
+		Local btBody2:=_connected?.btBody
+		Assert( btBody2,"FixedJoint: No connected rigid body" )	'todo: fail nicely
 		
-		If _connected
-			Local btBody2:=_connected.btBody
-			Assert( btBody2,"BallSocketJoint: No rigid body" )	'todo: fail nicely
-			_btconstraint=New btHingeConstraint( btBody1,btBody2,_pivot1,_pivot2,_axis1,_axis2 )
-		Else
-			_btconstraint=New btHingeConstraint( btBody1,_pivot1,_axis1 )
-		End
+		Local tform:=_connected.Entity.InverseMatrix * Entity.Matrix
+		
+		_btconstraint=New btFixedConstraint( btBody1,btBody2,New AffineMat4f,tform )
 	End
 	
 End

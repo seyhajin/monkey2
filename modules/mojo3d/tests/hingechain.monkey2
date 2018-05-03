@@ -68,11 +68,9 @@ Class MyWindow Extends Window
 			
 			If prev
 				Local joint:=copy.AddComponent<HingeJoint>()
+				joint.ConnectedBody=prev.RigidBody
 				joint.Pivot=New Vec3f( 0,-.5,0 )
 				joint.Axis=New Vec3f( 1,0,0 )
-				joint.ConnectedBody=prev.RigidBody
-				joint.ConnectedPivot=New Vec3f( 0,.5,0 )
-				joint.ConnectedAxis=New Vec3f( 1,0,0 )
 			Endif
 			
 			prev=copy
@@ -83,6 +81,7 @@ Class MyWindow Extends Window
 		model.Visible=False
 		
 		If _scene.Editable 
+			Print "Saving mojo3d scene file"
 			_scene.Save( "hingechain-scene.mojo3d","modules/mojo3d/tests/assets/" )
 			_scene=Scene.Load( "hingechain-scene.mojo3d" )
 		Endif
