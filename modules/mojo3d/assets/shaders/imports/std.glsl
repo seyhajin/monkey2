@@ -8,6 +8,19 @@
 #ifndef MX2_RENDERPASS
 #define MX2_RENDERPASS 0
 #endif
+
+#ifndef MX2_FORWARDRENDERER
+#define MX2_FORWARDRENDERER 0
+#endif
+
+#ifndef MX2_DEFERREDRENDERER
+#define MX2_DEFERREDRENDERER 0
+#endif
+
+#ifndef MX2_SRGBOUTPUT
+#define MX2_SRGBOUTPUT 0
+#endif
+
 #define MX2_PASSTYPE			((MX2_RENDERPASS & 3))
 #define MX2_LIGHTTYPE			((MX2_RENDERPASS & 12)>>2)
 #define MX2_SHADOWTYPE			((MX2_RENDERPASS & 16)>>4)
@@ -72,7 +85,7 @@ uniform mat4 r_InverseProjectionMatrix;
 uniform mat4 r_ProjectionMatrix;
 uniform mat4 r_ViewMatrix;
 
-// These available in deferred renderer!
+// These only available in deferred renderer!
 uniform sampler2D r_AccumBuffer;
 uniform sampler2D r_ColorBuffer;
 uniform sampler2D r_NormalBuffer;
@@ -366,7 +379,7 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 
 void emitLinearFragment( vec4 color ){
 
-#if defined( MX2_SRGBOUTPUT )
+#if MX2_SRGBOUTPUT
 	gl_FragColor=vec4( pow( color.rgb*color.a,vec3( 1.0/2.2 ) ),color.a );
 #else
 	gl_FragColor=vec4( color.rgb*color.a,color.a );

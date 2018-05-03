@@ -123,6 +123,7 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 	
 	vec3 frag=(ambDiffuse + ambSpecular) * occlusion + emissive;
 	
+#if MX2_DEFERREDRENDERER
 	//write ambient
 	gl_FragData[0]=vec4( min( frag,8.0 ),1.0 );
 	
@@ -131,6 +132,7 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 	
 	//write normal/roughness
 	gl_FragData[2]=vec4( normal * 0.5 + 0.5,roughness );
+#endif
 }
 
 #endif
