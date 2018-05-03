@@ -625,5 +625,16 @@ Class btHingeConstraint Extends btTypedConstraint="bbBullet::HingeConstraint"
 	Method getFrameOffsetB:btTransform()
 End
 
+Class btSliderConstraint Extends btTypedConstraint="bbBullet::SliderConstraint"
+	
+	Method New( rbA:btRigidBody,rbB:btRigidBody,frameInA:btTransform,frameInB:btTransform,useLinearReferenceFrameA:Bool )
+ 
+	Method New( rbB:btRigidBody,frameInB:btTransform,useLinearReferenceFrameA:Bool )
+End
 
+Class btFixedConstraint Extends btTypedConstraint="bbBullet::FixedConstraint"
+	
+	Method New( rbA:btRigidBody,rbB:btRigidBody,frameInA:btTransform,frameInB:btTransform )
+		
+End
 

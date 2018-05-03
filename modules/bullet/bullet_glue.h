@@ -34,6 +34,21 @@ namespace bbBullet{
 		btHingeConstraint(*rbA, rbAFrame, useReferenceFrameA){}
 	};
 	
+	struct SliderConstraint : public btSliderConstraint{
+
+		SliderConstraint(btRigidBody *rbA, btRigidBody *rbB, const btTransform &frameInA, const btTransform &frameInB, bool useLinearReferenceFrameA):
+		btSliderConstraint(*rbA,*rbB, frameInA, frameInB, useLinearReferenceFrameA){}
+ 
+		SliderConstraint(btRigidBody *rbB, const btTransform &frameInB, bool useLinearReferenceFrameA):
+		btSliderConstraint(*rbB, frameInB, useLinearReferenceFrameA){}
+	};
+	
+	struct FixedConstraint : public btFixedConstraint{
+		
+		FixedConstraint(btRigidBody* rbA,btRigidBody* rbB, const btTransform& frameInA,const btTransform& frameInB):
+		btFixedConstraint(*rbA,*rbB,frameInA,frameInB){}
+	};
+	
 	struct MotionState : public btMotionState{
 		
 		virtual void setWorldTransform( btTransform *worldTrans ){
