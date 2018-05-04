@@ -356,10 +356,14 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 
 	if( r_EnvCube ){
 		
+		return pow( textureCube( r_EnvTextureCube,tv,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		
+		/*
 		float lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 		if( lod>0.0 ) lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
 	
 		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		*/
 		
 	}else{
 
@@ -368,10 +372,14 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 		
 		vec2 tc=vec2( y,p ) *0.5 + 0.5;
 
+		return pow( texture2D( r_EnvTexture2D,tc,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+
+		/*
 		float lod=texture2D( r_EnvTexture2D,tc,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 		if( lod>0.0 ) lod=texture2D( r_EnvTexture2D,tc ).a * 255.0;
 	
 		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		*/
 	}
 }
 

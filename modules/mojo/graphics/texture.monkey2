@@ -30,6 +30,7 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
 '	Case PixelFormat.RGBA16F Return GL_RGBA
+	Case PixelFormat.RGB32F Return BBGL_ES ? GL_RGB Else GL_RGB32F
 	Case PixelFormat.RGBA32F Return BBGL_ES ? GL_RGBA Else GL_RGBA32F
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
@@ -45,6 +46,7 @@ Function glFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB8 Return GL_RGB
 	Case PixelFormat.RGBA8 Return GL_RGBA
 '	Case PixelFormat.RGBA16F Return GL_RGBA
+	Case PixelFormat.RGB32F Return GL_RGB
 	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
 	End
@@ -60,6 +62,7 @@ Function glType:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB8 Return GL_UNSIGNED_BYTE
 	Case PixelFormat.RGBA8 Return GL_UNSIGNED_BYTE
 '	Case PixelFormat.RGBA16F Return GL_HALF_FLOAT
+	Case PixelFormat.RGB32F Return GL_FLOAT
 	Case PixelFormat.RGBA32F Return GL_FLOAT
 	Case PixelFormat.Depth32 Return GL_UNSIGNED_INT
 	End
@@ -93,60 +96,29 @@ Function ClearTexImage2D( glTarget:GLenum,width:Int,height:Int,format:PixelForma
 	glCheck()
 End
 
-Function UploadTexImage2D( glTarget:GLenum,image:Pixmap,mipmap:Bool,envmap:Bool )
+Function UploadTexImage2D( glTarget:GLenum,image:Pixmap )
 	
 	glCheck()
 	
-	Local format:=image.Format
-	
-	If envmap Assert( format=PixelFormat.RGBA8 )
-	
+	Local width:=image.Width,height:=image.Height,format:=image.Format
+
 	Local gliformat:=glInternalFormat( format )
 	Local glformat:=glFormat( format )
 	Local gltype:=glType( format )
-	
-	Local mip:=0
-	
-	Repeat
-		
-		Local width:=image.Width,height:=image.Height
 
-		If envmap
-			'write miplevel to alpha for envmaps
-			For Local y:=0 until height
-				Local p:=image.PixelPtr( 0,y )
-				For Local x:=0 Until width
-					p[x*4+3]=mip
-				Next
-			Next
-		Endif
-		
-		If image.Pitch=width * image.Depth
-			glTexImage2D( glTarget,mip,gliformat,width,height,0,glformat,gltype,image.Data )
+	If image.Pitch=width * image.Depth
+		glTexImage2D( glTarget,0,gliformat,width,height,0,glformat,gltype,image.Data )
+		glCheck()
+	Else
+		glTexImage2D( glTarget,0,gliformat,width,height,0,glformat,gltype,Null )
+		glCheck()
+		For Local y:=0 Until height
+			glTexSubImage2D( glTarget,0,0,y,width,1,glformat,gltype,image.PixelPtr( 0,y ) )
 			glCheck()
-		Else
-			glTexImage2D( glTarget,mip,gliformat,width,height,0,glformat,gltype,Null )
-			glCheck()
-			For Local y:=0 Until height
-				glTexSubImage2D( glTarget,mip,0,y,width,1,glformat,gltype,image.PixelPtr( 0,y ) )
-				glCheck()
-			Next
-		Endif
-		
-		glFlush() 'macos nvidia bug!
-		
-		If Not mipmap Or Not envmap Exit
-		
-		If width=1 And height=1 Exit
-		
-		image=image.MipHalve()
-		
-		mip+=1
-	Forever
+		Next
+	Endif
 	
-	If mipmap And Not envmap glGenerateMipmap( glTarget )
-	
-	glCheck()
+	glFlush() 'macos nvidia bug!
 End
 
 Public
@@ -173,11 +145,9 @@ Enum TextureFlags
 	
 	Dynamic=		$0100
 	Cubemap=		$0200
-	Envmap=			$0400
 	
 	WrapST=			WrapS|WrapT
 	FilterMipmap=	Filter|Mipmap
-	CubeEnvmap=		Cubemap|Envmap
 End
 
 #rem monketdoc @hidden
@@ -211,13 +181,6 @@ Class Texture Extends Resource
 	Method New( pixmap:Pixmap,flags:TextureFlags )
 		
 		If flags & TextureFlags.Cubemap
-
-			'Nasty: envmap mips need mip level in the alpha channel for env maps
-			'
-			'If flags & TextureFlags.Envmap And pixmap.Format<>PixelFormat.RGBA8
-			'	
-			'	pixmap=pixmap.Convert( PixelFormat.RGBA8 )
-			'Endif
 
 			Local size:=pixmap.Size
 			
@@ -336,8 +299,7 @@ Class Texture Extends Resource
 	Function Load:Texture( path:String,flags:TextureFlags=TextureFlags.FilterMipmap,flipNormalY:Bool=False )
 		
 		Local format:=PixelFormat.Unknown
-		If flags & TextureFlags.Envmap format=PixelFormat.RGBA8
-
+		
 		Local pixmap:=Pixmap.Load( path,format,True )
 		If Not pixmap Return Null
 		
@@ -519,19 +481,13 @@ Class Texture Extends Resource
 		
 		If _dirty & Dirty.TexImage
 			
-			Local mipmap:=(_flags & TextureFlags.Mipmap)<>0
-				
-			Local envmap:=(_flags & TextureFlags.Envmap)<>0
-				
 			Select _glTarget
 			Case GL_TEXTURE_2D
 				
 				If _managed
-					UploadTexImage2D( _glTarget,_managed,mipmap,envmap )
-					_dirty&=~Dirty.Mipmaps
+					UploadTexImage2D( _glTarget,_managed )
 				else
 					ClearTexImage2D( _glTarget,_size.x,_size.y,_format,Color.Black )
-					If mipmap _dirty|=Dirty.Mipmaps
 				Endif
 					
 			Case GL_TEXTURE_CUBE_MAP
@@ -539,17 +495,17 @@ Class Texture Extends Resource
 				If _cubeFaces[0]._managed
 					For Local i:=0 Until 6
 						Local face:=_cubeFaces[i]
-						UploadTexImage2D( face._glTarget,face._managed,mipmap,envmap )
+						UploadTexImage2D( face._glTarget,face._managed )
 					Next
-					_dirty&=~Dirty.Mipmaps
 				Else
 					For Local i:=0 Until 6
 						Local face:=_cubeFaces[i]
 						ClearTexImage2D( face._glTarget,face._size.x,face._size.y,face._format,Color.Black )
 					Next
-					If mipmap _dirty|=Dirty.Mipmaps
 				Endif
 			End
+			
+			If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
 			
 		Endif
 		

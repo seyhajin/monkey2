@@ -623,6 +623,12 @@ Class btHingeConstraint Extends btTypedConstraint="bbBullet::HingeConstraint"
 	Method getFrameOffsetA:btTransform()
 		
 	Method getFrameOffsetB:btTransform()
+		
+	Method getLowerLimit:btScalar()
+		
+	Method getUpperLimit:btScalar()
+		
+	Method setLimit( low:btScalar,high:btScalar,_softness:btScalar=.9,_biasFactor:btScalar=.3,_relaxationFactor:btScalar=1.0 )
 End
 
 Class btSliderConstraint Extends btTypedConstraint="bbBullet::SliderConstraint"

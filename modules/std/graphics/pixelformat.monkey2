@@ -31,12 +31,36 @@ Enum PixelFormat
 	Depth16
 	Depth24
 	Depth32
+	
+	RGB16F
+	RGB32F
 
 	'deprecated
 	IA16=IA8
 	RGB24=RGB8
 	RGBA32=RGBA8
 
+End
+
+Function IsAlphaPixelFormat:Bool( format:PixelFormat )
+	Select format
+	Case PixelFormat.A8,PixelFormat.IA8,PixelFormat.RGBA8,PixelFormat.RGBA16F,PixelFormat.RGBA32F Return True
+	End
+	Return False
+End
+
+Function IsDepthPixelFormat:Bool( format:PixelFormat )
+	Select format
+	Case PixelFormat.Depth16,PixelFormat.Depth24,PixelFormat.Depth32 Return True
+	End
+	Return False
+End
+
+Function IsFloatPixelFormat:Bool( format:PixelFormat )
+	Select format
+	Case PixelFormat.RGBA16F,PixelFormat.RGBA32F,PixelFormat.RGB16F,PixelFormat.RGB32F Return True
+	End
+	Return False
 End
 
 #rem monkeydoc Gets the number of bytes per pixel for a particular pixel format.
@@ -54,6 +78,8 @@ Function PixelFormatDepth:Int( format:PixelFormat )
 	Case PixelFormat.Depth16 Return 2
 	Case PixelFormat.Depth24 Return 4
 	Case PixelFormat.Depth32 Return 4
+	Case PixelFormat.RGB16F Return 6
+	Case PixelFormat.RGB32F Return 12
 		
 	'deprecated
 	Case PixelFormat.IA16 Return 2
@@ -62,5 +88,5 @@ Function PixelFormatDepth:Int( format:PixelFormat )
 		
 	End
 	
-	Return PixelFormat.Unknown
+	Return 0
 End

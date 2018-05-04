@@ -30,7 +30,7 @@ Class MyWindow Extends Window
 		
 		_scene=New Scene( True )
 		
-		_scene.SkyTexture=_scene.LoadTexture( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap~TextureFlags.Envmap )
+		_scene.SkyTexture=_scene.LoadTexture( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
 		_scene.FogColor=Color.Sky
 		_scene.FogNear=10
 		_scene.FogFar=30

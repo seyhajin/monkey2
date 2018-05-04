@@ -175,6 +175,17 @@ Class Pixmap Extends Resource
 			p[1]=color.g * 255
 			p[2]=color.b * 255
 			p[3]=color.a * 255
+		Case PixelFormat.RGB32F
+			Local fp:=Cast<Float Ptr>( p )
+			fp[0]=color.r
+			fp[1]=color.g
+			fp[2]=color.b
+		Case PixelFormat.RGBA32F
+			Local fp:=Cast<Float Ptr>( p )
+			fp[0]=color.r
+			fp[1]=color.g
+			fp[2]=color.b
+			fp[3]=color.a
 '		Default
 '			Assert( False )
 		End
@@ -210,6 +221,12 @@ Class Pixmap Extends Resource
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,1 )
 		Case PixelFormat.RGBA32
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,p[3]/255.0 )
+		Case PixelFormat.RGB32F
+			Local fp:=Cast<Float Ptr>( p )
+			Return New Color( fp[0],fp[1],fp[2] )
+		Case PixelFormat.RGBA32F
+			Local fp:=Cast<Float Ptr>( p )
+			Return New Color( fp[0],fp[1],fp[2],fp[3] )
 '		Default
 '			Assert( False )
 		End
@@ -250,6 +267,17 @@ Class Pixmap Extends Resource
 			p[1]=color Shr 8
 			p[2]=color
 			p[3]=color Shr 24
+		Case PixelFormat.RGB32F
+			Local fp:=Cast<Float Ptr>( p )
+			fp[0]=((color Shr 16)&255)/255.0
+			fp[1]=((color Shr 8)&255)/255.0
+			fp[2]=(color&255)/255.0
+		Case PixelFormat.RGBA32F
+			Local fp:=Cast<Float Ptr>( p )
+			fp[0]=((color Shr 16)&255)/255.0
+			fp[1]=((color Shr 8)&255)/255.0
+			fp[2]=(color&255)/255.0
+			fp[3]=((color Shr 24)&255)/255.0
 		Default
 			Assert( False )
 		End
@@ -283,6 +311,12 @@ Class Pixmap Extends Resource
 			Return UByte($ff) Shl 24 | p[0] Shl 16 | p[1] Shl 8 | p[2]
 		Case PixelFormat.RGBA32
 			Return p[3] Shl 24 | p[0] Shl 16 | p[1] Shl 8 | p[2]
+		Case PixelFormat.RGB32F
+			Local fp:=Cast<Float Ptr>( p )
+			Return UInt($ff000000) | UInt(p[0]*255.0) Shl 16 | UInt(fp[1]*255.0) Shl 8 | UInt(fp[2]*255.0)
+		Case PixelFormat.RGBA32F
+			Local fp:=Cast<Float Ptr>( p )
+			Return UInt(fp[3]*255.0) Shl 24 | UInt(p[0]*255.0) Shl 16 | UInt(fp[1]*255.0) Shl 8 | UInt(fp[2]*255.0) 
 		Default
 			Assert( False )
 		End
@@ -298,7 +332,7 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method Clear( color:Color )
-		
+
 		For Local y:=0 Until _height
 			For Local x:=0 Until _width
 				SetPixel( x,y,color )
@@ -312,11 +346,9 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method ClearARGB( color:UInt )
-		
+
 		For Local y:=0 Until _height
-			
 			For Local x:=0 Until _width
-				
 				SetPixelARGB( x,y,color )
 			Next
 		Next
@@ -328,16 +360,12 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method Copy:Pixmap()
-	
+		
 		Local pitch:=Width * Depth
-		
 		Local data:=Cast<UByte Ptr>( libc.malloc( pitch * Height ) )
-		
 		For Local y:=0 Until Height
-			
 			memcpy( data+y*pitch,PixelPtr( 0,y ),pitch )
 		Next
-		
 		Return New Pixmap( Width,Height,Format,data,pitch )
 	End
 	
@@ -355,12 +383,11 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method Paste( pixmap:Pixmap,x:Int,y:Int )
+
 		DebugAssert( x>=0 And x+pixmap._width<=_width And y>=0 And y+pixmap._height<=_height )
 		
 		For Local ty:=0 Until pixmap._height
-			
 			For Local tx:=0 Until pixmap._width
-				
 				SetPixel( x+tx,y+ty,pixmap.GetPixel( tx,ty ) )
 			Next
 		Next
@@ -379,13 +406,26 @@ Class Pixmap Extends Resource
 		
 		Local t:=New Pixmap( _width,_height,format )
 		
-		For Local y:=0 Until _height
-			
-			For Local x:=0 Until _width
-				
-				t.SetPixel( x,y,GetPixel( x,y ) )
+		If IsFloatPixelFormat( _format ) And Not IsFloatPixelFormat( format )
+			For Local y:=0 Until _height
+				For Local x:=0 Until _width
+					Local c:=GetPixel( x,y )
+					c.r=Clamp( c.r,0.0,1.0 )
+					c.g=Clamp( c.g,0.0,1.0 )
+					c.b=Clamp( c.b,0.0,1.0 )
+					c.a=Clamp( c.a,0.0,1.0 )
+					t.SetPixel( x,y,c )
+				Next
 			Next
-		Next
+		Else
+			For Local y:=0 Until _height
+				For Local x:=0 Until _width
+					t.SetPixel( x,y,GetPixel( x,y ) )
+				Next
+			Next
+		Endif
+		
+		
 		Return t
 	End
 	
@@ -396,12 +436,10 @@ Class Pixmap Extends Resource
 	Method PremultiplyAlpha()
 		
 		Select _format
-		Case PixelFormat.IA16,PixelFormat.RGBA32
+		Case PixelFormat.IA16,PixelFormat.RGBA32,PixelFormat.RGBA16F,PixelFormat.RGBA32F
 			
 			For Local y:=0 Until _height
-				
 				For Local x:=0 Until _width
-					
 					Local color:=GetPixel( x,y )
 					color.r*=color.a
 					color.g*=color.a
