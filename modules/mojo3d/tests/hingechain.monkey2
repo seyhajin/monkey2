@@ -4,7 +4,7 @@ Namespace myapp3d
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Reflect mojo3d
+'#Reflect mojo3d
 
 Using std..
 Using mojo..
@@ -71,6 +71,8 @@ Class MyWindow Extends Window
 				joint.ConnectedBody=prev.RigidBody
 				joint.Pivot=New Vec3f( 0,-.5,0 )
 				joint.Axis=New Vec3f( 1,0,0 )
+				joint.MinAngle=-90
+				joint.MaxAngle=90
 			Endif
 			
 			prev=copy

@@ -4,7 +4,7 @@ Namespace myapp3d
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Reflect mojo3d
+'#Reflect mojo3d
 
 Using std..
 Using mojo..
