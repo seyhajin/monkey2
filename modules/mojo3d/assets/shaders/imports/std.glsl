@@ -384,7 +384,7 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 //#ifdef GL_ES
 		float lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
 		if( lod==0 ) lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*(r_EnvTextureMaxLod-1.0)-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //#else
 //		return pow( textureCube( r_EnvTextureCube,tv,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //#endif
@@ -398,7 +398,7 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 //#ifdef GL_ES
 		float lod=texture2D( r_EnvTexture2D,tc ).a * 255.0;
 		if( lod==0.0 ) lod=texture2D( r_EnvTexture2D,tc,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*(r_EnvTextureMaxLod-1.0)-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //else
 //		return pow( texture2DLod( r_EnvTexture2D,tc,max( mipmapLod( tc ),roughness*r_EnvTextureMaxLod ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 	
