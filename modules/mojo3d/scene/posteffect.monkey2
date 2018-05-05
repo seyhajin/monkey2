@@ -63,7 +63,7 @@ Class PostEffect
 		Local rtarget:=_gdevice.RenderTarget
 		Local rtexture:=rtarget.GetColorTexture( 0 )
 		_runiforms.SetTexture( "SourceBuffer",rtexture )
-		_runiforms.SetVec2f( "SourceBufferSize",Cast<Vec2f>( rsize ) )
+		_runiforms.SetVec2f( "SourceBufferSize",Cast<Vec2f>( rtexture.Size ) )'rsize ) )
 		_runiforms.SetVec2f( "SourceBufferScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( rtexture.Size ) )
 		
 		_gdevice.RenderTarget=target

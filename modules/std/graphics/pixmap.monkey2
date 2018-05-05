@@ -3,6 +3,34 @@ Namespace std.graphics
 
 Using std.resource
 
+Extern Private
+
+Function ldexp:Float( x:Float,exp:Int )
+	
+Function frexp:Float( arg:Float,exp:Int Ptr )
+	
+Private
+
+Function GetColorRGBE8:Color( p:UByte Ptr)
+	If Not p[3] Return Color.Black
+	Local f:=ldexp( 1.0,p[3]-136 )
+	Return New Color( p[0]*f,p[1]*f,p[2]*f )
+End
+
+Function SetColorRGBE8( p:UByte Ptr,color:Color )
+	Local v:=color.r,e:=0
+	If color.g>v v=color.g
+	If color.b>v v=color.b
+	If( v<1e-32) p[0]=0;p[1]=0;p[2]=0;p[3]=0;Return
+	v=frexp( v,Varptr e ) * 256.0/v
+	p[0]=color.r*v
+	p[1]=color.g*v
+	p[2]=color.b*v
+	p[0]=e+128
+End
+	
+Public
+
 #rem monkeydoc Pixmaps allow you to store and manipulate rectangular blocks of pixel data.
 
 A pixmap contains a block of memory used to store a rectangular array of pixels.
@@ -25,7 +53,7 @@ Class Pixmap Extends Resource
 	@param pitch The pitch of the data.
 	
 	#end
-	Method New( width:Int,height:Int,format:PixelFormat=PixelFormat.RGBA32 )
+	Method New( width:Int,height:Int,format:PixelFormat=PixelFormat.RGBA8 )
 	
 '		Print "New pixmap1, width="+width+", height="+height
 
@@ -103,7 +131,7 @@ Class Pixmap Extends Resource
 	Property HasAlpha:Bool()
 		
 		Select _format
-		Case PixelFormat.A8,PixelFormat.IA16,PixelFormat.RGBA32
+		Case PixelFormat.A8,PixelFormat.IA8,PixelFormat.RGBA8
 			Return True
 		End
 		Return False
@@ -158,36 +186,39 @@ Class Pixmap Extends Resource
 		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 		
 		Local p:=PixelPtr( x,y )
+		
 		Select _format
 		Case PixelFormat.A8
 			p[0]=color.a * 255
 		Case PixelFormat.I8
 			p[0]=color.r * 255
-		Case PixelFormat.IA16
+		Case PixelFormat.IA8
 			p[0]=color.r * 255
 			p[1]=color.a * 255
-		Case PixelFormat.RGB24
+		Case PixelFormat.RGB8
 			p[0]=color.r * 255
 			p[1]=color.g * 255
 			p[2]=color.b * 255
-		Case PixelFormat.RGBA32
+		Case PixelFormat.RGBA8
 			p[0]=color.r * 255
 			p[1]=color.g * 255
 			p[2]=color.b * 255
 			p[3]=color.a * 255
 		Case PixelFormat.RGB32F
-			Local fp:=Cast<Float Ptr>( p )
-			fp[0]=color.r
-			fp[1]=color.g
-			fp[2]=color.b
+			Local f:=Cast<Float Ptr>( p )
+			f[0]=color.r
+			f[1]=color.g
+			f[2]=color.b
 		Case PixelFormat.RGBA32F
-			Local fp:=Cast<Float Ptr>( p )
-			fp[0]=color.r
-			fp[1]=color.g
-			fp[2]=color.b
-			fp[3]=color.a
-'		Default
-'			Assert( False )
+			Local f:=Cast<Float Ptr>( p )
+			f[0]=color.r
+			f[1]=color.g
+			f[2]=color.b
+			f[3]=color.a
+		Case PixelFormat.RGBE8
+			SetColorRGBE8( p,color )
+		Default
+			Assert( False )
 		End
 	End
 
@@ -208,27 +239,30 @@ Class Pixmap Extends Resource
 		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 	
 		Local p:=PixelPtr( x,y )
+
 		Select _format
 		Case PixelFormat.A8 
 			Return New Color( 0,0,0,p[0]/255.0 )
 		Case PixelFormat.I8
 			Local i:=p[0]/255.0
 			Return New Color( i,i,i,1 )
-		Case PixelFormat.IA16
+		Case PixelFormat.IA8
 			Local i:=p[0]/255.0
 			Return New Color( i,i,i,p[1]/255.0 )
-		Case PixelFormat.RGB24
+		Case PixelFormat.RGB8
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,1 )
-		Case PixelFormat.RGBA32
+		Case PixelFormat.RGBA8
 			Return New Color( p[0]/255.0,p[1]/255.0,p[2]/255.0,p[3]/255.0 )
 		Case PixelFormat.RGB32F
-			Local fp:=Cast<Float Ptr>( p )
-			Return New Color( fp[0],fp[1],fp[2] )
+			Local f:=Cast<Float Ptr>( p )
+			Return New Color( f[0],f[1],f[2] )
 		Case PixelFormat.RGBA32F
-			Local fp:=Cast<Float Ptr>( p )
-			Return New Color( fp[0],fp[1],fp[2],fp[3] )
-'		Default
-'			Assert( False )
+			Local f:=Cast<Float Ptr>( p )
+			Return New Color( f[0],f[1],f[2],f[3] )
+		Case PixelFormat.RGBE8
+			Return GetColorRGBE8( p )
+		Default
+			Assert( False )
 		End
 		Return Color.None
 	End
@@ -250,36 +284,39 @@ Class Pixmap Extends Resource
 		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 	
 		Local p:=PixelPtr( x,y )
+		
 		Select _format
 		Case PixelFormat.A8
 			p[0]=color Shr 24
 		Case PixelFormat.I8
 			p[0]=color Shr 16
-		Case PixelFormat.IA16
+		Case PixelFormat.IA8
 			p[0]=color Shr 24
 			p[1]=color Shr 16
-		Case PixelFormat.RGB24
+		Case PixelFormat.RGB8
 			p[0]=color Shr 16
 			p[1]=color Shr 8
 			p[2]=color
-		Case PixelFormat.RGBA32
+		Case PixelFormat.RGBA8
 			p[0]=color Shr 16
 			p[1]=color Shr 8
 			p[2]=color
 			p[3]=color Shr 24
 		Case PixelFormat.RGB32F
-			Local fp:=Cast<Float Ptr>( p )
-			fp[0]=((color Shr 16)&255)/255.0
-			fp[1]=((color Shr 8)&255)/255.0
-			fp[2]=(color&255)/255.0
+			Local f:=Cast<Float Ptr>( p )
+			f[0]=((color Shr 16)&255)/255.0
+			f[1]=((color Shr 8)&255)/255.0
+			f[2]=(color&255)/255.0
 		Case PixelFormat.RGBA32F
-			Local fp:=Cast<Float Ptr>( p )
-			fp[0]=((color Shr 16)&255)/255.0
-			fp[1]=((color Shr 8)&255)/255.0
-			fp[2]=(color&255)/255.0
-			fp[3]=((color Shr 24)&255)/255.0
+			Local f:=Cast<Float Ptr>( p )
+			f[0]=((color Shr 16)&255)/255.0
+			f[1]=((color Shr 8)&255)/255.0
+			f[2]=(color&255)/255.0
+			f[3]=((color Shr 24)&255)/255.0
+		Case PixelFormat.RGBE8
+			SetColorRGBE8( p,New Color( ((color Shr 16)&255)/255.0,((color Shr 8)&255)/255.0,(color&255)/255.0,((color Shr 24)&255)/255.0 ) )
 		Default
-			Assert( False )
+			SetPixel( x,y,New Color( ((color Shr 16)&255)/255.0,((color Shr 8)&255)/255.0,(color&255)/255.0,((color Shr 24)&255)/255.0 ) )
 		End
 	End
 
@@ -298,27 +335,32 @@ Class Pixmap Extends Resource
 		DebugAssert( x>=0 And y>=0 And x<_width And y<_height,"Pixmap pixel coordinates out of range" )
 	
 		Local p:=PixelPtr( x,y )
+		
 		Select _format
 		Case PixelFormat.A8 
 			Return p[0] Shl 24
 		Case PixelFormat.I8 
 			Local i:=p[0]
 			Return UByte($ff) Shl 24 | i Shl 16 | i Shl 8 | i
-		Case PixelFormat.IA16
+		Case PixelFormat.IA8
 			Local i:=p[1]
 			Return p[0] Shl 24 | i Shl 16 | i Shl 8 | i
-		Case PixelFormat.RGB24
+		Case PixelFormat.RGB8
 			Return UByte($ff) Shl 24 | p[0] Shl 16 | p[1] Shl 8 | p[2]
-		Case PixelFormat.RGBA32
+		Case PixelFormat.RGBA8
 			Return p[3] Shl 24 | p[0] Shl 16 | p[1] Shl 8 | p[2]
 		Case PixelFormat.RGB32F
-			Local fp:=Cast<Float Ptr>( p )
-			Return UInt($ff000000) | UInt(p[0]*255.0) Shl 16 | UInt(fp[1]*255.0) Shl 8 | UInt(fp[2]*255.0)
+			Local f:=Cast<Float Ptr>( p )
+			Return UInt($ff) Shl 24 | UInt(f[0]*255.0) Shl 16 | UInt(f[1]*255.0) Shl 8 | UInt(f[2]*255.0)
 		Case PixelFormat.RGBA32F
-			Local fp:=Cast<Float Ptr>( p )
-			Return UInt(fp[3]*255.0) Shl 24 | UInt(p[0]*255.0) Shl 16 | UInt(fp[1]*255.0) Shl 8 | UInt(fp[2]*255.0) 
+			Local f:=Cast<Float Ptr>( p )
+			Return UInt(f[3]*255.0) Shl 24 | UInt(f[0]*255.0) Shl 16 | UInt(f[1]*255.0) Shl 8 | UInt(f[2]*255.0)
+		Case PixelFormat.RGBE8
+			Local color:=GetColorRGBE8( p )
+			Return UInt($ff) Shl 24 | UInt(color.r*255.0) Shl 16 | UInt(color.g*255.0) Shl 8 | UInt(color.b*255.0)
 		Default
-			Assert( False )
+			Local color:=GetPixel( x,y )
+			Return UInt(color.a*255.0) Shl 24 | UInt(color.r*255.0) Shl 16 | UInt(color.g*255.0) Shl 8 | UInt(color.b*255.0)
 		End
 
 		Return 0
@@ -425,7 +467,6 @@ Class Pixmap Extends Resource
 			Next
 		Endif
 		
-		
 		Return t
 	End
 	
@@ -436,7 +477,7 @@ Class Pixmap Extends Resource
 	Method PremultiplyAlpha()
 		
 		Select _format
-		Case PixelFormat.IA16,PixelFormat.RGBA32,PixelFormat.RGBA16F,PixelFormat.RGBA32F
+		Case PixelFormat.IA8,PixelFormat.RGBA8,PixelFormat.RGBA16F,PixelFormat.RGBA32F
 			
 			For Local y:=0 Until _height
 				For Local x:=0 Until _width

@@ -25,14 +25,12 @@ void main(){
 		frag=pow( textureCube( r_SkyTextureCube,tv ).rgb,vec3( 2.2 ) );
 
 	}else{
-		
-		float p=-atan( tv.y,sqrt( tv.x*tv.x+tv.z*tv.z ) ) / (pi/2.0) * 0.5 + 0.5;
+
+		float p=-atan( tv.y,sqrt( tv.x*tv.x+tv.z*tv.z ) ) / pi + 0.5;
 		
 		float y=atan( tv.x,tv.z ) / pi * 0.5 + 0.5;
 		
 		frag=pow( texture2D( r_SkyTexture2D,vec2( y,p ) ).rgb,vec3( 2.2 ) );
-		
-//		frag=vec3( p,p,p );//y,y,y );
 	}
 	
 #if MX2_DEFERREDRENDERER

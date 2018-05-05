@@ -350,36 +350,59 @@ float shadowColor( vec3 position ){
 
 #endif
 
+/*
+float mipmapLod( vec2 tc ){
+    vec2 dx=dFdx( tc );
+    vec2 dy=dFdy( tc );
+    float dsqr=max( dot( dx,dx ),dot( dy,dy ) );
+    float lod=log2( dsqr ) * 0.5;
+    return max( lod,0.0 );
+}
+
+float mipmapLodCube( vec3 tv ){
+	vec2 tc;
+	vec3 at=abs( tv );
+	if( at.x>at.y && at.x>at.z ){
+		tc=vec2( tv.y,tv.z )/tv.x;
+	}else if( at.y>at.z ){
+		tc=vec2( tv.x,tv.z )/tv.y;
+	}else{
+		tc=vec2( tv.x,tv.y )/tv.z;
+	}
+	return mipmapLod( (tc+1.0)*0.5 );
+}
+*/
+
 vec3 sampleEnv( vec3 viewVec,float roughness ){
 
 	vec3 tv=r_EnvMatrix * viewVec;
 
 	if( r_EnvCube ){
 		
-		return pow( textureCube( r_EnvTextureCube,tv,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
-		
-		/*
-		float lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-		if( lod>0.0 ) lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
-	
+		float r_EnvTextureMaxLod=11.0;
+
+//#ifdef GL_ES
+		float lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
+		if( lod==0 ) lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
-		*/
+//#else
+//		return pow( textureCube( r_EnvTextureCube,tv,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+//#endif
 		
 	}else{
-
-		float p=-atan( tv.y,sqrt( tv.x*tv.x+tv.z*tv.z ) ) / (pi/2.0);
-		float y=atan( tv.x,tv.z ) / pi;
-		
-		vec2 tc=vec2( y,p ) *0.5 + 0.5;
-
-		return pow( texture2D( r_EnvTexture2D,tc,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
-
-		/*
-		float lod=texture2D( r_EnvTexture2D,tc,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-		if( lod>0.0 ) lod=texture2D( r_EnvTexture2D,tc ).a * 255.0;
 	
+		float p=-atan( tv.y,sqrt( tv.x*tv.x+tv.z*tv.z ) ) / pi + 0.5;
+		float y=atan( tv.x,tv.z ) / pi * 0.5 + 0.5;
+		vec2 tc=vec2( y,p );
+		
+//#ifdef GL_ES
+		float lod=texture2D( r_EnvTexture2D,tc ).a * 255.0;
+		if( lod==0.0 ) lod=texture2D( r_EnvTexture2D,tc,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
-		*/
+//else
+//		return pow( texture2DLod( r_EnvTexture2D,tc,max( mipmapLod( tc ),roughness*r_EnvTextureMaxLod ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+	
+//#endif
 	}
 }
 

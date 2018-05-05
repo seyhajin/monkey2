@@ -10,7 +10,7 @@ Class BloomEffect Extends PostEffect
 	
 	#rem monkeydoc Creates a new bloom effect.
 	#end
-	Method New( passes:Int=2 )
+	Method New( passes:Int=1 )
 		
 		_shader=Shader.Open( "effects/bloom" )
 		
@@ -29,7 +29,7 @@ Class BloomEffect Extends PostEffect
 		Return _passes
 	
 	Setter( passes:Int )
-		Assert( passes>0 And (passes&1)=0,"BloomEffect passes must be even and >0" )
+		Assert( passes>0,"BloomEffect passes must be >0" )
 		
 		_passes=passes
 	End
@@ -41,7 +41,7 @@ Class BloomEffect Extends PostEffect
 		Local size:=viewport.Size
 		Local source:=target.GetColorTexture( 0 )
 		
-		If Not _target0 Or size.x>_target0.Size.x Or size.y>_target0.Size.y
+		If Not _target0 Or size.x<>_target0.Size.x Or size.y<>_target0.Size.y
 			_target0=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
 			_target1=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
 		Endif
@@ -51,7 +51,7 @@ Class BloomEffect Extends PostEffect
 		
 		Local rtarget:=_target0
 		
-		For Local i:=0 Until _passes
+		For Local i:=0 Until _passes*2
 			
 			Super.SetRenderTarget( rtarget,New Recti( 0,0,size ) )
 			Device.RenderPass=i ? 2-(i&1) Else 0	'0,1,2,1,2,1,2...

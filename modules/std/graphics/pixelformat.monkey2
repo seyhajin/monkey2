@@ -34,7 +34,9 @@ Enum PixelFormat
 	
 	RGB16F
 	RGB32F
-
+	
+	RGBE8
+	
 	'deprecated
 	IA16=IA8
 	RGB24=RGB8
@@ -80,6 +82,7 @@ Function PixelFormatDepth:Int( format:PixelFormat )
 	Case PixelFormat.Depth32 Return 4
 	Case PixelFormat.RGB16F Return 6
 	Case PixelFormat.RGB32F Return 12
+	Case PixelFormat.RGBE8 Return 4
 		
 	'deprecated
 	Case PixelFormat.IA16 Return 2
