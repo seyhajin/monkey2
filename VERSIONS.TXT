@@ -1,5 +1,5 @@
 
-***** Monkey-v2018.05 Mx2cc-v1.1.12 Ted2go-2.10 *****
+***** Monkey-v2018.05 Mx2cc-v1.1.13 Ted2go-2.10 *****
 
 Added simple support for .hdr pixmap/texture/image loading (wont work on android).
 
