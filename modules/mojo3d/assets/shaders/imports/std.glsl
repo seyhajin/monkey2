@@ -379,11 +379,9 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 
 	if( r_EnvCube ){
 		
-		float r_EnvTextureMaxLod=11.0;
-
 //#ifdef GL_ES
 		float lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
-		if( lod==0 ) lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
+		if( lod==0.0 ) lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
 		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*(r_EnvTextureMaxLod-1.0)-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //#else
 //		return pow( textureCube( r_EnvTextureCube,tv,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
