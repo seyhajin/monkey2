@@ -30,6 +30,7 @@ Using reflection..
 #Import "scene/components/animator"
 #Import "scene/components/rigidbody"
 #Import "scene/components/collider"
+#Import "scene/components/joint"
 #Import "scene/components/behaviour"
 #Import "scene/components/flybehaviour"
 #Import "scene/components/movebehaviour"
@@ -50,6 +51,7 @@ Using reflection..
 
 #Import "scene/effects/bloomeffect"
 #Import "scene/effects/monochromeeffect"
+#Import "scene/effects/reflectioneffect"
 
 #Import "scene/jsonifier/jsonifier"
 #Import "scene/jsonifier/invocation"
@@ -59,7 +61,6 @@ Using reflection..
 #Import "scene/mesh"
 #Import "scene/meshprims"
 #Import "scene/bttypeconvs"
-'#Import "scene/util3d"
 
 #Import "render/renderer"
 #Import "render/renderqueue"

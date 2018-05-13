@@ -162,7 +162,11 @@ Class Gltf2Loader
 	
 	Method GetMaterial:Material( material:Gltf2Material,textured:Bool,boned:Bool )
 		
-		If Not material Return New PbrMaterial( Color.Magenta,0,1,boned )
+		If Not material
+			Local mat:=New PbrMaterial( Color.Magenta,0,1 )
+			mat.Boned=boned
+			Return mat
+		Endif
 		
 		If _materialCache.Contains( material ) Return _materialCache[material]
 		
@@ -180,7 +184,8 @@ Class Gltf2Loader
 			normalTexture=GetTexture( material.normalTexture )
 		Endif
 			
-		Local mat:=New PbrMaterial( boned )
+		Local mat:=New PbrMaterial
+		mat.Boned=boned
 		
 		mat.Name=material.name
 		
@@ -217,6 +222,10 @@ Class Gltf2Loader
 		Case "BLEND" mat.BlendMode=BlendMode.Alpha
 		End
 			
+		If material.doubleSided
+			mat.CullMode=CullMode.None
+		Endif
+			
 		_materialCache[material]=mat
 		Return mat
 	End
@@ -230,11 +239,28 @@ Class Gltf2Loader
 		Return matrix
 	End
 	
-	Method GetMatrix:Mat4f( node:Gltf2Node )
+	Method GetWorldMatrix:Mat4f( node:Gltf2Node )
 		
-		Local matrix:=FlipMatrix( node.matrix )
+		Return node.parent ? GetWorldMatrix( node.parent ) * GetLocalMatrix( node ) Else GetLocalMatrix( node )
+	End
+	
+	Method GetLocalMatrix:Mat4f( node:Gltf2Node )
 		
-		Return node.parent ? GetMatrix( node.parent ) * matrix Else matrix
+		Local matrix:Mat4f
+		
+		If node.hasMatrix Return FlipMatrix( node.matrix )
+		
+		Local v:=node.translation
+		v.z=-v.z
+		
+		Local q:=node.rotation
+		q.v.x=-q.v.x
+		q.v.y=-q.v.y
+		q.w=-q.w
+		
+		Local s:=node.scale
+		
+		Return Mat4f.Translation( v ) * Mat4f.Rotation( q ) * Mat4f.Scaling( s )
 	End
 	
 	Method LoadPrimitive:Mesh( prim:Gltf2Primitive )
@@ -306,7 +332,7 @@ Class Gltf2Loader
 		
 		If prim.TEXCOORD_0
 			If prim.TEXCOORD_0.componentType=GLTF_FLOAT And prim.TEXCOORD_0.type="VEC2"
-'				Print "Gltf2 primitive has texcoords"
+'				Print "Gltf2 primitive has texcoords0"
 				Local datap:=GetData( prim.TEXCOORD_0 )
 				Local stride:=prim.TEXCOORD_0.bufferView.byteStride ?Else 8
 				For Local i:=0 Until vcount
@@ -315,6 +341,20 @@ Class Gltf2Loader
 				Next
 			Else
 				Print "Unsupported gltf2 primitive TEXCOORD_0 format"
+			Endif
+		Endif
+		
+		If prim.TEXCOORD_1
+			If prim.TEXCOORD_1.componentType=GLTF_FLOAT And prim.TEXCOORD_1.type="VEC2"
+'				Print "Gltf2 primitive has texcoords1"
+				Local datap:=GetData( prim.TEXCOORD_1 )
+				Local stride:=prim.TEXCOORD_1.bufferView.byteStride ?Else 8
+				For Local i:=0 Until vcount
+					vertices[i].texCoord1=Cast<Vec2f Ptr>( datap )[0]
+					datap+=stride
+				Next
+			Else
+				Print "Unsupported gltf2 primitive TEXCOORD_1 format"
 			Endif
 		Endif
 		
@@ -402,7 +442,7 @@ Class Gltf2Loader
 		
 		If node.mesh
 			
-			Local matrix:=New AffineMat4f( GetMatrix( node ) )
+			Local matrix:=New AffineMat4f( GetWorldMatrix( node ) )
 
 			For Local prim:=Eachin node.mesh.primitives
 				
@@ -440,7 +480,7 @@ Class Gltf2Loader
 		
 		model.Name=node.name
 		
-		model.LocalMatrix=New AffineMat4f( FlipMatrix( node.matrix ) )
+		model.LocalMatrix=New AffineMat4f( GetLocalMatrix( node ) )
 		
 		Local id:=_entities.Length
 		_entities.Add( model )
@@ -691,11 +731,10 @@ Class Gltf2Loader
 		
 		For Local i:=0 Until n
 			
-			Local entity:=_entities[ _nodeIds[skin.joints[i]] ]
-			Local matrix:=datap ? FlipMatrix( Cast<Mat4f Ptr>( datap )[0] ) Else New Mat4f
+			Local matrix:=datap ? New AffineMat4f( FlipMatrix( Cast<Mat4f Ptr>( datap )[0] ) ) Else New AffineMat4f
 			
-			_bones[i].entity=entity
-			_bones[i].offset=New AffineMat4f( matrix )
+			_bones[i].entity=_entities[ _nodeIds[skin.joints[i]] ]
+			_bones[i].offset=matrix
 			
 			If datap datap+=stride
 		Next

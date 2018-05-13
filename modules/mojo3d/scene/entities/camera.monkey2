@@ -17,9 +17,9 @@ Class Camera Extends Entity
 		Far=100
 		FOV=90
 		
-		AddInstance()
-		
 		Visible=True
+		
+		AddInstance()
 	End
 
 	Method New( view:View,parent:Entity=Null )
@@ -32,9 +32,9 @@ Class Camera Extends Entity
 		Far=100
 		FOV=90
 		
-		AddInstance()
-		
 		Visible=True
+		
+		AddInstance()
 	End
 	
 	#rem monkeydoc Copies the camera.

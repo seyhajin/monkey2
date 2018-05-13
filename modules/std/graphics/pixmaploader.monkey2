@@ -1,10 +1,21 @@
 
 Namespace std.graphics.pixmaploader
 
-Private
+#Import "rgbe/rgbe.c"
+#Import "rgbe/rgbe.h"
 
 Using stb.image
 Using std.stream
+
+Extern Private
+
+Struct rgbe_header_info
+End
+
+Function RGBE_ReadHeader:Int( fp:FILE Ptr,width:Int Ptr,height:Int Ptr,info:rgbe_header_info Ptr )
+Function RGBE_ReadPixels_RLE:Int( fp:FILE Ptr,data:Float Ptr,scanline_width:Int,num_scanlines:Int )
+
+Private
 
 Struct stbi_user
 	Field stream:Stream
@@ -59,6 +70,31 @@ Public
 #rem monkeydoc @hidden
 #end
 Function LoadPixmap:Pixmap( path:String,format:PixelFormat )
+	
+	If ExtractExt( path )=".hdr"
+		path=RealPath( path )
+		
+		Local file:=libc.fopen( path,"rb" )
+		If Not file Return Null
+		
+		Local width:=0,height:=0
+		
+		If RGBE_ReadHeader( file,Varptr width,Varptr height,Null )<>0
+			libc.fclose( file )
+			Return Null
+		Endif
+		
+		Local pixmap:=New Pixmap( width,height,PixelFormat.RGB32F )
+	
+		RGBE_ReadPixels_RLE( file,Cast<Float Ptr>( pixmap.Data ),width,height )
+		
+		If format<>PixelFormat.Unknown And format<>PixelFormat.RGB32F
+			pixmap=pixmap.Convert( format )
+		Endif
+		
+		libc.fclose( file )
+		Return pixmap
+	Endif
 
 	Local x:Int,y:Int,comp:Int,req_comp:Int
 	

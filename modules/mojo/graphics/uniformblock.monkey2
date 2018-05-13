@@ -230,7 +230,6 @@ Class UniformBlock Extends Resource
 	End
 
 	Method GetTexture:Texture( uniform:String )
-		
 		Local id:=GetUniformId( uniform,Type.Texture )
 		Return _uniforms[id].texture
 	End
@@ -297,7 +296,7 @@ Class UniformBlock Extends Resource
 
 #If __DEBUG__		
 		Assert( id,"Uniform '"+name+"' not found" )
-		Assert( _uniforms[id].type,"Uniform '"+name+"' does not found in UniformBlock" )
+		Assert( _uniforms[id].type,"Uniform '"+name+"' not found in UniformBlock" )
 		Assert( _uniforms[id].type=type,"Uniform '"+name+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
 #endif
 		Return id
@@ -359,14 +358,16 @@ Class UniformBlock Extends Resource
 		Return Cast<T Ptr>( Varptr _uniforms[id].floatData )[0]
 	End
 
-	Method GetDataPtr<T>:T Ptr( name:String,type:Type )
-		Local id:=GetUniformId( name,type )
-'		DebugAssert( _uniforms[id].type=type,"Invalid uniform type" )
+	Method GetDataPtr<T>:T Ptr( id:Int,type:Type )
+#If __DEBUG__
+		Assert( id,"Uniform '"+GetUniformName( id )+"' not found" )
+		Assert( _uniforms[id].type,"Uniform '"+GetUniformName( id )+"' not found in UniformBlock" )
+		Assert( _uniforms[id].type=type,"Uniform '"+GetUniformName( id )+"' has incorrect type '"+_typenames[_uniforms[id].type]="', expecting type '"+_typenames[type]+"'" )
+#endif
 		Return Cast<T Ptr>( Varptr _uniforms[id].floatData )
 	End
 	
 	Method GetFloatPtr:Float Ptr( id:Int,type:Type )
-		
 #If __DEBUG__
 		Assert( id,"Uniform '"+GetUniformName( id )+"' not found" )
 		Assert( _uniforms[id].type,"Uniform '"+GetUniformName( id )+"' not found in UniformBlock" )

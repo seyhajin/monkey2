@@ -27,6 +27,13 @@ Class Entity Extension
 		Return GetComponent<Collider>()
 	End
 
+	#rem monkeydoc The joint attached to the entity.
+	#end
+	Property Joint:Joint()
+		
+		Return GetComponent<Joint>()
+	End
+
 	#rem monkeydoc The animator attached to the entity.
 	#end
 	Property Animator:Animator()

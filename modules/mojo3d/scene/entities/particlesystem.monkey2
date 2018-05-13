@@ -12,6 +12,8 @@ Class ParticleSystem Extends Renderable
 		_material=New ParticleMaterial
 		
 		Visible=True
+		
+		AddInstance()
 	End
 
 	Method New( particleBuffer:ParticleBuffer,material:ParticleMaterial,parent:Entity=Null )
@@ -21,6 +23,8 @@ Class ParticleSystem Extends Renderable
 		_material=material
 		
 		Visible=True
+		
+		AddInstance( New Variant[]( particleBuffer,material,parent ) )
 	End
 
 	#rem monkeydoc Copies the particle system.
@@ -83,3 +87,4 @@ Class ParticleSystem Extends Renderable
 	Field _material:ParticleMaterial
 	
 End
+

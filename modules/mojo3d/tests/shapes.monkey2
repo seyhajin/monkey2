@@ -5,7 +5,8 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
+'uncomment this to create a mojo3d scene file in monkey2 dir!
+'#Reflect mojo3d
 
 Using std..
 Using mojo..
@@ -17,70 +18,38 @@ Class MyWindow Extends Window
 	
 	Field _camera:Camera
 	
-	Field _light:Light
-	
-	Field _ground:Model
-	
 	Field _marker:Model
-	
-'	Method OnMeasure:Vec2i() Override
-		
-'		Return New Vec2i( 640,480 )
-'	End
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
-'		Layout="letterbox"
+		CreateScene()
+	End
+
+	Method CreateGround()
+
+		Local box:=New Boxf( -60,-1,-60,60,0,60 )
 		
-		_scene=Scene.GetCurrent()
+		Local material:=New PbrMaterial( Color.Green )
 		
-		'create camera
-		'
-		_camera=New Camera
-		_camera.Name="Camera"
-		_camera.Near=.1
-		_camera.Far=60
-		_camera.Move( 0,10,-10 )
-		New FlyBehaviour( _camera )
+		Local model:=Model.CreateBox( box,16,16,16,material )
+		model.Name="Ground"
 		
-		Local camCollider:=New SphereCollider( _camera )
-		camCollider.Radius=1
-		Local camBody:=New RigidBody( _camera )
-		camBody.Kinematic=True
-		camBody.Mass=0
-		camBody.CollisionGroup=32
-		camBody.CollisionMask=127
-		
-		'create light
-		'
-		_light=New Light
-		_light.RotateX( 75,15 )
-		_light.CastsShadow=true
-		
-		'create ground
-		'
-		Local groundBox:=New Boxf( -60,-1,-60,60,0,60 )
-		
-		_ground=Model.CreateBox( groundBox,16,16,16,New PbrMaterial( Color.Green ) )
-		_ground.Name="Ground"
-		
-		_ground.Collided+=Lambda( body:RigidBody )
-		
+		model.Collided+=Lambda( body:RigidBody )
 '			Print "Ground hit: "+body.Entity.Name
 		End
-		
-'		Local groundCollider:=New BoxCollider( _ground )
-'		groundCollider.Box=groundBox
 
-		Local groundCollider:=New MeshCollider( _ground )
-		groundCollider.Mesh=_ground.Mesh
-		
-		Local groundBody:=New RigidBody( _ground )
-		groundBody.Mass=0
-		groundBody.CollisionGroup=64
-		groundBody.CollisionMask=127
+		Local collider:=model.AddComponent<BoxCollider>()
+		collider.Box=box
+
+		Local body:=model.AddComponent<RigidBody>()
+		body.CollisionGroup=64
+		body.CollisionMask=127
+		body.Mass=0
+	End
+
+	Method CreateBodies()		
 		
 		Local material:=New PbrMaterial( Color.White )
 
@@ -133,68 +102,115 @@ Class MyWindow Extends Window
 			
 			For Local z:=-40 To 40 Step 8
 				
-				Local i:=Int( Rnd(5) )
+				Local i:=Int( Rnd( models.Length ) )
 				
 				Local model:=models[i].Copy()
 				
 				model.Materials=New Material[]( New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 				
 				model.Move( x,10,z )
+				
 			Next
-		
+			
 		Next
 		
 		For Local model:=Eachin models
 			
-			model.Destroy()
+			model.Visible=False
+			
+			'model.Destroy()
 		Next
-		
+	End
+
+	Method CreateMarker()
+					
 		_marker=Model.CreateCone( 1,2,Axis.Y,12,New PbrMaterial( Color.Red ),Null )
 		
 		_marker.Mesh.FitVertices( New Boxf( -.125,0,-.125,.125,1,.125 ),False )
+	End
+	
+	Method CreateScene()
 		
+		_scene=New Scene( True )
+		
+		'create camera
+		'
+		_camera=New Camera( Self )
+		_camera.Name="Camera"
+		_camera.Near=.1
+		_camera.Far=60
+		_camera.Move( 0,10,-10 )
+		_camera.AddComponent<FlyBehaviour>()
+		
+		Local collider:=_camera.AddComponent<SphereCollider>()
+		collider.Radius=1
+		
+		Local body:=_camera.AddComponent<RigidBody>()
+		body.CollisionGroup=32
+		body.CollisionMask=127
+		body.Kinematic=True
+		body.Friction=0	'no friction best for kinematic bodies?
+		body.Mass=0
+		
+		'create light
+		'
+		Local light:=New Light
+		light.RotateX( 75,15 )
+		light.CastsShadow=true
+		
+		CreateGround()
+		
+		CreateBodies()
+		
+		If _scene.Editable 
+			_scene.Save( "shapes-scene.mojo3d","modules/mojo3d/tests/assets/" )
+			_scene=Scene.Load( "shapes-scene.mojo3d" )
+			_camera=Cast<Camera>( _scene.FindEntity( "Camera" ) )
+		Endif
+
+		CreateMarker()
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 		
 		RequestRender()
 		
-		_camera.Viewport=Rect
-		
 		_scene.Update()
 		
-		Local raycast:=_camera.MousePick( 127 )
-		
-		Local picked:=""
-		
-		If raycast
+		If _marker
+			Local raycast:=_camera.MousePick( 127 )
 			
-			Local j:=raycast.normal,i:Vec3f,k:Vec3f
+			Local picked:=""
 			
-			If Abs( j.x )>.5
-				k=New Vec3f( 0,0,1 )
-				i=j.Cross( k ).Normalize()
-				k=i.Cross( j ).Normalize()
+			If raycast
+				
+				Local j:=raycast.normal,i:Vec3f,k:Vec3f
+				
+				If Abs( j.x )>.5
+					k=New Vec3f( 0,0,1 )
+					i=j.Cross( k ).Normalize()
+					k=i.Cross( j ).Normalize()
+				Else
+					i=New Vec3f( 1,0,0 )
+					k=i.Cross( j ).Normalize()
+					i=j.Cross( k ).Normalize()
+				Endif
+				
+				_marker.Position=raycast.point
+				_marker.Basis=New Mat3f( i,j,k )
+				_marker.Visible=True
+				picked=raycast.body.Entity.Name+" "+_marker.Basis.j
+				
 			Else
-				i=New Vec3f( 1,0,0 )
-				k=i.Cross( j ).Normalize()
-				i=j.Cross( k ).Normalize()
+				
+				_marker.Visible=False
+				
 			Endif
-			
-			_marker.Position=raycast.point
-			_marker.Basis=New Mat3f( i,j,k )
-			_marker.Visible=True
-			picked=raycast.body.Entity.Name+" "+_marker.Basis.j
-			
-		Else
-			
-			_marker.Visible=False
-			
 		Endif
-		
+				
 		_scene.Render( canvas )
 		
-		canvas.DrawText( "Camera pos="+_camera.Position+", Picked="+picked+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	
 End

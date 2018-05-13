@@ -26,21 +26,26 @@ Local stacks:Stack<Int>[]	'One dimensional array of stacks of type Int.
 
 Declaring an array does not actually create an array. To do that you must use `New`.
 
-`New` can be used to create either an unintialized or preinitialized array. The syntax for creating an uninitialized array is:
+`New` can be used to create either a null intialized or value initialized array. The syntax for creating a null initialized array is:
 
-`New` _ElementType_ `[` _DimensionSizes_ `]`
+`New` _ElementType_ `[` _Sizes_ `]`
 
-(Note: the elements of an 'uninitialized' array are actually initialized to 'Null'!)
+...where sizes is a comma separated sequence of dimension size.
 
-The syntax for creating an initialized array is:
+The syntax for creating a value initialized array is:
 
-`New` _ElementType_[]( _Element0_`,`_Element1_`,`...etc )
+`New` _ElementType_`[` _Sizes_ `]`( _Element0_`,`_Element1_`,`...etc )
+
+One dimensional arrays can omit sizes when creating a value initialized array:
+
+`New` _ElementType_`[` `]`( _Element0_`,`_Element1_`,`...etc )
 
 Here are some examples:
 
 ```
 Local ints:Int[]=New Int[10]				'Creates a ten element integer array.
 Local flts:=New Float[]( 1.0,3,5.1,7,9.2 )	'Creates a 5 element float array initialized to 1.0,3,5.1,7,9.2 
+Local flts2:=New Float[2,2]( 1,2,3,4 )		'Creates a 2x2 element float array initialized to 1,2,3,4
 ```
 
 @#### Iterating through arrays

@@ -1,11 +1,12 @@
-
 Namespace myapp
 
 #Import "<std>"
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
+#Import "assets/miramar-skybox.jpg"
+#Import "assets/water_normal0.png"
+#Import "assets/water_normal1.png"
 
 Using std..
 Using mojo..
@@ -25,16 +26,15 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		_scene=Scene.GetCurrent()
+		_scene=New Scene
 		
-		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap|TextureFlags.Envmap )
 		
 		'create camera
 		'
 		_camera=New Camera( self )
 		_camera.Move( 0,10,-10 )
-		
-		New FlyBehaviour( _camera )
+		_camera.AddComponent<FlyBehaviour>()
 		
 		'create light
 		'
@@ -46,8 +46,8 @@ Class MyWindow Extends Window
 		Local waterMaterial:=New WaterMaterial
 		
 		waterMaterial.ScaleTextureMatrix( 10,10 )
+		
 		waterMaterial.ColorFactor=Color.SeaGreen
-		waterMaterial.Roughness=0
 		
 		waterMaterial.NormalTextures=New Texture[]( 
 			Texture.Load( "asset::water_normal0.png",TextureFlags.WrapST|TextureFlags.FilterMipmap ),
@@ -68,7 +68,7 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_camera.Render( canvas )
+		_scene.Render( canvas )
 	End
 	
 End

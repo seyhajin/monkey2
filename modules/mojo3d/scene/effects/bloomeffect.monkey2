@@ -10,9 +10,9 @@ Class BloomEffect Extends PostEffect
 	
 	#rem monkeydoc Creates a new bloom effect.
 	#end
-	Method New( passes:Int=2 )
+	Method New( passes:Int=1 )
 		
-		_shader=Shader.Open( "effect-bloom" )
+		_shader=Shader.Open( "effects/bloom" )
 		
 		_uniforms=New UniformBlock( 3 )
 		
@@ -29,68 +29,40 @@ Class BloomEffect Extends PostEffect
 		Return _passes
 	
 	Setter( passes:Int )
-		Assert( passes>0 And (passes&1)=0,"BloomEffect passes must be even and >0" )
+		Assert( passes>0,"BloomEffect passes must be >0" )
 		
 		_passes=passes
 	End
 	
 	Protected
 	
-	#rem monkeydoc @hidden
-	#end
-	Method OnRender() Override
+	Method OnRender( target:RenderTarget,viewport:Recti ) Override
 		
-		Local rsize:=Device.Viewport.Size
-		Local rtarget:=Device.RenderTarget
-		Local rtexture:=rtarget.GetColorTexture( 0 )
+		Local size:=viewport.Size
+		Local source:=target.GetColorTexture( 0 )
 		
-		If Not _target0 Or rsize.x>_target0.Size.x Or rsize.y>_target0.Size.y
-		
-			_texture0?.Discard()
-			_texture1?.Discard()
-			
-			_target0?.Discard()
-			_target1?.Discard()
-			
-			_texture0=New Texture( rsize.x,rsize.y,rtexture.Format,TextureFlags.Dynamic|TextureFlags.Filter )
-			_texture1=New Texture( rsize.x,rsize.y,rtexture.Format,TextureFlags.Dynamic|TextureFlags.Filter )
-
-			_target0=New RenderTarget( New Texture[]( _texture0 ),Null )
-			_target1=New RenderTarget( New Texture[]( _texture1 ),Null )
+		If Not _target0 Or size.x<>_target0.Size.x Or size.y<>_target0.Size.y
+			_target0=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
+			_target1=CreateRenderTarget( size,source.Format,TextureFlags.Dynamic )
 		Endif
-
+		
 		Device.Shader=_shader
 		Device.BindUniformBlock( _uniforms )
-
-		Local target:=_target0
-		Local source:=rtexture
 		
-		For Local i:=0 Until _passes
-
-			_uniforms.SetTexture( "SourceTexture",source )
-			_uniforms.SetVec2f( "SourceTextureSize",source.Size )
-			_uniforms.SetVec2f( "SourceTextureScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( source.Size ) )
-
-			Device.RenderTarget=target
+		Local rtarget:=_target0
+		
+		For Local i:=0 Until _passes*2
+			
+			Super.SetRenderTarget( rtarget,New Recti( 0,0,size ) )
 			Device.RenderPass=i ? 2-(i&1) Else 0	'0,1,2,1,2,1,2...
 			
 			RenderQuad()
 			
-			If target=_target0
-				source=_texture0
-				target=_target1
-			Else
-				source=_texture1
-				target=_target0
-			Endif
-			
+			rtarget=rtarget=_target0 ? _target1 Else _target0
 		Next
 		
-		_uniforms.SetTexture( "SourceTexture",source )
-		_uniforms.SetVec2f( "SourceTextureSize",source.Size )
-		_uniforms.SetVec2f( "SourceTextureScale",Cast<Vec2f>( rsize )/Cast<Vec2f>( source.Size ) )
+		Super.SetRenderTarget( target,viewport )
 		
-		Device.RenderTarget=rtarget
 		Device.BlendMode=BlendMode.Additive
 		Device.RenderPass=3
 		
@@ -101,12 +73,7 @@ Class BloomEffect Extends PostEffect
 	
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
-	
 	Field _passes:Int=4
-	
-	Field _texture0:Texture
-	Field _texture1:Texture
-	
 	Field _target0:RenderTarget
 	Field _target1:RenderTarget
 	

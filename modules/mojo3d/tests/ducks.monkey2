@@ -5,6 +5,9 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
+'uncomment this to create a mojo3d scene file in monkey2 dir!
+'#Reflect mojo3d
+
 #Import "assets/duck.gltf/@/duck.gltf"
 
 Using std..
@@ -15,46 +18,27 @@ Class MyWindow Extends Window
 	
 	Field _scene:Scene
 	
-	Field _camera:Camera
-	
-	Field _light:Light
-	
-	Field _ground:Model
-	
-	Field _ducks:=New Stack<Model>
-	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
-		'create scene
-		'		
-		_scene=New Scene
+		CreateScene()
+	End
+	
+	Method CreateGround()
 		
-		'for softer shadows
-		'
-		_scene.ShadowAlpha=.6
+		Local box:=New Boxf( -50,-1,-50,50,0,50 )
 		
-		'create camera
-		'
-		_camera=New Camera( Self )
-		_camera.Move( 0,15,-20 )
+		Local material:=New PbrMaterial( Color.Green,0,1 )
 		
-		New FlyBehaviour( _camera )
+		Local model:=Model.CreateBox( box,1,1,1,material )
 		
-		'create light
-		'
-		_light=New Light
-		_light.CastsShadow=True
-		_light.Rotate( 75,15,0 )
+		model.CastsShadow=False
 		
-		'create ground
-		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green,0,1 ) )
-		_ground.CastsShadow=False
-		
-		'create ducks
-		'		
+	End
+	
+	Method CreateDucks()
+
 		Local duck:=Model.Load( "asset::duck.gltf/Duck.gltf" )
 		duck.Mesh.FitVertices( New Boxf( -1,1 ) )
 		
@@ -62,7 +46,7 @@ Class MyWindow Extends Window
 		root.Move( 0,10,0 )
 		root.Scale=New Vec3f( 3 )
 		
-		_ducks.Push( root )
+		root.AddComponent<RotateBehaviour>().Speed=New Vec3f( 0,-.01,0 )
 		
 		For Local m:=0.0 To 1.0 Step .125
 		
@@ -89,24 +73,48 @@ Class MyWindow Extends Window
 				Next
 				
 				copy.Materials=materials
-				
-				_ducks.Push( copy )
-			
 			Next
 		Next
 		
 		duck.Destroy()
 	End
 	
+	Method CreateScene()
+		
+		'create scene
+		'		
+		_scene=New Scene( True )
+		
+		'for softer shadows
+		'
+		_scene.ShadowAlpha=.6
+		
+		'create camera
+		'
+		Local camera:=New Camera( Self )
+		camera.AddComponent<FlyBehaviour>()
+		camera.Move( 0,15,-20 )
+		
+		'create light
+		'
+		Local light:=New Light
+		light.CastsShadow=True
+		light.Rotate( 90,0,0 )
+		
+		CreateGround()
+		
+		CreateDucks()
+		
+		If _scene.Editable _scene.Save( "ducks-scene.mojo3d","modules/mojo3d/tests/assets/" ) ; _scene=Scene.Load( "ducks-scene.mojo3d" )
+	End
+	
 	Method OnRender( canvas:Canvas ) Override
 
 		RequestRender()
 		
-		_ducks[0].Rotate( 0,-.01,0 )
-		
 		_scene.Update()
 		
-		_camera.Render( canvas )
+		_scene.Render( canvas )
 
 		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
 	End

@@ -28,3 +28,4 @@ Valid options are:
 * `target=`_target_ - set target to `desktop` (the default) or `windows`, `macos`, `linux`, `emscripten`, `wasm`, `android`, `ios`. `desktop` is an alias for current host.
 * `config=`_config_ - set config to `debug` (the default) or `release`.
 * `apptype=`_apptype_ set apptype to `gui` (the default) or `console`.
+

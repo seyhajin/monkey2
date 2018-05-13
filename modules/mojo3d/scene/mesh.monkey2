@@ -514,6 +514,20 @@ Class Mesh Extends Resource
 		InvalidateVertices()
 	End
 
+	#rem monkeydoc Copies texcoord0 to texcoord1.
+	#end
+	Method CopyTexCoords()
+
+		Local vertices:=_vertices.Data
+		
+		For Local i:=0 Until _vertices.Length
+		
+			vertices[i].texCoord1=vertices[i].texCoord0
+		Next
+		
+		InvalidateVertices()
+	End
+	
 	#rem monkeydoc Loads a mesh from a file.
 	
 	On its own, mojo3d can only load gltf2 format mesh and model files.

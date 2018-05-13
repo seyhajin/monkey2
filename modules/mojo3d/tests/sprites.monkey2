@@ -5,87 +5,81 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
+'uncomment this to create a mojo3d scene file in monkey2 dir!
+'#Reflect mojo3d
+
+#Import "assets/miramar-skybox.jpg"
+#Import "assets/Acadia-Tree-Sprite.png"
 
 Using std..
 Using mojo..
 Using mojo3d..
 
-Function Main()
-	
-	New AppInstance
-	
-	New MyWindow
-	
-	App.Run()
-End
-
 Class MyWindow Extends Window
 	
 	Field _scene:Scene
-	
-	Field _camera:Camera
-	
-	Field _light:Light
-	
-	Field _ground:Model
-	
-	Field _sprites:=New Stack<Sprite>
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
-		_scene=New Scene
-		_scene.SkyTexture=_scene.LoadTexture( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+		CreateScene()
+	End
+	
+	Method CreateScene()
+		
+		_scene=New Scene( True )
+		
+		_scene.SkyTexture=_scene.LoadTexture( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap|TextureFlags.Envmap )
 		_scene.FogColor=Color.Sky
 		_scene.FogNear=10
 		_scene.FogFar=30
 		
 		'create camera
 		'
-		_camera=New Camera( Self )
-		_camera.Near=.1
-		_camera.Far=100
-		_camera.Move( 0,10,-10 )
-		New FlyBehaviour( _camera )
+		Local camera:=New Camera( Self )
+		camera.Near=.1
+		camera.Far=100
+		camera.Move( 0,10,-10 )
+		camera.AddComponent<FlyBehaviour>()
 		
 		'create light
 		'
-		_light=New Light
-		_light.Rotate( 60,45,0 )
+		Local light:=New Light
+		light.Rotate( 60,45,0 )
 		
 		'create ground
 		'
-		_ground=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green ) )
+		Local ground:=Model.CreateBox( New Boxf( -50,-1,-50,50,0,50 ),1,1,1,New PbrMaterial( Color.Green ) )
 		
 		'create sprites
 		'
 		Local material:=SpriteMaterial.Load( "asset::Acadia-Tree-Sprite.png" )
-		
-		material.AlphaDiscard=1.0/255.0
-		
+'		material.AlphaDiscard=1.0/255.0
+
 		For Local i:=0 Until 1000
 			
 			Local sprite:=New Sprite( material )
 			
 			sprite.Move( Rnd(-50,50),0,Rnd(-50,50) )
-
-			sprite.Scale=New Vec3f( Rnd(4,5),Rnd(5,6),1 )
+			
+			sprite.Scale=New Vec3f( Rnd( 1,2 ),Rnd( 2,3 ),1 )
 			
 			sprite.Handle=New Vec2f( .5,0 )
 			
 			sprite.Mode=SpriteMode.Upright
-
-			_sprites.Push( sprite )
 		Next
 		
 		For Local i:=0 Until 100
 			
-			Local box:=Model.CreateBox( New Boxf( -5,0,-5,5,Rnd(2,10),5 ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
+			Local sx:=Rnd( 1,2 )
+
+			Local box:=Model.CreateBox( New Boxf( -sx,0,-sx,sx,Rnd( 2,10 ),sx ),1,1,1,New PbrMaterial( New Color( Rnd(),Rnd(),Rnd() ) ) )
 			
 			box.Move( Rnd(-50,50),0,Rnd(-50,50) )
 		next	
+
+		If _scene.Editable _scene.Save( "sprites-scene.mojo3d","modules/mojo3d/tests/assets/" ) ; _scene=Scene.Load( "sprites-scene.mojo3d" )
 		
 	End
 	
@@ -97,8 +91,16 @@ Class MyWindow Extends Window
 		
 		_scene.Render( canvas )
 		
-		canvas.DrawText( "Width="+Width+", Height="+Height+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	
 End
 
+Function Main()
+	
+	New AppInstance
+	
+	New MyWindow
+	
+	App.Run()
+End

@@ -130,20 +130,24 @@ Class GLProgram
 			For Local u:=Eachin _uniforms[i]
 			
 				Select u.type
-				Case GL_INT
-				
+				Case GL_BOOL
+
 					glUniform1i( u.location,ublock.GetInt( u.uniformId ) )
-					
+
+				Case GL_INT
+
+					glUniform1i( u.location,ublock.GetInt( u.uniformId ) )
+
 				Case GL_FLOAT
-				
+
 					glUniform1f( u.location,ublock.GetFloat( u.uniformId ) )
-					
+
 				Case GL_FLOAT_VEC2
-				
+
 					glUniform2fv( u.location,1,ublock.GetVec2fv( u.uniformId ) )
-					
+
 				Case GL_FLOAT_VEC3
-				
+
 					glUniform3fv( u.location,1,ublock.GetVec3fv( u.uniformId ) )
 					
 				Case GL_FLOAT_VEC4
@@ -211,7 +215,7 @@ Class Shader
 		
 			def=def.Trim()
 			If Not def Continue
-			
+
 			if Not def.Contains( " " ) def+=" 1"
 			
 			_defs+="#define "+def+"~n"
@@ -346,15 +350,16 @@ Class Shader
 	'
 	Method SplitSource:String[]( source:String )
 		
-		Local i0:=_source.Find( "~n//@vertex" )
+		Local i0:=source.Find( "~n//@vertex" )
 		If i0=-1 
 			Print "Shader source:~n"+source
-			Assert( False,"Can't find //@vertex chunk" )
+			RuntimeError( "Can't find //@vertex chunk" )
 		Endif
-		Local i1:=source.Find( "~n//@fragment" )
+		
+		Local i1:=source.Find( "~n//@fragment",i0+1 )
 		If i1=-1
 			Print "Shader source:~n"+source
-			Assert( False,"Can't find //@fragment chunk" )
+			RuntimeError( "Can't find //@fragment chunk" )
 		Endif
 			
 		Local cs:=source.Slice( 0,i0 )+"~n"
@@ -364,23 +369,37 @@ Class Shader
 		Local chunks:=New String[3]
 		
 		'Find //@imports in common section
-		Repeat
-			Local i:=cs.Find( "~n//@import" )
-			If i=-1 Exit
 		
-			Local p:=cs.Slice( 10 ).Trim()
-			If Not p.StartsWith( "~q" ) Or Not p.EndsWith( "~q" )
+		i0=0
+		
+		Repeat
+			i0=cs.Find( "~n//@import",i0 )
+			If i0=-1 Exit
+			
+			Local i1:=cs.Find( "~n",i0+1 )
+			If i1=-1 RuntimeError( "Malformed @import directive in shader" )
+				
+			Local f:=cs.Slice( i0+11,i1 ).Trim()
+			i0=i1
+			
+			If Not f.StartsWith( "~q" ) Or Not f.EndsWith( "~q" )
+				RuntimeError( "Malformed @import directive in shader" )
 				Exit
 			Endif
-			p=p.Slice(1,-1)
-			Local s:=LoadString( "asset::shaders/"+p )
-			If Not s Exit
-		
-			Local tchunks:=SplitSource( s )
+			
+			f=f.Slice(1,-1)
+			Local path:="asset::shaders/imports/"+f+".glsl"
+			Local src:=LoadString( path )
+			Assert( src,"Can't import shader from "+path )
+			
+			Local tchunks:=SplitSource( src )
+			
 			chunks[0]+=tchunks[0]
 			chunks[1]+=tchunks[1]
 			chunks[2]+=tchunks[2]
 			
+'			Print "Imported "+f
+		
 		Forever
 		
 		chunks[0]+=cs

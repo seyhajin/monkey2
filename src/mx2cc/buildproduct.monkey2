@@ -41,7 +41,8 @@ Class BuildProduct
 
 	Method Build()
 		
-		If opts.verbose=0 Print "Compiling..."
+'		If opts.verbose=0 
+		Print "Compiling..."
 		
 		If Not CreateDir( module.cacheDir ) Throw New BuildEx( "Error creating dir '"+module.cacheDir+"'" )
 			
@@ -112,7 +113,7 @@ Class BuildProduct
 	
 	Method Exec:Bool( cmd:String,eatstdout:Bool=False )
 		
-		If opts.verbose>2 Print cmd
+		If opts.verbose=3 Print cmd
 			
 		Local fstdout:=eatstdout ? AllocTmpFile( "stdout" ) Else ""
 		
@@ -299,48 +300,40 @@ Class GccBuildProduct Extends BuildProduct
 		
 		Select opts.toolchain
 		Case "msvc"
-			
 			CC_CMD= "cl -c"
 			CXX_CMD="cl -c"
 			AS_CMD=opts.arch="x64" ? "ml64 -c" Else "ml -c"
 			AR_CMD="lib"
 			LD_CMD="link"
 			target="_MSVC"
-			
 		Case "gcc"
-			
 			Select opts.target
 			Case "emscripten"
-				
 				CC_CMD= "emcc -c"
 				CXX_CMD="em++ -c"
-				AR_CMD="emar"
 				LD_CMD="em++"
-				
+				AR_CMD="em++ -o"
 			Case "raspbian"
-
 				CC_CMD= "arm-linux-gnueabihf-gcc -c"
 				CXX_CMD="arm-linux-gnueabihf-g++ -c"
-				AS_CMD= "arm-linux-gnueabihf-as"
-				AR_CMD= "arm-linux-gnueabihf-ar"
 				LD_CMD= "arm-linux-gnueabihf-g++"
-				
-			Default
-				
-				Local suffix:=GetEnv( "MX2_GCC_SUFFIX" )
-				
-				CC_CMD= "gcc"+suffix+" -c "
-				CXX_CMD="g++"+suffix+" -c "
+				AR_CMD= "arm-linux-gnueabihf-ar q"
+				AS_CMD= "arm-linux-gnueabihf-as"
+			Case "ios"
+				CC_CMD= "gcc -c"
+				CXX_CMD="g++ -c"
+				LD_CMD= "g++"
+				AR_CMD= "libtool -o"
 				AS_CMD= "as"
-				AR_CMD= "ar"
-				LD_CMD= "g++"+suffix+" "
-				
+			Default
+				CC_CMD= "gcc -c"
+				CXX_CMD="g++ -c"
+				LD_CMD= "g++"
+				AR_CMD= "ar q"
+				AS_CMD= "as"
 			End
-			
 		Default
-			
-			RuntimeError( "Toolchain error: '"+opts.toolchain+"'" )
-			
+			RuntimeError( "Unrecognized error: '"+opts.toolchain+"'" )
 		End
 		
 		CC_CMD+=" "+GetEnv( "MX2_CC_OPTS"+target )+" "+GetEnv( "MX2_CC_OPTS"+target+config )
@@ -348,7 +341,6 @@ Class GccBuildProduct Extends BuildProduct
 		AS_CMD+=" "+GetEnv( "MX2_AS_OPTS"+target )+" "+GetEnv( "MX2_AS_OPTS"+target+config )
 		AR_CMD+=" "+GetEnv( "MX2_AR_OPTS"+target )+" "+GetEnv( "MX2_AR_OPTS"+target+config )
 		LD_CMD+=" "+GetEnv( "MX2_LD_OPTS"+target )+" "+GetEnv( "MX2_LD_OPTS"+target+config )
-		
 	End
 	
 	Method CompileSource:String( src:String )
@@ -432,7 +424,7 @@ Class GccBuildProduct Extends BuildProduct
 			DeleteFile( deps )
 		Endif
 			
-		If opts.verbose>0 Print StripDir( src )
+		If opts.verbose=1 Print StripDir( src )
 			
 		If opts.toolchain<>"msvc"
 			
@@ -458,7 +450,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 			cmd+=" -MMD -MF~q"+deps+"~q"
 			cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
-			If opts.verbose>2 Print cmd
+			
 			Exec( cmd )
 			
 			Local buf:=New StringStack
@@ -483,7 +475,6 @@ Class GccBuildProduct Extends BuildProduct
 			Local fstdout:=AllocTmpFile( "stdout" )
 			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >"+fstdout
 			
-			If opts.verbose>2 Print cmd
 			Local fstderr:=AllocTmpFile( "stderr" )
 			If system( cmd+" 2>"+fstderr )
 				Local buf:=New StringStack
@@ -537,20 +528,22 @@ Class GccBuildProduct Extends BuildProduct
 		objs.AddAll( OBJ_FILES )
 		
 		If opts.productType="module"
-		
 			BuildModule( objs )
-		
 		Else
-		
 			BuildApp( objs )
 		End
 	End
 	
 	Method BuildModule( objs:StringStack )
-
+		
 		Local output:=module.afile
-		If opts.toolchain="msvc" output=StripExt(output)+".lib"
-
+		
+		If opts.toolchain="msvc" 
+			output=StripExt( output )+".lib"
+		Else if opts.target="emscripten"
+			output=StripExt( output )+".bc"
+		Endif
+		
 		Local maxObjTime:Long
 		For Local obj:=Eachin objs
 			maxObjTime=Max( maxObjTime,GetFileTime( obj ) )
@@ -566,33 +559,21 @@ Class GccBuildProduct Extends BuildProduct
 			args+=" ~q"+objs.Get( i )+"~q"
 		Next
 		
-		If opts.target="ios"
-		
-			cmd="libtool -o ~q"+output+"~q"+args
-			
-		Else If opts.toolchain="msvc"
-			
-			Local tmp:=AllocTmpFile( "libFiles" )
-			SaveString( args,tmp )
-			
-			cmd="lib -out:~q"+output+"~q @~q"+tmp+"~q"
-
-		Else
-
+		cmd=AR_CMD
 #If __TARGET__="windows"
-
-			Local tmp:=AllocTmpFile( "libFiles" )
-			SaveString( args,tmp )
-			
-			cmd=AR_CMD+" q ~q"+output+"~q @~q"+tmp+"~q"
-			
-#Else
-			cmd=AR_CMD+" q ~q"+output+"~q"+args
-#Endif
+		Local tmp:=AllocTmpFile( "libFiles" )
+		SaveString( args,tmp )
+		
+		If opts.toolchain="msvc"
+			cmd+=" -out:~q"+output+"~q @~q"+tmp+"~q"
+		Else
+			cmd+=" ~q"+output+"~q @~q"+tmp+"~q"
 		Endif
+#Else
+		cmd+=" ~q"+output+"~q"+args
+#Endif
 		
 		Exec( cmd,opts.toolchain="msvc" )
-			
 	End
 	
 	Method BuildApp( objs:StringStack ) Virtual
@@ -695,7 +676,11 @@ Class GccBuildProduct Extends BuildProduct
 		
 		For Local imp:=Eachin imports
 			Local afile:=imp.afile
-			If opts.toolchain="msvc" afile=StripExt(afile)+".lib"
+			If opts.target="emscripten"
+				afile=StripExt(afile)+".bc"
+			Else If opts.toolchain="msvc" 
+				afile=StripExt(afile)+".lib"
+			Endif
 			lnkFiles+=" ~q"+afile+"~q"
 		Next
 

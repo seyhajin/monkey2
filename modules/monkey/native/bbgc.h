@@ -180,10 +180,10 @@ namespace bbGC{
 		BBGC_VALIDATE( p );
 		
 		bbGCTmp *tmp=freeTmps;
-		if( !tmp ) tmp=new bbGCTmp;
-		tmp->node=p;
+		if( tmp ) freeTmps=tmp->succ; else tmp=new bbGCTmp;
 		tmp->succ=currentFiber->tmps;
 		currentFiber->tmps=tmp;
+		tmp->node=p;
 	}
 	
 	inline void popTmps( int n ){

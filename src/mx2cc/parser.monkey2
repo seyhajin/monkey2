@@ -1505,7 +1505,13 @@ Class Parser
 				
 				tail.type=type
 				
-				Return New NewArrayExpr( head,sizes,Null,srcpos,EndPos )
+				Local inits:Expr[]
+				If CParse( "(" ) 
+					inits=ParseExprs()
+					Parse( ")" )
+				Endif
+				
+				Return New NewArrayExpr( head,sizes,inits,srcpos,EndPos )
 			Endif
 			
 			If Toke="("

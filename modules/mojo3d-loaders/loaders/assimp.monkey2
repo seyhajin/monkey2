@@ -180,7 +180,8 @@ Class AssimpLoader
 		Local vp:=aimesh.mVertices
 		Local np:=aimesh.mNormals
 		Local cp:=aimesh.mColors[0]
-		Local tp:=aimesh.mTextureCoords[0]
+		Local tp0:=aimesh.mTextureCoords[0]
+		Local tp1:=aimesh.mTextureCoords[1]
 		
 		For Local i:=0 Until vertices.Length
 			
@@ -196,9 +197,14 @@ Class AssimpLoader
 				vertices[i].color=UInt(a) Shl 24 | UInt(color.b*a) Shl 16 | UInt(color.g*a) Shl 8 | UInt(color.r*a)
 			Endif
 
-			If tp 
-				vertices[i].texCoord0=New Vec2f( tp[i].x,tp[i].y )
+			If tp0 
+				vertices[i].texCoord0=New Vec2f( tp0[i].x,tp0[i].y )
 			Endif
+			
+			If tp1 
+				vertices[i].texCoord1=New Vec2f( tp1[i].x,tp1[i].y )
+			Endif
+			
 		Next
 		
 		Local indices:=New UInt[ aimesh.mNumFaces*3 ]
@@ -254,7 +260,8 @@ Class AssimpLoader
 		aiGetMaterialColor( aimaterial,AI_MATKEY_COLOR_DIFFUSE,0,0,Varptr aicolor )
 		diffuseColor=New Color( Pow( aicolor.r,2.2 ),Pow( aicolor.g,2.2 ),Pow( aicolor.b,2.2 ),aicolor.a )
 
-		Local material:=New PbrMaterial( boned )
+		Local material:=New PbrMaterial
+		material.Boned=boned
 		
 		material.Name=name
 		

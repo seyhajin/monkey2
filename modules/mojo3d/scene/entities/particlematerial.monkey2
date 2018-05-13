@@ -8,7 +8,9 @@ Class ParticleMaterial Extends Material
 	#rem monkeydoc Creates a new particle material.
 	#end	
 	Method New()
-
+		
+		ShaderName="materials/particle"
+		AttribMask=1|8|32
 		BlendMode=BlendMode.Additive
 		CullMode=CullMode.None
 		
@@ -29,23 +31,6 @@ Class ParticleMaterial Extends Material
 	Method Copy:ParticleMaterial() Override
 	
 		Return New ParticleMaterial( Self )
-	End
-	
-	Method GetTransparentShader:Shader() Override
-		
-		Global _shader:Shader
-		
-		If Not _shader
-			
-			Local shader:="material-particle"
-			Local defs:=Renderer.GetCurrent().ShaderDefs
-				
-			_shader=Shader.Open( shader,defs )
-		
-		Endif
-		
-		Return _shader
-		
 	End
 	
 	Property ColorTexture:Texture()
@@ -94,7 +79,7 @@ Class ParticleMaterial Extends Material
 	
 		Uniforms.SetFloat( "Fade",fade )
 	End
-
+	
 	Private
 	
 	Field _duration:Float

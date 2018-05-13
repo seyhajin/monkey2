@@ -14,7 +14,7 @@ Class Scene
 		
 		If Not _current _current=Self
 			
-		_editable=editable
+		_editable=editable And TypeInfo.GetType( "mojo3d.Scene" )<>Null
 		
 		_clearColor=Color.Sky
 
@@ -25,13 +25,10 @@ Class Scene
 		_world=New World( Self )
 		
 		If _editable
-			Local type:=TypeInfo.GetType( "mojo3d.Scene" )
-			Assert( type And type.Kind="Class","mojo3d reflection must be enabled for editable scenes" )
 			_jsonifier=New Jsonifier
 			_jsonifier.AddInstance( Self,New Variant[]( true ) )
 			_editing=True
 		Endif
-		
 	End
 	
 	Property World:World()
@@ -313,7 +310,7 @@ Class Scene
 		Return _jsonifier
 	End
 	
-	Method LoadTexture:Texture( path:String,flags:TextureFlags,flipNormalY:Bool=False )
+	Method LoadTexture:Texture( path:String,flags:TextureFlags=TextureFlags.FilterMipmap,flipNormalY:Bool=False )
 		
 		Local texture:=Texture.Load( path,flags,flipNormalY )
 		If Not texture Return Null

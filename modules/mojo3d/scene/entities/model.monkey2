@@ -20,9 +20,9 @@ Class Model Extends Renderable
 		
 		Name="Model"
 		
-		AddInstance()
-		
 		Visible=True
+		
+		AddInstance()
 	End
 	
 	Method New( mesh:Mesh,material:Material,parent:Entity=Null )
@@ -31,13 +31,13 @@ Class Model Extends Renderable
 		
 		Name="Model"
 		
-		AddInstance( New Variant[]( mesh,material,parent ) )
-		
 		Mesh=mesh
 		Materials=New Material[]( material )
 		Material=material
 		
 		Visible=True
+
+		AddInstance( New Variant[]( mesh,material,parent ) )
 	End
 	
 	#rem monkeydoc Copies the model.

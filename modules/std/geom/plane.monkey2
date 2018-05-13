@@ -61,4 +61,8 @@ Struct Plane<T>
 		Return New Line<T>( o,v )
 	End
 	
+	Operator To:String()
+		Return "Plane("+n+","+d+")"
+	End
+		
 End

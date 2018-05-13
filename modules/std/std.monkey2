@@ -6,6 +6,7 @@ Namespace std
 #Import "<stb-image-write>"
 #import "<stb-vorbis>"
 #Import "<miniz>"
+#Import "<zlib>"
 
 #If __MOBILE_TARGET__
 #Import "<sdl2>"
@@ -13,6 +14,10 @@ Namespace std
 #Import "<jni>"
 #Endif
 #Endif
+
+#If __WEB_TARGET__
+#Import "<emscripten>"
+#endif
 
 #Import "collections/container"
 #Import "collections/stack"

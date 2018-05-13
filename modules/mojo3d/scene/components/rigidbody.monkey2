@@ -165,6 +165,46 @@ Class RigidBody Extends Component
 		_dirty|=Dirty.Collisions
 	End
 	
+	[jsonify=1]
+	Property LinearDamping:Float()
+		
+		Return _btbody.getLinearDamping()
+		
+	Setter( damping:Float )
+		
+		_btbody.setDamping( damping,_btbody.getAngularDamping() )
+	End
+	
+	[jsonify=1]
+	Property AngularDamping:Float()
+		
+		Return _btbody.getAngularDamping()
+	
+	Setter( damping:Float )
+		
+		_btbody.setDamping( _btbody.getLinearDamping(),damping )
+	End
+	
+	[jsonify=1]
+	Property LinearFactor:Vec3f()
+		
+		Return _btbody.getLinearFactor()
+	
+	Setter( factor:Vec3f )
+		
+		_btbody.setLinearFactor( factor )
+	End
+
+	[jsonify=1]	
+	Property AngularFactor:Vec3f()
+		
+		Return _btbody.getAngularFactor()
+	
+	Setter( factor:Vec3f )
+		
+		_btbody.setAngularFactor( factor )
+	End
+	
 	Property LinearVelocity:Vec3f()
 		
 		Return _btbody.getLinearVelocity()
@@ -182,7 +222,7 @@ Class RigidBody Extends Component
 		
 		_btbody.setAngularVelocity( avelocity )
 	End
-
+	
 	Property btBody:btRigidBody()
 	
 		Return _btbody
@@ -325,8 +365,6 @@ Class RigidBody Extends Component
 			
 			_btbody.setCollisionShape( collider?.Validate() )
 
-'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_KINEMATIC_OBJECT )
-			
 '			If Cast<MeshCollider>( collider )
 '				_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
 '			Else

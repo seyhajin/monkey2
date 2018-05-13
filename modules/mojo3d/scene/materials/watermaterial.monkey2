@@ -8,17 +8,17 @@ Class WaterMaterial Extends Material
 	#rem monkeydoc Creates a new water material.
 	#end
 	Method New()
+
+		ShaderName="materials/water"
+		AttribMask=1|4|8|32
+		BlendMode=BlendMode.Opaque
+		CullMode=CullMode.None
 		
 		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.SeaGreen
-		
 		Metalness=0
 		Roughness=0
-		
-		Local normal:=Texture.ColorTexture( New Color( .5,.5,1 ) )
-		
-		NormalTextures=New Texture[]( normal,normal )
-		
+		NormalTextures=New Texture[]( Texture.FlatNormal(),Texture.FlatNormal() )
 		Velocities=New Vec2f[]( New Vec2f( 0,0 ),New Vec2f( 0,0 ) )
 	End
 	
@@ -34,36 +34,22 @@ Class WaterMaterial Extends Material
 		Return New WaterMaterial( Self )
 	End
 	
-	Method GetOpaqueShader:Shader() Override
-		
-		Global _shader:=Shader.Open( "material-water" )
-		
-		Assert( _shader )
-
-		Return _shader
-	End
-	
-	Method GetShadowShader:Shader() Override
-		
-		Return Null
-	End
-	
 	Property ColorTexture:Texture()
-		
-		Return Uniforms.GetTexture( "ColorTexture" )
 	
-	Setter( texture:Texture )
+		Return Uniforms.GetTexture( "ColorTexture" )
 		
+	Setter( texture:Texture )
+	
 		Uniforms.SetTexture( "ColorTexture",texture )
 	End
-	
+
 	Property ColorFactor:Color()
-		
+	
 		Return Uniforms.GetColor( "ColorFactor" )
+		
+	Setter( color:Color )
 	
-	Setter( factor:Color )
-	
-		Uniforms.SetColor( "ColorFactor",factor )
+		Uniforms.SetColor( "ColorFactor",color )
 	End
 	
 	Property Metalness:Float()
@@ -89,8 +75,9 @@ Class WaterMaterial Extends Material
 		Return New Texture[]( Uniforms.GetTexture( "NormalTexture0" ),Uniforms.GetTexture( "NormalTexture1" ) )
 	
 	Setter( textures:Texture[] )
-		Assert( textures.Length=2,"NormalTextures array must havre length 2" )
+		Assert( textures.Length=2,"NormalTextures array must have length 2" )
 		
+		Uniforms.SetTexture( "NormalTexture",textures[0] )
 		Uniforms.SetTexture( "NormalTexture0",textures[0] )
 		Uniforms.SetTexture( "NormalTexture1",textures[1] )
 	End

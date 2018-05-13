@@ -5,7 +5,8 @@ Namespace myapp
 #Import "<mojo>"
 #Import "<mojo3d>"
 
-#Import "assets/"
+#Import "assets/miramar-skybox.jpg"
+#Import "assets/spheres.gltf"
 
 Using std..
 Using mojo..
@@ -29,7 +30,7 @@ Class MyWindow Extends Window
 		
 		_scene=New Scene
 		
-		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap )
+		_scene.SkyTexture=Texture.Load( "asset::miramar-skybox.jpg",TextureFlags.FilterMipmap|TextureFlags.Cubemap|TextureFlags.Envmap )
 		
 		'create camera
 		'
@@ -54,7 +55,7 @@ Class MyWindow Extends Window
 		
 		'create spheres
 		
-		_spheres=Model.Load( "asset::spheres.gltf/MetalRoughSpheres.gltf" )
+		_spheres=Model.Load( "asset::MetalRoughSpheres.gltf" )
 		
 		_spheres.Move( 0,10,0 )
 		

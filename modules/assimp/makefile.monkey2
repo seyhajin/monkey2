@@ -242,6 +242,7 @@ Namespace assimp
 #Import "assimp/contrib/irrXML/irrXML.cpp"
 
 'zlib
+#rem
 #Import "assimp/contrib/zlib/adler32.c"
 #Import "assimp/contrib/zlib/compress.c"
 #Import "assimp/contrib/zlib/crc32.c"
@@ -257,6 +258,7 @@ Namespace assimp
 #Import "assimp/contrib/zlib/trees.c"
 #Import "assimp/contrib/zlib/uncompr.c"
 #Import "assimp/contrib/zlib/zutil.c"
+#end
 
 'unzip
 '#Import "assimp/contrib/unzip/ioapi.c"

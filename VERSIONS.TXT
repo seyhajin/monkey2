@@ -1,4 +1,42 @@
 
+***** Monkey-v2018.05 Mx2cc-v1.1.13 Ted2go-2.10 *****
+
+Added simple support for .hdr pixmap/texture/image loading (wont work on android).
+
+Added mojo3d HingeJoint. See tests/hingechain.monkey2
+
+Renamed mojo3d Constraint->Joint and PointToPointConstraint->BallSocketJoint.
+
+Added mojo3d support for 'spherical' sky textures. Also added TextureFlags.Envmap which must be used for envmap textures. Previously, cubemap+mipmap implied envmap but this is no longer true.
+
+Fixed a very gnarly bug in garbage collector. Thanks Mac767!
+
+Changed emscripten module builds so they generate .bc files instead of .a for a minor link speed up.
+
+Added experimental spot and point light texturing via new Light.Texture property. See tests/spotlight and tests/room for demos.
+
+Added RigidBody.LinearFactor and RigidBody.Angular factor properties - untested!
+
+Added support for multiple UVs to gltf2 and assimp loaders.
+
+Streamlined mojo3d tests dir.
+
+Added LinearDamping and AngularDamping properties to RigidBody, but can't get them to do anything so far - please have a play James!
+
+Added 'offset' version of ApplyImpulse to RigidBody.
+
+Added AmbientTexture and AmbientFactor to PbrMaterial. Like EmissiveFactor, AmbientFactor defaults to black so needs to be set to white to enable AmbientTexture.
+
+Major clean up of mojo3d material system. Minor cleanup of post effect system, mainly just added some helper methods in base PostEffect class.
+
+Added multidimensional array initializers, eg: New Int[2,2]( 1,2,3,4 ). Array length much match number of elements exactly or runtime error.
+
+Added first physics constraint component to mojo3d, PointToPointConstraint - should probably be renamed joint IMO. Stay tuned...
+
+Added low budget OpenUrl for emscripten. It just replaces current page with the given URL so effectively ends app too.
+
+Added zlib module and DataBuffer.Compress and DataBuffer.Decompress.
+
 ***** Monkey-v2018.04 Mx2cc-v1.1.12 Ted2go-2.10 *****
 
 Added GetPixel and GetPixelARGB to both Image and Canvas classes - canvas version will be slow as hell, eg: 3 secs for 16x16! Image versions still relies on the 'managed pixmap hack', but I should be able to improve on the speed of this for desktop targets.

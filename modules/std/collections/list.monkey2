@@ -21,7 +21,7 @@ A linked list works by connecting elements together with 'next' and 'previous' r
 
 This connection between elements is achieved using separate Node objects (there is one per element) which contain references to the next and previous nodes in the list, as well as the actual object managed by the node.
 
-Lists implements the [[IContainer]] interface so can be used with [[Eachin]] loops.
+Lists implements the [[IContainer]] interface so can be used with Eachin loops.
 
 #end
 Class List<T> Implements IContainer<T>
@@ -308,7 +308,7 @@ Class List<T> Implements IContainer<T>
 	
 	#rem monkeydoc Gets an iterator for visiting list values.
 	
-	Returns an iterator suitable for use with [[Eachin]], or for manual iteration.
+	Returns an iterator suitable for use with Eachin, or for manual iteration.
 	
 	@return A list iterator.
 	
@@ -319,7 +319,7 @@ Class List<T> Implements IContainer<T>
 
 	#rem monkeydoc Gets an iterator for visiting list values in reverse order.
 	
-	Returns an iterator suitable for use with [[Eachin]], or for manual iteration.
+	Returns an iterator suitable for use with Eachin, or for manual iteration.
 	
 	@return A backwards list iterator.
 	

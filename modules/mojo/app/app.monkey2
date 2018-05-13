@@ -18,7 +18,7 @@ Global App:AppInstance
 
 Contains information describing a display mode.
 
-See [[AppInstance.DisplayMode]] for more information.
+See [[AppInstance.DesktopMode]] for more information.
 
 #end
 Struct DisplayMode
@@ -29,6 +29,7 @@ Struct DisplayMode
 	Field hertz:Int
 	
 	Operator To:String()
+	
 		Return "DisplayMode("+width+","+height+","+depth+","+hertz+")"
 	End
 	
@@ -39,6 +40,17 @@ End
 The AppInstance class is mainly reponsible for running the app 'event loop', but also provides several utility functions for managing the application.
 
 A global instance of the AppInstance class is stored in the [[App]] global variable, so you can use any member of the AppInstance simply by prefixing it with 'App.', eg: App.MilliSecs
+
+There are a number of config settings that can be used to control app behaviour. See [[std:std.filesystem.SetConfig|SetConfig]] for more information about config settings.
+
+| Config setting		  			| Possible values					| Default value
+|:----------------------------------|:----------------------------------|:-------------
+| "MOJO\_OPENGL\_PROFILE"			| "es", "compatibility" or "core" 	| "compatibility" on macos and linux, "es" on all other targets. Uses 'Angle' for es support on windows.
+| "MOJO\_OPENGL\_VERSION\_MAJOR"	| Open gl major version				| 2
+| "MOJO\_OPENGL\_VERSION\_MINOR"	| Open gl minor version				| 0
+| "MOJO\_COLOR\_BUFFER\_BITS"		| Minimum color bit depth			| 8
+| "MOJO\_DEPTH\_BUFFER\_BITS"		| Minimum depth buffer bit depth	| 0
+| "MOJO\_STENCIL\_BUFFER\_BITS"		| Minimum stencil buffer bit depth	| 0
 
 #end
 Class AppInstance
@@ -88,23 +100,11 @@ Class AppInstance
 	#end
 	Field SdlEventFilter:Void( event:SDL_Event Ptr )
 
-	#rem monkeydoc Create a new app instance.
+	#rem monkeydoc Creates a new app instance.
 	
-	The following environment variables can be set prior to constructing a new AppInstance:
+	Creates a new AppInstance objects and initializes the global [[App]] variable with it.
 	
-	MOJO\_OPENGL\_PROFILE : Should be set to one of "es", "compatibility" or "core". Defaults to "compatibility" on macos and linux, "es" on all other targets. Uses 'Angle' for es support on windows.
-
-	MOJO\_OPENGL\_VERSION\_MAJOR : defaults to "2".
-
-	MOJO\_OPENGL\_VERSION\_MINOR : defaults to "1".
-
-	MOJO\_COLOR\_BUFFER\_BITS : Minimum depth buffer bit depth. defaults to "8".
-	
-	MOJO\_DEPTH\_BUFFER\_BITS : Minimum depth buffer bit depth. defaults to "0".
-
-	MOJO\_STENCIL\_BUFFER\_BITS : Minimum stencil buffer bit depth. defaults to "0".
-	
-	Environment variables may be set using the [[std::std.filesystem.SetEnv|SetEnv]] function.
+	A runtime error will occur if more than 1 AppInstance is created.
 	
 	#end
 	Method New()
@@ -112,15 +112,13 @@ Class AppInstance
 		App=Self
 		
 		SDL_Init( SDL_INIT_VIDEO|SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER )
+
+		libc.atexit( SDL_Quit )
 		
 		SDL_SetHint( "SDL_MOUSE_FOCUS_CLICKTHROUGH","1" )
 
 		SDL_FlushEvents( SDL_JOYDEVICEADDED,SDL_JOYDEVICEADDED )
 		SDL_FlushEvents( SDL_CONTROLLERDEVICEADDED,SDL_CONTROLLERDEVICEADDED )
-		
-		'possible fix for linux crashing at exit (can't reproduce myself).
-		'		
-		libc.atexit( SDL_Quit )
 		
 		AppInit()
 		

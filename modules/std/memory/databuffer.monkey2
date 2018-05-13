@@ -586,6 +586,49 @@ Class DataBuffer Extends std.resource.Resource
 		libc.memmove( dst._data+dstOffset,_data+srcOffset,count )
 	End
 	
+	#rem monkeydoc Compresses data buffer.
+	
+	The `compressionLevel` parameter should be a value from 0 to 9 (inclusive), or -1 for default compression (currently 6).
+	
+	A compreesion level of 1 gives best speed, 9 gives best compression.
+	
+	This method prepends an 8 byte 'header' to the returned data.
+	
+	#end
+	Method Compress:DataBuffer( compressionLevel:Int=-1 )
+		Assert( compressionLevel>=-1 And compressionLevel<=9,"Compression level out of range" )
+		Local destLen:=zlib.compressBound( Length )
+		Local dest:=New DataBuffer( destLen+8 )
+		dest.PokeUInt( 0,Length )
+		dest.PokeUInt( 4,~Length )
+		Local destLenOut:=destLen
+		Local r:=zlib.compress2( dest.Data+8,Cast<zlib.z_uLong Ptr>( Varptr destLenOut ),Data,Length,compressionLevel )
+		If r<>zlib.Z_OK RuntimeError( "Error compressing data: zlib return code="+r )
+		If destLenOut=destLen Return dest
+		Local dest2:=New DataBuffer( destLenOut+8 )
+		dest.CopyTo( dest2,0,0,destLenOut+8 )
+		dest.Discard()
+		Return dest2
+	End
+	
+	#rem monkeydoc Decompresses data buffer.
+	
+	If there was an error decompressing the data, null is returned. Erros can occur if the compressed data 
+	has somehow been corrupted.
+	
+	#end
+	Method Decompress:DataBuffer()
+		If Length<8 Or PeekUInt( 0 )<>~PeekUInt( 4 ) Return Null
+		Local destLen:=PeekUInt( 0 )
+		Local dest:=New DataBuffer( destLen )
+		Local r:=zlib.uncompress( dest.Data,Cast<zlib.z_uLong Ptr>( Varptr destLen ),Data+8,Length-8 )
+		If r<>zlib.Z_OK
+			dest.Discard()
+			Return Null
+		Endif
+		Return dest
+	End
+	
 	#rem monkeydoc Saves the contents of the databuffer to a file.
 	
 	@param path The file path.

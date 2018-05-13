@@ -75,6 +75,7 @@ Class Gltf2Material
 	Field emissiveFactor:Vec3f=New Vec3f(0)
 	Field occlusionTexture:Gltf2Texture
 	Field normalTexture:Gltf2Texture
+	Field doubleSided:Bool
 	Field alphaMode:String
 End
 
@@ -86,6 +87,7 @@ Class Gltf2Primitive
 	Field TANGENT:Gltf2Accessor
 	Field COLOR_0:Gltf2Accessor
 	Field TEXCOORD_0:Gltf2Accessor
+	Field TEXCOORD_1:Gltf2Accessor
 	Field JOINTS_0:Gltf2Accessor
 	Field WEIGHTS_0:Gltf2Accessor
 	Field indices:Gltf2Accessor
@@ -110,8 +112,8 @@ Class Gltf2Node
 	Field rotation:Quatf=New Quatf
 	Field scale:Vec3f=New Vec3f(1)
 	Field matrix:Mat4f=New Mat4f
-	Field mesh:Gltf2Mesh
 	Field hasMatrix:Bool
+	Field mesh:Gltf2Mesh
 End
 
 #rem monkeydoc @hidden
@@ -382,6 +384,8 @@ Class Gltf2Asset
 			materials[i]=material
 			
 			material.name=jmaterial.GetString( "name" )
+			
+			material.doubleSided=jmaterial.GetBool( "doubleSided" )
 
 			Local jpbr:=jmaterial.GetObject( "pbrMetallicRoughness" )
 			If jpbr
@@ -470,6 +474,9 @@ Class Gltf2Asset
 				Endif
 				If jattribs.Contains( "TEXCOORD_0" )
 					prim.TEXCOORD_0=accessors[jattribs.GetNumber( "TEXCOORD_0" )]
+				Endif
+				If jattribs.Contains( "TEXCOORD_1" )
+					prim.TEXCOORD_1=accessors[jattribs.GetNumber( "TEXCOORD_1" )]
 				Endif
 				If jattribs.Contains( "JOINTS_0" )
 					prim.JOINTS_0=accessors[jattribs.GetNumber( "JOINTS_0" )]
@@ -643,8 +650,7 @@ Class Gltf2Asset
 				
 			If jnode.Contains( "matrix" )
 				node.matrix=GetMat4f( jnode.GetArray( "matrix" ) )
-			Else
-				node.matrix=Mat4f.Translation( node.translation ) * Mat4f.Rotation( node.rotation ) * Mat4f.Scaling( node.scale )
+				node.hasMatrix=True
 			Endif
 			
 			If jnode.Contains( "mesh" )

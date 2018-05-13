@@ -22,8 +22,6 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		SetConfig( "MOJO3D_RENDERER","forward" )
-
 		'create scene
 		'		
 		_scene=New Scene
@@ -70,9 +68,9 @@ Class MyWindow Extends Window
 		
 		_scene.Update()
 		
-		_camera.Render( canvas )
+		_scene.Render( canvas )
 		
-		canvas.DrawText( "FPS="+App.FPS,Width,0,1,0 )
+		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	
 End

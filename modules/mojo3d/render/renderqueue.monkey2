@@ -22,6 +22,7 @@ Class RenderOp
 	
 	Field blendMode:BlendMode
 	Field distance:Float
+	Field shader:Shader
 End
 
 Public
@@ -47,18 +48,23 @@ Class RenderQueue
 		_eyeLen=_eyePos.Length
 	End
 	
-	Property CastsShadow:Bool()
+	Property AddShadowOps:Bool()
 		
-		Return _castsShadow
+		Return _addShadowOps
 		
-	Setter( castsShadow:Bool )
+	Setter( addShadowOps:Bool )
 		
-		_castsShadow=castsShadow
+		_addShadowOps=addShadowOps
 	End
 
 	Property OpaqueOps:Stack<RenderOp>()
 		
 		Return _opaqueOps
+	End
+	
+	Property SelfIlluminatedOps:Stack<RenderOp>()
+		
+		Return _selfillumOps
 	End
 	
 	Property TransparentOps:Stack<RenderOp>()
@@ -78,6 +84,7 @@ Class RenderQueue
 
 	Method Clear()
 		_opaqueOps.Clear()
+		_selfillumOps.Clear()
 		_transparentOps.Clear()
 		_shadowOps.Clear()
 		_spriteOps.Clear()	
@@ -88,16 +95,19 @@ Class RenderQueue
 		op.blendMode=op.material.BlendMode
 		If op.instance And op.instance.Alpha<1 And op.blendMode=BlendMode.Opaque op.blendMode=BlendMode.Alpha
 			
+		Local stack:Stack<RenderOp>
+		
 		If op.blendMode=BlendMode.Opaque
-			DebugAssert( op.material.GetOpaqueShader(),"Material has no opaque shader" )
-			_opaqueOps.Push( op )
+			stack=_opaqueOps
+			op.shader=op.material.GetRenderShader()
+			If _addShadowOps _shadowOps.Add( op )
 		Else
-			DebugAssert( op.material.GetTransparentShader(),"Material has no transparent shader" )
+			stack=_transparentOps
+			op.shader=op.material.GetRenderShader()
 			op.distance=op.instance ? op.instance.Position.Distance( _eyePos ) Else _eyeLen
-			_transparentOps.Push( op )
 		Endif
-			
-		If _castsShadow And op.material.GetShadowShader() _shadowOps.Push( op )
+		
+		stack.Add( op )
 	End
 	
 	Method AddSpriteOp( op:SpriteOp )
@@ -154,7 +164,7 @@ Class RenderQueue
 	End
 	
 	Method AddSpriteOp( sprite:Sprite )
-		DebugAssert( sprite.Material.GetTransparentShader(),"Sprites must be transparent!" )
+		DebugAssert( sprite.Material.GetRenderShader(),"Sprites must be transparent!" )
 		Local op:=New SpriteOp
 		op.sprite=sprite
 		AddSpriteOp( op )
@@ -166,9 +176,10 @@ Class RenderQueue
 	
 	Field _eyePos:Vec3f
 	Field _eyeLen:Float
-	Field _castsShadow:Bool
+	Field _addShadowOps:Bool
 	
 	Field _opaqueOps:=New Stack<RenderOp>
+	Field _selfillumOps:=New Stack<RenderOp>
 	Field _transparentOps:=New Stack<RenderOp>
 	Field _shadowOps:=New Stack<RenderOp>
 	

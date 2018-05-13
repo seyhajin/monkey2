@@ -29,12 +29,15 @@ Class Light Extends Entity
 		
 		Name="Light"
 		Type=LightType.Directional
-		CastsShadow=False
+		Texture=Null
 		Range=10
-		
-		AddInstance()
+		InnerAngle=15
+		OuterAngle=30
+		CastsShadow=False
 		
 		Visible=True
+		
+		AddInstance()
 	End
 	
 	#rem monkeydoc Copies the light.
@@ -50,6 +53,7 @@ Class Light Extends Entity
 	
 	#rem monkeydoc The light type.
 	#end
+	[jsonify=1]
 	Property Type:LightType()
 		
 		Return _type
@@ -57,6 +61,16 @@ Class Light Extends Entity
 	Setter( type:LightType )
 		
 		_type=type
+	End
+	
+	[jsonify=1]
+	Property Texture:Texture()
+		
+		Return _texture
+	
+	Setter( texture:Texture )
+		
+		_texture=texture
 	End
 	
 	#rem monkeydoc Light shadows enabled flag.
@@ -83,6 +97,36 @@ Class Light Extends Entity
 		_range=range
 	End
 	
+	#rem monkeydoc The cone inner angle for spot lights, in degrees.
+	
+	Defaults to 0 degrees.
+		
+	#end
+	[jsonify=1]
+	Property InnerAngle:Float()
+		
+		Return _innerAngle
+	
+	Setter( angle:Float )
+		
+		_innerAngle=angle
+	End
+	
+	#rem monkeydoc The cone outer angle for spot lights, in degrees.
+	
+	Defaults to 45 degrees.
+		
+	#end
+	[jsonify=1]
+	Property OuterAngle:Float()
+		
+		Return _outerAngle
+	
+	Setter( angle:Float )
+		
+		_outerAngle=angle
+	End
+	
 	Protected
 
 	Method New( light:Light,parent:Entity )
@@ -90,8 +134,11 @@ Class Light Extends Entity
 		Super.New( light,parent )
 		
 		Type=light.Type
-		Color=light.Color
+		Texture=light.Texture
+		CastsShadow=light.CastsShadow
 		Range=light.Range
+		InnerAngle=light.InnerAngle
+		OuterAngle=light.OuterAngle
 		
 		AddInstance( light )
 	End
@@ -114,11 +161,11 @@ Class Light Extends Entity
 	Private
 	
 	Field _type:LightType
-	
+	Field _texture:Texture
 	Field _color:Color
-	
 	Field _range:Float
-	
+	Field _innerAngle:Float
+	Field _outerAngle:Float
 	Field _castsShadow:bool
 
 End

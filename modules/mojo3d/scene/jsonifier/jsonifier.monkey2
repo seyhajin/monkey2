@@ -136,16 +136,17 @@ Public
 			jobjsById[id]=jobj
 		Next
 		
-		'copy of insts alreday created (ie: initial Scene)
-		Local tinsts:=_insts.ToArray(),id:=0
+		Local id:=0
 		
 		For Local i:=0 Until jinsts.Length
 			
 			Local jobj:=jinsts.GetObject( i )
 			If Not jobj.Contains( "ctor" ) Continue
 			
-			Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
-			ctor.Execute()
+			If jobj.GetNumber( "id" )>=_insts.Length
+				Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
+				ctor.Execute()
+			Endif
 			
 			For Local j:=id Until _insts.Length
 				
@@ -196,45 +197,20 @@ Public
 		Local type:=value.Type
 		Assert( type )
 
-		'handle primitive types
-		Select type
-		Case Typeof<Bool>
-			Return New JsonBool( Cast<Bool>( value ) )
-		Case Typeof<Short>
-			Return New JsonNumber( Cast<Short>( value ) )
-		Case Typeof<Int>
-			Return New JsonNumber( Cast<Int>( value ) )
-		Case Typeof<Float>
-			Return New JsonNumber( Cast<Float>( value ) )
-		Case Typeof<String>
-			Return New JsonString( Cast<String>( value ) )
-		End
-		
-		'handle enums+references
 		Select type.Kind
-		Case "Class"
-			Local obj:=Cast<Object>( value )
-			If Not obj Return JsonValue.NullValue
-			Local inst:=_instsByObj[obj]
-			If inst Return New JsonString( "@"+inst.id )
-		Case "Enum"
-			Return New JsonNumber( value.EnumValue )
-		End
-		
-		'try custom jsonifiers
-		For Local jext:=Eachin JsonifierExt.All
-			Local jvalue:=jext.Jsonify( value,Self )
-			If jvalue Return jvalue
-		Next
-
-		Select type.Kind
-		Case "Unknown"
-			Local obj:=Cast<Object>( value )
-			If Not obj Return JsonValue.NullValue
-			Local inst:=_instsByObj[obj]
-			If inst Return New JsonString( "@"+inst.id )
-		Case "Class"
-			Return JsonValue.NullValue
+		Case "Primitive"
+			Select type
+			Case Typeof<Bool>
+				Return New JsonBool( Cast<Bool>( value ) )
+			Case Typeof<Short>
+				Return New JsonNumber( Cast<Short>( value ) )
+			Case Typeof<Int>
+				Return New JsonNumber( Cast<Int>( value ) )
+			Case Typeof<Float>
+				Return New JsonNumber( Cast<Float>( value ) )
+			Case Typeof<String>
+				Return New JsonString( Cast<String>( value ) )
+			End
 		Case "Array"
 			Local n:=value.GetArrayLength()
 			Local jarray:=New JsonArray( n )
@@ -242,9 +218,26 @@ Public
 				jarray[i]=Jsonify( value.GetArrayElement( i ) )
 			Next
 			Return jarray
+		Case "Enum"
+			Return New JsonNumber( value.EnumValue )
 		End
 		
-		RuntimeError( "TODO: No jsonifier found for type '"+type+"'" )
+		If IsInstanceType( type )
+			Local obj:=Cast<Object>( value )
+			If Not obj Return JsonValue.NullValue
+			Local inst:=_instsByObj[obj]
+			If inst Return New JsonString( "@"+inst.id )
+			Return JsonValue.NullValue	'for objects that weren't added using AddInstance - should really never happen.
+'			RuntimeError( "Can't jsonify instance of type '"+type+"'" )
+		Endif
+		
+		'try custom jsonifiers
+		For Local jext:=Eachin JsonifierExt.All
+			Local jvalue:=jext.Jsonify( value,Self )
+			If jvalue Return jvalue
+		Next
+		
+		RuntimeError( "No jsonifier found for type '"+type+"'" )
 		Return Null
 	End
 	
@@ -255,49 +248,20 @@ Public
 	
 	Method Dejsonify:Variant( jvalue:JsonValue,type:TypeInfo )
 		
-		'handle primitive types
-		Select type
-		Case Typeof<Bool>
-			Return jvalue.ToBool()
-		Case Typeof<Short>
-			Return Short( jvalue.ToNumber() )
-		Case Typeof<Int>
-			Return Int( jvalue.ToNumber() )
-		Case Typeof<Float>
-			Return Float( jvalue.ToNumber() )
-		Case Typeof<String>
-			Return jvalue.ToString()
-		End
-		
-		'handle references
 		Select type.Kind
-		Case "Class"
-			If jvalue.IsNull
-				Return type.NullValue
-			Elseif jvalue.IsString
-				Local id:=Int( jvalue.ToString().Slice( 1 ) )
-				Assert( id>=0 And id<_insts.Length,"Dejsonify error" )
-				Return _insts[id].obj
-			Endif
-		Case "Enum"
-			Return type.MakeEnum( jvalue.ToNumber() )
-		End
-		
-		'try custom jsonifiers
-		For Local jext:=Eachin JsonifierExt.All
-			Local value:=jext.Dejsonify( jvalue,type,Self )
-			If value Return value
-		Next
-
-		Select type.Kind
-		Case "Unknown"
-			If jvalue.IsString
-				Local id:=Int( jvalue.ToString().Slice( 1 ) )
-				Assert( id>=0 And id<_insts.Length,"Dejsonify error" )
-				Return _insts[id].obj
-			Endif
-		Case "Class"
-			Return type.NullValue
+		Case "Primitive"
+			Select type
+			Case Typeof<Bool>
+				Return jvalue.ToBool()
+			Case Typeof<Short>
+				Return Short( jvalue.ToNumber() )
+			Case Typeof<Int>
+				Return Int( jvalue.ToNumber() )
+			Case Typeof<Float>
+				Return Float( jvalue.ToNumber() )
+			Case Typeof<String>
+				Return jvalue.ToString()
+			End
 		Case "Array"
 			Local elemType:=type.ElementType
 			Local jarray:=Cast<JsonArray>( jvalue )
@@ -307,8 +271,26 @@ Public
 				v.SetArrayElement( i,elem )
 			Next
 			Return v
+		Case "Enum"
+			Return type.MakeEnum( jvalue.ToNumber() )
 		End
 		
+		If IsInstanceType( type )
+			If jvalue.IsNull
+				Return type.NullValue
+			Elseif jvalue.IsString
+				Local id:=Int( jvalue.ToString().Slice( 1 ) )
+				Assert( id>=0 And id<_insts.Length,"Dejsonify error" )
+				Return _insts[id].obj
+			Endif
+		Endif
+		
+		'try custom jsonifiers
+		For Local jext:=Eachin JsonifierExt.All
+			Local value:=jext.Dejsonify( jvalue,type,Self )
+			If value Return value
+		Next
+
 		RuntimeError( "No dejsonifier found for type '"+type+"'" )
 		
 		Return Null
@@ -343,12 +325,23 @@ Public
 		Next
 		
 	End
+	
+	Method IsInstanceType:Bool( type:TypeInfo )
+		
+		If type.Kind="Class" Return True
+		
+		If type=Typeof<Texture> Return True	'Cheeze it for now!
+		
+		If type.Kind="Array" Return IsInstanceType( type.ElementType )
+		
+		Return False
+	End
 
-	Method DejsonifyState( obj:Object,jobj:JsonObject,type:TypeInfo,insts:Bool )
+	Method DejsonifyState( obj:Object,jobj:JsonObject,type:TypeInfo,instTypes:Bool )
 		
 		If type.Kind<>"Class" Return
 		
-		If type.SuperType DejsonifyState( obj,jobj,type.SuperType,insts )
+		If type.SuperType DejsonifyState( obj,jobj,type.SuperType,instTypes )
 
 		For Local d:=Eachin type.GetDecls()
 			
@@ -358,13 +351,7 @@ Public
 			
 			If Not Int( d.GetMetaValue( "jsonify" ) ) Continue
 			
-			Local type:=d.Type
-			
-			Local isinst:=type.Kind="Class" Or type.Kind="Unknown"
-			
-			If Not isinst And type.Kind="Array" And type.ElementType.Kind="Class" isinst=True
-				
-			If isinst<>insts Continue
+			If IsInstanceType( d.Type )<>instTypes Continue
 			
 			d.Set( obj,Dejsonify( jobj.GetValue( d.Name ),d.Type ) )
 		Next

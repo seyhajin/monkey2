@@ -54,6 +54,8 @@ Global _config:=New StringMap<String>
 
 Function FixPath:String( path:String )
 	
+	path=path.Replace( "\","/" )
+	
 	Local root:=ExtractRootDir( path )
 	If Not root.EndsWith( "::" ) Return path
 	
@@ -189,19 +191,18 @@ End
 
 #rem monkeydoc Sets a global config setting.
 
-Currently known built-in config settings:
+Currently recognized built-in config settings:
 
-| Name									| More information
-|:--------------------------------------|:----------------
-| "MOJO\_OPENGL\_PROFILE"				| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_OPENGL\_VERSION\_MAJOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_OPENGL\_VERSION\_MINOR"		| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_COLOR\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_DEPTH\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_STENCIL\_BUFFER\_BITS"			| [[mojo:mojo.app.AppInstance.New|AppInstance.New]]
-| "MOJO\_TEXTURE\_MAX\_ANISOTROPY"		| [[mojo:mojo.graphics.Texture.New|Texture.New]]
-| "MOJO3D\_DEFAULT\_RENDERER"			| [[mojo3d:mojo3d.Renderer.GetCurrent|Renderer.GetCurrent]]
-| "MOJO3D\_FORWARD\_RENDERER\_DIRECT"	| [[mojo3d:mojo3d.ForwardRenderer.New|ForwardRenderer.New]]
+| Name								| More information
+|:----------------------------------|:----------------
+| "MOJO\_OPENGL\_PROFILE"			| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_OPENGL\_VERSION\_MAJOR"	| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_OPENGL\_VERSION\_MINOR"	| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_COLOR\_BUFFER\_BITS"		| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_DEPTH\_BUFFER\_BITS"		| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_STENCIL\_BUFFER\_BITS"		| [[mojo:mojo.app.AppInstance|mojo.AppInstance]]
+| "MOJO\_TEXTURE\_MAX\_ANISOTROPY"	| [[mojo:mojo.graphics.Texture|mojo.Texture]]
+| "MOJO3D\_RENDERER"				| [[mojo3d:mojo3d.Renderer|mojo3d.Renderer]]
 
 See also: [[GetConfig]].
 
@@ -328,6 +329,8 @@ A root directory is a directory path that:
 #end
 Function ExtractRootDir:String( path:String )
 	
+	path=path.Replace( "\","/" )
+	
 	If path.StartsWith( "//" ) Return "//"
 	
 	Local i:=path.Find( "/" )
@@ -355,6 +358,9 @@ End
 
 #end
 Function IsRootDir:Bool( path:String )
+	
+	path=path.Replace( "\","/" )
+	
 
 	If path="//" Return True
 	
@@ -466,6 +472,8 @@ This function will not strip slashes from a root directory path.
 #end
 Function StripSlashes:String( path:String )
 	
+	path=path.Replace( "\","/" )
+	
 	If Not path.EndsWith( "/" ) Return path
 	
 	Local root:=ExtractRootDir( path )
@@ -493,6 +501,8 @@ If `path` does not contain a directory component, an empty string is returned.
 
 #end
 Function ExtractDir:String( path:String )
+	
+	path=path.Replace( "\","/" )
 
 	path=StripSlashes( path )
 
@@ -541,6 +551,8 @@ End
 
 #end
 Function ExtractExt:String( path:String )
+	
+	path=path.Replace( "\","/" )
 
 	Local i:=path.FindLast( "." )
 	If i=-1 Return ""
@@ -559,6 +571,8 @@ End
 
 #end
 Function StripExt:String( path:String )
+	
+	path=path.Replace( "\","/" )
 
 	Local i:=path.FindLast( "." )
 	If i=-1 Return path
