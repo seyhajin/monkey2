@@ -169,22 +169,54 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 		Local renderPass:=0
 		
+		Local lvmatrix:=_viewMatrix * light.Matrix
+		
+		Local qscale:=New Vec2f( 1 )
+		Local qtrans:=New Vec2f( 0 )
+		
 		Select light.Type
 		Case LightType.Directional
+			
 			If light.CastsShadow RenderDirectionalShadows( light ) ; renderPass|=16
 			renderPass|=4
+			
 		Case LightType.Point
+
+			Local r:=light.Range
+			
+			If lvmatrix.t.z<-r 
+'				Print "clip1, z="+lvmatrix.t.z
+				Return
+			Endif
+			
+			If lvmatrix.t.z>r
+				Local box:=New Boxf( lvmatrix.t+New Vec3f( -r ),lvmatrix.t+New Vec3f( r ) )
+				Local cmin:=New Vec2f( 1 ),cmax:=New Vec2f( 0 )
+				For Local i:=0 Until 8
+					Local v:=(_projMatrix * box.Corner( i ) ).XY * 0.5 + 0.5
+					cmin.x=Min( cmin.x,v.x );cmin.y=Min( cmin.y,v.y )
+					cmax.x=Max( cmax.x,v.x );cmax.y=Max( cmax.y,v.y )
+				Next
+				If cmin.x>=1.0 Or cmin.y>=1.0 Return
+				If cmax.x<0.0 Or cmax.y<0.0 Return
+				qscale=cmax-cmin
+				qtrans=cmin
+			Endif
+			
 			If light.CastsShadow RenderPointShadows( light ) ; renderPass|=16
 			renderPass|=8
+			
 		Case LightType.Spot
+			
 			If light.CastsShadow RenderSpotShadows( light ) ; renderPass|=16
 			renderPass|=12
+
 		Default
 			Return
 		End
 		
-		Local lvmatrix:=_viewMatrix * light.Matrix
-		
+		_runiforms.SetVec2f( "QuadCoordScale",qscale )
+		_runiforms.SetVec2f( "QuadCoordTrans",qtrans )
 		_runiforms.SetMat4f( "LightViewMatrix",lvmatrix )
 		_runiforms.SetMat4f( "InverseLightViewMatrix",-lvmatrix )
 		_runiforms.SetColor( "LightColor",light.Color )

@@ -91,6 +91,8 @@ uniform sampler2D r_ColorBuffer;
 uniform sampler2D r_NormalBuffer;
 uniform sampler2D r_DepthBuffer;
 uniform vec2 r_BufferCoordScale;
+uniform vec2 r_QuadCoordScale;
+uniform vec2 r_QuadCoordTrans;
 
 //***** LIGHTING *****
 //
@@ -151,6 +153,17 @@ attribute vec2 a_TexCoord1;	//mask=16
 attribute vec4 a_Tangent;	//mask=32
 attribute vec4 a_Weights;	//mask=64
 attribute vec4 a_Bones;		//mask=128
+
+void transformLightQuadVertex(){
+
+	vec2 qposition=a_Position.xy * r_QuadCoordScale + r_QuadCoordTrans;
+
+	v_ClipPosition=qposition * 2.0 - 1.0;
+	
+	v_BufferCoords=qposition * r_BufferCoordScale;
+	
+	gl_Position=vec4( v_ClipPosition,-1.0,1.0 );
+}
 
 void transformQuadVertex(){
 
@@ -382,7 +395,7 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 //#ifdef GL_ES
 		float lod=textureCube( r_EnvTextureCube,tv ).a * 255.0;
 		if( lod==0.0 ) lod=textureCube( r_EnvTextureCube,tv,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*(r_EnvTextureMaxLod-1.0)-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		return pow( textureCube( r_EnvTextureCube,tv,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //#else
 //		return pow( textureCube( r_EnvTextureCube,tv,roughness*r_EnvTextureMaxLod ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //#endif
@@ -396,7 +409,7 @@ vec3 sampleEnv( vec3 viewVec,float roughness ){
 //#ifdef GL_ES
 		float lod=texture2D( r_EnvTexture2D,tc ).a * 255.0;
 		if( lod==0.0 ) lod=texture2D( r_EnvTexture2D,tc,r_EnvTextureMaxLod ).a * 255.0 - r_EnvTextureMaxLod;
-		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*(r_EnvTextureMaxLod-1.0)-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
+		return pow( texture2D( r_EnvTexture2D,tc,max( roughness*r_EnvTextureMaxLod-lod,0.0 ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 //else
 //		return pow( texture2DLod( r_EnvTexture2D,tc,max( mipmapLod( tc ),roughness*r_EnvTextureMaxLod ) ).rgb,vec3( 2.2 ) ) * r_EnvColor.rgb;
 	

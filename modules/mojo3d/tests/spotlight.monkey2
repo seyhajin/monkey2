@@ -26,6 +26,7 @@ Class MyWindow Extends Window
 		
 		'create (current) scene
 		_scene=New Scene( True )
+		_scene.ShadowAlpha=.75
 		
 		'create camera
 		Local camera:=New Camera( Self )
@@ -36,7 +37,8 @@ Class MyWindow Extends Window
 		Local light:=New Light
 		light.Type=LightType.Spot
 		light.Texture=_scene.LoadTexture( "asset::monkey2-logo.png" )
-		light.Range=25
+		light.Color=Color.White * 8
+		light.Range=15
 		light.InnerAngle=15
 		light.OuterAngle=45
 		light.CastsShadow=True

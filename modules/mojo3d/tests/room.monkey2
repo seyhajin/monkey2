@@ -41,7 +41,7 @@ Class MyWindow Extends Window
 	
 	Method CreateRoom()
 
-		Local box:=New Boxf( -10,10 )
+		Local box:=New Boxf( -15,15 )
 		
 		Local material:=New PbrMaterial( Color.Orange )
 		
@@ -88,13 +88,15 @@ Class MyWindow Extends Window
 		Local camera:=New Camera( Self )
 		camera.Move( 0,1,-5 )
 		camera.AddComponent<FlyBehaviour>()
+		camera.Far=100
 		
 		'Create light
 		Local light:=New Light
 		light.Type=LightType.Point
+		light.Color=Color.White
 		light.Texture=Texture.Load( "asset::monkey2-logo.png",TextureFlags.Filter|TextureFlags.Cubemap )
 		light.CastsShadow=True
-		light.Range=15
+		light.Range=25
 		light.AddComponent<RotateBehaviour>().Speed=New Vec3f( 0,-.05,0 )
 		
 		CreateRoom()

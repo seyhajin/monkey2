@@ -5,6 +5,15 @@
 
 //@fragment
 
+float pointAtten( float d,float r ){
+
+	float atten=max( 1.0-d*d/(r*r),0.0 );atten*=atten;
+	
+//	float d=length( lvec ),atten=1.0/(1.0+d*d);
+
+	return atten;
+}
+
 #if MX2_QUADPASS && MX2_LIGHTINGPASS
 
 void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,vec3 normal ){
@@ -17,19 +26,23 @@ void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,v
 #if MX2_DIRECTIONALLIGHT
 
 	vec3 lvec=normalize( -r_LightViewMatrix[2].xyz );
+
 	float atten=1.0;
 	
 #elif MX2_POINTLIGHT
 
-	// TODO: https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
 	vec3 lvec=r_LightViewMatrix[3].xyz-position;
-	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
+
+	float atten=pointAtten( length( lvec ),r_LightRange );
+
 	lvec=normalize( lvec );
 	
 #elif MX2_SPOTLIGHT
 
 	vec3 lvec=r_LightViewMatrix[3].xyz-position;
-	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
+	
+	float atten=pointAtten( length( lvec ),r_LightRange );
+	
 	lvec=normalize( lvec );
 	
 	float cosangle=dot( -lvec,r_LightViewMatrix[2].xyz );
@@ -51,11 +64,11 @@ void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,v
 	
 	float spow=pow( 2.0,glosiness * 12.0 );
 //	float spow=pow( 2048.0,glosiness );
-	
+
 	float fnorm=(spow+2.0)/8.0;
 	
 	vec3 fschlick=specular + (1.0-specular) * pow( 1.0-hdotl,5.0 ) * glosiness;
-	
+
 	specular=fschlick * pow( ndoth,spow ) * fnorm;
 	
 	vec3 light=r_LightColor.rgb * ndotl * atten;
@@ -80,7 +93,7 @@ void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,v
 
 	vec3 frag=(diffuse+specular) * light;
 		
-	gl_FragColor=vec4( min( frag,8.0 ),1.0 );
+	gl_FragColor=vec4( frag,1.0 );
 }
 
 #endif
@@ -189,18 +202,23 @@ void emitPbrFragment( vec4 color,vec3 ambient,vec3 emissive,float metalness,floa
 #if MX2_DIRECTIONALLIGHT
 
 	vec3 lvec=normalize( -r_LightViewMatrix[2].xyz );
+	
 	float atten=1.0;
 	
 #elif MX2_POINTLIGHT
 
 	vec3 lvec=r_LightViewMatrix[3].xyz-v_Position;
-	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
+	
+	float atten=pointAtten( length( lvec ),r_LightRange );
+	
 	lvec=normalize( lvec );
 	
 #elif MX2_SPOTLIGHT
 
 	vec3 lvec=r_LightViewMatrix[3].xyz-v_Position;
-	float atten=max( 1.0-length( lvec )/r_LightRange,0.0 );
+	
+	float atten=pointAtten( length( lvec ),r_LightRange );
+	
 	lvec=normalize( lvec );
 	
 	float cosangle=dot( -lvec,r_LightViewMatrix[2].xyz );

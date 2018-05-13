@@ -7,7 +7,7 @@
 
 void main(){
 
-	transformQuadVertex();
+	transformLightQuadVertex();
 }
 
 //@fragment
@@ -23,6 +23,8 @@ void main(){
 	vec3 normal=normalize( normal_r.xyz * 2.0 - 1.0 );
 	
 	emitPbrFragment( color_m.rgb,color_m.a,normal_r.a,position,normal );
+	
+//	gl_FragColor=vec4( 1.0,1.0,0.0,1.0 );
 }
 
 
