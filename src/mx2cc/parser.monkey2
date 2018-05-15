@@ -24,8 +24,8 @@ Class Parser
 		
 		If Builder.opts.geninfo
 			Local dir:=ExtractDir( srcPath )
-			Local name:=StripExt( StripDir( srcPath ) )
-			local path:=dir+".mx2/"+name+".monkey2"
+			Local name:=StripDir( srcPath )
+			local path:=dir+".mx2/"+name
 			If GetFileType( path )=FileType.File srcPath=path
 		Endif
 	
