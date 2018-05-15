@@ -21,6 +21,13 @@ Class Parser
 	End	
 
 	Method ParseFile:FileDecl( ident:String,srcPath:String,ppsyms:StringMap<String> )
+		
+		If Builder.opts.geninfo
+			Local dir:=ExtractDir( srcPath )
+			Local name:=StripExt( StripDir( srcPath ) )
+			local path:=dir+".mx2/"+name+".monkey2"
+			If GetFileType( path )=FileType.File srcPath=path
+		Endif
 	
 		_ppsyms=ppsyms
 		

@@ -25,7 +25,9 @@ Global StartDir:String
 'Const TestArgs:="mx2cc makemods"
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+
 Const TestArgs:="mx2cc makeapp -semant -geninfo src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp -semant -geninfo modules/mojo3d/mojo3d.monkey2"
 
 'Const TestArgs:="mx2cc makeapp -verbose src/mx2cc/catan/main.monkey2"
 
