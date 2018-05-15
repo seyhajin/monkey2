@@ -546,6 +546,7 @@ public class SDLActivity extends Activity {
      * This method is called by SDL using JNI.
      */
     public static int audioOpen(int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames) {
+/*
         int channelConfig = isStereo ? AudioFormat.CHANNEL_CONFIGURATION_STEREO : AudioFormat.CHANNEL_CONFIGURATION_MONO;
         int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
         int frameSize = (isStereo ? 2 : 1) * (is16Bit ? 2 : 1);
@@ -575,7 +576,7 @@ public class SDLActivity extends Activity {
         }
 
         Log.v(TAG, "SDL audio: got " + ((mAudioTrack.getChannelCount() >= 2) ? "stereo" : "mono") + " " + ((mAudioTrack.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT) ? "16-bit" : "8-bit") + " " + (mAudioTrack.getSampleRate() / 1000f) + "kHz, " + desiredFrames + " frames buffer");
-
+*/
         return 0;
     }
 
@@ -583,6 +584,7 @@ public class SDLActivity extends Activity {
      * This method is called by SDL using JNI.
      */
     public static void audioWriteShortBuffer(short[] buffer) {
+/*
         for (int i = 0; i < buffer.length; ) {
             int result = mAudioTrack.write(buffer, i, buffer.length - i);
             if (result > 0) {
@@ -598,12 +600,14 @@ public class SDLActivity extends Activity {
                 return;
             }
         }
+*/
     }
 
     /**
      * This method is called by SDL using JNI.
      */
     public static void audioWriteByteBuffer(byte[] buffer) {
+/*
         for (int i = 0; i < buffer.length; ) {
             int result = mAudioTrack.write(buffer, i, buffer.length - i);
             if (result > 0) {
@@ -619,12 +623,14 @@ public class SDLActivity extends Activity {
                 return;
             }
         }
+*/
     }
 
     /**
      * This method is called by SDL using JNI.
      */
     public static int captureOpen(int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames) {
+/*
         int channelConfig = isStereo ? AudioFormat.CHANNEL_CONFIGURATION_STEREO : AudioFormat.CHANNEL_CONFIGURATION_MONO;
         int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
         int frameSize = (isStereo ? 2 : 1) * (is16Bit ? 2 : 1);
@@ -652,41 +658,51 @@ public class SDLActivity extends Activity {
         }
 
         Log.v(TAG, "SDL capture: got " + ((mAudioRecord.getChannelCount() >= 2) ? "stereo" : "mono") + " " + ((mAudioRecord.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT) ? "16-bit" : "8-bit") + " " + (mAudioRecord.getSampleRate() / 1000f) + "kHz, " + desiredFrames + " frames buffer");
-
+*/
         return 0;
     }
 
     /** This method is called by SDL using JNI. */
     public static int captureReadShortBuffer(short[] buffer, boolean blocking) {
+/*
         // !!! FIXME: this is available in API Level 23. Until then, we always block.  :(
         //return mAudioRecord.read(buffer, 0, buffer.length, blocking ? AudioRecord.READ_BLOCKING : AudioRecord.READ_NON_BLOCKING);
         return mAudioRecord.read(buffer, 0, buffer.length);
+*/
+        return 0;
     }
 
     /** This method is called by SDL using JNI. */
     public static int captureReadByteBuffer(byte[] buffer, boolean blocking) {
+/*
         // !!! FIXME: this is available in API Level 23. Until then, we always block.  :(
         //return mAudioRecord.read(buffer, 0, buffer.length, blocking ? AudioRecord.READ_BLOCKING : AudioRecord.READ_NON_BLOCKING);
         return mAudioRecord.read(buffer, 0, buffer.length);
+*/
+        return 0;
     }
 
 
     /** This method is called by SDL using JNI. */
     public static void audioClose() {
+/*
         if (mAudioTrack != null) {
             mAudioTrack.stop();
             mAudioTrack.release();
             mAudioTrack = null;
         }
+*/
     }
 
     /** This method is called by SDL using JNI. */
     public static void captureClose() {
+/*
         if (mAudioRecord != null) {
             mAudioRecord.stop();
             mAudioRecord.release();
             mAudioRecord = null;
         }
+*/
     }
 
 
@@ -834,7 +850,7 @@ public class SDLActivity extends Activity {
             final int[] buttonIds,
             final String[] buttonTexts,
             final int[] colors) {
-
+/*
         messageboxSelection[0] = -1;
 
         // sanity checks
@@ -875,10 +891,12 @@ public class SDLActivity extends Activity {
         }
 
         // return selected value
-
         return messageboxSelection[0];
+*/
+        return -1;
     }
 
+/*
     @Override
     protected Dialog onCreateDialog(int ignore, Bundle args) {
 
@@ -957,7 +975,7 @@ public class SDLActivity extends Activity {
                     mapping.put(KeyEvent.KEYCODE_ENTER, button);
                 }
                 if ((buttonFlags[i] & 0x00000002) != 0) {
-                    mapping.put(111, button); /* API 11: KeyEvent.KEYCODE_ESCAPE */
+                    mapping.put(111, button);
                 }
             }
             button.setText(buttonTexts[i]);
@@ -1012,6 +1030,7 @@ public class SDLActivity extends Activity {
 
         return dialog;
     }
+    */
 }
 
 /**
@@ -1088,7 +1107,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("SDL", "surfaceCreated()");
-        holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+        //deprecated in API5!
+        //holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
     }
 
     // Called when we lose the surface
@@ -1109,22 +1129,26 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         int sdlFormat = 0x15151002; // SDL_PIXELFORMAT_RGB565 by default
         switch (format) {
-        case PixelFormat.A_8:
-            Log.v("SDL", "pixel format A_8");
+        case 8://PixelFormat.A_8:
+          Log.v("SDL", "pixel format A_8");
             break;
-        case PixelFormat.LA_88:
+        case 10://PixelFormat.LA_88:
             Log.v("SDL", "pixel format LA_88");
             break;
-        case PixelFormat.L_8:
+        case 9://PixelFormat.L_8:
             Log.v("SDL", "pixel format L_8");
             break;
-        case PixelFormat.RGBA_4444:
+        case 7://PixelFormat.RGBA_4444:
             Log.v("SDL", "pixel format RGBA_4444");
             sdlFormat = 0x15421002; // SDL_PIXELFORMAT_RGBA4444
             break;
-        case PixelFormat.RGBA_5551:
+        case 6://PixelFormat.RGBA_5551:
             Log.v("SDL", "pixel format RGBA_5551");
             sdlFormat = 0x15441002; // SDL_PIXELFORMAT_RGBA5551
+            break;
+        case 11://PixelFormat.RGB_332:
+            Log.v("SDL", "pixel format RGB_332");
+            sdlFormat = 0x14110801; // SDL_PIXELFORMAT_RGB332
             break;
         case PixelFormat.RGBA_8888:
             Log.v("SDL", "pixel format RGBA_8888");
@@ -1133,10 +1157,6 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         case PixelFormat.RGBX_8888:
             Log.v("SDL", "pixel format RGBX_8888");
             sdlFormat = 0x16261804; // SDL_PIXELFORMAT_RGBX8888
-            break;
-        case PixelFormat.RGB_332:
-            Log.v("SDL", "pixel format RGB_332");
-            sdlFormat = 0x14110801; // SDL_PIXELFORMAT_RGB332
             break;
         case PixelFormat.RGB_565:
             Log.v("SDL", "pixel format RGB_565");
