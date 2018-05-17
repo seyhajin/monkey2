@@ -16,9 +16,11 @@ namespace bbFileSystem{
 	bbBool copyFile( bbString srcPath,bbString dstPath );
 	
 #if BB_IOS
-	
 	bbString getSpecialDir( bbString name );
-	
+#endif
+
+#if BB_ANDROID
+	FILE *fopenAsset( void *asset );
 #endif
 
 }

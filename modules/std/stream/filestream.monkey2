@@ -92,9 +92,6 @@ Class FileStream Extends Stream
 	
 	When opening a file using "w", any existing file at the same path will be overwritten.
 	
-	Note: This method should not be used to open an 'asset stream' because assets are not always files. You should instead use 
-	[[Stream.Open]] for streams that have a stream path prefix such as `asset::`, `internal::`, `external::` etc.
-	
 	@param path The path of the file to open.
 	
 	@param mode The mode to open the file in: "r", "w" or "rw".
@@ -105,19 +102,14 @@ Class FileStream Extends Stream
 	Function Open:FileStream( path:String,mode:String )
 	
 		Select mode
-		Case "r"
-			mode="rb"
-		Case "w"
-			mode="wb"
-		Case "rw"
-			mode="r+b"
+		Case "r" mode="rb"
+		Case "w" mode="wb"
+		Case "rw" mode="r+b"
 		Default
 			Return Null
 		End
 		
-		path=RealPath( path )
-		
-		Local file:=fopen( path,mode )
+		Local file:=OpenCFile( path,mode )
 		If Not file Return Null
 		
 		Return New FileStream( file )

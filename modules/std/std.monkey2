@@ -1,23 +1,20 @@
 
 Namespace std
 
-#Import "<libc.monkey2>"
+#Import "<libc>"
+#Import "<zlib>"
+#Import "<miniz>"
 #Import "<stb-image>"
 #Import "<stb-image-write>"
 #import "<stb-vorbis>"
-#Import "<miniz>"
-#Import "<zlib>"
 
-#If __MOBILE_TARGET__
-#Import "<sdl2>"
-#If __TARGET__="android"
-#Import "<jni>"
-#Endif
-#Endif
-
-#If __WEB_TARGET__
+#If __TARGET__="emscripten"
 #Import "<emscripten>"
-#endif
+#ElseIf __TARGET__="android"
+#Import "<android>"
+#ElseIf __TARGET__="ios"
+'#Import "<ios>"
+#Endif
 
 #Import "collections/container"
 #Import "collections/stack"
@@ -30,9 +27,9 @@ Namespace std
 #Import "stream/stream"
 #Import "stream/filestream"
 
-#If __MOBILE_TARGET__
-#Import "stream/sdl_rwstream.monkey2"
-#Endif
+'#If __MOBILE_TARGET__
+'#Import "stream/sdl_rwstream.monkey2"
+'#Endif
 
 #Import "memory/byteorder"
 #Import "memory/databuffer"
@@ -107,9 +104,9 @@ Function Main()
 		Return FileStream.Open( path,mode )
 	End
 	
-	Stream.OpenFuncs["memblock"]=Lambda:Stream( proto:String,path:String,mode:String )
+	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
 	
-		Return DataStream.Open( path,mode )
+		Return FileStream.Open( filesystem.AssetsDir()+path,mode )
 	End
 	
 #If __MOBILE_TARGET__
@@ -126,46 +123,16 @@ Function Main()
 
 #endif
 	
+	Stream.OpenFuncs["memory"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return DataStream.Open( path,mode )
+	End
+	
 #If __DESKTOP_TARGET__
 
 	Stream.OpenFuncs["process"]=Lambda:Stream( proto:String,path:String,mode:String )
 
 		Return std.process.ProcessStream.Open( path,mode )
-	End
-	
-	Stream.OpenFuncs["desktop"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return FileStream.Open( filesystem.DesktopDir()+path,mode )
-	End
-
-	Stream.OpenFuncs["home"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return FileStream.Open( filesystem.HomeDir()+path,mode )
-	End
-	
-#Endif
-
-#If __DESKTOP_TARGET__ Or __WEB_TARGET__
-
-	'note: ios and android asset proto is implemented using SDL and implemented in mojo...
-	'
-	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return FileStream.Open( filesystem.AssetsDir()+path,mode )
-	End
-
-#Else If __TARGET__="android"
-
-	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return SDL_RWStream.Open( path,mode )
-	End
-
-#Else If __TARGET__="ios"
-
-	Stream.OpenFuncs["asset"]=Lambda:Stream( proto:String,path:String,mode:String )
-	
-		Return SDL_RWStream.Open( "assets/"+path,mode )
 	End
 	
 #Endif

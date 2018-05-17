@@ -37,6 +37,12 @@
 
 #endif
 
+#if BB_ANDROID
+
+#include <sdl2/SDL/src/core/android/SDL_android.h>
+
+#endif
+
 namespace bbFileSystem{
 
 	bbString _appDir;
@@ -172,4 +178,51 @@ namespace bbFileSystem{
 #endif
 	}
 	
+#if BB_ANDROID
+	int android_read( void *cookie,char *buf,int size ){
+	
+	  return AAsset_read( (AAsset*)cookie,buf,size );
+	}
+	
+	int android_write( void *cookie,const char* buf,int size ){
+	
+	  return EACCES; // can't provide write access to the apk
+	}
+	
+	fpos_t android_seek( void *cookie,fpos_t offset,int whence ){
+	
+	  return AAsset_seek( (AAsset*)cookie,offset,whence );
+	}
+	
+	int android_close(void* cookie) {
+	
+	  AAsset_close( (AAsset*)cookie );
+	  return 0;
+	}
+
+	FILE *fopenAsset( void *asset ){
+
+		return funopen( asset,android_read,android_write,android_seek,android_close );
+	}
+
+#endif
+
+/*	
+	FILE *fopen( const char *path,const char *mode ){
+
+#if BB_ANDROID
+		if( !strncmp( path,"asset::",7 ) ){
+			
+			AAssetManager *assetManager=Android_JNI_GetAssetManager();
+			if( !assetManager ) return 0;
+			
+	  		AAsset* asset=AAssetManager_open( assetManager,path+7,0 );
+			if( !asset ) return 0;
+			
+			return fopenAsset( asset );
+		}
+#endif
+		return ::fopen( path,mode );
+	}
+*/	
 }
