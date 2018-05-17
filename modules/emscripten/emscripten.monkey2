@@ -3,6 +3,9 @@ Namespace emscripten
 
 #If __TARGET__="emscripten"
 
+#Import "<libc>"
+#Import "<sdl2>"
+
 #Import "<emscripten.h>"
 
 Extern
