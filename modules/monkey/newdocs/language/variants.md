@@ -3,7 +3,7 @@
 
 ### Variants
 
-The Variant type is a primitive type that can be used to 'box' values of any type.
+A Variant is a special value that can be used to 'box' values of any other type.
 
 The easiest way to create a variant is to cast a value to Variant (much like casting an Int to String etc), eg:
 
@@ -17,7 +17,7 @@ v=10				'variant now contains an int 10.
 v="hello"			'variant now contains a string "hello".
 ```
 
-A variant is 'true' if it contains any value with a non-void type (including a bool false value!) and 'false' if it is uninitialized and has no (void) type.
+A variant is true if it is initialized (even if it contains a bool 'false' value) and false if it is uninitialized. There is currently no way to uninitialize a variant, so once a variant is initialized it will always be 'true'.
 
 Any type of value can be implicitly converted to a variant, so you can easily pass anything to a function with variant parameters:
 
@@ -47,4 +47,6 @@ Local v:=Variant( 10 )
 Print Cast<String>( v )	'Runtime error! Variant contains an Int not a String!
 ```
 
-The one exception to this is if the Variant contains a class object, in which case you can cast the variant to any valid base class of the object.
+The one exception to this is if the variant contains a instance of an object, in which case you can cast the variant to any valid base class of the object's actual type.
+
+Variants also have a number of useful methods including...

@@ -5,13 +5,13 @@
 
 An array is a linear sequence of values that can be addressed using one or more integer indices.
 
-Each array has an associated element type. That is, the type of the values actually stored in the array. An array's element type is a purely static property. It is only known at compile time so arrays cannot be 'downcast' at runtime.
+Each array has an associated element type. That is, the type of the values actually stored in the array. An array's element type is a purely static property. It is only known at compile time so arrays cannot be 'cast' to different array types at runtime.
 
-The syntax used for declaring values and variables of array type is: 
+Array variables are declared using the syntax:
 
-_ElementType_ `[` [`,`...] `]`
+_ElementType_`[`[`,`...]`]`
 
-An array can also be multidimensional, in which case the '[]' will contain 1 or more commas.
+An array can be multidimensional, in which case the '[]' will contain 1 or more commas.
 
 Here are some example of declaring array variables:
 
@@ -24,13 +24,13 @@ Local stacks:Stack<Int>[]	'One dimensional array of stacks of type Int.
 
 @#### Creating arrays
 
-Declaring an array does not actually create an array. To do that you must use `New`.
+Declaring an array does not actually create an array. To do that you must use the `New` operator.
 
 `New` can be used to create either a null intialized or value initialized array. The syntax for creating a null initialized array is:
 
 `New` _ElementType_ `[` _Sizes_ `]`
 
-...where sizes is a comma separated sequence of dimension size.
+...where sizes is a comma separated sequence of dimension sizes.
 
 The syntax for creating a value initialized array is:
 
@@ -80,8 +80,8 @@ Local ints:=New Int[]( 1,2,3 )
 ints=ints.Resize( 5 )	'ints now contains 1,2,3,0,0
 ```
 
-(Note that resize does not actually resize the array! It actually returns a resized *copy* of the array.)
+Note that resize actually returns a resized *copy* of the input array. The input array is not modified in any way.
 
-Note that mutidimensional arrays cannot currently be sliced or resized, and you cannot create an initialized multidimensional arrays. These features are planned for the future though.
+Multidimensional arrays cannot currently be sliced or resized.
 
 For more information, see the [[types.Array.Resize|Array.Resize]] API documentation.
