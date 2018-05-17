@@ -13,9 +13,7 @@
 #include "../../../std/async/native/async_cb.h"
 #include "../../../stb-vorbis/native/stb-vorbis.h"
 
-#if __ANDROID__
-#include "../../../sdl2/SDL/src/core/android/SDL_android.h"
-#endif
+#include <std/filesystem/native/filesystem.h>
 
 #include <atomic>
 
@@ -25,7 +23,7 @@ namespace{
 
 	Counter *counters;
 	
-	//Yikes! We have to make a little atomic counter class!
+	//little atomic counter class...
 	//
 	struct Counter{
 		
@@ -57,59 +55,13 @@ namespace{
 		return 0;
 	}
 }
-	
 
 namespace bbMusic{
 
-#if __ANDROID__
-	
-	int android_read( void *cookie,char *buf,int size ){
-	
-	  return AAsset_read( (AAsset*)cookie,buf,size );
-	}
-	
-	int android_write( void *cookie,const char* buf,int size ){
-	
-	  return EACCES; // can't provide write access to the apk
-	}
-	
-	fpos_t android_seek( void *cookie,fpos_t offset,int whence ){
-	
-	  return AAsset_seek( (AAsset*)cookie,offset,whence );
-	}
-	
-	int android_close(void* cookie) {
-	
-	  AAsset_close( (AAsset*)cookie );
-	  return 0;
-	}
-	
-#endif
-	
-	FILE *fopen( const char *path,const char *mode ){
-	
-#if __ANDROID__
-		if( !strncmp( path,"asset::",7 ) ){
-			
-			AAssetManager *assetManager=Android_JNI_GetAssetManager();
-			if( !assetManager ) return 0;
-			
-	  		AAsset* asset=AAssetManager_open( assetManager,path+7,0 );
-			if( !asset ) return 0;
-	
-	  		return funopen( asset,android_read,android_write,android_seek,android_close );
-		}
-#endif
-		return ::fopen( path,mode );
-	}
-
-	int playMusic( const char *path,int callback,int alsource ){
+	int playMusic( FILE *file,int callback,int alsource ){
 	
 		const int buffer_ms=100;
 			
-		FILE *file=fopen( path,"rb" );
-		if( !file ) return false;
-	
 		int error=0;
 		stb_vorbis *vorbis=stb_vorbis_open_file( file,0,&error,0 );
 		if( !vorbis ) return false;
