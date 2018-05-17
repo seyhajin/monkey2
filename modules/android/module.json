@@ -1,0 +1,6 @@
+{
+	"module":"android",
+	"version":"1.0.0",
+	"support":"http://monkeycoder.co.nz",
+	"depends":["libc","sdl2","jni"]
+}
