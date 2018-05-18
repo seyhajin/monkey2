@@ -354,7 +354,7 @@ Function ExtractRootDir:String( path:String )
 	Local j:=path.Find( ":" )
 	If j=-1 Or (i<>-1 And j>i) Return ""
 	
-	If path.Slice( j,j+3 )="://" Return path.Slice( 0,j+3)
+	If path.Slice( j,j+3 )="://" Return path.Slice( 0,j+3 )
 	
 	If path.Slice( j,j+2 )=":/" Return path.Slice( 0,j+2 )
 	
@@ -372,7 +372,9 @@ End
 #end
 Function IsRootDir:Bool( path:String )
 	
-	Return ExtractRootDir( path )=path
+	Local root:=ExtractRootDir( path )
+	
+	Return root And root.Length=path.Length
 End
 
 #rem monkeydoc Gets the process current directory.
@@ -696,8 +698,6 @@ Function LoadDir:String[]( path:String )
 	If path.StartsWith( "${ASSETS}/" )
 		
 		path=path.Slice( 10 )
-		
-		Print "Asset dir path 3="+path
 		
 		Local assetDir:=AAssetManager_openDir( GetAssetManager(),path )
 		

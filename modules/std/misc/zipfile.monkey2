@@ -63,7 +63,7 @@ Class ZipFile
 	#rem monkeydoc @hidden
 	#end	
 	Method Extract:Bool( dir:String,prefix:String="" )
-	
+		
 		If Not dir.EndsWith( "/" ) dir+="/"
 		
 		Local result:=True
@@ -75,13 +75,20 @@ Class ZipFile
 			
 			If prefix And Not name.StartsWith( prefix ) Continue
 			
+			Local path:=dir+name
+				
+			If mz_zip_reader_is_file_a_directory( _zip,i )
+				
+				filesystem.CreateDir( path )
+				
+				Continue
+			Endif
+			
 			Local size:=_sizes[i]
 
 			Local buf:=New DataBuffer( size )
-		
-			If mz_zip_reader_extract_to_mem( _zip,i,buf.Data,size,0 ) 
 			
-				Local path:=dir+name
+			If mz_zip_reader_extract_to_mem( _zip,i,buf.Data,size,0 ) 
 				
 				filesystem.CreateDir( ExtractDir( path ) )
 				
