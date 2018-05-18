@@ -13,6 +13,8 @@ Using mojo3d..
 
 Function Main()
 	
+	SetConfig( "MOJO_OPENGL_PROFILE","es" )
+	
 	New AppInstance
 	
 	New MyWindow
