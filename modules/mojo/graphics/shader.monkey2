@@ -423,6 +423,9 @@ Class Shader
 		
 			Local defs:="#define MX2_RENDERPASS "+rpass+"~n"
 			
+'			Print "~n~n*************** Vertex Shader ***************~n"+defs+vs
+'			Print "~n~n*************** Fragment Shader ****************~n"+defs+fs
+			
 			Local vshader:=glCompile( GL_VERTEX_SHADER,defs+vs )
 			Local fshader:=glCompile( GL_FRAGMENT_SHADER,defs+fs )
 				

@@ -149,7 +149,7 @@ Class Gltf2Loader
 			Local start:=ULong( GetData( source.bufferView ) )
 			Local length:=source.bufferView.byteLength
 			
-			Local path:="memblock::("+start+","+length+")"
+			Local path:="memory::("+start+","+length+")"
 			If source.mimeType.StartsWith( "image/" ) path+="."+texture.source.mimeType.Slice( 6 )
 				
 			tex=Texture.Load( path,flags )

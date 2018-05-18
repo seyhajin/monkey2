@@ -12,7 +12,7 @@ Namespace mojo.audio
 
 Extern Private
 
-Function playMusic:Int( path:CString,callback:Int,source:Int )="bbMusic::playMusic"
+Function playMusic:Int( file:libc.FILE ptr,callback:Int,source:Int )="bbMusic::playMusic"
 Function getBuffersProcessed:Int( source:Int )="bbMusic::getBuffersProcessed"
 Function endMusic:Void( source:Int )="bbMusic::endMusic"
 	
@@ -72,9 +72,9 @@ Class AudioDevice
 			finished()
 		End,True )
 		
-		path=filesystem.RealPath( path )
+		Local file:=filesystem.OpenCFile( path,"rb" )
 		
-		Local sampleRate:=playMusic( path,callback,channel._alSource )
+		Local sampleRate:=playMusic( file,callback,channel._alSource )
 	
 		If Not sampleRate
 			async.DestroyAsyncCallback( callback )

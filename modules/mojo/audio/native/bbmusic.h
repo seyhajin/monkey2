@@ -1,7 +1,9 @@
 
+#include <std/filesystem/native/filesystem.h>
+
 namespace bbMusic{
 
-	int playMusic( const char *path,int callback,int source );
+	int playMusic( FILE *file,int callback,int source );
 	
 	int getBuffersProcessed( int source );
 	

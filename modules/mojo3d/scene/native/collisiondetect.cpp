@@ -14,15 +14,24 @@ void collisionCallback( btDynamicsWorld *world,btScalar timeStep ){
 	
 	for( int i=0;i<numManifolds;++i ){
 
-		btPersistentManifold *manifold=world->getDispatcher()->getManifoldByIndexInternal( i );
+		btPersistentManifold *contactManifold=world->getDispatcher()->getManifoldByIndexInternal( i );
         
-		const btCollisionObject *body0=manifold->getBody0();
-		const btCollisionObject *body1=manifold->getBody1();
-       
-//		printf( "Collision! body0=%p body1=%p\n",body0,body1 );fflush( stdout );
+		const btCollisionObject *body0=contactManifold->getBody0();
+		const btCollisionObject *body1=contactManifold->getBody1();
 		
-		*_collp++=body0->getUserPointer();
-		*_collp++=body1->getUserPointer();
+        int numContacts=contactManifold->getNumContacts();
+        
+        for( int j=0;j<numContacts;++j ){
+        
+            btManifoldPoint &pt=contactManifold->getContactPoint(j);
+            
+            if( pt.getDistance()<0.0f ){
+	            
+				*_collp++=body0->getUserPointer();
+				*_collp++=body1->getUserPointer();
+				break;
+			}
+        }
 	}
 }
 

@@ -3,56 +3,33 @@
 
 ### Enums
 
-`Enum` is a data type containing a set of Int constants.
+An enum is a user defined data type that contains a set of named integer constants. Enums are frequently used to implement typesafe 'flags' or 'bitmasks'.
 
-By default the members will receive values starting from zero and incemented by one for each new member. You can assign a chosen value to each member when declaring them.
+Unintialized enum members are automatically assigned constant integer values starting with 0 and increasing by 1 for each successive enum member:
 
 ```
-Enum myBasicEnum
-	a,b,c 'a=0, b=1, c=2
-End
-```
-```
-Enum myCustomEnum
-	a=7
-	b=31,c,d 'c=32, d=33
-End
-```
-The values can be accessed with the postfix member acces operator (`.`).
-Enums values are implicitly converted to integral values when assigned to it.
-```
-Local i:UInt=myCustomEnum.b
-```
-
-You can also create `Enum` variables. An `Enum` variable contains an Int variable in addition to it's constant members (default value is zero).
-
-Bitwise operators (|,&,~) can be used with Enums variables and Enums members to compute combinations. Such Enums most often contain powers of 2 numbers as members! (1,2,4,8,16,32,64,... and 0 if needed).
-
-A bitmask Enum example:
-```
-Enum Flags 'a classic Enum. (4 bits bitmask)
-	None=0
-  A=$0001 'bin OOOI dec 1
-  B=$0002 'bin OOIO dec 2
-  C=$0004 'bin OIOO dec 4
-  D=$0008 'bin IOOO dec 8
-End
-```
-An enum with modifiers example (in this case the bitwise operators should be used with at least one modifier):
-```
-Enum Foo '(modifiers on 5th and 6th bit)
-	None=0
-	A=1,B,C,D,E,F,G,H,J,K,L,M ' max 15 because the 5th bit is used for modifier
-	Modifier_A=$0010 'bin IOOOO dec 16
-	Modifier_B=$0020 'bin IOOOOO dec 32
+Enum MyEnum
+	A,B,C			'A, B, C will be assigned the values 0, 1, 2.
+	D,E,F			'D, E, F will be assigned the values 4, 5, 6.
 End
 ```
 
-For now enums don't accept negative number literals. To assign a negative number you'll have to type a substraction until the bug is resolved.
+You can also initialize enum members with a constant integer value:
+
 ```
-Enum Foo '(with a negative member)
-	Negative=0-1 'instead of -1
-	None=0
-	A=1,B,C,D,E,F,G,H,J,K,L,M
+Enum MyEnum
+	A=10,B=20,C=30	'A, B, C will be assigned the values 10,20,30
+	D,E,F			'D, E, F will be assigned the values 31, 32, 33.
 End
 ```
+
+Enum members are accessed using the 'dot' operator:
+
+```
+Local e:MyEnum=MyEnum.A
+```
+
+Enum values can be implictly converted to any integer type, and can be used with the `&` (bitwise 'and'), `|` (bitwise 'or') and `~` (bitwise 'exclusive-or') binary operators. This allows you to use enums to represent 'bitmasks'.
+
+Enum values can also be compared with enum values of the same type, or with a `Null` which represents an enum value with the integer value 0.
+

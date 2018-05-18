@@ -91,6 +91,10 @@ Function mz_zip_reader_locate_file:Int( pZip:mz_zip_archive Ptr,pName:CString,pC
 'Returns detailed information about an archive file entry.
 Function mz_zip_reader_file_stat:Int( pZip:mz_zip_archive Ptr,file_index:Int,pStat:mz_zip_archive_file_stat Ptr )
 
+'Determines if an archive file entry is a directory entry.
+Function mz_zip_reader_is_file_a_directory:Int( pZip:mz_zip_archive Ptr,file_index:Int )
+Function mz_zip_reader_is_file_encrypted:Int( pZip:mz_zip_archive Ptr,file_index:Int )
+
 'Extracts a archive file to a memory buffer.
 Function mz_zip_reader_extract_to_mem:Int( pZip:mz_zip_archive Ptr,file_index:Int,pBuf:Void Ptr,buf_size:Int,flags:Int )
 Function mz_zip_reader_extract_file_to_mem:Int( pZip:mz_zip_archive Ptr,pFilename:CString,pBuf:Void Ptr,buf_size:Int,flags:Int )

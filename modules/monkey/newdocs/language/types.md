@@ -7,7 +7,7 @@
 
 The following primtive types are supported:
 
-| Type		| Description
+| Type Name	| Description
 |:----------|:-----------
 | `Void`	| No type.
 | `Bool`	| Boolean type.
@@ -24,32 +24,35 @@ The following primtive types are supported:
 | `String`	| String of 16 bit characters.
 | `Object`	| Base type of all objects.
 
+
 @#### Compound types
 
 The following compound types are supported:
 
-| Type						| Description
-|:--------------------------|:-----------
-| _Type_ `[` [,...] `]`		| Array type
-| _Type_ `Ptr`				| Pointer type
-| _Type_ `(` _Types_ `)`	| Function type
+| Type Syntax							| Description
+|:--------------------------------------|:-----------
+| _ElementType_`[]`						| Array type.
+| _PointeeType_ `Ptr`					| Pointer type.
+| _ReturnType_`(`_ParameterTypes_`)`	| Function type.
+
+Array types can have more than one dimension, for example: `[,]` declares a 2D array, `[,,]` declares a 3D array and so on.
+
+The parameter types for a function type can optionally include an identifier prefix, for example: `MyFunction:Int( arg:Int )`. The prefix must be a valid identifier but is otherwise ignored.
 
 
 @#### Implicit type conversions
 
 These type conversions are performed automatically:
 
-| Source type					| Destination type
-|:------------------------------|:-----------------
-| Any numeric type	 			| `Bool`
-| String or array type 			| `Bool`
-| Class or interface type	 	| `Bool`
-| Any numeric type				| Any numeric type
-| Any numeric type or `Bool`	| `String`
-| Any pointer type				| `Void Ptr`
-| Any enum type					| Any integral type
-| Class or interface type		| Base class type or implemented interface type
-| Class, interface or struct type | `Bool`
+| Source type						| Destination type
+|:----------------------------------|:-----------------
+| `Bool`							| `String`
+| Any numeric type					| `Bool`, `String` or any numeric type.
+| `String` or any array type 		| `Bool`
+| Any pointer type					| `Void Ptr`
+| Class, interface or struct type	| `Bool`
+| Class or interface type			| Base class or implemented interface type
+| Enum type							| `Bool` or any integral type.
 
 When numeric values are converted to bool, the result will be true if the value is not equal to 0.
 
@@ -57,24 +60,37 @@ When strings and arrays are converted to bool, the result will be true if the le
 
 When class or interface instances are converted to bool, the result will be true if the instance is not equal to null.
 
-When struct values are converted, the result will be true if the struct value is not equal to null.
+When struct values are converted to bool, the result will be true if the struct value is not equal to null.
 
-When floating point values are converted to integral values, the fractional part of the floating point value is simply chopped off - no rounding is performed.
+When floating point values are converted to integral values, the fractional part of the floating point value is chopped off - no rounding is performed.
 
-When Bools are converted to strings, the result will be either "True" or "False".
+When bools are converted to strings, the result will be either "True" or "False".
 
 
-@#### Explicit type conversions
+@#### Explicit type conversions 
 
-The `Cast` `<` _dest-type_ `>` `:` _dest-type_ `(` _expression_ `)` operator must be used for these type conversions:
+Some type conversions must be explicitly performed using the 'cast' operator. The cast operator has the syntax:
+
+`Cast<`_DestinationType_`>:`_DestinationType_`(`_SourceExpression_`)`
+
+You must use the cast operator to perform the following type conversions:
 
 | Source type			| Destination type
 |:----------------------|:-----------------
 | `Bool`				| Any numeric type
 | `String`				| Any numeric type
-| Any pointer type		| Any pointer type, any integral type
-| Any integral type		| Any pointer type, any enum type
-| Class type			| Derived class type, any interface type
-| Interface type		| Any class type, any interface type
+| Any pointer type		| Any pointer type or any integral type
+| Any integral type		| Any pointer type or any enum type.
+| Class type			| Derived class or any interface type.
+| Interface type		| Any class or interface type.
+
+When using the cast operator to dynamically downcast an object or interface instance, the result will be `Null` if the cast failed.
 
 When casting bool values to a numeric type, the result will be 1 for true, 0 for false.
+
+You can also use 'function syntax' to explictly cast values to primitive types:
+
+```
+Local floatValue:Float=3.14
+Local intValue:=Int( floatValue )
+```

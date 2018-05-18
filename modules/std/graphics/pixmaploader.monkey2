@@ -72,9 +72,8 @@ Public
 Function LoadPixmap:Pixmap( path:String,format:PixelFormat )
 	
 	If ExtractExt( path )=".hdr"
-		path=RealPath( path )
 		
-		Local file:=libc.fopen( path,"rb" )
+		Local file:=filesystem.OpenCFile( path,"rb" )
 		If Not file Return Null
 		
 		Local width:=0,height:=0

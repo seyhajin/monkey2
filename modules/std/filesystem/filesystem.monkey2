@@ -7,9 +7,23 @@ Using libc
 #Import "native/filesystem.cpp"
 
 #If __TARGET__="android"
+
 #Import "native/Monkey2FileSystem.java"
+
+Using android
+
 #Elseif __TARGET__="ios"
+
 #Import "native/filesystem.mm"
+
+#endif
+
+#If __TARGET__="android"
+
+Extern Private
+
+Function fopenAsset:FILE Ptr( asset:AAsset )="bbFileSystem::fopenAsset"
+	
 #endif
 
 Extern
@@ -63,8 +77,6 @@ Function FixPath:String( path:String )
 	
 	Select root
 	Case "asset::" return AssetsDir()+path
-	Case "desktop::" Return DesktopDir()+path
-	Case "home::" Return HomeDir()+path
 #If __MOBILE_TARGET__
 	Case "internal::" Return InternalDir()+path
 	Case "external::" Return ExternalDir()+path
@@ -226,13 +238,13 @@ Note that only the desktop and web targets have an assets directory. Other targe
 Function AssetsDir:String()
 	If Not _assetsDir
 #If __TARGET__="macos"
-		_assetsDir=ExtractDir( AppDir() )+"Resources/"	'enable me!
+		_assetsDir=ExtractDir( AppDir() )+"Resources/"
 #Else If __DESKTOP_TARGET__ Or __WEB_TARGET__
 		_assetsDir=AppDir()+"assets/"
 #Else If __TARGET__="ios"
 		_assetsDir=GetSpecialDir( "assets" )
 #Else
-		_assetsDir="asset::"
+		_assetsDir="${ASSETS}/"	'"asset::"
 #Endif
 	Endif
 	Return _assetsDir
@@ -261,7 +273,7 @@ Function DesktopDir:String()
 #Else If __DESKTOP_TARGET__
  	Return GetEnv( "HOME" )+"/Desktop/"
  #Else
- 	Return "desktop::"
+ 	Return "${DESKTOP}/"
 #Endif
 End
 
@@ -278,7 +290,7 @@ Function HomeDir:String()
 #Else if __DESKTOP_TARGET__
 	Return GetEnv( "HOME" )+"/"
 #Else
-	Return "home::"
+	Return "${HOME}/"
 #Endif
 End
 
@@ -333,19 +345,20 @@ Function ExtractRootDir:String( path:String )
 	
 	If path.StartsWith( "//" ) Return "//"
 	
+	If path.StartsWith( "/" ) Return "/"
+
 	Local i:=path.Find( "/" )
-	If i=0 Return "/"
 	
-	If i=-1 i=path.Length
+	If path.StartsWith( "$" ) And i<>-1 Return path.Slice( 0,i+1 )
 	
-	Local j:=path.Find( "://" )
-	If j>0 And j<i Return path.Slice( 0,j+3 )
+	Local j:=path.Find( ":" )
+	If j=-1 Or (i<>-1 And j>i) Return ""
 	
-	j=path.Find( ":/" )
-	If j>0 And j<i Return path.Slice( 0,j+2 )
+	If path.Slice( j,j+3 )="://" Return path.Slice( 0,j+3 )
 	
-	j=path.Find( "::" )
-	If j>0 And j<i Return path.Slice( 0,j+2 )
+	If path.Slice( j,j+2 )=":/" Return path.Slice( 0,j+2 )
+	
+	If path.Slice( j,j+2 )="::" Return path.Slice( 0,j+2 )
 	
 	Return ""
 End
@@ -359,26 +372,9 @@ End
 #end
 Function IsRootDir:Bool( path:String )
 	
-	path=path.Replace( "\","/" )
+	Local root:=ExtractRootDir( path )
 	
-
-	If path="//" Return True
-	
-	If path="/" Return True
-	
-	Local i:=path.Find( "/" )
-	If i=-1 i=path.Length
-	
-	Local j:=path.Find( "://" )
-	If j>0 And j<i Return j+3=path.Length
-	
-	j=path.Find( ":/" )
-	If j>0 And j<i Return j+2=path.Length
-	
-	j=path.Find( "::" )
-	If j>0 And j<i Return j+2=path.Length
-	
-	Return False
+	Return root And root.Length=path.Length
 End
 
 #rem monkeydoc Gets the process current directory.
@@ -418,30 +414,30 @@ Function RealPath:String( path:String )
 	
 	path=FixPath( path )
 	
-	Local rpath:=ExtractRootDir( path )
-	If rpath 
-		path=path.Slice( rpath.Length )
+	Local root:=ExtractRootDir( path )
+	If root 
+		path=path.Slice( root.Length )
 	Else
-		rpath=CurrentDir()
+		root=CurrentDir()
 	Endif
 	
 	While path
 		Local i:=path.Find( "/" )
-		If i=-1 Return rpath+path
+		If i=-1 Return root+path
 		Local t:=path.Slice( 0,i )
 		path=path.Slice( i+1 )
 		Select t
 		Case ""
 		Case "."
 		Case ".."
-			If Not rpath rpath=CurrentDir()
-			rpath=ExtractDir( rpath )
+			If Not root root=CurrentDir()
+			root=ExtractDir( root )
 		Default
-			rpath+=t+"/"
+			root+=t+"/"
 		End
 	Wend
 	
-	Return rpath
+	Return root
 	
 	#rem Not working on macos!
 	
@@ -593,6 +589,21 @@ End
 Function GetFileType:FileType( path:String )
 	
 	path=FixFilePath( path )
+	
+#If __TARGET__="android"
+	If path.StartsWith( "${ASSETS}/" )
+		
+		path=path.Slice( 10 )
+		
+		Local asset:=AAssetManager_open( GetAssetManager(),path,0 )
+		If Not asset Return FileType.Unknown
+		
+		Local length:=AAsset_getLength( asset )
+		AAsset_close( asset )
+		
+		Return length<>0 ? FileType.File Else FileType.Unknown
+	End
+#Endif
 
 	Local st:stat_t
 	If stat( path,Varptr st )<0 Return FileType.None
@@ -630,8 +641,23 @@ End
 
 #end
 Function GetFileSize:Long( path:String )
-
+	
 	path=FixFilePath( path )
+
+#If __TARGET__="android"
+	If path.StartsWith( "${ASSETS}/" )
+		
+		path=path.Slice( 10 )
+		
+		Local asset:=AAssetManager_open( GetAssetManager(),path,0 )
+		If Not asset Return 0
+		
+		Local length:=AAsset_getLength( asset )
+		AAsset_close( asset )
+		
+		Return length
+	End
+#Endif
 
 	Local st:stat_t
 	If stat( path,Varptr st )<0 Return 0
@@ -664,12 +690,32 @@ Does not return any '.' or '..' entries in a directory.
 #end
 Function LoadDir:String[]( path:String )
 	
+	Local files:=New StringStack
+	
 	path=FixFilePath( path )
-
+	
+#If __TARGET__="android"
+	If path.StartsWith( "${ASSETS}/" )
+		
+		path=path.Slice( 10 )
+		
+		Local assetDir:=AAssetManager_openDir( GetAssetManager(),path )
+		
+		If assetDir
+			Repeat
+				Local file:=AAssetDir_getNextFileName( assetDir )
+				If Not file Exit
+				files.Add( file )
+			Forever
+			AAssetDir_close( assetDir )
+		Endif
+		
+		Return files.ToArray()
+	Endif
+#endif
+	
 	Local dir:=opendir( path )
 	If Not dir Return Null
-	
-	Local files:=New StringStack
 	
 	Repeat
 		Local ent:=readdir( dir )
@@ -850,4 +896,30 @@ Function CopyDir:Bool( srcDir:String,dstDir:String,recursive:Bool=True )
 	
 	Return True
 
+End
+
+#rem monkeydoc Opens a 'C' file.
+
+Opens a file that can be used with the 'C' calls fopen, fread, fwrite and fclose. Similar to plain libc.fopen, except that it can also handle assets on android.
+
+`mode` should be one of: "r", "w" or "rw". When opening a file using "r" or "rw", the file must already exist or the function will fail and null will be returned. When opening a file using "w", any existing file at the same path will be overwritten.
+
+#end
+Function OpenCFile:FILE Ptr( path:String,mode:String )
+	
+	path=FixFilePath( path )
+	
+#If __TARGET__="android"
+	If path.StartsWith( "${ASSETS}/" )
+		
+		path=path.Slice( 10 )
+		
+		Local asset:=AAssetManager_open( GetAssetManager(),path,0 )
+		If Not asset Return Null
+		
+		Return fopenAsset( asset )
+	Endif
+#Endif
+	
+	Return libc.fopen( path,mode )
 End

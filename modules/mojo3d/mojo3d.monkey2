@@ -38,12 +38,13 @@ Using reflection..
 
 #Import "scene/entities/camera"
 #Import "scene/entities/light"
+#Import "scene/entities/pivot"
+#Import "scene/entities/renderable"
 #Import "scene/entities/model"
+#Import "scene/entities/sprite"
 #Import "scene/entities/particlebuffer"
 #Import "scene/entities/particlematerial"
 #Import "scene/entities/particlesystem"
-#Import "scene/entities/renderable"
-#Import "scene/entities/sprite"
 
 #Import "scene/materials/pbrmaterial"
 #Import "scene/materials/spritematerial"
