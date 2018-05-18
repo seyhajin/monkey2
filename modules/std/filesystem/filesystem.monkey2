@@ -372,7 +372,7 @@ End
 #end
 Function IsRootDir:Bool( path:String )
 	
-	Return ExtractRootDir( path )<>""
+	Return ExtractRootDir( path )=path
 End
 
 #rem monkeydoc Gets the process current directory.
