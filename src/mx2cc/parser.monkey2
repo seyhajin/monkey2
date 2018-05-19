@@ -22,11 +22,17 @@ Class Parser
 
 	Method ParseFile:FileDecl( ident:String,srcPath:String,ppsyms:StringMap<String> )
 		
+		Local gpath:=""
+		
 		If Builder.opts.geninfo
-			Local dir:=ExtractDir( srcPath )
+			
+			Local dir:=ExtractDir( srcPath )+".mx2/"
 			Local name:=StripDir( srcPath )
-			local path:=dir+".mx2/"+name
+			Local path:=dir+name
+			
 			If GetFileType( path )=FileType.File srcPath=path
+				
+			gpath=StripExt( path )+".geninfo"
 		Endif
 	
 		_ppsyms=ppsyms
@@ -37,6 +43,7 @@ Class Parser
 		_fdecl=New FileDecl
 		_fdecl.ident=ident
 		_fdecl.path=srcPath
+		_fdecl.gpath=gpath
 		_fdecl.nmspace=""
 		
 		Local source:=LoadString( srcPath )

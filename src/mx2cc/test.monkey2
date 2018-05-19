@@ -1,13 +1,7 @@
 
-#Import "<mojo>"
-
-Using mojo..
-
 Function Test:Int()
 	Return 0
 End
-
-Global g:=Image.Load( "test.png" )'New Image( 256,256 )
 
 Function Main:Void()
 	Local x:Int

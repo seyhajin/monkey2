@@ -26,8 +26,9 @@ Global StartDir:String
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
-Const TestArgs:="mx2cc makeapp -semant -geninfo src/mx2cc/test.monkey2"
-'Const TestArgs:="mx2cc makeapp -semant -geninfo modules/mojo3d/mojo3d.monkey2"
+Const TestArgs:="mx2cc geninfo src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc geninfo modules/mojo3d/mojo3d.monkey2"
+'Const TestArgs:="mx2cc geninfo src/ted2go/Ted2.monkey2"
 
 'Const TestArgs:="mx2cc makeapp -verbose src/mx2cc/catan/main.monkey2"
 
@@ -140,6 +141,8 @@ Function Main()
 		Local start:=std.time.Now()
 		
 		Select cmd
+		Case "geninfo"
+			ok=GenInfo( args )
 		Case "makeapp"
 			ok=MakeApp( args )
 		Case "makemods"
@@ -160,6 +163,49 @@ Function Main()
 	End
 	
 	If Not ok libc.exit_( 1 )
+End
+
+Function GenInfo:Bool( args:String[] )
+
+	Local opts:=New BuildOpts
+	opts.productType="module"
+	opts.target="desktop"
+	opts.config="debug"
+	opts.clean=False
+	opts.fast=True
+	opts.verbose=0
+	opts.passes=2
+	opts.geninfo=True
+	
+	args=ParseOpts( opts,args )
+	If args.Length<>1 Fail( "Invalid app source file" )
+	
+	Local cd:=CurrentDir()
+	ChangeDir( StartDir )
+	opts.mainSource=RealPath( args[0].Replace( "\","/" ) )
+	ChangeDir( cd )
+	
+	Print ""
+	Print "***** Generating info for "+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+") *****"
+	Print ""
+
+	New BuilderInstance( opts )
+	
+	Builder.Parse()
+	If opts.passes=1
+		Local gen:=New GeninfoGenerator
+		Local jobj:=gen.GenParseInfo( Builder.mainModule.fileDecls[0] )
+		Print jobj.ToJson()
+		Return Builder.errors.Length=0
+	Endif
+	If Builder.errors.Length Return False
+	
+	Builder.Semant()
+	
+	Local gen:=New GeninfoGenerator
+	gen.GenSemantInfo()
+	
+	Return Builder.errors.Length=0
 End
 
 Function MakeApp:Bool( args:String[] )
@@ -193,34 +239,19 @@ Function MakeApp:Bool( args:String[] )
 	Print ""
 
 	New BuilderInstance( opts )
-	
+
+	'pass1 	
 	Builder.Parse()
-	If opts.passes=1
-		If opts.geninfo
-			Local gen:=New ParseInfoGenerator
-			Local jobj:=gen.GenParseInfo( Builder.mainModule.fileDecls[0] )
-			Print jobj.ToJson()
-		Endif
-		Return True
-	Endif
+	If opts.passes=1 Return Builder.errors.Length=0
 	If Builder.errors.Length Return False
 	
 	Builder.Semant()
+	If opts.passes=2 Return Builder.errors.Length=0
 	If Builder.errors.Length Return False
-	If opts.passes=2
-		If opts.geninfo
-			Local gen:=New ParseInfoGenerator
-			Local jobj:=gen.GenParseInfo( Builder.mainModule.fileDecls[0] )
-			Print jobj.ToJson()
-		Endif
-		Return True
-	Endif
 	
 	Builder.Translate()
+	If opts.passes=3 Return Builder.errors.Length=0
 	If Builder.errors.Length Return False
-	If opts.passes=3
-		Return True
-	Endif
 	
 	Builder.product.Build()
 	If Builder.errors.Length Return False

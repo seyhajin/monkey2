@@ -1,13 +1,31 @@
 
 Namespace mx2.geninfo
 
-Class ParseInfoGenerator
+Class GeninfoGenerator
 
 	Method GenParseInfo:JsonValue( fdecl:FileDecl )
 	
 		Local node:=GenNode( fdecl )
 		
 		Return node
+	End
+	
+	Method GenSemantInfo()
+		
+		For Local fdecl:=Eachin Builder.mainModule.fileDecls
+			
+			If Not fdecl.gpath Continue
+			
+'			Print "path="+fdecl.path+" gpath="+fdecl.gpath
+			
+			Local jobj:=GenParseInfo( fdecl )
+			
+			Local json:=jobj.ToJson()
+			
+			CreateDir( ExtractDir( fdecl.gpath ) )
+			SaveString( json,fdecl.gpath )
+		Next
+		
 	End
 	
 	Private
@@ -17,11 +35,16 @@ Class ParseInfoGenerator
 		Local jarr:=New JsonArray
 		
 		For Local arg:=Eachin args
+			If Not arg Continue
+			
 '			Local jval:=GenNode( arg )
 '			If jval jarr.Add( jval )
+
 			Local jval:=GenNode( arg )
 			If Not jval Continue
+			
 			Local jarr2:=Cast<JsonArray>( jval )
+			
 			If jarr2 
 				For Local jval:=Eachin jarr2
 					jarr.Add( jval )
@@ -207,7 +230,7 @@ Class ParseInfoGenerator
 	End
 	
 	Method GenNode:JsonValue( expr:Expr )
-	
+		
 		Local identExpr:=Cast<IdentExpr>( expr )
 		If identExpr Return GenNode( identExpr )
 		
