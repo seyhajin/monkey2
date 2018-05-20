@@ -10,6 +10,10 @@
 
 #include <signal.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 typedef void(*dbEmit_t)(void*);
 
 namespace bbDB{
@@ -129,6 +133,10 @@ namespace bbDB{
 
 		bb_printf( "\n" );
 		fflush( stdout );
+		
+#ifdef __EMSCRIPTEN__
+		emscripten_pause_main_loop();
+#endif
 		
 		for(;;){
 		
