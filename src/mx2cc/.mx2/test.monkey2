@@ -5,7 +5,7 @@
 
 Using std..
 
-Function Test:Int()
+Function Testing:Int()
 	
 	Return 0
 End

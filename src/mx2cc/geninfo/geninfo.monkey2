@@ -23,7 +23,8 @@ Class GeninfoGenerator
 			Local json:=jobj.ToJson()
 			
 			CreateDir( ExtractDir( fdecl.gpath ) )
-			SaveString( json,fdecl.gpath )
+			
+			CSaveString( json,fdecl.gpath )
 		Next
 		
 	End
