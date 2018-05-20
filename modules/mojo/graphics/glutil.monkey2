@@ -209,7 +209,7 @@ precision mediump float;
 			Print (i+1)+":~t"+lines[i]
 		Next
 		
-		RuntimeError( "Failed to compile fragment shader:"+glGetShaderInfoLogEx( shader ) )
+		RuntimeError( "Failed to compile shader:"+glGetShaderInfoLogEx( shader ) )
 	Endif
 	Return shader
 End
