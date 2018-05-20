@@ -7,10 +7,9 @@
 
 float pointAtten( float d,float r ){
 
-//	Doesn't work on ANGLE!
-//	float atten=1.0-min( (d*d)/(r*r),1.0 );atten*=atten;
+	float atten=1.0-min( (d*d)/(r*r),1.0 );atten*=atten;
 
-	float atten=1.0-min( d/r,1.0 );atten*=atten;
+//	float atten=1.0-min( d/r,1.0 );atten*=atten;
 	
 //	float atten=1.0/(1.0+d*d);
 
@@ -37,10 +36,6 @@ void emitPbrFragment( vec3 color,float metalness,float roughness,vec3 position,v
 	vec3 lvec=r_LightViewMatrix[3].xyz-position;
 
 	float atten=pointAtten( length( lvec ),r_LightRange );
-	
-#ifdef GL_ES
-	if( atten!=atten ) return;
-#endif
 	
 	lvec=normalize( lvec );
 	
