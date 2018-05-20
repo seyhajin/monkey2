@@ -99,6 +99,7 @@ Class Entity Extends DynamicObject
 	
 	#rem monkeydoc Parent entity.
 	#end
+	[jsonify=1]
 	Property Parent:Entity()
 		
 		Return _parent
