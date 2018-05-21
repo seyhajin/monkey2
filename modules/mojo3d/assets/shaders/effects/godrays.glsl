@@ -2,6 +2,7 @@
 //@renderpasses 0
 
 uniform sampler2D r_SourceBuffer;
+//uniform sampler2D r_DepthBuffer;
 uniform sampler2D r_DepthBuffer;
 
 uniform vec2 r_SourceBufferScale;
@@ -33,6 +34,8 @@ uniform float m_Density;
 
 uniform vec4 m_Color;
 
+uniform float m_Weight;
+
 void main(){
 
 	vec2 coords=v_SourceBufferCoords;
@@ -43,13 +46,17 @@ void main(){
 	
 	vec3 fragColor=vec3( 0.0 );
 	
+	vec3 color=m_Color.rgb * m_Weight;
+	
 	for( int i=0;i<m_NumSamples;++i ){
 	
 		coords+=delta;
 
 		float depth=texture2D( r_DepthBuffer,coords ).r;
 		
-		vec3 sample=(depth==1.0) ? m_Color.rgb : vec3( 0.0 );
+//		vec3 color=texture2D( r_SourceBuffer,coords ).rgb;
+		
+		vec3 sample=(depth==1.0) ? color : vec3( 0.0 );
 		
 		fragColor+=sample;
 	}

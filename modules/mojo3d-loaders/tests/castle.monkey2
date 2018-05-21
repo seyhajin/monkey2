@@ -295,7 +295,7 @@ Class MyWindow Extends Window
 		_scene=New Scene
 		
 		_scene.AmbientLight=Color.Black
-		_scene.ClearColor=Color.Black
+		_scene.ClearColor=Color.Sky
 '		_scene.EnvColor=Color.Black
 		
 		_scene.ShadowAlpha=1

@@ -7,18 +7,19 @@ Class GodraysEffect Extends PostEffect
 
 	#rem monkeydoc Creates a new monochrome effect shader.
 	#end
-	Method New()
+	Method New( light:Light=Null )
 		
 		_shader=Shader.Open( "effects/godrays" )
 		
 		_uniforms=New UniformBlock( 3 )
 		
+		Light=light
 		NumSamples=100
 		Exposure=.0034
 		Decay=1.0
 		Density=0.84
 		Color=Color.White
-		Weight=.1
+		Weight=1
 	End
 	
 	Property Light:Light()
@@ -68,24 +69,20 @@ Class GodraysEffect Extends PostEffect
 	
 	Property Color:Color()
 		
-		Return _color
+		Return _uniforms.GetColor( "Color" )
 	
 	Setter( color:Color )
 		
-		_color=color
-		
-		_uniforms.SetColor( "Color",_color * _weight )
+		_uniforms.SetColor( "Color",color )
 	End
 	
 	Property Weight:Float()
 		
-		Return _weight
+		Return _uniforms.GetFloat( "Weight" )
 	
 	Setter( weight:Float )
 		
-		_weight=weight
-		
-		_uniforms.SetColor( "Color",_color * _weight )
+		_uniforms.SetFloat( "Weight",weight )
 	End
 	
 	Protected
