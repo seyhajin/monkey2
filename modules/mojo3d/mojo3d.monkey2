@@ -53,6 +53,7 @@ Using reflection..
 #Import "scene/effects/bloomeffect"
 #Import "scene/effects/monochromeeffect"
 #Import "scene/effects/reflectioneffect"
+#Import "scene/effects/godrayseffect"
 
 #Import "scene/jsonifier/jsonifier"
 #Import "scene/jsonifier/invocation"

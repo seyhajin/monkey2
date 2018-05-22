@@ -3,7 +3,7 @@ Namespace mojo3d
 
 #rem monkeydoc The Entity class.
 #end
-Class Entity Extends DynamicObject
+Class Entity Extends DynamicObject Abstract
 	
 	#rem monkeydoc Copied signal.
 	
@@ -99,6 +99,7 @@ Class Entity Extends DynamicObject
 	
 	#rem monkeydoc Parent entity.
 	#end
+	[jsonify=1]
 	Property Parent:Entity()
 		
 		Return _parent
@@ -476,7 +477,9 @@ Class Entity Extends DynamicObject
 	
 	Method OnCopy:Entity( parent:Entity ) Virtual
 		
-		Return New Entity( Self,parent )
+		RuntimeError( "Cannot copy Entity" )
+		
+		Return Null
 	End
 		
 	#rem monkeydoc Invoked when entity transitions from hidden->visible.

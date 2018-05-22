@@ -156,22 +156,22 @@ attribute vec4 a_Bones;		//mask=128
 
 void transformLightQuadVertex(){
 
-	vec2 qposition=a_Position.xy * r_QuadCoordScale + r_QuadCoordTrans;
+	//Careful! Bizarro angle/d3d bug...
 
-	v_ClipPosition=qposition * 2.0 - 1.0;
+	v_ClipPosition=a_Position.xy * r_QuadCoordScale + r_QuadCoordTrans;
 	
-	v_BufferCoords=qposition * r_BufferCoordScale;
+	v_BufferCoords=v_ClipPosition * r_BufferCoordScale;
 	
-	gl_Position=vec4( v_ClipPosition,-1.0,1.0 );
+	gl_Position=vec4( v_ClipPosition * 2.0 - 1.0,-1.0,1.0 );
 }
 
 void transformQuadVertex(){
 
-	v_ClipPosition=a_Position.xy * 2.0 - 1.0;
+	v_ClipPosition=a_Position.xy;
 	
-	v_BufferCoords=a_Position.xy * r_BufferCoordScale;
+	v_BufferCoords=v_ClipPosition.xy * r_BufferCoordScale;
 	
-	gl_Position=vec4( v_ClipPosition,-1.0,1.0 );
+	gl_Position=vec4( v_ClipPosition.xy * 2.0 - 1.0,-1.0,1.0 );
 }
 
 void transformSpriteVertex(){
@@ -276,7 +276,7 @@ vec3 fragmentPosition(){
 
 	float depth=viewDepth( texture2D( r_DepthBuffer,v_BufferCoords ).r );
 
-	vec4 vpos4=r_InverseProjectionMatrix * vec4( v_ClipPosition,-1.0,1.0 );
+	vec4 vpos4=r_InverseProjectionMatrix * vec4( v_ClipPosition*2.0-1.0,-1.0,1.0 );
 	
 	vec3 vpos=vpos4.xyz/vpos4.w;
 	

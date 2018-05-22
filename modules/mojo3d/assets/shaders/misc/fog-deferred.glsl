@@ -22,7 +22,7 @@ void main(){
 
 		depth=viewDepth( depth );
 		
-		vec4 vpos4=r_InverseProjectionMatrix * vec4( v_ClipPosition,-1.0,1.0 );
+		vec4 vpos4=r_InverseProjectionMatrix * vec4( v_ClipPosition*2.0-1.0,-1.0,1.0 );
 		
 		vec3 vpos=vpos4.xyz/vpos4.w;
 		

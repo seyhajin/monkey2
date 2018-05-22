@@ -6,8 +6,8 @@ Namespace myapp
 #Import "<mojo3d-loaders>"
 
 #Import "assets/castle/@/castle"
-#Import "../../mojo3d/tests/assets/heightmap_256.BMP"
-#Import "../../mojo3d/tests/assets/mossy-ground1.pbr@/mossy-ground1.pbr"
+#Import "../../mojo3d/tests/assets/terrain_256.png"
+#Import "../../mojo3d/tests/assets/mossy.pbr@/mossy.pbr"
 
 '#Import "../../mojo3d/tests/assets/miramar-skybox.jpg"
 
@@ -226,13 +226,17 @@ Class MyWindow Extends Window
 	
 	Field _camera:Camera
 	
+	Field _light:Light
+	
+	Field _godrays:GodraysEffect
+	
 	Method CreateTerrain:Model()
 		
 		Local box:=New Boxf( -256,-32,-256,256,0,256 )
 		
-		Local hmap:=Pixmap.Load( "asset::heightmap_256.BMP",PixelFormat.I8 )
+		Local hmap:=Pixmap.Load( "asset::terrain_256.png",PixelFormat.I8 )
 
-		Local material:=PbrMaterial.Load( "asset::mossy-ground1.pbr" )
+		Local material:=PbrMaterial.Load( "asset::mossy.pbr" )
 		material.ScaleTextureMatrix( 64,64 )
 		
 		'model+mesh
@@ -288,11 +292,13 @@ Class MyWindow Extends Window
 	
 	Method CreateScene:Scene()
 		
-		Local scene:=New Scene
+		_scene=New Scene
 		
-		Local light:=New Light
-		light.Rotate( 60,30,0 )	'aim directional light 'down' - Pi/2=90 degrees.
-		light.CastsShadow=True
+		_scene.AmbientLight=Color.Black
+		_scene.ClearColor=Color.Sky
+'		_scene.EnvColor=Color.Black
+		
+		_scene.ShadowAlpha=1
 		
 		Local terrain:=CreateTerrain()
 		
@@ -300,22 +306,30 @@ Class MyWindow Extends Window
 		
 		_player=CreatePlayer()
 		
-		Local camera:=New Camera( _player )
-		camera.View=Self
-		camera.LocalPosition=New Vec3f( 0,.5,0 )
-		camera.RotateX( 45 )
-		camera.Move( 0,0,-2 )
+		_camera=New Camera( _player )
+		_camera.View=Self
+		_camera.LocalPosition=New Vec3f( 0,.5,0 )
+		_camera.RotateX( 45 )
+		_camera.Move( 0,0,-2 )
+
+'		Return _scene
 		
-		_camera=camera
+		_light=New Light
+		_light.Rotate( 60,30,0 )	'aim directional light 'down' - Pi/2=90 degrees.
+		_light.CastsShadow=True
 		
-		Return scene
+		_godrays=New GodraysEffect
+		_godrays.Light=_light
+		_scene.AddPostEffect( _godrays )
+		
+		Return _scene
 	End
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
 		
-		_scene=CreateScene()
+		CreateScene()
 	End
 		
 	Method OnRender( canvas:Canvas ) Override

@@ -43,7 +43,10 @@ Class MyWindow Extends Window
 		'create light
 		'
 		_light=New Light
-		_light.RotateX( 60 )	'aim directional light 'downish'.
+		_light.Rotate( 54,144,0 )	'calibrated so specular highlight matches sun on sky texture!
+		
+		Local godrays:=New GodraysEffect( _light )
+		_scene.AddPostEffect( godrays )
 		
 		'create ground
 		'
