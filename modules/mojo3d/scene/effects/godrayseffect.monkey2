@@ -104,7 +104,11 @@ Class GodraysEffect Extends PostEffect
 		
 		Local lightPos:=lightClipPos.XY/lightClipPos.w * 0.5 + 0.5		'NDC
 		
-		lightPos*=SourceBufferScale	'buffer
+		Local bcscale:=Uniforms.GetVec2f( "BufferCoordScale" )
+		
+'		Print "SourceBufferSize="+SourceBufferSize+" SourceBufferScale="+SourceBufferScale
+		
+		lightPos*=bcscale
 		
 		'set effect uniforms
 		_uniforms.SetVec2f( "LightPosBufferCoords",lightPos )

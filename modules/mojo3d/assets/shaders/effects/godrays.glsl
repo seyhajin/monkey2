@@ -2,29 +2,33 @@
 //@renderpasses 0
 
 uniform sampler2D r_SourceBuffer;
-//uniform sampler2D r_DepthBuffer;
+
 uniform sampler2D r_DepthBuffer;
 
-uniform vec2 r_SourceBufferScale;
+uniform vec2 r_BufferCoordScale;
 
-varying vec2 v_SourceBufferCoords;
+varying vec2 v_BufferCoords;
 
 //@vertex
 
-attribute vec2 a_Position;
+attribute vec4 a_Position;
 	
 void main(){
 
-	v_SourceBufferCoords=a_Position * r_SourceBufferScale;
+	v_BufferCoords=a_Position.xy * r_BufferCoordScale;
 
-	gl_Position=vec4( a_Position * 2.0 - 1.0,-1.0,1.0 );
+	gl_Position=vec4( a_Position.xy * 2.0 - 1.0,0.0,1.0 );
 }
 
 //@fragment
 
 uniform vec2 m_LightPosBufferCoords;
 
+#ifdef GL_ES
+const int m_NumSamples=100;
+#else
 uniform int m_NumSamples;
+#endif
 
 uniform float m_Exposure;
 
@@ -38,7 +42,7 @@ uniform float m_Weight;
 
 void main(){
 
-	vec2 coords=v_SourceBufferCoords;
+	vec2 coords=v_BufferCoords;
 
 	vec2 delta=m_LightPosBufferCoords-coords;
 	
@@ -54,12 +58,14 @@ void main(){
 
 		float depth=texture2D( r_DepthBuffer,coords ).r;
 		
-//		vec3 color=texture2D( r_SourceBuffer,coords ).rgb;
-		
 		vec3 sample=(depth==1.0) ? color : vec3( 0.0 );
 		
 		fragColor+=sample;
 	}
+
+	float depth=texture2D( r_DepthBuffer,v_BufferCoords * r_BufferCoordScale ).r;
 	
-	gl_FragColor=vec4( fragColor*m_Exposure,1.0 );
+//	gl_FragColor=vec4( v_SourceBufferCoords,0.0,1.0 );//fragColor*m_Exposure,1.0 );
+
+	gl_FragColor=vec4( depth,0.0,0.0,1.0 );//fragColor*m_Exposure,1.0 );
 }

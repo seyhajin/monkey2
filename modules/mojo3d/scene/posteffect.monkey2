@@ -24,6 +24,8 @@ Class PostEffect
 	#end	
 	Method Render()
 		
+		UpdateSourceUniforms()
+		
 		OnRender( _gdevice.RenderTarget,_gdevice.Viewport )
 	End
 	
@@ -31,8 +33,6 @@ Class PostEffect
 
 		_gdevice=gdevice
 		_runiforms=runiforms
-		
-		UpdateSourceBuffer()
 	End
 	
 	Function EndRendering()
@@ -76,8 +76,9 @@ Class PostEffect
 	
 	Method SetRenderTarget( target:RenderTarget,viewport:Recti )
 		
-		_gdevice.RenderTarget=target
+		UpdateSourceUniforms()
 		
+		_gdevice.RenderTarget=target
 		_gdevice.Viewport=viewport
 	End
 	
@@ -96,8 +97,6 @@ Class PostEffect
 		_gdevice.VertexBuffer=_vertices
 		
 		_gdevice.Render( 4,1 )
-		
-		UpdateSourceBuffer()
 	End
 	
 	#rem monkeydoc @hidden
@@ -111,7 +110,7 @@ Class PostEffect
 	
 	Field _enabled:Bool=True
 	
-	function UpdateSourceBuffer()
+	Function UpdateSourceUniforms()
 
 		Local rsize:=_gdevice.Viewport.Size
 		Local rtarget:=_gdevice.RenderTarget
