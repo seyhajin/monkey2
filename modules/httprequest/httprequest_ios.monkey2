@@ -7,26 +7,59 @@ Namespace httprequest
 
 Extern
 
-Class HttpRequest="bbHttpRequest"
+Class bbHttpRequest
 	
-	Field ReadyStateChanged:Void()="readyStateChanged"
+	Field readyState:Int
+	Field response:String
+	Field status:Int
+	Field readyStateChanged:Void()
 	
-	Property ReadyState:ReadyState()="readyState"
-		
-	Property ResponseText:String()="responseText"
-		
-	Property Status:Int()="status"
+	Method open( req:String,url:String )
+	Method setHeader( name:String,value:String )
+	Method send( text:String )
+End
+
+Public
+
+Class HttpRequest Extends HttpRequestBase
 
 	Method New()
+	
+		_peer=New bbHttpRequest
 		
-	Method New( req:String,url:String,readyStateChanged:Void()=Null )
-		
-	Method Open( req:String,url:String )="open"
-		
-	Method SetHeader( name:String,value:String )="setHeader"
-		
-	Method Send()="send"
-		
-	Method Send( text:String )="send"
-		
+		_peer.readyStateChanged=OnReadyStateChanged
+	End
+
+	Protected
+	
+	Method OnReadyStateChanged()
+	
+		If _peer.readyState=4
+			_response=_peer.response
+			_status=_peer.status
+		Endif
+	
+		SetReadyState( Cast<ReadyState>( _peer.readyState ) )
+	End
+	
+	Method OnOpen( req:String,url:String ) Override
+	
+		_peer.open( req,url )
+	End
+	
+	Method OnSetHeader( name:String,value:String ) Override
+	
+		_peer.setHeader( name,value )
+	End
+	
+	Method OnSend( text:String ) Override
+	
+		_peer.send( text )
+	End
+	
+	Private
+	
+	Field _peer:bbHttpRequest
+	
 End
+

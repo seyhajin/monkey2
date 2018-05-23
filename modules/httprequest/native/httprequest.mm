@@ -16,16 +16,16 @@ namespace{
 		bbHttpRequest *req;
 		int state;
 
-		ReadyStateChangedEvent( bbHttpRequest *req,int state ):req( req ),state( state ){
+		ReadyStateChangedEvent( bbHttpRequest *req ):req( req ),state( req->readyState ){
 		}
 		
 		void dispatch(){
 		
-			if( state==req->_readyState ){
+			if( state==req->readyState ){
 		
-				if( req->_readyState==4 ){
-					req->_response=bbString( req->_rep->_response );
-					req->_status=req->_rep->_status;
+				if( req->readyState==4 ){
+					req->response=bbString( req->_rep->_response );
+					req->status=req->_rep->_status;
 				}
 			
 				req->readyStateChanged();
@@ -44,31 +44,10 @@ bbHttpRequest::bbHttpRequest(){
 	_rep=new Rep;
 }
 
-bbHttpRequest::bbHttpRequest( bbString req,bbString url,bbFunction<void()> readyStateChanged ):bbHttpRequest(){
-
-	this->readyStateChanged=readyStateChanged;
-
-	open( req,url );
-}
-	
-bbReadyState bbHttpRequest::readyState(){
-	
-	return (bbReadyState)_readyState;
-}
-	
-bbString bbHttpRequest::responseText(){
-
-	return _response;
-}
-	
-int bbHttpRequest::status(){
-	
-	return _status;
-}
 	
 void bbHttpRequest::open( bbString req,bbString url ){
 	
-	if( _readyState!=0 ) return;
+	if( readyState!=0 ) return;
 	
 	NSMutableURLRequest *nsreq=[[NSMutableURLRequest alloc] init];
 		
@@ -81,29 +60,22 @@ void bbHttpRequest::open( bbString req,bbString url ){
 	}
 	
 	_rep->_req=nsreq;
-		
-	_readyState=1;
+	
+	setReadyState( 1 );
 }
 	
 void bbHttpRequest::setHeader( bbString name,bbString value ){
 	
-	if( _readyState!=1 ) return;
+	if( readyState!=1 ) return;
 		
 	[_rep->_req setValue:value.ToNSString() forHTTPHeaderField:name.ToNSString()];
 }
 	
-void bbHttpRequest::send(){
-	
-	send( "" );
-}
-	
 void bbHttpRequest::send( bbString text ){
 	
-	if( _readyState!=1 ) return;
+	if( readyState!=1 ) return;
 		
 	bbGC::retain( this );
-
-	_readyState=3;	//loading
 	
     std::thread( [=](){
 
@@ -116,17 +88,24 @@ void bbHttpRequest::send( bbString text ){
 		  	_rep->_response=[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 		
 		    _rep->_status=[(NSHTTPURLResponse*)response statusCode];
-			    
-		    //_recv=[data length];
 		}
+
+		readyState=4;
 		
-		_readyState=4;	//loaded
-		
-		ReadyStateChangedEvent *ev=new ReadyStateChangedEvent( this,_readyState );
+		ReadyStateChangedEvent *ev=new ReadyStateChangedEvent( this );
 		
 		ev->post();
 			
 	} ).detach();
+
+	setReadyState( 3 );
+}
+
+void bbHttpRequest::setReadyState( int state ){
+
+	readyState=state;
+	
+	readyStateChanged();
 }
 
 void bbHttpRequest::gcMark(){
