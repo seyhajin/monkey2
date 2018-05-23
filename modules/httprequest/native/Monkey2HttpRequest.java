@@ -58,7 +58,7 @@ public class Monkey2HttpRequest{
 		connection.setRequestProperty( name,value );
 	}
 	
-	void send( final String text ){
+	void send( final String text,final int timeout ){
 	
 		if( readyState!=1 || busy ) return;
 		
@@ -67,7 +67,11 @@ public class Monkey2HttpRequest{
 		new Thread( new Runnable() {
 
 			public void run() {
-
+			
+				connection.setConnectTimeout( timeout );
+		
+				connection.setReadTimeout( timeout );
+				
 				try {
 				
 					if( text!=null && text.length()!=0 ){

@@ -39,7 +39,6 @@ Enum ReadyState
 	Loading=3
 	Done=4
 	Error=5
-
 End
 
 Class HttpRequest
@@ -83,6 +82,15 @@ Class HttpRequest
 		Return _status
 	End
 	
+	Property Timeout:Float()
+		
+		Return _timeout
+		
+	Setter( timeout:Float )
+		
+		_timeout=timeout
+	End
+	
 	Method Discard()
 		
 		Remove()
@@ -123,8 +131,10 @@ Class HttpRequest
 		OnMainFiber( Lambda()
 
 			Local env:=Android_JNI_GetEnv()
+			
+			Local timeout:=Int( _timeout * 1000 )
 		
-			env.CallVoidMethod( _obj,_send,New Variant[]( text ) )
+			env.CallVoidMethod( _obj,_send,New Variant[]( text,timeout ) )
 		
 		End )
 		
@@ -139,6 +149,7 @@ Class HttpRequest
 	Field _readyState:Int
 	Field _response:String
 	Field _status:int
+	Field _timeout:Float=10.0
 	
 	Method New( peer:jobject )
 		_obj=peer
@@ -225,8 +236,8 @@ Class HttpRequest
 		_open=env.GetMethodID( _class,"open","(Ljava/lang/String;Ljava/lang/String;)V" )
 		
 		_setHeader=env.GetMethodID( _class,"setHeader","(Ljava/lang/String;Ljava/lang/String;)V" )
-	
-		_send=env.GetMethodID( _class,"send","(Ljava/lang/String;)V" )
+		
+		_send=env.GetMethodID( _class,"send","(Ljava/lang/String;I)V" )
 		
 		onReadyStateChanged=OnReadyStateChanged
 		
