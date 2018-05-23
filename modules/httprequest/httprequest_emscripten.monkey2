@@ -9,16 +9,13 @@ Class HttpRequest Extends HttpRequestBase
 	
 	Protected
 	
-	Method OnSetHeader( header:String,value:String ) Override
-	End
-	
 	Method OnSend( text:String ) Override
 		
 		Local attr:emscripten_fetch_attr_t
 		
 		emscripten_fetch_attr_init( Varptr attr )
 		
-		_method.ToCString( attr.requestMethod,4 )
+		_req.ToCString( attr.requestMethod,4 )
 		attr.attributes=EMSCRIPTEN_FETCH_LOAD_TO_MEMORY
 		attr.onsuccess=FetchSuccess
 		attr.onerror=FetchError

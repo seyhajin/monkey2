@@ -80,50 +80,36 @@ Class HttpRequestBase
 	
 	Method Open( req:String,url:String )
 		
-		If _readyState<>ReadyState.Unsent Return
-		
-		_method=req
-		
-		_url=url
-		
-		OnOpen()
-		
-		_readyState=ReadyState.Opened
-		
-		ReadyStateChanged()
+		OnOpen( req,url )
 	End
 	
 	Method SetHeader( header:String,value:String )
 		
-		If _readyState<>ReadyState.Opened Return
-		
 		OnSetHeader( header,value )
 	End
 	
-	Method Send()
-		
-		Send( "" )
-	End
-	
-	Method Send( text:String )
-
-		If _readyState<>ReadyState.Opened Return
+	Method Send( text:String="" )
 		
 		OnSend( text )
 	End
 	
 	Protected
 	
+	Field _readyState:ReadyState
 	Field _timeout:Float=10.0
 	Field _response:String
 	Field _status:Int=-1
-	Field _method:String
+	Field _req:String
 	Field _url:String
 	
-	Method OnOpen() Virtual
+	Method OnOpen( req:String,url:String ) Virtual
+		_req=req
+		_url=url
+		SetReadyState( ReadyState.Opened )
 	End
 
-	Method OnSetHeader( header:String,value:String ) Abstract
+	Method OnSetHeader( header:String,value:String ) Virtual
+	End
 	
 	Method OnSend( text:String ) Abstract
 	
@@ -135,10 +121,6 @@ Class HttpRequestBase
 		
 		ReadyStateChanged()
 	End
-	
-	Private
-	
-	Field _readyState:ReadyState
 	
 End
 

@@ -8,9 +8,6 @@ Class HttpRequest Extends HttpRequestBase
 	
 	Protected
 
-	Method OnSetHeader( header:String,value:String ) Override
-	End
-	
 	Method OnSend( text:String ) Override
 		
 		Global id:=0
@@ -19,13 +16,11 @@ Class HttpRequest Extends HttpRequestBase
 		
 		Local tmp:=GetEnv( "TMP" )+"\wget-"+id+".txt"
 		
-	#if __TARGET__="macos"
-	
-		Local cmd:="curl -s -m "+timeout+" -o ~q"+tmp+"~q ~q"+url+"~q"
-		
+	#if __TARGET__="windows"
+		Local post_data:=_req="POST" ? " -post-data=~q"+text+"~q" Else ""
+		Local cmd:="wget -q -T "+_timeout+" -O ~q"+tmp+"~q --method="+_req+post_data+" ~q"+_url+"~q"
 	#else
-		Local post_data:=_method="POST" ? " -post-data=~q"+text+"~q" Else ""
-		Local cmd:="wget -q -T "+_timeout+" -O ~q"+tmp+"~q --method="+_method+post_data+" ~q"+_url+"~q"
+		Local cmd:="curl -s -m "+timeout+" -o ~q"+tmp+"~q ~q"+url+"~q"
 	#endif
 		
 		Local process:=New Process
@@ -54,6 +49,5 @@ Class HttpRequest Extends HttpRequestBase
 		SetReadyState( ReadyState.Loading )
 		
 		process.Start( cmd )
-		
 	End
 End

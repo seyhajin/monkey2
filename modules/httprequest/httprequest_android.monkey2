@@ -47,13 +47,13 @@ Class HttpRequest Extends HttpRequestBase
 	
 	Protected
 	
-	Method OnOpen() Override
+	Method OnOpen( req:String,url:String ) Override
 		
 		OnMainFiber( Lambda()
 		
 			Local env:=Android_JNI_GetEnv()
 		
-			env.CallVoidMethod( _obj,_open,New Variant[]( _method,_url ) )
+			env.CallVoidMethod( _obj,_open,New Variant[]( req,url ) )
 			
 		End )
 	End
@@ -80,7 +80,6 @@ Class HttpRequest Extends HttpRequestBase
 			env.CallVoidMethod( _obj,_send,New Variant[]( text,timeout ) )
 		
 		End )
-	
 	End
 	
 	Private
