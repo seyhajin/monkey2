@@ -1,4 +1,3 @@
-
 Namespace myapp
 
 #Import "<std>"
@@ -17,22 +16,33 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags )
 		
-		req=New HttpRequest( "GET","http://www.blitzbasic.com",Lambda()
+		req=New HttpRequest
+		
+		req.Timeout=10
+
+		req.ReadyStateChanged=Lambda()
 		
 			Print "Ready state changed to "+Int( req.ReadyState )
 			
-			If req.ReadyState=4 
-				Print "ReponseText="+req.ResponseText
-				Print "Status="+req.Status
-			Endif
+			Select req.ReadyState
+			Case ReadyState.Done
+				Print "Request done ReponseText=~q"+req.ResponseText+"~q Status="+req.Status
+				Print "Length="+req.ResponseText.Length
+			Case ReadyState.Error
+				Print "Request error Status="+req.Status
+			End
 		
-		End )
+		End
 		
-		New Fiber( Lambda()
+	#If __TARGET__="emscripten"
+		Const url:="test.txt"
+	#else
+		Const url:="https://www.github.com"
+	#endif
 		
-			req.Send()
-			
-		End )
+		req.Open( "GET",url )
+		
+		req.Send()
 	End
 
 	Method OnRender( canvas:Canvas ) Override

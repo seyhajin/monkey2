@@ -7,12 +7,6 @@ Namespace httprequest
 
 Extern
 
-Enum ReadyState="bbReadyState"
-	Unsent
-	Done
-	Error
-End
-
 Class HttpRequest="bbHttpRequest"
 	
 	Field ReadyStateChanged:Void()="readyStateChanged"

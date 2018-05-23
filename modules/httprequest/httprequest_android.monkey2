@@ -26,20 +26,140 @@ private
 Function OnMainFiber( func:Void() )
 	
 	If Fiber.Current()=Fiber.Main() func() Else App.Idle+=func
-	
 End
 
 Public
 
-Enum ReadyState
+Class HttpRequest Extends HttpRequestBase
 	
-	Unsent=0
-	Opened=1
-	HeadersReceived=2
-	Loading=3
-	Done=4
-	Error=5
+	Method New()
+		
+		Init()
+
+		Local env:=Android_JNI_GetEnv()
+		
+		Local obj:=env.AllocObject( _class )
+		
+		_obj=env.NewGlobalRef( obj )
+		
+		_requests.Add( Self )
+	End
+	
+	Protected
+	
+	Method OnOpen() Override
+		
+		OnMainFiber( Lambda()
+		
+			Local env:=Android_JNI_GetEnv()
+		
+			env.CallVoidMethod( _obj,_open,New Variant[]( _method,_url ) )
+			
+		End )
+	End
+	
+	Method OnSetHeader( header:String,value:String ) Override
+		
+		OnMainFiber( Lambda()
+
+			Local env:=Android_JNI_GetEnv()
+		
+			env.CallVoidMethod( _obj,_setHeader,New Variant[]( header,value ) )
+			
+		End )
+	End
+	
+	Method OnSend( text:String ) Override
+		
+		OnMainFiber( Lambda()
+
+			Local env:=Android_JNI_GetEnv()
+			
+			Local timeout:=Int( _timeout * 1000 )
+		
+			env.CallVoidMethod( _obj,_send,New Variant[]( text,timeout ) )
+		
+		End )
+	
+	End
+	
+	Private
+	
+	Field _obj:jobject
+	
+	Global _class:jclass
+	Global _open:jmethodID
+	Global _setHeader:jmethodID
+	Global _send:jmethodID
+	
+	Global _requests:=New Stack<HttpRequest>
+	
+	Method Close()
+		
+		Local env:=Android_JNI_GetEnv()
+		
+		env.DeleteGlobalRef( _obj )
+		
+		_requests.Remove( Self )
+	End
+	
+	Function OnReadyStateChanged( obj:jobject,state:Int )
+		
+		Local env:=Android_JNI_GetEnv()
+		
+		For Local request:=Eachin _requests
+			
+			If Not env.IsSameObject( obj,request._obj ) Continue
+				
+			request.SetReadyState( Cast<ReadyState>( state ) )
+
+			If state=4 Or state=5 request.Close()
+			
+			Exit
+		Next
+		
+	End
+	
+	Function OnResponseReceived( obj:jobject,response:String,status:Int,state:Int )
+
+		Local env:=Android_JNI_GetEnv()
+		
+		For Local request:=Eachin _requests
+			
+			If Not env.IsSameObject( obj,request._obj ) Continue
+				
+			request._response=response
+			
+			request._status=status
+			
+			request.SetReadyState( Cast<ReadyState>( state ) )
+			
+			Exit
+		Next
+	End
+	
+	Function Init()
+		
+		If _class Return
+
+		Local env:=Android_JNI_GetEnv()
+	
+		_class=env.FindClass( "com/monkey2/lib/Monkey2HttpRequest" )
+		If Not _class RuntimeError( "Can't find com.monkey2.lib.Monkey2HttpRequest class" )
+		
+		_open=env.GetMethodID( _class,"open","(Ljava/lang/String;Ljava/lang/String;)V" )
+		
+		_setHeader=env.GetMethodID( _class,"setHeader","(Ljava/lang/String;Ljava/lang/String;)V" )
+		
+		_send=env.GetMethodID( _class,"send","(Ljava/lang/String;I)V" )
+		
+		onReadyStateChanged=OnReadyStateChanged
+		
+		onResponseReceived=OnResponseReceived
+	End
 End
+
+#rem
 
 Class HttpRequest
 	
@@ -142,6 +262,9 @@ Class HttpRequest
 	
 	Private
 	
+	Global _sending:=New Stack<HttpRequest>
+	
+	
 	Global _list:HttpRequest
 	
 	Field _succ:HttpRequest
@@ -185,21 +308,14 @@ Class HttpRequest
 		
 		Local env:=Android_JNI_GetEnv()
 		
-		Local inst:=_list
-		
-		While inst
+		For Local request:=Eachin _requests
 			
-			If env.IsSameObject( obj,inst._obj )
+			If Not env.IsSameObject( obj,request._obj ) Continue
 				
-				inst._readyState=state
+			request.SetReadyState( state )
 				
-				inst.ReadyStateChanged()
-				
-				Return
-			Endif
-			
-			inst=inst._succ
-		Wend
+			Return
+		Next
 		
 	End
 	
@@ -207,28 +323,27 @@ Class HttpRequest
 
 		Local env:=Android_JNI_GetEnv()
 		
-		Local inst:=_list
-		
-		While inst
+		For Local request:=Eachin _requests
 			
-			If env.IsSameObject( obj,inst._obj )
+			If Not env.IsSameObject( obj,request._obj ) Continue
 				
-				inst._response=response
-				
-				inst._status=status
-				
-				inst._readyState=state
-				
-				inst.ReadyStateChanged()
+			inst._response=response
 			
-			Endif
-
-			inst=inst._succ
-		wend
+			inst._status=status
+			
+			inst._readyState=state
+				
+			inst.ReadyStateChanged()
+			
+			Return
+		Next
 	End
 	
-	Function Init( env:JNIEnv )
+	Function Init()
+		
 		If _class Return
+
+		Local env:=Android_JNI_GetEnv()
 	
 		_class=env.FindClass( "com/monkey2/lib/Monkey2HttpRequest" )
 		If Not _class RuntimeError( "Can't find com.monkey2.lib.Monkey2HttpRequest class" )
