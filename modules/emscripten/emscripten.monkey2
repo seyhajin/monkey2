@@ -7,6 +7,7 @@ Namespace emscripten
 #Import "<sdl2>"
 
 #Import "<emscripten.h>"
+#Import "<emscripten/fetch.h>"
 
 Extern
 
@@ -33,5 +34,52 @@ Function emscripten_get_device_pixel_ratio:Double()
 Function emscripten_set_canvas_size:Void( width:Int,height:Int )
 Function emscripten_get_canvas_size:Void( width:Int Ptr,height:Int Ptr,fullScreen:Int Ptr )
 Function emscripten_get_now:Double()
+
+Struct emscripten_fetch_t
+	
+	Field id:UInt
+	Field userData:Void Ptr
+	Field url:CString
+	Field data:libc.char_t Ptr
+	Field numBytes:ULong
+	Field dataOffset:ULong
+	Field totalBytes:ULong
+	Field readyState:UShort
+	Field status:Short
+End
+
+Const EMSCRIPTEN_FETCH_LOAD_TO_MEMORY:UInt
+Const EMSCRIPTEN_FETCH_STREAM_DATA:UInt
+Const EMSCRIPTEN_FETCH_PERSIST_FILE:UInt
+Const EMSCRIPTEN_FETCH_APPEND:UInt
+Const EMSCRIPTEN_FETCH_REPLACE:UInt
+Const EMSCRIPTEN_FETCH_NO_DOWNLOAD:UInt
+Const EMSCRIPTEN_FETCH_SYNCHRONOUS:UInt
+Const EMSCRIPTEN_FETCH_WAITABLE:UInt
+
+Struct emscripten_fetch_attr_t
+	
+	Field requestMethod:libc.char_t Ptr
+	Field userData:Void Ptr
+	Field onsuccess:Void( fetch:emscripten_fetch_t ptr )
+	Field onerror:Void( fetch:emscripten_fetch_t ptr )
+	Field onprogress:Void( fetch:emscripten_fetch_t Ptr )
+	Field attributes:UInt
+	Field timeoutMSecs:UInt
+	Field withCredentials:Bool
+	Field destinationPath:CString
+	Field userName:CString
+	Field password:CString
+	Field requestHeaders:CString Ptr
+	Field overridenMimeType:CString
+	Field requestData:CString
+	Field requestDataSize:UInt
+End
+
+Function emscripten_fetch_attr_init( attr:emscripten_fetch_attr_t Ptr )
+
+Function emscripten_fetch:emscripten_fetch_t Ptr( attr:emscripten_fetch_attr_t Ptr,url:CString )
+
+Function emscripten_fetch_close( fetch:emscripten_fetch_t Ptr )
 
 #Endif
