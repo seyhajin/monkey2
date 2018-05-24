@@ -71,13 +71,15 @@ void bbHttpRequest::setHeader( bbString name,bbString value ){
 	[_rep->_req setValue:value.ToNSString() forHTTPHeaderField:name.ToNSString()];
 }
 	
-void bbHttpRequest::send( bbString text ){
+void bbHttpRequest::send( bbString text,float timeout ){
 	
 	if( readyState!=1 ) return;
 		
 	bbGC::retain( this );
 	
     std::thread( [=](){
+    
+    	_rep->_req.timeoutInterval=(NSTimeInterval)timeout;
 
 		NSURLResponse *response=0;
 			
