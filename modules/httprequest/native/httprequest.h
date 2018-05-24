@@ -19,7 +19,7 @@ struct bbHttpRequest : public bbObject{
 	
 	void open( bbString req,bbString url );
 	void setHeader( bbString name,bbString value );
-	void send( bbString text );
+	void send( bbString text,float timeout );
 	
 	void setReadyState( int state );
 	

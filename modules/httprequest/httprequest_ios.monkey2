@@ -16,7 +16,7 @@ Class bbHttpRequest
 	
 	Method open( req:String,url:String )
 	Method setHeader( name:String,value:String )
-	Method send( text:String )
+	Method send( text:String,timeout:float )
 End
 
 Public
@@ -54,7 +54,7 @@ Class HttpRequest Extends HttpRequestBase
 	
 	Method OnSend( text:String ) Override
 	
-		_peer.send( text )
+		_peer.send( text,_timeout )
 	End
 	
 	Private
