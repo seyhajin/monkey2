@@ -93,10 +93,15 @@ Class HttpRequestBase
 		OnSend( text )
 	End
 	
+	Method Cancel()
+		
+		OnCancel()
+	End
+	
 	Protected
 	
 	Field _readyState:ReadyState
-	Field _timeout:Float=10.0
+	Field _timeout:Float=60.0
 	Field _response:String
 	Field _status:Int=-1
 	Field _req:String
@@ -112,6 +117,9 @@ Class HttpRequestBase
 	End
 	
 	Method OnSend( text:String ) Abstract
+	
+	Method OnCancel() Virtual
+	End
 	
 	Method SetReadyState( readyState:ReadyState )
 		

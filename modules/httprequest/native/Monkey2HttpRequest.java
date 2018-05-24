@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Monkey2HttpRequest{
 
@@ -62,6 +65,77 @@ public class Monkey2HttpRequest{
 	
 		if( readyState!=1 || busy ) return;
 		
+		ExecutorService executor=Executors.newSingleThreadExecutor();
+		
+		new Thread( new Runnable(){
+		
+			public void run(){
+			
+				connection.setConnectTimeout( timeout );
+		
+				connection.setReadTimeout( timeout );
+				
+				try {
+				
+					if( text!=null && text.length()!=0 ){
+			
+						byte[] bytes=text.getBytes( "UTF-8" );
+
+						connection.setDoOutput( true );
+						connection.setFixedLengthStreamingMode( bytes.length );
+				
+						OutputStream out=connection.getOutputStream();
+						out.write( bytes,0,bytes.length );
+						out.close();
+					}
+					
+					InputStream in=connection.getInputStream();
+					
+					setReadyState( 3 );
+
+					byte[] buf=new byte[4096];
+					ByteArrayOutputStream out=new ByteArrayOutputStream(1024);
+					for( ;; ){
+						int n=in.read( buf );
+						if( n<0 ) break;
+						out.write( buf,0,n );
+					}
+					in.close();
+
+					String response=new String( out.toByteArray(),"UTF-8" );
+
+					int status=connection.getResponseCode();
+					
+					onNativeResponseReceived( response,status,4 );
+					
+					readyState=4;
+					
+				} catch ( IOException ex) {
+				
+					setReadyState( 5 );
+				}
+
+				connection.disconnect();
+
+				busy=false;
+			}
+			
+		} ).start();
+		
+	}
+	
+	void cancel(){
+	
+		Log.v( TAG,"Cancelling httprequest" );
+	
+		connection.disconnect();
+	}
+	
+	/*
+	void send( final String text,final int timeout ){
+	
+		if( readyState!=1 || busy ) return;
+		
 		busy=true;
 		
 		new Thread( new Runnable() {
@@ -90,12 +164,12 @@ public class Monkey2HttpRequest{
 					
 					setReadyState( 3 );
 
-					byte[] buf = new byte[4096];
+					byte[] buf=new byte[4096];
 					ByteArrayOutputStream out=new ByteArrayOutputStream(1024);
-					for (; ; ) {
-						int n = in.read(buf);
-						if (n < 0) break;
-						out.write(buf, 0, n);
+					for( ;; ){
+						int n=in.read( buf );
+						if( n<0 ) break;
+						out.write( buf,0,n );
 					}
 					in.close();
 
@@ -111,10 +185,14 @@ public class Monkey2HttpRequest{
 				
 					setReadyState( 5 );
 				}
+
+				connection.disconnect();
+					
 				
 				busy=false;
 			}
 			
 		} ).start();
 	}
+	*/
 }

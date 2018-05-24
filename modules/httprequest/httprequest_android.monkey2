@@ -51,6 +51,8 @@ Class HttpRequest Extends HttpRequestBase
 		
 		OnMainFiber( Lambda()
 		
+			If Not _obj Return
+		
 			Local env:=Android_JNI_GetEnv()
 		
 			env.CallVoidMethod( _obj,_open,New Variant[]( req,url ) )
@@ -62,6 +64,8 @@ Class HttpRequest Extends HttpRequestBase
 		
 		OnMainFiber( Lambda()
 
+			If Not _obj Return
+		
 			Local env:=Android_JNI_GetEnv()
 		
 			env.CallVoidMethod( _obj,_setHeader,New Variant[]( header,value ) )
@@ -73,6 +77,8 @@ Class HttpRequest Extends HttpRequestBase
 		
 		OnMainFiber( Lambda()
 
+			If Not _obj Return
+		
 			Local env:=Android_JNI_GetEnv()
 			
 			Local timeout:=Int( _timeout * 1000 )
@@ -80,6 +86,15 @@ Class HttpRequest Extends HttpRequestBase
 			env.CallVoidMethod( _obj,_send,New Variant[]( text,timeout ) )
 		
 		End )
+	End
+	
+	Method OnCancel() Override
+		
+		If Not _obj Return
+		
+		Local env:=Android_JNI_GetEnv()
+		
+		env.CallVoidMethod( _obj,_cancel,Null )
 	End
 	
 	Private
@@ -90,16 +105,21 @@ Class HttpRequest Extends HttpRequestBase
 	Global _open:jmethodID
 	Global _setHeader:jmethodID
 	Global _send:jmethodID
+	Global _cancel:jmethodID
 	
 	Global _requests:=New Stack<HttpRequest>
 	
 	Method Close()
 		
+		If Not _obj Return
+		
+		_requests.Remove( Self )
+		
 		Local env:=Android_JNI_GetEnv()
 		
 		env.DeleteGlobalRef( _obj )
 		
-		_requests.Remove( Self )
+		_obj=Null
 	End
 	
 	Function OnReadyStateChanged( obj:jobject,state:Int )
@@ -151,6 +171,8 @@ Class HttpRequest Extends HttpRequestBase
 		_setHeader=env.GetMethodID( _class,"setHeader","(Ljava/lang/String;Ljava/lang/String;)V" )
 		
 		_send=env.GetMethodID( _class,"send","(Ljava/lang/String;I)V" )
+
+		_cancel=env.GetMethodID( _class,"cancel","()V" )
 		
 		onReadyStateChanged=OnReadyStateChanged
 		

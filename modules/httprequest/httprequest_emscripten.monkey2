@@ -27,6 +27,15 @@ Class HttpRequest Extends HttpRequestBase
 		_sending.Add( Self )
 	End
 	
+	Method OnCancel() Override
+		
+		If Not _fetch Return
+		
+		Close()
+		
+		SetReadyState( ReadyState.Error )
+	End
+	
 	Private
 	
 	Field _fetch:emscripten_fetch_t Ptr
@@ -35,9 +44,13 @@ Class HttpRequest Extends HttpRequestBase
 	
 	Method Close()
 		
-		emscripten_fetch_close( _fetch )
+		If Not _fetch Return
 		
 		_sending.Remove( Self )
+		
+		emscripten_fetch_close( _fetch )
+		
+		_fetch=Null
 	End
 	
 	Method Success()
@@ -63,6 +76,7 @@ Class HttpRequest Extends HttpRequestBase
 	Function FindRequest:HttpRequest( fetch:emscripten_fetch_t Ptr )
 
 		For Local request:=Eachin _sending
+
 			If request._fetch=fetch Return request
 		Next
 		
