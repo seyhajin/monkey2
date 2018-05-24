@@ -62,10 +62,16 @@ void main(){
 		
 		fragColor+=sample;
 	}
-
-	float depth=texture2D( r_DepthBuffer,v_BufferCoords * r_BufferCoordScale ).r;
 	
-//	gl_FragColor=vec4( v_SourceBufferCoords,0.0,1.0 );//fragColor*m_Exposure,1.0 );
+	gl_FragColor=vec4( fragColor * m_Exposure,1.0 );
 
-	gl_FragColor=vec4( depth,0.0,0.0,1.0 );//fragColor*m_Exposure,1.0 );
+/*
+	float depth=texture2D( r_DepthBuffer,v_BufferCoords ).r;
+	
+//	depth=1.0;
+	
+//	gl_FragColor=vec4( v_BufferCoords,0.0,1.0 );
+
+	gl_FragColor=vec4( depth,0.0,0.0,1.0 );
+*/
 }
