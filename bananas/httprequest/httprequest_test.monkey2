@@ -29,14 +29,7 @@ Class MyWindow Extends Window
 		
 			label.Text="Ready state changed to "+Int( req.ReadyState )+" status="+req.Status
 			
-			Select req.ReadyState
-			Case ReadyState.Done
-				Print "Request done ReponseText=~q"+req.ResponseText+"~q Status="+req.Status
-				Print "Length="+req.ResponseText.Length
-			Case ReadyState.Error
-				Print "Request error Status="+req.Status
-			End
-		
+			If req.ReadyState=ReadyState.Done Print "Request response:~n"+req.ResponseText
 		End
 		
 	#If __TARGET__="emscripten"
@@ -65,14 +58,10 @@ Class MyWindow Extends Window
 		req.Send()
 	End
 
-#rem
 	Method OnRender( canvas:Canvas ) Override
 	
-		App.RequestRender()
-	
-		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
+		App.RequestRender()	'need this for ios?
 	End
-#end
 	
 	Method OnMeasure:Vec2i() Override
 		

@@ -16,10 +16,12 @@ struct bbHttpRequest : public bbObject{
 	bbFunction<void()> readyStateChanged;
 	
 	bbHttpRequest();
+	~bbHttpRequest();
 	
 	void open( bbString req,bbString url );
 	void setHeader( bbString name,bbString value );
 	void send( bbString text,float timeout );
+	void cancel();
 	
 	void setReadyState( int state );
 	
