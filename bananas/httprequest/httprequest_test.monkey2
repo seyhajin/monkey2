@@ -3,27 +3,31 @@ Namespace myapp
 
 #Import "<std>"
 #Import "<mojo>"
+#Import "<mojox>"
 #Import "<httprequest>"
 
 Using std..
 Using mojo..
+Using mojox..
 Using httprequest..
 
 Class MyWindow Extends Window
 	
-	Field req:HttpRequest
-
 	Method New( title:String="HttpRequest demo",width:Int=640,height:Int=480,flags:WindowFlags=Null )
 
 		Super.New( title,width,height,flags )
+
+		Layout="letterbox"		
 		
-		req=New HttpRequest
+		Local label:=New Label
+		
+		Local req:=New HttpRequest
 		
 		req.Timeout=10
 
 		req.ReadyStateChanged=Lambda()
 		
-			Print "Ready state changed to "+Int( req.ReadyState )
+			label.Text="Ready state changed to "+Int( req.ReadyState )+" status="+req.Status
 			
 			Select req.ReadyState
 			Case ReadyState.Done
@@ -43,14 +47,36 @@ Class MyWindow Extends Window
 		
 		req.Open( "GET",url )
 		
+		Local button:=New Button( "CANCEL!" )
+		
+		button.Clicked+=Lambda()
+		
+			req.Cancel()
+		End
+		
+		Local dockingView:=New DockingView
+		
+		dockingView.AddView( label,"top" )
+		
+		dockingView.ContentView=button
+		
+		ContentView=dockingView
+		
 		req.Send()
 	End
 
+#rem
 	Method OnRender( canvas:Canvas ) Override
 	
 		App.RequestRender()
 	
 		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
+	End
+#end
+	
+	Method OnMeasure:Vec2i() Override
+		
+		Return New Vec2i( 320,240 )
 	End
 	
 End
