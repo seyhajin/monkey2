@@ -257,9 +257,6 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	End
 	
 	Method RenderOpaqueDeferred()
-
-		'write to all deferred buffers
-		_gdevice.RenderTarget=_renderTarget0
 		
 		_gdevice.ColorMask=ColorMask.All
 		_gdevice.DepthMask=True
@@ -354,6 +351,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	End
 
 	Method RenderTransparent()
+		
+		If _deferred _gdevice.RenderTarget=_renderTarget0
 
 		Local first:=True
 		
@@ -552,6 +551,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	End
 	
 	Method RenderPostEffects()
+		
+		If _deferred _gdevice.RenderTarget=_renderTarget1
 		
 		PostEffect.BeginRendering( _gdevice,_runiforms )
 		
@@ -907,6 +908,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		If _accumBuffer And size.x<=_accumBuffer.Size.x And size.y<=_accumBuffer.Size.y Return
 		
 		_accumBuffer?.Discard()
+		_colorBuffer?.Discard()
+		_normalBuffer?.Discard()
 		_depthBuffer?.Discard()
 		_renderTarget0?.Discard()
 		_renderTarget1?.Discard()
