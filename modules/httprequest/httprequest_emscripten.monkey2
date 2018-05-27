@@ -7,6 +7,9 @@ Using emscripten..
 
 Class HttpRequest Extends HttpRequestBase
 	
+	Method New()
+	End
+	
 	Protected
 	
 	Method OnSend( text:String ) Override

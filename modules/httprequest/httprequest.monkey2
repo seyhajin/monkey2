@@ -38,22 +38,6 @@ Class HttpRequestBase
 	
 	Field ReadyStateChanged:Void()
 	
-	Method New()
-		
-		_readyState=ReadyState.Unsent
-		_timeout=10
-		_status=-1
-	End
-	
-	Method New( req:String,url:String,readyStateChanged:Void()=Null )
-		
-		Self.New()
-		
-		Open( req,url )
-		
-		ReadyStateChanged=readyStateChanged
-	End
-	
 	Property Timeout:Float()
 		
 		Return _timeout
@@ -106,6 +90,13 @@ Class HttpRequestBase
 	Field _status:Int=-1
 	Field _req:String
 	Field _url:String
+	
+	Method New()
+		
+		_readyState=ReadyState.Unsent
+		_timeout=10
+		_status=-1
+	End
 	
 	Method OnOpen( req:String,url:String ) Virtual
 		_req=req

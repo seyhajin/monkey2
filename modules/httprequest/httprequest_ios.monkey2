@@ -31,15 +31,6 @@ Class HttpRequest Extends HttpRequestBase
 		_peer.readyStateChanged=OnReadyStateChanged
 	End
 	
-	Method New( req:String,url:String,readyStateChanged:Void()=Null )
-	
-		Self.New()
-		
-		Open( req,url )
-		
-		ReadyStateChanged=readyStateChanged
-	End
-	
 	Protected
 	
 	Method OnReadyStateChanged()

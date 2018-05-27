@@ -21,7 +21,7 @@ public class Monkey2HttpRequest{
 	
 	int readyState;
 	
-	boolean busy;
+	boolean sending;
 
     native void onNativeReadyStateChanged( int state );
     
@@ -50,22 +50,24 @@ public class Monkey2HttpRequest{
 			
 		}catch( IOException ex ){
 		
+			Log.v( TAG,ex.toString() );
+				
 			setReadyState( 5 );
 		}		
 	}
 	
 	void setHeader( String name,String value ){
 	
-		if( readyState!=1 || busy ) return;
+		if( readyState!=1 || sending ) return;
 	
 		connection.setRequestProperty( name,value );
 	}
 	
 	void send( final String text,final int timeout ){
 	
-		if( readyState!=1 || busy ) return;
-		
-		ExecutorService executor=Executors.newSingleThreadExecutor();
+		if( readyState!=1 || sending ) return;
+				
+		sending=true;
 		
 		new Thread( new Runnable(){
 		
@@ -75,7 +77,7 @@ public class Monkey2HttpRequest{
 		
 				connection.setReadTimeout( timeout );
 				
-				try {
+				try{
 				
 					if( text!=null && text.length()!=0 ){
 			
@@ -110,89 +112,22 @@ public class Monkey2HttpRequest{
 					
 					readyState=4;
 					
-				} catch ( IOException ex) {
+				}catch( IOException ex ){
+				
+					Log.v( TAG,ex.toString() );
 				
 					setReadyState( 5 );
 				}
 
 				connection.disconnect();
 
-				busy=false;
+				sending=false;
 			}
-			
 		} ).start();
-		
 	}
 	
 	void cancel(){
 	
-		Log.v( TAG,"Cancelling httprequest" );
-	
 		connection.disconnect();
 	}
-	
-	/*
-	void send( final String text,final int timeout ){
-	
-		if( readyState!=1 || busy ) return;
-		
-		busy=true;
-		
-		new Thread( new Runnable() {
-
-			public void run() {
-			
-				connection.setConnectTimeout( timeout );
-		
-				connection.setReadTimeout( timeout );
-				
-				try {
-				
-					if( text!=null && text.length()!=0 ){
-			
-						byte[] bytes=text.getBytes( "UTF-8" );
-
-						connection.setDoOutput( true );
-						connection.setFixedLengthStreamingMode( bytes.length );
-				
-						OutputStream out=connection.getOutputStream();
-						out.write( bytes,0,bytes.length );
-						out.close();
-					}
-					
-					InputStream in=connection.getInputStream();
-					
-					setReadyState( 3 );
-
-					byte[] buf=new byte[4096];
-					ByteArrayOutputStream out=new ByteArrayOutputStream(1024);
-					for( ;; ){
-						int n=in.read( buf );
-						if( n<0 ) break;
-						out.write( buf,0,n );
-					}
-					in.close();
-
-					String response=new String( out.toByteArray(),"UTF-8" );
-
-					int status=connection.getResponseCode();
-					
-					onNativeResponseReceived( response,status,4 );
-					
-					readyState=4;
-					
-				} catch ( IOException ex) {
-				
-					setReadyState( 5 );
-				}
-
-				connection.disconnect();
-					
-				
-				busy=false;
-			}
-			
-		} ).start();
-	}
-	*/
 }

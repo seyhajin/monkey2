@@ -57,7 +57,7 @@ Class MyWindow Extends Window
 		
 		req.Send()
 	End
-
+	
 	Method OnRender( canvas:Canvas ) Override
 	
 		App.RequestRender()	'need this for ios?
