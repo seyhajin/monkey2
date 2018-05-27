@@ -1,6 +1,18 @@
 
 Namespace mx2.geninfo
 
+#rem
+
+Possible optimizations:
+
+* Use semType for functions.
+
+* Erase blocks with no vardecls.
+
+* Remove 'monkey.types.' prefix from primitive sem types.
+
+#end
+
 Class GeninfoGenerator
 
 	Method GenParseInfo:JsonValue( fdecl:FileDecl )
@@ -202,6 +214,21 @@ Class GeninfoGenerator
 		Local ifStmt:=Cast<IfStmtExpr>( stmt )
 		If ifStmt Return GenNode( ifStmt )
 		
+		Local whileStmt:=Cast<WhileStmtExpr>( stmt )
+		If whileStmt Return GenNode( whileStmt )
+		
+		Local repeatStmt:=Cast<RepeatStmtExpr>( stmt )
+		If repeatStmt Return GenNode( repeatStmt )
+		
+		Local selectStmt:=Cast<SelectStmtExpr>( stmt )
+		If selectStmt Return GenNode( selectStmt )
+		
+		Local forStmt:=Cast<ForStmtExpr>( stmt )
+		If forStmt Return GenNode( forStmt )
+		
+		Local tryStmt:=Cast<TryStmtExpr>( stmt )
+		If tryStmt Return GenNode( tryStmt )
+		
 		Return Null
 	End
 	
@@ -214,6 +241,52 @@ Class GeninfoGenerator
 			jarr.Add( jobj )
 			ifStmt=ifStmt.succ
 		Wend
+		Return jarr
+	End
+	
+	Method GenNode:JsonValue( whileStmt:WhileStmtExpr )
+		
+		Local jobj:=MakeNode( whileStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( whileStmt.stmts ) )
+		Return jobj
+	End
+	
+	Method GenNode:JsonValue( repeatStmt:RepeatStmtExpr )
+
+		Local jobj:=MakeNode( repeatStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( repeatStmt.stmts ) )
+		Return jobj
+	End
+	
+	Method GenNode:JsonValue( selectStmt:SelectStmtExpr )
+		
+		Local jarr:=New JsonArray
+		For Local caseStmt:=Eachin selectStmt.cases
+			Local jobj:=MakeNode( caseStmt,"block" )
+			jobj.SetValue( "stmts",GenNode( caseStmt.stmts ) )
+			jarr.Add( jobj )
+		Next
+		Return jarr
+	End
+	
+	Method GenNode:JsonValue( forStmt:ForStmtExpr )
+		
+		Local jobj:=MakeNode( forStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( forStmt.stmts ) )
+		Return jobj
+	End
+	
+	Method GenNode:JsonValue( tryStmt:TryStmtExpr )
+
+		Local jarr:=New JsonArray
+		Local jobj:=MakeNode( tryStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( tryStmt.stmts ) )
+		jarr.Add( jobj )
+		For Local catchStmt:=Eachin tryStmt.catches
+			Local jobj:=MakeNode( catchStmt,"block" )
+			jobj.SetValue( "stmts",GenNode( catchStmt.stmts ) )
+			jarr.Add( jobj )
+		Next
 		Return jarr
 	End
 	

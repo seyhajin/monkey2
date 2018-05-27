@@ -499,12 +499,14 @@ Class RepeatStmtExpr Extends StmtExpr
 
 End
 
-Class CaseExpr
-
+Class CaseStmtExpr Extends StmtExpr
+	
 	Field exprs:Expr[]
 	Field stmts:StmtExpr[]
 	
-	Method New( exprs:Expr[],stmts:StmtExpr[] )
+	Method New( exprs:Expr[],stmts:StmtExpr[],srcpos:Int,endpos:Int )
+		Super.New( srcpos,endpos )
+		
 		Self.exprs=exprs
 		Self.stmts=stmts
 	End
@@ -514,9 +516,9 @@ End
 Class SelectStmtExpr Extends StmtExpr
 
 	Field expr:Expr
-	Field cases:CaseExpr[]
+	Field cases:CaseStmtExpr[]
 	
-	Method New( expr:Expr,cases:CaseExpr[],srcpos:Int,endpos:Int )
+	Method New( expr:Expr,cases:CaseStmtExpr[],srcpos:Int,endpos:Int )
 		Super.New( srcpos,endpos )
 		
 		Self.expr=expr
@@ -777,13 +779,14 @@ Class ForStmtExpr Extends StmtExpr
 	
 End
 
-Class CatchExpr
+Class CatchStmtExpr Extends StmtExpr
 
 	Field varIdent:String
 	Field varType:Expr
 	Field stmts:StmtExpr[]
 
-	Method New( varIdent:String,varType:Expr,stmts:StmtExpr[] )
+	Method New( varIdent:String,varType:Expr,stmts:StmtExpr[],srcpos:Int,endpos:Int )
+		Super.New( srcpos,endpos )
 		Self.varIdent=varIdent
 		Self.varType=varType
 		Self.stmts=stmts
@@ -794,9 +797,9 @@ End
 Class TryStmtExpr Extends StmtExpr
 
 	Field stmts:StmtExpr[]
-	Field catches:CatchExpr[]
+	Field catches:CatchStmtExpr[]
 	
-	Method New( stmts:StmtExpr[],catches:CatchExpr[],srcpos:Int,endpos:Int )
+	Method New( stmts:StmtExpr[],catches:CatchStmtExpr[],srcpos:Int,endpos:Int )
 		Super.New( srcpos,endpos )
 		Self.stmts=stmts
 		Self.catches=catches

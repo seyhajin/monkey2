@@ -1,12 +1,8 @@
 
-Function Test:Int()
-	
-	Return 0
-End
-
 Function Main:Void()
-	Local x:Int
-	Local y:Int
+	
+	Local x:=0
+	
 	If x<10
 		Local t:=100
 	Else
