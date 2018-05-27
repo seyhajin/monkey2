@@ -3,6 +3,6 @@
 	"about":"HttpRequest module",
 	"author":"Mark Sibly",
 	"version":"1.0.0",
-	"depends":["jni","std","sdl2","mojo"]
+	"depends":["libc","jni","std","sdl2","mojo"]
 }
 

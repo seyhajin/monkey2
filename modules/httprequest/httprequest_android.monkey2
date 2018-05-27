@@ -21,174 +21,102 @@ Global onReadyStateChanged:Void(jobject,Int)="bbHttpRequest::onReadyStateChanged
 
 Global onResponseReceived:Void(jobject,String,Int,Int)="bbHttpRequest::onResponseReceived"
 
-private
-
-Function OnMainFiber( func:Void() )
-	
-	If Fiber.Current()=Fiber.Main() func() Else App.Idle+=func
-	
-End
-
 Public
 
-Enum ReadyState
-	
-	Unsent=0
-	Opened=1
-	HeadersReceived=2
-	Loading=3
-	Done=4
-	Error=5
-
-End
-
-Class HttpRequest
-	
-	Field ReadyStateChanged:Void()
+Class HttpRequest Extends HttpRequestBase
 	
 	Method New()
+		
+		Init()
 
 		Local env:=Android_JNI_GetEnv()
-		
-		Init( env )
 		
 		Local obj:=env.AllocObject( _class )
 		
 		_obj=env.NewGlobalRef( obj )
 		
-		Insert()
+		_requests.Add( Self )
 	End
 	
-	Method New( req:String,url:String,readyStateChanged:Void()=Null )
-		Self.New()
+	Protected
+	
+	Method OnOpen( req:String,url:String ) Override
 		
-		ReadyStateChanged=readyStateChanged
-		
-		Open( req,url )
+		If Not _obj Return
+	
+		Local env:=Android_JNI_GetEnv()
+	
+		env.CallVoidMethod( _obj,_open,New Variant[]( req,url ) )
 	End
 	
-	Property ReadyState:ReadyState()
+	Method OnSetHeader( header:String,value:String ) Override
 		
-		Return Cast<ReadyState>( _readyState )
-
+		If Not _obj Return
+	
+		Local env:=Android_JNI_GetEnv()
+	
+		env.CallVoidMethod( _obj,_setHeader,New Variant[]( header,value ) )
 	End
 	
-	Property ResponseText:String()
+	Method OnSend( text:String ) Override
 		
-		Return _response
+		If Not _obj Return
+	
+		Local env:=Android_JNI_GetEnv()
+		
+		Local timeout:=Int( _timeout * 1000 )
+	
+		env.CallVoidMethod( _obj,_send,New Variant[]( text,timeout ) )
 	End
 	
-	Property Status:Int()
+	Method OnCancel() Override
 		
-		Return _status
-	End
-	
-	Method Discard()
-		
-		Remove()
+		If Not _obj Return
 		
 		Local env:=Android_JNI_GetEnv()
 		
-		env.DeleteGlobalRef( _obj )
-		
-	End
-	
-	Method Open( req:String,url:String )
-		
-		OnMainFiber( Lambda()
-		
-			Local env:=Android_JNI_GetEnv()
-		
-			env.CallVoidMethod( _obj,_open,New Variant[]( req,url ) )
-		End )
-	End
-	
-	Method SetHeader( header:String,value:String )
-		
-		OnMainFiber( Lambda()
-
-			Local env:=Android_JNI_GetEnv()
-		
-			env.CallVoidMethod( _obj,_setHeader,New Variant[]( header,value ) )
-		End )
-	End
-	
-	Method Send()
-		
-		Send( "" )
-	End
-	
-	Method Send( text:String )
-		
-		OnMainFiber( Lambda()
-
-			Local env:=Android_JNI_GetEnv()
-		
-			env.CallVoidMethod( _obj,_send,New Variant[]( text ) )
-		
-		End )
-		
+		env.CallVoidMethod( _obj,_cancel,Null )
 	End
 	
 	Private
 	
-	Global _list:HttpRequest
-	
-	Field _succ:HttpRequest
 	Field _obj:jobject
-	Field _readyState:Int
-	Field _response:String
-	Field _status:int
-	
-	Method New( peer:jobject )
-		_obj=peer
-	End
-	
-	Method Insert()
-		_succ=_list
-		_list=Self
-	End
-	
-	Method Remove()
-		local inst:=_list,pred:HttpRequest=Null
-		While inst
-			If inst=Self
-				If pred
-					pred._succ=_succ
-				Else
-					_list=_succ
-				Endif
-				Return
-			Endif
-			pred=inst
-			inst=inst._succ
-		Wend
-	End
 	
 	Global _class:jclass
 	Global _open:jmethodID
 	Global _setHeader:jmethodID
 	Global _send:jmethodID
+	Global _cancel:jmethodID
+	
+	Global _requests:=New Stack<HttpRequest>
+	
+	Method Close()
+		
+		If Not _obj Return
+		
+		_requests.Remove( Self )
+		
+		Local env:=Android_JNI_GetEnv()
+		
+		env.DeleteGlobalRef( _obj )
+		
+		_obj=Null
+	End
 	
 	Function OnReadyStateChanged( obj:jobject,state:Int )
 		
 		Local env:=Android_JNI_GetEnv()
 		
-		Local inst:=_list
-		
-		While inst
+		For Local request:=Eachin _requests
 			
-			If env.IsSameObject( obj,inst._obj )
+			If Not env.IsSameObject( obj,request._obj ) Continue
 				
-				inst._readyState=state
-				
-				inst.ReadyStateChanged()
-				
-				Return
-			Endif
+			request.SetReadyState( Cast<ReadyState>( state ) )
+
+			If state=4 Or state=5 request.Close()
 			
-			inst=inst._succ
-		Wend
+			Exit
+		Next
 		
 	End
 	
@@ -196,28 +124,25 @@ Class HttpRequest
 
 		Local env:=Android_JNI_GetEnv()
 		
-		Local inst:=_list
-		
-		While inst
+		For Local request:=Eachin _requests
 			
-			If env.IsSameObject( obj,inst._obj )
+			If Not env.IsSameObject( obj,request._obj ) Continue
 				
-				inst._response=response
-				
-				inst._status=status
-				
-				inst._readyState=state
-				
-				inst.ReadyStateChanged()
+			request._response=response
 			
-			Endif
-
-			inst=inst._succ
-		wend
+			request._status=status
+			
+			request.SetReadyState( Cast<ReadyState>( state ) )
+			
+			Exit
+		Next
 	End
 	
-	Function Init( env:JNIEnv )
+	Function Init()
+		
 		If _class Return
+
+		Local env:=Android_JNI_GetEnv()
 	
 		_class=env.FindClass( "com/monkey2/lib/Monkey2HttpRequest" )
 		If Not _class RuntimeError( "Can't find com.monkey2.lib.Monkey2HttpRequest class" )
@@ -225,14 +150,13 @@ Class HttpRequest
 		_open=env.GetMethodID( _class,"open","(Ljava/lang/String;Ljava/lang/String;)V" )
 		
 		_setHeader=env.GetMethodID( _class,"setHeader","(Ljava/lang/String;Ljava/lang/String;)V" )
-	
-		_send=env.GetMethodID( _class,"send","(Ljava/lang/String;)V" )
+		
+		_send=env.GetMethodID( _class,"send","(Ljava/lang/String;I)V" )
+
+		_cancel=env.GetMethodID( _class,"cancel","()V" )
 		
 		onReadyStateChanged=OnReadyStateChanged
 		
 		onResponseReceived=OnResponseReceived
 	End
-	
 End
-
-		

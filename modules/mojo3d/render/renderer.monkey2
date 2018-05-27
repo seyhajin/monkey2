@@ -235,17 +235,29 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_gdevice.Shader=_deferredLightingShader
 		_gdevice.CullMode=CullMode.None
 		
-		_gdevice.RenderTarget=_renderTarget1
-		
 		_runiforms.SetMat4f( "InverseProjectionMatrix",_invProjMatrix )
 		
 		RenderQuad()
+	End
+	
+	Method RenderDeferredFog()
 		
-		_gdevice.RenderTarget=_renderTarget0
+		If _scene.FogColor.a=0 Return
+		
+		_gdevice.ColorMask=ColorMask.All
+		_gdevice.DepthMask=False
+		_gdevice.DepthFunc=DepthFunc.Always
+		_gdevice.BlendMode=BlendMode.Alpha
+		_gdevice.RenderPass=0
+		
+		_gdevice.Shader=_deferredFogShader
+		_gdevice.CullMode=CullMode.None
+		
+		RenderQuad()
 	End
 	
 	Method RenderOpaqueDeferred()
-
+		
 		_gdevice.ColorMask=ColorMask.All
 		_gdevice.DepthMask=True
 		_gdevice.DepthFunc=DepthFunc.LessEqual
@@ -254,11 +266,15 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 		RenderOpaqueOps()
 		
+		'only write to accum buffer only from now on...
+		_gdevice.RenderTarget=_renderTarget1
+		
 		For Local light:=Eachin _scene.Lights
 			
 			RenderDeferredLighting( light )
 		Next
 		
+		RenderDeferredFog()
 	End
 	
 	Method RenderOpaqueForward()
@@ -315,30 +331,10 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		
 	End
 	
-	Method RenderDeferredFog()
-		
-		If _scene.FogColor.a=0 Return
-		
-		_gdevice.ColorMask=ColorMask.All
-		_gdevice.DepthMask=False
-		_gdevice.DepthFunc=DepthFunc.Always
-		_gdevice.BlendMode=BlendMode.Alpha
-		_gdevice.RenderPass=0
-		
-		_gdevice.RenderTarget=_renderTarget1
-		_gdevice.Shader=_deferredFogShader
-		_gdevice.CullMode=CullMode.None
-		
-		RenderQuad()
-
-		_gdevice.RenderTarget=_renderTarget0
-	End
-	
 	Method RenderOpaque()
 		
 		If _deferred 
 			RenderOpaqueDeferred()
-			RenderDeferredFog()
 		Else 
 			RenderOpaqueForward()
 		Endif
@@ -355,6 +351,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	End
 
 	Method RenderTransparent()
+		
+		If _deferred _gdevice.RenderTarget=_renderTarget0
 
 		Local first:=True
 		
@@ -553,6 +551,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	End
 	
 	Method RenderPostEffects()
+		
+		If _deferred _gdevice.RenderTarget=_renderTarget1
 		
 		PostEffect.BeginRendering( _gdevice,_runiforms )
 		
@@ -908,6 +908,8 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		If _accumBuffer And size.x<=_accumBuffer.Size.x And size.y<=_accumBuffer.Size.y Return
 		
 		_accumBuffer?.Discard()
+		_colorBuffer?.Discard()
+		_normalBuffer?.Discard()
 		_depthBuffer?.Discard()
 		_renderTarget0?.Discard()
 		_renderTarget1?.Discard()

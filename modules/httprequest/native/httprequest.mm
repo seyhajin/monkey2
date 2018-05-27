@@ -4,129 +4,101 @@
 #include "../../std/async/native/async.h"
 
 struct bbHttpRequest::Rep{
-	NSMutableURLRequest *_req;
-	NSString *_response;
-	int _status;	
+
+	NSMutableURLRequest *_req=0;
+
+	NSURLSessionDataTask *_dataTask=0;
 };
-
-namespace{
-
-	struct ReadyStateChangedEvent : public bbAsync::Event{
-
-		bbHttpRequest *req;
-		int state;
-
-		ReadyStateChangedEvent( bbHttpRequest *req,int state ):req( req ),state( state ){
-		}
-		
-		void dispatch(){
-		
-			if( state==req->_readyState ){
-		
-				if( req->_readyState==4 ){
-					req->_response=bbString( req->_rep->_response );
-					req->_status=req->_rep->_status;
-				}
-			
-				req->readyStateChanged();
-			}
-			
-			bbGC::release( req );
-			
-			delete this;
-		}
-	};
-
-}
 
 bbHttpRequest::bbHttpRequest(){
 
 	_rep=new Rep;
 }
 
-bbHttpRequest::bbHttpRequest( bbString req,bbString url,bbFunction<void()> readyStateChanged ):bbHttpRequest(){
+bbHttpRequest::~bbHttpRequest(){
 
-	this->readyStateChanged=readyStateChanged;
+#if !__has_feature(objc_arc)
+	if( _rep->_req ) [_rep->_req release];
+#endif
 
-	open( req,url );
-}
-	
-bbReadyState bbHttpRequest::readyState(){
-	
-	return (bbReadyState)_readyState;
-}
-	
-bbString bbHttpRequest::responseText(){
-
-	return _response;
-}
-	
-int bbHttpRequest::status(){
-	
-	return _status;
+	delete _rep;
 }
 	
 void bbHttpRequest::open( bbString req,bbString url ){
 	
-	if( _readyState!=0 ) return;
+	if( readyState!=0 ) return;
 	
-	NSMutableURLRequest *nsreq=[[NSMutableURLRequest alloc] init];
+	_rep->_req=[[NSMutableURLRequest alloc] init];
 		
-	[nsreq setHTTPMethod:req.ToNSString()];
+	[_rep->_req setHTTPMethod:req.ToNSString()];
 	
-	[nsreq setURL:[NSURL URLWithString:url.ToNSString()]];
+	[_rep->_req setURL:[NSURL URLWithString:url.ToNSString()]];
 	
-	if( [nsreq respondsToSelector:@selector(setAllowsCellularAccess:)] ){
-		[nsreq setAllowsCellularAccess:YES];
+	if( [_rep->_req respondsToSelector:@selector(setAllowsCellularAccess:)] ){
+		[_rep->_req setAllowsCellularAccess:YES];
 	}
 	
-	_rep->_req=nsreq;
-		
-	_readyState=1;
+	setReadyState( 1 );
 }
 	
 void bbHttpRequest::setHeader( bbString name,bbString value ){
 	
-	if( _readyState!=1 ) return;
+	if( readyState!=1 ) return;
 		
 	[_rep->_req setValue:value.ToNSString() forHTTPHeaderField:name.ToNSString()];
 }
-	
-void bbHttpRequest::send(){
-	
-	send( "" );
-}
-	
-void bbHttpRequest::send( bbString text ){
-	
-	if( _readyState!=1 ) return;
-		
-	bbGC::retain( this );
 
-	_readyState=3;	//loading
+void bbHttpRequest::send( bbString text,float timeout ){
 	
-    std::thread( [=](){
+	if( readyState!=1 ) return;
+	
+	NSURLSession *session=[NSURLSession sharedSession];
+		
+	_rep->_dataTask=[session dataTaskWithRequest:_rep->_req completionHandler:
+	
+	^( NSData *data,NSURLResponse *response,NSError *error ){
+	
+		if( !error ){
+		
+			NSString *str=[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+		
+			this->response=bbString( str );
+			
+#if !__has_feature(objc_arc)
+			[str release];
+#endif
 
-		NSURLResponse *response=0;
-			
-		NSData *data=[NSURLConnection sendSynchronousRequest:_rep->_req returningResponse:&response error:0];
+		    status=[(NSHTTPURLResponse*)response statusCode];
+		    
+		    setReadyState( 4 );
+		    
+		}else{
 		
-		if( data && response ){
-			
-		  	_rep->_response=[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-		
-		    _rep->_status=[(NSHTTPURLResponse*)response statusCode];
-			    
-		    //_recv=[data length];
+			setReadyState( 5 );
 		}
 		
-		_readyState=4;	//loaded
-		
-		ReadyStateChangedEvent *ev=new ReadyStateChangedEvent( this,_readyState );
-		
-		ev->post();
-			
-	} ).detach();
+		bbGC::release( this );
+	}
+	
+	];
+	
+	[_rep->_dataTask resume];
+
+	bbGC::retain( this );
+	
+	setReadyState( 3 );
+}
+
+void bbHttpRequest::cancel(){
+
+	if( _rep->_dataTask ) [_rep->_dataTask cancel];
+}
+
+void bbHttpRequest::setReadyState( int state ){
+
+	readyState=state;
+	
+	readyStateChanged();
 }
 
 void bbHttpRequest::gcMark(){

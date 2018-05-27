@@ -60,9 +60,8 @@ Class MyWindow Extends Window
 		Local model:=Model.Load( "asset::fish.glb" )
 		model.Mesh.FitVertices( New Boxf( -1,1 ) )
 		
-		Local root:=New Entity
+		Local root:=New Pivot
 		root.AddComponent<RotateBehaviour>().Speed=New Vec3f( 0,.1,0 )
-		root.Visible=True
 		
 		For Local an:=0 Until 360 Step 9
 			

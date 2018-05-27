@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Monkey2HttpRequest{
 
@@ -18,7 +21,7 @@ public class Monkey2HttpRequest{
 	
 	int readyState;
 	
-	boolean busy;
+	boolean sending;
 
     native void onNativeReadyStateChanged( int state );
     
@@ -47,28 +50,34 @@ public class Monkey2HttpRequest{
 			
 		}catch( IOException ex ){
 		
+			Log.v( TAG,ex.toString() );
+				
 			setReadyState( 5 );
 		}		
 	}
 	
 	void setHeader( String name,String value ){
 	
-		if( readyState!=1 || busy ) return;
+		if( readyState!=1 || sending ) return;
 	
 		connection.setRequestProperty( name,value );
 	}
 	
-	void send( final String text ){
+	void send( final String text,final int timeout ){
 	
-		if( readyState!=1 || busy ) return;
+		if( readyState!=1 || sending ) return;
+				
+		sending=true;
 		
-		busy=true;
+		new Thread( new Runnable(){
 		
-		new Thread( new Runnable() {
-
-			public void run() {
-
-				try {
+			public void run(){
+			
+				connection.setConnectTimeout( timeout );
+		
+				connection.setReadTimeout( timeout );
+				
+				try{
 				
 					if( text!=null && text.length()!=0 ){
 			
@@ -86,12 +95,12 @@ public class Monkey2HttpRequest{
 					
 					setReadyState( 3 );
 
-					byte[] buf = new byte[4096];
+					byte[] buf=new byte[4096];
 					ByteArrayOutputStream out=new ByteArrayOutputStream(1024);
-					for (; ; ) {
-						int n = in.read(buf);
-						if (n < 0) break;
-						out.write(buf, 0, n);
+					for( ;; ){
+						int n=in.read( buf );
+						if( n<0 ) break;
+						out.write( buf,0,n );
 					}
 					in.close();
 
@@ -103,14 +112,22 @@ public class Monkey2HttpRequest{
 					
 					readyState=4;
 					
-				} catch ( IOException ex) {
+				}catch( IOException ex ){
+				
+					Log.v( TAG,ex.toString() );
 				
 					setReadyState( 5 );
 				}
-				
-				busy=false;
+
+				connection.disconnect();
+
+				sending=false;
 			}
-			
 		} ).start();
+	}
+	
+	void cancel(){
+	
+		connection.disconnect();
 	}
 }
