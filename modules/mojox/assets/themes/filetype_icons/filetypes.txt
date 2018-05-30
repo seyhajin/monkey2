@@ -42,7 +42,6 @@ htm.png
 html.png
 ics.png
 image.png
-index.html
 iso.png
 jar.png
 java.png
@@ -77,7 +76,6 @@ py.png
 ram.png
 rar.png
 rb.png
-readme.url
 rm.png
 rpm.png
 rtf.png
