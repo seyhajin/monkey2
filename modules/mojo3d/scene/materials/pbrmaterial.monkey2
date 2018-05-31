@@ -54,6 +54,7 @@ Class PbrMaterial Extends Material
 	
 	'***** textures *****
 	
+	[jsonify=1]
 	Property Boned:Bool()
 		
 		Return (AttribMask & 192)=192
@@ -63,6 +64,7 @@ Class PbrMaterial Extends Material
 		If boned AttribMask|=192 Else AttribMask&=~192
 	End
 	
+	[jsonify=1]
 	Property ColorTexture:Texture()
 	
 		Return Uniforms.GetTexture( "ColorTexture" )
@@ -74,6 +76,7 @@ Class PbrMaterial Extends Material
 		UpdateAttribMask()
 	End
 	
+	[jsonify=1]
 	Property AmbientTexture:Texture()
 		
 		Return Uniforms.GetTexture( "AmbientTexture" )
@@ -85,6 +88,7 @@ Class PbrMaterial Extends Material
 		UpdateAttribMask()
 	End
 	
+	[jsonify=1]
 	Property EmissiveTexture:Texture()
 	
 		Return Uniforms.GetTexture( "EmissiveTexture" )
@@ -96,6 +100,7 @@ Class PbrMaterial Extends Material
 		UpdateAttribMask()
 	End
 	
+	[jsonify=1]
 	Property MetalnessTexture:Texture()
 	
 		Return Uniforms.GetTexture( "MetalnessTexture" )
@@ -107,6 +112,7 @@ Class PbrMaterial Extends Material
 		UpdateAttribMask()
 	End
 
+	[jsonify=1]
 	Property RoughnessTexture:Texture()
 	
 		Return Uniforms.GetTexture( "RoughnessTexture" )
@@ -118,6 +124,7 @@ Class PbrMaterial Extends Material
 		UpdateAttribMask()
 	End
 	
+	[jsonify=1]
 	Property OcclusionTexture:Texture()
 	
 		Return Uniforms.GetTexture( "OcclusionTexture" )
@@ -129,6 +136,7 @@ Class PbrMaterial Extends Material
 		UpdateAttribMask()
 	End
 	
+	[jsonify=1]
 	Property NormalTexture:Texture()
 	
 		Return Uniforms.GetTexture( "NormalTexture" )
