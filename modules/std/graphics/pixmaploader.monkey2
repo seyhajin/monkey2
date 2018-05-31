@@ -70,15 +70,15 @@ Function LoadPixmap:Pixmap( path:String,format:PixelFormat )
 	Local req_comp:Int,isfloat:Bool
 	
 	Select format
+	Case PixelFormat.I8,PixelFormat.IA8,PixelFormat.RGB8,PixelFormat.RGBA8
+		isfloat=False
+		req_comp=PixelFormatDepth( format )
 	Case PixelFormat.RGB32F
 		isfloat=True
 		req_comp=3
 	Case PixelFormat.RGBA32F
 		isfloat=True
 		req_comp=4
-	Case PixelFormat.IA8,PixelFormat.RGB8,PixelFormat.RGBA8
-		isfloat=False
-		req_comp=PixelFormatDepth( format )
 	Case PixelFormat.Unknown
 		Local pos:=stream.Position
 		isfloat=stbi_is_hdr_from_callbacks( Varptr clbks,Varptr user )
@@ -98,24 +98,26 @@ Function LoadPixmap:Pixmap( path:String,format:PixelFormat )
 		
 		data=Cast<UByte Ptr>( stbi_loadf_from_callbacks( Varptr clbks,Varptr user,Varptr x,Varptr y,Varptr comp,req_comp ) )
 		
-		Select comp
-		Case 1 format=PixelFormat.I32F
-		Case 2 format=PixelFormat.IA32F
-		Case 3 format=PixelFormat.RGB32F
-		Case 4 format=PixelFormat.RGBA32F
-		Default format=PixelFormat.Unknown
-		End
+		If format=PixelFormat.Unknown
+			Select comp
+			Case 1 format=PixelFormat.I32F
+			Case 2 format=PixelFormat.IA32F
+			Case 3 format=PixelFormat.RGB32F
+			Case 4 format=PixelFormat.RGBA32F
+			End
+		Endif
 	Else
 		
-		data=stbi_load_from_callbacks( Varptr clbks,Varptr user,Varptr x,Varptr y,Varptr comp,0 )
+		data=stbi_load_from_callbacks( Varptr clbks,Varptr user,Varptr x,Varptr y,Varptr comp,req_comp )
 		
-		Select comp
-		Case 1 format=PixelFormat.I8
-		Case 2 format=PixelFormat.IA8
-		Case 3 format=PixelFormat.RGB8
-		Case 4 format=PixelFormat.RGBA8
-		Default format=PixelFormat.Unknown
-		End
+		If format=PixelFormat.Unknown
+			Select comp
+			Case 1 format=PixelFormat.I8
+			Case 2 format=PixelFormat.IA8
+			Case 3 format=PixelFormat.RGB8
+			Case 4 format=PixelFormat.RGBA8
+			End
+		Endif
 	Endif
 	
 	stream.Close()
