@@ -33,6 +33,8 @@ void main(){
 		frag=pow( texture2D( r_SkyTexture2D,vec2( y,p ) ).rgb,vec3( 2.2 ) );
 	}
 	
+	frag*=r_SkyColor.rgb;
+	
 #if MX2_DEFERREDRENDERER
 	gl_FragData[0]=vec4( frag,1.0 );					//accum
 	gl_FragData[1]=vec4( 0.0,0.0,0.0,1.0 );				//color_m

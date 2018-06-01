@@ -124,9 +124,9 @@ Class Model Extends Renderable
 		
 		Local scene:=mojo3d.Scene.GetCurrent()
 		
-		Local editing:=scene.Editing
-		
-		If editing scene.Jsonifier.BeginLoading()
+		If scene.Editing
+			scene.Jsonifier.BeginLoading()
+		Endif
 		
 		Local model:Model
 		
@@ -137,9 +137,10 @@ Class Model Extends Renderable
 			If model Exit
 		Next
 		
-		If editing scene.Jsonifier.EndLoading()
-		
-		If editing scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
+		If scene.Editing
+			scene.Jsonifier.EndLoading()
+			If model scene.Jsonifier.AddInstance( model,"mojo3d.Model.Load",New Variant[]( path )  )
+		Endif
 		
 		Return model
 	End
@@ -161,15 +162,28 @@ Class Model Extends Renderable
 	
 	#end
 	Function LoadBoned:Model( path:String )
+		
+		Local scene:=mojo3d.Scene.GetCurrent()
+		
+		If scene.Editing
+			scene.Jsonifier.BeginLoading()
+		Endif
+		
+		Local model:Model		
 	
 		For Local loader:=Eachin Mojo3dLoader.Instances
 		
-			Local model:=loader.LoadBonedModel( path )
+			model=loader.LoadBonedModel( path )
 			
-			If model Return model
+			If model Exit
 		Next
 		
-		Return Null
+		If scene.Editing
+			scene.Jsonifier.EndLoading()
+			If model scene.Jsonifier.AddInstance( model,"mojo3d.Model.LoadBoned",New Variant[]( path )  )
+		Endif
+		
+		Return model
 	End
 	
 	Protected
