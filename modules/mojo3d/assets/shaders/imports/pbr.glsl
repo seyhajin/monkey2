@@ -7,9 +7,9 @@
 
 float pointAtten( float d,float r ){
 
-	float atten=1.0-min( (d*d)/(r*r),1.0 );atten*=atten;
+//	float atten=1.0-min( (d*d)/(r*r),1.0 );atten*=atten;
 
-//	float atten=1.0-min( d/r,1.0 );atten*=atten;
+	float atten=1.0-min( d/r,1.0 );atten*=atten;
 	
 //	float atten=1.0/(1.0+d*d);
 
