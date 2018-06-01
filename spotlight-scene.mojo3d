@@ -6,7 +6,10 @@
 			"decl":"mojo3d.Scene.New",
 			"type":"Void(Bool)"
 		},
-		"id":0,
+		"id":"#0",
+		"state":{
+			"ShadowAlpha":0.75
+		},
 		"type":"mojo3d.Scene"
 	},{
 		"ctor":{
@@ -14,18 +17,18 @@
 			"decl":"mojo3d.Camera.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":1,
+		"id":"#1",
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,2.5,-10]
 		},
 		"type":"mojo3d.Camera"
 	},{
 		"ctor":{
-			"args":["@1"],
+			"args":["#1"],
 			"decl":"mojo3d.FlyBehaviour.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":2,
+		"id":"#2",
 		"type":"mojo3d.FlyBehaviour"
 	},{
 		"ctor":{
@@ -33,13 +36,14 @@
 			"decl":"mojo3d.Light.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":3,
+		"id":"#3",
 		"state":{
 			"CastsShadow":true,
+			"Color":[8,8,8,8],
 			"LocalMatrix":[1,0,0,0,-4.3711388286737929e-08,1,0,-1,-4.3711388286737929e-08,0,10,0],
 			"OuterAngle":45,
-			"Range":25,
-			"Texture":"@4",
+			"Range":15,
+			"Texture":"#4",
 			"Type":3
 		},
 		"type":"mojo3d.Light"
@@ -47,10 +51,10 @@
 		"ctor":{
 			"args":["asset::monkey2-logo.png",12,false],
 			"decl":"mojo3d.Scene.LoadTexture",
-			"inst":"@0",
+			"inst":"#0",
 			"type":"mojo.graphics.Texture(String,mojo.graphics.TextureFlags,Bool)"
 		},
-		"id":4,
+		"id":"#4",
 		"type":"mojo.graphics.Texture"
 	},{
 		"ctor":{
@@ -58,7 +62,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":5,
+		"id":"#5",
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -66,15 +70,15 @@
 			"decl":"mojo3d.Mesh.CreateBox",
 			"type":"mojo3d.Mesh(std.geom.Box<monkey.types.Float>,Int,Int,Int)"
 		},
-		"id":6,
+		"id":"#6",
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
-			"args":["@6","@5",null],
+			"args":["#6","#5",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":7,
+		"id":"#7",
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
@@ -82,7 +86,7 @@
 			"decl":"mojo3d.PbrMaterial.New",
 			"type":"Void(std.graphics.Color,Float,Float)"
 		},
-		"id":8,
+		"id":"#8",
 		"type":"mojo3d.PbrMaterial"
 	},{
 		"ctor":{
@@ -90,26 +94,26 @@
 			"decl":"mojo3d.Mesh.CreateTorus",
 			"type":"mojo3d.Mesh(Float,Float,Int,Int)"
 		},
-		"id":9,
+		"id":"#9",
 		"type":"mojo3d.Mesh"
 	},{
 		"ctor":{
-			"args":["@9","@8",null],
+			"args":["#9","#8",null],
 			"decl":"mojo3d.Model.New",
 			"type":"Void(mojo3d.Mesh,mojo3d.Material,mojo3d.Entity)"
 		},
-		"id":10,
+		"id":"#10",
 		"state":{
 			"LocalMatrix":[1,0,0,0,1,0,0,0,1,0,2.5,0]
 		},
 		"type":"mojo3d.Model"
 	},{
 		"ctor":{
-			"args":["@10"],
+			"args":["#10"],
 			"decl":"mojo3d.RotateBehaviour.New",
 			"type":"Void(mojo3d.Entity)"
 		},
-		"id":11,
+		"id":"#11",
 		"state":{
 			"Speed":[0.20000000298023224,0.40000000596046448,0.60000002384185791]
 		},
