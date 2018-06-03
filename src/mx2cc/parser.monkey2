@@ -21,6 +21,19 @@ Class Parser
 	End	
 
 	Method ParseFile:FileDecl( ident:String,srcPath:String,ppsyms:StringMap<String> )
+		
+		Local gpath:=""
+		
+		If Builder.opts.geninfo
+			
+			Local dir:=ExtractDir( srcPath )+".mx2/"
+			Local name:=StripDir( srcPath )
+			Local path:=dir+name
+			
+			If GetFileType( path )=FileType.File srcPath=path
+				
+			gpath=StripExt( path )+".geninfo"
+		Endif
 	
 		_ppsyms=ppsyms
 		
@@ -30,6 +43,7 @@ Class Parser
 		_fdecl=New FileDecl
 		_fdecl.ident=ident
 		_fdecl.path=srcPath
+		_fdecl.gpath=gpath
 		_fdecl.nmspace=""
 		
 		Local source:=LoadString( srcPath )
@@ -1049,9 +1063,13 @@ Class Parser
 			SkipToNextLine()
 		End
 		
-		Local cases:=New Stack<CaseExpr>
+		Local cases:=New Stack<CaseStmtExpr>
 		
-		While CParse( "case" )
+		While Toke="case"
+			
+			Local srcpos:=SrcPos
+			
+			Bump()
 
 			Local exprs:=New Stack<Expr>
 
@@ -1070,18 +1088,22 @@ Class Parser
 			
 			Local stmts:=ParseStmts( True )
 			
-			cases.Push( New CaseExpr( exprs.ToArray(),stmts ) )
+			cases.Push( New CaseStmtExpr( exprs.ToArray(),stmts,srcpos,SrcPos ) )
 		Wend
 		
 		If cases.Empty ErrorNx( "Select statement must have at least one case" )
-		
-		If CParse( "default" )
+			
+		If Toke="default"
+			
+			Local srcpos:=SrcPos
+			
+			Bump()
 		
 			CParseEol()
 		
 			Local stmts:=ParseStmts( True )
 			
-			cases.Push( New CaseExpr( Null,stmts ) )
+			cases.Push( New CaseStmtExpr( Null,stmts,srcpos,SrcPos ) )
 		Endif
 		
 		Try
@@ -1112,7 +1134,7 @@ Class Parser
 		
 		Local stmts:=ParseStmts( True )
 		
-		Local catches:=New Stack<CatchExpr>
+		Local catches:=New Stack<CatchStmtExpr>
 		
 		While Toke="catch"
 		
@@ -1137,7 +1159,7 @@ Class Parser
 			
 			Local stmts:=ParseStmts( True )
 			
-			catches.Push( New CatchExpr( varIdent,varType,stmts ) )
+			catches.Push( New CatchStmtExpr( varIdent,varType,stmts,srcpos,SrcPos ) )
 		Wend
 		
 		Try

@@ -1,7 +1,19 @@
 
 Namespace mx2.geninfo
 
-Class ParseInfoGenerator
+#rem
+
+Possible optimizations:
+
+* Use semType for functions.
+
+* Erase blocks with no vardecls.
+
+* Remove 'monkey.types.' prefix from primitive sem types.
+
+#end
+
+Class GeninfoGenerator
 
 	Method GenParseInfo:JsonValue( fdecl:FileDecl )
 	
@@ -10,26 +22,63 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Private
+	Method GenSemantInfo()
+		
+		For Local fdecl:=Eachin Builder.mainModule.fileDecls
+			
+			If Not fdecl.gpath Continue
+			
+'			Print "path="+fdecl.path+" gpath="+fdecl.gpath
+			
+			Local jobj:=GenParseInfo( fdecl )
+			
+			Local json:=jobj.ToJson()
+			
+			CreateDir( ExtractDir( fdecl.gpath ) )
+			
+			CSaveString( json,fdecl.gpath )
+		Next
+		
+	End
 	
-	'Generic...
-	'
+	Private
+
 	Method GenNode<T>:JsonArray( args:T[] )
 	
-		Local arr:=New JsonArray
+		Local jarr:=New JsonArray
+		
 		For Local arg:=Eachin args
-			arr.Push( GenNode( arg ) )
+			If Not arg Continue
+			
+'			Local jval:=GenNode( arg )
+'			If jval jarr.Add( jval )
+
+			Local jval:=GenNode( arg )
+			If Not jval Continue
+			
+			Local jarr2:=Cast<JsonArray>( jval )
+			
+			If jarr2 
+				For Local jval:=Eachin jarr2
+					jarr.Add( jval )
+				Next
+			Else
+				jarr.Add( jval )
+			Endif
 		Next
-		Return arr
+		
+		Return jarr
 	End
 	
 	Method GenNode:JsonArray( args:String[] )
 
-		Local arr:=New JsonArray
+		Local jarr:=New JsonArray
+			
 		For Local arg:=Eachin args
-			arr.Push( New JsonString( arg ) )
+			jarr.Add( New JsonString( arg ) )
 		Next
-		Return arr
+		
+		Return jarr
 	End
 	
 	'Decls...
@@ -49,7 +98,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( decl:Decl )
+	Method GenNode:JsonValue( decl:Decl )
 	
 		Local classDecl:=Cast<ClassDecl>( decl )
 		If classDecl Return GenNode( classDecl )
@@ -69,7 +118,7 @@ Class ParseInfoGenerator
 		Return MakeNode( decl )
 	End
 
-	Method GenNode:JsonObject( decl:FileDecl )
+	Method GenNode:JsonValue( decl:FileDecl )
 	
 		local node:=MakeNode( decl )
 		
@@ -81,7 +130,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( decl:ClassDecl )
+	Method GenNode:JsonValue( decl:ClassDecl )
 	
 		Local node:=MakeNode( decl )
 		
@@ -94,7 +143,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 
-	Method GenNode:JsonObject( decl:FuncDecl )
+	Method GenNode:JsonValue( decl:FuncDecl )
 
 		Local node:=MakeNode( decl )
 		
@@ -103,11 +152,13 @@ Class ParseInfoGenerator
 		If decl.type node.SetValue( "type",GenNode( decl.type ) )
 		
 		If decl.whereExpr node.SetValue( "where",GenNode( decl.whereExpr ) )
-		
+			
+		If decl.stmts node.SetValue( "stmts",GenNode( decl.stmts ) )
+			
 		Return node
 	End
 	
-	Method GenNode:JsonObject( decl:AliasDecl )
+	Method GenNode:JsonValue( decl:AliasDecl )
 
 		Local node:=MakeNode( decl )
 		
@@ -118,18 +169,20 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( decl:VarDecl )
+	Method GenNode:JsonValue( decl:VarDecl )
 	
 		Local node:=MakeNode( decl )
 		
 		If decl.type node.SetValue( "type",GenNode( decl.type ) )
 		
 		If decl.init node.SetValue( "init",GenNode( decl.init ) )
-		
+			
+		If decl.semtype node.SetString( "semtype",decl.semtype.Name )
+			
 		Return node
 	End
 	
-	Method GenNode:JsonObject( decl:PropertyDecl )
+	Method GenNode:JsonValue( decl:PropertyDecl )
 	
 		Local node:=MakeNode( decl )
 		
@@ -139,6 +192,102 @@ Class ParseInfoGenerator
 		
 		Return node
 	
+	End
+	
+	'StmtExprs...
+	Method MakeNode:JsonObject( stmt:StmtExpr,kind:String )
+	
+		Local node:=New JsonObject
+
+		node.SetString( "srcpos",(stmt.srcpos Shr 12)+":"+(stmt.srcpos & $fff) )
+		node.SetString( "endpos",(stmt.endpos Shr 12)+":"+(stmt.endpos & $fff) )
+		node.SetString( "kind",kind )
+		
+		Return node
+	End
+	
+	Method GenNode:JsonValue( stmt:StmtExpr )
+		
+		Local vdeclStmt:=Cast<VarDeclStmtExpr>( stmt )
+		If vdeclStmt Return GenNode( vdeclStmt.decl )
+		
+		Local ifStmt:=Cast<IfStmtExpr>( stmt )
+		If ifStmt Return GenNode( ifStmt )
+		
+		Local whileStmt:=Cast<WhileStmtExpr>( stmt )
+		If whileStmt Return GenNode( whileStmt )
+		
+		Local repeatStmt:=Cast<RepeatStmtExpr>( stmt )
+		If repeatStmt Return GenNode( repeatStmt )
+		
+		Local selectStmt:=Cast<SelectStmtExpr>( stmt )
+		If selectStmt Return GenNode( selectStmt )
+		
+		Local forStmt:=Cast<ForStmtExpr>( stmt )
+		If forStmt Return GenNode( forStmt )
+		
+		Local tryStmt:=Cast<TryStmtExpr>( stmt )
+		If tryStmt Return GenNode( tryStmt )
+		
+		Return Null
+	End
+	
+	Method GenNode:JsonValue( ifStmt:IfStmtExpr )
+
+		Local jarr:=New JsonArray
+		While ifStmt
+			Local jobj:=MakeNode( ifStmt,"block" )
+			jobj.SetValue( "stmts",GenNode( ifStmt.stmts ) )
+			jarr.Add( jobj )
+			ifStmt=ifStmt.succ
+		Wend
+		Return jarr
+	End
+	
+	Method GenNode:JsonValue( whileStmt:WhileStmtExpr )
+		
+		Local jobj:=MakeNode( whileStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( whileStmt.stmts ) )
+		Return jobj
+	End
+	
+	Method GenNode:JsonValue( repeatStmt:RepeatStmtExpr )
+
+		Local jobj:=MakeNode( repeatStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( repeatStmt.stmts ) )
+		Return jobj
+	End
+	
+	Method GenNode:JsonValue( selectStmt:SelectStmtExpr )
+		
+		Local jarr:=New JsonArray
+		For Local caseStmt:=Eachin selectStmt.cases
+			Local jobj:=MakeNode( caseStmt,"block" )
+			jobj.SetValue( "stmts",GenNode( caseStmt.stmts ) )
+			jarr.Add( jobj )
+		Next
+		Return jarr
+	End
+	
+	Method GenNode:JsonValue( forStmt:ForStmtExpr )
+		
+		Local jobj:=MakeNode( forStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( forStmt.stmts ) )
+		Return jobj
+	End
+	
+	Method GenNode:JsonValue( tryStmt:TryStmtExpr )
+
+		Local jarr:=New JsonArray
+		Local jobj:=MakeNode( tryStmt,"block" )
+		jobj.SetValue( "stmts",GenNode( tryStmt.stmts ) )
+		jarr.Add( jobj )
+		For Local catchStmt:=Eachin tryStmt.catches
+			Local jobj:=MakeNode( catchStmt,"block" )
+			jobj.SetValue( "stmts",GenNode( catchStmt.stmts ) )
+			jarr.Add( jobj )
+		Next
+		Return jarr
 	End
 	
 	'Expressions...
@@ -154,8 +303,8 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( expr:Expr )
-	
+	Method GenNode:JsonValue( expr:Expr )
+		
 		Local identExpr:=Cast<IdentExpr>( expr )
 		If identExpr Return GenNode( identExpr )
 		
@@ -186,7 +335,7 @@ Class ParseInfoGenerator
 		Return MakeNode( expr,"????Expr?????" )
 	End
 	
-	Method GenNode:JsonObject( expr:IdentExpr )
+	Method GenNode:JsonValue( expr:IdentExpr )
 	
 		Local node:=MakeNode( expr,"ident" )
 		
@@ -195,7 +344,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( expr:MemberExpr )
+	Method GenNode:JsonValue( expr:MemberExpr )
 	
 		Local node:=MakeNode( expr,"member" )
 		
@@ -206,7 +355,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( expr:GenericExpr )
+	Method GenNode:JsonValue( expr:GenericExpr )
 
 		Local node:=MakeNode( expr,"generic" )
 		
@@ -217,7 +366,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( expr:LiteralExpr )
+	Method GenNode:JsonValue( expr:LiteralExpr )
 	
 		Local node:=MakeNode( expr,"literal" )
 		
@@ -226,7 +375,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( expr:NewObjectExpr )
+	Method GenNode:JsonValue( expr:NewObjectExpr )
 	
 		Local node:=MakeNode( expr,"newobject" )
 		
@@ -237,7 +386,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 		
-	Method GenNode:JsonObject( expr:NewArrayExpr )
+	Method GenNode:JsonValue( expr:NewArrayExpr )
 	
 		Local node:=MakeNode( expr,"newarray" )
 		
@@ -250,7 +399,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 		
-	Method GenNode:JsonObject( expr:FuncTypeExpr )
+	Method GenNode:JsonValue( expr:FuncTypeExpr )
 
 		Local node:=MakeNode( expr,"functype" )
 		
@@ -261,7 +410,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 
-	Method GenNode:JsonObject( expr:ArrayTypeExpr )
+	Method GenNode:JsonValue( expr:ArrayTypeExpr )
 	
 		Local node:=MakeNode( expr,"arraytype" )
 		
@@ -272,7 +421,7 @@ Class ParseInfoGenerator
 		Return node
 	End
 	
-	Method GenNode:JsonObject( expr:PointerTypeExpr )
+	Method GenNode:JsonValue( expr:PointerTypeExpr )
 	
 		Local node:=MakeNode( expr,"pointertype" )
 		
@@ -280,5 +429,5 @@ Class ParseInfoGenerator
 		
 		Return node
 	End
-
+	
 End

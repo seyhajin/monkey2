@@ -81,10 +81,11 @@ Class Toker
 		_toke=""
 		_tokePos=0
 		_tokeType=TOKE_EOL
-		_line=0
 		_srcPos=0
 		_endPos=0
 		_linePos=0
+		_line=1
+		_flags=0
 	End
 	
 	Property Toke:String()
@@ -139,27 +140,27 @@ Class Toker
 		_srcPos=toker._srcPos
 		_endPos=toker._endPos
 		_linePos=toker._linePos
+		_flags=toker._flags
 	End
 	
 	Method Bump:String()
-	
-		Local newLine:=False
-		If _tokeType=TOKE_EOL Or _tokeType=TOKE_PREPROC
-			_line+=1
-			_linePos=_pos
-			newLine=True
-		End
-	
+		
+		'update endpos
+		If _flags & 1 _endPos=(_line Shl 12) | (_pos-_linePos)
+		
+		'skip whitespace
 		While _pos<_len And _text[_pos]<=32 And _text[_pos]<>CHAR_EOL
 			_pos+=1
 		Wend
-		
+
+		'update toke start pos
+		_toke=""		
 		_tokePos=_pos
-		_endPos=_srcPos+_toke.Length
-		_srcPos=(_line Shl 12) | (_tokePos-_linePos)
-		
+		_srcPos=(_line Shl 12) | (_pos-_linePos)
+		_flags|=1
+
+		'check end of file
 		If _pos=_len
-			_toke=""
 			_tokeType=TOKE_EOF
 			Return _toke
 		Endif
@@ -185,8 +186,6 @@ Class Toker
 			Else
 				_tokeType=TOKE_IDENT
 			Endif
-			
-			Return _toke
 			
 		Else If IsDigit( ch ) Or (ch=CHAR_DOT And _pos<_len And IsDigit( _text[_pos] ))
 
@@ -227,12 +226,11 @@ Class Toker
 			While _pos<_len
 				Local ch:=_text[_pos]
 				If ch=CHAR_QUOTE Exit
-				If ch=CHAR_EOL
-					_line+=1
-					_linePos=_pos
-				
-				Endif
 				_pos+=1
+				If ch=CHAR_EOL
+					_linePos=_pos
+					_line+=1
+				Endif
 			Wend
 			If _pos<_len And _text[_pos]=CHAR_QUOTE
 				_tokeType=TOKE_STRINGLIT
@@ -250,13 +248,18 @@ Class Toker
 			
 			_tokeType=TOKE_INTLIT
 			
-		Else If ch=CHAR_HASH And newLine
+		Else If ch=CHAR_HASH And (_tokeType=TOKE_EOL Or _tokeType=TOKE_PREPROC)
 		
 			While _pos<_len And _text[_pos]<>CHAR_EOL
 				_pos+=1
 			Wend
+			If _pos<_len
+				_pos+=1
+				_linePos=_pos
+				_line+=1
+			Endif
 			
-			If _pos<_len _pos+=1
+			If _tokeType=TOKE_PREPROC Or _tokeType=TOKE_EOL _flags&=~1
 			
 			_tokeType=TOKE_PREPROC
 			
@@ -265,17 +268,25 @@ Class Toker
 			While _pos<_len And _text[_pos]<>CHAR_EOL
 				_pos+=1
 			Wend
+
+			If _pos<_len
+				_pos+=1
+				_linePos=_pos
+				_line+=1
+			Endif
 			
-			_tokePos=_pos
-			
-			If _pos<_len _pos+=1
+			If _tokeType=TOKE_PREPROC Or _tokeType=TOKE_EOL _flags&=~1
 			
 			_tokeType=TOKE_EOL
 			
 		Else If ch=CHAR_EOL
+			
+			_linePos=_pos
+			_line+=1
 		
+			If _tokeType=TOKE_PREPROC Or _tokeType=TOKE_EOL _flags&=~1
+				
 			_tokeType=TOKE_EOL
-
 		Else
 		
 			Local found:=False
@@ -303,11 +314,10 @@ Class Toker
 			Endif
 			
 			_tokeType=TOKE_SYMBOL
-
 		Endif
 		
-		_toke=_text.Slice( _tokePos,_pos )
-		
+		If Not _toke _toke=_text.Slice( _tokePos,_pos )
+
 		Return _toke
 	End
 	
@@ -323,6 +333,5 @@ Class Toker
 	Field _srcPos:Int
 	Field _endPos:Int
 	Field _linePos:Int
-	
+	Field _flags:Int
 End
-

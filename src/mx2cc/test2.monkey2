@@ -1,12 +1,3 @@
 
-
-Class VertexFormat
-	
-	Property Pitch:Int() Virtual
-		Return 0
-	End
-
-	Method UpdateGLAttribs() Virtual
-	End
+Function Test2()
 End
-
