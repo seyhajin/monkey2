@@ -22,6 +22,7 @@ This section of the monkey2 manual describes the monkey2 language.
 @import preprocessor.md
 @import reflection.md
 @import error-handling.md
+@import weak-references.md
 @import assets-management.md
 @import native-code.md
 @import build-system.md
