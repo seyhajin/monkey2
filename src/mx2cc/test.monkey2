@@ -1,24 +1,27 @@
 
-Class C
+Global weakRef:WeakRef
 
-	Method Update()
-		Print "Update!"
-	End
-		
+Class C
 End
 
-Class D
-
-	Method NewC:C()
-		
-		Return New C
-	End
+Function Test()
+	
+	weakRef=New WeakRef( New C )
 End
 
 Function Main()
 	
+	Test()
 	
-	(New D).NewC().Update()
+'	Local tmp:=weakRef.Target
+	
+	Print "weakRef valid="+(weakRef.Target<>Null)
+	
+	GCCollect()
+	GCCollect()
+
+	Print "weakRef valid="+(weakRef.Target<>Null)
+	
+	Print "Hello World"
 	
 End
-

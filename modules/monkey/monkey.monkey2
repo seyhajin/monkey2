@@ -10,6 +10,7 @@ Namespace monkey
 #Import "native/bbgc.cpp"
 #Import "native/bbobject.cpp"
 #Import "native/bbdebug.cpp"
+#Import "native/bbweakref.cpp"
 #Import "native/bbvariant.cpp"
 #Import "native/bbtypeinfo.cpp"
 #Import "native/bbdeclinfo.cpp"

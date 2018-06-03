@@ -777,3 +777,23 @@ Class DeclInfo Extends Void="bbDeclInfo"
 	Method Invoke:Variant( instance:Variant,params:Variant[] )="invoke"
 End
 
+#rem monkeydoc Weak reference class.
+
+A weak reference is an object that contains a reference to another object, but without preventing the other object from being garbage collected.
+
+The [[Target]] property returns the object being referenced, or null if the object has been garbage collected.
+
+A weak reference must be contructed with the object it references.
+
+#end
+Class WeakRef="bbGCWeakRef"
+	
+	Method New( target:Object )
+		
+	Property Target:Object()="getTarget"
+End
+
+	
+
+
+

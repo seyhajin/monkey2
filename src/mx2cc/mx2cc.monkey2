@@ -23,9 +23,9 @@ Global opts_time:Bool
 Global StartDir:String
 
 'Const TestArgs:="mx2cc makemods -verbose=1 -clean -target=emscripten pyro-framework"
-Const TestArgs:="mx2cc makemods -verbose -target=desktop pyro-framework"
+'Const TestArgs:="mx2cc makemods -verbose -target=desktop pyro-framework"
  
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 'Const TestArgs:="mx2cc makeapp -parse -geninfo src/mx2cc/test.monkey2"
 

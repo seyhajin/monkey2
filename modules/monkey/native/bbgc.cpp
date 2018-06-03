@@ -1,4 +1,6 @@
+
 #include "bbgc.h"
+#include "bbweakref.h"
 
 namespace bbDB{
 
@@ -98,6 +100,22 @@ namespace bbGC{
 			freed+=mallocSize( p );
 			
 			remove( p );
+			
+			if( p->flags & 2 ){
+
+				//printf( "deleting weak refs for: %s %p\n",p->typeName(),p );fflush( stdout );
+				
+				bbGCWeakRef **pred=&bbGC::weakRefs,*curr;
+				
+				while( curr=*pred ){
+					if( curr->target==p ){
+						curr->target=0;
+						*pred=curr->succ;
+					}else{
+						pred=&curr->succ;
+					}
+				}
+			}
 			
 			if( p->flags & 1 ){
 				
