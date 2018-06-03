@@ -5,7 +5,7 @@ Class Jsonifier
 Private
 	
 	Class Instance
-		Field id:Int
+		Field id:String
 		Field obj:Variant
 		Field ctor:Invocation
 		Field initialState:JsonObject
@@ -18,6 +18,7 @@ Private
 	Field _loading:Int
 	Field _instLoading:Int
 	Field _instsByObj:=New Map<Object,Instance>
+	Field _instsById:=New StringMap<Instance>
 	Field _insts:=New Stack<Instance>
 	
 Public
@@ -54,13 +55,16 @@ Public
 			inst.ctor=ctor
 			Return
 		Endif
+		
+		Local id:="#"+_insts.Length
 			
 		inst=New Instance
-		inst.id=_insts.Length
+		inst.id=id
 		inst.obj=obj
 		
-		_insts.Add( inst )
 		_instsByObj[tobj]=inst
+		_instsById[id]=inst
+		_insts.Add( inst )
 		
 		If _loading Return
 
@@ -80,8 +84,6 @@ Public
 		
 		For Local i:=0 Until _insts.Length
 			
-'			Print "Jsonifying "+i
-			
 			Local inst:=_insts[i]
 			Local tobj:=Cast<Object>( inst.obj )
 
@@ -98,13 +100,17 @@ Public
 				If CompareJson( x,y )<>0 dstate[it.Key]=x
 			Next
 			
+			'skip objects with no ctor and no delta state...
 			If Not inst.ctor And dstate.Empty Continue
 			
 			Local jobj:=New JsonObject
+			
 			jobj["type"]=New JsonString( tobj.DynamicType.Name )	'not actually used, cool for debug
 			
-			jobj["id"]=New JsonNumber( inst.id )
+			jobj["id"]=New JsonString( inst.id )
+			
 			If inst.ctor jobj["ctor"]=Jsonify( inst.ctor )
+				
 			If Not dstate.Empty jobj["state"]=dstate
 				
 			jinsts.Add( jobj )
@@ -123,51 +129,65 @@ Public
 		
 		Local jinsts:=jobj.GetArray( "instances" )
 
-		Local jobjsById:=New IntMap<JsonObject>
+		Local jobjsById:=New StringMap<JsonObject>
 		
 		For Local i:=0 Until jinsts.Length
 			
 			Local jobj:=jinsts.GetObject( i )
 			Assert( jobj.Contains( "id" ) )
 			
-			Local id:=jobj.GetNumber( "id" )
+			Local id:=jobj.GetString( "id" )
 			Assert( Not jobjsById.Contains( id ) )
 			
 			jobjsById[id]=jobj
 		Next
 		
-		Local id:=0
+		Local n:=0,ninsts:=_insts.Length
 		
 		For Local i:=0 Until jinsts.Length
 			
 			Local jobj:=jinsts.GetObject( i )
-			If Not jobj.Contains( "ctor" ) Continue
 			
-			If jobj.GetNumber( "id" )>=_insts.Length
+			Local inst:Instance
+			
+			If jobj.Contains( "ctor" ) And i>=ninsts
 				Local ctor:=Cast<Invocation>( Dejsonify( jobj["ctor"],Typeof<Invocation> ) )
-				ctor.Execute()
+				Local tobj:=Cast<Object>( ctor.Execute() )
+				inst=_instsByObj[tobj]
+			Else
+				inst=_insts[i]
 			Endif
 			
-			For Local j:=id Until _insts.Length
-				
-				If Not jobjsById.Contains( j ) Continue
+			Local id:=jobj.GetString( "id" )
+			_instsById[id]=inst
+			inst.id=id
 
-				Local jobj:=jobjsById[j]
+			For Local j:=n Until _insts.Length
+				
+				Local id:=_insts[j].id
+				
+				Local jobj:=jobjsById[id]
+				If Not jobj Or Not jobj.Contains( "state" ) Continue
+				
 				Local tobj:=Cast<Object>( _insts[j].obj )
-				If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,False )
+				
+				DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,False )
 			Next
 			
-			id=_insts.Length
+			n=_insts.Length
 		Next
 		
 		'set reference type state - do this on a second pass 'coz of forward refs. Probably wont always work?
-		For Local i:=0 Until _insts.Length
+		For Local j:=0 Until _insts.Length
 			
-			If Not jobjsById.Contains( i ) Continue
+			Local id:=_insts[j].id
 			
-			Local jobj:=jobjsById[i]
-			Local tobj:=Cast<Object>( _insts[i].obj )
-			If jobj.Contains( "state" ) DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,True )
+			Local jobj:=jobjsById[id]
+			If Not jobj Or Not jobj.Contains( "state" ) Continue
+			
+			Local tobj:=Cast<Object>( _insts[j].obj )
+			
+			DejsonifyState( tobj,jobj.GetObject( "state" ),tobj.DynamicType,True )
 		Next
 		
 		SetAssetsDir( assetsDir )
@@ -226,9 +246,10 @@ Public
 			Local obj:=Cast<Object>( value )
 			If Not obj Return JsonValue.NullValue
 			Local inst:=_instsByObj[obj]
-			If inst Return New JsonString( "@"+inst.id )
-			Return JsonValue.NullValue	'for objects that weren't added using AddInstance - should really never happen.
-'			RuntimeError( "Can't jsonify instance of type '"+type+"'" )
+			If inst Return New JsonString( inst.id )
+			'For objects that weren't added using AddInstance, eg: textures loaded via Texture.Load instead of Scene.LoadTexture.
+			Return JsonValue.NullValue	
+'			RuntimeError( "Jsonifier can't find instance of type '"+type+"'" )
 		Endif
 		
 		'try custom jsonifiers
@@ -279,9 +300,9 @@ Public
 			If jvalue.IsNull
 				Return type.NullValue
 			Elseif jvalue.IsString
-				Local id:=Int( jvalue.ToString().Slice( 1 ) )
-				Assert( id>=0 And id<_insts.Length,"Dejsonify error" )
-				Return _insts[id].obj
+				Local id:=jvalue.ToString()
+				Assert( _instsById.Contains( id ),"Dejsonify error" )
+				Return _instsById[id].obj
 			Endif
 		Endif
 		

@@ -96,7 +96,8 @@ Class Mesh Extension
 				For Local x:=0 To xsegs
 					Local vx:=box.Width*x/xsegs+box.min.x
 					Local vy:=box.Height*y/ysegs+box.min.y
-					vp[0]=New Vertex3f( vx,vy,q>0 ? box.max.z Else box.min.z, Float(x)/xsegs,Float(y)/ysegs, 0,0,q )
+					Local u:=Float(x)/xsegs,v:=Float(y)/ysegs
+					vp[0]=New Vertex3f( vx,vy,q>0 ? box.max.z Else box.min.z, q=1 ? 1-u Else u,1-v, 0,0,q )
 					vp+=1
 				Next
 			Next
@@ -104,7 +105,8 @@ Class Mesh Extension
 				For Local x:=0 To xsegs
 					Local vx:=box.Width*x/xsegs+box.min.x
 					Local vz:=box.Depth*z/zsegs+box.min.z
-					vp[0]=New Vertex3f( vx,q>0 ? box.max.y Else box.min.y,vz, Float(x)/xsegs,Float(z)/zsegs, 0,q,0 )
+					Local u:=Float(x)/xsegs,v:=Float(z)/zsegs
+					vp[0]=New Vertex3f( vx,q>0 ? box.max.y Else box.min.y,vz, u,q=1 ? 1-v Else v, 0,q,0 )
 					vp+=1
 				Next
 			Next
@@ -112,7 +114,8 @@ Class Mesh Extension
 				For Local z:=0 To zsegs
 					Local vy:=box.Height*y/ysegs+box.min.y
 					Local vz:=box.Depth*z/zsegs+box.min.z
-					vp[0]=New Vertex3f( q>0 ? box.max.x Else box.min.x,vy,vz, Float(z)/zsegs,Float(y)/ysegs, q,0,0 )
+					Local u:=Float(z)/zsegs,v:=Float(y)/ysegs
+					vp[0]=New Vertex3f( q>0 ? box.max.x Else box.min.x,vy,vz, q=-1 ? 1-u Else u,1-v, q,0,0 )
 					vp+=1
 				Next
 			Next
@@ -302,10 +305,11 @@ Class Mesh Extension
 			Local yaw:=i * TwoPi / segs
 			Local v:=New Vec3f( Cos( yaw ) * radius,hlength,Sin( yaw ) * radius )
 			Local n:=New Vec3f( 0,1,0 )
-			Local tc:=New Vec2f( v.x*.5+.5,v.z*.5+.5 )
+			Local tc:=New Vec2f( v.x*.5+.5,1-(v.z*.5+.5) )
 			vertices.Add( New Vertex3f( v,tc,n ) )
 			v.y=-v.y
 			n.y=-n.y
+			tc.y=1-tc.y
 			vertices.Add( New Vertex3f( v,tc,n ) )
 		Next
 		For Local i:=1 Until segs-1

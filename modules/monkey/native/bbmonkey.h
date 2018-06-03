@@ -11,6 +11,7 @@
 #include "bbarray.h"
 #include "bbfunction.h"
 #include "bbobject.h"
+#include "bbweakref.h"
 #include "bbvariant.h"
 #include "bbtypeinfo_t.h"
 #include "bbdeclinfo.h"

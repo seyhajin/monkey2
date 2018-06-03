@@ -1,6 +1,14 @@
 
 ***** Monkey-v2018.06 *****
 
+Added WeakRef class. Must be constructed with an Object, and has a single Target property that returns Null if object has been GC'd. Really needs this for arrays too I guess.
+
+Added Stream.SharedPath property for obtaining a path to an open stream.
+
+Changed to stb-image for hdr support.
+
+Added Cancel() method to HttpRequest.
+
 Added Timeout property to HttpRequest.
 
 Implemented HttpRequest on all targets - only GET tested.

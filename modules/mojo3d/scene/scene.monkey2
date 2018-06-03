@@ -18,6 +18,8 @@ Class Scene
 		
 		_clearColor=Color.Sky
 
+		_skyColor=Color.White
+
 		_ambientDiffuse=Color.DarkGrey
 		
 		_envColor=Color.White
@@ -53,6 +55,23 @@ Class Scene
 	Setter( texture:Texture )
 		
 		_skyTexture=texture
+	End
+	
+	#rem monkeydoc The sky color.
+	
+	The sky color is used to modulate the sky texture.
+	
+	Sky color is only used if there is also a sky texture.
+	
+	#end
+	[jsonify=1]
+	Property SkyColor:Color()
+		
+		Return _skyColor
+	
+	Setter( color:Color )
+		
+		_skyColor=color
 	End
 	
 	#rem monkeydoc The environment texture.
@@ -407,6 +426,8 @@ Class Scene
 	Global _defaultEnv:Texture
 	
 	Field _skyTexture:Texture
+	Field _skyColor:Color
+	
 	Field _envTexture:Texture
 	Field _envColor:Color
 	

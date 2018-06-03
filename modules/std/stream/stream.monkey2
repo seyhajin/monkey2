@@ -31,6 +31,14 @@ Class Stream Extends std.resource.Resource
 	#end
 	Method Close:Void()
 		
+		If Not _open Return
+		
+		_open-=1
+		
+		If _open Return
+		
+		If _sharedPath _shared.Remove( _sharedPath )
+		
 		OnClose()
 	End
 
@@ -190,6 +198,30 @@ Class Stream Extends std.resource.Resource
 		
 		libc.free( tmp )
 		Return n
+	End
+	
+	Property SharedPath:String()
+		
+		If Not _sharedPath
+			
+			Global sharedId:=0
+			sharedId+=1
+			
+			Local path:="@"+sharedId
+			_sharedPath="stream::"+path
+			_shared[path]=Self
+		Endif
+		
+		Return _sharedPath
+	End
+	
+	#rem monkeydoc Reopens the stream.
+	#end
+	Method Reopen:Stream()
+		
+		_open+=1
+		
+		Return Self
 	End
 	
 	#rem monkeydoc Reads a byte from the stream.
@@ -564,6 +596,8 @@ Class Stream Extends std.resource.Resource
 		Local proto:=path.Slice( 0,i )
 		Local ipath:=path.Slice( i+2 )
 		
+		If proto="stream" Return _shared[ipath].Reopen()
+		
 		Return OpenFuncs[proto]( proto,ipath,mode )
 	End
 	
@@ -580,6 +614,8 @@ Class Stream Extends std.resource.Resource
 	Method New()
 		
 		_swap=false
+		
+		_open=1
 	End
 	
 	Method OnClose() Virtual
@@ -590,6 +626,12 @@ Class Stream Extends std.resource.Resource
 	Private
 	
 	Field _swap:Bool
+	
+	Field _open:Int
+	
+	Field _sharedPath:String
+	
+	Global _shared:=New StringMap<Stream>
 	
 	Function Swap2( v:Void Ptr )
 		Local t:=Cast<UShort Ptr>( v )[0]

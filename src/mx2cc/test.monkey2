@@ -1,12 +1,27 @@
 
-Function Main:Void()
-	
-	Local x:=0
-	
-	If x<10
-		Local t:=100
-	Else
-		Local t:=20
-	Endif
+Global weakRef:WeakRef
+
+Class C
 End
 
+Function Test()
+	
+	weakRef=New WeakRef( New C )
+End
+
+Function Main()
+	
+	Test()
+	
+'	Local tmp:=weakRef.Target
+	
+	Print "weakRef valid="+(weakRef.Target<>Null)
+	
+	GCCollect()
+	GCCollect()
+
+	Print "weakRef valid="+(weakRef.Target<>Null)
+	
+	Print "Hello World"
+	
+End

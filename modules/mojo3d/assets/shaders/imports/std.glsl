@@ -68,6 +68,7 @@ uniform vec4 r_AmbientDiffuse;
 uniform samplerCube r_SkyTextureCube;
 uniform sampler2D r_SkyTexture2D;
 uniform bool r_SkyCube;
+uniform vec4 r_SkyColor;
 
 uniform samplerCube r_EnvTextureCube;
 uniform sampler2D r_EnvTexture2D;

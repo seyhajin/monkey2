@@ -137,7 +137,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 	Method RenderBackground()
 	
 		If _scene.SkyTexture
-		
+			
 			_gdevice.ColorMask=ColorMask.None
 			_gdevice.DepthMask=True
 			
@@ -1024,6 +1024,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		Local sky:=_scene.SkyTexture
 		
 		If sky
+			_runiforms.SetColor( "SkyColor",_scene.SkyColor )
 			If sky.Flags & TextureFlags.Cubemap
 				_runiforms.SetTexture( "SkyTextureCube",sky )
 				_runiforms.SetTexture( "SkyTexture2D",_whiteTexture )
