@@ -17,15 +17,10 @@ struct bbGCWeakRef : public bbObject{
 	bbGCWeakRef *succ;	
 	bbObject *target;
 	
-	bbGCWeakRef( bbObject *p ):succ( bbGC::weakRefs ),target( p ){
-		bbGC::weakRefs=this;
-		target->flags|=2;
-	}
+	bbGCWeakRef( bbObject *target );
+	~bbGCWeakRef();
 	
-	bbObject *getTarget(){
-		return target;
-	}
-	
+	bbObject *getTarget();
 };
 
 #endif
