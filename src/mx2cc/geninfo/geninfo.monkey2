@@ -272,7 +272,14 @@ Class GeninfoGenerator
 	Method GenNode:JsonValue( forStmt:ForStmtExpr )
 		
 		Local jobj:=MakeNode( forStmt,"block" )
-		jobj.SetValue( "stmts",GenNode( forStmt.stmts ) )
+'		jobj.SetValue( "stmts",GenNode( forStmt.stmts ) )
+		Local jarr:=New JsonArray
+		If forStmt.semVar jarr.Add( GenNode( forStmt.semVar.vdecl ) )
+		For Local stmt:=Eachin forStmt.stmts
+			Local jobj:=GenNode( stmt )
+			If jobj jarr.Add( GenNode( stmt ) )
+		Next
+		jobj.SetValue( "stmts",jarr )
 		Return jobj
 	End
 	

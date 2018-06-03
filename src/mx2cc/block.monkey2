@@ -103,21 +103,21 @@ Class Block Extends Scope
 		Scope.semanting.Pop()
 	End
 	
-	Method AllocLocal:VarValue( init:Value )
+	Method AllocLocal:VarValue( init:Value,srcpos:Int=0,endpos:Int=0 )
 
 		Local ident:=""+func.nextLocalId
 		func.nextLocalId+=1
 
-		Local varValue:=New VarValue( "local",ident,init,Self )
+		Local varValue:=New VarValue( "local",ident,init,Self,srcpos,endpos )
 		
 		stmts.Push( New VarDeclStmt( Null,varValue ) )
 
 		Return varValue
 	End
 
-	Method AllocLocal:VarValue( ident:String,init:Value )
+	Method AllocLocal:VarValue( ident:String,init:Value,srcpos:Int=0,endpos:Int=0 )
 
-		Local varValue:=New VarValue( "local",ident,init,Self )
+		Local varValue:=New VarValue( "local",ident,init,Self,srcpos,endpos,DECL_PUBLIC )
 		
 		stmts.Push( New VarDeclStmt( Null,varValue ) )
 

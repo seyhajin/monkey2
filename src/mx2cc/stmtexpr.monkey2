@@ -577,10 +577,13 @@ Class ForStmtExpr Extends StmtExpr
 	Field init:Expr
 	Field cond:Expr
 	Field incr:Expr
-	
 	Field stmts:StmtExpr[]
+	Field vsrcpos:Int
+	Field vendpos:Int
 	
-	Method New( varIdent:String,varType:Expr,varExpr:Expr,kind:String,init:Expr,cond:Expr,incr:Expr,stmts:StmtExpr[],srcpos:Int,endpos:Int )
+	Field semVar:VarValue
+
+	Method New( varIdent:String,varType:Expr,varExpr:Expr,kind:String,init:Expr,cond:Expr,incr:Expr,stmts:StmtExpr[],srcpos:Int,endpos:Int,vsrcpos:Int,vendpos:Int )
 		Super.New( srcpos,endpos )
 		
 		Self.varIdent=varIdent
@@ -590,8 +593,9 @@ Class ForStmtExpr Extends StmtExpr
 		Self.init=init
 		Self.cond=cond
 		Self.incr=incr
-		
 		Self.stmts=stmts
+		Self.vsrcpos=vsrcpos
+		Self.vendpos=vendpos
 	End
 	
 	Method ToString:String() Override
@@ -699,7 +703,7 @@ Class ForStmtExpr Extends StmtExpr
 		
 		If varIdent
 			If varType curr=curr.UpCast( varType.SemantType( block ) )
-			block.AllocLocal( varIdent,curr )
+			semVar=block.AllocLocal( varIdent,curr,vsrcpos,vendpos )
 		Else
 			Local iter:=varExpr.Semant( block ).RemoveSideEffects( block )
 			If Not iter.IsAssignable Throw New SemantEx( "For loop index '"+iter.ToString()+"' is not assignable" )
@@ -724,7 +728,8 @@ Class ForStmtExpr Extends StmtExpr
 		
 		If varIdent
 			If varType init=init.UpCast( varType.SemantType( iblock ) )
-			iter=iblock.AllocLocal( varIdent,init )
+			semVar=iblock.AllocLocal( varIdent,init,vsrcpos,vendpos )
+			iter=semVar
 		Else
 			iter=varExpr.Semant( iblock ).RemoveSideEffects( iblock )
 			If Not iter.IsAssignable Throw New SemantEx( "For loop index '"+iter.ToString()+"' is not assignable" )

@@ -972,8 +972,6 @@ Class Parser
 	
 	Method ParseFor:ForStmtExpr()
 	
-		Local srcpos:=SrcPos
-		
 		Local varIdent:String
 		Local varType:Expr
 		Local varExpr:Expr
@@ -982,10 +980,16 @@ Class Parser
 		Local cond:Expr
 		Local incr:Expr
 		
+		Local srcpos:=SrcPos
+		
+		Local vsrcpos:=srcpos
+		
 		Try
 			Parse( "for" )
 			
 			If CParse( "local" )
+				
+				vsrcpos=SrcPos
 			
 				varIdent=ParseIdent()
 				
@@ -1033,6 +1037,8 @@ Class Parser
 			
 		End
 		
+		Local vendpos:=SrcPos
+		
 		Local stmts:=ParseStmts( True )
 		
 		Try
@@ -1042,7 +1048,7 @@ Class Parser
 			SkipToNextLine()
 		End
 		
-		Return New ForStmtExpr( varIdent,varType,varExpr,kind,init,cond,incr,stmts,srcpos,EndPos )
+		Return New ForStmtExpr( varIdent,varType,varExpr,kind,init,cond,incr,stmts,srcpos,EndPos,vsrcpos,vendpos )
 	
 	End
 	

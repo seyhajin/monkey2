@@ -1,27 +1,16 @@
 
-Global weakRef:WeakRef
-
-Class C
-End
-
-Function Test()
-	
-	weakRef=New WeakRef( New C )
-End
-
 Function Main()
 	
-	Test()
+	Local x:=10
 	
-'	Local tmp:=weakRef.Target
+	For Local c:=Eachin "Hello World"
+		Local t:=c
+		Print c
+	Next
 	
-	Print "weakRef valid="+(weakRef.Target<>Null)
-	
-	GCCollect()
-	GCCollect()
-
-	Print "weakRef valid="+(weakRef.Target<>Null)
-	
-	Print "Hello World"
+	For Local i:=0 Until 10
+		Local y:=20
+		Print i
+	Next
 	
 End

@@ -45,11 +45,14 @@ Class VarValue Extends Value
 		End
 	End
 	
-	Method New( kind:String,ident:String,init:Value,scope:Scope )
+	Method New( kind:String,ident:String,init:Value,scope:Scope,srcpos:Int=0,endpos:Int=0,declflags:Int=0 )
 
 		vdecl=New VarDecl
 		vdecl.kind=kind
 		vdecl.ident=ident
+		vdecl.srcpos=srcpos
+		vdecl.endpos=endpos
+		vdecl.flags=declflags
 		
 		Self.pnode=vdecl
 		Self.type=init.type
