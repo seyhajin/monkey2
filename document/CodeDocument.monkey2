@@ -426,7 +426,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 							If text.ToLower().EndsWith( "abstract" )
 								' nothing
 							Else
-								Local scope:=_doc.Parser.GetScope( FilePath,LineNumAtCursor )
+								Local scope:=_doc.Parser.GetScope( FilePath,CursorPos )
 								If scope And scope.Kind=CodeItemKind.Interface_
 									' nothing
 								Else
@@ -759,10 +759,11 @@ Class CodeDocumentView Extends Ted2CodeTextView
 	End
 	
 	Method ShowJsonDialog()
-	
-		New Fiber( Lambda()
 		
-			Local cmd:="~q"+MainWindow.Mx2ccPath+"~q makeapp -parse -geninfo ~q"+_doc.Path+"~q"
+		Local cmd:=Monkey2Parser.GetParseCommand( _doc.Path )
+		If Not cmd Return
+		
+		New Fiber( Lambda()
 			
 			Local str:=LoadString( "process::"+cmd )
 			Local i:=str.Find( "{" )
@@ -781,7 +782,6 @@ Class CodeDocumentView Extends Ted2CodeTextView
 			tv.WordWrap=True
 			tv.Text=str
 			dock.AddView( tv,"bottom",200,True )
-			
 			
 			Local dialog:=New Dialog( "ParseInfo",dock )
 			dialog.AddAction( "Close" ).Triggered=dialog.Close
@@ -1140,7 +1140,7 @@ Class CodeDocument Extends Ted2Document
 						Local s:=textLine.Slice( 0,i1 ).Trim()
 						s=Utils.GetIndentBeforePos( s,s.Length )
 						
-						Local item:=_parser.ItemAtScope( s,Path,_codeView.LineNumAtCursor )
+						Local item:=_parser.ItemAtScope( s,Path,CursorPos )
 						If item
 							' strip ident
 							s=item.Text.Slice( item.Ident.Length )
@@ -1245,6 +1245,21 @@ Class CodeDocument Extends Ted2Document
 		Return _errMap[line]
 	End
 	
+	Method OnDocumentParsed( codeItems:Stack<CodeItem>,errors:Stack<BuildError> )
+		
+		ResetErrors()
+		
+		If errors And Not errors.Empty
+			For Local err:=Eachin errors
+				AddError( err )
+			Next
+			Return
+		Endif
+		
+		UpdateCodeTree( codeItems )
+		UpdateFolding()
+	End
+	
 	Method ResetErrors()
 		_errors.Clear()
 		_errMap.Clear()
@@ -1266,9 +1281,8 @@ Class CodeDocument Extends Ted2Document
 		
 		If Not _parsingEnabled Return
 		
-		Local ident:=_codeView.FullIdentAtCursor
-		Local line:=TextDocument.FindLine( _codeView.Cursor )
-		Local item:=_parser.ItemAtScope( ident,Path,line )
+		Local ident:=_codeView.IdentBeforeCursor()
+		Local item:=_parser.ItemAtScope( ident,Path,CursorPos )
 		
 		If item
 			Local pos:=item.ScopeStartPos
@@ -1439,6 +1453,12 @@ Class CodeDocument Extends Ted2Document
 	Field _toolBar:ToolBarExt
 	Field _content:DockingView
 	
+	Method InitParser()
+		
+		_parser=ParsersManager.Get( FileExtension )
+		_parsingEnabled=Not ParsersManager.IsFake( _parser )
+	End
+	  
 	Method GetToolBar:ToolBarExt()
 		
 		If _toolBar Return _toolBar
@@ -1536,8 +1556,6 @@ Class CodeDocument Extends Ted2Document
 		
 		InitParser()
 		
-		ParsingDoc() 'start parsing right after loading, not by timer
-		
 		' grab lines after load
 		_doc.LinesModified+=Lambda( first:Int,removed:Int,inserted:Int )
 			
@@ -1585,17 +1603,24 @@ Class CodeDocument Extends Ted2Document
 		OnUpdateCurrentScope()
 	End
 	
+	Property CursorPos:Vec2i()
+		
+		Return GetCursorPos( _codeView )
+	End
+	
 	Method OnUpdateCurrentScope()
 		
-		Local scope:=_parser.GetNearestScope( Path,_codeView.LineNumAtCursor+1,True )
+		'DebugStop()
+		Local scope:=_parser.GetNearestScope( Path,CursorPos )
+		'Print ""+CursorPos+", "+scope?.KindStr+", "+scope?.Text
 		If scope
 			_treeView.SelectByScope( scope )
 		Endif
 	End
 	
-	Method UpdateCodeTree()
+	Method UpdateCodeTree( codeItems:Stack<CodeItem> = Null )
 		
-		_treeView.Fill( FileExtension,Path )
+		_treeView.Fill( codeItems,_parser )
 		OnUpdateCurrentScope()
 	End
 	
@@ -1639,113 +1664,7 @@ Class CodeDocument Extends Ted2Document
 		Next
 	End
 	
-	Method InitParser()
-		
-		_parser=ParsersManager.Get( FileExtension )
-		_parsingEnabled=Not ParsersManager.IsFake( _parser )
-	End
-	
-	Field _timeDocParsed:=0
-	Field _timeTextChanged:=0
-	Method ParsingOnTextChanged()
-		
-		If Not _parsingEnabled Return
-		
-		_timeTextChanged=Millisecs()
-		
-		If Not _timer Then _timer=New Timer( 1,Lambda()
-		
-			If _parsing Return
-			
-			Local msec:=Millisecs()
-			If msec<_timeDocParsed+1000 Return
-			If _timeTextChanged=0 Or msec<_timeTextChanged+1000 Return
-			_timeTextChanged=0
-			
-			ParsingDoc()
-		
-		End )
-		
-	End
-	
-	Method ParsingDoc()
-		
-		If _parsing Return
-		
-		_parsing=True
-		
-		New Fiber( Lambda()
-			
-			Local dirty:=Dirty
-			
-			Local filePath:=Path
-			If dirty
-				filePath=MainWindow.AllocTmpPath( "_mx2cc_parse_",".monkey2" )
-				SaveString( _doc.Text,filePath )
-			Endif
-			
-			ParsingFile( filePath )
-		
-			If dirty Then DeleteFile( filePath )
-			
-			_parsing=False
-			
-			_timeDocParsed=Millisecs()
-			
-		End )
-		
-	End
-	
-	Method ParsingFile( pathOnDisk:String )
-		
-		If MainWindow.IsTerminating Return
-		
-		ResetErrors()
-		
-		Local errors:=_parser.ParseFile( Path,pathOnDisk,"" )
-		
-		If MainWindow.IsTerminating Return
-		
-		If errors
-			
-			If errors="#"
-				Return
-			Endif
-			
-			Local arr:=errors.Split( "~n" )
-			For Local s:=Eachin arr
-				Local i:=s.Find( "] : Error : " )
-				If i<>-1
-					Local j:=s.Find( " [" )
-					If j<>-1
-						Local path:=s.Slice( 0,j )
-						Local line:=Int( s.Slice( j+2,i ) )-1
-						Local msg:=s.Slice( i+12 )
-						
-						Local err:=New BuildError( path,line,msg )
-					
-						AddError( err )
-						
-					Endif
-				Endif
-			Next
-			
-			Return ' exit when errors
-		Endif
-		
-		UpdateCodeTree()
-		UpdateFolding()
-	End
-	
 	Method OnTextChanged()
-		
-		' catch for common operations
-		
-		
-		' -----------------------------------
-		' catch for parsing
-		
-		ParsingOnTextChanged()
 		
 	End
 	
@@ -1884,9 +1803,8 @@ Class CodeDocument Extends Ted2Document
 			
 			opts.ident=ident
 			opts.filePath=Path
-			opts.docLineNum=_codeView.LineNumAtCursor
+			opts.cursor=CursorPos
 			opts.docLineStr=line
-			opts.docPosInLine=pos
 			opts.results=results
 			
 			results.Clear()
@@ -2375,12 +2293,3 @@ Class ParamsHintView Extends TextView
 	End
 	
 End
-
-'Class CodeTextView_Bridge Extends CodeTextView Final
-'	
-'	Function OnContentMouseEvent( view:CodeTextView,event:MouseEvent )
-'		
-'		view.OnContentMouseEvent( event )
-'	End
-'	
-'End

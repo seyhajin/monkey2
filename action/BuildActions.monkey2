@@ -62,11 +62,6 @@ Class BuildActions Implements IModuleBuilder
 		_console=console
 		_debugView=debugView
 		
-		_docs.DocumentRemoved+=Lambda( doc:Ted2Document )
-
-			If doc=_locked _locked=Null
-		End
-		
 		buildAndRun=New Action( "Run" )
 #If __TARGET__="macos"
 		buildAndRun.HotKey=Key.R
@@ -111,7 +106,7 @@ Class BuildActions Implements IModuleBuilder
 		nextError.HotKey=Key.F4
 		
 		lockBuildFile=New Action( "Lock build file" )
-		lockBuildFile.Triggered=LockBuildFile
+		lockBuildFile.Triggered=_docs.LockBuildFile
 		lockBuildFile.HotKey=Key.L
 		lockBuildFile.HotKeyModifiers=Modifier.Menu
 		
@@ -208,25 +203,12 @@ Class BuildActions Implements IModuleBuilder
 		Endif
 	End
 	
-	Property LockedDocument:CodeDocument()
-	
-		Return _locked
-	End
-	
 	Property Verbosed:Bool()
 	
 		Return _verboseMode.Checked
 	End
 	
-	Method LockBuildFile()
-		
-		Local doc:=Cast<CodeDocument>( _docs.CurrentDocument )
-		OnLockBuildFile( doc )
-	End
-	
 	Method SaveState( jobj:JsonObject )
-		
-		If _locked jobj["lockedDocument"]=New JsonString( _locked.Path )
 		
 		jobj["buildConfig"]=New JsonString( _buildConfig )
 		
@@ -234,15 +216,9 @@ Class BuildActions Implements IModuleBuilder
 		
 		jobj["buildVerbose"]=New JsonBool( _verboseMode.Checked )
 	End
-		
+	
 	Method LoadState( jobj:JsonObject )
 	
-		If jobj.Contains( "lockedDocument" )
-			Local path:=jobj["lockedDocument"].ToString()
-			_locked=Cast<CodeDocument>( _docs.FindDocument( path ) )
-			If _locked Then SetLockedState( _locked,True )
-		Endif
-		
 		If jobj.Contains( "buildConfig" )
 			_buildConfig=jobj["buildConfig"].ToString()
 			Select _buildConfig
@@ -290,7 +266,7 @@ Class BuildActions Implements IModuleBuilder
 		Wend
 	
 		Local idle:=Not _console.Running
-		Local canbuild:=idle And BuildDoc()<>Null And _buildTarget
+		Local canbuild:=idle And FilePathToBuild And _buildTarget
 		
 		build.Enabled=canbuild
 		buildAndRun.Enabled=canbuild
@@ -378,8 +354,6 @@ Class BuildActions Implements IModuleBuilder
 	Field _console:ConsoleExt
 	Field _debugView:DebugView
 	
-	Field _locked:CodeDocument
-	
 	Field _errors:=New List<BuildError>
 	
 	Field _buildConfig:String
@@ -401,11 +375,14 @@ Class BuildActions Implements IModuleBuilder
 	Field _storedTargets:String
 	Field _storedClean:Bool
 	
-	Method BuildDoc:CodeDocument()
-		
-		If Not _locked Return Cast<CodeDocument>( _docs.CurrentDocument )
-		
-		Return _locked
+	Property FilePathToBuild:String()
+	
+		Return PathsProvider.GetActiveMainFilePath()
+	End
+	
+	Property FilePathToBuildWithPrompt:String()
+	
+		Return PathsProvider.GetActiveMainFilePath( True,True )
 	End
 	
 	Method SaveAll:Bool( buildFile:String )
@@ -564,10 +541,10 @@ Class BuildActions Implements IModuleBuilder
 	
 	Method BuildApp:Bool( config:String,target:String,sourceAction:String )
 	
-		Local buildDoc:=BuildDoc()
-		If Not buildDoc Return False
+		Local buildDocPath:=FilePathToBuildWithPrompt
+		If Not buildDocPath Return False
 		
-		Local product:=BuildProduct.GetBuildProduct( buildDoc.Path,target,False )
+		Local product:=BuildProduct.GetBuildProduct( buildDocPath,target,False )
 		If Not product Return False
 		
 		Local opts:=product.GetMx2ccOpts()
@@ -581,12 +558,12 @@ Class BuildActions Implements IModuleBuilder
 		If Verbosed cmd+=" -verbose"
 		cmd+=" -config="+config
 		cmd+=" -target="+target
-		cmd+=" ~q"+buildDoc.Path+"~q"
+		cmd+=" ~q"+buildDocPath+"~q"
 		
 		Local title := sourceAction="build" ? "Building" Else (sourceAction="run" ? "Running" Else "Checking")
-		Local msg:=title+" ~ "+target+" ~ "+config+" ~ "+StripDir( buildDoc.Path )
+		Local msg:=title+" ~ "+target+" ~ "+config+" ~ "+StripDir( buildDocPath )
 		
-		If Not BuildMx2( cmd,msg,sourceAction,buildDoc.Path,True ) Return False
+		If Not BuildMx2( cmd,msg,sourceAction,buildDocPath,True ) Return False
 		
 		_console.Write("~nDone.")
 		
@@ -662,41 +639,16 @@ Class BuildActions Implements IModuleBuilder
 		If _errors.Empty Return
 		
 		_errors.AddLast( _errors.RemoveFirst() )
-			
+		
 		GotoError( _errors.First )
-	End
-	
-	Method OnLockBuildFile( doc:CodeDocument )
-	
-		If Not doc Return
-		
-		If _locked Then SetLockedState( _locked,False )
-		
-		If doc=_locked
-			_locked=Null
-			Return
-		Endif
-		
-		_locked=doc
-		SetLockedState( _locked,True )
-		
-		
-	End
-	
-	Method SetLockedState( doc:CodeDocument,locked:Bool )
-		
-		doc.State=locked ? "+" Else ""
-		Local tab:=_docs.FindTab( doc.View )
-		If tab Then tab.SetLockedState( locked )
-		_docs.CurrentDocumentChanged()
 	End
 	
 	Method OnBuildFileSettings()
 
-		Local buildDoc:=BuildDoc()
-		If Not buildDoc Return
+		Local path:=FilePathToBuild
+		If Not path Return
 		
-		local product:=BuildProduct.GetBuildProduct( buildDoc.Path,_buildTarget,True )
+		Local product:=BuildProduct.GetBuildProduct( path,_buildTarget,True )
 	End
 	
 	Method OnUpdateModules()

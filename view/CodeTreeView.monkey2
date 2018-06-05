@@ -7,37 +7,23 @@ Class CodeTreeView Extends TreeViewExt
 	Field SortByType:=True
 	Field ShowInherited:=False
 	
-	Method Fill( fileType:String,path:String,expandIfOnlyOneItem:Bool=True )
-	
-		Local stack:=New Stack<TreeView.Node>
-		Local parser:=ParsersManager.Get( fileType )
+	Method Fill( codeItems:Stack<CodeItem>,parser:ICodeParser,expandIfOnlyOneItem:Bool=True )
+		
 		Local node:=RootNode
 		
 		RootNodeVisible=False
 		node.Expanded=True
 		node.RemoveAllChildren()
 		
-		_stack.Clear()
+		If codeItems ' empty stack is correct here - we must remove all
+			_codeItems=codeItems
+		Endif
 		
-		' extract all items in file
-		Local list:=parser.ItemsMap[path]
-		If list Then _stack.AddAll( list )
+		If Not _codeItems Or _codeItems.Empty Return
 		
-		' extensions are here too
-		For Local lst:=Eachin parser.ExtraItemsMap.Values
-			For Local i:=Eachin lst
-				If i.FilePath=path
-					If Not _stack.Contains( i.Parent ) Then _stack.Add( i.Parent )
-				Endif
-			Next
-		Next
+		SortItems( _codeItems )
 		
-		If _stack.Empty Return
-		
-		' sorting
-		SortItems( _stack )
-		
-		For Local i:=Eachin _stack
+		For Local i:=Eachin _codeItems
 			AddTreeItem( i,node,parser )
 		Next
 		
@@ -50,6 +36,7 @@ Class CodeTreeView Extends TreeViewExt
 	Method SelectByScope( scope:CodeItem )
 		
 		Local node:=FindNode( RootNode,scope )
+		If Not node And scope.Parent Then node=FindNode( RootNode,scope.Parent )
 		If Not node Return
 		
 		node.Expanded=True
@@ -64,7 +51,7 @@ Class CodeTreeView Extends TreeViewExt
 	
 	Private
 	
-	Field _stack:=New Stack<CodeItem>
+	Field _codeItems:Stack<CodeItem>
 	
 	Method FindNode:TreeView.Node( treeNode:TreeView.Node,item:CodeItem )
 	
@@ -100,7 +87,7 @@ Class CodeTreeView Extends TreeViewExt
 		
 		' sorting only root class members
 		If item.IsLikeClass
-				
+			
 			SortItems( list )
 			
 			If ShowInherited
@@ -111,10 +98,6 @@ Class CodeTreeView Extends TreeViewExt
 					inherRoot.Children=lst
 					inherRoot.KindStr="inherited"
 					list.Insert( 0,inherRoot )
-					'For Local i:=Eachin lst
-					'	Local children:=i.Children
-					'	
-					'Next
 				Endif
 			Endif
 		End
@@ -123,7 +106,7 @@ Class CodeTreeView Extends TreeViewExt
 		
 		Local added:=New StringStack
 		For Local i:=Eachin list
-			If i.Kind = CodeItemKind.Param_ Continue
+			If i.KindStr="block" Continue
 			Local txt:=i.Text
 			If added.Contains( txt ) Continue
 			added.Add( txt )

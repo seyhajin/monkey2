@@ -8,6 +8,7 @@ Class DocumentManager
 	Field prevDocument:Action
 
 	Field CurrentDocumentChanged:Void()
+	Field LockedDocumentChanged:Void()
 	
 	Field DocumentAdded:Void( doc:Ted2Document )
 	Field DocumentRemoved:Void( doc:Ted2Document )
@@ -34,22 +35,43 @@ Class DocumentManager
 		nextDocument.Triggered=OnNextDocument
 		nextDocument.HotKey=Key.Tab
 		nextDocument.HotKeyModifiers=Modifier.Control
-
+		
 		prevDocument=New Action( "Previous tab" )
 		prevDocument.Triggered=OnPrevDocument
 		prevDocument.HotKey=Key.Tab
 		prevDocument.HotKeyModifiers=Modifier.Control|Modifier.Shift
+		
+		DocumentRemoved+=Lambda( doc:Ted2Document )
+			
+			If doc=_locked Then OnLockedChanged( Null )
+		End
 		
 		App.Activated+=Lambda()
 			New Fiber( OnAppActivated )
 		End
 	End
 	
+	Method LockBuildFile()
+	
+		Local doc:=Cast<CodeDocument>( CurrentDocument )
+		OnLockBuildFile( doc )
+	End
+	
+	Property LockedDocument:CodeDocument()
+	
+		Return _locked
+	End
+	
 	Property TabView:TabViewExt()
-
+	
 		Return _tabView
 	End
 
+	Property CurrentCodeDocument:CodeDocument()
+		
+		Return Cast<CodeDocument>( _currentDoc )
+	End
+	
 	Property CurrentDocument:Ted2Document()
 	
 		Return _currentDoc
@@ -87,8 +109,18 @@ Class DocumentManager
 	End
 	
 	Property OpenDocuments:Ted2Document[]()
-		
+	
 		Return _openDocs.ToArray()
+	End
+	
+	Property OpenCodeDocuments:CodeDocument[]()
+		
+		Local stack:=New Stack<CodeDocument>
+		For Local i:=Eachin _openDocs
+			Local doc:=Cast<CodeDocument>( i )
+			If doc Then stack.Add( doc )
+		Next
+		Return stack.ToArray()
 	End
 	
 	Property CurrentDocumentLabel:String()
@@ -144,7 +176,7 @@ Class DocumentManager
 		
 		doc=docType.CreateDocument( path )
 		If Not doc.Load() Return Null
-
+		
 		InitDoc( doc )
 		
 		Local addAtBegin:=(openByHand And Prefs.MainPlaceDocsAtBegin)
@@ -255,8 +287,10 @@ Class DocumentManager
 		jobj["openDocuments"]=docs
 		
 		If _currentDoc jobj["currentDocument"]=New JsonString( _currentDoc.Path )
-	End
 		
+		If _locked jobj["lockedDocument"]=New JsonString( _locked.Path )
+	End
+	
 	Method LoadState( jobj:JsonObject )
 		
 		If Not jobj.Contains( "openDocuments" ) Return
@@ -288,22 +322,33 @@ Class DocumentManager
 			CurrentDocument=_openDocs[0]
 		Endif
 		
+		If jobj.Contains( "lockedDocument" )
+			Local path:=jobj["lockedDocument"].ToString()
+			OnLockBuildFile( Cast<CodeDocument>( FindDocument( path ) ) )
+		Endif
+		
 	End
-
+	
 	Method Update()
 		
 		nextDocument.Enabled=_openDocs.Length>1
 		prevDocument.Enabled=_openDocs.Length>1
 	End
 	
+	Method SetAsMainFile( path:String,set:Bool )
+		
+		Local doc:=Cast<CodeDocument>( FindDocument( path ) )
+		If doc Then SetMainFileState( doc,set )
+	End
+	
+	
 	Private
 	
 	Field _tabView:TabViewExt
 	Field _browser:DockingView
-	
 	Field _currentDoc:Ted2Document
-	
 	Field _openDocs:=New Stack<Ted2Document>
+	Field _locked:CodeDocument
 	
 	Method InitDoc( doc:Ted2Document )
 	
@@ -323,7 +368,7 @@ Class DocumentManager
 		
 			Local index:=_tabView.TabIndex( doc.View )
 			If index=-1 Return	'in case doc already removed via Rename.
-
+		
 			_tabView.RemoveTab( index )
 			_openDocs.Remove( doc )
 			
@@ -438,7 +483,7 @@ Class DocumentManager
 			Case FileType.None
 			
 				doc.Dirty=True
-
+				
 				'CurrentDocument=doc
 				
 				Alert( "File '"+doc.Path+"' has been deleted!" )
@@ -447,6 +492,41 @@ Class DocumentManager
 		
 		Next
 		
+	End
+	
+	Method OnLockBuildFile( doc:CodeDocument )
+		
+		If Not doc Return
+		
+		If _locked Then SetLockedState( _locked,False )
+		
+		If doc=_locked
+			OnLockedChanged( Null )
+			Return
+		Endif
+		
+		SetLockedState( doc,True )
+		OnLockedChanged( doc )
+	End
+	
+	Method SetLockedState( doc:CodeDocument,locked:Bool )
+	
+		doc.State=locked ? "+" Else ""
+		Local tab:=FindTab( doc.View )
+		If tab Then tab.SetLockedState( locked )
+		CurrentDocumentChanged()
+	End
+	
+	Method SetMainFileState( doc:CodeDocument,state:Bool )
+	
+		doc.State=state ? ">" Else ""
+		CurrentDocumentChanged()
+	End
+	
+	Method OnLockedChanged( locked:CodeDocument )
+		
+		_locked=locked
+		LockedDocumentChanged()
 	End
 	
 End

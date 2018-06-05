@@ -63,6 +63,7 @@
 #Import "parser/Parser"
 #Import "parser/Monkey2Parser"
 #Import "parser/ParserPlugin"
+#Import "parser/CodeParsing"
 
 #Import "product/BuildProduct"
 #Import "product/Mx2ccEnv"
@@ -120,7 +121,7 @@
 #Import "view/Undock"
 #Import "view/TextViewExt"
 
-
+#Import "PathsProvider"
 #Import "Tree"
 #Import "Tuple"
 #Import "Plugin"
@@ -129,6 +130,9 @@
 #Import "ProcessReader"
 #Import "LiveTemplates"
 #Import "MainWindow"
+
+#Import "di/Di"
+#Import "di/DiSetup"
 
 
 Namespace ted2go
@@ -139,13 +143,16 @@ Using mojox..
 Using tinyxml2..
 Using sdl2..
 
+
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.10"
+Global AppTitle:="Ted2Go v2.11"
 
 
 Function Main()
-
+	
+	SetupDiContainer()
+	
 	Prefs.LoadLocalState()
 	
 	Local root:=Prefs.MonkeyRootPath
@@ -165,18 +172,22 @@ Function Main()
 	'
 	Local jobj:=JsonObject.Load( "bin/ted2.state.json" )
 	If Not jobj jobj=New JsonObject
-
+	
 	Prefs.LoadState( jobj )
 	
 	'initial theme
 	'
 	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-hollow" )
-
+	
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
 	
 	SetConfig( "MOJO_INITIAL_THEME",jobj.GetString( "theme" ) )
 	
 	SetConfig( "MOJO_INITIAL_THEME_SCALE",jobj.GetString( "themeScale" ) )
+	
+	If Prefs.OpenGlProfile
+		SetConfig( "MOJO_OPENGL_PROFILE",Prefs.OpenGlProfile )
+	Endif
 	
 	'start the app!
 	'
@@ -185,7 +196,7 @@ Function Main()
 	'initial window state
 	'
 	Local flags:=WindowFlags.Resizable|WindowFlags.HighDPI
-
+	
 	Local rect:Recti
 	
 	If jobj.Contains( "windowRect" ) 
@@ -196,7 +207,7 @@ Function Main()
 		rect=New Recti( 0,0,w,h )
 		flags|=WindowFlags.Center
 	Endif
-
+	
 	New MainWindowInstance( AppTitle,rect,flags,jobj )
 	
 	App.Idle+=Lambda()
@@ -206,11 +217,7 @@ Function Main()
 		For Local i:=1 Until args.Length
 			Local arg:=args[i]
 			arg=arg.Replace( "\","/" )
-			If GetFileType( arg ) = FileType.File
-				MainWindow.OpenDocument( arg,True )
-			Elseif GetFileType( arg ) = FileType.Directory
-				MainWindow.OpenProject( arg )
-			Endif
+			MainWindow.OnFileDropped( arg )
 		Next
 	End
 	
@@ -221,7 +228,7 @@ End
 Function SetupMonkeyRootPath:String( rootPath:String,searchMode:Bool )
 	
 #If __DESKTOP_TARGET__
-
+	
 	If searchMode
 		' search for desired folder
 		Local found:=FindBinFolder( rootPath )
@@ -229,7 +236,7 @@ Function SetupMonkeyRootPath:String( rootPath:String,searchMode:Bool )
 		If Not found And rootPath<>AppDir() Then found=FindBinFolder( AppDir() )
 		' search for choosen-by-requester folder
 		While Not found
-	
+			
 			Local ok:=Confirm( "Initializing","Monkey2 root directory isn't set.~nTo continue, you should specify it." )
 			If Not ok
 				Return ""
@@ -255,30 +262,30 @@ Function SetupMonkeyRootPath:String( rootPath:String,searchMode:Bool )
 End
 
 Function GetActionTextWithShortcut:String( action:Action )
-
+	
 	Return action.Text+" ("+action.HotKeyText+")"
 End
 
 Function Exec( exePath:String,args:String="" )
-
+	
 #If __HOSTOS__="windows"
-
+	
 	libc.system( exePath+" "+args )
 	
 #Else If __HOSTOS__="macos"
-
+	
 	libc.system( "open ~q"+exePath+"~q --args "+args )
-
+	
 #Else If __HOSTOS__="linux"
-
+	
 	libc.system( exePath+" "+args+" >/dev/null 2>/dev/null &" )
-
+	
 #Else If __HOSTOS__="raspbian"
-
+	
 	libc.system( exePath+" "+args+" >/dev/null 2>/dev/null &" )
-
+	
 #Endif
-
+	
 End
 
 
@@ -291,13 +298,13 @@ Function FindBinFolder:String( startingFolder:String )
 	ChangeDir( startingFolder )
 	
 	While GetFileType( "bin" )<>FileType.Directory Or GetFileType( "modules" )<>FileType.Directory
-	
+		
 		If IsRootDir( CurrentDir() )
 			
 			ok=False
 			Exit
 		Endif
-	
+		
 		ChangeDir( ExtractDir( CurrentDir() ) )
 	Wend
 	Local result:=ok ? CurrentDir() Else ""

@@ -4,13 +4,17 @@ Namespace ted2go
 
 Class ProjectView Extends DockingView
 
-	Field openProject:Action
+	Field openProjectFolder:Action
+	Field openProjectFile:Action
+	Field setMainFile:Action
 	
-	Field ProjectOpened:Void( dir:String )
-	Field ProjectClosed:Void( dir:String )
+	Field ProjectOpened:Void( path:String )
+	Field ProjectClosed:Void( path:String )
+	Field ActiveProjectChanged:Void( proj:Monkey2Project )
 	
 	Field RequestedFindInFolder:Void( folder:String )
-
+	Field MainFileChanged:Void( path:String,prevPath:String )
+	
 	Method New( docs:DocumentManager,builder:IModuleBuilder )
 	
 		_docs=docs
@@ -20,12 +24,50 @@ Class ProjectView Extends DockingView
 		
 		ContentView=_docker
 		
-		openProject=New Action( "Open project" )
-		openProject.HotKey=Key.O
-		openProject.HotKeyModifiers=Modifier.Menu|Modifier.Shift
-		openProject.Triggered=OnOpenProject
+		openProjectFolder=New Action( "Open project folder" )
+		openProjectFolder.HotKey=Key.O
+		openProjectFolder.HotKeyModifiers=Modifier.Menu|Modifier.Shift
+		openProjectFolder.Triggered=OnOpenProjectFolder
+		
+		openProjectFile=New Action( "Open project file" )
+		'openProjectFile.HotKey=Key.O
+		'openProjectFile.HotKeyModifiers=Modifier.Menu|Modifier.Shift
+		openProjectFile.Triggered=OnOpenProjectFile
+		
+		setMainFile=New Action( "Set as main file" )
+		setMainFile.Triggered=Lambda()
+			
+			Local doc:=_docs.CurrentCodeDocument
+			If doc Then SetMainFile( doc.Path )
+		End
 		
 		InitProjBrowser()
+		
+'		_docs.LockedDocumentChanged+=Lambda:Void()
+'			Local path:=_docs.LockedDocument?.Path
+'			If path Then SetActiveProject( path )
+'		End
+		
+		App.Activated+=Lambda()
+			
+			For Local proj:=Eachin _projects
+				Local changed:=proj.Reload()
+				If changed
+					_projBrowser?.RefreshProject( proj )
+				Endif
+			Next
+		End
+		
+		ActiveProjectChanged+=Lambda( proj:Monkey2Project )
+		
+			_projBrowser?.SetActiveProject( proj )
+		End
+		
+		MainFileChanged+=Lambda( path:String,prevPath:String )
+			
+			_projBrowser?.SetMainFile( prevPath,False )
+			_projBrowser?.SetMainFile( path,True )
+		End
 	End
 	
 	Property SelectedItem:ProjectBrowserView.Node()
@@ -33,9 +75,24 @@ Class ProjectView Extends DockingView
 		Return Cast<ProjectBrowserView.Node>( _projBrowser.Selected )
 	End
 	
-	Property OpenProjects:String[]()
+	Property OpenProjects:Stack<Monkey2Project>()
+		
+		Return _projects
+	End
 	
-		Return _projects.ToArray()
+	Property OpenProjectsFolders:String[]()
+	
+		Local folders:=New String[_projects.Length]
+		For Local i:=0 Until _projects.Length
+			folders[i]=_projects[i].Folder
+		Next
+	
+		Return folders
+	End
+	
+	Property ActiveProject:Monkey2Project()
+	
+		Return _activeProject
 	End
 	
 	Property SingleClickExpanding:Bool()
@@ -47,24 +104,47 @@ Class ProjectView Extends DockingView
 		_projBrowser.SingleClickExpanding=value
 	End
 	
-	Function FindProjectByFile:String( filePath:String )
+	Function FindProject:Monkey2Project( filePath:String )
+	
+		If Not filePath Return Null
 		
-		If Not filePath Return ""
-		
-		For Local p:=Eachin _projects
-			If filePath.StartsWith( p )
-				Return p
+		For Local proj:=Eachin _projects
+			If filePath.StartsWith( proj.Folder )
+				Return proj
 			Endif
-		End
-		Return ""
+		Next
+		
+		Return Null
+	End
+	
+	Function IsProjectFile:Bool( filePath:String )
+	
+		Return ExtractExt( filePath )=".mx2proj"
+	End
+	
+	Function IsValidProject:Bool( path:String )
+	
+		Return IsProjectFile( path ) Or GetFileType( path )=FileType.Directory
+	End
+	
+	Function ActiveProjectName:String()
+	
+		Return _activeProject?.Name
+	End
+	
+	Function CheckMainFilePath( proj:Monkey2Project )
+		
+		If Not proj.MainFilePath
+			Alert( "Main file of ~q"+proj.Name+"~q project is not specified.~n~nRight click on file in Project tree~nand choose 'Set as main file'.","Build error" )
+		Endif
+	
 	End
 	
 	Method OnFileDropped:Bool( path:String )
 		
 		Local ok:=_projBrowser.OnFileDropped( path )
 		If Not ok
-			Local isFolder:=GetFileType( path )=FileType.Directory
-			If isFolder
+			If IsValidProject( path )
 				ok=True
 				OpenProject( path )
 			Endif
@@ -72,30 +152,68 @@ Class ProjectView Extends DockingView
 		Return ok
 	End
 	
-	Method OpenProject:Bool( dir:String )
+	Method SetActiveProject( path:String,prompt:Bool=True )
+		
+		Local proj:=FindProject( path )
+		If proj
+			If proj.IsFolderBased
+				If Not prompt Return
+				proj=ShowCreateProjectFilePrompt( "Can't set folder-based project as active.",proj )
+				If Not proj Return
+			Endif
+			OnActiveProjectChanged( proj )
+		Endif
+	End
 	
-		dir=StripSlashes( dir )
+	Method SetMainFile( path:String,prompt:Bool=True )
+	
+		Local proj:=FindProject( path )
+		If proj
+			If proj.IsFolderBased
+				If Not prompt Return
+				proj=ShowCreateProjectFilePrompt( "Can't set main file of folder-based project.",proj )
+				If Not proj Return
+			Endif
+			Local prev:=proj.MainFilePath
+			proj.MainFilePath=path
+			MainFileChanged( path,prev )
+		Endif
+	End
+	
+	Method OpenProject:Bool( path:String )
 		
-		If _projects.Contains( dir ) Return False
+		Local proj:=FindProject( path )
+		Local isProjExists:=(proj<>Null)
 		
-		If GetFileType( dir )<>FileType.Directory Return False
+		Local projIndex:=_projects.FindIndex( proj )
+		Local wasActive:=(proj=_activeProject)
 		
-		_projects+=dir
+		proj=New Monkey2Project( path )
 		
-		_projBrowser.AddProject( dir )
+		If isProjExists
+			_projects.Set( projIndex,proj )
+			_projBrowser.RefreshProject( proj )
+			If wasActive Then OnActiveProjectChanged( proj )
+		Else
+			_projects+=proj
+			_projBrowser.AddProject( proj )
+		Endif
 		
-		ProjectOpened( dir )
-
+		ProjectOpened( proj.Path )
+		
 		Return True
 	End
 	
 	Method CloseProject( dir:String )
-
-		dir=StripSlashes( dir )
 		
-		_projBrowser.RemoveProject( dir )
+		Local proj:=FindProject( dir )
+		If Not proj Return
 		
-		_projects-=dir
+		_projBrowser.RemoveProject( proj )
+		
+		_projects-=proj
+		
+		If proj=_activeProject Then OnActiveProjectChanged( Null )
 		
 		ProjectClosed( dir )
 	End
@@ -107,7 +225,7 @@ Class ProjectView Extends DockingView
 		
 		Local jarr:=New JsonArray
 		For Local p:=Eachin _projects
-			jarr.Add( New JsonString( p ) )
+			jarr.Add( New JsonString( p.Path ) )
 		Next
 		j["openProjects"]=jarr
 		
@@ -115,6 +233,13 @@ Class ProjectView Extends DockingView
 		
 		Local selPath:=GetNodePath( _projBrowser.Selected )
 		j["selected"]=New JsonString( selPath )
+		
+		If _activeProject Then j["active"]=New JsonString( _activeProject.Path )
+	End
+	
+	Property HasOpenedProjects:Bool()
+		
+		Return _projects.Length>0
 	End
 	
 	Method LoadState( jobj:JsonObject )
@@ -126,14 +251,20 @@ Class ProjectView Extends DockingView
 		_projBrowser.LoadState( jobj,"expanded" )
 		
 		If jobj.Contains( "openProjects" )
-			local arr:=jobj["openProjects"].ToArray()
-			For Local dir:=Eachin arr
-				OpenProject( dir.ToString() )
+			Local arr:=jobj["openProjects"].ToArray()
+			For Local path:=Eachin arr
+				OpenProject( path.ToString() )
 			Next
+			If arr.Length=1
+				jobj["active"]=New JsonString( _projects[0].Path )
+			Endif
 		Endif
 		
 		Local selPath:=Json_GetString( jobj.Data,"selected","" )
 		If selPath Then _projBrowser.SelectByPath( selPath )
+		
+		Local activePath:=Json_GetString( jobj.Data,"active","" )
+		If activePath Then SetActiveProject( activePath,False )
 	End
 	
 	
@@ -144,11 +275,46 @@ Class ProjectView Extends DockingView
 	
 	Field _docs:DocumentManager
 	Field _docker:=New DockingView
-	Global _projects:=New StringStack
+	'Global _projectFolders:=New StringStack
+	Global _projects:=New Stack<Monkey2Project>
 	Field _builder:IModuleBuilder
 	Field _projBrowser:ProjectBrowserView
-	
+	Global _activeProject:Monkey2Project
 	Field _cutPath:String,_copyPath:String
+	
+	Method ShowCreateProjectFilePrompt:Monkey2Project( prompt:String,proj:Monkey2Project )
+		
+		Local yes:=RequestOkay( prompt+"~n~nDo you want create project file for the project?","Projects","Yes","No" )
+		If Not yes Return Null
+		
+		Local path:String
+		Repeat 
+			Local name:=RequestString( "Project filename:","Projects",StripDir( proj.Folder ) ).Trim()
+			If Not name
+				Alert( "Name wasn't entered, so do nothing.","Projects" )
+				Return Null
+			Endif
+			If ExtractExt( name )<>".mx2proj"
+				name+=".mx2proj"
+			Endif
+			path=proj.Folder+"/"+name
+			
+			If FileExists( path )
+				Local yes:=RequestOkay( "Such project file already exists.~nDo you want use it for the project?","Projects","Use it","Create another" )
+				If Not yes Continue
+			Else
+				' don't overwrite existing files
+				Monkey2Project.SaveEmptyProject( path )
+			Endif
+			
+			Exit
+			
+		Forever
+		
+		OpenProject( path )
+		
+		Return FindProject( path )
+	End
 	
 	Method OnCut( path:String )
 		
@@ -225,7 +391,7 @@ Class ProjectView Extends DockingView
 				
 			Else
 				
-				If Not RequestOkay( "Really delete file '"+path+"'?" ) Print "1111" ; Return
+				If Not RequestOkay( "Really delete file '"+path+"'?" ) Return
 				
 				If DeleteFile( path )
 				
@@ -246,18 +412,40 @@ Class ProjectView Extends DockingView
 		New Fiber( work )
 	End
 	
-	Method OnOpenProject()
+	Method OnOpenProjectFolder()
 	
-		Local dir:=MainWindow.RequestDir( "Select Project Directory...","" )
+		Local dir:=MainWindow.RequestDir( "Select project folder...","" )
 		If Not dir Return
-		
+	
 		OpenProject( dir )
+		
+'		If _projects.Length=1
+'			OnActiveProjectChanged( _projects[0] )
+'		Endif
+	End
+	
+	Method OnActiveProjectChanged( proj:Monkey2Project )
+		
+		_activeProject=proj
+		ActiveProjectChanged( _activeProject )
+	End
+	
+	Method OnOpenProjectFile()
+	
+		Local file:=MainWindow.RequestFile( "Select project file...","",False,"Monkey2 projects:mx2proj" )
+		If Not file Return
+	
+		OpenProject( file )
+		
+		If _projects.Length=1
+			OnActiveProjectChanged( _projects[0] )
+		Endif
 	End
 	
 	Method OnOpenDocument( path:String,makeFocused:Bool,runExec:Bool=True )
 		
 		If GetFileType( path )<>FileType.File Return
-			
+		
 		New Fiber( Lambda()
 			
 			Local ext:=ExtractExt( path )
@@ -330,7 +518,7 @@ Class ProjectView Extends DockingView
 		_docker.ContentView=browser
 		
 		browser.RequestedDelete+=Lambda( node:ProjectBrowserView.Node )
-		
+			
 			DeleteItem( browser,node.Path,node )
 		End
 		
@@ -345,7 +533,7 @@ Class ProjectView Extends DockingView
 		End
 		
 		browser.FileRightClicked+=Lambda( node:ProjectBrowserView.Node )
-		
+			
 			Local menu:=New MenuExt
 			Local path:=node.Path
 			Local pasteAction:Action
@@ -353,12 +541,12 @@ Class ProjectView Extends DockingView
 			Local fileType:=GetFileType( path )
 			
 			menu.AddAction( "Open on Desktop" ).Triggered=Lambda()
-			
+				
 				Local p:=(fileType=FileType.File) ? ExtractDir( path ) Else path
 				requesters.OpenUrl( p )
 			End
 			menu.AddAction( "Copy path" ).Triggered=Lambda()
-			
+				
 				App.ClipboardText=path
 			End
 			
@@ -460,8 +648,22 @@ Class ProjectView Extends DockingView
 				
 				If browser.IsProjectNode( node ) ' root node
 					
+					menu.AddAction( "Build & Run" ).Triggered=Lambda()
+						PathsProvider.SetCustomBuildProject( node.Project )
+						Local buildActions:=Di.Resolve<BuildActions>()
+						buildActions.buildAndRun.Triggered()
+						PathsProvider.SetCustomBuildProject( Null )
+					End
+					
+					menu.AddAction( "Set as active project" ).Triggered=Lambda()
+					
+						SetActiveProject( path )
+					End
+					
 					menu.AddAction( "Close project" ).Triggered=Lambda()
-						
+					
+						If Not RequestOkay( "Really close project?" ) Return
+					
 						CloseProject( path )
 					End
 					
@@ -528,6 +730,12 @@ Class ProjectView Extends DockingView
 				
 			
 			Case FileType.File
+				
+				menu.AddAction( "Set as main file" ).Triggered=Lambda()
+				
+					SetMainFile( path )
+				End
+				menu.AddSeparator()
 				
 				menu.AddAction( "Rename file" ).Triggered=Lambda()
 					
@@ -606,6 +814,119 @@ Class ProjectView Extends DockingView
 			menu.Open()
 		End
 		
+	End
+	
+End
+
+
+Class Monkey2Project
+	
+	Const KEY_MAIN_FILE:="mainFile"
+	Const KEY_HIDDEN:="hidden"
+	
+	Function SaveEmptyProject( path:String )
+		
+		Local jobj:=New JsonObject
+		jobj[KEY_MAIN_FILE]=New JsonString
+		jobj[KEY_HIDDEN]=New JsonArray
+		
+		SaveString( jobj.ToJson(),path )
+	End
+	
+	Method New( path:String )
+		
+		_path=path
+		
+		If GetFileType( path )=FileType.File
+			_data=JsonObject.Load( path )
+			_modified=GetFileTime( path )
+			path=ExtractDir( path )
+		Else
+			_data=New JsonObject
+			_isFolderBased=True
+		Endif
+		
+		_folder=StripSlashes( path )
+	End
+	
+	Property MainFile:String()
+		Return _data.GetString( KEY_MAIN_FILE )
+	End
+	
+	Property MainFilePath:String()
+		Local main:=MainFile
+		Return main ? Folder+"/"+main Else ""
+	Setter( value:String )
+		_data.SetString( KEY_MAIN_FILE,value.Replace(Folder+"/","" ) )
+		OnChanged()
+	End
+	
+	Property Folder:String()
+		Return _folder
+	End
+	
+	Property Name:String()
+		Return StripDir( _folder )
+	End
+	
+	Property IsFolderBased:Bool()
+		Return _isFolderBased
+	End
+	
+	Property Path:String()
+		Return _path
+	End
+	
+	Property Modified:Int()
+		Return _modified
+	End
+	
+	Property Excluded:String[]()
+		
+		If _modified=0 Return New String[0]
+		If _modified=_excludedTime Return _excluded
+		
+		Local jarr:=_data.GetArray( KEY_HIDDEN )
+		If Not jarr Or jarr.Empty Return New String[0]
+		
+		_excluded=New String[jarr.Length]
+		For Local i:=0 Until jarr.Length
+			_excluded[i]=jarr[i].ToString()
+		Next
+		
+		Return _excluded
+	End
+	
+	Method Save()
+		
+		If Not _isFolderBased Then SaveString( _data.ToJson(),_path )
+	End
+	
+	Method Reload:Bool()
+	
+		If _isFolderBased Return False
+		
+		Local t:=GetFileTime( _path )
+		If t>_modified
+			_data=JsonObject.Load( _path )
+			_modified=t
+			Return True
+		Endif
+		
+		Return False
+	End
+	
+	Private
+	
+	Field _path:String,_folder:String
+	Field _data:JsonObject
+	Field _isFolderBased:Bool
+	Field _modified:Int
+	Field _excluded:String[],_excludedTime:Int
+	
+	Method OnChanged()
+		
+		Save()
 	End
 	
 End
