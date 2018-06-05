@@ -1,6 +1,7 @@
 
 Namespace test2go
 
+Using std..
 
 Private
 
@@ -8,17 +9,63 @@ Private
 Class TestTheSame
 	
 	Property TestTheSame:TestTheSame()
+		
+		Local abc:="Hello"
+		If abc.Length>5
+			Print "it's longer than 5"
+		Endif
+		abc.Capitalize()
+		Local f7:=""
+		
+		For Local Y:=0 Until 20
+			Local dev:=True
+		Next
+		
 		Return Null
+		
+	Setter( value:TestTheSame )
+		
+		Local a8:=8
+		
 	End
 	
 	Method Test( pType:String Ptr )
+		
+		For Local Y:=0 Until 20
+			Local dev:=True
+		Next
+		
 		pType->Capitalize()
 		aPtr->Normalize()
+		
+		Local v:=GetVector()
+		Local c:=New Color
+		Local abc:="Hello"
+		If abc.Length>5
+			Print "it's longer than 5"
+			Local def:=3000
+			
+		Endif
+		
 	End
 	
 	Field aPtr:Vec2i Ptr
+	Global ccc:List<Vec3f>
 	
 End
+
+Function LocalTest()
+	
+	Local img:=Image.Load( "" )
+	Local vvv:=GetVector()
+	
+End
+
+Function GetVector:Vec2i()
+
+	Return New Vec2i
+End
+
 
 Struct Vec2i Extension
 	
