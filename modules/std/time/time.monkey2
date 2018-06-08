@@ -36,7 +36,14 @@ Function Millisecs:Int()
 	Return Now() * 1000
 End
 
-#rem monkeydoc @hidden Time class.
+#rem monkeydoc The Time class.
+
+The Time class is used to represent dates and times.
+
+You can create a time object representing the current time with the [[Now]] function.
+
+Times can be converted to strings with the [[ToString]] method.
+
 #end
 Class Time
 
