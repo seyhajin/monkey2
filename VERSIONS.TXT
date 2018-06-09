@@ -1,11 +1,11 @@
 
-***** Monkey-v2018.06 *****
+***** Monkey-v2018.06 Mx2cc-v1.1.14 Ted2go-v2.11 *****
 
-Added WeakRef class. Must be constructed with an Object, and has a single Target property that returns Null if object has been GC'd. Really needs this for arrays too I guess.
+Added WeakRef class. Must be constructed with an Object and has a single Target property that returns Null if object has been GC'd.
 
-Added Stream.SharedPath property for obtaining a path to an open stream.
+Added Stream.SharedPath property for obtaining a path to an already open stream.
 
-Changed to stb-image for hdr support.
+Changed to stb-image for hdr support so hdr images can now be loaded from any stream.
 
 Added Cancel() method to HttpRequest.
 
@@ -19,7 +19,7 @@ Fixed deprecated warnings in android project template.
 
 Updated android SDK to: Android Studio 3.1.2 ; Android SDK 27 (Oreo 8.1) ; NDK 16.1.4479499 ; Android SDK Tools 26.1.1
 
-Point/spot light now render quads.
+Point/spot light now render bounding quads instead of fullscreen quads.
 
 ***** Monkey-v2018.05 Mx2cc-v1.1.13 Ted2go-2.10 *****
 
