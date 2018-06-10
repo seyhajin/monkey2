@@ -187,22 +187,30 @@ void BBIAPStore::OnUpdatedTransactions( SKPaymentQueue *queue,NSArray *transacti
 	
 		if( transaction.transactionState==SKPaymentTransactionStatePurchased ){
 		
+			printf( "IAP purchased\n" );fflush( stdout );
+			
 			_result=0;
 			
 			_running=false;
 			
 		}else if( transaction.transactionState==SKPaymentTransactionStateFailed ){
 		
+			printf( "IAP failed %i\n",transaction.error.code );fflush( stdout );
+			
 			_result=(transaction.error.code==SKErrorPaymentCancelled) ? 1 : -1;
 			
 			_running=false;
 			
 		}else if( transaction.transactionState==SKPaymentTransactionStateRestored ){
 		
+			printf( "IAP restored\n" );fflush( stdout );
+			
 			if( BBProduct *p=FindProduct( transaction.payment.productIdentifier ) ) p->owned=true;
 		
 		}else{
 		
+			printf( "IAP ?????\n" );fflush( stdout );
+
 			continue;
 		}
 		
