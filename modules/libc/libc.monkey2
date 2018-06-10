@@ -77,6 +77,14 @@ Alias uintptr_t:ULong
 
 Function sizeof<T>:size_t( t:T )="sizeof"
 	
+Public
+
+Function sizeof<T>:size_t()
+	Return libc.sizeof( Cast<T Ptr>( Cast<Void Ptr>(0) )[0] )
+End
+
+Extern
+
 '***** limits.h *****
 
 Const PATH_MAX:Int
@@ -217,3 +225,5 @@ End
 Function opendir:DIR Ptr( path:CString )="opendir_utf8"
 Function readdir:dirent Ptr( dir:DIR Ptr )="readdir_utf8"
 Function closedir( dir:DIR Ptr )="closedir_utf8"
+
+Public
