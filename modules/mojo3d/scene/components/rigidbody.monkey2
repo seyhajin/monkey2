@@ -347,10 +347,22 @@ Class RigidBody Extends Component
 		Local rvisible:=Entity.ReallyVisible
 		
 		If rvisible=_rvisible And Not _dirty Return
+
+		'Just remove body if hiding, deal with dirty only when made visible.
+		'		
+		If Not rvisible
+			
+			If _rvisible
+				
+				World.Remove( Self )
+				
+				_rvisible=False
+			Endif
+			
+			Return
+		Endif
 		
-		If Not rvisible Return
-		
-		'Have to remove/add bodies from world if collision shape changes. http://bulletphysics.org/Bullet/phpBB3/viewtopic.php?t=5194
+		'remove/add body from world if collision shape changes. http://bulletphysics.org/Bullet/phpBB3/viewtopic.php?t=5194
 		'
 		If _rvisible And (_dirty & Dirty.Collider)
 			
