@@ -30,23 +30,11 @@ MX2_AS_OPTS=
 
 '***** EMSCRIPTEN TARGET *****
 
-'IMPORTANT:
+'Change this to the location of your emsdk:
 '
-'Precompiled emscripten sdk packages appear to be completely broken on macos.
-'
-'So you'll need to compile emscripten from source. Fortunately, this is quite easy to do as it's
-'just like installing a precompiled package, ie:
-'
-'./emsdk install sdk-incoming-64bit
-'./emsdk activate sdk-incoming-64bit
-'
-'then wait...
-'
-'Also, change this to the location of your emsdk:
-'
-EMSDK=${HOME}/emsdk-portable
+EMSDK=${HOME}/emsdk
 
-PATH=${EMSDK}:${EMSDK}/clang/fastcomp/build_incoming_64/bin:${EMSDK}/node/4.1.1_64bit/bin:${EMSDK}/emscripten/incoming:${PATH}
+PATH=${EMSDK}:${EMSDK}/clang/e1.38.0_64bit:${EMSDK}/node/8.9.1_64bit/bin:${EMSDK}/emscripten/1.38.0:${PATH}
 
 'El Capitan broke my python...
 '
@@ -57,7 +45,7 @@ PATH=/usr/local/bin:${PATH}
 MX2_MSERVER=open "${MX2_HOME}/devtools/mserver-v86c/mserver_macos.app" --args
 
 'LD options
-MX2_LD_OPTS_EMSCRIPTEN=-s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_LD_OPTS_EMSCRIPTEN=-s FETCH=1 -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_LD_OPTS_EMSCRIPTEN_DEBUG=-O2 -s ASSERTIONS=2
 MX2_LD_OPTS_EMSCRIPTEN_RELEASE=-O3
 
@@ -69,7 +57,7 @@ MX2_CC_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CC_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
-MX2_CPP_OPTS_EMSCRIPTEN=-std=c++14 -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
+MX2_CPP_OPTS_EMSCRIPTEN=-std=c++11 -s USE_SDL=2 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1
 MX2_CPP_OPTS_EMSCRIPTEN_DEBUG=-O2
 MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
@@ -125,7 +113,7 @@ MX2_CC_OPTS_IOS_RELEASE=-O3 -DNDEBUG
 
 'C++ compiler options
 '
-MX2_CPP_OPTS_IOS=-std=c++11 ${MX2_IOS_ARCHS} -miphoneos-version-min=${MX2_IOS_DEPLOYMENT_TARGET} -isysroot ${MX2_IOS_SDK} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality
+MX2_CPP_OPTS_IOS=-std=c++11 ${MX2_IOS_ARCHS} -miphoneos-version-min=${MX2_IOS_DEPLOYMENT_TARGET} -isysroot ${MX2_IOS_SDK} -fobjc-arc -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality -fvisibility=hidden
 
 MX2_CPP_OPTS_IOS_DEBUG=-O0 -g
 MX2_CPP_OPTS_IOS_RELEASE=-O3 -DNDEBUG
