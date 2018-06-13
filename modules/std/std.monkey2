@@ -66,6 +66,7 @@ Namespace std
 
 #Import "async/async"
 #Import "time/time"
+#Import "time/time-parser"
 #Import "time/timer"
 #Import "fiber/fiber"
 #Import "fiber/future"
