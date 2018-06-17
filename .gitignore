@@ -45,6 +45,7 @@ __NEWPAGES__/
 /modules/pyro-gui
 /modules/pyro-scenegraph
 /modules/pyro-tiled
+/modules/box2d
 
 /modules/module-manager/backups
 
