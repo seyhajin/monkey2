@@ -184,6 +184,10 @@ https://en.wikipedia.org/wiki/Year_2038_problem
 #end
 Class Time
 	
+	Const DayNames:=New String[]( "Sun","Mon","Tue","Wed","Thu","Fri","Sat" )
+	
+	Const MonthNames:=New String[]( "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" )
+	
 	#rem monkeydoc Creates a new time.
 	
 	Creating a time with no parameters creates a time representing 'now' in local time.
@@ -279,7 +283,7 @@ Class Time
 	
 	#end
 	Method ToString:String()
-		Return _days[ WeekDay ]+" "+Day+" "+_months[ Month ]+" "+Year+" "+ Hours+":"+Minutes+":"+Seconds
+		Return DayNames[ WeekDay ]+" "+Day+" "+MonthNames[ Month ]+" "+Year+" "+ Hours+":"+Minutes+":"+Seconds
 	End
 
 	#rem monkeydoc Overloaded comparison operator.
