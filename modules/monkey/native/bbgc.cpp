@@ -236,7 +236,8 @@ namespace bbGC{
 		if( !node ) return;
 		
 		bbGCTmp *tmp=freeTmps;
-		if( !tmp ) tmp=new bbGCTmp;
+		if( tmp ) freeTmps=tmp->succ; else tmp=new bbGCTmp;
+			
 		tmp->node=node;
 		tmp->succ=retained;
 		retained=tmp;
