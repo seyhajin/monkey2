@@ -17,14 +17,18 @@ Class HttpRequest Extends HttpRequestBase
 		
 		id+=1
 		
-		_tmp=GetEnv( "TMP" )+"\wget-"+id+".txt"
+	#If __TARGET__="windos"
+		_tmp=GetEnv( "TMP" )+"\mx2_wget-"+id+".txt"
+	#Else
+		_tmp="/tmp/mx2_wget-"+id+".txt"
+	#endif
 		
-	#if __TARGET__="windows"
+'	#if __TARGET__="windows"
 		Local post_data:=_req="POST" ? " -post-data=~q"+text+"~q" Else ""
 		Local cmd:="wget -q -T "+_timeout+" -O ~q"+_tmp+"~q --method="+_req+post_data+" ~q"+_url+"~q"
-	#else
-		Local cmd:="curl -s -m "+timeout+" -o ~q"+_tmp+"~q ~q"+url+"~q"
-	#endif
+'	#else
+'		Local cmd:="curl -s -m "+_timeout+" -o ~q"+_tmp+"~q ~q"+_url+"~q"
+'	#endif
 		
 		_process=New Process
 		
