@@ -5,7 +5,7 @@ Namespace myapp
 #Import "<mojo3d>"
 #Import "<mojo3d-vr>"
 
-#Import "../../mojo3d/tests/assets/bluspark.png"
+'#Import "../../mojo3d/tests/assets/bluspark.png"
 #Import "../../mojo3d/tests/assets/duck.gltf/@/duck.gltf"
 
 #Import "assets/vivecontroller.gltf"
@@ -113,7 +113,7 @@ Class MyWindow Extends Window
 		_particles.RotateX( -90 )	'point upwards
 		
 		Local pmaterial:=_particles.Material
-		pmaterial.ColorTexture=Texture.Load( "asset::bluspark.png",TextureFlags.FilterMipmap )
+'		pmaterial.ColorTexture=Texture.Load( "asset::bluspark.png",TextureFlags.FilterMipmap )
 		
 		Local pbuffer:=_particles.ParticleBuffer
 		pbuffer.Gravity=New Vec3f( 0,-.1,0 )	'gravity in world space in m/s^2.
@@ -191,7 +191,8 @@ Class MyWindow Extends Window
 
 		canvas.Scale( Width/640.0,Height/480.0 )
 		
-		canvas.DrawText( "Camera.Position="+_camera.Position+", FPS="+App.FPS,0,0 )
+'		canvas.DrawText( "Camera.Position="+_camera.Position+", FPS="+App.FPS,0,0 )
+		canvas.DrawText( "FPS="+App.FPS,0,0 )
 	End
 	
 End
