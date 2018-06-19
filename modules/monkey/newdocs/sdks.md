@@ -34,12 +34,12 @@ Monkey2 uses the command line tools included with xcode to build desktop apps fo
 
 Monkey2 uses the 'gcc' command line tools to build desktop apps for linux.
 
-You will also need to install all the developer libraries required by the compiler and modules. This will differ depending on hte prcise version of Linux you are you, but to get you started:
+You will also need to install all the developer libraries required by the compiler and modules. This will differ depending on the precise version of Linux you have, but to get you started:
 
 ```
 sudo apt-get update && sudo apt-get upgrade
- 
-sudo apt-get install g++-multilib libglu1-mesa-dev libopenal-dev libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev libxxf86vm-dev libx11-dev libgl1-mesa-dev libpulse-dev
+
+sudo apt-get install g++-multilib libopenal-dev libpulse-dev libsdl2-dev
 ```
 
 
