@@ -578,6 +578,17 @@ Class Entity Extends DynamicObject Abstract
 	End
 	
 	'top down
+	Method Start()
+		
+		For Local c:=Eachin _components
+			c.OnStart()
+		Next
+		
+		For Local e:=Eachin _children
+			e.Start()
+		End
+	End
+	
 	Method Update( elapsed:Float )
 		
 		For Local c:=Eachin _components

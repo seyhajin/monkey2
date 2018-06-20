@@ -219,6 +219,7 @@ Class Scene
 		_csmSplits=splits.Slice( 0 )
 	End
 	
+	
 	#rem monkeydoc Finds an entity in the scene.
 	
 	Finds an entity in the scene with the given name.
@@ -266,22 +267,41 @@ Class Scene
 		Wend
 	End
 	
+	#rem monkeydoc Starts the scene.
+	
+	Called automatically if scene is not started by first update.
+	
+	#end
+	Method Start()
+		
+		If _started Return
+		_started=True
+		
+		For Local entity:=Eachin _rootEntities
+			
+			entity.Start()
+		Next
+		
+		_time=Now()
+		_elapsed=0
+	End
+	
 	#rem monkeydoc Updates the scene.
 	#end
 	Method Update()
 		
-		Global time:=0.0
-		
-		Local elapsed:=0.0
-		
-		If time
-			elapsed=Now()-time
-			time+=elapsed
-		Else
-			time=Now()
+		If Not _started
+			Start()
+			Return
 		Endif
 		
-		Update( elapsed )
+		Local now:=Now()
+		
+		_elapsed=now-_time
+		
+		_time=now
+		
+		Update( _elapsed )
 	End
 	
 	#rem monkeydoc Renders the scene to	a canvas.
@@ -367,6 +387,8 @@ Class Scene
 		SetCurrent( scene )
 		
 		scene.Jsonifier.DejsonifyInstances( jobj )
+		
+		scene.Start()
 		
 		Return scene
 	End
@@ -456,6 +478,10 @@ Class Scene
 	Field _jsonifier:Jsonifier
 	Field _editable:Bool
 	Field _editing:Bool
+	
+	Field _started:Bool
+	Field _time:Double
+	Field _elapsed:Double
 	
 	Method Update( elapsed:Float )
 		

@@ -107,6 +107,9 @@ Internal
 	Method OnBeginUpdate() Virtual
 	End
 	
+	Method OnStart() Virtual
+	End
+	
 	Method OnUpdate( elapsed:Float ) Virtual
 	End
 	
