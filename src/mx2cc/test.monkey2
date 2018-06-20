@@ -1,16 +1,28 @@
 
+Namespace myapp
+
+#reflect myapp
+
+Class C
+End
+
+Class C Extension
+	Method Update()
+	End
+End
+
 Function Main()
 	
-	Local x:=10
-	
-	For Local c:=Eachin "Hello World"
-		Local t:=c
-		Print c
-	Next
-	
-	For Local i:=0 Until 10
-		Local y:=20
-		Print i
+	For Local type:=Eachin TypeInfo.GetTypes()
+		
+		Print type
+		
+		For Local decl:=eachin type.GetDecls()
+			
+			Print "  "+decl
+			
+		Next
+		
 	Next
 	
 End

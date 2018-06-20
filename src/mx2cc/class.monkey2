@@ -275,7 +275,16 @@ Class ClassType Extends Type
 				
 			Endif
 			
-			transFile.classes.Push( Self )
+			If cdecl.IsExtension
+				
+				For Local ctype:=Eachin transFile.extclasses
+					If ctype.cdecl.ident=cdecl.ident Throw New SemantEx( "Duplicate type extension '"+cdecl.ident+"'" )
+				Next
+				
+				transFile.extclasses.Add( Self )
+			Else
+				transFile.classes.Add( Self )
+			Endif
 			
 		Endif
 		

@@ -22,9 +22,9 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-'Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"
  
-Const TestArgs:="mx2cc geninfo src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 'Const TestArgs:="mx2cc geninfo modules/mojo3d/mojo3d.monkey2"
 'Const TestArgs:="mx2cc geninfo src/ted2go/Ted2.monkey2"
 

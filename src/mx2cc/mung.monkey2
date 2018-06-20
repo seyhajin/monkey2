@@ -186,7 +186,7 @@ Function ClassName:String( ctype:ClassType )
 		Return symbol
 	Endif
 	
-	If ctype.cdecl.IsExtension Return "x_"+ScopeName( ctype.scope )+"_"+ctype.scope.FindFile().fdecl.ident
+	If ctype.cdecl.IsExtension Return "x_"+ScopeName( ctype.scope )+"_"+ctype.transFile.ident	'scope.FindFile().fdecl.ident
 
 	Return "t_"+ScopeName( ctype.scope )
 End

@@ -119,6 +119,7 @@ Class FileDecl Extends Decl
 	
 	Field enums:=New Stack<EnumType>
 	Field classes:=New Stack<ClassType>
+	Field extclasses:=New Stack<ClassType>
 	Field globals:=New Stack<VarValue>
 	Field functions:=New Stack<FuncValue>
 	

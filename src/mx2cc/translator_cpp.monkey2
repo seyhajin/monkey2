@@ -97,6 +97,10 @@ Class Translator_CPP Extends Translator
 					Endif
 				Next
 				
+				For Local ctype:=Eachin fdecl.extclasses
+					If GenTypeInfo( ctype ) EmitTypeInfo( ctype )
+				Next
+				
 				For Local ctype:=Eachin fdecl.classes
 					If GenTypeInfo( ctype )
 						EmitTypeInfo( ctype )
@@ -265,7 +269,6 @@ Class Translator_CPP Extends Translator
 		
 		'emit classes
 		For Local ctype:=Eachin fdecl.classes
-			
 			'may have to begin/end deps around this again...
 			EmitClassProto( ctype )
 		Next
@@ -1249,21 +1252,23 @@ Class Translator_CPP Extends Translator
 			Emit( "}" )
 		Endif
 		
+		Local ccname:=cdecl.IsExtension ? ClassName( ctype.superType ) Else cname
+		
 		'nullvalue
 		Emit( "bbVariant nullValue(){" )
 		If ctype.IsStruct
-			Emit( "return bbVariant("+cname+"{});")
+			Emit( "return bbVariant("+ccname+"{});")
 		Else
-			Emit( "return bbVariant(("+cname+"*)0);")
+			Emit( "return bbVariant(("+ccname+"*)0);")
 		Endif
 		Emit( "}" )
 		
 		'newArray
 		Emit( "bbVariant newArray( int length ){" )
 		If ctype.IsStruct
-			Emit( "return bbVariant(bbArray<"+cname+">(length));" )
+			Emit( "return bbVariant(bbArray<"+ccname+">(length));" )
 		Else
-			Emit( "return bbVariant(bbArray<bbGCVar<"+cname+">>(length));" )
+			Emit( "return bbVariant(bbArray<bbGCVar<"+ccname+">>(length));" )
 		Endif
 		Emit( "}" )
 		
@@ -1275,13 +1280,15 @@ Class Translator_CPP Extends Translator
 		
 		EmitBr()
 		
-		Emit( "bbTypeInfo *bbGetType("+cname+(ctype.IsStruct ? " " Else "*")+"const&){" )
-		Emit( "return &"+rcname+"::instance;" )
-		Emit( "}" )
-
-		Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
-		Emit( "return &"+rcname+"::instance;" )
-		Emit( "}" )
+		If Not cdecl.IsExtension
+			Emit( "bbTypeInfo *bbGetType("+cname+(ctype.IsStruct ? " " Else "*")+"const&){" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+	
+			Emit( "bbTypeInfo *"+cname+"::typeof()const{" )
+			Emit( "return &"+rcname+"::instance;" )
+			Emit( "}" )
+		endif
 		
 	End
 
