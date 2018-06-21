@@ -5,6 +5,7 @@
 namespace bbApp{
 
 	void init();
+	void swapBuffers( void *window,void *context );
 }
 
 #endif

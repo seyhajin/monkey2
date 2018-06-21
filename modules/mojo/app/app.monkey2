@@ -456,7 +456,7 @@ Class AppInstance
 	#end
 	Property Renderable:Bool()
 		
-		Return _activeWindow And Not _activeWindow.Minimized And Not _renderingSuspended
+		Return _activeWindow And Not _activeWindow.Minimized And _activeWindow.CanRender And Not _renderingSuspended
 	End
 
 	#rem monkeydoc @hidden
@@ -466,7 +466,6 @@ Class AppInstance
 		If Not _requestRender Or Not Renderable
 
 			SDL_WaitEvent( Null )
-
 		Endif
 		
 		UpdateEvents()
@@ -507,7 +506,7 @@ Class AppInstance
 		
 		For Local window:=Eachin Window.VisibleWindows()
 			window.UpdateWindow( render )
-		End
+		Next
 		
 		If _mouseView And Not IsActive( _mouseView )
 			SendMouseEvent( EventType.MouseUp,_mouseView )
@@ -618,20 +617,18 @@ Class AppInstance
 		While SDL_PollEvent( Varptr event )
 			
 			Window.CreateNewWindows()
-		
-			DispatchEvent( Varptr event )
 			
+			DispatchEvent( Varptr event )
 		Wend
-		
 	End
 	
 	Method UpdateEvents()
 	
-		Keyboard.Update()
+'		Keyboard.Update()
 		
-		Mouse.Update()
+'		Mouse.Update()
 		
-		Touch.Update()
+'		Touch.Update()
 		
 		DispatchEvents()
 		
@@ -1063,9 +1060,16 @@ Class AppInstance
 		
 			Local uevent:=Cast<SDL_UserEvent Ptr>( event )
 			
-			Local event:=Cast<AsyncEvent Ptr>( uevent->data1 )
-			
-			event->Dispatch()
+			Select uevent->code
+			Case 0
+				Local event:=Cast<AsyncEvent Ptr>( uevent->data1 )
+				event->Dispatch()
+			Case 1
+				_window=Window.WindowForID( uevent->windowID )
+				If Not _window Return
+				
+				SendWindowEvent( EventType.WindowSwapped )
+			End
 
 		Case SDL_DROPFILE
 		
@@ -1159,6 +1163,12 @@ Class AppInstance
 			
 				Return 0
 					
+			Case SDL_WINDOWEVENT_SIZE_CHANGED
+				
+'				Print "SDL_WINDOWEVENT_SIZE_CHANGED"
+
+				Return 0
+				
 			Case SDL_WINDOWEVENT_RESIZED
 				
 '				Print "SDL_WINDOWEVENT_RESIZED"

@@ -11,9 +11,15 @@ namespace bbAsync{
 
 	struct Semaphore{
 	
-		int count=0;
+		int count;
 		std::mutex mutex;
 		std::condition_variable cond_var;
+		
+		Semaphore():count( 0 ){
+		}
+		
+		Semaphore( int count ):count( count ){
+		}
 		
 		void wait(){
 			std::unique_lock<std::mutex> lock( mutex );

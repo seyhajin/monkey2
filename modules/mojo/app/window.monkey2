@@ -1,5 +1,13 @@
 	
+#Import "native/app.h"
+
 Namespace mojo.app
+
+Extern Private
+
+Function swapBuffers( window:Void Ptr,context:Void Ptr )="bbApp::swapBuffers"
+	
+Public
 
 #rem monkeydoc Window creation flags.
 
@@ -86,6 +94,20 @@ Class Window Extends View
 		_swapInterval=swapInterval
 	End
 	
+	Property SwapAsync:Bool()
+		
+		Return _swapAsync
+	
+	Setter( swapAsync:Bool )
+		
+		_swapAsync=swapAsync
+	End
+	
+	Property CanRender:Bool()
+		
+		Return _canRender
+	End
+	
 	#rem monkeydoc Window fullscreen state.
 	
 	Note: The setter for this property deprecated! Please use BeginFullscreen/EndFullscreen instead.
@@ -133,7 +155,32 @@ Class Window Extends View
 		If _contentView AddChildView( _contentView )
 		
 	End
-
+	
+	Method ResizeWindow( rect:Recti )
+		
+		Local x:Int=rect.Left/_mouseScale.x
+		Local y:Int=rect.Top/_mouseScale.y
+		Local w:Int=rect.Right/_mouseScale.x-x
+		Local h:Int=rect.Bottom/_mouseScale.y-y
+			
+		SDL_SetWindowPosition( _sdlWindow,x,y )
+		SDL_SetWindowSize( _sdlWindow,w,h )
+			
+		Frame=GetFrame()
+		_frame=Frame
+		_weirdHack=True
+	End
+	
+	Method ResizeWindow( x:Int,y:Int,width:Int,height:Int )
+		
+		ResizeWindow( New Recti( x,y,x+width,y+height ) )
+	End
+	
+	Method ResizeWindow( width:Int,height:Int )
+		
+		ResizeWindow( New Recti( 0,0,width,height ).Centered( New Recti( 0,0,App.DesktopSize ) ) )
+	End
+	
 	#rem monkeydoc Switches to 'desktop' fullscreen mode.
 	
 	Switches to 'desktop' fullscreen mode. 
@@ -261,6 +308,8 @@ Class Window Extends View
 		Case EventType.WindowMaximized
 		Case EventType.WindowMinimized
 		Case EventType.WindowRestored
+		Case EventType.WindowSwapped
+			_canRender=True
 		Case EventType.WindowMoved,EventType.WindowResized
 			Frame=GetFrame()
 			_frame=Frame
@@ -373,6 +422,8 @@ Class Window Extends View
 	Field _maxfudge:Int
 	Field _rswapInterval:=1
 	Field _swapInterval:=1
+	Field _swapAsync:=False
+	Field _canRender:=True
 	
 	Field _canvas:Canvas
 
@@ -539,7 +590,12 @@ Class Window Extends View
 		
 		_canvas.EndRender()
 		
-		SDL_GL_SwapWindow( _sdlWindow )
+		If _swapAsync
+			_canRender=False
+			swapBuffers( _sdlWindow,_sdlGLContext )
+		Else
+			SDL_GL_SwapWindow( _sdlWindow )
+		Endif
 	End
 	
 	Method Init( title:String,rect:Recti,flags:WindowFlags )
