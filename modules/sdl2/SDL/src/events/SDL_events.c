@@ -33,6 +33,11 @@
 #endif
 #include "../video/SDL_sysvideo.h"
 
+// ***** Mark was here! *****
+#include <stdio.h>
+#include <SDL_mutex.h>
+static SDL_sem *sem;
+
 /*#define SDL_DEBUG_EVENTS 1*/
 
 /* An arbitrary limit so we don't have unbounded growth */
@@ -462,7 +467,7 @@ SDL_AddEvent(SDL_Event * event)
     if (final_count > SDL_EventQ.max_events_seen) {
         SDL_EventQ.max_events_seen = final_count;
     }
-
+    
     return 1;
 }
 
@@ -514,7 +519,15 @@ SDL_PeepEvents(SDL_Event * events, int numevents, SDL_eventaction action,
             for (i = 0; i < numevents; ++i) {
                 used += SDL_AddEvent(&events[i]);
             }
+            
+            // ***** Mark was here! *****
+            if( sem ) SDL_SemPost( sem );
+            
         } else {
+        
+            // ***** Mark was here! *****
+        	if( sem ) while( SDL_SemValue( sem ) ) SDL_SemWait( sem );
+        
             SDL_EventEntry *entry, *next;
             SDL_SysWMEntry *wmmsg, *wmmsg_next;
             Uint32 type;
@@ -676,7 +689,13 @@ SDL_WaitEventTimeout(SDL_Event * event, int timeout)
                 /* Timeout expired and no events */
                 return 0;
             }
-            SDL_Delay(10);
+            
+            // ***** Mark was here! *****
+			if( !sem ) sem=SDL_CreateSemaphore(0);
+			SDL_SemWaitTimeout( sem,10 );
+			
+//			SDL_Delay(10);
+
             break;
         default:
             /* Has events */
