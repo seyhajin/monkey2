@@ -3,16 +3,21 @@ Namespace myapp
 
 #Import "<std>"
 #Import "<mojo>"
-#Import "<windows.h>"
 
 Using std..
 Using mojo..
+
+#If __TARGET__="windows"
+
+#Import "<windows.h>"
 
 Extern
 
 Function SetProcessDPIAware:Int()
 
 Public
+
+#Endif
 
 Class MyWindow Extends Window
 	
@@ -72,9 +77,11 @@ Class MyWindow Extends Window
 End
 
 Function Main()
-	
-	Print "DPI="+SetProcessDPIAware()
 
+#If __TARGET__="windows"
+	SetProcessDPIAware()
+#Endif
+	
 	New AppInstance
 	
 	New MyWindow
