@@ -22,17 +22,9 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"' -clean mojo"
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
-'Const TestArgs:="mx2cc geninfo modules/mojo3d/mojo3d.monkey2"
-'Const TestArgs:="mx2cc geninfo src/ted2go/Ted2.monkey2"
-
-'Const TestArgs:="mx2cc makeapp -verbose src/mx2cc/catan/main.monkey2"
-
-'Const TestArgs:="mx2cc makeapp D:\Plane-Demo-master\Plane.monkey2"
-
-'Const TestArgs:="mx2cc makemods -target=ios"' monkey libc"
 
 Function Main()
 	

@@ -669,13 +669,20 @@ Method AddRef:Bool( node:SNode )
 	
 	Method UsesType( type:Type )
 		
-		Local ctype:=TCast<ClassType>( type )
+		Local xtype:=Cast<AliasType>( type )
+		If xtype
+			If xtype.adecl.IsExtern UsesFile( xtype.transFile ) ; Return
+			UsesType( xtype._alias )
+			Return
+		Endif
+		
+		Local ctype:=Cast<ClassType>( type )
 		If ctype
 			UsesFile( ctype.transFile )
 			Return
 		Endif
 		
-		Local atype:=TCast<ArrayType>( type )
+		Local atype:=Cast<ArrayType>( type )
 		If atype
 			'would rather not have to use array element type too, but it's complicated...
 			UsesType( atype.elemType )
@@ -687,7 +694,14 @@ Method AddRef:Bool( node:SNode )
 	
 	Method RefsType( type:Type )
 		
-		Local ctype:=TCast<ClassType>( type )
+		Local xtype:=Cast<AliasType>( type )
+		If xtype
+			If xtype.adecl.IsExtern UsesFile( xtype.transFile ) ; Return
+			RefsType( xtype._alias )
+			Return
+		Endif
+		
+		Local ctype:=Cast<ClassType>( type )
 		If ctype
 			'Note: Have to include extern type definitons
 			If ctype.cdecl.IsExtern UsesFile( ctype.transFile ) ; Return
@@ -695,13 +709,13 @@ Method AddRef:Bool( node:SNode )
 			Return
 		Endif
 		
-		Local etype:=TCast<EnumType>( type )
+		Local etype:=Cast<EnumType>( type )
 		If etype
 			If AddRef( etype ) _deps.refsTypes.Push( etype )
 			Return
 		Endif
 		
-		Local ftype:=TCast<FuncType>( type )
+		Local ftype:=Cast<FuncType>( type )
 		If ftype
 			RefsType( ftype.retType )
 			For Local type:=Eachin ftype.argTypes
@@ -710,13 +724,13 @@ Method AddRef:Bool( node:SNode )
 			Return
 		Endif
 		
-		Local atype:=TCast<ArrayType>( type )
+		Local atype:=Cast<ArrayType>( type )
 		If atype
 			RefsType( atype.elemType )
 			Return
 		Endif
 		
-		Local ptype:=TCast<PointerType>( type )
+		Local ptype:=Cast<PointerType>( type )
 		If ptype
 			RefsType( ptype.elemType )
 			Return

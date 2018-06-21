@@ -243,21 +243,6 @@ Class Parser
 		Return decls.ToArray()
 	End
 	
-	#rem
-	Method CParseAccess:Int( flags:Int )
-	
-		Select Toke
-		Case "public" flags=flags & ~(DECL_ACCESSMASK) | DECL_PUBLIC
-		Case "private" flags=flags & ~(DECL_ACCESSMASK) | DECL_PRIVATE
-		Case "internal" flags=flags & ~(DECL_ACCESSMASK) | DECL_INTERNAL
-		Case "protected" flags=flags & ~(DECL_ACCESSMASK) | DECL_PROTECTED
-		Default Return flags
-		End
-		Bump()
-		Return flags
-	End
-	#end
-	
 	Method ParseAliases( decls:Stack<Decl>,flags:Int )
 	
 		Local kind:=Parse()
@@ -277,6 +262,10 @@ Class Parser
 				
 				Parse( ":" )
 				decl.type=ParseType()
+
+				If flags & DECL_EXTERN
+					If CParse( "=" ) decl.symbol=ParseString()
+				Endif
 				
 				decl.endpos=EndPos
 				decls.Push( decl )

@@ -48,13 +48,13 @@ Class Translator_CPP Extends Translator
 		Emit( "#include <bbmonkey.h>" )
 		Emit( "#include <bbtypeinfo_r.h>" )
 		Emit( "#include <bbdeclinfo_r.h>" )
+		
 		EmitBr()
 		Emit( "#include ~q_r.h~q" )
 		
-		BeginDeps()
-		
 		Local nmspaces:=New StringMap<Stack<FileDecl>>
 		
+		EmitBr()
 		For Local fdecl:=Eachin _module.fileDecls
 			Local nmspace:=fdecl.nmspace
 			Local fdecls:=nmspaces[fdecl.nmspace]
@@ -63,7 +63,10 @@ Class Translator_CPP Extends Translator
 				nmspaces[fdecl.nmspace]=fdecls
 			Endif
 			fdecls.Add( fdecl )
+			EmitExternIncludes( fdecl )
 		Next
+		
+		BeginDeps()
 		
 		For Local it:=eachin nmspaces
 			
@@ -83,6 +86,7 @@ Class Translator_CPP Extends Translator
 				nmpath=nmpath.Slice( 0,i )
 			Forever
 			
+			EmitBr()
 			Emit( "#if "+rcc )
 			
 			For Local fdecl:=Eachin fdecls
@@ -170,20 +174,8 @@ Class Translator_CPP Extends Translator
 		Emit( "}" )
 	End
 	
-	Method TranslateFile( fdecl:FileDecl )
-	
-		Reset()
+	Method EmitExternIncludes( fdecl:FileDecl )
 		
-		'***** Emit header file *****
-		
-		EmitBr()
-		Emit( "#ifndef MX2_"+fdecl.ident.ToUpper()+"_H" )
-		Emit( "#define MX2_"+fdecl.ident.ToUpper()+"_H" )
-		
-		EmitBr()
-		Emit( "#include <bbmonkey.h>" )
-		If fdecl.exhfile Emit( "#include ~q"+MakeIncludePath( fdecl.exhfile,ExtractDir( fdecl.hfile ) )+"~q" )
-			
 		For Local ipath:=Eachin fdecl.imports
 		
 			If ipath.Contains( "*." ) Continue
@@ -202,6 +194,23 @@ Class Translator_CPP Extends Translator
 			Endif
 			
 		Next
+	End
+	
+	Method TranslateFile( fdecl:FileDecl )
+	
+		Reset()
+		
+		'***** Emit header file *****
+		
+		EmitBr()
+		Emit( "#ifndef MX2_"+fdecl.ident.ToUpper()+"_H" )
+		Emit( "#define MX2_"+fdecl.ident.ToUpper()+"_H" )
+		
+		EmitBr()
+		Emit( "#include <bbmonkey.h>" )
+		If fdecl.exhfile Emit( "#include ~q"+MakeIncludePath( fdecl.exhfile,ExtractDir( fdecl.hfile ) )+"~q" )
+			
+		EmitExternIncludes( fdecl )
 		
 		BeginDeps()
 		
@@ -2492,8 +2501,38 @@ Class Translator_CPP Extends Translator
 	
 	Method TransType:String( type:Type ) Override
 	
-		If TCast<VoidType>( type ) Return "void"
+		Local xtype:=Cast<AliasType>( type )
+		If xtype 
+			If xtype.adecl.symbol Return xtype.adecl.symbol
+			If xtype.adecl.IsExtern Return xtype.adecl.ident
+			Return TransType( xtype._alias )
+		Endif
+
+		If Cast<VoidType>( type ) Return "void"
+		
+		Local classType:=Cast<ClassType>( type )
+		If classType Return TransType( classType )
+		
+		Local enumType:=Cast<EnumType>( type )
+		If enumType Return TransType( enumType )
 	
+		Local primType:=Cast<PrimType>( type )
+		If primType Return TransType( primType )
+		
+		Local funcType:=Cast<FuncType>( type )
+		If funcType Return TransType( funcType )
+		
+		Local arrayType:=Cast<ArrayType>( type )
+		If arrayType Return TransType( arrayType )
+		
+		Local pointerType:=Cast<PointerType>( type )
+		If pointerType Return TransType( pointerType )
+		
+		Local genArgType:=Cast<GenArgType>( type )
+		If genArgType Return TransType( genArgType )
+#rem		
+		If TCast<VoidType>( type ) Return "void"
+		
 		Local classType:=TCast<ClassType>( type )
 		If classType Return TransType( classType )
 		
@@ -2514,6 +2553,7 @@ Class Translator_CPP Extends Translator
 		
 		Local genArgType:=TCast<GenArgType>( type )
 		If genArgType Return TransType( genArgType )
+#end
 		
 		'Throw New TransEx( "Translator_CPP.Trans() Type '"+String.FromCString( type.typeName() )+"' not recognized" )
 		Throw New TransEx( "Translator_CPP.Trans() Type not recognized" )

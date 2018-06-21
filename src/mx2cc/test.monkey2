@@ -1,28 +1,23 @@
 
-Namespace myapp
+Namespace test
 
-#reflect myapp
+#Import "<windows.h>"
 
-Class C
-End
+Extern
 
-Class C Extension
-	Method Update()
-	End
+Alias DWORD:UInt
+Alias LPDWORD:DWORD Ptr
+
+Public
+
+Function Test( p:LPDWORD )
+	
+	Print p[0]
 End
 
 Function Main()
 	
-	For Local type:=Eachin TypeInfo.GetTypes()
-		
-		Print type
-		
-		For Local decl:=eachin type.GetDecls()
-			
-			Print "  "+decl
-			
-		Next
-		
-	Next
+	Local t:DWORD=10
 	
+	Test( Varptr t )
 End
