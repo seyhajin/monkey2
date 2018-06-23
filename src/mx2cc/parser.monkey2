@@ -2060,7 +2060,6 @@ Class Parser
 				
 				Continue
 				
-'			Else If _ccnest<>_ifnest
 			Else If _cc.Top<>1
 			
 				Local pos:=_toker.LinePos
@@ -2069,7 +2068,10 @@ Class Parser
 					_toker.Bump()
 				Wend
 				
-				If _doccing _docs.Push( _toker.Text.Slice( pos,_toker.TokePos ) )
+				If _doccing
+					Local text:=_toker.Text.Slice( pos,_toker.TokePos )
+					_docs.Push( text )
+				Endif
 
 				Continue
 				
@@ -2286,7 +2288,7 @@ Class Parser
 				
 			Case "rem"
 			
-				If _cc.Top=1 And p.Bump()="monkeydoc"
+				If _cc.Top=1 And p.Bump()="monkeydoc" And Builder.opts.makedocs
 
 					Local qhelp:=p._toker.Text.Slice( p._toker.TokePos+9 ).Trim()
 					_docs.Clear()

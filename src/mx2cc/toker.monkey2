@@ -253,6 +253,7 @@ Class Toker
 			While _pos<_len And _text[_pos]<>CHAR_EOL
 				_pos+=1
 			Wend
+			
 			If _pos<_len
 				_pos+=1
 				_linePos=_pos
@@ -268,6 +269,8 @@ Class Toker
 			While _pos<_len And _text[_pos]<>CHAR_EOL
 				_pos+=1
 			Wend
+			
+			_tokePos=_pos
 
 			If _pos<_len
 				_pos+=1

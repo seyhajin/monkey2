@@ -22,7 +22,8 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"' -clean mojo"
+'Const TestArgs:="mx2cc makemods"' -clean mojo"
+Const TestArgs:="mx2cc makedocs std"
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
