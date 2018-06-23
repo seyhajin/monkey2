@@ -31,11 +31,13 @@ Namespace win32
 
 Extern
 
+Alias BOOL_:Int
 Alias CHAR:UByte	'signedness?
 Alias WCHAR:UShort	'signedness?
 Alias WORD:UShort
 Alias DWORD:UInt
 Alias LONG_:Int
+Alias ATOM:WORD
 
 Alias LONG_PTR:Int	'long on 64 bit?
 Alias UINT_PTR:UInt	'ulong on 64bit?
@@ -60,8 +62,6 @@ Alias LRESULT_WINAPI:LRESULT="LRESULT WINAPI"	'cheezy as hell!
 
 Alias WNDPROC:LRESULT_WINAPI( hwnd:HWND,uMsg:UInt,wParam:WPARAM,lParam:LPARAM )
 
-Alias ATOM:WORD
-
 Struct WNDCLASSW
 	Field style:UInt
 	Field lpfnWndProc:WNDPROC
@@ -73,6 +73,27 @@ Struct WNDCLASSW
 	Field hbrBackground:HBRUSH
 	Field lpszMenuName:WCHAR Ptr
 	Field lpszClassName:WCHAR Ptr
+End
+
+Struct POINT
+	Field x:LONG_
+	Field y:LONG_
+End
+
+Struct RECT
+	Field left:LONG_
+	Field top:LONG_
+	Field right:LONG_
+	Field bottom:LONG_
+End
+
+Struct MSG
+	Field hwnd:HWND
+	Field message:UInt
+	Field wParam:WPARAM
+	Field lParam:LPARAM
+	Field time:DWORD
+	Field pt:POINT
 End
 
 Const MB_OK:UInt
@@ -90,35 +111,62 @@ Const IDYES:Int
 Const WS_OVERLAPPEDWINDOW:DWORD
 Const WS_POPUPWINDOW:DWORD
 Const WS_VISIBLE:DWORD
+Const WS_CHILD:DWORD
+Const WS_CLIPCHILDREN:DWORD
+Const WS_CLIPSIBLINGS:DWORD
 
-Struct POINT
-	Field x:LONG_
-	Field y:LONG_
-End
+Const SM_CYVIRTUALSCREEN:Int
+Const SM_CXVIRTUALSCREEN:Int
+ 
+Const GWL_EXSTYLE:LONG_
+Const GWL_HINSTANCE:LONG_
+Const GWL_HWNDPARENT:LONG_
+Const GWL_ID:LONG_
+Const GWL_STYLE:LONG_
+Const GWL_USERDATA:LONG_
+Const GWL_WNDPROC:LONG_
+ 
+Const HWND_BOTTOM:HWND
+Const HWND_NOTOPMOST:HWND
+Const HWND_TOP:HWND
+Const HWND_TOPMOST:HWND
 
-Struct MSG
-	Field hwnd:HWND
-	Field message:UInt
-	Field wParam:WPARAM
-	Field lParam:LPARAM
-	Field time:DWORD
-	Field pt:POINT
-End
+Const SWP_ASYNCWINDOWPOS:UInt
+Const SWP_DEFERERASE:UInt
+Const SWP_DRAWFRAME:UInt
+Const SWP_FRAMECHANGED:UInt
+Const SWP_HIDEWINDOW:UInt
+Const SWP_NOACTIVATE:UInt
+Const SWP_NOCOPYBITS:UInt
+Const SWP_NOMOVE:UInt
+Const SWP_NOOWNERZORDER:UInt
+Const SWP_NOREDRAW:UInt
+Const SWP_NOREPOSITION:UInt
+Const SWP_NOSENDCHANGING:UInt
+Const SWP_NOSIZE:UInt
+Const SWP_NOZORDER:UInt
+Const SWP_SHOWWINDOW:UInt
 
 Function MessageBoxW:Int( hWnd:HWND,lpText:WString,lpCaption:WString,uType:UInt )
 
-Function RegisterClassW:ATOM( lpWndClass:WNDCLASSW Ptr )	
-	
 Function GetModuleHandleW:HMODULE( lpModuleName:WCHAR Ptr )
 	
+Function RegisterClassW:ATOM( lpWndClass:WNDCLASSW Ptr )	
 Function CreateWindowW:HWND( lpClassName:WString,lpWindowName:WString,dwStyle:DWORD,x:Int,y:Int,nWidth:Int,nHeight:Int,hWndParent:HWND,hMenu:HMENU,hInstance:HINSTANCE,lpParam:Void Ptr )
-
 Function DefWindowProcW:LRESULT_WINAPI( hwnd:HWND,uMsg:UInt,wParam:WPARAM,lParam:LPARAM )
-	
-Function GetMessage:Int( lpMsg:MSG Ptr,hWnd:HWND,wMsgFilterMin:UInt,wMsgFilterMax:UInt )
-
-Function TranslateMessage:Int( lpMsg:MSG Ptr )
-	
+Function GetClientRect:BOOL_( hWnd:HWND,lpRect:RECT Ptr )
+Function SetParent:HWND( child:HWND,parent:HWND )
+Function FindWindowW:HWND( lpClassName:WString,lpWindowName:WString )
+Function SetWindowPos:BOOL_( hWnd:HWND,hWndInsertAfter:HWND,x:Int,y:Int,cx:Int,cy:Int,flags:UInt )
+Function SetWindowLong:LONG_( hWnd:HWND,nIndex:Int,dwNewLong:LONG_ )
+Function GetWindowLong:LONG_( hWnd:HWND,nIndex:Int )
+			
+Function GetMessage:BOOL_( lpMsg:MSG Ptr,hWnd:HWND,wMsgFilterMin:UInt,wMsgFilterMax:UInt )
+Function TranslateMessage:BOOL_( lpMsg:MSG Ptr )
 Function DispatchMessage:LRESULT( lpMsg:MSG Ptr )
+	
+Function GetCommandLineW:WString()
+	
+Function GetSystemMetrics:Int( nIndex:Int )
 	
 #End
