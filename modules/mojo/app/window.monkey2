@@ -557,9 +557,13 @@ Class Window Extends View
 	#end
 	Method RenderWindow()
 		
+		Assert( _canRender )
+		
+		_canRender=False
+		
 		If _maxfudge
 			_maxfudge-=1
-			App.RequestRender()
+			RequestRender()
 		Endif
 
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
@@ -595,6 +599,7 @@ Class Window Extends View
 			swapBuffers( _sdlWindow,_sdlGLContext )
 		Else
 			SDL_GL_SwapWindow( _sdlWindow )
+			_canRender=True
 		Endif
 	End
 	
