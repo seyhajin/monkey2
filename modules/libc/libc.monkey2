@@ -8,32 +8,23 @@ Extern
 
 #rem monkeydoc C/C++ 'char' type.
 #end
-Struct char_t="char"
-End
+Alias char_t:UByte="char"	'TODO: fix signedness.
 
 #rem monkeydoc C/C++ 'const char' type.
 #end
-Struct const_char_t="const char"
-End
+Alias const_char_t:UByte="const char"	'TODO: fix signedness.
 
 #rem monkeydoc C/C++ 'signed char' type.
 #end
-Struct signed_char_t="signed char"
-End
+Alias signed_char_t:Byte="signed char"
 
 #rem monkeydoc C/C++ 'unsigned char' type
 #end
-Struct unsigned_char_t="unsigned char"
-End
+Alias unsigned_char_t:UByte="unsigned char"
 
 #rem monkeydoc C/C++ 'wchar_t' type
 #end
-Struct wchar_t="wchar_t"
-End
-
-#rem monkeydoc C/C++ 'size_t' type
-#end
-Alias size_t:UInt
+Alias wchar_t:UShort
 
 #rem monkeydoc C/C++ 'int8_t' type
 #end
@@ -67,6 +58,14 @@ Alias int64_t:Long
 #end
 Alias uint64_t:ULong
 
+#rem monkeydoc C/C++ 'size_t' type
+#end
+Alias size_t:UInt
+
+#rem monkeydoc C/C++ 'ptrdiff_t' type
+#end
+Alias ptrdiff_t:Int
+
 #rem monkeydoc C/C++ 'intptr_t' type
 #end
 Alias intptr_t:ULong
@@ -80,7 +79,7 @@ Function sizeof<T>:size_t( t:T )="sizeof"
 Public
 
 Function sizeof<T>:size_t()
-	Return libc.sizeof( Cast<T Ptr>( Cast<Void Ptr>(0) )[0] )
+	Return libc.sizeof( Cast<T Ptr>(0)[0] )
 End
 
 Extern
