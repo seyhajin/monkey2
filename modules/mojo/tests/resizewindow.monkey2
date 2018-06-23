@@ -1,3 +1,8 @@
+#rem
+
+Use enter to toggle fullscreen, arrow keys to move window, +shift to size!
+
+#end
 
 Namespace myapp
 
@@ -6,18 +11,6 @@ Namespace myapp
 
 Using std..
 Using mojo..
-
-#If __TARGET__="windows"
-
-#Import "<windows.h>"
-
-Extern
-
-Function SetProcessDPIAware:Int()
-
-Public
-
-#Endif
 
 Class MyWindow Extends Window
 	
@@ -29,48 +22,42 @@ Class MyWindow Extends Window
 
 		Super.New( title,width,height,flags|WindowFlags.Resizable|WindowFlags.HighDPI )
 		
-		Print "Desktop="+App.DesktopSize
-		
-		SwapAsync=True
-		
-		Local timer:=New Timer( 250,Lambda()
-		
-			Local time:=Now()
-			
-			Print "Elapsed="+Int( (time-_time)*1000+.5 )
-			
-			_time=time
-			
-			_ticks+=1
-		End )
-		
 	End
 
 	Method OnRender( canvas:Canvas ) Override
 		
-		If Keyboard.KeyDown( Key.LeftShift )
+		RequestRender()
+		
+		If Keyboard.KeyHit( Key.Enter )
 			
-			If Keyboard.KeyHit( Key.Enter )
-				If Fullscreen EndFullscreen() Else BeginFullscreen()
-			Else If Keyboard.KeyDown( Key.Left )
-				ResizeWindow( Frame.X-1,Frame.Y,Frame.Width+1,Frame.Height )
+			If Fullscreen EndFullscreen() Else BeginFullscreen()
+				
+		Else If Keyboard.KeyDown( Key.LeftShift )
+			
+			If Keyboard.KeyDown( Key.Left )
+				ResizeWindow( Frame.X-1,Frame.Y,Frame.Width+2,Frame.Height )
 			Else If Keyboard.KeyDown( Key.Right )
-				ResizeWindow( Frame.X+0,Frame.Y,Frame.Width+1,Frame.Height )
+				ResizeWindow( Frame.X+1,Frame.Y,Frame.Width-2,Frame.Height )
+			Else If Keyboard.KeyDown( Key.Up )
+				ResizeWindow( Frame.X,Frame.Y-1,Frame.Width,Frame.Height+2 )
+			Else If Keyboard.KeyDown( Key.Down )
+				ResizeWindow( Frame.X,Frame.Y+1,Frame.Width,Frame.Height-2 )
 			Endif
-'			Print String( Frame.Origin )+","+Frame.Size
+			
 		Else
+			
 			If Keyboard.KeyDown( Key.Left )
 				ResizeWindow( Frame.X-1,Frame.Y,Frame.Width,Frame.Height )
 			Else If Keyboard.KeyDown( Key.Right )
 				ResizeWindow( Frame.X+1,Frame.Y,Frame.Width,Frame.Height )
+			Else If Keyboard.KeyDown( Key.Up )
+				ResizeWindow( Frame.X,Frame.Y-1,Frame.Width,Frame.Height )
+			Else If Keyboard.KeyDown( Key.Down )
+				ResizeWindow( Frame.X,Frame.Y+1,Frame.Width,Frame.Height )
 			Endif
-'			Print String( Frame.Origin )+","+Frame.Size
+			
 		Endif
 		
-		'Print "Render"
-		
-		App.RequestRender()
-	
 		canvas.DrawText( "Hello World! Ticks="+_ticks+" FPS="+App.FPS,Width/2,Height/2,.5,.5 )
 	End
 	
@@ -78,18 +65,9 @@ End
 
 Function Main()
 
-#If __TARGET__="windows"
-	SetProcessDPIAware()
-#Endif
-	
 	New AppInstance
 	
 	New MyWindow
-	
-	Local x:Float,y:Float,d:Float
-	sdl2.SDL_GetDisplayDPI( 0,Varptr x,Varptr y,Varptr d )
-	
-	Print "x="+x+", y="+y+", d="+d
 	
 	App.Run()
 End
