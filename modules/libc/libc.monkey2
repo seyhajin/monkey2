@@ -8,23 +8,32 @@ Extern
 
 #rem monkeydoc C/C++ 'char' type.
 #end
-Alias char_t:UByte="char"	'TODO: fix signedness.
+Struct char_t="char"
+End
 
 #rem monkeydoc C/C++ 'const char' type.
 #end
-Alias const_char_t:UByte="const char"	'TODO: fix signedness.
+Struct const_char_t="const char"
+End
 
 #rem monkeydoc C/C++ 'signed char' type.
 #end
-Alias signed_char_t:Byte="signed char"
+Struct signed_char_t="signed char"
+End
 
 #rem monkeydoc C/C++ 'unsigned char' type
 #end
-Alias unsigned_char_t:UByte="unsigned char"
+Struct unsigned_char_t="unsigned char"
+End
 
 #rem monkeydoc C/C++ 'wchar_t' type
 #end
-Alias wchar_t:UShort
+Struct wchar_t="wchar_t"
+End
+
+#rem monkeydoc C/C++ 'size_t' type
+#end
+Alias size_t:UInt
 
 #rem monkeydoc C/C++ 'int8_t' type
 #end
@@ -57,14 +66,6 @@ Alias int64_t:Long
 #rem monkeydoc C/C++ 'uint64_t' type
 #end
 Alias uint64_t:ULong
-
-#rem monkeydoc C/C++ 'size_t' type
-#end
-Alias size_t:UInt
-
-#rem monkeydoc C/C++ 'ptrdiff_t' type
-#end
-Alias ptrdiff_t:Int
 
 #rem monkeydoc C/C++ 'intptr_t' type
 #end
