@@ -181,13 +181,11 @@ Class Window Extends View
 		ResizeWindow( New Recti( 0,0,width,height ).Centered( New Recti( 0,0,App.DesktopSize ) ) )
 	End
 	
-	#rem monkeydoc Switches to 'desktop' fullscreen mode.
+	#rem monkeydoc Switches window to fullscreen mode.
 	
-	Switches to 'desktop' fullscreen mode. 
+	If called with no parameters, resizes the window to cover the entire desktop without actually changing the display mode.
 	
-	The window is resized to cover the entire desktop and any window decorations are hidden.
-	
-	The display resolution does not actually change.
+	If called with size and refresh rate parameters, both the display mode and window size are changed.
 	
 	#end	
 	Method BeginFullscreen()
