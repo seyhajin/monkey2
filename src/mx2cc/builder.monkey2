@@ -574,6 +574,7 @@ Class BuilderInstance
 		Type.ThrowableClass=TCast<ClassType>( types.nodes["@throwable"] )
 
 		Type.CStringClass=TCast<ClassType>( types.nodes["@cstring"] )
+		Type.WStringClass=TCast<ClassType>( types.nodes["@wstring"] )
 		Type.TypeInfoClass=TCast<ClassType>( types.nodes["@typeinfo"] )
 
 		rootNamespace.Insert( "void",Type.VoidType )
@@ -595,6 +596,7 @@ Class BuilderInstance
 		rootNamespace.Insert( "throwable",Type.ThrowableClass )
 
 		rootNamespace.Insert( "cstring",Type.CStringClass )
+		rootNamespace.Insert( "wstring",Type.WStringClass )
 		rootNamespace.Insert( "typeinfo",Type.TypeInfoClass )
 		
 		Type.BoolType.Semant()
@@ -614,6 +616,7 @@ Class BuilderInstance
 		Type.ObjectClass.Semant()
 		Type.ThrowableClass.Semant()
 		Type.CStringClass.Semant()
+		Type.WStringClass?.Semant()
 		Type.TypeInfoClass.Semant()
 	End
 	
@@ -661,7 +664,7 @@ Class BuilderInstance
 		Case ".lib"
 			
 			If opts.toolchain="msvc"
-				product.LIB_FILES.Push( name )
+				product.LIB_FILES.Push( StripDir( path ) )'name )
 			Else
 				product.LIB_FILES.Push( "-l"+name )
 			Endif

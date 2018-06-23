@@ -29,6 +29,8 @@ Class Type Extends SNode
 	Global ThrowableClass:ClassType
 	
 	Global CStringClass:ClassType
+	Global WStringClass:ClassType
+	
 	Global TypeInfoClass:ClassType
 	
 	Field flags:Int
@@ -269,7 +271,7 @@ Class PrimType Extends Type
 			'numeric->string
 			If IsNumeric Or Self=BoolType Return MAX_DISTANCE
 
-		Case CStringClass
+		Case CStringClass,WStringClass
 		
 			'numeric,string->cstring.
 			If Self=StringType Or IsNumeric Return MAX_DISTANCE
@@ -576,7 +578,7 @@ Class FuncType Extends Type
 		Local r:Value=New InvokeValue( value,args )
 		
 		'Autocast CString to String
-		If r.type.Equals( Type.CStringClass )
+		If r.type.Equals( Type.CStringClass ) Or r.type.Equals( Type.WStringClass )
 			r=New UpCastValue( Type.StringType,r )
 		Endif
 		

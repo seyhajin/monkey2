@@ -1257,7 +1257,7 @@ Class Parser
 	
 	Method IsTypeIdent:Bool( ident:String )
 		Select ident
-		Case "void","bool","byte","ubyte","short","ushort","int","uint","long","ulong","float","double","string","object","throwable","variant","cstring","typeinfo"
+		Case "void","bool","byte","ubyte","short","ushort","int","uint","long","ulong","float","double","string","object","throwable","variant","cstring","wstring","typeinfo"
 			Return True
 		End
 		Return False

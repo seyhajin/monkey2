@@ -399,6 +399,14 @@ This type should only be used when declaring parameters for extern functions.
 Struct @CString="bbCString"
 End
 
+#rem monkeydoc String wrapper type for native 'wchar_t *' strings.
+
+This type should only be used when declaring parameters for extern functions.
+
+#end
+Struct @WString="bbWString"
+End
+
 #rem monkeydoc Variant type.
 
 The 'Variant' type is a primitive type that can be used to 'box' values of any type.
