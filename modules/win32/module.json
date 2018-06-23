@@ -1,0 +1,8 @@
+{
+	"module":"win32",
+	"about":"Windows Win32 wrapper",
+	"author":"Mark Sibly",
+	"version":"1.0.0",
+	"support":"http://monkeycoder.co.nz",
+	"depends":["libc"]
+}
