@@ -1,4 +1,14 @@
 
+***** Monkey-v2018.07 ***** 
+
+Added simple win32 module and some tests.
+
+Fixed SDL2 issue where SDL_WaitEvent always took a multiple of 10ms to execute. This would have affected code that used purely timer driven update rates without any calls to RequestRender inside OnRender.
+
+Added SUPER experimental SwapAsync flag to Window. Causes window to execute swaps in a separate thread. This allows you to use much finer grained timers etc. Note: it may not be a good idea to do any off-screen rendering with this enabled. It may not work everywhere, but Qt4.8 apparantley recommends it so give it a go! Confirmed to work on windows and macos, but not linux.
+
+Added extern alias symbols to mx2cc, eg: you can now go `Alias DWORD:UInt="unsigned long"` (inside an Extern section) to get proper win32 dwords (and LPDWORDs that don't break c++).
+
 ***** Monkey-v2018.06 Mx2cc-v1.1.14 Ted2go-v2.11 *****
 
 Added WeakRef class. Must be constructed with an Object and has a single Target property that returns Null if object has been GC'd.
