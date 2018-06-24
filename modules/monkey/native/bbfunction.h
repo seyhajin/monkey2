@@ -29,7 +29,7 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 	
 	struct Rep{
 
-		int refs=0;
+		bb_atomic_int refs=0;
 
 		virtual ~Rep(){
 		}

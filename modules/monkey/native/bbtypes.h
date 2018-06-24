@@ -4,6 +4,10 @@
 
 #include "bbstd.h"
 
+#if BB_THREADS
+#include <atomic>
+#endif
+
 typedef bool bbBool;
 typedef signed char bbByte;
 typedef unsigned char bbUByte;
@@ -82,6 +86,12 @@ bbTypeInfo *bbGetType(X const&); \
 bbString bbDBType(X*); \
 bbString bbDBValue(X*);
 
+#endif
+
+#if BB_THREADS
+typedef std::atomic_int bb_atomic_int;
+#else
+typedef int bb_atomic_int;
 #endif
 
 #endif

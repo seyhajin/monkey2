@@ -55,8 +55,8 @@ Class BuildProduct
 		Endif
 
 		If opts.threads
-			CC_OPTS+=" -DMX2_THREADS=1"
-			CPP_OPTS+=" -DMX2_THREADS=1"
+			CC_OPTS+=" -DBB_THREADS=1"
+			CPP_OPTS+=" -DBB_THREADS=1"
 		Endif
 		
 		If opts.productType="app"

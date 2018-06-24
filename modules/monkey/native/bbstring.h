@@ -15,7 +15,7 @@ class bbCString;
 class bbString{
 
 	struct Rep{
-		int refs;
+		bb_atomic_int refs;
 		int length;
 		bbChar data[0];
 		
