@@ -24,6 +24,7 @@ Class BuildProduct
 	Field reflects:=New StringStack
 	
 	Method New( module:Module,opts:BuildOpts )
+		
 		Self.module=module
 		Self.opts=opts
 		
@@ -47,12 +48,19 @@ Class BuildProduct
 		If Not CreateDir( module.cacheDir ) Throw New BuildEx( "Error creating dir '"+module.cacheDir+"'" )
 			
 		Local srcs:=New StringStack
+		
+		If opts.config="release" 
+			CC_OPTS+=" -DNDEBUG=1"
+			CPP_OPTS+=" -DNDEBUG=1"
+		Endif
 
+		If opts.threads
+			CC_OPTS+=" -DMX2_THREADS=1"
+			CPP_OPTS+=" -DMX2_THREADS=1"
+		Endif
+		
 		If opts.productType="app"
 
-			CC_OPTS+=" -DBB_NEWREFLECTION"
-			CPP_OPTS+=" -DBB_NEWREFLECTION"			
-			
 			CC_OPTS+=" -I~q"+module.cacheDir+"~q"
 			CPP_OPTS+=" -I~q"+module.cacheDir+"~q"
 			

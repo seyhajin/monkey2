@@ -22,8 +22,10 @@ Global opts_time:Bool
 
 Global StartDir:String
 
+Const TestArgs:="mx2cc makemods"
+
 'Const TestArgs:="mx2cc makemods"' -clean mojo"
-Const TestArgs:="mx2cc makedocs std"
+'Const TestArgs:="mx2cc makedocs std"
  
 'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
@@ -486,8 +488,10 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		
 	opts.wholeArchive=Int( GetEnv( "MX2_WHOLE_ARCHIVE" ) )
 		
-	opts.toolchain="gcc"
+	opts.threads=Int( GetEnv( "MX2_THREADS" ) )
 		
+	opts.toolchain="gcc"
+	
 	Select opts.target
 	Case "windows"
 		

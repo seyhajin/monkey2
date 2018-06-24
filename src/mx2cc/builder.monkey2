@@ -15,6 +15,8 @@ Class BuildOpts
 	
 	Field config:String
 	
+	Field threads:Bool
+	
 	Field clean:Bool
 	
 	Field product:String
@@ -116,6 +118,8 @@ Class BuilderInstance
 		
 		ppsyms["__MAKEDOCS__"]=opts.makedocs ? "true" Else "false"
 
+		ppsyms["__THREADS__"]=opts.threads ? "true" Else "false"
+
 		profileName=opts.target+"_"+opts.config
 		
 		If opts.target="windows"
@@ -129,6 +133,8 @@ Class BuilderInstance
 			If opts.arch="x64" profileName+="_x64"
 				
 		Endif
+		
+		If opts.threads profileName+="_mx"
 		
 		If opts.productType="app" APP_DIR=ExtractDir( opts.mainSource )
 		
