@@ -25,19 +25,21 @@ Namespace win32
 
 #Import "<libc>"
 
+#Import "<kernel32.lib>"
 #Import "<user32.lib>"
 
 #import "<windows.h>"
 
 Extern
 
-Alias BOOL_:Int
 Alias CHAR:UByte	'signedness?
 Alias WCHAR:UShort	'signedness?
 Alias WORD:UShort
 Alias DWORD:UInt
-Alias LONG_:Int
 Alias ATOM:WORD
+
+Alias BOOL_:Int="BOOL"
+Alias LONG_:Int="LONG"
 
 Alias LONG_PTR:Int	'long on 64 bit?
 Alias UINT_PTR:UInt	'ulong on 64bit?
@@ -147,10 +149,30 @@ Const SWP_NOSIZE:UInt
 Const SWP_NOZORDER:UInt
 Const SWP_SHOWWINDOW:UInt
 
-Function MessageBoxW:Int( hWnd:HWND,lpText:WString,lpCaption:WString,uType:UInt )
+Const DELETE_:DWORD
+Const READ_CONTROL:DWORD
+Const SYNCHRONIZE:DWORD
+Const WRITE_DAC:DWORD
+Const WRITE_OWNER:DWORD
+
+Const STANDARD_RIGHTS_ALL:DWORD
+Const STANDARD_RIGHTS_EXECUTE:DWORD
+Const STANDARD_RIGHTS_READ:DWORD
+Const STANDARD_RIGHTS_REQUIRED:DWORD
+Const STANDARD_RIGHTS_WRITE:DWORD
+
+'kernel32
 
 Function GetModuleHandleW:HMODULE( lpModuleName:WCHAR Ptr )
 	
+Function OpenProcess:HANDLE( dwDesiredAccess:DWORD,bInheritHandle:BOOL_,dwProcessId:DWORD )
+	
+Function GetCurrentProcess:HANDLE()
+	
+'user32
+
+Function MessageBoxW:Int( hWnd:HWND,lpText:WString,lpCaption:WString,uType:UInt )
+
 Function RegisterClassW:ATOM( lpWndClass:WNDCLASSW Ptr )	
 Function CreateWindowW:HWND( lpClassName:WString,lpWindowName:WString,dwStyle:DWORD,x:Int,y:Int,nWidth:Int,nHeight:Int,hWndParent:HWND,hMenu:HMENU,hInstance:HINSTANCE,lpParam:Void Ptr )
 Function DefWindowProcW:LRESULT_WINAPI( hwnd:HWND,uMsg:UInt,wParam:WPARAM,lParam:LPARAM )
@@ -169,4 +191,6 @@ Function GetCommandLineW:WString()
 	
 Function GetSystemMetrics:Int( nIndex:Int )
 	
+Function GetWindowThreadProcessId:DWORD( hWnd:HWND,lpdwProcessId:DWORD Ptr )
+
 #End
