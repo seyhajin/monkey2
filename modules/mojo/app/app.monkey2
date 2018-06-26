@@ -624,11 +624,11 @@ Class AppInstance
 	
 	Method UpdateEvents()
 	
-'		Keyboard.Update()
+		Keyboard.Update()
 		
-'		Mouse.Update()
+		Mouse.Update()
 		
-'		Touch.Update()
+		Touch.Update()
 		
 		DispatchEvents()
 		
