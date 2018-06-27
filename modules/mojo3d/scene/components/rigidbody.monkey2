@@ -386,14 +386,20 @@ Class RigidBody Extends Component
 	
 	Method Validate()
 		
-		If Not Entity.ReallyVisible Or Not _dirty Return
-
+		Local rvisible:=Entity.ReallyVisible
+		
+		If rvisible=_rvisible And Not _dirty Return
+		
 		'remove from world
 		'
 		If _rvisible
 			World.Remove( Self )
 			_rvisible=False
 		Endif
+
+		'don't bother to validate if not visible
+		'		
+		If Not rvisible Return
 
 		'validate collider/mass
 		'
