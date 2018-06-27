@@ -195,7 +195,7 @@ Class RigidBody Extends Component
 		_btbody.setLinearFactor( factor )
 	End
 
-	[jsonify=1]	
+	[jsonify=1]
 	Property AngularFactor:Vec3f()
 		
 		Return _btbody.getAngularFactor()
@@ -205,6 +205,7 @@ Class RigidBody Extends Component
 		_btbody.setAngularFactor( factor )
 	End
 	
+	[jsonify=1]
 	Property LinearVelocity:Vec3f()
 		
 		Return _btbody.getLinearVelocity()
@@ -214,6 +215,7 @@ Class RigidBody Extends Component
 		_btbody.setLinearVelocity( velocity )
 	End
 	
+	[jsonify=1]
 	Property AngularVelocity:Vec3f()
 		
 		Return _btbody.getAngularVelocity()
@@ -235,12 +237,16 @@ Class RigidBody Extends Component
 
 	Method ApplyForce( force:Vec3f )
 		
+		ValidateCollider()
+		
 		_btbody.applyCentralForce( force )
 		
 		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Method ApplyForce( force:Vec3f,offset:Vec3f )
+		
+		ValidateCollider()
 		
 		_btbody.applyForce( force,offset )
 		
@@ -249,12 +255,16 @@ Class RigidBody Extends Component
 	
 	Method ApplyImpulse( impulse:Vec3f )
 		
+		ValidateCollider()
+		
 		_btbody.applyCentralImpulse( impulse )
 		
 		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 	
 	Method ApplyImpulse( impulse:Vec3f,offset:Vec3f )
+		
+		ValidateCollider()
 		
 		_btbody.applyForce( impulse,offset )
 		
@@ -263,12 +273,16 @@ Class RigidBody Extends Component
 	
 	Method ApplyTorque( torque:Vec3f )
 		
+		ValidateCollider()
+		
 		_btbody.applyTorque( torque )
 		
 		_btbody.forceActivationState( ACTIVE_TAG )
 	End
 		
 	Method ApplyTorqueImpulse( torque:Vec3f )
+		
+		ValidateCollider()
 
 		_btbody.applyTorqueImpulse( torque )
 		
@@ -341,61 +355,54 @@ Class RigidBody Extends Component
 	Field _colliderseq:Int
 	Field _rvisible:Bool
 	Field _seq:Int
-
-	Method Validate()
+	
+	Method ValidateCollider()
 		
-		Local rvisible:=Entity.ReallyVisible
+		If (_dirty & (Dirty.Collider|Dirty.Mass))=0 Return
 		
-		If rvisible=_rvisible And Not _dirty Return
-
-		'Just remove body if hiding, deal with dirty only when made visible.
-		'		
-		If Not rvisible
-			
-			If _rvisible
-				
-				World.Remove( Self )
-				
-				_rvisible=False
-			Endif
-			
-			Return
-		Endif
+		_dirty &= ~(Dirty.Collider|Dirty.Mass)
 		
-		'remove/add body from world if collision shape changes. http://bulletphysics.org/Bullet/phpBB3/viewtopic.php?t=5194
-		'
-		If _rvisible And (_dirty & Dirty.Collider)
-			
+		If _rvisible
 			World.Remove( Self )
-			
 			_rvisible=False
 		Endif
 		
-		If _dirty & (Dirty.Collider|Dirty.Mass)
-			
-			Local collider:=Entity.Collider
-			
-			_btbody.setCollisionShape( collider?.Validate() )
+		Local collider:=Entity.Collider
+		
+		_btbody.setCollisionShape( collider?.Validate() )
 
-'			If Cast<MeshCollider>( collider )
-'				_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
-'			Else
-'				_btbody.setCollisionFlags( _btbody.getCollisionFlags() & ~btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
-'			Endif
+'		If Cast<MeshCollider>( collider )
+'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() | btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+'		Else
+'			_btbody.setCollisionFlags( _btbody.getCollisionFlags() & ~btCollisionObject.CF_CUSTOM_MATERIAL_CALLBACK )
+'		Endif
 			
-			Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
-			
-			_btbody.setMassProps( _mass,inertia )
-			
-			_btbody.updateInertiaTensor()
-		Endif
+		Local inertia:btVector3=collider?.CalculateLocalInertia( _mass )
+		
+		_btbody.setMassProps( _mass,inertia )
+		
+		_btbody.updateInertiaTensor()
+	End
 	
-		If _rvisible<>rvisible
-			
-			If rvisible World.Add( Self ) Else World.Remove( Self )
-				
-			_rvisible=rvisible
+	Method Validate()
+		
+		If Not Entity.ReallyVisible Or Not _dirty Return
+
+		'remove from world
+		'
+		If _rvisible
+			World.Remove( Self )
+			_rvisible=False
 		Endif
+
+		'validate collider/mass
+		'
+		ValidateCollider()
+		
+		'add to world
+		'
+		World.Add( Self )
+		_rvisible=True
 	
 		_dirty=Null
 	End
