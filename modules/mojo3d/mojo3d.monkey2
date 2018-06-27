@@ -54,6 +54,7 @@ Using reflection..
 #Import "scene/effects/monochromeeffect"
 #Import "scene/effects/reflectioneffect"
 #Import "scene/effects/godrayseffect"
+#Import "scene/effects/fxaaeffect"
 
 #Import "scene/jsonifier/jsonifier"
 #Import "scene/jsonifier/invocation"

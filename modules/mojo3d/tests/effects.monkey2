@@ -26,6 +26,8 @@ Class MyWindow Extends Window
 	
 	Field _godrays:GodraysEffect
 	
+	Field _fxaa:FXAAEffect
+	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=WindowFlags.Resizable )
 
 		Super.New( title,width,height,flags )
@@ -52,13 +54,17 @@ Class MyWindow Extends Window
 
 		_bloom=New BloomEffect
 		_bloom.Enabled=False
-		_scene.AddPostEffect( _bloom )
 		
 		_mono=New MonochromeEffect
 		_mono.Enabled=False
-		_scene.AddPostEffect( _mono )
 		
+		_fxaa=New FXAAEffect
+		_fxaa.Enabled=False
+		
+		_scene.AddPostEffect( _bloom )
+		_scene.AddPostEffect( _mono )
 		_scene.AddPostEffect( _godrays )
+		_scene.AddPostEffect( _fxaa )
 		
 		Local material:=New PbrMaterial( New Color( 2,.5,0,1 ),0,1 )
 		
@@ -75,6 +81,7 @@ Class MyWindow Extends Window
 		If Keyboard.KeyHit( Key.Key1 ) _godrays.Enabled=Not _godrays.Enabled
 		If Keyboard.KeyHit( Key.Key2 ) _bloom.Enabled=Not _bloom.Enabled
 		If Keyboard.KeyHit( Key.Key3 ) _mono.Enabled=Not _mono.Enabled
+		If Keyboard.KeyHit( Key.Key4 ) _fxaa.Enabled=Not _fxaa.Enabled
 		
 		_scene.Update()
 		
@@ -83,6 +90,7 @@ Class MyWindow Extends Window
 		canvas.DrawText( "(1) Godrays="+_godrays.Enabled,0,0 )
 		canvas.DrawText( "(2) Bloom="+_bloom.Enabled,0,16 )
 		canvas.DrawText( "(3) Monochrome="+_mono.Enabled,0,32 )
+		canvas.DrawText( "(4) FXAA="+_fxaa.Enabled,0,48 )
 	End
 	
 End
