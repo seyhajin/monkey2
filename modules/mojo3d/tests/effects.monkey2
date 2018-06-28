@@ -97,7 +97,7 @@ End
 
 Function Main()
 	
-	SetConfig( "MOJO_OPENGL_PROFILE","es" )
+'	SetConfig( "MOJO_OPENGL_PROFILE","es" )
 
 	New AppInstance
 	
