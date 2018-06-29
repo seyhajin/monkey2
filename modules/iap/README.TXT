@@ -47,7 +47,8 @@ Class IAPStore
 	
 	Method OpenStore( products:Product[] )	'Attempt to open the store.
 	Method BuyProduct( product:Product )	'Attempt to buy a product.
-	Method GetOwnedProducts()				'Attempty to get owned products.
+	Method GetOwnedProducts()				'Attempt to get owned products.
+	Method CloseStore()						'Closes store.
 End
 
 
