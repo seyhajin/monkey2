@@ -63,9 +63,12 @@ struct BBIAPStore : public bbObject{
 	bool OpenStoreAsync( bbArray<bbGCVar<BBProduct>> products );
 	bool BuyProductAsync( BBProduct* product );
 	bool GetOwnedProductsAsync();
+	void CloseStore();
 	
 	bool IsRunning();
 	int GetResult();
+	
+	static bool CanMakePayments();
 	
 	BBProduct *FindProduct( bbString id );
 	void OnRequestProductDataResponse( SKProductsRequest *request,SKProductsResponse *response );

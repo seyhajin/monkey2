@@ -6,6 +6,7 @@ IMPORTANT!
 This wont work 'as is'! You'll need to set up a bunch of stuff on GooglePlay/iTunes Connect developer portal such as app/products etc.
 
 #end
+
 Namespace myapp
 
 #Import "<iap>"
@@ -28,12 +29,16 @@ Class MyWindow Extends Window
 
 	Field _listView:ListView
 
+	Field _openStoreItem:ListView.Item
+	
+	Field _restorePurchasesItem:ListView.Item
+	
 	Field _iap:IAPStore
 	
 	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=Null )
 
 		Super.New( title,width,height,flags )
-
+		
 		Layout="stretch"
 		
 		'Create our IAP products.
@@ -43,7 +48,7 @@ Class MyWindow Extends Window
 			New Product( "bullet_boost",ProductType.Consumable ),
 			New Product( "ship_upgrade",ProductType.NonConsumable ) )
 		
-		'Load purchases we've alreday bought.
+		'Load purchases we've already bought.
 		'
 		LoadPurchases()
 
@@ -55,17 +60,23 @@ Class MyWindow Extends Window
 		
 		_listView.ItemClicked=Lambda( item:ListView.Item )
 		
-			If _iap.Busy Return
+			If Not _iap Or _iap.Busy Return
 			
-			Local index:= _listView.IndexOfItem( item )
-			
-			If index=_products.Length
-				
+			If item=_restorePurchasesItem
+
 				_iap.GetOwnedProducts()
+
+				Return
+			Endif
+			
+			If item=_openStoreItem
+				
+				OpenStore()
 				
 				Return
-			
 			Endif
+
+			Local index:= _listView.IndexOfItem( item )
 			
 			Local product:=_products[ index ]
 			
@@ -80,13 +91,36 @@ Class MyWindow Extends Window
 		
 		ContentView=_listView
 		
+		OpenStore()
+	End
+	
+	Method MakePurchase( product:Product )
+		
+		Select product.Type
+		Case ProductType.Consumable
+			_purchases.SetNumber( product.Identifier,_purchases.GetNumber( product.Identifier )+1 )
+		Case ProductType.NonConsumable
+			_purchases.SetNumber( product.Identifier,1 )
+		End
+	End
+	
+	Method OpenStore()
+
+		_iap?.CloseStore()
+		_iap=Null
+		
 		'Create IAPStore and various handlers.
 		'
 		_iap=New IAPStore
-		
-		'This isc alled when OpenStore completes.
+
+		GCCollect()
+		GCCollect()
+
+		'This is called when OpenStore completes.
 		'
 		_iap.OpenStoreComplete=Lambda( result:Int,interrupted:Product[],owned:Product[] )
+		
+			Print "OpenStoreComplete result="+result
 		
 			Select result
 			Case 0
@@ -104,7 +138,7 @@ Class MyWindow Extends Window
 				'you (as long as you're logged in anyway) so you don't strictly need to save them, but you do on ios so for the sake of 
 				'uniformity we will on android too.
 				'
-				'On Android, you never really need to use GetOwnProducts() because you are given this array of owned products when the store
+				'On Android, you never really need to use GetOwnedProducts() because you are given this array of owned products when the store
 				'opens. So in a sense, android automatically 'restores purchases' whenever you open the store.
 				'
 				'This array is always empty on ios. To restore non-consumables on ios you must call GetOwnedProducts in response to the push
@@ -117,13 +151,13 @@ Class MyWindow Extends Window
 				Next
 				
 				SavePurchases()
-				UpdateListView()
 				
 				_info="OpenStore successful"
 			Default
 				_info="OpenStore error:"+result
 			End
-		
+
+			UpdateListView()
 		End
 		
 		'This is called when BuyProduct completes.
@@ -165,21 +199,11 @@ Class MyWindow Extends Window
 			End
 			
 		End
-		
 
 		_iap.OpenStore( _products )
 		
 		_info="Opening store..."
-	End
-	
-	Method MakePurchase( product:Product )
 		
-		Select product.Type
-		Case ProductType.Consumable
-			_purchases.SetNumber( product.Identifier,_purchases.GetNumber( product.Identifier )+1 )
-		Case ProductType.NonConsumable
-			_purchases.SetNumber( product.Identifier,1 )
-		End
 	End
 	
 	Method LoadPurchases()
@@ -216,7 +240,11 @@ Class MyWindow Extends Window
 
 		_listView.RemoveAllItems()
 		
-		If _iap.Open
+		_restorePurchasesItem=Null
+		
+		_openStoreItem=Null
+		
+		If _iap?.Open
 		
 			For Local product:=Eachin _products
 				
@@ -227,15 +255,16 @@ Class MyWindow Extends Window
 				_listView.AddItem( product.Title+" - "+product.Description+" for the low price of "+product.Price+" ("+_purchases.GetNumber( product.Identifier )+")" )
 			Next
 			
-		Endif
+			_restorePurchasesItem=_listView.AddItem( "[RESTORE PURCHASES]" )
 			
-		_listView.AddItem( "[RESTORE PURCHASES]" )
+		Endif
 		
+		_openStoreItem=_listView.AddItem( "[REOPEN STORE]" )
 	End
 	
 	Method OnRender( canvas:Canvas ) Override
 		
-		App.RequestRender()
+		RequestRender()
 		
 		canvas.DrawText( "Hello World!",Width/2,Height/2,.5,.5 )
 		

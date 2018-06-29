@@ -136,6 +136,9 @@ Class IAPStoreRep
 		Return Env.CallBooleanMethod( _instance,_getownedproductsasync,Null )
 	End
 	
+	Method CloseStore:Void()
+	End
+	
 	Method IsRunning:Bool()
 		
 		Return Env.CallBooleanMethod( _instance,_isrunning,Null )
@@ -144,6 +147,11 @@ Class IAPStoreRep
 	Method GetResult:Int()
 		
 		Return Env.CallIntMethod( _instance,_getresult,Null )
+	End
+	
+	Function CanMakePayments:Bool()
+		
+		Return True
 	End
 	
 	Private

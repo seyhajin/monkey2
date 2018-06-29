@@ -23,9 +23,12 @@ Class BBIAPStore="BBIAPStore"
 	Method BBOpenStoreAsync:Bool( products:BBProduct[] )="OpenStoreAsync"
 	Method BBBuyProductAsync:Bool( product:BBProduct )="BuyProductAsync"
 	Method GetOwnedProductsAsync:Bool()
+	Method CloseStore()
 	
 	Method IsRunning:Bool()
 	Method GetResult:Int()
+		
+	Function CanMakePayments:Bool()
 End
 
 public

@@ -49,7 +49,7 @@ Class IAPStore
 	
 	Method OpenStore( products:Product[] )
 		
-		If _state>0 Return
+		If _state<>0 Return
 		
 		_products=products
 
@@ -57,12 +57,20 @@ Class IAPStore
 		
 		App.Idle+=UpdateState
 
-		_iap.OpenStoreAsync( _products )
+		If _iap.OpenStoreAsync( _products ) Return
+		
+		App.Idle-=UpdateState
+		
+		_state=0
+		
+		OpenStoreComplete( -1,Null,Null )
 	End
 	
 	Method BuyProduct( product:Product )
 		
 		If _state<>1 Return
+		
+		Print "_state="+_state
 		
 		_buying=product
 		
@@ -70,7 +78,15 @@ Class IAPStore
 		
 		App.Idle+=UpdateState
 		
-		_iap.BuyProductAsync( product )
+		If _iap.BuyProductAsync( _buying ) Return
+		
+		App.Idle-=UpdateState
+		
+		_buying=Null
+		
+		_state=1
+		
+		BuyProductComplete( -1,product )
 	End
 	
 	Method GetOwnedProducts()
@@ -81,7 +97,29 @@ Class IAPStore
 		
 		App.Idle+=UpdateState
 		
-		_iap.GetOwnedProductsAsync()
+		If _iap.GetOwnedProductsAsync() Return
+		
+		App.Idle-=UpdateState
+		
+		_state=1
+		
+		GetOwnedProductsComplete( -1,Null )
+	End
+	
+	Method CloseStore()
+		
+		If _state<>1 Return
+		
+		_iap.CloseStore()
+		
+		_iap=Null
+		
+		_state=-1
+	End
+	
+	Function CanMakePayments:Bool()
+		
+		Return IAPStoreRep.CanMakePayments()
 	End
 	
 	Private
@@ -110,7 +148,7 @@ Class IAPStore
 		Case 2	'openstore
 			
 			If result<0 _state=0
-			
+
 			Local interrupted:=New Stack<Product>
 			Local owned:=New Stack<Product>
 			For Local product:=Eachin _products

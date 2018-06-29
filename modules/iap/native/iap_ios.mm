@@ -53,10 +53,6 @@ BBProduct::~BBProduct(){
 
 BBIAPStore::BBIAPStore():_running( false ),_products( 0 ),_result( -1 ){
 
-	_delegate=[[BBIAPStoreDelegate alloc] initWithPeer:this];
-	
-	[[SKPaymentQueue defaultQueue] addTransactionObserver:_delegate];
-	
 	_priceFormatter=[[NSNumberFormatter alloc] init];
 	
 	[_priceFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
@@ -68,6 +64,12 @@ bool BBIAPStore::OpenStoreAsync( bbArray<bbGCVar<BBProduct>> products ){
 	if( _running || _products.length() ) return false;
 
 	if( ![SKPaymentQueue canMakePayments] ) return false;
+	
+	if( !_delegate ){	
+		_delegate=[[BBIAPStoreDelegate alloc] initWithPeer:this];
+	
+		[[SKPaymentQueue defaultQueue] addTransactionObserver:_delegate];
+	}
 	
 	_products=products;
 	
@@ -124,6 +126,15 @@ bool BBIAPStore::GetOwnedProductsAsync(){
 	return true;
 }
 
+void BBIAPStore::CloseStore(){
+
+	if( !_delegate ) return;
+	
+	[[SKPaymentQueue defaultQueue] removeTransactionObserver:_delegate];
+
+	_delegate=0;
+}
+
 bool BBIAPStore::IsRunning(){
 
 	return _running;
@@ -132,6 +143,11 @@ bool BBIAPStore::IsRunning(){
 int BBIAPStore::GetResult(){
 
 	return _result;
+}
+
+bool BBIAPStore::CanMakePayments(){
+
+	return [SKPaymentQueue canMakePayments];
 }
 
 BBProduct *BBIAPStore::FindProduct( bbString id ){
@@ -151,7 +167,7 @@ void BBIAPStore::OnRequestProductDataResponse( SKProductsRequest *request,SKProd
 	//Get product details
 	for( SKProduct *p in response.products ){
 	
-		printf( "product=%p\n",p );fflush( stdout );
+//		printf( "product=%p\n",p );fflush( stdout );
 	
 		BBProduct *prod=FindProduct( p.productIdentifier );
 		if( !prod ) continue;
@@ -175,7 +191,13 @@ void BBIAPStore::OnRequestProductDataResponse( SKProductsRequest *request,SKProd
 		_result=0;
 		break;
 	}
-	
+
+	if( _result==-1 ){	
+		[[SKPaymentQueue defaultQueue] removeTransactionObserver:_delegate];
+
+		_delegate=0;
+	}
+
 	_running=false;
 }
 
@@ -187,7 +209,7 @@ void BBIAPStore::OnUpdatedTransactions( SKPaymentQueue *queue,NSArray *transacti
 	
 		if( transaction.transactionState==SKPaymentTransactionStatePurchased ){
 		
-			printf( "IAP purchased\n" );fflush( stdout );
+//			printf( "IAP purchased\n" );fflush( stdout );
 			
 			_result=0;
 			
@@ -195,7 +217,7 @@ void BBIAPStore::OnUpdatedTransactions( SKPaymentQueue *queue,NSArray *transacti
 			
 		}else if( transaction.transactionState==SKPaymentTransactionStateFailed ){
 		
-			printf( "IAP failed %i\n",transaction.error.code );fflush( stdout );
+//			printf( "IAP failed %i\n",transaction.error.code );fflush( stdout );
 			
 			_result=(transaction.error.code==SKErrorPaymentCancelled) ? 1 : -1;
 			
@@ -203,13 +225,13 @@ void BBIAPStore::OnUpdatedTransactions( SKPaymentQueue *queue,NSArray *transacti
 			
 		}else if( transaction.transactionState==SKPaymentTransactionStateRestored ){
 		
-			printf( "IAP restored\n" );fflush( stdout );
+//			printf( "IAP restored\n" );fflush( stdout );
 			
 			if( BBProduct *p=FindProduct( transaction.payment.productIdentifier ) ) p->owned=true;
 		
 		}else{
 		
-			printf( "IAP ?????\n" );fflush( stdout );
+//			printf( "IAP ?????\n" );fflush( stdout );
 
 			continue;
 		}
@@ -226,6 +248,10 @@ void BBIAPStore::OnRestoreTransactionsFinished( SKPaymentQueue *queue,NSError *e
 }
 
 void BBIAPStore::OnRequestFailed( SKRequest *request,NSError *error ){
+
+	[[SKPaymentQueue defaultQueue] removeTransactionObserver:_delegate];
+
+	_delegate=0;
 
 	_running=false;
 }
