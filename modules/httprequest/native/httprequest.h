@@ -1,4 +1,7 @@
 
+#ifndef BB_HTTPREQUEST_H
+#define BB_HTTPREQUEST_H
+
 #include <bbmonkey.h>
 
 #if __APPLE__
@@ -39,5 +42,7 @@ namespace bbHttpRequest{
 	extern bbFunction<void( jobject,bbString,bbInt,bbInt )> onResponseReceived;
 
 }
+
+#endif
 
 #endif
