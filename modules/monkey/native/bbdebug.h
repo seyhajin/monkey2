@@ -37,6 +37,9 @@ inline bbString bbDBValue( bbFloat *p ){ return bbString(*p); }
 inline bbString bbDBValue( bbDouble *p ){ return bbString(*p); }
 extern bbString bbDBValue( bbString *p );
 
+template<class R,class...A> bbString bbDBType( R(*)(A...) ){ return "Extern?(?)"; }
+template<class R,class...A> bbString bbDBValue( R(*)(A...) ){ return "?"; }
+
 template<class T> bbString bbDBType(){
 	return bbDBType( (T*)0 );
 }
