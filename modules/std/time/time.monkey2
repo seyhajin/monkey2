@@ -335,6 +335,17 @@ Class Time
 		
 		Return New Time( p.day,p.month,p.year,p.hours,p.minutes,p.seconds )
 	End
+	
+	#rem monkeydoc Converts a file time to a time.
+	
+	Converts a file time as returned by [[GetFileTime]] to a time.
+	
+	#end
+	Function FromFileTime:Time( fileTime:Long )
+		
+		Return New Time( fileTime * TimeSpan.TicksPerSecond )
+	End
+	
 
 	Private
 	
@@ -351,7 +362,9 @@ Class Time
 	Method Init( ticks:Long )
 		_ticks=ticks
 		Local time:=to_time( _ticks )
-		_tm=libc.localtime( Varptr time )[0]
+		Local p:=libc.localtime( Varptr time )
+		If Not p RuntimeError( "time_t error" )
+		_tm=p[0]
 	End
 	
 End
