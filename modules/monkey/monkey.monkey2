@@ -7,7 +7,6 @@ Namespace monkey
 #Import "native/bbfunction.cpp"
 #Import "native/bbarray.cpp"
 #Import "native/bbmonkey.cpp"
-#Import "native/bbgc.cpp"
 #Import "native/bbobject.cpp"
 #Import "native/bbdebug.cpp"
 #Import "native/bbweakref.cpp"
@@ -15,6 +14,12 @@ Namespace monkey
 #Import "native/bbtypeinfo.cpp"
 #Import "native/bbdeclinfo.cpp"
 #Import "native/bbmonkey_c.c"
+
+'#If __THREADS__
+'#Import "native/bbgc_mx.cpp"
+'#else
+#Import "native/bbgc.cpp"
+'#endif
 
 #If __TARGET__="macos" Or __TARGET__="ios"
 #Import "native/bbstring.mm"
