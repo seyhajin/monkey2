@@ -2,7 +2,10 @@
 #ifndef BB_GC_H
 #define BB_GC_H
 
-#include "bbstd.h"
+#ifdef BB_THREADS
+#error "Wrong gc header"
+#endif
+
 #include "bbtypes.h"
 #include "bbfunction.h"
 

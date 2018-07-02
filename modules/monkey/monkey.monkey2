@@ -15,11 +15,8 @@ Namespace monkey
 #Import "native/bbdeclinfo.cpp"
 #Import "native/bbmonkey_c.c"
 
-'#If __THREADS__
-'#Import "native/bbgc_mx.cpp"
-'#else
+#Import "native/bbgc_mx.cpp"
 #Import "native/bbgc.cpp"
-'#endif
 
 #If __TARGET__="macos" Or __TARGET__="ios"
 #Import "native/bbstring.mm"

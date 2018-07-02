@@ -1,4 +1,6 @@
 
+#ifndef BB_THREADS
+
 #include "bbgc.h"
 #include "bbweakref.h"
 
@@ -375,3 +377,4 @@ namespace bbGC{
 	}
 }
 
+#endif
