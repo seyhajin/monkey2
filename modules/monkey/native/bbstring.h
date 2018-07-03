@@ -15,7 +15,11 @@ class bbCString;
 class bbString{
 
 	struct Rep{
-		bb_atomic_int refs;
+#ifdef BB_THREADS
+		std::atomic_int refs;
+#else
+		int refs;
+#endif
 		int length;
 		bbChar data[0];
 		
@@ -32,12 +36,26 @@ class bbString{
 			while( *e ) ++e;
 			return create( p,e-p );
 		}
-
 	};
-	
-	Rep *_rep;
 
 	static Rep _nullRep;
+	
+#ifdef BB_THREADS
+
+	std::atomic<Rep*> _rep;
+
+	void retain()const{
+		++_rep.load()->refs;
+	}
+	
+	void release(){
+		Rep *rep=_rep.load();
+		if( !--rep->refs && rep!=&_nullRep ) bbGC::free( rep );
+	}
+	
+#else
+
+	Rep *_rep;
 	
 	void retain()const{
 		++_rep->refs;
@@ -47,7 +65,9 @@ class bbString{
 		if( !--_rep->refs && _rep!=&_nullRep ) bbGC::free( _rep );
 	}
 	
-	bbString( Rep *rep ):_rep( rep ){
+#endif
+
+	bbString( Rep *rep ):_rep(rep){
 	}
 	
 	public:
@@ -57,9 +77,15 @@ class bbString{
 	bbString():_rep( &_nullRep ){
 	}
 	
+#if BB_THREADS
+	bbString( const bbString &s ):_rep( s._rep.load() ){
+		retain();
+	}
+#else
 	bbString( const bbString &s ):_rep( s._rep ){
 		retain();
 	}
+#endif
 	
 	bbString( const void *data );
 	
@@ -99,6 +125,15 @@ class bbString{
 		release();
 	}
 	
+#if BB_THREADS
+	const bbChar *data()const{
+		return _rep.load()->data;
+	}
+	
+	int length()const{
+		return _rep.load()->length;
+	}
+#else
 	const bbChar *data()const{
 		return _rep->data;
 	}
@@ -106,7 +141,8 @@ class bbString{
 	int length()const{
 		return _rep->length;
 	}
-	
+#endif
+
 	bbChar operator[]( int index )const{
 		bbDebugAssert( index>=0 && index<length(),"String character index out of range" );
 		return data()[index];
@@ -126,12 +162,23 @@ class bbString{
 	
 	bbString operator*( int n )const;
 	
+#ifdef BB_THREADS	
+	bbString &operator=( const bbString &str ){
+		Rep *oldrep=_rep,*newrep=str._rep;
+		if( _rep.compare_exchange_strong( oldrep,newrep ) ){
+			++newrep->refs;
+			if( !--oldrep->refs && oldrep!=&_nullRep ) bbGC::free( oldrep );
+		}
+		return *this;
+	}
+#else
 	bbString &operator=( const bbString &str ){
 		str.retain();
 		release();
 		_rep=str._rep;
 		return *this;
 	}
+#endif
 	
 	template<class C> bbString &operator=( const C *data ){
 		release();

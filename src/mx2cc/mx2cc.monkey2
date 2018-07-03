@@ -22,12 +22,14 @@ Global opts_time:Bool
 
 Global StartDir:String
 
-Const TestArgs:="mx2cc makemods"
+Global profileName:String
+
+'Const TestArgs:="mx2cc makemods monkey"
 
 'Const TestArgs:="mx2cc makemods"' -clean mojo"
 'Const TestArgs:="mx2cc makedocs std"
  
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 Function Main()
 	
@@ -179,7 +181,7 @@ Function GenInfo:Bool( args:String[] )
 	ChangeDir( cd )
 	
 	Print ""
-	Print "***** Generating info for "+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+") *****"
+	Print "***** Generating info for "+opts.mainSource+"' "+profileName+" *****"
 	Print ""
 
 	New BuilderInstance( opts )
@@ -228,7 +230,7 @@ Function MakeApp:Bool( args:String[] )
 	opts.mainSource=srcPath
 	
 	Print ""
-	Print "***** Making app '"+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+") *****"
+	Print "***** Making app '"+opts.mainSource+"' "+profileName+" *****"
 	Print ""
 
 	New BuilderInstance( opts )
@@ -287,7 +289,7 @@ Function MakeMods:Bool( args:String[] )
 		If Not path Fail( "Module '"+modid+"' not found" )
 	
 		Print ""
-		Print "***** Making module '"+modid+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+") *****"
+		Print "***** Making module '"+modid+"' "+profileName+" *****"
 		Print ""
 		
 		opts.mainSource=RealPath( path )
@@ -572,6 +574,8 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 	Default
 		Fail( "Unrecognized apptype '"+opts.appType+"'" )
 	End
+	
+	profileName="("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+(opts.threads ? " mx" Else "")+")"
 		
 	Return args
 End

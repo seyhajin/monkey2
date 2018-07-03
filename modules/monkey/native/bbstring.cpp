@@ -7,6 +7,10 @@
 #include <cwctype>
 #include <clocale>
 
+#ifdef BB_THREADS
+#include <mutex>
+#endif
+
 bbString::Rep bbString::_nullRep;
 
 #if BB_ANDROID
@@ -56,9 +60,14 @@ namespace{
 	
 	void initLocale(){
 	
+#if BB_THREADS
+		static std::atomic_bool inited;
+		if( inited.exchange( true ) ) return;
+#else
 		static bool inited;
 		if( inited ) return;
 		inited=true;
+#endif
 		
 #if BB_ANDROID
 		JNIEnv *env=(JNIEnv*)SDL_AndroidGetJNIEnv();
@@ -208,8 +217,9 @@ bbString::bbString( const void *p ){
 		_rep=Rep::create( cp,sz );
 		return;
 	}
-	_rep=Rep::alloc( n );
-	utf8ToChars( cp,_rep->data,n );
+	Rep *rep=Rep::alloc( n );
+	utf8ToChars( cp,rep->data,n );
+	_rep=rep;
 }
 
 bbString::bbString( const void *p,int sz ){
@@ -227,8 +237,9 @@ bbString::bbString( const void *p,int sz ){
 		_rep=Rep::create( cp,sz );
 		return;
 	}
-	_rep=Rep::alloc( n );
-	utf8ToChars( cp,_rep->data,n );
+	Rep *rep=Rep::alloc( n );
+	utf8ToChars( cp,rep->data,n );
+	_rep=rep;
 }
 
 bbString::bbString( const bbChar *data ):_rep( Rep::create( data ) ){
@@ -326,8 +337,8 @@ bbString::bbString( double n ){
 }
 
 void bbString::toCString( void *buf,int size )const{
-
-	charsToUtf8( _rep->data,_rep->length,(char*)buf,size );
+	Rep *rep=_rep;
+	charsToUtf8( rep->data,rep->length,(char*)buf,size );
 }
 
 void bbString::toWString( void *buf,int size )const{
@@ -347,12 +358,23 @@ const char *bbString::c_str()const{
 
 	static int _sz;
 	static char *_tmp;
-	
+
 	int sz=utf8Length()+1;
+	
+#ifdef BB_THREADS
+	std::mutex _mutex;
+	_mutex.lock();
+#endif
+
 	if( sz>_sz ){
 		::free( _tmp );
 		_tmp=(char*)::malloc( _sz=sz );
 	}
+	
+#ifdef BB_THREADS
+	_mutex.unlock();
+#endif
+	
 	toCString( _tmp,sz );
 	return _tmp;
 }
@@ -463,7 +485,7 @@ bbString bbString::operator*( int n )const{
 	Rep *rep=Rep::alloc( length()*n );
 	bbChar *p=rep->data;
 	for( int j=0;j<n;++j ){
-		for( int i=0;i<_rep->length;++i ) *p++=data()[i];
+		for( int i=0;i<length();++i ) *p++=data()[i];
 	}
 	return rep;
 }
@@ -580,7 +602,7 @@ bbString bbString::dup( int n )const{
 	Rep *rep=Rep::alloc( length()*n );
 	bbChar *p=rep->data;
 	for( int j=0;j<n;++j ){
-		for( int i=0;i<_rep->length;++i ) *p++=data()[i];
+		for( int i=0;i<length();++i ) *p++=data()[i];
 	}
 	return rep;
 }

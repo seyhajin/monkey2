@@ -16,11 +16,26 @@
 
 typedef void(*dbEmit_t)(void*);
 
+#if BB_THREADS
+namespace bbGC{
+	void suspendThreads();
+	void resumeThreads();
+}
+#endif
+
 namespace bbDB{
 
-	int nextSeq;
+	bool fatality;
 	
+#if BB_THREADS	
+	std::atomic_int nextSeq;
+	thread_local bbDBContext *currentContext;
+#else
+	int nextSeq;
 	bbDBContext *currentContext;
+#endif
+
+	bbDBContext mainContext;
 	
 #if !_WIN32
 	void breakHandler( int sig ){
@@ -29,31 +44,32 @@ namespace bbDB{
 	}
 #endif
 
+	//Note: doesn't work on non-mainthread on at least windows.
+	//
 	void sighandler( int sig  ){
 	
-		const char *err="Unknown signal";
+		const char *err="SIGNAL: Unknown signal";
+		
 		switch( sig ){
-		case SIGSEGV:err="Memory access violation";break;
-		case SIGILL:err="Illegal instruction";break;
-		case SIGFPE:err="Floating point exception";break;
+		case SIGSEGV:err="SIGNAL: Memory access violation";break;
+		case SIGILL:err= "SIGNAL: Illegal instruction";break;
+		case SIGFPE:err= "SIGNAL: Floating point exception";break;
 #if !_WIN32
-		case SIGBUS:err="Bus error";
+		case SIGBUS:err= "SIGNAL: Bus error";break;
 #endif	
 		}
-				
-#ifndef NDEBUG
+		
+		fatality=true;
 		error( err );
 		exit( 0 );
-#endif
-		bb_printf( "Caught signal:%s\n",err );
-		exit( -1 );
 	}
 	
 	void init(){
 	
-		currentContext=new bbDBContext;
-		currentContext->init();
+		mainContext.init();
 		
+		currentContext=&mainContext;
+	
 		signal( SIGSEGV,sighandler );
 		signal( SIGILL,sighandler );
 		signal( SIGFPE,sighandler );
@@ -77,9 +93,22 @@ namespace bbDB{
 #else		
 		signal( SIGTSTP,breakHandler );
 #endif
-
 #endif
-}
+	}
+	
+	void emit( const char *e ){
+	
+		if( const char *p=strchr( e,':' ) ){
+			dbEmit_t dbEmit=(dbEmit_t)( strtol( p+1,0,16 ) );
+			dbEmit( (void*)strtol( e,0,16 ) );
+		}else{
+			bbGCNode *node=(bbGCNode*)strtoll( e,0,16 );
+			node->dbEmit();
+		}
+		
+		puts( "" );
+		fflush( stdout );
+	}
 	
 	void emitVar( bbDBVar *v ){
 		bbString id=v->name;
@@ -104,64 +133,62 @@ namespace bbDB{
 		}
 	}
 	
-	void stop(){
-	
-		//currentContext->stopped=1;	//stop on *next* stmt.
-		
-		stopped();						//stop on DebugStop() stmt.
-	}
-	
-	void emit( const char *e ){
-	
-		if( const char *p=strchr( e,':' ) ){
-			dbEmit_t dbEmit=(dbEmit_t)( strtol( p+1,0,16 ) );
-			dbEmit( (void*)strtol( e,0,16 ) );
-		}else{
-			bbGCNode *node=(bbGCNode*)strtoll( e,0,16 );
-			node->dbEmit();
-		}
-		
-		puts( "" );
-		fflush( stdout );
+	void error( bbString msg ){
+#if _WIN32
+		MessageBoxW( 0,bbWString( msg ),L"Monkey 2 Runtime Error",MB_OK );
+#else
+		bb_print( msg );
+#endif
+		stopped();
 	}
 	
 	void stopped(){
 	
-		bb_printf( "{{!DEBUG!}}\n" );
-		
-		emitStack();
+#ifdef NDEBUG
+		exit( -1 );
+#endif
 
-		bb_printf( "\n" );
-		fflush( stdout );
-		
+#ifdef BB_THREADS
+		bbGC::suspendThreads();
+#endif
+
 #ifdef __EMSCRIPTEN__
 		emscripten_pause_main_loop();
 #endif
+
+		bb_printf( "{{!DEBUG!}}\n" );
+		emitStack();
+		bb_printf( "\n" );
+		
+		fflush( stdout );
 		
 		for(;;){
 		
 			char buf[256];
 			char *e=fgets( buf,256,stdin );
-			if( !e ) exit( -1 );
 			
+			if( !e || fatality ) exit( -1 );
+			
+#ifdef BB_THREADS
+			bbGC::resumeThreads();
+#endif
+
+#ifdef __EMSCRIPTEN__
+			emscripten_resume_main_loop();
+#endif
 			switch( e[0] ){
-			case 'r':currentContext->stopped=0;currentContext->stepMode=0;return;
-			case 'e':currentContext->stopped=1;currentContext->stepMode=0;return;
-			case 's':currentContext->stopped=1;currentContext->stepMode='s';return;
-			case 'l':currentContext->stopped=0;currentContext->stepMode='l';return;
+			case 'r':currentContext->stopped=0;currentContext->stepMode=0;break;
+			case 'e':currentContext->stopped=1;currentContext->stepMode=0;break;
+			case 's':currentContext->stopped=1;currentContext->stepMode='s';break;
+			case 'l':currentContext->stopped=0;currentContext->stepMode='l';break;
 			case '@':emit( e+1 );continue;
-			case 'q':exit( 0 );return;
+			case 'q':exit( 0 );break;
+			default:
+				bb_printf( "Unrecognized debug cmd: %s\n",buf );fflush( stdout );
+				exit( -1 );
 			}
-			bb_printf( "Unrecognized debug cmd: %s\n",buf );fflush( stdout );
-			exit( -1 );
+			return;
 		}
-	}
-	
-	void error( bbString msg ){
-		
-		bb_printf( "\n%s\n",msg.c_str() );
-		
-		stopped();
 	}
 	
 	bbArray<bbString> stack(){
@@ -179,12 +206,21 @@ namespace bbDB{
 		
 		return st;
 	}
+	
+	void stop(){
+	
+		//currentContext->stopped=1;	//stop on *next* stmt.
+		
+		stopped();						//stop on DebugStop() stmt.
+	}
+	
 }
 
 void bbDBContext::init(){
 	if( !localsBuf ) localsBuf=new bbDBVar[16384];
 	locals=localsBuf;
 	frames=nullptr;
+	stepMode=0;
 	stopped=0;
 }
 

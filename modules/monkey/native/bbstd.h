@@ -15,4 +15,12 @@
 #include <cctype>
 #include <cmath>
 
+#ifdef BB_THREADS
+#include <atomic>
+#endif
+
+#ifndef _MSC_VER
+#define __forceinline inline __attribute__((always_inline))
+#endif
+
 #endif

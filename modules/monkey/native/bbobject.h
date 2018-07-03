@@ -2,8 +2,13 @@
 #ifndef BB_OBJECT_H
 #define BB_OBJECT_H
 
+#ifdef BB_THREADS
+#include "bbgc_mx.h"
+#else
 #include "bbgc.h"
-#include "bbstring.h"
+#endif
+
+//#include "bbstring.h"
 #include "bbdebug.h"
 
 struct bbObject : public bbGCNode{

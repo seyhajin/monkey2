@@ -2,7 +2,11 @@
 #ifndef BB_ARRAY_H
 #define BB_ARRAY_H
 
+#ifdef BB_THREADS
+#include "bbgc_mx.h"
+#else
 #include "bbgc.h"
+#endif
 
 template<class T,int D> struct bbArray{
 

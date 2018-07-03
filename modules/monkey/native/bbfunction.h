@@ -28,8 +28,12 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 	}
 	
 	struct Rep{
-
-		bb_atomic_int refs=0;
+		
+#ifdef BB_THREADS
+		std::atomic_int refs;
+#else
+		int refs;
+#endif
 
 		virtual ~Rep(){
 		}
@@ -134,6 +138,27 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 			return rhs( a... );
 		}
 		
+#ifdef BB_THREADS
+		virtual Rep *remove( Rep *rep ){
+		
+			if( rep==this ) return &_nullRep;
+			
+			Rep *lhs2=lhs._rep.load()->remove( rep );
+			Rep *rhs2=rhs._rep.load()->remove( rep );
+			
+			if( lhs2==lhs._rep && rhs2==rhs._rep ) return this;
+			
+			if( lhs2==&_nullRep ) return rhs2;
+			if( rhs2==&_nullRep ) return lhs2;
+			
+			return new SequenceRep( lhs2,rhs2 );
+		}
+		
+		virtual void gcMark(){
+			lhs._rep.load()->gcMark();
+			rhs._rep.load()->gcMark();
+		}
+#else
 		virtual Rep *remove( Rep *rep ){
 		
 			if( rep==this ) return &_nullRep;
@@ -153,11 +178,24 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 			lhs._rep->gcMark();
 			rhs._rep->gcMark();
 		}
+#endif
 	};
-	
-	Rep *_rep;
-	
+
 	static Rep _nullRep;
+	
+#ifdef BB_THREADS
+	std::atomic<Rep*> _rep;
+	
+	void retain()const{
+		++_rep.load()->refs;
+	}
+	
+	void release(){
+		Rep *rep=_rep.load();
+		if( !--rep->refs && rep!=&_nullRep ) delete rep;
+	}
+#else
+	Rep *_rep;
 	
 	void retain()const{
 		++_rep->refs;
@@ -166,6 +204,7 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 	void release(){
 		if( !--_rep->refs && _rep!=&_nullRep ) delete _rep;
 	}
+#endif
 	
 	bbFunction( Rep *rep ):_rep( rep ){
 		retain();
@@ -175,10 +214,16 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 	
 	bbFunction():_rep( &_nullRep ){
 	}
-	
+
+#ifdef BB_THREADS
+	bbFunction( const bbFunction &p ):_rep( p._rep.load() ){
+		retain();
+	}
+#else
 	bbFunction( const bbFunction &p ):_rep( p._rep ){
 		retain();
 	}
+#endif
 	
 	template<class C> bbFunction( C *c,typename MethodRep<C>::T p ):_rep( new MethodRep<C>(c,p) ){
 		retain();
@@ -192,12 +237,57 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		release();
 	}
 	
+	/*
 	void discard(){
 		if( _rep==&_nullRep ) return;
 		delete _rep;
 		_rep=&_nullRep;
 	}
+	*/
 	
+#ifdef BB_THREADS
+	bbFunction &operator=( const bbFunction &p ){
+		Rep *oldrep=_rep,*newrep=p._rep;
+		if( _rep.compare_exchange_strong( oldrep,newrep ) ){
+			++newrep->refs;
+			if( !--oldrep->refs && oldrep!=&_nullRep ) delete oldrep;
+		}
+		return *this;
+	}
+
+	bbFunction operator+( const bbFunction &rhs )const{
+		Rep *tlhs=_rep,*trhs=rhs._rep;
+		if( tlhs==&_nullRep ) return trhs;
+		if( trhs==&_nullRep ) return tlhs;
+		return new SequenceRep( tlhs,trhs );
+	}
+	
+	bbFunction operator-( const bbFunction &rhs )const{
+		return _rep.load()->remove( rhs._rep );
+	}
+	
+	bbBool operator==( const bbFunction &rhs )const{
+		return _rep.load()->equals( rhs._rep );
+	}
+	
+	bbBool operator!=( const bbFunction &rhs )const{
+		return !_rep.load()->equals( rhs._rep );
+	}
+
+	operator bbBool()const{
+		return _rep.load()==&_nullRep;
+	}
+	
+	R operator()( A...a )const{
+		return _rep.load()->invoke( a... );
+	}
+
+	operator F()const{	//cast to simple static function ptr
+		FunctionRep *t=dynamic_cast<FunctionRep*>( _rep.load() );
+		if( t ) return t->p;
+		return castErr;
+	}
+#else
 	bbFunction &operator=( const bbFunction &p ){
 		p.retain();
 		release();
@@ -210,19 +300,9 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		if( rhs._rep==&_nullRep ) return *this;
 		return new SequenceRep( *this,rhs );
 	}
-	
+
 	bbFunction operator-( const bbFunction &rhs )const{
 		return _rep->remove( rhs._rep );
-	}
-	
-	bbFunction &operator+=( const bbFunction &rhs ){
-		*this=*this+rhs;
-		return *this;
-	}
-	
-	bbFunction &operator-=( const bbFunction &rhs ){
-		*this=*this-rhs;
-		return *this;
 	}
 
 	bbBool operator==( const bbFunction &rhs )const{
@@ -232,7 +312,7 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 	bbBool operator!=( const bbFunction &rhs )const{
 		return !_rep->equals( rhs._rep );
 	}
-	
+
 	operator bbBool()const{
 		return _rep==&_nullRep;
 	}
@@ -241,12 +321,21 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		return _rep->invoke( a... );
 	}
 	
-	//cast to simple static function ptr
-	//
-	operator F()const{
+	operator F()const{	//cast to simple static function ptr
 		FunctionRep *t=dynamic_cast<FunctionRep*>( _rep );
 		if( t ) return t->p;
 		return castErr;
+	}
+#endif
+
+	bbFunction &operator+=( const bbFunction &rhs ){
+		*this=*this+rhs;
+		return *this;
+	}
+	
+	bbFunction &operator-=( const bbFunction &rhs ){
+		*this=*this-rhs;
+		return *this;
 	}
 };
 
@@ -264,9 +353,15 @@ template<class R,class...A> bbFunction<R(A...)> bbMakefunc( R(*p)(A...) ){
 	return bbFunction<R(A...)>( p );
 }
 
+#if BB_THREADS
+template<class R,class...A> void bbGCMark( const bbFunction<R(A...)> &t ){
+	t._rep.load()->gcMark();
+}
+#else
 template<class R,class...A> void bbGCMark( const bbFunction<R(A...)> &t ){
 	t._rep->gcMark();
 }
+#endif
 
 template<class R,class...A> int bbCompare( const bbFunction<R(A...)> &x,const bbFunction<R(A...)> &y ){
 	return x._rep->compare( y._rep );
