@@ -66,12 +66,25 @@ End
 Function Main()
 
 	Use( Typeof(app.App) )
-
+	
+	'***** Bizarro issue #87c *****
+	'
+	'The first OpenFunc here gets ignored, but ONLY in release+threaded mode and ONLY on my nvidia shield tablet (so far, emulators OK)
+	'
+	'Damn straight this took a while to find! No idea what's causing it, but this dummy entry is the workaround for now.
+	'
+	'Original symptom was fonts failing to load.
+	'	
+	Stream.OpenFuncs["::"]=Lambda:Stream( proto:String,path:String,mode:String )
+	
+		Return Null
+	End
+	
 	Stream.OpenFuncs["font"]=Lambda:Stream( proto:String,path:String,mode:String )
 	
 		Return Stream.Open( "asset::fonts/"+path,mode )
 	End
-		
+	
 	Stream.OpenFuncs["image"]=Lambda:Stream( proto:String,path:String,mode:String )
 	
 		Return Stream.Open( "asset::images/"+path,mode )
@@ -81,5 +94,4 @@ Function Main()
 	
 		Return Stream.Open( "asset::themes/"+path,mode )
 	End
-	
 End
