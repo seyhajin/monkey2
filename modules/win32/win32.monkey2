@@ -169,6 +169,8 @@ Function OpenProcess:HANDLE( dwDesiredAccess:DWORD,bInheritHandle:BOOL_,dwProces
 	
 Function GetCurrentProcess:HANDLE()
 	
+Function CloseHandle:BOOL_( hObject:HANDLE )
+	
 'user32
 
 Function MessageBoxW:Int( hWnd:HWND,lpText:WString,lpCaption:WString,uType:UInt )
