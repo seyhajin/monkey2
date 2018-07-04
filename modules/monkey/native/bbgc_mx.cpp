@@ -456,7 +456,7 @@ namespace bbGC{
 		
 		double elapsed=now()-start;
 		
-		bb_printf( "sweep=%g (%ims)",elapsed,int(elapsed*1000+0.5) );fflush( stdout );
+//		bb_printf( "sweep=%g (%ims)\n",elapsed,int(elapsed*1000+0.5) );fflush( stdout );
 		
 //		printf( "end sweep\n" );fflush( stdout );
 	}
