@@ -1,5 +1,5 @@
 
-'Namespace std.thread
+Namespace std.thread
 
 #If __THREADS__
 
