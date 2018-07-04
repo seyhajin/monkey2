@@ -78,6 +78,13 @@ namespace bbGC{
 	
 	bool inited;
 	
+	void finit(){
+	
+		suspended=INT_MAX;
+		
+		inited=false;
+	}
+	
 	void init(){
 
 		if( inited ) return;
@@ -111,8 +118,9 @@ namespace bbGC{
 			
 		if( sigaction( SIGUSR2,&action,0 )<0 ) exit(-1);
 #endif
-
 		suspended=0;
+		
+		atexit( finit );
 	}
 	
 	void setTrigger( size_t size ){
