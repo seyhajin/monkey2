@@ -1,5 +1,5 @@
 
-#if 0 //_MSC_VER
+#if _MSC_VER
 
 #include <openvr.h>
 
@@ -18,6 +18,5 @@
 #include <openvr_mingw.h>
 
 #endif
-
 
 using namespace vr;
