@@ -15,11 +15,11 @@ Namespace openvr
 
 #Elseif __TARGET__="macos"
 
-#Import "bin/osx64/OpenVR.framework"
+'#Import "bin/osx64/OpenVR.framework"
 
 #Elseif __TARGET__="linux"
 
-#Import "bin/liux64/libopenvr_api.so"
+'#Import "bin/liux64/libopenvr_api.so"
 
 #Endif
 
