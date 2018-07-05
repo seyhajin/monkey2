@@ -24,12 +24,9 @@ Global StartDir:String
 
 Global profileName:String
 
-'Const TestArgs:="mx2cc makemods monkey"
+Const TestArgs:="mx2cc makemods monkey"
 
-'Const TestArgs:="mx2cc makemods"' -clean mojo"
-'Const TestArgs:="mx2cc makedocs std"
- 
-Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 Function Main()
 	
@@ -540,6 +537,8 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		If Not opts.appType opts.appType="wasm"
 			
 		opts.arch="llvm"
+		
+		opts.threads=False
 		
 	Case "android"
 		

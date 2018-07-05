@@ -46,6 +46,8 @@ __NEWPAGES__/
 /modules/pyro-scenegraph
 /modules/pyro-tiled
 /modules/box2d
+/modules/box2dxt
+/modules/steamworks
 
 /modules/module-manager/backups
 
