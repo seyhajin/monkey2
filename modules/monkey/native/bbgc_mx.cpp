@@ -80,7 +80,7 @@ namespace bbGC{
 	
 	void finit(){
 	
-		suspended=INT_MAX;
+		suspended=0x7fffffff;
 		
 		inited=false;
 	}
