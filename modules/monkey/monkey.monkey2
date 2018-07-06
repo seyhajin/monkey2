@@ -19,6 +19,7 @@ Namespace monkey
 #Import "native/bbgc.cpp"
 
 #If __TARGET__="macos" Or __TARGET__="ios"
+#Import "native/bbmonkey.mm"
 #Import "native/bbstring.mm"
 #Endif
 

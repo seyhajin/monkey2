@@ -25,7 +25,7 @@ void bb_printf( const char *fmt,... ){
 	va_end( args );
 }
 
-#else
+#elif !BB_IOS
 
 void bb_print( bbString str ){
 	puts( str.c_str() );fflush( stdout );
