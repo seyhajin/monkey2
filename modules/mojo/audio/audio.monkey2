@@ -72,7 +72,7 @@ Class AudioDevice
 			finished()
 		End,True )
 		
-		Local file:=filesystem.OpenCFile( path,"rb" )
+		Local file:=filesystem.OpenCFile( path,"r" )
 		
 		Local sampleRate:=playMusic( file,callback,channel._alSource )
 	

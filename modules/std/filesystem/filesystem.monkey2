@@ -908,6 +908,12 @@ Opens a file that can be used with the 'C' calls fopen, fread, fwrite and fclose
 Function OpenCFile:FILE Ptr( path:String,mode:String )
 	
 	path=FixFilePath( path )
+
+	Select mode
+	Case "r" mode="rb"
+	Case "w" mode="wb"
+	Case "rw" mode="r+b"
+	End
 	
 #If __TARGET__="android"
 	If path.StartsWith( "${ASSETS}/" )
