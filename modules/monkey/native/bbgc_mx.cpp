@@ -42,6 +42,8 @@ namespace{
 
 namespace bbGC{
 
+	const char *state="IDLE";
+
 	size_t trigger=4*1024*1024;
 	int suspended=1;
 	
@@ -487,14 +489,22 @@ namespace bbGC{
 
 			if( allocedBytes+size>=trigger ){
 				
+				state="SWEEPING";
+				
 				sweep();
 				
 			}else{
 			
+				state="MARKING";
+			
 				markQueued( double( allocedBytes+size ) / double( trigger ) * double( unmarkedBytes + trigger ) );
 			}
 			
+			state="RECLAIMING";			
+			
 			reclaim( size );
+			
+			state="IDLE";
 			
 			unlockCollector();
 		}

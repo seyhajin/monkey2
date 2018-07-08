@@ -18,6 +18,7 @@ typedef void(*dbEmit_t)(void*);
 
 #if BB_THREADS
 namespace bbGC{
+	extern const char *state;
 	void suspendThreads();
 	void resumeThreads();
 }
@@ -25,8 +26,6 @@ namespace bbGC{
 
 namespace bbDB{
 
-	bool fatality;
-	
 #if BB_THREADS	
 	std::atomic_int nextSeq;
 	thread_local bbDBContext *currentContext;
@@ -59,9 +58,21 @@ namespace bbDB{
 #endif	
 		}
 		
-		fatality=true;
-		error( err );
-		exit( 0 );
+		char buf[160];
+#ifdef BB_THREADS		
+		sprintf( buf,"Monkey 2 Runtime error: %s\nGC state=%s\n",err,bbGC::state );
+#else
+		sprintf( buf,"Monkey 2 Runtime error: %s\n",err );
+#endif
+		bb_printf( buf );
+
+#ifdef NDEBUG
+#ifdef _WIN32
+ 		MessageBoxA( 0,buf,"Monkey 2 Runtime Error",MB_OK );
+#endif
+		exit( -1 );
+#endif
+		stopped();
 	}
 	
 	void init(){
@@ -166,8 +177,7 @@ namespace bbDB{
 		
 			char buf[256];
 			char *e=fgets( buf,256,stdin );
-			
-			if( !e || fatality ) exit( -1 );
+			if( !e ) exit( -1 );
 			
 #ifdef BB_THREADS
 			bbGC::resumeThreads();
