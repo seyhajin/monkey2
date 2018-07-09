@@ -83,16 +83,20 @@ Function PlayMusic:Bool( path:String,finished:Void()=Null )
 			Local state:ALenum
 			
 			Repeat
+				
 				alGetSourcei( source,AL_SOURCE_STATE,Varptr state )
-					
 				If state=AL_STOPPED Exit
 				
 				If state=AL_PLAYING
+					
 					Local processed:ALint
 					alGetSourcei( source,AL_BUFFERS_PROCESSED,Varptr processed )
 					
 					If processed Exit
+					
 				Endif
+				
+				Sleep( buffer_ms/2/1000.0 )
 				
 			Forever
 			
