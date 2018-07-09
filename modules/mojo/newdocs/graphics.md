@@ -45,7 +45,58 @@ An image can be loaded from a file using the [[Image.Load]] function or construc
 You can also render to an image using a canvas object.
 
 
-@#### Lighting
+@#### Fullscreen mode
+
+To render fullscreen, you must place your apps main window into fullscreen mode. Use [[Window.BeginFullscreen]] to enter fullscreen mode and [[Window.EndFullscreen]] to leave fullscreen mode.
+
+
+@#### Virtual resolution
+
+You can also render at a fixed virtual (or 'logical') resolution, and allow mojo to scale up rendering operations to the actual resolution.
+
+To do this, you need to change the window's [[View.Layout|layout mode]] to 'letterbox' and override the window's [[View.OnMeasure|OnMeasure]] method. For example:
+
+```
+#Import "<mojo>"
+
+Using std..
+Using mojo..
+
+Class MyWindow Extends Window
+
+	'The resolution we want to use
+	Const VirtualResolution:=New Vec2i( 256,128 )
+
+	Method New( title:String="Simple mojo app",width:Int=640,height:Int=480,flags:WindowFlags=Null )
+
+		Super.New( title,width,height,flags )
+		
+		Layout="letterbox"
+	End
+
+	Method OnRender( canvas:Canvas ) Override
+	
+		App.RequestRender()
+	
+		canvas.DrawText( "Chunky graphics!",Width/2,Height/2,.5,.5 )
+	End
+	
+	Method OnMeasure:Vec2i() Override
+		
+		Return VirtualResolution
+	End
+	
+End
+
+Function Main()
+	New AppInstance
+	New MyWindow
+	App.Run()
+End
+```
+
+
+@#### 2D Lighting
 
 A canvas also supports 2d lighting with bumpmapping and specular effects.
 

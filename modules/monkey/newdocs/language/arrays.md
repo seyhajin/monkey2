@@ -3,7 +3,7 @@
 
 ### Arrays
 
-An array is a linear sequence of values that can be addressed using one or more integer indices.
+An array is a linear sequence of values that can be addressed using one or more integer indices. Arrays are '0 based' in monkey2, meaning the first element in an array is at index 0, the second is at index 1, the third is at index 2 and so on.
 
 Each array has an associated element type. That is, the type of the values actually stored in the array. An array's element type is a purely static property. It is only known at compile time so arrays cannot be 'cast' to different array types at runtime.
 
