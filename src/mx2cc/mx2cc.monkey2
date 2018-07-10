@@ -24,9 +24,9 @@ Global StartDir:String
 
 Global profileName:String
 
-Const TestArgs:="mx2cc makemods monkey"
+'Const TestArgs:="mx2cc makemods monkey"
 
-'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
+Const TestArgs:="mx2cc geninfo -semant src/mx2cc/test.monkey2"
 
 Function Main()
 	
