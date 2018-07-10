@@ -289,7 +289,11 @@ Class Texture Extends Resource
 	Setter( flags:TextureFlags )
 		
 		Assert( Not _cubeMap )
-		
+
+#If Not __DESKTOP_TARGET__
+		If Not IsPow2( _size.x,_size.y ) flags&=~TextureFlags.Mipmap
+#Endif
+
 		Local mask:=TextureFlags.WrapS|TextureFlags.WrapT|TextureFlags.Filter|TextureFlags.Mipmap
 		
 		_flags=(_flags & ~mask) | (flags & mask)
