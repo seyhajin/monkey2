@@ -216,10 +216,6 @@ Class BuilderInstance
 			
 			Local parser:=New Parser
 			
-			Local cd:=currentDir
-
-			currentDir=ExtractDir( path )
-			
 			Local fdecl:=parser.ParseFile( ident,path,ppsyms )
 			
 			fdecl.module=module
@@ -229,13 +225,20 @@ Class BuilderInstance
 
 			module.fileDecls.Push( fdecl )
 			
+			product.reflects.AddAll( fdecl.reflects )
+			
+			'process imports...
+			'
+			If opts.passes=1 Continue
+			'
+			Local cd:=currentDir
+			currentDir=ExtractDir( fdecl.path )
 			BuildEx.srcpath=fdecl.path
 			BuildEx.srcpos=-1
 			
 			For Local imp:=0 Until fdecl.imports.Length
 				
 				Local path:=fdecl.imports[imp]
-				
 				
 				Local i:=path.FindLast( "[" )
 				If i<>-1 And path.EndsWith( "]" )
@@ -250,19 +253,7 @@ Class BuilderInstance
 			Next
 			
 			BuildEx.srcpath=""
-			
 			currentDir=cd
-			
-			product.reflects.AddAll( fdecl.reflects )
-			
-			#rem
-			For Local ref:=Eachin fdecl.reflects
-				
-				ref="#define BB_R_"+ref.Replace( "_","_0" ).Replace( ".","_" )+" 1"
-				
-				product.reflects.Push( ref )
-			Next
-			#end
 			
 		Forever
 	
@@ -713,7 +704,8 @@ Class BuilderInstance
 			Local src:=path.Slice( 0,i )
 			
 			If GetFileType( src )=FileType.None
-				If Not opts.geninfo New BuildEx( "Asset '"+src+"' not found" )
+'				If Not opts.geninfo
+				New BuildEx( "Asset '"+src+"' not found" )
 				Return
 			Endif
 			
@@ -730,7 +722,8 @@ Class BuilderInstance
 			Local dir:=ExtractDir( path )
 			
 			If GetFileType( dir )<>FILETYPE_DIR
-				If Not opts.geninfo New BuildEx( "Directory '"+dir+"' not found" )
+'				If Not opts.geninfo
+				New BuildEx( "Directory '"+dir+"' not found" )
 				Return
 			Endif
 			
@@ -780,7 +773,8 @@ Class BuilderInstance
 			
 			If opts.toolchain="gcc"
 				If GetFileType( path )<>FileType.Directory
-					If Not opts.geninfo New BuildEx( "Framework not found "+qpath )
+'					If Not opts.geninfo 
+					New BuildEx( "Framework not found "+qpath )
 				Endif
 				
 				Return
@@ -791,11 +785,13 @@ Class BuilderInstance
 			If GetFileType( path )=FileType.Directory
 				
 				product.ASSET_FILES.Push( path )
+				
 				Return
 				
 			Else If GetFileType( path )<>FileType.File
 				
-				If Not opts.geninfo New BuildEx( "File not found "+qpath )
+'				If Not opts.geninfo
+ 				New BuildEx( "File not found "+qpath )
 					
 				Return
 			

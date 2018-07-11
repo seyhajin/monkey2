@@ -14,12 +14,14 @@ Possible optimizations:
 #end
 
 Class GeninfoGenerator
-
-	Method GenParseInfo:JsonValue( fdecl:FileDecl )
 	
-		Local node:=GenNode( fdecl )
+	Method GenParseInfo()
 		
-		Return node
+		Local fdecl:=Builder.mainModule.fileDecls[0]		
+	
+		Local jobj:=GenNode( fdecl )
+		
+		Print jobj.ToJson()
 	End
 	
 	Method GenSemantInfo()
@@ -30,7 +32,7 @@ Class GeninfoGenerator
 			
 '			Print "path="+fdecl.path+" gpath="+fdecl.gpath
 			
-			Local jobj:=GenParseInfo( fdecl )
+			Local jobj:=GenNode( fdecl )
 			
 			Local json:=jobj.ToJson()
 			

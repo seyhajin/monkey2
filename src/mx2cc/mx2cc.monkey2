@@ -24,7 +24,7 @@ Global StartDir:String
 
 Global profileName:String
 
-'Const TestArgs:="mx2cc makemods monkey"
+'Const TestArgs:="mx2cc makemods"
 
 Const TestArgs:="mx2cc geninfo -semant src/mx2cc/test.monkey2"
 
@@ -171,7 +171,7 @@ Function GenInfo:Bool( args:String[] )
 	
 	args=ParseOpts( opts,args )
 	If args.Length<>1 Fail( "Invalid app source file" )
-	
+		
 	Local cd:=CurrentDir()
 	ChangeDir( StartDir )
 	opts.mainSource=RealPath( args[0].Replace( "\","/" ) )
@@ -182,20 +182,17 @@ Function GenInfo:Bool( args:String[] )
 	Print ""
 
 	New BuilderInstance( opts )
+
+	Local gen:=New GeninfoGenerator
 	
 	Builder.Parse()
+	
 	If opts.passes=1
-		Local gen:=New GeninfoGenerator
-		Local jobj:=gen.GenParseInfo( Builder.mainModule.fileDecls[0] )
-		Print jobj.ToJson()
-		Return Builder.errors.Length=0
+		gen.GenParseInfo()
+	Else
+		If Not Builder.errors.Length Builder.Semant()
+		gen.GenSemantInfo()
 	Endif
-	If Builder.errors.Length Return False
-	
-	Builder.Semant()
-	
-	Local gen:=New GeninfoGenerator
-	gen.GenSemantInfo()
 	
 	Return Builder.errors.Length=0
 End
@@ -432,8 +429,6 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 				opts.verbose=-1
 			Case "-verbose"
 				opts.verbose=1
-			Case "-geninfo"
-				opts.geninfo=True
 			Case "-time"
 				opts_time=True
 			Default
