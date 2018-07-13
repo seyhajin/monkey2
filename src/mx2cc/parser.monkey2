@@ -30,7 +30,8 @@ Class Parser
 			Local name:=StripDir( srcPath )
 			Local path:=dir+name
 			
-			If GetFileType( path )=FileType.File srcPath=path
+			'use tmp file ONLY if newer than real file.
+			If GetFileType( path )=FileType.File And GetFileTime( path )>GetFileTime( srcPath ) srcPath=path
 				
 			gpath=StripExt( path )+".geninfo"
 		Endif

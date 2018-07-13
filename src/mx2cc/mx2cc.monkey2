@@ -188,7 +188,8 @@ Function GenInfo:Bool( args:String[] )
 	Builder.Parse()
 	
 	If opts.passes=1
-		gen.GenParseInfo()
+		gen.GenSemantInfo()
+'		gen.GenParseInfo()
 	Else
 		If Not Builder.errors.Length Builder.Semant()
 		gen.GenSemantInfo()
