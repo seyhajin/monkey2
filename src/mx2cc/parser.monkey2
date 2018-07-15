@@ -22,7 +22,7 @@ Class Parser
 
 	Method ParseFile:FileDecl( ident:String,srcPath:String,ppsyms:StringMap<String> )
 		
-		Local gpath:=""
+		Local srcPath2:=srcPath,gpath:=""
 		
 		If Builder.opts.geninfo
 			
@@ -31,7 +31,7 @@ Class Parser
 			Local path:=dir+name
 			
 			'use tmp file ONLY if newer than real file.
-			If GetFileType( path )=FileType.File And GetFileTime( path )>GetFileTime( srcPath ) srcPath=path
+			If GetFileType( path )=FileType.File And GetFileTime( path )>GetFileTime( srcPath ) srcPath2=path
 				
 			gpath=StripExt( path )+".geninfo"
 		Endif
@@ -47,7 +47,7 @@ Class Parser
 		_fdecl.gpath=gpath
 		_fdecl.nmspace=""
 		
-		Local source:=LoadString( srcPath )
+		Local source:=LoadString( srcPath2 )
 		_toker=New Toker( source )
 		
 		PNode.parsing=_fdecl

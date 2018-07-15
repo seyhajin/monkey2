@@ -30,10 +30,6 @@ Const TestArgs:="mx2cc geninfo -semant src/mx2cc/test.monkey2"
 
 Function Main()
 	
-'	Print "YARGH!"
-	
-'	Return
-
 	'Set aside 64M for GC!
 	GCSetTrigger( 64*1024*1024 )
 	
