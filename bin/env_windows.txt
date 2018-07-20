@@ -1,4 +1,11 @@
-'Use msvc 2017 community edition (mainly for x64 support, but it's also the latest/greatest).
+
+'Hyper experimental thread builds!
+'
+MX2_THREADS=1
+
+'Use MX2_USE_MSVC=1 to force use of msvc, or MX2_USE_MSVC=0 to force use of mingw.
+'
+'If MX2_USE_MSVC is not set, mx2cc will attempt to autodetect msvc.
 '
 MX2_USE_MSVC=0
 
@@ -41,20 +48,47 @@ MX2_CPP_OPTS_WINDOWS=-std=c++11 -D_WIN32_WINNT=0x0603 -m32
 MX2_CPP_OPTS_WINDOWS_DEBUG=-O2
 MX2_CPP_OPTS_WINDOWS_RELEASE=-O3 -DNDEBUG
 
+
 '***** WINDOWS DESKTOP TARGET - MSVC *****
 
-'directories
+'Note: these paths are only used if legacy MX2_USE_MSVC=1
+'
+'If MX2_USE_MSVC is not set, mx2cc attempts to autodetect latest version of msvc and latest windows kit.
+'
 MX2_MSVC_DIR=${ProgramFiles(x86)}\Microsoft Visual Studio\2017\Community\VC
 
-'For Visual Studio Community Edition 2017 15.6.2
-MX2_MSVC_TOOLS_DIR=${MX2_MSVC_DIR}\Tools\MSVC\14.13.26128
+MX2_MSVC_TOOLS_DIR=${MX2_MSVC_DIR}\Tools\MSVC\14.14.26428
 
 MX2_WINDOWS_KITS_DIR=${ProgramFiles(x86)}\Windows Kits\10
 
 MX2_WINDOWS_KIT=10.0.16299.0
 
+MX2_MSVC_PATH_X86=${MX2_MSVC_TOOLS_DIR}\bin\Hostx86\x86
+
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_TOOLS_DIR}\include;
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\ucrt;
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\shared;
+MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\um;
+
+MX2_MSVC_LIB_X86=${MX2_MSVC_TOOLS_DIR}\lib\x86;
+MX2_MSVC_LIB_X86=${MX2_MSVC_LIB_X86}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x86;
+MX2_MSVC_LIB_X86=${MX2_MSVC_LIB_X86}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x86;
+
+MX2_MSVC_PATH_X64=${MX2_MSVC_TOOLS_DIR}\bin\Hostx64\x64
+
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_TOOLS_DIR}\include;
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\ucrt;
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\um;
+MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\shared;
+
+MX2_MSVC_LIB_X64=${MX2_MSVC_TOOLS_DIR}\lib\x64;
+MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x64;
+MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x64;
+
+'***** MSVC COMMAND LINE OPTIONS *****
+
 'Linker options
-MX2_LD_OPTS_MSVC=
+MX2_LD_OPTS_MSVC=user32.lib
 MX2_LD_OPTS_MSVC_DEBUG=
 MX2_LD_OPTS_MSVC_RELEASE=
 
@@ -71,31 +105,6 @@ MX2_CPP_OPTS_MSVC_RELEASE=-O2 -DNDEBUG
 'assembler opts
 MX2_AS_OPTS_MSVC=-DBOOST_CONTEXT_EXPORT=
 
-'***** MSVC X86 PATHS *****
-
-MX2_MSVC_PATH_X86=${MX2_MSVC_TOOLS_DIR}\bin\Hostx86\x86
-
-MX2_MSVC_INCLUDE_X86=${MX2_MSVC_TOOLS_DIR}\include;
-MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\ucrt;
-MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\shared;
-MX2_MSVC_INCLUDE_X86=${MX2_MSVC_INCLUDE_X86}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\um;
-
-MX2_MSVC_LIB_X86=${MX2_MSVC_TOOLS_DIR}\lib\x86;
-MX2_MSVC_LIB_X86=${MX2_MSVC_LIB_X86}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x86;
-MX2_MSVC_LIB_X86=${MX2_MSVC_LIB_X86}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x86;
-
-'***** MSVC X64 PATHS *****
-
-MX2_MSVC_PATH_X64=${MX2_MSVC_TOOLS_DIR}\bin\Hostx64\x64
-
-MX2_MSVC_INCLUDE_X64=${MX2_MSVC_TOOLS_DIR}\include;
-MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\ucrt;
-MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\um;
-MX2_MSVC_INCLUDE_X64=${MX2_MSVC_INCLUDE_X64}${MX2_WINDOWS_KITS_DIR}\Include\${MX2_WINDOWS_KIT}\shared;
-
-MX2_MSVC_LIB_X64=${MX2_MSVC_TOOLS_DIR}\lib\x64;
-MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\ucrt\x64;
-MX2_MSVC_LIB_X64=${MX2_MSVC_LIB_X64}${MX2_WINDOWS_KITS_DIR}\Lib\${MX2_WINDOWS_KIT}\um\x64;
 
 '***** EMSCRIPTEN TARGET *****
 
@@ -146,26 +155,16 @@ MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 
 'This is where *my* ndk-bundle is located - yours is probably somewhere else!
 '
-'For android builds, you need to either set this correctly or make sure 'ndk-build' is available from the command line.
+'For android builds, you need to either set this correctly or make sure 'ndk-build' is available from the command line via you PATH.
 '
 'PATH=D:\devtools\Android\sdk\ndk-bundle;${PATH}
 
-'Controls APP_ABI in Application.mk for NDK
+'Application.mk
 '
-MX2_ANDROID_APP_ABI=armeabi-v7a x86
-'MX2_ANDROID_APP_ABI=all
-
-'Controls APP_PLATFORM in Application.mk for NDK
-'
+MX2_ANDROID_APP_CFLAGS=-std=gnu99 -fno-stack-protector
+MX2_ANDROID_APP_CPPFLAGS=-std=c++11 -fno-stack-protector -frtti -fexceptions
 MX2_ANDROID_APP_PLATFORM=android-14
-
-'Android app compiler Compiler flags
-'
-MX2_ANDROID_APP_CFLAGS=-std=gnu99 -fno-stack-protector -w
-MX2_ANDROID_APP_CPPFLAGS=-std=c++11 -fno-stack-protector -frtti -fexceptions -w
-
-'Controls version of STL used by android apps.
-'
+MX2_ANDROID_APP_ABI=armeabi-v7a x86
 MX2_ANDROID_APP_STL=c++_static
 
 '***** RASPBIAN *****

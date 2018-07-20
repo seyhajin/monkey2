@@ -5,9 +5,9 @@
 Using libc..
 Using std..
 
-Const MONKEY2_VERSION:="2018.06"
+Const MONKEY2_VERSION:="2018.07"
 
-Const MX2CC_VERSION:="1.1.14"
+Const MX2CC_VERSION:="1.1.15"
 
 Const RELEASE_SUFFIX:=""
 
@@ -91,10 +91,12 @@ Function CopyFiles( dir:String )
 				
 			Else If dir.Contains( ".buildv" )
 				
+				If Not file.EndsWith( "_mx" ) Continue
+				
 				If file.StartsWith( "emscripten_" ) Continue
 				If file.StartsWith( "android_" ) Continue
 				If file.StartsWith( "ios_" ) Continue
-				If file.EndsWith( "_msvc" )  Continue
+'				If file.EndsWith( "_msvc" )  Continue
 				If file.EndsWith( "_x64" ) Continue
 				If file="build" Continue
 				If file="src" Continue

@@ -4,6 +4,7 @@ Namespace mx2cc
 #Import "<std>"
 
 #Import "mx2"
+#Import "findmsvc"
 
 #Import "newdocs/docsnode"
 #Import "newdocs/docsbuffer"
@@ -24,9 +25,9 @@ Global StartDir:String
 
 Global profileName:String
 
-'Const TestArgs:="mx2cc makemods"
+Const TestArgs:="mx2cc makemods"
 
-Const TestArgs:="mx2cc geninfo -semant src/mx2cc/test.monkey2"
+'Const TestArgs:="mx2cc makeapp src/mx2cc/test.monkey2"
 
 Function Main()
 	
@@ -494,7 +495,15 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 			Fail( "Unrecognized architecture '"+opts.arch+"'" )
 		Endif
 		
-		If Int( GetEnv( "MX2_USE_MSVC" ) )
+'		Print "MX2_USE_MSVC='"+GetEnv( "MX2_USE_MSVC" )+"'"
+		
+		Local msvc:=GetEnv( "MX2_USE_MSVC" )
+		
+		If msvc=""
+			msvc=FindMSVC() ? "1" Else "0"
+		Endif
+		
+		If Int( msvc )
 			
 			opts.toolchain="msvc"
 			
