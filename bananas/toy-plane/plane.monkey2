@@ -93,7 +93,7 @@ Class MyWindow Extends Window
 '		_plane.Material = mat
 		
 		'create camera target
-		_camTarget = New Entity( _pivot )
+		_camTarget = New Pivot( _pivot )
 '		_camTarget = Model.CreateSphere( 0.25, 12, 12, New PbrMaterial( Color.Red ) )
 '		_camTarget.Parent = _plane
 		_camTarget.Position = New Vec3f( 0, 0, -10 )
