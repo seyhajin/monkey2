@@ -62,7 +62,7 @@ Function CopyFiles( dir:String )
 		Select GetFileType( src )
 		Case FileType.Directory
 			
-			If file="__PAGES__" Or file="__MANPAGES__"
+			If file=".mx2" Or file=".DS_Store" Or file=".git" Or file="__PAGES__" Or file="__MANPAGES__"
 				
 				Continue
 				
@@ -96,8 +96,8 @@ Function CopyFiles( dir:String )
 				If file.StartsWith( "emscripten_" ) Continue
 				If file.StartsWith( "android_" ) Continue
 				If file.StartsWith( "ios_" ) Continue
-'				If file.EndsWith( "_msvc" )  Continue
-				If file.EndsWith( "_x64" ) Continue
+'				If file.Contains( "_msvc" )  Continue
+				If file.Contains( "_x64" ) Continue
 				If file="build" Continue
 				If file="src" Continue
 			
@@ -106,6 +106,8 @@ Function CopyFiles( dir:String )
 			CopyFiles( src )
 		
 		Case FileType.File
+			
+			If file=".gitignore" Continue
 		
 			Local dst:=output+"/"+dir+"/"+file
 			
