@@ -84,6 +84,7 @@
 #Import "utils/JsonUtils"
 #Import "utils/Utils"
 #Import "utils/TextUtils"
+#Import "utils/ViewUtils"
 
 #Import "view/CodeMapView"
 #Import "view/CodeTextView"
@@ -119,12 +120,15 @@
 #Import "view/DraggableViewListener"
 #Import "view/Undock"
 #Import "view/TextViewExt"
+#Import "view/ExamplesView"
+
+#Import "theme/ThemeImages"
+#Import "theme/ThemesInfo"
 
 #Import "PathsProvider"
 #Import "Tree"
 #Import "Tuple"
 #Import "Plugin"
-#Import "ThemeImages"
 #Import "Prefs"
 #Import "ProcessReader"
 #Import "LiveTemplates"
@@ -145,7 +149,7 @@ Using sdl2..
 
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.11"
+Global AppTitle:="Ted2Go v2.12"
 
 
 Function Main()
@@ -173,6 +177,8 @@ Function Main()
 	If Not jobj jobj=New JsonObject
 	
 	Prefs.LoadState( jobj )
+	
+	ThemesInfo.Load( "theme::themes.json" )
 	
 	'initial theme
 	'
