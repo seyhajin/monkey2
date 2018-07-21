@@ -84,14 +84,13 @@ Function CopyFiles( dir:String )
 #else
 				Continue
 #endif
-				
 			Else If file.Contains( ".buildv" )
-				
+
 				If ExtractDir( dir )<>"modules/" Or Not file.EndsWith( ".buildv"+MX2CC_VERSION ) Continue
-				
+
 			Else If dir.Contains( ".buildv" )
 				
-				If Not file.EndsWith( "_mx" ) Continue
+				If Not src.Contains( "_mx" ) And Not src.EndsWith( "_mx" ) Continue
 				
 				If file.StartsWith( "emscripten_" ) Continue
 				If file.StartsWith( "android_" ) Continue

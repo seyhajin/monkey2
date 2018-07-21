@@ -92,7 +92,7 @@ namespace bbGC{
 		if( inited ) return;
 		inited=true;
 		
-		bb_printf( "Initializing threaded GC\n" );
+//		bb_printf( "Initializing threaded GC\n" );
 		
 		markedBit=1;
 		markedList=&markLists[0];
