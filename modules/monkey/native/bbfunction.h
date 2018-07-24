@@ -237,14 +237,6 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		release();
 	}
 	
-	/*
-	void discard(){
-		if( _rep==&_nullRep ) return;
-		delete _rep;
-		_rep=&_nullRep;
-	}
-	*/
-	
 #ifdef BB_THREADS
 	bbFunction &operator=( const bbFunction &p ){
 		Rep *oldrep=_rep,*newrep=p._rep;
@@ -357,15 +349,19 @@ template<class R,class...A> bbFunction<R(A...)> bbMakefunc( R(*p)(A...) ){
 template<class R,class...A> void bbGCMark( const bbFunction<R(A...)> &t ){
 	t._rep.load()->gcMark();
 }
+
+template<class R,class...A> int bbCompare( const bbFunction<R(A...)> &x,const bbFunction<R(A...)> &y ){
+	return x._rep.load()->compare( y._rep.load() );
+}
 #else
 template<class R,class...A> void bbGCMark( const bbFunction<R(A...)> &t ){
 	t._rep->gcMark();
 }
-#endif
 
 template<class R,class...A> int bbCompare( const bbFunction<R(A...)> &x,const bbFunction<R(A...)> &y ){
 	return x._rep->compare( y._rep );
 }
+#endif
 
 template<class R,class...A> bbString bbDBType( bbFunction<R(A...)> *p ){
 	return bbDBType<R>()+"()";
