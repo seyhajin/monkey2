@@ -102,8 +102,8 @@ Class Value Extends SNode
 	
 		If decl.IsInternal
 			If scope.FindFile().fdecl.module=tscope.FindFile().fdecl.module Return
-
-			Throw New SemantEx( "Internal declaration '"+decl.ident+"' cannot be accessed from here." )
+			
+			If Not decl.IsProtected Throw New SemantEx( "Internal declaration '"+decl.ident+"' cannot be accessed from here." )
 		Endif
 			
 		If decl.IsPublic Return

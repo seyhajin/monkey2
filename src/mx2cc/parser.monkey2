@@ -136,6 +136,40 @@ Class Parser
 		Return meta
 	End
 	
+	Method ParseAccessFlags:Int( flags:Int,fileScope:Bool )
+		
+		flags&=~DECL_ACCESSMASK
+		
+		If fileScope flags&=~DECL_EXTERN
+		
+		If CParse( "public" )
+			flags|=DECL_PUBLIC
+		Else If CParse( "private" )
+			flags|=DECL_PRIVATE
+		Else If CParse( "protected" )
+			If fileScope Error( "'Protected' can only be used in a class, struct or interface" )
+			flags|=DECL_PROTECTED
+			If CParse( "internal" ) 
+				flags|=DECL_INTERNAL
+			Endif
+		Else If CParse( "internal" )
+			flags|=DECL_INTERNAL|DECL_PUBLIC
+		Else If CParse( "extern" )
+			If Not fileScope Error( "'Extern' must appear at file scope" )
+			flags|=DECL_EXTERN
+			If CParse( "private" ) 
+				flags|=DECL_PRIVATE
+			Else If CParse( "internal" )
+				flags|=DECL_INTERNAL
+			Else
+				CParse( "public" )
+				flags|=DECL_PUBLIC
+			Endif
+		Endif
+		
+		Return flags
+	End
+	
 	Method ParseDecls:Decl[]( flags:Int,fileScope:Bool )
 	
 		Local decls:=New Stack<Decl>
@@ -159,37 +193,8 @@ Class Parser
 					_usings.Push( ParseUsingIdent() )
 					ParseEol()
 					Continue
-				Case "extern"
-					If Not fileScope Error( "'Extern' must appear at file scope" )
-					Bump()
-					flags=(flags & ~DECL_ACCESSMASK) | DECL_EXTERN
-					If CParse( "private" )
-						flags|=DECL_PRIVATE
-					Else If CParse( "internal" )
-						flags|=DECL_INTERNAL|DECL_PUBLIC
-					Else
-						CParse( "public" )
-						flags|=DECL_PUBLIC
-					Endif
-					ParseEol()
-					Continue
-				Case "public","private","internal"
-					flags&=~DECL_ACCESSMASK
-					If fileScope flags&=~DECL_EXTERN
-					If CParse( "private" )
-						flags|=DECL_PRIVATE
-					Else If CParse( "internal" )
-						flags|=DECL_INTERNAL|DECL_PUBLIC
-					Else
-						Parse( "public" )
-						flags|=DECL_PUBLIC
-					Endif
-					ParseEol()
-					Continue
-				Case "protected"
-					If fileScope Error( "'Protected' can only be used in a class, struct or interface" )
-					Bump()
-					flags=(flags & ~DECL_ACCESSMASK)|DECL_PROTECTED
+				Case "public","private","protected","internal","extern"
+					flags=ParseAccessFlags( flags,fileScope )
 					ParseEol()
 					Continue
 				End
