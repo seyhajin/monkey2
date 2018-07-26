@@ -101,18 +101,9 @@ Class World
 			
 			Local body0:=Cast<RigidBody>( p[i*2] )
 			Local body1:=Cast<RigidBody>( p[i*2+1] )
-
-			Local entity0:=body0.Entity
-			Local entity1:=body1.Entity
 			
-			entity0.Collide( body1 )
-			entity1.Collide( body0 )
-			
-'			body0.Entity.Collide( body1 )
-'			body1.Entity.Collide( body0 )
-			
-'			Print "Collision:"+entity0.Name+"->"+entity1.Name
-			
+			body0.Collided( body1 )
+			body1.Collided( body0 )
 		Next
 		
 		resetCollisions()

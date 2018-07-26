@@ -37,6 +37,10 @@ Public
 
 Class RigidBody Extends Component
 	
+	#rem monkeydoc Invoked when this rigid body collides with another rigid body.
+	#end
+	Field Collided:Void( rigidBody:RigidBody )
+	
 	Const Type:=New ComponentType( "RigidBody",-10,ComponentTypeFlags.Singleton )
 	
 	Method New( entity:Entity )
@@ -297,7 +301,7 @@ Class RigidBody Extends Component
 		
 		Return body
 	End
-
+	
 	Method OnBeginUpdate() Override
 		
 		Validate()
@@ -309,7 +313,7 @@ Class RigidBody Extends Component
 		
 	End
 	
-	Method OnUpdate( elapsed:Float ) Override
+	Method OnEndUpdate() Override
 		
 		_seq=Entity.Seq
 	End
@@ -328,11 +332,6 @@ Class RigidBody Extends Component
 	Method ColliderInvalidated()
 		
 		_dirty|=Dirty.Collider
-	End
-	
-	Property World:World()
-		
-		Return Entity.Scene.World
 	End
 	
 	Private
@@ -355,6 +354,11 @@ Class RigidBody Extends Component
 	Field _colliderseq:Int
 	Field _rvisible:Bool
 	Field _seq:Int
+	
+	Property World:World()
+		
+		Return Entity.Scene.World
+	End
 	
 	Method ValidateCollider()
 		

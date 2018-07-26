@@ -68,7 +68,7 @@ Class Entity Extends DynamicObject Abstract
 		Return copy
 	End
 	
-	#rem monkeydoc Sequence id.
+	#rem monkeydoc Sequence id
 	
 	The sequence id is an integer that is incremented whenever the entity's matrix is modified.
 	
@@ -78,7 +78,7 @@ Class Entity Extends DynamicObject Abstract
 		Return _seq
 	End
 	
-	#rem monkeydoc Entity name.
+	#rem monkeydoc Name
 	#end
 	[jsonify=1]
 	Property Name:String()
@@ -90,7 +90,10 @@ Class Entity Extends DynamicObject Abstract
 		_name=name
 	End
 
-	#rem monkeydoc @hidden
+	#rem monkeydoc Scene
+	
+	The scene the entity belongs to.
+	
 	#end
 	Property Scene:Scene()
 	
@@ -385,6 +388,17 @@ Class Entity Extends DynamicObject Abstract
 	#end
 	Method Destroy()
 		
+		If _scene.Updating
+			If _state<>State.Active Return
+			_state=State.Destroying
+			_scene.UpdateFinished+=Destroy
+			Return
+		End
+		
+		If _state=State.Destroyed Return
+		
+		_state=State.Destroyed
+		
 		While Not _children.Empty
 			_children.Top.Destroy()
 		Wend
@@ -513,7 +527,7 @@ Class Entity Extends DynamicObject Abstract
 		
 		'should really be different pass...ie: ALL entities should be copied before ANY components?
 		For Local c:=Eachin _components
-			c.OnCopy( copy )
+			c.Copy( copy )
 		Next
 		
 		copy.Visible=Visible
@@ -522,8 +536,6 @@ Class Entity Extends DynamicObject Abstract
 		
 		Copied( copy )
 	End
-	
-	Internal
 	
 	Method AddInstance()
 		
@@ -539,6 +551,8 @@ Class Entity Extends DynamicObject Abstract
 		
 		If _scene.Editing _scene.Jsonifier.AddInstance( Self,args )
 	End
+	
+	Internal
 	
 	Method AddComponent( c:Component )
 		
@@ -564,24 +578,10 @@ Class Entity Extends DynamicObject Abstract
 		_components.Remove( c )
 	End
 
-	'bottom up
-	Method BeginUpdate()
-
-		For Local e:=Eachin _children
-			e.BeginUpdate()
-		Next
-		
-		For Local c:=Eachin _components
-			c.OnBeginUpdate()
-		Next
-		
-	End
-	
-	'top down
 	Method Start()
 		
 		For Local c:=Eachin _components
-			c.OnStart()
+			c.Start()
 		Next
 		
 		For Local e:=Eachin _children
@@ -589,27 +589,46 @@ Class Entity Extends DynamicObject Abstract
 		End
 	End
 	
+	Method BeginUpdate()
+
+		For Local c:=Eachin _components
+			c.BeginUpdate()
+		Next
+
+		For Local e:=Eachin _children
+			e.BeginUpdate()
+		Next
+	End
+	
 	Method Update( elapsed:Float )
 		
 		For Local c:=Eachin _components
-			c.OnUpdate( elapsed )
+			c.Update( elapsed )
 		End
 		
 		For Local e:=Eachin _children
 			e.Update( elapsed )
 		Next
 	End
-	
-	Method Collide( body:RigidBody )
+
+	Method EndUpdate()
 		
 		For Local c:=Eachin _components
-			c.OnCollide( body )
+			c.EndUpdate()
 		Next
-		
-		Collided( body )
-	End
 
+		For Local e:=Eachin _children
+			e.EndUpdate()
+		Next
+	End
+	
 Private
+
+	Enum State
+		Active=1
+		Destroying=2
+		Destroyed=3
+	End
 	
 	Enum Dirty
 		M=1
@@ -632,12 +651,14 @@ Private
 	Field _t:Vec3f=New Vec3f
 	Field _r:Mat3f=New Mat3f
 	Field _s:Vec3f=New Vec3f(1)
-	Field _seq:Int=1
 	
 	Field _dirty:Dirty=Dirty.All
 	Field _M:AffineMat4f
 	Field _W:AffineMat4f
 	Field _IW:AffineMat4f
+	
+	Field _state:State=State.Active
+	Field _seq:Int=1
 	
 	Method InvalidateWorld()
 		
@@ -673,8 +694,7 @@ Private
 			OnShow()
 			
 			For Local c:=Eachin _components
-				
-				c.OnShow()
+				c.Show()
 			Next
 		
 		Else
@@ -682,8 +702,7 @@ Private
 			OnHide()
 			
 			For Local c:=Eachin _components
-				
-				c.OnHide()
+				c.Hide()
 			Next
 		Endif
 		

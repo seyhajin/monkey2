@@ -1,4 +1,15 @@
 
+Made sure Component.OnStart is always called before any other Component.OnBlah method.
+
+Added 'Protected Internal' access to mx2cc. Decls in protected internal sections in classes are visible both to subclasses, or to module they are declared in.
+ 
+Removed Entity.Collided( rigidBody:RigidBody ) and added RigidBody.Collided( rigidBody:RigidBody ), please use this instead. Removed Component.OnCollided.
+
+Component.OnUpdate now executes before physics update. Added Component.OnEndUpdate for post update processing.
+
+Entity.Destroy() and Component.Destroy() now postphpone destruction until update has finished if called during Scene.Update.
+
+
 ***** Monkey-v2018.07 ***** 
 
 Added thread support and std.thread module!
@@ -16,6 +27,7 @@ Fixed SDL2 issue where SDL_WaitEvent always took a multiple of 10ms to execute. 
 Added SUPER experimental SwapAsync flag to Window. Causes window to execute swaps in a separate thread. This allows you to use much finer grained timers etc. Note: it may not be a good idea to do any off-screen rendering with this enabled. It may not work everywhere, but Qt4.8 apparantley recommends it so give it a go! Confirmed to work on windows and macos, but not linux.
 
 Added extern alias symbols to mx2cc, eg: you can now go `Alias DWORD:UInt="unsigned long"` (inside an Extern section) to get proper win32 dwords (and LPDWORDs that don't break c++).
+
 
 ***** Monkey-v2018.06 Mx2cc-v1.1.14 Ted2go-v2.11 *****
 
@@ -38,6 +50,7 @@ Fixed deprecated warnings in android project template.
 Updated android SDK to: Android Studio 3.1.2 ; Android SDK 27 (Oreo 8.1) ; NDK 16.1.4479499 ; Android SDK Tools 26.1.1
 
 Point/spot light now render bounding quads instead of fullscreen quads.
+
 
 ***** Monkey-v2018.05 Mx2cc-v1.1.13 Ted2go-2.10 *****
 
@@ -76,6 +89,7 @@ Added first physics constraint component to mojo3d, PointToPointConstraint - sho
 Added low budget OpenUrl for emscripten. It just replaces current page with the given URL so effectively ends app too.
 
 Added zlib module and DataBuffer.Compress and DataBuffer.Decompress.
+
 
 ***** Monkey-v2018.04 Mx2cc-v1.1.12 Ted2go-2.10 *****
 

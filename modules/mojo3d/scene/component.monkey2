@@ -62,7 +62,23 @@ Class Component
 		Return _type
 	End
 	
+	#rem monkeydoc Destroys the entity immediately or when update finishes.
+	
+	If scene is currently being updated, the component will not be destroyed until update finishes.
+		
+	#end
 	Method Destroy()
+		
+		If _state=State.Destroyed Return
+		
+		If _entity.Scene.Updating
+			If _state=State.Destroying Return
+			_state=State.Destroying
+			_entity.Scene.UpdateFinished+=Destroy
+			Return
+		End
+		
+		_state=State.Destroyed
 		
 		OnDestroy()
 		
@@ -73,8 +89,8 @@ Class Component
 		_type=Null
 	End
 	
-Protected
-
+	Protected
+	
 	Method AddInstance()
 		
 		Local scene:=_entity.Scene
@@ -89,13 +105,14 @@ Protected
 		If scene.Editing scene.Jsonifier.AddInstance( Self,New Variant[]( _entity,component ) )
 	End
 	
-Internal
-
 	Method OnCopy:Component( entity:Entity ) Virtual
 
 		RuntimeError( "Don't know how to copy component of type "+Type.Name )
 		
 		Return Null
+	End
+	
+	Method OnStart() Virtual
 	End
 	
 	Method OnShow() virtual
@@ -107,22 +124,66 @@ Internal
 	Method OnBeginUpdate() Virtual
 	End
 	
-	Method OnStart() Virtual
+	Method OnUpdate( elapsed:Float ) Virtual
 	End
 	
-	Method OnUpdate( elapsed:Float ) Virtual
+	Method OnEndUpdate() Virtual
 	End
 	
 	Method OnDestroy() Virtual
 	End
 	
-	Method OnCollide( body:RigidBody ) virtual
+	Internal
+	
+	Method Copy:Component( entity:Entity )
+		Return OnCopy( entity )
+	End
+	
+	Method Start()
+		If _state<>State.Initial Return
+		_state=State.Started
+		OnStart()
+	End
+	
+	Method Show()
+		Start()
+		If _state<>State.Started Return
+		OnShow()
+	End
+	
+	Method Hide()
+		If _state<>State.Started Return
+		OnHide()
+	End
+	
+	Method BeginUpdate()
+		Start()
+		If _state<>State.Started Return
+		OnBeginUpdate()
+	End
+	
+	Method Update( elapsed:Float )
+		If _state<>State.Started Return
+		OnUpdate( elapsed )
+	End
+	
+	Method EndUpdate()
+		If _state<>State.Started Return
+		OnEndUpdate()
 	End
 	
 	Private
 	
+	Enum State
+		Initial=0
+		Started=1
+		Destroyed=2
+		Destroying=3
+	End
+	
 	Field _entity:Entity
 	Field _type:ComponentType
+	Field _state:State=State.Initial
 End
 
 

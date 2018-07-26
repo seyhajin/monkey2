@@ -5,6 +5,7 @@ Namespace mojo3d
 #end
 Class Scene
 
+	
 	#rem monkeydoc Creates a new scene.
 	
 	If there is no current scene when a new scene is created, the new scene becomes the current scene.
@@ -32,7 +33,16 @@ Class Scene
 			_editing=True
 		Endif
 	End
+
+	#rem monkeydoc True if scene is currently updating
+	#end	
+	Property Updating:Bool()
+		
+		Return _updating
+	End
 	
+	#rem monkeydoc hidden
+	#end
 	Property World:World()
 		
 		Return _world
@@ -219,7 +229,6 @@ Class Scene
 		_csmSplits=splits.Slice( 0 )
 	End
 	
-	
 	#rem monkeydoc Finds an entity in the scene.
 	
 	Finds an entity in the scene with the given name.
@@ -291,17 +300,19 @@ Class Scene
 	Method Update()
 		
 		If Not _started
+			BeginUpdating()
 			Start()
+			EndUpdating()
 			Return
 		Endif
 		
 		Local now:=Now()
-		
 		_elapsed=now-_time
-		
 		_time=now
 		
+		BeginUpdating()
 		Update( _elapsed )
+		EndUpdating()
 	End
 	
 	#rem monkeydoc Renders the scene to	a canvas.
@@ -416,6 +427,8 @@ Class Scene
 	End
 	
 	Internal
+	
+	Field UpdateFinished:Void()
 
 	Property PostEffects:Stack<PostEffect>()
 		
@@ -482,6 +495,23 @@ Class Scene
 	Field _started:Bool
 	Field _time:Double
 	Field _elapsed:Double
+	Field _updating:Bool
+	
+	Method BeginUpdating()
+		Assert( Not _updating,"Scene.Update cannot be called recursively" )
+		
+		_updating=True
+	End
+	
+	Method EndUpdating()
+		
+		_updating=false
+		
+		Local finished:=UpdateFinished
+		UpdateFinished=Null
+		
+		finished()
+	End
 	
 	Method Update( elapsed:Float )
 		
@@ -489,10 +519,14 @@ Class Scene
 			e.BeginUpdate()
 		Next
 		
-		_world.Update( elapsed )
-		
 		For Local e:=Eachin _rootEntities
 			e.Update( elapsed )
+		Next
+		
+		_world.Update( elapsed )
+
+		For Local e:=Eachin _rootEntities
+			e.EndUpdate()
 		Next
 	End
 			
