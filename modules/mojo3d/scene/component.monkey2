@@ -41,7 +41,7 @@ Class ComponentType
 	Field _flags:ComponentTypeFlags
 End
 
-Class Component
+Class Component Abstract
 	
 	Method New( entity:Entity,type:ComponentType )
 		

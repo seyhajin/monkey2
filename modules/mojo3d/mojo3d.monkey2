@@ -18,7 +18,6 @@ Using reflection..
 
 #Import "scene/raycastresult"
 #Import "scene/component"
-#Import "scene/dynamicobject"
 #Import "scene/entity"
 #Import "scene/entityexts"
 #Import "scene/scene"

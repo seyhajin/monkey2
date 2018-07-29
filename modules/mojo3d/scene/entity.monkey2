@@ -3,7 +3,7 @@ Namespace mojo3d
 
 #rem monkeydoc The Entity class.
 #end
-Class Entity Extends DynamicObject Abstract
+Class Entity Abstract
 	
 	#rem monkeydoc Copied signal.
 	
