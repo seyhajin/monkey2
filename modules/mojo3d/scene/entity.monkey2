@@ -33,13 +33,6 @@ Class Entity Abstract
 	#end
 	Field Shown:Void()
 	
-	#rem monkeydoc Collided signal.
-	
-	After after an entity has collided with a rigidbody.
-	
-	#end
-	Field Collided:Void( rigidBody:RigidBody )
-	
 	#rem monkeydoc Creates a new entity.
 	#end
 	Method New( parent:Entity=Null )
