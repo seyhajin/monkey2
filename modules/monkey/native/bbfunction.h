@@ -30,9 +30,9 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 	struct Rep{
 		
 #ifdef BB_THREADS
-		std::atomic_int refs;
+		std::atomic_int refs{0};
 #else
-		int refs;
+		int refs{0};
 #endif
 
 		virtual ~Rep(){
