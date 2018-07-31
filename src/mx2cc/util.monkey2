@@ -239,6 +239,38 @@ Function DequoteMx2String:String( str:String )
 	
 	str=str.Slice( 1,-1 )
 	
+	Local out:="",i0:=0
+
+	Repeat
+		Local i:=str.Find( STRING_TILDE,i0 )
+		If i=-1 Or i>=str.Length-1
+			If i0 Return out+str.Slice( i0 )
+			Return str
+		Endif
+		Local rep:=""
+		Select str[i+1]
+		Case CHAR_TILDE	'~
+			rep=STRING_TILDE
+		Case 113		'q
+			rep=STRING_QUOTE
+		Case 110		'n
+			rep=STRING_EOL
+		Case 114		'r
+			rep=STRING_RETURN
+		Case 116		't
+			rep=STRING_TAB
+		Default
+			out+=str.Slice( i0,i+2 )
+			i0=i+2
+			Continue
+		End
+'		Print "str="+str+" i="+i+" rep="+rep
+		out+=str.Slice( i0,i )+rep
+		i0=i+2
+	Forever
+	
+	Return ""
+#rem	
 	str=str.Replace( STRING_MX2TILDE,STRING_TILDE )
 	str=str.Replace( STRING_MX2QUOTE,STRING_QUOTE )
 	str=str.Replace( STRING_MX2EOL,STRING_EOL )
@@ -246,6 +278,7 @@ Function DequoteMx2String:String( str:String )
 	str=str.Replace( STRING_MX2TAB,STRING_TAB )
 	
 	Return str
+#end
 End
 
 Function EnquoteCppString:String( str:String )

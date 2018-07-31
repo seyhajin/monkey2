@@ -1,4 +1,7 @@
 
 Function Main()
-	Print "Hello World!"
+	
+	Print "~q".Length
+	Print "~~q".Length
+	
 End
