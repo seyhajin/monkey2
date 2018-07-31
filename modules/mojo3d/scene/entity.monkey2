@@ -381,14 +381,14 @@ Class Entity Abstract
 	#end
 	Method Destroy()
 		
+		If _state=State.Destroyed Return
+		
 		If _scene.Updating
-			If _state<>State.Active Return
+			If _state=State.Destroying Return
 			_state=State.Destroying
 			_scene.UpdateFinished+=Destroy
 			Return
 		End
-		
-		If _state=State.Destroyed Return
 		
 		_state=State.Destroyed
 		
