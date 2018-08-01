@@ -38,6 +38,10 @@ Function FindMSVC:Bool()
 '	Print toolsDir
 '	Print incsDir
 '	Print libsDir
+	Print "~nMSVC installation auto-detected:"
+	Print " Tools='"+toolsDir+"'"
+	Print " Includes='"+incsDir+"'"
+	Print " Libs='"+libsDir+"'"
 	
 	SetEnv( "MX2_MSVC_PATH_X86",toolsDir+"\bin\Hostx86\x86" )
 	SetEnv( "MX2_MSVC_INCLUDE_X86",toolsDir+"\include;"+incsDir+"\ucrt;"+incsDir+"\shared;"+incsDir+"\um" )
