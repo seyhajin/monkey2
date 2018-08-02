@@ -1,5 +1,6 @@
 
 #include "bbmonkey.h"
+#include "bbplatform.h"
 
 #if BB_IOS
 
