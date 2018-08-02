@@ -1,4 +1,10 @@
 
+***** Monkey-v2018.07b *****
+
+Fixed broken ios bb_print.
+
+Fixed kinda serious functions bug.
+
 Made sure Component.OnStart is always called before any other Component.OnBlah method.
 
 Added 'Protected Internal' access to mx2cc. Decls in protected internal sections in classes are visible both to subclasses, or to module they are declared in.
