@@ -160,7 +160,7 @@ Class Parser
 			If CParse( "private" ) 
 				flags|=DECL_PRIVATE
 			Else If CParse( "internal" )
-				flags|=DECL_INTERNAL
+				flags|=DECL_INTERNAL|DECL_PUBLIC
 			Else
 				CParse( "public" )
 				flags|=DECL_PUBLIC
