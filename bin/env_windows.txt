@@ -5,9 +5,9 @@ MX2_THREADS=1
 
 'Use MX2_USE_MSVC=1 to force use of msvc, or MX2_USE_MSVC=0 to force use of mingw.
 '
-'If MX2_USE_MSVC is not set mx2cc will attempt to autodetect msvc.
+'If MX2_USE_MSVC is not set (or blank) mx2cc will attempt to autodetect msvc.
 '
-'MX2_USE_MSVC=0
+MX2_USE_MSVC=
 
 'Build architecture: x86 or x64, x64 only working with msvc.
 '
