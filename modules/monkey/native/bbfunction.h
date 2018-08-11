@@ -126,6 +126,36 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 		
 	};
 	
+	template<class C> struct ExtMethodRep : public Rep{
+	
+		typedef R(*T)(C*,A...);
+		C *c;
+		T p;
+		
+		ExtMethodRep( C *c,T p ):c(c),p(p){
+		}
+		
+		virtual R invoke( A...a ){
+			return (*p)( c,a... );
+		}
+		
+		virtual bool equals( Rep *rhs ){
+			ExtMethodRep *t=dynamic_cast<ExtMethodRep*>( rhs );
+			return t && c==t->c && p==t->p;
+		}
+
+		virtual int compare( Rep *rhs ){
+			ExtMethodRep *t=dynamic_cast<ExtMethodRep*>( rhs );
+			if( t && c==t->c && p==t->p ) return 0;
+			return Rep::compare( rhs );
+		}
+		
+		virtual void gcMark(){
+			bbGCMark( c );
+		}
+		
+	};
+	
 	struct SequenceRep : public Rep{
 	
 		bbFunction lhs,rhs;
@@ -226,6 +256,10 @@ template<class R,class...A> struct bbFunction<R(A...)>{
 #endif
 	
 	template<class C> bbFunction( C *c,typename MethodRep<C>::T p ):_rep( new MethodRep<C>(c,p) ){
+		retain();
+	}
+	
+	template<class C> bbFunction( C *c,typename ExtMethodRep<C>::T p ):_rep( new ExtMethodRep<C>(c,p) ){
 		retain();
 	}
 	
@@ -338,6 +372,14 @@ template<class C,class R,class...A> bbFunction<R(A...)> bbMethod( C *c,R(C::*p)(
 }
 
 template<class C,class R,class...A> bbFunction<R(A...)> bbMethod( const bbGCVar<C> &c,R(C::*p)(A...) ){
+	return bbFunction<R(A...)>( c.get(),p );
+}
+
+template<class C,class R,class...A> bbFunction<R(A...)> bbExtMethod( C *c,R(*p)(C*,A...) ){
+	return bbFunction<R(A...)>( c,p );
+}
+
+template<class C,class R,class...A> bbFunction<R(A...)> bbExtMethod( const bbGCVar<C> &c,R(*p)(C*,A...) ){
 	return bbFunction<R(A...)>( c.get(),p );
 }
 

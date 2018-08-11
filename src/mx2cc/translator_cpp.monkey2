@@ -2148,12 +2148,31 @@ Class Translator_CPP Extends Translator
 
 		Local ctype:=value.member.cscope.ctype
 		
-		'Uses( ctype )
-		UsesType( ctype )
-
-		Local cname:=ClassName( ctype )
-		
 		Local func:=value.member
+		
+		If func.fdecl.IsExtension
+			
+			ctype=ctype.superType
+
+			UsesType( ctype )
+			
+			Local cname:=ClassName( ctype )
+
+			Local args:="<"+cname+","+TransType( func.ftype.retType )
+			For Local ty:=Eachin func.ftype.argTypes
+				args+=","+TransType( ty )
+			Next
+			args+=">"
+		
+'			Print "args="+args
+		
+			Return "bbExtMethod"+args+"(("+cname+"*)("+Trans( value.instance )+"),&"+Trans( value.member )+")"
+			
+		Endif
+
+		UsesType( ctype )
+		
+		Local cname:=ClassName( ctype )
 		
 		Local args:="<"+cname+","+TransType( func.ftype.retType )
 		For Local ty:=Eachin func.ftype.argTypes
