@@ -283,7 +283,11 @@ Class Time
 	
 	#end
 	Method ToString:String()
-		Return DayNames[ WeekDay ]+" "+Day+" "+MonthNames[ Month ]+" "+Year+" "+ Hours+":"+Minutes+":"+Seconds
+		local day:=("0"+Day).Slice( -2 )
+		Local hours:=("0"+Hours).Slice( -2 )
+		Local minutes:=("0"+Minutes).Slice( -2 )
+		Local seconds:=("0"+Seconds).Slice( -2 )
+		Return DayNames[ WeekDay ]+" "+day+" "+MonthNames[ Month ]+" "+Year+" "+hours+":"+minutes+":"+seconds
 	End
 
 	#rem monkeydoc Overloaded comparison operator.
