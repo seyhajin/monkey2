@@ -968,7 +968,8 @@ Class Translator_CPP Extends Translator
 				args+=","+TransType( arg )
 			Next
 			
-			DeclsFunc( func.ftype )
+			UsesFunc( func.ftype )
+'			DeclsFunc( func.ftype )
 			RefsFunc( func )
 						
 			decls.Push( "bbFunctionDecl<"+args+">(~q"+id+"~q,&"+fname+meta+")" )
@@ -1091,7 +1092,8 @@ Class Translator_CPP Extends Translator
 							args+=TransType( arg )
 						Next
 						
-						DeclsFunc( ctor.ftype )
+						UsesFunc( ctor.ftype )
+'						DeclsFunc( ctor.ftype )
 						
 						decls.Push( "bbCtorDecl<"+args+">("+meta+")" )
 					Next
@@ -1131,7 +1133,8 @@ Class Translator_CPP Extends Translator
 					args+=","+TransType( arg )
 				Next
 				
-				DeclsFunc( func.ftype )
+				UsesFunc( func.ftype )
+				'DeclsFunc( func.ftype )
 				
 				decls.Push( "bbMethodDecl<"+args+">(~q"+id+"~q,&"+cname+"::"+fname+meta+")" )
 			Next
@@ -1190,7 +1193,8 @@ Class Translator_CPP Extends Translator
 				Local fname:=FuncName( func )
 				Local meta:=func.fdecl.meta ? ","+EnquoteCppString( func.fdecl.meta ) Else ""
 					
-				DeclsFunc( func.ftype )
+				UsesFunc( func.ftype )
+				'DeclsFunc( func.ftype )
 					
 				If func.IsExtension
 	

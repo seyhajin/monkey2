@@ -667,6 +667,14 @@ Method AddRef:Bool( node:SNode )
 		UsesType( type )
 	End
 	
+	Method UsesFunc( type:FuncType )
+		
+		UsesType( type.retType)
+		For Local argty:=Eachin type.argTypes
+			UsesType( argty )
+		Next
+	End
+	
 	Method UsesType( type:Type )
 		
 		Local xtype:=Cast<AliasType>( type )
