@@ -333,7 +333,7 @@ Class Stack<T> Implements IContainer<T>
 		
 		If _data.Length>=capacity Return
 		
-		capacity=Max( _length*2+_length,capacity )
+		capacity=Max( _length*2,capacity )
 		Local data:=New T[capacity]
 		_data.CopyTo( data,0,0,_length )
 		_data=data
