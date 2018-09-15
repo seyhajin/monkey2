@@ -5,11 +5,11 @@
 Using libc..
 Using std..
 
-Const MONKEY2_VERSION:="2018.07"
+Const MONKEY2_VERSION:="2018.08"
 
 Const MX2CC_VERSION:="1.1.15"
 
-Const RELEASE_SUFFIX:="b"
+Const RELEASE_SUFFIX:=""
 
 Const OUTPUT:="Monkey2-v"+MONKEY2_VERSION+RELEASE_SUFFIX
 
