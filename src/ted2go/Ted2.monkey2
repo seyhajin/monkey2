@@ -149,7 +149,7 @@ Using sdl2..
 
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.12"
+Global AppTitle:="Ted2Go v2.13"
 
 
 Function Main()
@@ -227,6 +227,8 @@ Function Main()
 			MainWindow.OnFileDropped( arg )
 		Next
 	End
+	
+	SDL_EnableScreenSaver()
 	
 	App.Run()
 	
