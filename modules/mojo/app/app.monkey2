@@ -610,34 +610,31 @@ Class AppInstance
 	
 	Internal
 	
-	Method DispatchEvents()
+	Method UpdateEvents()
 		
+		'FIXME: Very hacky...
+		Window.CreateNewWindows()
+			
 		Local event:SDL_Event
 
 		While SDL_PollEvent( Varptr event )
 			
-			Window.CreateNewWindows()
+			Keyboard.Update()
 			
+			Mouse.Update()
+			
+			Touch.Update()
+		
 			DispatchEvent( Varptr event )
+			
 		Wend
-	End
-	
-	Method UpdateEvents()
-	
-		Keyboard.Update()
-		
-		Mouse.Update()
-		
-		Touch.Update()
-		
-		DispatchEvents()
 		
 		Local idle:=Idle
 		Idle=Null
 		idle()
-		
-	End
 
+	End
+	
 	Private
 	
 	Field _touchMouse:Bool=False		'Whether mouse is really touch
