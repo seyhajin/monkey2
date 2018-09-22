@@ -163,7 +163,7 @@ End
 #end
 Function ExtractZip:Bool( zipFile:String,dstDir:String )
 
-	Return ExtractZip( zipFile,dstDir )
+	Return ExtractZip( zipFile,dstDir,"" )
 End
 
 #rem monkeydoc @hidden
