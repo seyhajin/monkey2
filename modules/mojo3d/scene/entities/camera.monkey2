@@ -225,15 +225,19 @@ Class Camera Extends Entity
 	End
 	
 	Method MousePick:RayCastResult( collisionMask:Int=-1 )
-	
-		Local mouse:=Cast<Vec2f>( Mouse.Location )
+		
+		Local mouse:Vec2f=Mouse.Location
 
-		If App.ActiveWindow mouse.y=App.ActiveWindow.Height-mouse.y
-			
-		If _view mouse=_view.TransformWindowPointToView( mouse )
-			
-		mouse.x-=Viewport.min.x
-		mouse.y-=Viewport.min.y
+		If _view
+			If App.ActiveWindow	And App.ActiveWindow<>_view 
+				mouse=_view.TransformPointFromView( mouse,App.ActiveWindow )
+			Endif
+			mouse.y=_view.Height-mouse.y
+		Else
+			mouse.x-=Viewport.min.x
+			mouse.y-=Viewport.min.y
+			mouse.y=Viewport.Height-mouse.y
+		Endif
 		
 		Return Pick( mouse,collisionMask )
 	End
