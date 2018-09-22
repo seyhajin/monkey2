@@ -36,10 +36,6 @@ Class MyWindow Extends Window
 		Local model:=Model.CreateBox( box,16,16,16,material )
 		model.Name="Ground"
 		
-		model.Collided+=Lambda( body:RigidBody )
-'			Print "Ground hit: "+body.Entity.Name
-		End
-
 		Local collider:=model.AddComponent<BoxCollider>()
 		collider.Box=box
 
@@ -47,6 +43,10 @@ Class MyWindow Extends Window
 		body.CollisionGroup=64
 		body.CollisionMask=127
 		body.Mass=0
+		
+		model.RigidBody.Collided+=Lambda( body:RigidBody )
+'			Print "Ground hit: "+body.Entity.Name
+		End
 	End
 
 	Method CreateBodies()		
@@ -174,6 +174,8 @@ Class MyWindow Extends Window
 	Method OnRender( canvas:Canvas ) Override
 		
 		RequestRender()
+		
+		If Keyboard.KeyHit(Key.Space) _scene.UpdateRate=_scene.UpdateRate ? 0 Else 60
 		
 		_scene.Update()
 		

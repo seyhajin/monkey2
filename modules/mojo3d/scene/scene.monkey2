@@ -184,6 +184,13 @@ Class Scene
 	
 	Setter( updateRate:Float )
 		
+		If updateRate=_updateRate Return
+		
+		If updateRate And Not _updateRate
+			_time=Now()
+			_elapsed=0
+		Endif
+		
 		_updateRate=updateRate
 	End
 	
@@ -298,6 +305,8 @@ Class Scene
 	#rem monkeydoc Updates the scene.
 	#end
 	Method Update()
+		
+		If Not _updateRate Return
 		
 		If Not _started
 			BeginUpdating()
