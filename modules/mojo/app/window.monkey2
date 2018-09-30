@@ -1,11 +1,15 @@
-	
-#Import "native/app.h"
 
 Namespace mojo.app
 
+#Import "native/displaylink.mm"
+#Import "native/displaylink.h"
+
 Extern Private
 
-Function swapBuffers( window:Void Ptr,context:Void Ptr )="bbApp::swapBuffers"
+#If __TARGET__="macos"
+Function initDisplayLink()="bbDisplayLink::init"
+Function enableDisplayLink(enable:Bool)="bbDisplayLink::enable"
+#Endif
 	
 Public
 
@@ -91,16 +95,21 @@ Class Window Extends View
 	
 	Setter( swapInterval:Int )
 		
-		_swapInterval=swapInterval
-	End
-	
-	Property SwapAsync:Bool()
+		If swapInterval=_swapInterval Return
 		
-		Return _swapAsync
+		_swapInterval=swapInterval
+#If __TARGET__="macos"		
+		_canRender=True
+#Endif
+	End
+
+	'Deprecated! Too hard on macos...	
+	Property SwapAsync:Bool()
+
+		Return False		
 	
 	Setter( swapAsync:Bool )
 		
-		_swapAsync=swapAsync
 	End
 	
 	Property CanRender:Bool()
@@ -307,7 +316,10 @@ Class Window Extends View
 		Case EventType.WindowMinimized
 		Case EventType.WindowRestored
 		Case EventType.WindowSwapped
+		Case EventType.WindowVSync
+#If __TARGET__="macos"
 			_canRender=True
+#endif				
 		Case EventType.WindowMoved,EventType.WindowResized
 			Frame=GetFrame()
 			_frame=Frame
@@ -420,7 +432,6 @@ Class Window Extends View
 	Field _maxfudge:Int
 	Field _rswapInterval:=1
 	Field _swapInterval:=1
-	Field _swapAsync:=False
 	Field _canRender:=True
 	
 	Field _canvas:Canvas
@@ -557,20 +568,25 @@ Class Window Extends View
 		
 		Assert( _canRender )
 		
-		_canRender=False
-		
+#If __TARGET__="macos"
+		_canRender=(_swapInterval=0)
+#endif
 		If _maxfudge
 			_maxfudge-=1
 			RequestRender()
 		Endif
 
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
-
+		
 		If _swapInterval<>_rswapInterval
-			SDL_GL_SetSwapInterval( _swapInterval )
 			_rswapInterval=_swapInterval
+#If __TARGET__="macos"
+			enableDisplayLink(_swapInterval<>0)
+#Else			
+			SDL_GL_SetSwapInterval( _swapInterval )
+#endif		
 		Endif
-	
+		
 #If __TARGET__="windows"
 		If _weirdHack
 			_weirdHack=False
@@ -592,13 +608,11 @@ Class Window Extends View
 		
 		_canvas.EndRender()
 		
-		If _swapAsync
-			_canRender=False
-			swapBuffers( _sdlWindow,_sdlGLContext )
-		Else
-			SDL_GL_SwapWindow( _sdlWindow )
-			_canRender=True
-		Endif
+		SDL_GL_SwapWindow( _sdlWindow )
+		
+#If __TARGET__="macos"
+		glFinish()
+#Endif
 	End
 	
 	Method Init( title:String,rect:Recti,flags:WindowFlags )
@@ -651,8 +665,14 @@ Class Window Extends View
 			Assert( _sdlGLContext,"FATAL ERROR: SDL_GL_CreateContext failed" )
 		Endif
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
-		
+
+#If __TARGET__="macos"		
+		initDisplayLink()
+		enableDisplayLink( _rswapInterval<>0 )
+		SDL_GL_SetSwapInterval( 0 )
+#Else
 		SDL_GL_SetSwapInterval( _rswapInterval )
+#endif
 		
 		bbglInit()
 		

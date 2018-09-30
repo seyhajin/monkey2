@@ -54,7 +54,8 @@ Enum EventType
 	WindowMaximized,
 	WindowMinimized,
 	WindowRestored,
-	WindowSwapped
+	WindowSwapped,
+	WindowVSync
 	
 	Eaten=$40000000
 End

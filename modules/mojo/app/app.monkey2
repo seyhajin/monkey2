@@ -550,14 +550,13 @@ Class AppInstance
 	#rem monkeydoc Run the app.
 	#end
 	Method Run()
-
+		
 #If __TARGET__="emscripten"
 
 		emscripten_set_main_loop( EmscriptenMainLoop,0,1 )
-		
 #Else
 		Repeat
-		
+
 			MainLoop()
 			
 		Forever
@@ -647,8 +646,8 @@ Class AppInstance
 	Field _active:Bool
 	Field _activeWindow:Window
 	
-	Field _renderingSuspended:int
-
+	Field _renderingSuspended:Int
+	
 	Field _keyView:View
 	Field _hoverView:View
 	Field _mouseView:View
@@ -1066,6 +1065,11 @@ Class AppInstance
 				If Not _window Return
 				
 				SendWindowEvent( EventType.WindowSwapped )
+			Case 2
+				_window=ActiveWindow
+				If Not _window Return
+				
+				SendWindowEvent( EventType.WindowVSync )
 			End
 
 		Case SDL_DROPFILE
