@@ -389,7 +389,10 @@ Cocoa_GL_SwapWindow(_THIS, SDL_Window * window)
 {
     SDLOpenGLContext* nscontext = (SDLOpenGLContext*)SDL_GL_GetCurrentContext();
     [nscontext flushBuffer];
-    [nscontext updateIfNeeded];
+    
+    // ***** Mark was here! *****
+    // Fix for Mojave, which wasn't rendering until window moved.
+    [nscontext update];//IfNeeded];
 }}
 
 void
