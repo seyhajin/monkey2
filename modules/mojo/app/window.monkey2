@@ -1,8 +1,10 @@
 
 Namespace mojo.app
 
+#If __TARGET__="macos"
 #Import "native/displaylink.mm"
 #Import "native/displaylink.h"
+#Endif
 
 Extern Private
 
