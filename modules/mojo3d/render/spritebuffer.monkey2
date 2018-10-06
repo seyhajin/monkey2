@@ -92,6 +92,8 @@ Class SpriteBuffer
 
 			Local sprite:=spriteOps[spritei].sprite
 			
+			Local rgba:=(sprite.Color*sprite.Alpha).ToRGBA()
+			
 			Local material:=sprite.Material
 			
 			If material<>_material
@@ -120,19 +122,19 @@ Class SpriteBuffer
 			
 			vp[0].position=matrix * New Vec3f( -handle.x,1-handle.y,0 )
 			vp[0].texCoord0=New Vec2f( texrect.min.x,texrect.min.y )
-			vp[0].color=~0
+			vp[0].color=rgba
 			
 			vp[1].position=matrix * New Vec3f( 1-handle.x,1-handle.y,0 )
 			vp[1].texCoord0=New Vec2f( texrect.max.x,texrect.min.y )
-			vp[1].color=~0
+			vp[1].color=rgba
 
 			vp[2].position=matrix * New Vec3f( 1-handle.x,-handle.y,0 )
 			vp[2].texCoord0=New Vec2f( texrect.max.x,texrect.max.y )
-			vp[2].color=~0
+			vp[2].color=rgba
 			
 			vp[3].position=matrix * New Vec3f( -handle.x,-handle.y,0 )
 			vp[3].texCoord0=New Vec2f( texrect.min.x,texrect.max.y )
-			vp[3].color=~0
+			vp[3].color=rgba
 			
 			'bump vertex/index
 			vp+=4

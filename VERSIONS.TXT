@@ -1,4 +1,6 @@
 
+Fixed entity.Color and Entity.Alpha not affecting sprites.
+
 Experimental fix for Mojave vsync not working. Removed support for Window.SwapAsync as it breaks on macos.
 
 Experimental fix for Mojave not rendering until window moved.

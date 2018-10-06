@@ -10,13 +10,13 @@ Class SpriteMaterial Extends Material
 	Method New()
 		
 		ShaderName="materials/sprite"
-		AttribMask=1|8
+		AttribMask=1|4|8
 		BlendMode=BlendMode.Alpha
 		CullMode=CullMode.None
 		
 		ColorTexture=Texture.ColorTexture( Color.White )
 		ColorFactor=Color.White
-		AlphaDiscard=.5
+		AlphaDiscard=0
 		
 		AddInstance()
 	End

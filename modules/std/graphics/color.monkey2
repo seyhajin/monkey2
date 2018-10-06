@@ -196,7 +196,7 @@ Struct Color
 	Operator To:geom.Vec4f()
 		Return New Vec4f( r,g,b,a )
 	End
-	
+
 	#rem monkeydoc The Red color component.
 	#end
 	Property R:Float()
@@ -268,7 +268,7 @@ Struct Color
 	Operator-:Color( offset:Float )
 		Return New Color( r-offset,g-offset,b-offset,a-offset )
 	End
-
+	
 	#rem monkeydoc Blends the color with another color and returns the result.
 	#end	
 	Method Blend:Color( color:Color,delta:Float )
@@ -280,6 +280,12 @@ Struct Color
 	#end	
 	Method ToARGB:UInt()
 		Return UInt(a*255) Shl 24 | UInt(r*255) Shl 16 | UInt(g*255) Shl 8 | UInt(b*255)
+	End
+
+	#rem monkeydoc Converts the color to 32 bit RGBA format.
+	#end	
+	Method ToRGBA:UInt()
+		Return Int(r*255)Shl 24 | Int(g*255)Shl 16 |Int(b*255)Shl 8|Int(a*255)
 	End
 
 	#rem monkeydoc Converts the color to printable string.
@@ -321,6 +327,16 @@ Struct Color
 		Local r:=(argb Shr 16 & $ff)/255.0
 		Local g:=(argb Shr 8 & $ff)/255.0
 		Local b:=(argb & $ff)/255.0
+		Return New Color( r,g,b,a )
+	End
+	
+	#rem monkeydoc Creates a color from a 32 bit RGBA color.
+	#end
+	Function FromRGBA:Color( argb:UInt )
+		Local r:=(argb Shr 24 & $ff)/255.0
+		Local g:=(argb Shr 16 & $ff)/255.0
+		Local b:=(argb Shr 8 & $ff)/255.0
+		Local a:=(argb & $ff)/255.0
 		Return New Color( r,g,b,a )
 	End
 	

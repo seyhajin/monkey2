@@ -180,6 +180,8 @@ void transformSpriteVertex(){
 	v_Position=(i_ModelViewMatrix * a_Position).xyz;
 
 	v_TexCoord0=(m_TextureMatrix * vec3(a_TexCoord0,1.0)).st;
+
+	v_Color=a_Color;
 	
 	gl_Position=i_ModelViewProjectionMatrix * a_Position;
 }
