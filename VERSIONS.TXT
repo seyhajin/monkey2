@@ -1,4 +1,6 @@
 
+Added SpriteMode.Fixed for sprites unaffected by camera.
+
 Fixed entity.Color and Entity.Alpha not affecting sprites.
 
 Experimental fix for Mojave vsync not working. Removed support for Window.SwapAsync as it breaks on macos.

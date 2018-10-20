@@ -7,11 +7,13 @@ Namespace mojo3d
 |:--------------|:-----------
 | `Billboard`	| Sprite always faces the camera, eg: like a lens flare.
 | `Upright`		| Sprite faces the camera but remains upright, eg: like a tree.
+| `Fixed`		| Sprite is not affected by the camera.
 
 #end
 Enum SpriteMode
-	Billboard=1
-	Upright=2
+	Billboard=0
+	Upright=1
+	Fixed=2
 End
 
 #rem monkeydoc The Sprite class.
@@ -135,6 +137,6 @@ Class Sprite Extends Renderable
 	Field _material:Material
 	Field _textureRect:=New Rectf( 0,0,1,1 )
 	Field _handle:Vec2f=New Vec2f( .5,.5 )
-	Field _mode:SpriteMode=Null
+	Field _mode:SpriteMode
 	
 End
