@@ -72,10 +72,10 @@ Class Mesh Extension
 
 		Local mesh:=New Mesh( 
 			New Vertex3f[](
-				New Vertex3f( rect.min.x,rect.max.y,0 ),
-				New Vertex3f( rect.max.x,rect.max.y,0 ),
-				New Vertex3f( rect.max.x,rect.min.y,0 ),
-				New Vertex3f( rect.min.x,rect.min.y,0 ) ),
+				New Vertex3f( rect.min.x,rect.max.y,0, 0,0, 0,0,-1 ),
+				New Vertex3f( rect.max.x,rect.max.y,0, 1,0, 0,0,-1 ),
+				New Vertex3f( rect.max.x,rect.min.y,0, 1,1, 0,0,-1 ),
+				New Vertex3f( rect.min.x,rect.min.y,0, 0,1, 0,0,-1 ) ),
 			New UInt[](
 				0,1,2,
 				0,2,3 ) )
