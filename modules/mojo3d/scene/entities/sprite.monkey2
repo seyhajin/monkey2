@@ -26,9 +26,12 @@ Class Sprite Extends Renderable
 		
 		Super.New( parent )
 		
-		Name="Sprite"
+		Global _defaultMaterial:=New SpriteMaterial
 		
-		AddInstance()
+		Name="Sprite"
+		Material=_defaultMaterial
+		
+		AddInstance( New Variant[]( parent ) )
 		
 		Visible=True
 	End
