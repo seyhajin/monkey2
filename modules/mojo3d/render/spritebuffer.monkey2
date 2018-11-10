@@ -100,7 +100,7 @@ Class SpriteBuffer
 
 			Local sprite:=spriteOps[spritei].sprite
 			
-			Local rgba:=(sprite.Color*sprite.Alpha).ToRGBA()
+			Local rgba:=(sprite.Color*sprite.Alpha).ToABGR()
 			
 			Local material:=sprite.Material
 			
