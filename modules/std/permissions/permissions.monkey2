@@ -133,6 +133,10 @@ Depending on the permissions, this may cause a modal dialog to be presented to t
 
 The permission strings should be in android manifest form, eg: "android.permission.READ\_EXTERNAL\_STORAGE".
 
+See this page for more permissions:
+
+https://developer.android.com/reference/android/Manifest.permission
+
 If the result is an empty array, the operation was cancelled.
 
 #end
