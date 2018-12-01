@@ -61,9 +61,16 @@ Invoke when the user has sat through a rewarded video and therefore claimed thei
 
 To prepare an android studio project for use with admob, add the following line to your project's 'build.gradle (Module:app)' file inside the 'dependancies' block...
 
-    compile 'com.google.android.gms:play-services-ads:11.8.0'
-    
+    implement 'com.google.android.gms:play-services-ads:17.1.1'
+        
 You may need to change the version number depending on when you're reading this.
+
+If you are using a version >= 17.0.0 you will also need to add something like this to your app manifest...
+
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+
+...inside the <application> block. The publisher id shown here allows you to test admob offline, you'll have to change it with your actual admob publisher id when you go 'live'.
 
 After this, you'll need to do a 'gradle sync'.
 

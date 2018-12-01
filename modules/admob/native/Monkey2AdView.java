@@ -116,6 +116,11 @@ public class Monkey2AdView{
                 Log.i( TAG,"onRewardedVideoStarted" );
             }
 
+            public void onRewardedVideoCompleted(){
+
+                Log.i( TAG,"onRewardedVideoCompleted" );
+            }
+
             public void onRewardedVideoAdLeftApplication(){
 
                 Log.i( TAG,"onRewardedVideoAdLeftApplication" );
