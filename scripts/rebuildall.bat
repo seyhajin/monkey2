@@ -7,7 +7,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 call rebuildmods
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-call rebuildted2
+call rebuildted2go
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 call makedocs
