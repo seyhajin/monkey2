@@ -164,7 +164,7 @@ MX2_CPP_OPTS_EMSCRIPTEN_RELEASE=-O3 -DNDEBUG
 '
 MX2_ANDROID_APP_CFLAGS=-std=gnu99 -fno-stack-protector
 MX2_ANDROID_APP_CPPFLAGS=-std=c++11 -fno-stack-protector -frtti -fexceptions
-MX2_ANDROID_APP_PLATFORM=android-14
+MX2_ANDROID_APP_PLATFORM=android-16
 MX2_ANDROID_APP_ABI=armeabi-v7a x86
 MX2_ANDROID_APP_STL=c++_static
 
