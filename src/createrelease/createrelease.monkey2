@@ -141,6 +141,8 @@ Function CopyRelease()
 	Copy( "sprites-scene.mojo3d" )
 	Copy( "test-scene.mojo3d" )
 	
+	Copy( "xmas-lights.png" )
+	
 #If __TARGET__="windows"
 	Copy( "Monkey2 (Windows).exe" )
 #Else if __TARGET__="macos"
