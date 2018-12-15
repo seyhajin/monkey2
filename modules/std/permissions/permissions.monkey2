@@ -42,9 +42,9 @@ End
 Class Request
 
 	Field permissions:String
-	Field finished:void( result:int[] )
+	Field finished:Void( result:ResultType[] )
 
-	Method New( permissions:String[],finished:Void( result:Int[] ) )
+	Method New( permissions:String[],finished:Void( result:ResultType[] ) )
 	
 		Self.permissions=";".Join( permissions )
 	
@@ -75,9 +75,9 @@ Class Request
 		
 		Local sresult:=result.Split( ";" )
 		
-		Local iresult:=New Int[sresult.Length]
+		Local iresult:=New ResultType[sresult.Length]
 		For Local i:=0 Until iresult.Length
-			iresult[i]=int( sresult[i] )
+			iresult[i]=Cast<UInt>( sresult[i] )
 		Next
 		
 		finished( iresult )
@@ -92,7 +92,7 @@ End
 
 Public
 
-#end
+#Endif
 
 #rem monkeydoc Check an android permission.
 
@@ -105,7 +105,7 @@ The permission string should be in android manifest form, eg: "android.permissio
 #end
 Function CheckPermission:Int( permission:String )
  
- #If __TARGET__="android"
+#If __TARGET__="android"
  
 	Init()
 
@@ -113,15 +113,15 @@ Function CheckPermission:Int( permission:String )
 	
 	Return env.CallIntMethod( _instance,_checkPermission,New Variant[]( permission ) )
 	
-#else
+#Else
 
 	Return -1
 	
-#endif
+#Endif
 
 End
 
-Alias ResultType:uInt
+Alias ResultType:UInt
 
 #rem monkeydoc Request android permissions.
 
@@ -146,10 +146,10 @@ Function RequestPermissions( permissions:String[],finished:Void( results:ResultT
 
 	Init()
 
-'	_requests.AddLast( New Request( permissions,finished ) )
+	_requests.AddLast( New Request( permissions,finished ) )
 	
 	StartNextRequest()
 	
-#endif
+#Endif
 
 End
