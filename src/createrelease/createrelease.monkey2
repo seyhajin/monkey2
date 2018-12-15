@@ -5,7 +5,7 @@
 Using libc..
 Using std..
 
-Const MONKEY2_VERSION:="2018.08"
+Const MONKEY2_VERSION:="2018.09"
 
 Const MX2CC_VERSION:="1.1.15"
 
