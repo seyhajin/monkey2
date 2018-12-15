@@ -14,11 +14,11 @@ If you install this to the monkey2 'devtools' directory, the following steps sho
 
 2) Open a command prompt and change to the 'monkey2\scripts' directory.
 
-3) Enter 'rebuildall2go' and hit return. Wait...
+3) Enter 'rebuildall' and hit return. Wait...
 
 4) If all went well, you should end up with a 'Monkey2 (Windows)' exe in the monkey2 directory. Run this to launch the Ted2go IDE.
 
-5) You should now be able to build and run monkey2 apps. There are some samples apps in the monkey2/bananas directory.
+5) You should now be able to build and run monkey2 apps. There are some sample apps in the monkey2/bananas directory.
 
 
 ***** Building monkey2 on MacOS/Linux *****
@@ -27,16 +27,14 @@ If you install this to the monkey2 'devtools' directory, the following steps sho
 
 2) Open a shell and change to the 'monkey2/scripts' directory.
 
-3) Enter './rebuildall2go.sh' and hit return. Wait...
+3) Enter './rebuildall.sh' and hit return. Wait...
 
 4) If all went well, you should end up with a 'Monkey2 (...)' app in the monkey2 directory. Run this to launch the Ted2go IDE.
 
-5) You should now be able to build and run monkey2 apps. There are some samples apps in the monkey2/bananas directory.
+5) You should now be able to build and run monkey2 apps. There are some sample apps in the monkey2/bananas directory.
 
 
 ***** More information *****
-
-Monkey2 patreon page: https://www.patreon.com/monkey2
 
 Monkey2 development blog: http://monkeycoder.co.nz/
 
