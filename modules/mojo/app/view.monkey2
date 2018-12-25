@@ -145,7 +145,7 @@ Class View
 	| "fill"			| View is resized to fit its layout frame.
 	| "float"			| View floats within its layout frame according to the view [[Gravity]].
 	| "fill-x"			| View is resized on the x axis and floats on the y axis.
-	| "fill-y"			| View is resized on the y axis and floats on the x axs.
+	| "fill-y"			| View is resized on the y axis and floats on the x axis.
 	| "stretch"			| View is stretched non-uniformly to fit its layout frame.
 	| "letterbox"		| View is uniformly stretched on both axii and centered within its layout frame.
 	| "letterbox-int"	| View is uniformly stretched on both axii and centered within its layout frame. Scale factors are integrized.
