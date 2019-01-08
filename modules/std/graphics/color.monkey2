@@ -11,135 +11,135 @@ Struct Color
 	#end
 	Const None:=New Color( 0,0,0,0 )
 	
-	#rem monkeydoc Black.
+	#rem monkeydoc Black. Equivalent to New Color( 0,0,0 ).
 	#end
 	Const Black:=New Color( 0,0,0 )
 	
-	#rem monkeydoc Grey.
+	#rem monkeydoc Grey. Equivalent to New Color( .5,.5,.5 ).
 	#end
 	Const Grey:=New Color( .5,.5,.5 )
 	
-	#rem monkeydoc Light Grey.
+	#rem monkeydoc Light Grey. Equivalent to New Color( .75,.75,.75 ).
 	#end
 	Const LightGrey:=New Color( .75,.75,.75 )
 	
-	#rem monkeydoc Dark Grey.
+	#rem monkeydoc Dark Grey. Equivalent to New Color( .25,.25,.25 ).
 	#end
 	Const DarkGrey:=New Color( .25,.25,.25 )
 	
-	#rem monkeydoc White.
+	#rem monkeydoc White. Equivalent to New Color( 1,1,1 ).
 	#end
 	Const White:=New Color( 1,1,1 )
 	
-	#rem monkeydoc Red.
+	#rem monkeydoc Red. Equivalent to New Color( 1,0,0 ).
 	#end
 	Const Red:=New Color( 1,0,0 )
 	
-	#rem monkeydoc Green.
+	#rem monkeydoc Green. Equivalent to New Color( 0,1,0 ).
 	#end
 	Const Green:=New Color( 0,1,0 )
 	
-	#rem monkeydoc Blue.
+	#rem monkeydoc Blue. Equivalent to New Color( 0,0,1 ).
 	#end
 	Const Blue:=New Color( 0,0,1 )
 	
-	#rem monkeydoc Brown.
+	#rem monkeydoc Brown. Equivalent to New Color( .7,.4,.1 ).
 	#end
 	Const Brown:=New Color( .7,.4,.1 )
 	
-	#rem monkeydoc Orange.
+	#rem monkeydoc Orange. Equivalent to New Color( 1,.5,0 ).
 	#end
 	Const Orange:=New Color( 1,.5,0 )
 	
-	#rem monkeydoc Yellow.
+	#rem monkeydoc Yellow. Equivalent to New Color( 1,1,0 ).
 	#end
 	Const Yellow:=New Color( 1,1,0 )
 	
-	#rem monkeydoc Lime.
+	#rem monkeydoc Lime. Equivalent to New Color( .7,1,0 ).
 	#end
 	Const Lime:=New Color( .7,1,0 )
 	
-	#rem monkeydoc Pine.
+	#rem monkeydoc Pine. Equivalent to New Color( 0,.5,0 ).
 	#end
 	Const Pine:=New Color( 0,.5,0 )
 	
-	#rem monkeydoc Aqua.
+	#rem monkeydoc Aqua. Equivalent to New Color( 0,.9,.4 ).
 	#end
 	Const Aqua:=New Color( 0,.9,.4 )
 	
-	#rem monkeydoc Cyan.
+	#rem monkeydoc Cyan. Equivalent to New Color( 0,1,1 ).
 	#end
 	Const Cyan:=New Color( 0,1,1 )
 	
-	#rem monkeydoc Sky.
+	#rem monkeydoc Sky. Equivalent to New Color( 0,.5,1 ).
 	#end
 	Const Sky:=New Color( 0,.5,1 )
 	
-	#rem monkeydoc Steel.
+	#rem monkeydoc Steel. Equivalent to New Color( .2,.2,.7 ).
 	#end
 	Const Steel:=New Color( .2,.2,.7 )
 	
-	#rem monkeydoc Violet.
+	#rem monkeydoc Violet. Equivalent to New Color( .7,0,1 ).
 	#end
 	Const Violet:=New Color( .7,0,1 )
 	
 	#rem monkeydoc Magenta.
 	#end
-	Const Magenta:=New Color( 1,0,1 )
+	Const Magenta:=New Color( 1,0,1 ) Equivalent to New Color( 1,0,1 ).
 	
 	#rem monkeydoc Puce.
 	#end
-	Const Puce:=New Color( 1,0,.4 )
+	Const Puce:=New Color( 1,0,.4 ) Equivalent to New Color( 1,0,.4 ).
 	
 	#rem monkeydoc Skin.
 	#end
-	Const Skin:=New Color( .8,.5,.6 )
+	Const Skin:=New Color( .8,.5,.6 ) Equivalent to New Color( .8,.5,.6 ).
 	
 	#rem monkeydoc Pink.
 	#end
-	Const Pink:=New Color( 1,.75,.8 )
+	Const Pink:=New Color( 1,.75,.8 ) Equivalent to New Color( 1,.75,.8 ).
 	
 	#rem monkeydoc HotPink.
 	#end
-	Const HotPink:=New Color( 1,.41,.71 )
+	Const HotPink:=New Color( 1,.41,.71 ) Equivalent to New Color( 1,.41,.71 ).
 
-	#rem monkeydoc SeaGreen.
+	#rem monkeydoc SeaGreen. Roughly equivalent to New Color( .03,.3,.25 ).
 	#end
 	Const SeaGreen:=New Color( .031372,.301960,.247058,1 )
 
-	#rem monkeydoc Silver.
+	#rem monkeydoc Silver. Roughly equivalent to New Color( .99,.98,.96 ).
 	#end
 	Const Silver:=New Color( 0.98695202723239916,0.98157612499486091,0.96058105436290453 )
 
-	#rem monkeydoc Aluminum.
+	#rem monkeydoc Aluminum. Roughly equivalent to New Color( .96,.96,.96 ).
 	#end
 	Const Aluminum:=New Color( 0.95955910300613745,0.9635188914336692,0.96495768667887971 )
 
-	#rem monkeydoc Gold.
+	#rem monkeydoc Gold. Roughly equivalent to New Color( 1,.89,.61 ).
 	#end
 	Const Gold:=New Color( 1,0.88565078560356991,0.6091625017721024 )
 
-	#rem monkeydoc Copper.
+	#rem monkeydoc Copper. Roughly equivalent to New Color( .98,.82,.76 ).
 	#end
 	Const Copper:=New Color( 0.9792921449434141,0.81490079942355442,0.75455014940288267 )
 
-	#rem monkeydoc Chromium.
+	#rem monkeydoc Chromium. Roughly equivalent to New Color( .76,.77,.77 ).
 	#end
 	Const Chromium:=New Color( 0.76178782381338439,0.76588820797089974,0.76472402871006473 )
 
-	#rem monkeydoc Nickel.
+	#rem monkeydoc Nickel. Roughly equivalent to New Color( .83,.8,.75 ).
 	#end
 	Const Nickel:=New Color( 0.827766413700323,0.79798492878548577,0.74652364685504802 )
 
-	#rem monkeydoc Titanium.
+	#rem monkeydoc Titanium. Roughly equivalent to New Color( .76,.73,.7 ).
 	#end
 	Const Titanium:=New Color( 0.75694694835172049,0.72760746687141564,0.69520723368860826 )
 
-	#rem monkeydoc Cobalt.
+	#rem monkeydoc Cobalt. Roughly equivalent to New Color( .83,.82,.81 ).
 	#end
 	Const Cobalt:=New Color( 0.82910355988659823,0.82495893307721546,0.81275025476652396 )
 
-	#rem monkeydoc Platinum.
+	#rem monkeydoc Platinum. Roughly equivalent to New Color( .84,.82,.78 ).
 	#end
 	Const Platinum:=New Color( 0.83493408973507777,0.81484503266020314,0.78399912482207756 )
 	
