@@ -112,6 +112,7 @@ Class MouseDevice
 		Return _location
 	Setter( location:Vec2i )
 		_location=location
+		If App.ActiveWindow	location=App.ActiveWindow.TransformPointFromView( location / App.ActiveWindow.MouseScale,Null )
 		SDL_WarpMouseInWindow( Null,location.x,location.y )
 	End
 	
