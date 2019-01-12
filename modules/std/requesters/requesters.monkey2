@@ -13,6 +13,8 @@ Namespace std.requesters
 
 #Elseif __TARGET__="macos"
 
+	#Import "<Cocoa.framework>"
+
 	#Import "native/requesters_macos.mm"
 	#Import "native/requesters.h"
 
