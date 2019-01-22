@@ -11,10 +11,6 @@ Namespace std.async
 #Import "native/Monkey2Async.java"
 #Endif
 
-#If __TARGET__="raspbian" Or __TARGET__="linux"
-#Import "<libpthread.a>"	'WTH? Didn't used to need this!
-#Endif
-
 Extern
 
 #rem monkeydoc @hidden

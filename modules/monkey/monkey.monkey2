@@ -28,6 +28,10 @@ Namespace monkey
 #import "<liblog.a>"
 #endif
 
+#If __TARGET__="raspbian" Or __TARGET__="linux"
+#Import "<libpthread.a>"
+#endif
+
 #Import "types"
 #Import "math"
 #Import "debug"
