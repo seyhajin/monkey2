@@ -25,7 +25,7 @@ Class HttpRequest Extends HttpRequestBase
 	
 		'WGET
 		Local post_data:=_req="POST" ? " -post-data=~q"+text+"~q" Else ""
-		Local cmd:="wget -q -T "+_timeout+" -O ~q"+_tmp+"~q --method="+_req+post_data+" ~q"+_url+"~q"
+		Local cmd:="wget -q -T "+_timeout+" -O ~q"+_tmp+"~q --method="+_req+" --content-on-error"+post_data+" ~q"+_url+"~q"
 	
 		'CURL
 '		Local cmd:="curl -s -m "+_timeout+" -o ~q"+_tmp+"~q ~q"+_url+"~q"
