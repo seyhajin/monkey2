@@ -56,6 +56,18 @@ Class KeyboardDevice
 		Return _names[key]
 	End
 	
+	#rem monkeydoc Gets the key by a given name.
+	#end
+	Method KeyFromName:Key( name:String )
+		
+		For Local i:=0 Until _names.Length
+			If _names[i]=name
+				Return Cast<Key>( i )
+			Endif
+		Next
+		Return Key.None
+	End
+	
 	#rem monkeydoc Translates a key to/from a raw key.
 	
 	If `key` is a raw key, returns the corresponding virtual key.
