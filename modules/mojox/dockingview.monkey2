@@ -7,8 +7,9 @@ Class DockKnob Extends View
 
 	Field Dragged:Void( v:Vec2i )
 
-	Method New()
+	Method New( vertical:Bool )
 		Style=GetStyle( "DockKnob" )
+		_vertical=vertical
 	End
 	
 	Protected
@@ -28,8 +29,11 @@ Class DockKnob Extends View
 			_drag=False
 		Case EventType.MouseEnter
 			_hover=True
+			_storedCursor=Mouse.Cursor
+			Mouse.Cursor=_vertical ? MouseCursor.SizeWE Else MouseCursor.SizeNS
 		Case EventType.MouseLeave
 			_hover=False
+			Mouse.Cursor=_storedCursor
 		Case EventType.MouseMove
 			If _drag Dragged( event.Location-_org )
 		End
@@ -49,6 +53,8 @@ Class DockKnob Extends View
 	
 	Field _drag:Bool
 	Field _hover:Bool
+	Field _storedCursor:MouseCursor
+	Field _vertical:Bool
 	
 End
 
@@ -78,7 +84,9 @@ Class DockedView Extends View
 		
 		If _sizeMode=SizeMode.Absolute And _resizable
 		
-			_knob=New DockKnob
+			Local vertical:=(location="left" Or location="right")
+			
+			_knob=New DockKnob( vertical )
 			
 			_knob.Dragged=Lambda( v:Vec2i )
 			
