@@ -590,6 +590,30 @@ Class Mesh Extends Resource
 		Return material.ibuffer
 	End
 	
+	Method GetIndexBufferBounds:Boxf( materialid:Int )
+		
+		Local material:=_materials[materialid]
+		
+		If material.dirty & Dirty.Bounds
+			
+			Local bounds:=Bounds.EmptyBounds
+			
+			Local vertices:=_vertices.Data.Data
+			
+			For Local i:=Eachin material.indices
+				
+				bounds|=vertices[i].position
+			Next
+			
+			material.bounds=bounds
+			
+			material.dirty&=~Dirty.Bounds
+		Endif
+		
+		Return material.bounds
+	End
+		
+	
 	Private
 	
 	Enum Dirty
@@ -600,8 +624,9 @@ Class Mesh Extends Resource
 	
 	class MaterialID
 		Field indices:=New Stack<UInt>
-		Field dirty:Dirty=Dirty.IndexBuffer
+		Field dirty:Dirty=Dirty.IndexBuffer|Dirty.Bounds
 		Field ibuffer:IndexBuffer
+		Field bounds:Boxf
 	End
 	
 	Const IndexPitch:=4
@@ -628,7 +653,7 @@ Class Mesh Extends Resource
 		InvalidateVertices( 0,_vertices.Length )
 	End
 	
-	Method GetMaterial:MaterialID( materialid:Int,dirty:Dirty=Dirty.IndexBuffer )
+	Method GetMaterial:MaterialID( materialid:Int,dirty:Dirty=Dirty.IndexBuffer|Dirty.Bounds )
 		
 		DebugAssert( materialid>=0 And materialid<=_materials.Length,"Materialid out of range" )
 		

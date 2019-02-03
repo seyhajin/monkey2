@@ -3,6 +3,24 @@ Namespace mojo3d
 
 Internal
 
+'TODO: cache this stuff
+Class RenderInstance
+	Field instance:Entity
+	Field uniforms:UniformBlock
+	Field bones:Mat4f
+End
+
+'TODO: cache this too
+Class RenderGeometry
+	Field material:Material
+	Field vbuffer:VertexBuffer
+	Field ibuffer:IndexBuffer
+	Field bounds:Boxf
+	Field order:Int
+	Field count:Int
+	Field first:Int
+End
+
 Struct SpriteOp
 	Field sprite:Sprite
 
@@ -16,6 +34,7 @@ Class RenderOp
 	Field bones:Mat4f[]			'should be in instance
 	Field vbuffer:VertexBuffer
 	Field ibuffer:IndexBuffer
+	Field bounds:Boxf
 	Field order:Int
 	Field count:Int
 	Field first:Int
@@ -104,7 +123,11 @@ Class RenderQueue
 		Else
 			stack=_transparentOps
 			op.shader=op.material.GetRenderShader()
-			op.distance=op.instance ? op.instance.Position.Distance( _eyePos ) Else _eyeLen
+			If op.instance
+				op.distance=(op.instance.Matrix * op.bounds.Center).Distance( _eyePos )
+			Else
+				op.distance=op.bounds.Center.Distance( _eyePos )
+			Endif
 		Endif
 		
 		stack.Add( op )
@@ -115,48 +138,52 @@ Class RenderQueue
 		_spriteOps.Add( op )
 	End
 	
-	Method AddRenderOp( material:Material,uniforms:UniformBlock,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
+	Method AddRenderOp( material:Material,uniforms:UniformBlock,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,bounds:Boxf,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
 		op.material=material
 		op.uniforms=uniforms
 		op.instance=instance
 		op.vbuffer=vbuffer
 		op.ibuffer=ibuffer
+		op.bounds=bounds
 		op.order=order
 		op.count=count
 		op.first=first
 		AddRenderOp( op )
 	End
 	
-	Method AddRenderOp( material:Material,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
+	Method AddRenderOp( material:Material,instance:Entity,vbuffer:VertexBuffer,ibuffer:IndexBuffer,bounds:Boxf,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
 		op.material=material
 		op.instance=instance
 		op.vbuffer=vbuffer
 		op.ibuffer=ibuffer
+		op.bounds=bounds
 		op.order=order
 		op.count=count
 		op.first=first
 		AddRenderOp( op )
 	End
 	
-	Method AddRenderOp( material:Material,bones:Mat4f[],vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
+	Method AddRenderOp( material:Material,bones:Mat4f[],vbuffer:VertexBuffer,ibuffer:IndexBuffer,bounds:Boxf,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
 		op.material=material
 		op.bones=bones
 		op.vbuffer=vbuffer
 		op.ibuffer=ibuffer
+		op.bounds=bounds
 		op.order=order
 		op.count=count
 		op.first=first
 		AddRenderOp( op )
 	End
 	
-	Method AddRenderOp( material:Material,vbuffer:VertexBuffer,ibuffer:IndexBuffer,order:Int,count:Int,first:Int )
+	Method AddRenderOp( material:Material,vbuffer:VertexBuffer,ibuffer:IndexBuffer,bounds:Boxf,order:Int,count:Int,first:Int )
 		Local op:=New RenderOp
 		op.material=material
 		op.vbuffer=vbuffer
 		op.ibuffer=ibuffer
+		op.bounds=bounds
 		op.order=order
 		op.count=count
 		op.first=first

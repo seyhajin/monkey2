@@ -227,13 +227,15 @@ Class Model Extends Renderable
 		For Local i:=0 Until _mesh.NumMaterials
 
 			Local ibuffer:=_mesh.GetIndexBuffer( i )
+			
+			Local bounds:=_mesh.GetIndexBufferBounds( i )
 
 			Local material:=i<_materials.Length And _materials[i] ? _materials[i] Else _material
 			
 			If _bones
-				rq.AddRenderOp( material,_boneMatrices,vbuffer,ibuffer,3,ibuffer.Length/3,0 )
+				rq.AddRenderOp( material,_boneMatrices,vbuffer,ibuffer,bounds,3,ibuffer.Length/3,0 )
 			Else
-				rq.AddRenderOp( material,Self,vbuffer,ibuffer,3,ibuffer.Length/3,0 )
+				rq.AddRenderOp( material,Self,vbuffer,ibuffer,bounds,3,ibuffer.Length/3,0 )
 			Endif
 			
 		Next
