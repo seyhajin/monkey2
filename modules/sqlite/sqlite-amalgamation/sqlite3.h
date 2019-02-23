@@ -34,6 +34,7 @@
 #define SQLITE3_H
 #include <stdarg.h>     /* Needed for the definition of va_list */
 
+#define SQLITE_OMIT_LOAD_EXTENSION 1
 /*
 ** Make sure we can call this stuff from C++.
 */
