@@ -649,6 +649,15 @@ Method AddRef:Bool( node:SNode )
 			Return
 		Endif
 		
+		Local ftype:=TCast<FuncType>( type )
+		If ftype
+			DeclsVar( ftype.retType )
+			For Local type:=Eachin ftype.argTypes
+				DeclsVar( type )
+			Next
+			Return
+		Endif
+		
 		RefsType( type )
 	End
 	
