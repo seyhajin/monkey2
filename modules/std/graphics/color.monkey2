@@ -168,7 +168,7 @@ Struct Color
 		Self.r=i
 		Self.g=i
 		Self.b=i
-		Self.a=1
+		Self.a=a
 	End
 	
 	Method New( r:Float,g:Float,b:Float,a:Float=1 )
