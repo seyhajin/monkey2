@@ -83,25 +83,25 @@ Struct Color
 	#end
 	Const Violet:=New Color( .7,0,1 )
 	
-	#rem monkeydoc Magenta.
+	#rem monkeydoc Magenta. Equivalent to New Color( 1,0,1 ).
 	#end
-	Const Magenta:=New Color( 1,0,1 ) Equivalent to New Color( 1,0,1 ).
+	Const Magenta:=New Color( 1,0,1 )
 	
-	#rem monkeydoc Puce.
+	#rem monkeydoc Puce. Equivalent to New Color( 1,0,.4 ).
 	#end
-	Const Puce:=New Color( 1,0,.4 ) Equivalent to New Color( 1,0,.4 ).
+	Const Puce:=New Color( 1,0,.4 )
 	
-	#rem monkeydoc Skin.
+	#rem monkeydoc Skin. Equivalent to New Color( .8,.5,.6 ).
 	#end
-	Const Skin:=New Color( .8,.5,.6 ) Equivalent to New Color( .8,.5,.6 ).
+	Const Skin:=New Color( .8,.5,.6 )
 	
-	#rem monkeydoc Pink.
+	#rem monkeydoc Pink. Equivalent to New Color( 1,.75,.8 ).
 	#end
-	Const Pink:=New Color( 1,.75,.8 ) Equivalent to New Color( 1,.75,.8 ).
+	Const Pink:=New Color( 1,.75,.8 )
 	
-	#rem monkeydoc HotPink.
+	#rem monkeydoc HotPink. Equivalent to New Color( 1,.41,.71 ).
 	#end
-	Const HotPink:=New Color( 1,.41,.71 ) Equivalent to New Color( 1,.41,.71 ).
+	Const HotPink:=New Color( 1,.41,.71 )
 
 	#rem monkeydoc SeaGreen. Roughly equivalent to New Color( .03,.3,.25 ).
 	#end
