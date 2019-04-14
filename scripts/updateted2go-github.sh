@@ -1,5 +1,5 @@
 
-source common.sh
+. ./common.sh
 
 echo ""
 echo "***** Updating ted2go *****"
@@ -35,6 +35,9 @@ else
 
 	rm -r -f $ted2
 	cp -R ./ted2go-github.products/macos/ted2.app $ted2
+
+	cp ../src/ted2go/info.plist "$ted2/Contents"
+	cp ../src/launcher/Monkey2logo.icns "$ted2/Contents/Resources"
 	
 	rm -r -f "$launcher"
 	cp -R ./launcher.products/macos/Launcher.app "$launcher"
