@@ -1,5 +1,5 @@
 
-source common.sh
+. ./common.sh
 
 echo ""
 echo "***** Updating ted2go *****"
