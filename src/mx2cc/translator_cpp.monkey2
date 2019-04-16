@@ -2082,7 +2082,6 @@ Class Translator_CPP Extends Translator
 				If _gcframe
 					tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
 				Else
-					If TCast<ArrayType>( instance.type ) Throw New TransEx( "Mark TODO 1")
 					tinst="bbGC::tmp("+tinst+")"
 					UsesType( instance.type )
 					_gctmps+=1
@@ -2506,7 +2505,6 @@ Class Translator_CPP Extends Translator
 				If _gcframe
 					t=AllocGCTmp( arg.type )+"="+t
 				Else
-					If TCast<ArrayType>( arg.type ) Throw New TransEx( "Mark TODO 4" )
 					t="bbGC::tmp("+t+")"
 					UsesType( arg.type )
 					_gctmps+=1
