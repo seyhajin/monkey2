@@ -187,16 +187,18 @@ Class FuncValue Extends Value
 			
 		Else If IsLambda
 		
-			selfValue=Cast<Block>( scope ).func.selfValue
-			
-			If selfValue
-			
-				Local selfVar:=New VarValue( "capture","self",selfValue,block )
-				captures.Push( selfVar )
+			If Cast<Block>( scope )
+				selfValue=Cast<Block>( scope ).func.selfValue
+
+				If selfValue
 				
-				selfValue=selfVar
-				selfType=Cast<ClassType>( selfValue.type )
-				
+					Local selfVar:=New VarValue( "capture","self",selfValue,block )
+					captures.Push( selfVar )
+					
+					selfValue=selfVar
+					selfType=Cast<ClassType>( selfValue.type )
+					
+				Endif
 			Endif
 		
 		Endif

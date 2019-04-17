@@ -63,7 +63,7 @@ Class Block Extends Scope
 					
 						Local tfunc:=funcs.Pop()
 						
-						'FXIME: this pollutes outer func scope with captured var name.
+						'FIXME: this pollutes outer func scope with captured var name.
 						'
 						vvar=New VarValue( "capture",vvar.vdecl.ident,vvar,tfunc.block )
 						tfunc.block.Insert( vvar.vdecl.ident,vvar )
