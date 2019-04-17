@@ -88,6 +88,8 @@ Function Main()
 		Print "Options:"
 		Print "  -quiet       - emit less info when building."
 		Print "  -verbose     - emit more info when building."
+		Print "  -clean       - force clean rebuild."
+		Print "  -time        - output build time information."
 		Print "  -parse       - parse only."
 		Print "  -semant      - parse and semant."
 		Print "  -translate   - parse, semant and translate."
