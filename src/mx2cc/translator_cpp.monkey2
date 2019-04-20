@@ -2071,8 +2071,15 @@ Class Translator_CPP Extends Translator
 		UsesType( instance.type )
 		
 		Local supr:=Cast<SuperValue>( instance )
-		If supr Return ClassName( supr.ctype )+"::"+Trans( member )
 		
+		If supr
+			If supr.func And supr.func.IsLambda
+				' Call to a base class method inside of a lambda that is inside of a method
+				Return "l_self->"+ClassName( supr.ctype )+"::"+Trans( member )
+			Endif
+			Return ClassName( supr.ctype )+"::"+Trans( member )
+		Endif
+
 		Local tinst:=Trans( instance )
 		Local tmember:=Trans( member )
 		

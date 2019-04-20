@@ -687,7 +687,7 @@ Class SuperExpr Extends Expr
 			If ctype
 
 				Local superType:=ctype.superType
-				If superType Return New SuperValue( superType )
+				If superType Return New SuperValue( superType,block.func )
 
 				Throw New SemantEx( "Class '"+ctype.Name+"' has no super class" )
 
