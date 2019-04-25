@@ -22,9 +22,9 @@ Namespace std.fiber
 
 #Else If __TARGET__="linux"
 
-	#Import "native/asm/linux-$(TARGET_ARCH)/make.S"
-	#Import "native/asm/linux-$(TARGET_ARCH)/jump.S"
-	#Import "native/asm/linux-$(TARGET_ARCH)/ontop.S"
+	#import "native/asm/make_x86_64_sysv_elf_gas.S"
+	#import "native/asm/jump_x86_64_sysv_elf_gas.S"
+	#import "native/asm/ontop_x86_64_sysv_elf_gas.S"
 	
 #Else If __TARGET__="android"
  
