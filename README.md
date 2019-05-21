@@ -4,7 +4,7 @@
 
 While staying true to the ‘basic’ style of the original blitz languages, Monkey2 offers some very powerful new features including:
 
-#### Generic classes and methods 
+### Generic classes and methods 
 
 Classes, interfaces, structs, methods and functions can have 'type' parameters.
 
@@ -20,7 +20,7 @@ Function Main()
 End
 ```
 
-#### 'First class' functions :
+### 'First class' functions :
 
 Functions (and methods) can be stored in variables and passed to/from other functions.
 
@@ -44,7 +44,7 @@ Function Main()
 End
 ```
 
-#### Lambda functions
+### Lambda functions
 
 Lambda functions allow you to create closures.
 
@@ -63,7 +63,7 @@ Function Main()
 End
 ```
 
-#### New 'Struct' type that provides value semantics
+### New 'Struct' type that provides value semantics
 
 Structs are similar to classes in that they encapsulate member data, but differ in that they are passed around 'by value' instead of 'by reference'.
 
@@ -86,7 +86,7 @@ Function Main()
 End
 ```
 
-#### Fibers for easy asynchronous programming
+### Fibers for easy asynchronous programming
 
 Fibers provide support for 'cooperative' multi-threading.
 
@@ -103,7 +103,7 @@ Function Server( host:String, service:String )
 End
 ```
 
-#### Operator overloading
+### Operator overloading
 
 Operator overloading allows you to override the meaning of the built-in language operators, making for more expressive code.
 
@@ -134,7 +134,7 @@ Function Main()
 	Print v0+v1
 End
 ```
-#### Class extensions
+### Class extensions
 
 Class extensions allow you to add extra methods, functions and properties to existing classes.
 
@@ -151,11 +151,11 @@ Struct Foo Extension
 End
 ```
 
-#### Fully garbage collected
+### Fully garbage collected
 
 Monkey2 provides a ‘mostly’ incremental garbage collector that efficiently collects garbage as it runs without any of those annoying ‘sweep’ spikes found in typical garbage collectors.
 
-#### Optional reflection features
+### Optional reflection features
 
 Monkey2 includes an optional reflection system that allows you to inspect and modify variables and values at runtime:
 
@@ -181,7 +181,7 @@ End
 
 ```
 
-#### Multi-target products
+### Multi-target products
 
 Monkey2 works on a wide range of targets: Windows, Macos, Linux, Emscripten, Android and iOS.
 
