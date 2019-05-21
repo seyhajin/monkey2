@@ -47,6 +47,6 @@ Using libc
 Const MX2CC_VERSION:="1.1.15"
 
 'For 'emergency patch' versions, 'b', 'c' etc...
-Const MX2CC_VERSION_EXT:=""
+Const MX2CC_VERSION_EXT:="d"
 
 

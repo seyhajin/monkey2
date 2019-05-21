@@ -240,10 +240,12 @@ End
 Class SuperValue Extends Value
 
 	Field ctype:ClassType
-
-	Method New( ctype:ClassType )
+	Field func:FuncValue
+	
+	Method New( ctype:ClassType,func:FuncValue )
 		Self.type=ctype
 		Self.ctype=ctype
+		Self.func=func
 	End
 	
 	Method ToString:String() Override

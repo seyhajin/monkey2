@@ -2071,8 +2071,15 @@ Class Translator_CPP Extends Translator
 		UsesType( instance.type )
 		
 		Local supr:=Cast<SuperValue>( instance )
-		If supr Return ClassName( supr.ctype )+"::"+Trans( member )
 		
+		If supr
+			If supr.func And supr.func.IsLambda
+				' Call to a base class method inside of a lambda that is inside of a method
+				Return "l_self->"+ClassName( supr.ctype )+"::"+Trans( member )
+			Endif
+			Return ClassName( supr.ctype )+"::"+Trans( member )
+		Endif
+
 		Local tinst:=Trans( instance )
 		Local tmember:=Trans( member )
 		
@@ -2082,7 +2089,6 @@ Class Translator_CPP Extends Translator
 				If _gcframe
 					tinst="("+AllocGCTmp( instance.type )+"="+tinst+")"
 				Else
-					If TCast<ArrayType>( instance.type ) Throw New TransEx( "Mark TODO 1")
 					tinst="bbGC::tmp("+tinst+")"
 					UsesType( instance.type )
 					_gctmps+=1
@@ -2506,7 +2512,6 @@ Class Translator_CPP Extends Translator
 				If _gcframe
 					t=AllocGCTmp( arg.type )+"="+t
 				Else
-					If TCast<ArrayType>( arg.type ) Throw New TransEx( "Mark TODO 4" )
 					t="bbGC::tmp("+t+")"
 					UsesType( arg.type )
 					_gctmps+=1

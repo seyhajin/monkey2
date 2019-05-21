@@ -88,6 +88,8 @@ Function Main()
 		Print "Options:"
 		Print "  -quiet       - emit less info when building."
 		Print "  -verbose     - emit more info when building."
+		Print "  -clean       - force clean rebuild."
+		Print "  -time        - output build time information."
 		Print "  -parse       - parse only."
 		Print "  -semant      - parse and semant."
 		Print "  -translate   - parse, semant and translate."
@@ -407,72 +409,75 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 	For i=0 Until args.Length
 	
 		Local arg:=args[i]
-	
-		Local j:=arg.Find( "=" )
-		If j=-1
-			Select arg
-			Case "-run"
-				opts.passes=5
-			Case "-build"
-				opts.passes=4
-			Case "-translate"
-				opts.passes=3
-			Case "-semant"
-				opts.passes=2
-			Case "-parse"
-				opts.passes=1
-			Case "-clean"
-				opts.clean=True
-			Case "-quiet"
-				opts.verbose=-1
-			Case "-verbose"
-				opts.verbose=1
-			Case "-time"
-				opts_time=True
-			Default
-				If arg.StartsWith( "-" ) Fail( "Unrecognized option '"+arg+"'" )
-				Exit
-			End
-			Continue
-		Endif
 		
-		Local opt:=arg.Slice( 0,j ),val:=arg.Slice( j+1 )
-		
-		Local path:=val.Replace( "\","/" )
-		If path.StartsWith( "~q" ) And path.EndsWith( "~q" ) path=path.Slice( 1,-1 )
-		
-		val=val.ToLower()
-		
-		Select opt
-		Case "-product"
-			opts.product=path
-		Case "-apptype"
-			opts.appType=val
-		Case "-target"
-			Select val
-			Case "desktop","windows","macos","linux","raspbian","emscripten","android","ios"
-				opts.target=val
-			Default
-				Fail( "Invalid value for 'target' option: '"+val+"' - must be 'desktop', 'raspbian', 'emscripten', 'android' or 'ios'" )
-			End
-		Case "-config"
-			Select val
-			Case "debug","release"
-				opts.config=val
-			Default
-				Fail( "Invalid value for 'config' option: '"+val+"' - must be 'debug' or 'release'" )
-			End
+		' Options without parameters
+		Select arg
+		Case "-run"
+			opts.passes=5
+		Case "-build"
+			opts.passes=4
+		Case "-translate"
+			opts.passes=3
+		Case "-semant"
+			opts.passes=2
+		Case "-parse"
+			opts.passes=1
+		Case "-clean"
+			opts.clean=True
+		Case "-quiet"
+			opts.verbose=-1
 		Case "-verbose"
-			Select val
-			Case "0","1","2","3","-1"
-				opts.verbose=Int( val )
-			Default
-				Fail( "Invalid value for 'verbose' option: '"+val+"' - must be '0', '1', '2', '3' or '-1'" )
-			End
+			opts.verbose=1
+		Case "-time"
+			opts_time=True
 		Default
-			Fail( "Invalid option: '"+opt+"'" )
+			If arg.StartsWith( "-" )
+				' Options with parameters
+				Local j:=arg.Find( "=" )
+				
+				If j=-1 Fail( "Expected value for option '"+arg+"'" )
+					
+				Local opt:=arg.Slice( 0,j ),val:=arg.Slice( j+1 )
+				
+				Local path:=val.Replace( "\","/" )
+				If path.StartsWith( "~q" ) And path.EndsWith( "~q" ) path=path.Slice( 1,-1 )
+				
+				val=val.ToLower()
+				
+				Select opt
+				Case "-product"
+					opts.product=path
+				Case "-apptype"
+					opts.appType=val
+				Case "-target"
+					Select val
+					Case "desktop","windows","macos","linux","raspbian","emscripten","android","ios"
+						opts.target=val
+					Default
+						Fail( "Invalid value for 'target' option: '"+val+"' - must be 'desktop', 'raspbian', 'emscripten', 'android' or 'ios'" )
+					End
+				Case "-config"
+					Select val
+					Case "debug","release"
+						opts.config=val
+					Default
+						Fail( "Invalid value for 'config' option: '"+val+"' - must be 'debug' or 'release'" )
+					End
+				Case "-verbose"
+					Select val
+					Case "0","1","2","3","-1"
+						opts.verbose=Int( val )
+					Default
+						Fail( "Invalid value for 'verbose' option: '"+val+"' - must be '0', '1', '2', '3' or '-1'" )
+					End
+				Default
+					Fail( "Unrecognized option '"+arg+"'" )
+				End
+			Else
+				' Path to monkey2 file
+				Exit
+			Endif
 		End
-	
 	Next
 	args=args.Slice( i )
 	

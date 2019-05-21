@@ -48,6 +48,8 @@ Class FuncValue Extends Value
 	
 	Field params:VarValue[]
 	
+	Field superValue:Value
+	Field superType:ClassType
 	Field selfValue:Value
 	Field selfType:ClassType
 	
@@ -184,19 +186,33 @@ Class FuncValue Extends Value
 			If selfType.cdecl.IsExtension And selfType.superType selfType=selfType.superType
 			
 			selfValue=New SelfValue( selfType,Self )
+			superType = selfType.superType
+			If superType superValue=New SuperValue( selfType.superType,Self )
 			
 		Else If IsLambda
 		
-			selfValue=Cast<Block>( scope ).func.selfValue
-			
-			If selfValue
-			
-				Local selfVar:=New VarValue( "capture","self",selfValue,block )
-				captures.Push( selfVar )
+			If Cast<Block>( scope )
+				selfValue=Cast<Block>( scope ).func.selfValue
+
+				If selfValue
 				
-				selfValue=selfVar
-				selfType=Cast<ClassType>( selfValue.type )
+					Local selfVar:=New VarValue( "capture","self",selfValue,block )
+					captures.Push( selfVar )
+					
+					selfValue=selfVar
+					selfType=Cast<ClassType>( selfValue.type )
+					
+				Endif
 				
+				If superValue
+					
+					Local superVar:=New VarValue( "capture","super",superValue,block )
+					captures.Push( superVar )
+					
+					superValue=superVar
+					superType=Cast<ClassType>( superValue.type )
+					
+				Endif
 			Endif
 		
 		Endif

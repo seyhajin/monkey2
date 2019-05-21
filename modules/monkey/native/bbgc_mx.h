@@ -138,7 +138,12 @@ namespace bbGC{
 			currentFiber->freeTmps=tmp;
 		}
 	}
-	
+
+	template<class T, int D> bbArray<T, D> tmp(const bbArray<T, D> &arr) {
+		pushTmp(arr._rep);
+		return arr;
+	}
+
 	template<class T> T *tmp( T *p ){
 		pushTmp( p );
 		return p;
