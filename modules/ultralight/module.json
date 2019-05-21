@@ -1,0 +1,8 @@
+{
+	"module":"ultralight",
+	"about":"Ultralight is the lighter, faster option to integrate HTML UI in your C++ app. (monkey2 bindings)",
+	"author":"Adam Simmons (author), seyhajin (monkey2 port)",
+	"version":"1.0.0",
+	"support":"https://ultralig.ht/",
+	"depends":["libc"]
+}
