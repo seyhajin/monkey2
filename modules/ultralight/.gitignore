@@ -1,0 +1,12 @@
+
+*.bak
+*.buildv*
+
+.DS_Store
+
+/desktop.ini
+
+*.products/
+
+.mx2
+
