@@ -38,7 +38,7 @@ Class DocsMaker
 		
 		If GetFileType( manpath )=FileType.File
 			
-			Print "Making manual docs"
+			Print "[###  ] Making manual docs"
 			
 			Local src:=LoadString( manpath )
 			
@@ -760,7 +760,7 @@ Class DocsMaker
 	
 	Method MakeNamespaceDocs:DocsNode( scope:NamespaceScope,parent:DocsNode )
 	
-		Print "Making namespace docs:"+scope.Name
+		Print "[#### ] Making namespace docs:"+scope.Name
 
 		Local buf:=New DocsBuffer
 
