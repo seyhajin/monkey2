@@ -35,6 +35,7 @@ Namespace sdl2
 
 'events
 #Import "SDL/src/events/SDL_clipboardevents.c"
+#import "SDL/src/events/SDL_displayevents.c" 'v2.0.9
 #Import "SDL/src/events/SDL_dropevents.c"
 #Import "SDL/src/events/SDL_events.c"
 #Import "SDL/src/events/SDL_gesture.c"
@@ -84,6 +85,10 @@ Namespace sdl2
 #Import "SDL/src/render/software/SDL_render_sw.c"
 #Import "SDL/src/render/software/SDL_rotate.c"
 
+'sensor (v2.0.9)
+#Import "SDL/src/sensor/SDL_sensor.c"
+#Import "SDL/src/sensor/dummy/SDL_dummysensor.c"
+
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
 #Import "SDL/src/stdlib/SDL_iconv.c"
@@ -124,17 +129,24 @@ Namespace sdl2
 #Import "SDL/src/video/SDL_stretch.c"
 #Import "SDL/src/video/SDL_surface.c"
 #Import "SDL/src/video/SDL_video.c"
+#import "SDL/src/video/SDL_vulkan_utils.c" 'v2.0.9
+#import "SDL/src/video/SDL_yuv.c" 'v2.0.9
+
+#import "SDL/src/video/yuv2rgb/yuv_rgb.c" 'v2.0.9
 
 #Import "SDL/src/video/cocoa/SDL_cocoaclipboard.m"
 #Import "SDL/src/video/cocoa/SDL_cocoaevents.m"
 #Import "SDL/src/video/cocoa/SDL_cocoakeyboard.m"
 #Import "SDL/src/video/cocoa/SDL_cocoamessagebox.m"
+#Import "SDL/src/video/cocoa/SDL_cocoametalview.m" 'v2.0.9
 #Import "SDL/src/video/cocoa/SDL_cocoamodes.m"
 #Import "SDL/src/video/cocoa/SDL_cocoamouse.m"
 #Import "SDL/src/video/cocoa/SDL_cocoamousetap.m"
 #Import "SDL/src/video/cocoa/SDL_cocoaopengl.m"
+#Import "SDL/src/video/cocoa/SDL_cocoaopengles.m" 'v2.0.9
 #Import "SDL/src/video/cocoa/SDL_cocoashape.m"
 #Import "SDL/src/video/cocoa/SDL_cocoavideo.m"
+#Import "SDL/src/video/cocoa/SDL_cocoavulkan.m" 'v2.0.9
 #Import "SDL/src/video/cocoa/SDL_cocoawindow.m"
 
 'src
