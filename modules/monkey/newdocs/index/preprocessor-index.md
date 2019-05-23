@@ -58,6 +58,14 @@ The \_\_TARGET\_\_ symbol is set to the current build target and will be one of 
 
 The \_\_CONFIG\_\_ symbol is set to the current build config and will be set to either "debug" or "release".
 
+@#### \_\_ARCH\_\_
+
+The \_\_ARCH\_\_ symbol is set to the current build architecture and will be set to either "x86" or "x64".
+
+@#### \_\_COMPILER\_\_
+
+The \_\_COMPILER\_\_ symbol is set to the current build tool-chain and will be set to either "gcc" or "msvc" (on Windows only).
+
 
 @#### \_\_DESKTOP\_TARGET\_\_
 

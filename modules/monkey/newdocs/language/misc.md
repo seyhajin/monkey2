@@ -14,17 +14,31 @@ Multiline comments can be made with the `#Rem` preprocessor. See [[language-refe
 
 @#### Line breaks in code
 
-Lines can currently only be split after ‘[‘, ‘(‘ or ‘,’ tokens.
+Lines can currently only be split after ‘[‘, ‘(‘ or ‘,’ tokens and operators.
 
 ```
-Local myArray:Int[] = New Int[](
-    0,
-    1,
-    2)
+Local integer := 1 +
+                 2 *
+                 3 /
+                 4 -
+                 5 Mod
+                 6
 
-Local myarray2:String[,] = New String[
-    10,
-    10]
+    Local l := "line 1~q"+
+               "line 2~q"+
+               "line 3~q"+
+               "line 4~q"
+
+    Local flag := mojo.app.WindowFlags.Resizable |
+                  mojo.app.WindowFlags.HighDPI   |
+                  mojo.app.WindowFlags.Center
+
+    If 5 =
+           5 Or
+                1 <
+                    2 And
+                          3 >
+                              4 Then Print "okay"
 ```
 
 @#### Print
