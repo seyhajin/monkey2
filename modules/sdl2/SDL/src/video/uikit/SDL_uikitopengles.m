@@ -170,6 +170,7 @@ UIKit_GL_CreateContext(_THIS, SDL_Window * window)
              * dimensions of the screen rather than the dimensions in points. */
 #ifdef __IPHONE_8_0
             if ([data.uiwindow.screen respondsToSelector:@selector(nativeScale)]) {
+                //!\\ Mark was here! Always use screen.scale, ignore screen.nativeScale...TO TESTED with 2.0.9 else change to 'scale = data.uiwindow.screen.scale;'
                 scale = data.uiwindow.screen.nativeScale;
             } else
 #endif
