@@ -3,6 +3,7 @@ Namespace sdl2
 
 #Import "<libdl.a>"
 
+'main
 #Import "SDL/src/main/android/SDL_android_main.c"
 
 'audio
@@ -30,6 +31,7 @@ Namespace sdl2
 
 'events
 #Import "SDL/src/events/SDL_clipboardevents.c"
+#import "SDL/src/events/SDL_displayevents.c" 'v2.0.9
 #Import "SDL/src/events/SDL_dropevents.c"
 #Import "SDL/src/events/SDL_events.c"
 #Import "SDL/src/events/SDL_gesture.c"
@@ -47,6 +49,8 @@ Namespace sdl2
 
 'haptic
 #Import "SDL/src/haptic/SDL_haptic.c"
+
+#Import "SDL/src/haptic/android/SDL_syshaptic.c" 'v2.0.9
 #Import "SDL/src/haptic/dummy/SDL_syshaptic.c"
 
 'joystick
@@ -72,6 +76,11 @@ Namespace sdl2
 #Import "SDL/src/render/software/SDL_drawpoint.c"
 #Import "SDL/src/render/software/SDL_render_sw.c"
 #Import "SDL/src/render/software/SDL_rotate.c"
+
+'sensor (v2.0.9)
+#Import "SDL/src/sensor/SDL_sensor.c"
+#Import "SDL/src/sensor/android/SDL_androidsensor.c"
+#Import "SDL/src/sensor/dummy/SDL_dummysensor.c"
 
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
@@ -113,6 +122,10 @@ Namespace sdl2
 #Import "SDL/src/video/SDL_stretch.c"
 #Import "SDL/src/video/SDL_surface.c"
 #Import "SDL/src/video/SDL_video.c"
+#import "SDL/src/video/SDL_vulkan_utils.c" 'v2.0.9
+#import "SDL/src/video/SDL_yuv.c" 'v2.0.9
+
+#import "SDL/src/video/yuv2rgb/yuv_rgb.c" 'v2.0.9
 
 #Import "SDL/src/video/android/SDL_androidclipboard.c"
 #Import "SDL/src/video/android/SDL_androidevents.c"
@@ -122,6 +135,7 @@ Namespace sdl2
 #Import "SDL/src/video/android/SDL_androidmouse.c"
 #Import "SDL/src/video/android/SDL_androidtouch.c"
 #Import "SDL/src/video/android/SDL_androidvideo.c"
+#Import "SDL/src/video/android/SDL_androidvulkan.c" 'v2.0.9
 #Import "SDL/src/video/android/SDL_androidwindow.c"
 
 'src
