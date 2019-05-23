@@ -43,7 +43,7 @@ Class BuildProduct
 	Method Build()
 		
 '		If opts.verbose=0 
-		Print "Compiling..."
+		Print "[#### ] Compiling..."
 		
 		If Not CreateDir( module.cacheDir ) Throw New BuildEx( "Error creating dir '"+module.cacheDir+"'" )
 			
@@ -558,7 +558,7 @@ Class GccBuildProduct Extends BuildProduct
 		Next
 		If GetFileTime( output )>maxObjTime Return
 		
-		If opts.verbose>=0 Print "Archiving "+output+"..."
+		If opts.verbose>=0 Print "[#####] Archiving "+output+"..."
 		
 		DeleteFile( output )
 		
@@ -668,7 +668,7 @@ Class GccBuildProduct Extends BuildProduct
 			Endif
 		End
 		
-		If opts.verbose>=0 Print "Linking "+outputFile+"..."
+		If opts.verbose>=0 Print "[#####] Linking "+outputFile+"..."
 			
 		If opts.toolchain="msvc"
 			cmd+=" -entry:mainCRTStartup -out:~q"+outputFile+"~q"
@@ -729,7 +729,7 @@ Class GccBuildProduct Extends BuildProduct
 			run="~q"+outputFile+"~q"
 		End
 		
-		If opts.verbose>=0 Print "Running "+outputFile
+		If opts.verbose>=0 Print "[#####] Running "+outputFile
 			
 		Exec( run )
 	End

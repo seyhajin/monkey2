@@ -88,6 +88,7 @@ Class BuilderInstance
 		ppsyms["__TARGET__"]="~q"+opts.target+"~q"
 		ppsyms["__CONFIG__"]="~q"+opts.config+"~q"
 		ppsyms["__ARCH__"]="~q"+opts.arch+"~q"
+		ppsyms["__COMPILER__"]="~q"+opts.toolchain+"~q" '//new! maybe '__TOOL_CHAIN__' ? = 'msvc' or 'gcc'
 		
 		Select opts.target
 		Case "windows","macos","linux","raspbian"
@@ -147,7 +148,7 @@ Class BuilderInstance
 	
 	Method Parse()
 	
-		If opts.verbose>=0 Print "Parsing..."
+		If opts.verbose>=0 Print "[#    ] Parsing..."
 		
 		Local name:=StripDir( StripExt( opts.mainSource ) )
 
@@ -307,7 +308,7 @@ Class BuilderInstance
 
 	Method Semant()
 	
-		If opts.verbose>=0 Print "Semanting..."
+		If opts.verbose>=0 Print "[##   ] Semanting..."
 		
 		SortModules()
 		
@@ -479,7 +480,7 @@ Class BuilderInstance
 	
 	Method Translate()
 	
-		If opts.verbose>=0 Print "Translating..."
+		If opts.verbose>=0 Print "[###  ] Translating..."
 		
 		Local module:=mainModule
 		
