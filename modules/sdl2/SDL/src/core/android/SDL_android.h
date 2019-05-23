@@ -30,6 +30,7 @@ extern "C" {
 
 #include <EGL/eglplatform.h>
 #include <android/native_window_jni.h>
+#include <android/asset_manager.h> //!\\ Mark was here
 
 #include "SDL_audio.h"
 #include "SDL_rect.h"
@@ -99,6 +100,8 @@ int Android_JNI_GetTouchDeviceIds(int **ids);
 #include <jni.h>
 JNIEnv *Android_JNI_GetEnv(void);
 int Android_JNI_SetupThread(void);
+
+AAssetManager* Android_JNI_GetAssetManager(void); //!\\ Mark was here!
 
 /* Generic messages */
 int Android_JNI_SendMessage(int command, int param);
