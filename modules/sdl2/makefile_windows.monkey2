@@ -4,6 +4,8 @@ Namespace sdl2
 #import "<libdsound.a>"
 #import "<libxinput.a>"
 #import "<libdinput8.a>"
+#import "<libsetupapi.a>" 'v2.0.9
+#import "<libhid.a>" 'v2.0.9
 
 #import "<libadvapi32.a>"
 #import "<libole32.a>"
@@ -75,6 +77,9 @@ Namespace sdl2
 #import "SDL/src/haptic/windows/SDL_dinputhaptic.c"
 #import "SDL/src/haptic/windows/SDL_xinputhaptic.c"
 
+'hidapi
+#import "SDL/src/hidapi/windows/hid.c" 'v2.0.9
+
 'joystick
 #import "SDL/src/joystick/SDL_joystick.c"
 #Import "SDL/src/joystick/SDL_gamecontroller.c"
@@ -83,6 +88,12 @@ Namespace sdl2
 #import "SDL/src/joystick/windows/SDL_dinputjoystick.c"
 #import "SDL/src/joystick/windows/SDL_xinputjoystick.c"
 #import "SDL/src/joystick/windows/SDL_mmjoystick.c" 'v2.0.9'
+
+#import "SDL/src/joystick/hidapi/SDL_hidapijoystick.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_ps4.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_switch.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xbox360.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xboxone.c" 'v2.0.9'
 
 'loadso
 #import "SDL/src/loadso/windows/SDL_sysloadso.c"
