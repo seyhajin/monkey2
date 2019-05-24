@@ -208,7 +208,7 @@
 #define SDL_VIDEO_OPENGL_ES2    1
 #endif
 #ifndef SDL_VIDEO_OPENGL_EGL
-#define SDL_VIDEO_OPENGL_EGL    1
+#define SDL_VIDEO_OPENGL_EGL    0 //!\\ sey was here! (from 1 to 0)
 #endif
 #ifndef SDL_VIDEO_OPENGL_CGL
 #define SDL_VIDEO_OPENGL_CGL    1
