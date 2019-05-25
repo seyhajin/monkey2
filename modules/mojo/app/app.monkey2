@@ -177,10 +177,10 @@ Class AppInstance
 		
 		'create dummy window/context
 		Local _sdlWindow:=SDL_CreateWindow( "<dummy>",0,0,0,0,SDL_WINDOW_HIDDEN|SDL_WINDOW_OPENGL )
-		Assert( _sdlWindow,"FATAL ERROR: SDL_CreateWindow failed" )
+		Assert( _sdlWindow,"FATAL ERROR: SDL_CreateWindow failed~n> SDL_ERROR: "+String.FromCString(SDL_GetError()) )
 
 		Local _sdlGLContext:=SDL_GL_CreateContext( _sdlWindow )
-		Assert( _sdlGLContext,"FATAL ERROR: SDL_GL_CreateContext failed" )
+		Assert( _sdlGLContext,"FATAL ERROR: SDL_GL_CreateContext failed~n> SDL_ERROR: "+String.FromCString(SDL_GetError()) )
 		
 		SDL_GL_MakeCurrent( _sdlWindow,_sdlGLContext )
 #Endif	
