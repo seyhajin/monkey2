@@ -205,7 +205,7 @@ Monkey2 works on a wide range of targets: Windows, Macos, Linux, Emscripten, And
 
 ### Showcase
 
-![](./docs/img/showcase.png)
+![](./docs/img/showcase.jpg)
 
 ### More information
 
