@@ -182,6 +182,12 @@ Class CodeDocumentView Extends Ted2CodeTextView
 	
 	Method OnKeyEvent( event:KeyEvent ) Override
 		
+		#If __TARGET__="macos"
+		Local isMacos:=True
+		#Else
+		Local isMacos:=False
+		#Endif
+		
 		_doc.HideHint_()
 		
 		Local alt:=(event.Modifiers & Modifier.Alt)<>0
@@ -197,53 +203,6 @@ Class CodeDocumentView Extends Ted2CodeTextView
 			
 			Select key
 				
-				Case Key.D
-					
-					Local ok:=ctrl
-					#If __TARGET__="macos"
-					If Not shift ok=Null
-					#Endif
-					
-					If ok ' duplicate line or selection
-						
-						Local cur:=Cursor,anc:=Anchor
-						If cur=anc ' duplicate whole line
-							
-							Local pos:=PosInLineAtCursor
-							Local line:=Document.FindLine( cur )
-							Local s:=LineTextAtCursor
-							Local ends:=Document.EndOfLine( line )
-							ReplaceText( ends,ends,"~n"+s )
-							pos=pos+StartOfLineAtCursor
-							SelectText( pos,pos )
-							
-						Else ' duplicate selection
-							
-							Local min:=Min( Cursor,Anchor )
-							Local max:=Max( Cursor,Anchor )
-							Local selLen:=max-min
-							Local s:=SelectedText
-							Local atEnd:=(max=Document.EndOfLine( Document.FindLine( max ) ))
-							If atEnd
-								Local minLine:=Document.FindLine( min )
-								Local s0:=Document.GetLine( minLine )
-								Local pos:=min-Document.StartOfLine( minLine )
-								Local indent:=Min( GetIndent( s0 ),pos )
-								Local indentStr:=(indent>0) ? s0.Slice( 0,indent ) Else ""
-								s="~n"+indentStr+s
-								selLen+=indentStr.Length
-							Endif
-							SelectText( max,max )
-							ReplaceText( s )
-							Local pos:=max+Int(atEnd)
-							SelectText( pos,pos+selLen )
-							
-						Endif
-						
-						Return
-						
-					Endif
-					
 				Case Key.Space
 					If ctrl
 						Return
@@ -321,7 +280,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 				
 				Case Key.X
 					
-					If ctrl 'nothing selected - cut whole line
+					If (isMacos And menu) Or (Not isMacos And ctrl) 'nothing selected - cut whole line
 						OnCut( Not CanCopy )
 						Return
 					Endif
@@ -329,7 +288,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 			
 				Case Key.C
 					
-					If ctrl 'nothing selected - copy whole line
+					If (isMacos And menu) Or (Not isMacos And ctrl) 'nothing selected - copy whole line
 						OnCopy( Not CanCopy )
 						Return
 					Endif
@@ -477,26 +436,22 @@ Class CodeDocumentView Extends Ted2CodeTextView
 						Return
 					Endif
 			
-				#Else
-			
-				Case Key.Home 'smart Home behaviour
-			
-					If ctrl
-						If shift 'selection
-							SelectText( 0,Anchor )
-						Else
-							SelectText( 0,0 )
-						Endif
-					Else
-						SmartHome( shift )
-					Endif
-					Return
 				#Endif
-			
+				
+				Case Key.Home 'smart Home behaviour
+				
+					ProcessHomeKey( ctrl,shift )
+					Return
+				
+				Case Key.KeyEnd ' special case here to force macos behaviour
+					
+					ProcessEndKey( ctrl,shift )
+					Return
+					
 				Case Key.Tab
-			
+					
 					If Cursor = Anchor 'has no selection
-			
+						
 						' live templates by tab!
 						Local ident:=IdentBeforeCursor()
 						If InsertLiveTemplate( ident ) Return ' exit method
@@ -537,26 +492,26 @@ Class CodeDocumentView Extends Ted2CodeTextView
 							For Local i:=0 Until lines.Length
 								
 								If lines[i].StartsWith( tabStr ) ' try to remove tab or spaces
-								
+									
 									lines[i]=lines[i].Slice( tabStr.Length )+"~n"
 									changes+=1
 									If i=0 Then shiftFirst=-tabStr.Length
 									If i=lines.Length-1 Then shiftLast=-tabStr.Length
-								
+									
 								Elseif tabStr<>"~t" And lines[i].StartsWith( "~t" ) ' for spaces-mode also try to remove tabs (mixed indentation)
-								
+									
 									lines[i]=lines[i].Slice( 1 )+"~n"
 									changes+=1
 									If i=0 Then shiftFirst=-1
 									If i=lines.Length-1 Then shiftLast=-1
-								
+									
 								Else
-								
+									
 									lines[i]+="~n"
 								
 								Endif
 							Next
-			
+							
 							go=(changes > 0)
 							
 						Else
@@ -568,7 +523,7 @@ Class CodeDocumentView Extends Ted2CodeTextView
 							Next
 							
 						Endif
-			
+						
 						If go
 							
 							Local minStart:=Document.StartOfLine( min )
@@ -590,22 +545,22 @@ Class CodeDocumentView Extends Ted2CodeTextView
 					CheckFormat( event )
 					
 					Return
-			
-			
+				
+				
 				Case Key.V
-			
-					If CanPaste And ctrl
+					
+					If CanPaste And ((isMacos And menu) Or (Not isMacos And ctrl))
 						SmartPaste()
 						Return
 					Endif
-			
-			
+				
+				
 				#If __TARGET__="macos"
 				
 				Case Key.Z
-			
-					If event.Modifiers & Modifier.Menu
-			
+					
+					If menu
+						
 						If shift
 							Redo()
 						Else
@@ -613,7 +568,21 @@ Class CodeDocumentView Extends Ted2CodeTextView
 						Endif
 						Return
 					Endif
-			
+				
+				Case Key.Left ' home = cmd + left
+					
+					If menu
+						ProcessHomeKey( ctrl,shift )
+						Return
+					Endif
+					
+				Case Key.Right ' end = cmd + right
+					
+					If menu
+						ProcessEndKey( ctrl,shift )
+						Return
+					Endif
+					
 				#Endif
 			
 			End
@@ -1439,14 +1408,12 @@ Class CodeDocument Extends Ted2Document
 	
 	Method Comment()
 	
-		Local event:=New KeyEvent( EventType.KeyChar,_codeView,Key.Apostrophe,Key.Apostrophe,Modifier.Control,"'" )
-		_codeView.OnKeyEvent( event )
+		_codeView.CommentBlock()
 	End
 	
 	Method Uncomment()
 	
-		Local event:=New KeyEvent( EventType.KeyChar,_codeView,Key.Apostrophe,Key.Apostrophe,Modifier.Control|Modifier.Shift,"'" )
-		_codeView.OnKeyEvent( event )
+		_codeView.UncommentBlock()
 	End
 	
 	Method StoreChangesCounter()
@@ -1469,7 +1436,7 @@ Class CodeDocument Extends Ted2Document
 		
 		For Local child:=Eachin parent.Children
 			GrabCodeItems( child,items )
-		Next 
+		Next
 	End
 	
 	Method JumpToPreviousScope()
@@ -2339,8 +2306,11 @@ Class ParamsHintView Extends TextView
 			Local params:=i.Params
 			If Not params Then s+="<no params>" ; Continue
 			For Local j:=0 Until params.Length
+				Local param:=params[j]
+				If param.hasDefaultValue Then s+=" ["
 				If j>0 Then s+=", "
 				s+=params[j].ToString()
+				If param.hasDefaultValue Then s+="]"
 			Next
 		Next
 		Text=s ' use it for TextView.OnMeasure
@@ -2382,12 +2352,14 @@ Class ParamsHintView Extends TextView
 	Field _paramIndex:Int
 	Field _color1:Color,_color2:Color
 	Field _sender:CodeTextView
+	Field _offsetX:=0,_offsetAtIndex:=-1
 	
 	Method OnRenderContent( canvas:Canvas ) Override
 		
 		Local stored:=canvas.Color
 		
-		Local x:Float,y:Float,s:=""
+		Local x0:=_offsetX
+		Local x:Float=x0,y:Float,s:=""
 		Local font:=RenderStyle.Font
 		For Local item:=Eachin _items
 			
@@ -2399,22 +2371,45 @@ Class ParamsHintView Extends TextView
 			Else
 				For Local i:=0 Until params.Length
 					
+					Local param:=params[i]
+					Local selected:=(i=_paramIndex)
+					
+					If selected And i<>_offsetAtIndex
+						If x*App.Theme.Scale.x-_offsetX>650
+							_offsetX=-500
+						Else
+							_offsetX=0
+						Endif
+						_offsetAtIndex=i
+					Endif
+					
+					canvas.Color=selected ? _color2 Else _color1
+					
+					If param.hasDefaultValue
+						Local ss:=(i>0) ? " [" Else "["
+						canvas.DrawText( ss,x,y )
+						x+=font.TextWidth( ss )
+					Endif
+					
 					If i>0
-						canvas.Color=_color1
 						canvas.DrawText( ", ",x,y )
 						x+=font.TextWidth( ", " )
 					Endif
 					
 					s=params[i].ToString()
-					canvas.Color=(i=_paramIndex) ? _color2 Else _color1
 					canvas.DrawText( s,x,y )
 					x+=font.TextWidth( s )
+					
+					If param.hasDefaultValue
+						canvas.DrawText( "]",x,y )
+						x+=font.TextWidth( "]" )
+					Endif
 				Next
 				
 			Endif
 			
 			y+=font.Height
-			x=0
+			x=x0
 		Next
 		
 		canvas.Color=stored

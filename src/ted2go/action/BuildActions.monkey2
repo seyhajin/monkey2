@@ -47,6 +47,7 @@ Class BuildActions Implements IModuleBuilder
 	Field updateModules:Action
 	Field moduleManager:Action
 	Field rebuildHelp:Action
+	Field forceStop:Action
 	
 	Field targetMenu:MenuExt
 	
@@ -62,63 +63,37 @@ Class BuildActions Implements IModuleBuilder
 		_console=console
 		_debugView=debugView
 		
-		buildAndRun=New Action( "Run" )
-#If __TARGET__="macos"
-		buildAndRun.HotKey=Key.R
-		buildAndRun.HotKeyModifiers=Modifier.Menu
-#Else
-		buildAndRun.HotKey=Key.F5
-#Endif
+		buildAndRun=ActionById( ActionId.Run )
 		buildAndRun.Triggered=OnBuildAndRun
 		
-		debugApp=New Action( "Debug" )
-#If __TARGET__="macos"
-		debugApp.HotKey=Key.D
-		debugApp.HotKeyModifiers=Modifier.Menu
-#Else
-		debugApp.HotKey=Key.F8
-#Endif
+		debugApp=ActionById( ActionId.Debug )
 		debugApp.Triggered=OnDebugApp
 
-		build=New Action( "Build" )
-#If __TARGET__="macos"
-		build.HotKey=Key.B
-		build.HotKeyModifiers=Modifier.Menu
-#Else
-		build.HotKey=Key.F6
-#Endif
+		build=ActionById( ActionId.Build )
 		build.Triggered=OnBuild
 		
-		semant=New Action( "Check" )
-#If __TARGET__="macos"
-		semant.HotKey=Key.R
-		semant.HotKeyModifiers=Modifier.Menu|Modifier.Shift
-#Else
-		semant.HotKey=Key.F7
-#Endif
+		semant=ActionById( ActionId.Semant )
 		semant.Triggered=OnSemant
 		
-		buildSettings=New Action( "Product settings..." )
+		forceStop=ActionById( ActionId.ForceStop )
+		forceStop.Triggered=OnForceStop
+		
+		buildSettings=ActionById( ActionId.ProductSettings )
 		buildSettings.Triggered=OnBuildFileSettings
 		
-		nextError=New Action( "Next build error" )
+		nextError=ActionById( ActionId.NextError )
 		nextError.Triggered=OnNextError
-		nextError.HotKey=Key.F4
 		
-		lockBuildFile=New Action( "Lock build file" )
+		lockBuildFile=ActionById( ActionId.LockBuildFile )
 		lockBuildFile.Triggered=_docs.LockBuildFile
-		lockBuildFile.HotKey=Key.L
-		lockBuildFile.HotKeyModifiers=Modifier.Menu
 		
-		updateModules=New Action( "Update / Rebuild modules..." )
+		updateModules=ActionById( ActionId.UpdateModules )
 		updateModules.Triggered=OnUpdateModules
-		updateModules.HotKey=Key.U
-		updateModules.HotKeyModifiers=Modifier.Menu
 		
-		moduleManager=New Action( "Module manager..." )
+		moduleManager=ActionById( ActionId.ModuleManager )
 		moduleManager.Triggered=OnModuleManager
 		
-		rebuildHelp=New Action( "Rebuild documentation" )
+		rebuildHelp=ActionById( ActionId.RebuildDocs )
 		rebuildHelp.Triggered=OnRebuildHelp
 		
 		local group:=New CheckGroup
@@ -625,6 +600,11 @@ Class BuildActions Implements IModuleBuilder
 		If _console.Running Return
 	
 		BuildApp( _buildConfig,_buildTarget,"semant" )
+	End
+	
+	Method OnForceStop()
+	
+		MainWindow.OnForceStop()
 	End
 	
 	Method OnNextError()

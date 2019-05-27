@@ -1,3 +1,4 @@
+
 #If __TARGET__="windows"
 
 #Import "bin/wget.exe"
@@ -74,6 +75,8 @@
 #Import "syntax/Monkey2Highlighter"
 #Import "syntax/CppHighlighter"
 #Import "syntax/CppKeywords"
+#Import "syntax/JavaHighlighter"
+#Import "syntax/JavaKeywords"
 #Import "syntax/GlslHighlighter"
 #Import "syntax/GlslKeywords"
 #Import "syntax/CodeFormatter"
@@ -81,6 +84,7 @@
 
 #Import "testing/ParserTests"
 
+#Import "utils/Extensions"
 #Import "utils/JsonUtils"
 #Import "utils/Utils"
 #Import "utils/TextUtils"
@@ -125,6 +129,7 @@
 #Import "theme/ThemeImages"
 #Import "theme/ThemesInfo"
 
+#Import "ActionsProvider"
 #Import "PathsProvider"
 #Import "Tree"
 #Import "Tuple"
@@ -149,7 +154,7 @@ Using sdl2..
 
 Const MONKEY2_DOMAIN:="http://monkeycoder.co.nz"
 
-Global AppTitle:="Ted2Go v2.13"
+Global AppTitle:="Ted2Go v2.14a"
 
 
 Function Main()
@@ -182,7 +187,7 @@ Function Main()
 	
 	'initial theme
 	'
-	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-prime-blue" )
+	If Not jobj.Contains( "theme" ) jobj["theme"]=New JsonString( "theme-hollow" )
 	
 	If Not jobj.Contains( "themeScale" ) jobj["themeScale"]=New JsonNumber( 1 )
 	
@@ -199,6 +204,8 @@ Function Main()
 	'start the app!
 	'
 	New AppInstance
+	
+	InitHotkeys()
 	
 	'initial window state
 	'
@@ -226,6 +233,15 @@ Function Main()
 			arg=arg.Replace( "\","/" )
 			MainWindow.OnFileDropped( arg )
 		Next
+		
+		#If __TARGET__="macos"
+		App.Idle+=Lambda() ' quick fix for black screen on mojave at startup
+			
+			Local dx:=MainWindow.Frame.Left Mod 2 = 0 ? -1 Else 1
+			MainWindow.Frame=MainWindow.Frame+New Recti( dx,0,0,0 )
+			MainWindow.RequestRender()
+		End
+		#Endif
 	End
 	
 	SDL_EnableScreenSaver()

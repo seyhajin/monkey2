@@ -267,7 +267,7 @@ Class CodeTextView Extends TextView
 		
 		If Not found
 			' valid ident parts: .?->[]
-			Local arr:=New Int[]( 
+			Local arr:=New Int[](
 						Chars.DOT,
 						Chars.QUESTION,
 						Chars.MINUS,
@@ -368,7 +368,8 @@ Class CodeTextView Extends TextView
 	End
 	
 	Method ShrinkSelection()
-		' todo
+		
+		SelectText( Cursor,Cursor )
 	End
 	
 	Property SelectedText:String()
@@ -379,6 +380,54 @@ Class CodeTextView Extends TextView
 		Local i2:=Max( Anchor,Cursor )
 		
 		Return Text.Slice( i1,i2 )
+	End
+	
+	Method CommentBlock( commentMark:String="'" )
+		
+		CommentUncommentBlock( True,commentMark )
+	End
+	
+	Method UncommentBlock( commentMark:String="'" )
+		
+		CommentUncommentBlock( False,commentMark )
+	End
+	
+	Method DuplicateBlock()
+		
+		Local cur:=Cursor,anc:=Anchor
+		If cur=anc ' duplicate whole line
+			
+			Local pos:=PosInLineAtCursor
+			Local line:=Document.FindLine( cur )
+			Local s:=LineTextAtCursor
+			Local ends:=Document.EndOfLine( line )
+			SelectText( ends,ends )
+			ReplaceText( "~n"+s )
+			pos=pos+StartOfLineAtCursor
+			SelectText( pos,pos )
+			
+		Else ' duplicate selection
+			
+			Local min:=Min( Cursor,Anchor )
+			Local max:=Max( Cursor,Anchor )
+			Local selLen:=max-min
+			Local s:=SelectedText
+			Local atEnd:=(max=Document.EndOfLine( Document.FindLine( max ) ))
+			If atEnd
+				Local minLine:=Document.FindLine( min )
+				Local s0:=Document.GetLine( minLine )
+				Local pos:=min-Document.StartOfLine( minLine )
+				Local indent:=Min( GetIndent( s0 ),pos )
+				Local indentStr:=(indent>0) ? s0.Slice( 0,indent ) Else ""
+				s="~n"+indentStr+s
+				selLen+=indentStr.Length
+			Endif
+			SelectText( max,max )
+			ReplaceText( s )
+			Local pos:=max+Int(atEnd)
+			SelectText( pos,pos+selLen )
+			
+		Endif
 	End
 	
 	Property IsCursorAtTheEndOfLine:Bool()
@@ -1028,6 +1077,19 @@ Class CodeTextView Extends TextView
 		App.ClipboardText=result
 	End
 	
+	Method ProcessHomeKey( ctrl:Bool,shift:Bool )
+		
+		If ctrl
+			If shift 'selection
+				SelectText( 0,Anchor )
+			Else
+				SelectText( 0,0 )
+			Endif
+		Else
+			SmartHome( shift )
+		Endif
+	End
+	
 	Method SmartHome( shift:Bool )
 	
 		Local line:=Document.FindLine( Cursor )
@@ -1051,6 +1113,20 @@ Class CodeTextView Extends TextView
 			SelectText( Anchor,newPos )
 		Else
 			SelectText( newPos,newPos )
+		Endif
+	End
+	
+	Method ProcessEndKey( ctrl:Bool,shift:Bool )
+		
+		Local pos:=Document.EndOfLine( Document.FindLine( Cursor ) )
+		If ctrl
+			If shift 'selection
+				SelectText( Cursor,Text.Length )
+			Else
+				SelectText( Text.Length,Text.Length )
+			Endif
+		Else
+			SmartEnd( shift )
 		Endif
 	End
 	
@@ -1270,6 +1346,39 @@ Class CodeTextView Extends TextView
 		Endif
 	End
 	
+	Method CommentUncommentBlock( comment:Bool,commentMark:String="'" )
+		
+		Local doc:=Document
+		Local i1:=Min( Cursor,Anchor )
+		Local i2:=Max( Cursor,Anchor )
+		Local line1:=doc.FindLine( i1 )
+		Local line2:=doc.FindLine( i2 )
+		
+		Local result:=""
+		Local made:=False
+		For Local line:=line1 To line2
+			Local s:= doc.GetLine( line )
+			If comment
+				s=commentMark+s
+				made=True
+			Elseif s.StartsWith( commentMark )
+				s=s.Slice( 1 )
+				made=True
+			Endif
+			If result Then result+="~n"
+			result+=s
+		Next
+		' if have changes
+		If made
+			i1=doc.StartOfLine( line1 )
+			i2=doc.EndOfLine( line2 )
+			SelectText( i1,i2 )
+			ReplaceText( result )
+			' select commented / uncommented lines
+			SelectText( i1,i1+result.Length )
+		Endif
+	End
+	
 End
 
 
@@ -1284,21 +1393,25 @@ End
 
 Function FixNumpadKeys:Key( event:KeyEvent )
 	
-	Local key:=event.Key
-	If Not (event.Modifiers & Modifier.NumLock)
-		Select key
-		Case Key.Keypad1 key=Key.KeyEnd
-		Case Key.Keypad2 key=Key.Down
-		Case Key.Keypad3 key=Key.PageDown
-		Case Key.Keypad4 key=Key.Left
-		Case Key.Keypad6 key=Key.Right
-		Case Key.Keypad7 key=Key.Home
-		Case Key.Keypad8 key=Key.Up
-		Case Key.Keypad9 key=Key.PageUp
-		Case Key.Keypad0 key=Key.Insert
-		End
-	Endif
-	Return key
+	#If __TARGET__="macos"
+    	Return event.Key
+	#Else
+		Local key:=event.Key
+		If Not (event.Modifiers & Modifier.NumLock)
+			Select key
+			Case Key.Keypad1 key=Key.KeyEnd
+			Case Key.Keypad2 key=Key.Down
+			Case Key.Keypad3 key=Key.PageDown
+			Case Key.Keypad4 key=Key.Left
+			Case Key.Keypad6 key=Key.Right
+			Case Key.Keypad7 key=Key.Home
+			Case Key.Keypad8 key=Key.Up
+			Case Key.Keypad9 key=Key.PageUp
+			Case Key.Keypad0 key=Key.Insert
+			End
+		Endif
+		Return key
+	#Endif
 End
 
 
@@ -1327,7 +1440,7 @@ Function RemoveWhitespacedTrailings:String( doc:TextDocument,linesChanged:Int Pt
 		If i=ends Continue ' have no trailing
 		If i=start Continue ' skip whole-whitespaced line
 		
-		If i>index 
+		If i>index
 			result+=text.Slice( index,i )
 			changes+=1
 		Endif
