@@ -211,17 +211,17 @@ Monkey2 works on a wide range of targets: Windows, Macos, Linux, Emscripten, And
 
 ##### Monkey2
 
-![Monkey2 development blog](X:/seyhajin.git/monkey2/docs/img/icons/logo-wordpress.svg) Development blog : http://monkeycoder.co.nz/
+![](./docs/img/icons/logo-wordpress.svg) Development blog : http://monkeycoder.co.nz/
 
-![Monkey2 discord channel](X:/seyhajin.git/monkey2/docs/img/icons/logo-discord.svg) Discord channel : https://discord.gg/ZHpRAFp
+![](./docs/img/icons/logo-discord.svg) Discord channel : https://discord.gg/ZHpRAFp
 
-![Monkey2 itch.io page](X:/seyhajin.git/monkey2/docs/img/icons/logo-itchio.svg) Itch.io page: https://blitzresearch.itch.io/monkey2
+![](./docs/img/icons/logo-itchio.svg) Itch.io page: https://blitzresearch.itch.io/monkey2
 
-![Monkey2 github page](X:/seyhajin.git/monkey2/docs/img/icons/logo-github.svg) Github page: https://github.com/blitz-research/monkey2
+![](./docs/img/icons/logo-github.svg) Github page: https://github.com/blitz-research/monkey2
 
 ##### Ted2Go
 
-![Ted2Go github page](X:/seyhajin.git/monkey2/docs/img/icons/logo-github.svg) Github page: https://github.com/engor/Ted2Go
+![](./docs/img/icons/logo-github.svg) Github page: https://github.com/engor/Ted2Go
 
 
 
