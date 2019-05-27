@@ -185,7 +185,51 @@ End
 
 Monkey2 works on a wide range of targets: Windows, Macos, Linux, Emscripten, Android and iOS.
 
-## How to build from source
+#### Desktop targets
+
+| Windows | MacOS | Linux | Raspbian |
+| ------- | ----- | ----- | -------- |
+| ![](./docs/img/icons/logo-windows.svg) | ![](./docs/img/icons/logo-apple.svg) | ![](./docs/img/icons/logo-linux.svg) | ![](./docs/img/icons/logo-raspberry.png) |
+
+#### Mobile targets
+
+| Android      | iOS             |
+| ------------ | --------------- |
+| ![](./docs/img/icons/logo-android.svg) | ![](./docs/img/icons/logo-apple.svg) |
+
+#### Web targets
+
+| Emscripten                                                   |
+| --------------------------------------------------------- |
+| ![](./docs/img/icons/logo-html5.svg)![](./docs/img/icons/logo-javascript.svg) |
+
+### Showcase
+
+![](./docs/img/showcase.png)
+
+### More information
+
+##### Monkey2
+
+![Monkey2 development blog](X:/seyhajin.git/monkey2/docs/img/icons/logo-wordpress.svg) Development blog : http://monkeycoder.co.nz/
+
+![Monkey2 discord channel](X:/seyhajin.git/monkey2/docs/img/icons/logo-discord.svg) Discord channel : https://discord.gg/ZHpRAFp
+
+![Monkey2 itch.io page](X:/seyhajin.git/monkey2/docs/img/icons/logo-itchio.svg) Itch.io page: https://blitzresearch.itch.io/monkey2
+
+![Monkey2 github page](X:/seyhajin.git/monkey2/docs/img/icons/logo-github.svg) Github page: https://github.com/blitz-research/monkey2
+
+##### Ted2Go
+
+![Ted2Go github page](X:/seyhajin.git/monkey2/docs/img/icons/logo-github.svg) Github page: https://github.com/engor/Ted2Go
+
+
+
+------
+
+
+
+## How to build 'monkey2' from source
 
 If you are reading this on github, please note there are prebuilt versions of monkey2 (with complete source code) available from https://blitzresearch.itch.io/monkey2.
 
@@ -196,24 +240,25 @@ Unless you are using one of the prebuilt releases, you will need to install the 
 If you install this to the monkey2 'devtools' directory, the following steps should 'just work' (ha!) :
 
 1. Open a command prompt and change to the 'monkey2\scripts' directory.
-2. Enter 'rebuildall' and hit return. Wait...
+2. Enter `rebuildall.bat` and hit return. Wait...
 3. If all went well, you should end up with a 'Monkey2 (Windows)' exe in the monkey2 directory. Run this to launch the Ted2go IDE.
 4. You should now be able to build and run monkey2 apps. There are some sample apps in the monkey2/bananas directory.
 
 ### Building 'monkey2' on MacOS/Linux
 
-1. On MacOS, install the XCode command line tools. You can do this by entering 'xcode-select --install' in a shell.
-2. Open a shell and change to the 'monkey2/scripts' directory.
-3. Enter './rebuildall.sh' and hit return. Wait...
-4. If all went well, you should end up with a 'Monkey2 (...)' app in the monkey2 directory. Run this to launch the Ted2go IDE.
-5. You should now be able to build and run monkey2 apps. There are some sample apps in the monkey2/bananas directory.
+* On **MacOS**, install the XCode command line tools. You can do this by entering in a shell :
 
-#### More information
+```shell
+xcode-select --install
+```
 
-Monkey2 development blog: http://monkeycoder.co.nz/
+* On **Linux**, install the GCC toolchain and libraries. You can do this by entering in a shell :
 
-Monkey2 itch.io page: https://blitzresearch.itch.io/monkey2
+```shell
+sudo apt-get install g++-multilib libopenal-dev libpulse-dev libsdl2-dev`
+```
+1. Open a shell and change to the 'monkey2/scripts' directory.
+2. Enter `./rebuildall.sh` and hit return. Wait...
+3. If all went well, you should end up with a 'Monkey2 (...)' app in the monkey2 directory. Run this to launch the Ted2go IDE.
+4. You should now be able to build and run monkey2 apps. There are some sample apps in the monkey2/bananas directory.
 
-Monkey2 github page: https://github.com/blitz-research/monkey2
-
-Ted2go github page: https://github.com/engor/Ted2Go
