@@ -2,6 +2,16 @@
 
 **Monkey2** is a new programming language designed by Mark Sibly, creator of the ‘Blitz’ range of languages.
 
+### Showcase
+
+![](./docs/img/showcase.jpg)
+
+### Ted2Go (IDE)
+
+![](./docs/img/ted2go_ide.jpg)
+
+------
+
 While staying true to the ‘basic’ style of the original blitz languages, Monkey2 offers some very powerful new features including:
 
 ### Generic classes and methods 
@@ -202,10 +212,6 @@ Monkey2 works on a wide range of targets: Windows, Macos, Linux, Emscripten, And
 | Emscripten                                                   |
 | --------------------------------------------------------- |
 | ![](./docs/img/icons/logo-html5.svg)![](./docs/img/icons/logo-javascript.svg) |
-
-### Showcase
-
-![](./docs/img/showcase.jpg)
 
 ### More information
 
