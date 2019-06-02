@@ -66,9 +66,26 @@ To declare an interface:
 
 _Interfaces_ is a comma separated list of interface types.
 
-An interface can contain consts, globals, fields, methods, functions and other user defined types.
+An interface can contain consts, globals, methods, functions, properties and other user defined types.
 
 Interface methods are always 'abstract' and cannot declare any code.
+
+Example for using properties in an interface:
+```
+Interface IExample
+
+	' Property with Setter
+	Property IntProp1( a:Int )
+
+	' Property with Getter
+	Property IntProp2:Int()
+
+	' Property with Setter + Getter
+	Property IntProp3:Int()
+	Setter( a:Int )
+
+End
+```
 
 
 @#### Fields
