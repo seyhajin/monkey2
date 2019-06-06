@@ -53,10 +53,19 @@ Namespace sdl2
 #Import "SDL/src/haptic/android/SDL_syshaptic.c" 'v2.0.9
 #Import "SDL/src/haptic/dummy/SDL_syshaptic.c"
 
+'hidapi
+#import "SDL/src/hidapi/android/hid.cpp" 'v2.0.9
+
 'joystick
 #Import "SDL/src/joystick/SDL_gamecontroller.c"
 #Import "SDL/src/joystick/SDL_joystick.c"
 #Import "SDL/src/joystick/android/SDL_sysjoystick.c"
+
+#import "SDL/src/joystick/hidapi/SDL_hidapijoystick.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_ps4.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_switch.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xbox360.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xboxone.c" 'v2.0.9'
 
 'loadso
 #Import "SDL/src/loadso/dlopen/SDL_sysloadso.c"
@@ -143,4 +152,5 @@ Namespace sdl2
 #Import "SDL/src/SDL_error.c"
 #Import "SDL/src/SDL_hints.c"
 #Import "SDL/src/SDL_log.c"
+#Import "SDL/src/SDL_dataqueue.c" 'v2.0.9
 #Import "SDL/src/SDL.c"
