@@ -69,7 +69,7 @@ Namespace sdl2
 
 'render
 #Import "SDL/src/render/SDL_render.c"
-#Import "SDL/src/render/SDL_yuv_mmx.c"
+'#Import "SDL/src/render/SDL_yuv_mmx.c"
 #Import "SDL/src/render/SDL_yuv_sw.c"
 #Import "SDL/src/render/software/SDL_blendfillrect.c"
 #Import "SDL/src/render/software/SDL_blendline.c"
