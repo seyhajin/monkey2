@@ -1,53 +1,103 @@
-Namespace ultralight
+namespace ultralight
 
 'Imports
-#Import "<libc>"
+#import "<libc>"
 
-Using libc..
+using libc..
 
 '// Include dirs
-#Import "native/include/*.h"
+#import "native/include/*.h"
 
 '// Main include file
-#Import "<Ultralight/CAPI.h>"
-'[TODO]: #Import "<AppCore/CAPI.h>"
+#import "<Ultralight/CAPI.h>"
+'[TODO]: #import "<AppCore/CAPI.h>"
 
-'// Libs dirs
-#If __TARGET__="windows"
-	#If __RELEASE__
-		#Import "native/lib/windows/x86/release/*.lib" '//TODO: '__ARCH__' = x86, x64
-	#ElseIf __DEBUG__
-		#Import "native/lib/windows/x86/debug/*.lib" '//TODO: Arch
-	#EndIf
-#Else '// Other
-	'[TODO]:
-#EndIf
+#if __TARGET__="windows"
+	#if __CONFIG__="debug"
+		#if __ARCH__="x86"
+			#import "native/lib/windows/x86/debug/*.lib"
 
-'// Libs dependencies
-'[TODO]: Add Linux, MacOS and Architecture x86 & x64
-#If __TARGET__="windows"
-	#Import "<Ultralight.lib>"
-	#Import "<UltralightCore.lib>"
-	#Import "<WebCore.lib>"
-	#Import "<AppCore.lib>"
+			#import "<Ultralight.lib>"
+			#import "<UltralightCore.lib>"
+			#import "<WebCore.lib>"
+			#import "<AppCore.lib>"
 
-	#If __RELEASE__
-		#Import "./native/bin/windows/x86/release/Ultralight.dll"
-		#Import "./native/bin/windows/x86/release/UltralightCore.dll"
-		#Import "./native/bin/windows/x86/release/WebCore.dll"
-		#Import "./native/bin/windows/x86/release/AppCore.dll"
-	#ElseIf __DEBUG__
-		#Import "./native/bin/windows/x86/debug/Ultralight.dll"
-		#Import "./native/bin/windows/x86/debug/UltralightCore.dll"
-		#Import "./native/bin/windows/x86/debug/WebCore.dll"
-		#Import "./native/bin/windows/x86/debug/AppCore.dll"
-	#EndIf
-#Else 
-	#Import "<Ultralight.a>"
-	#Import "<UltralightCore.a>"
-	#Import "<WebCore.a>"
-	#Import "<AppCore.a>"
-#EndIf
+			#import "./native/bin/windows/x64/debug/Ultralight.dll"
+			#import "./native/bin/windows/x64/debug/UltralightCore.dll"
+			#import "./native/bin/windows/x64/debug/WebCore.dll"
+			#import "./native/bin/windows/x64/debug/AppCore.dll"
+
+		#elseif __ARCH__="x64"
+			#import "native/lib/windows/x64/debug/*.lib"
+
+			#import "<Ultralight.lib>"
+			#import "<UltralightCore.lib>"
+			#import "<WebCore.lib>"
+			#import "<AppCore.lib>"
+
+			#import "./native/bin/windows/x64/debug/Ultralight.dll"
+			#import "./native/bin/windows/x64/debug/UltralightCore.dll"
+			#import "./native/bin/windows/x64/debug/WebCore.dll"
+			#import "./native/bin/windows/x64/debug/AppCore.dll"
+		#end
+
+	#elseif __CONFIG__="release"
+		#if __ARCH__="x86"
+			#import "native/lib/windows/x86/release/*.lib"
+
+			#import "<Ultralight.lib>"
+			#import "<UltralightCore.lib>"
+			#import "<WebCore.lib>"
+			#import "<AppCore.lib>"
+
+			#import "./native/bin/windows/x86/release/Ultralight.dll"
+			#import "./native/bin/windows/x86/release/UltralightCore.dll"
+			#import "./native/bin/windows/x86/release/WebCore.dll"
+			#import "./native/bin/windows/x86/release/AppCore.dll"
+
+		#elseif __ARCH__="x64"
+			#import "native/lib/windows/x64/release/*.lib"
+
+			#import "<Ultralight.lib>"
+			#import "<UltralightCore.lib>"
+			#import "<WebCore.lib>"
+			#import "<AppCore.lib>"
+
+			#import "./native/bin/windows/x64/release/Ultralight.dll"
+			#import "./native/bin/windows/x64/release/UltralightCore.dll"
+			#import "./native/bin/windows/x64/release/WebCore.dll"
+			#import "./native/bin/windows/x64/release/AppCore.dll"
+		#end
+	#end
+
+#elseif __TARGET__="linux" '// x64 only
+	#if __CONFIG__="debug"
+		#import "./native/bin/linux/x64/debug/libUltralight.so"
+		#import "./native/bin/linux/x64/debug/libUltralightCore.so"
+		#import "./native/bin/linux/x64/debug/libWebCore.so"
+		#import "./native/bin/linux/x64/debug/libAppCore.so"
+
+	#elseif __CONFIG__="release"
+		#import "./native/bin/linux/x64/release/libUltralight.so"
+		#import "./native/bin/linux/x64/release/libUltralightCore.so"
+		#import "./native/bin/linux/x64/release/libWebCore.so"
+		#import "./native/bin/linux/x64/release/libAppCore.so"
+	#end
+
+#elseIf __TARGET__="macos" '// x64 only
+	#if __CONFIG__="debug"
+		#import "./native/bin/windows/x64/debug/libUltralight.dylib"
+		#import "./native/bin/windows/x64/debug/libUltralightCore.dylib"
+		#import "./native/bin/windows/x64/debug/libWebCore.dylib"
+		#import "./native/bin/windows/x64/debug/libAppCore.dylib"
+
+	#elseif __CONFIG__="release"
+		#import "./native/bin/windows/x64/release/libUltralight.dylib"
+		#import "./native/bin/windows/x64/release/libUltralightCore.dylib"
+		#import "./native/bin/windows/x64/release/libWebCore.dylib"
+		#import "./native/bin/windows/x64/release/libAppCore.dylib"
+	#end
+#end
 
 
 '//////////////////////////////////////////////////////////////

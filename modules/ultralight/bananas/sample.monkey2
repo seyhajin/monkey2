@@ -26,13 +26,14 @@ Class AppWindow Extends Window
 		
 		'Create configuration
 		_config = ulCreateConfig()
+		ulConfigSetDeviceScaleHint(_config, App.Theme.Scale.X)
 		
 		'Create renderer
 		_renderer = ulCreateRenderer(_config)
 		
 		'Create view and load URL
 		_view = ulCreateView(_renderer, Self.Width, Self.Height, False)
-		ulViewLoadURL(_view, ulCreateString("http://monkeycoder.co.nz/news"))
+		ulViewLoadURL(_view, ulCreateString("http://www.codedan.net/Monkey2/docs/"))
 		
 		'Create mojo image to render
 		_image = New Image(Self.Width, Self.Height, TextureFlags.Dynamic)
