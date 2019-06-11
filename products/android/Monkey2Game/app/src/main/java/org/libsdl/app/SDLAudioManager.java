@@ -235,13 +235,17 @@ public class SDLAudioManager
      * This method is called by SDL using JNI.
      */
     public static int[] audioOpen(int sampleRate, int audioFormat, int desiredChannels, int desiredFrames) {
+/* //!\\
         return open(false, sampleRate, audioFormat, desiredChannels, desiredFrames);
+*/
+        return null;
     }
 
     /**
      * This method is called by SDL using JNI.
      */
     public static void audioWriteFloatBuffer(float[] buffer) {
+/* //!\\
         if (mAudioTrack == null) {
             Log.e(TAG, "Attempted to make audio call with uninitialized audio!");
             return;
@@ -262,12 +266,14 @@ public class SDLAudioManager
                 return;
             }
         }
+*/
     }
 
     /**
      * This method is called by SDL using JNI.
      */
     public static void audioWriteShortBuffer(short[] buffer) {
+/* //!\\
         if (mAudioTrack == null) {
             Log.e(TAG, "Attempted to make audio call with uninitialized audio!");
             return;
@@ -288,12 +294,14 @@ public class SDLAudioManager
                 return;
             }
         }
+*/
     }
 
     /**
      * This method is called by SDL using JNI.
      */
     public static void audioWriteByteBuffer(byte[] buffer) {
+/* //!\\
         if (mAudioTrack == null) {
             Log.e(TAG, "Attempted to make audio call with uninitialized audio!");
             return;
@@ -314,54 +322,71 @@ public class SDLAudioManager
                 return;
             }
         }
+*/
     }
 
     /**
      * This method is called by SDL using JNI.
      */
     public static int[] captureOpen(int sampleRate, int audioFormat, int desiredChannels, int desiredFrames) {
+/* //!\\
         return open(true, sampleRate, audioFormat, desiredChannels, desiredFrames);
+*/
+        return null;
     }
 
     /** This method is called by SDL using JNI. */
     public static int captureReadFloatBuffer(float[] buffer, boolean blocking) {
+/* //!\\
         return mAudioRecord.read(buffer, 0, buffer.length, blocking ? AudioRecord.READ_BLOCKING : AudioRecord.READ_NON_BLOCKING);
+*/
+        return 0;
     }
 
     /** This method is called by SDL using JNI. */
     public static int captureReadShortBuffer(short[] buffer, boolean blocking) {
+/* //!\\
         if (Build.VERSION.SDK_INT < 23) {
             return mAudioRecord.read(buffer, 0, buffer.length);
         } else {
             return mAudioRecord.read(buffer, 0, buffer.length, blocking ? AudioRecord.READ_BLOCKING : AudioRecord.READ_NON_BLOCKING);
         }
+*/
+        return 0;
     }
 
     /** This method is called by SDL using JNI. */
     public static int captureReadByteBuffer(byte[] buffer, boolean blocking) {
+/* //!\\
         if (Build.VERSION.SDK_INT < 23) {
             return mAudioRecord.read(buffer, 0, buffer.length);
         } else {
             return mAudioRecord.read(buffer, 0, buffer.length, blocking ? AudioRecord.READ_BLOCKING : AudioRecord.READ_NON_BLOCKING);
         }
+*/
+        return 0;
     }
 
     /** This method is called by SDL using JNI. */
     public static void audioClose() {
+/* //!\\
         if (mAudioTrack != null) {
             mAudioTrack.stop();
             mAudioTrack.release();
             mAudioTrack = null;
-        }
+        
+*/
     }
 
     /** This method is called by SDL using JNI. */
     public static void captureClose() {
+/* //!\\
         if (mAudioRecord != null) {
             mAudioRecord.stop();
             mAudioRecord.release();
             mAudioRecord = null;
         }
+*/
     }
 
     public static native int nativeSetupJNI();

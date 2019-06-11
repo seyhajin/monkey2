@@ -103,7 +103,7 @@ public class HIDDeviceManager {
 
     private HIDDeviceManager(final Context context) {
         mContext = context;
-
+/* //!\\
         // Make sure we have the HIDAPI library loaded with the native functions
         try {
             SDL.loadLibrary("hidapi");
@@ -135,7 +135,13 @@ public class HIDDeviceManager {
         }
         
         HIDDeviceRegisterCallback();
-
+*/
+        try {
+            HIDDeviceRegisterCallback();
+        } catch (UnsatisfiedLinkError error) {
+            Log.v("SDL", "No implementation found for native library HIDDeviceRegisterCallback(). Was SDL_JOYSTICK_HIDAPI enabled when building SDL?");
+        }
+        
         mSharedPreferences = mContext.getSharedPreferences("hidapi", Context.MODE_PRIVATE);
         mIsChromebook = mContext.getPackageManager().hasSystemFeature("org.chromium.arc.device_management");
 

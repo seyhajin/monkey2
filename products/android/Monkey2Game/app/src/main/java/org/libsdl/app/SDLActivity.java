@@ -142,12 +142,13 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
      */
     protected String[] getLibraries() {
         return new String[] {
-            "SDL2",
+            //!\\ "SDL2",
             // "SDL2_image",
             // "SDL2_mixer",
             // "SDL2_net",
             // "SDL2_ttf",
-            "main"
+            "openal", //!\\
+            "mx2_main" //!\\
         };
     }
 
@@ -1147,7 +1148,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             final int[] buttonIds,
             final String[] buttonTexts,
             final int[] colors) {
-
+/* //!\\
         messageboxSelection[0] = -1;
 
         // sanity checks
@@ -1190,8 +1191,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         // return selected value
 
         return messageboxSelection[0];
+*/
+        return -1;
     }
 
+/* //!\\
     @Override
     protected Dialog onCreateDialog(int ignore, Bundle args) {
 
@@ -1270,7 +1274,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                     mapping.put(KeyEvent.KEYCODE_ENTER, button);
                 }
                 if ((buttonFlags[i] & 0x00000002) != 0) {
-                    mapping.put(KeyEvent.KEYCODE_ESCAPE, button); /* API 11 */
+                    mapping.put(KeyEvent.KEYCODE_ESCAPE, button); /* API 11 * /
                 }
             }
             button.setText(buttonTexts[i]);
@@ -1325,6 +1329,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         return dialog;
     }
+*/
 
     private final Runnable rehideSystemUi = new Runnable() {
         @Override
@@ -1547,7 +1552,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("SDL", "surfaceCreated()");
+/* //!\\
+		// Deprecated in API5
         holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+*/
     }
 
     // Called when we lose the surface
@@ -1575,20 +1583,20 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         int sdlFormat = 0x15151002; // SDL_PIXELFORMAT_RGB565 by default
         switch (format) {
-        case PixelFormat.A_8:
+        case 8: //!\\  PixelFormat.A_8:
             Log.v("SDL", "pixel format A_8");
             break;
-        case PixelFormat.LA_88:
+        case 10: //!\\  PixelFormat.LA_88:
             Log.v("SDL", "pixel format LA_88");
             break;
-        case PixelFormat.L_8:
+        case 9: //!\\  PixelFormat.L_8:
             Log.v("SDL", "pixel format L_8");
             break;
-        case PixelFormat.RGBA_4444:
+        case 7: //!\\  PixelFormat.RGBA_4444:
             Log.v("SDL", "pixel format RGBA_4444");
             sdlFormat = 0x15421002; // SDL_PIXELFORMAT_RGBA4444
             break;
-        case PixelFormat.RGBA_5551:
+        case 6: //!\\  PixelFormat.RGBA_5551:
             Log.v("SDL", "pixel format RGBA_5551");
             sdlFormat = 0x15441002; // SDL_PIXELFORMAT_RGBA5551
             break;
@@ -1600,7 +1608,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             Log.v("SDL", "pixel format RGBX_8888");
             sdlFormat = 0x16261804; // SDL_PIXELFORMAT_RGBX8888
             break;
-        case PixelFormat.RGB_332:
+        case 11: //!\\  PixelFormat.RGB_332:
             Log.v("SDL", "pixel format RGB_332");
             sdlFormat = 0x14110801; // SDL_PIXELFORMAT_RGB332
             break;
