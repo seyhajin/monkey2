@@ -8,6 +8,7 @@ Namespace sdl2
 #Import "SDL/src/SDL_error.c"
 #Import "SDL/src/SDL_hints.c"
 #Import "SDL/src/SDL_log.c"
+#Import "SDL/src/SDL_dataqueue.c" 'v2.0.9
 #Import "SDL/src/SDL.c"
 
 'audio
@@ -88,6 +89,7 @@ Namespace sdl2
 'sensor (v2.0.9)
 #Import "SDL/src/sensor/SDL_sensor.c"
 #Import "SDL/src/sensor/dummy/SDL_dummysensor.c"
+#Import "SDL/src/sensor/coremotion/SDL_coremotionsensor.m" 'v2.0.9
 
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
