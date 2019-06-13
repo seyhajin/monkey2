@@ -554,7 +554,10 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		
 		opts.arch="armv7 arm64"
 		
-		If Int( GetEnv( "MX2_IOS_USE_SIMULATOR" ) ) opts.arch="x64"
+		If Int( GetEnv( "MX2_IOS_USE_SIMULATOR" ) ) 
+			opts.arch="x64"
+			opts.threads=0 'Don't support threads
+		End
 		
 	Default
 		
