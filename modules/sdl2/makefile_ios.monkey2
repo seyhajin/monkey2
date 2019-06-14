@@ -85,6 +85,7 @@ Namespace sdl2
 #Import "SDL/src/render/opengles/SDL_render_gles.c"
 #Import "SDL/src/render/opengles2/SDL_render_gles2.c"
 #Import "SDL/src/render/opengles2/SDL_shaders_gles2.c"
+#Import "SDL/src/render/metal/SDL_render_metal.m" 'v2.0.9
 
 'sensor (v2.0.9)
 #Import "SDL/src/sensor/SDL_sensor.c"
@@ -145,10 +146,12 @@ Namespace sdl2
 #Import "SDL/src/video/uikit/SDL_uikitclipboard.m"
 #Import "SDL/src/video/uikit/SDL_uikitevents.m"
 #Import "SDL/src/video/uikit/SDL_uikitmessagebox.m"
+#Import "SDL/src/video/uikit/SDL_uikitmetalview.m" 'v2.0.9
 #Import "SDL/src/video/uikit/SDL_uikitmodes.m"
 #Import "SDL/src/video/uikit/SDL_uikitopengles.m"
 #Import "SDL/src/video/uikit/SDL_uikitopenglview.m"
 #Import "SDL/src/video/uikit/SDL_uikitvideo.m"
 #Import "SDL/src/video/uikit/SDL_uikitview.m"
 #Import "SDL/src/video/uikit/SDL_uikitviewcontroller.m"
+#Import "SDL/src/video/uikit/SDL_uikitvulkan.m" 'v2.0.9
 #Import "SDL/src/video/uikit/SDL_uikitwindow.m"
