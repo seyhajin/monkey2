@@ -87,6 +87,9 @@ typedef unsigned int uintptr_t;
 #define HAVE_ENDPOINTVOLUME_H 1
 
 /* This is disabled by default to avoid C runtime dependencies and manifest requirements */
+#ifndef _WIN64
+  #define HAVE_LIBC 1
+#endif
 #ifdef HAVE_LIBC
 /* Useful headers */
 #define STDC_HEADERS 1
