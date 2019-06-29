@@ -10,9 +10,15 @@ Namespace std.fiber
 
 #If __TARGET__="windows"
 
-	#import "native/asm/make_i386_ms_pe_gas.asm"
-	#import "native/asm/jump_i386_ms_pe_gas.asm"
-	#import "native/asm/ontop_i386_ms_pe_gas.asm"
+	#if __ARCH__="x86"
+		#import "native/asm/make_i386_ms_pe_gas.asm"
+		#import "native/asm/jump_i386_ms_pe_gas.asm"
+		#import "native/asm/ontop_i386_ms_pe_gas.asm"
+	#elseif __ARCH__="x64"
+		#import "native/asm/make_x86_64_ms_pe_gas.asm"
+		#import "native/asm/jump_x86_64_ms_pe_gas.asm"
+		#import "native/asm/ontop_x86_64_ms_pe_gas.asm"
+	#endif
 
 #Else If __TARGET__="macos"
 

@@ -521,7 +521,7 @@ Function ParseOpts:String[]( opts:BuildOpts,args:String[] )
 		Endif
 	
 		If opts.arch="x64" And opts.toolchain<>"msvc"
-			Fail( "x64 builds for windows currently only supported for msvc" )
+			'Fail( "x64 builds for windows currently only supported for msvc" )
 		Endif
 		
 	Case "macos","linux"
