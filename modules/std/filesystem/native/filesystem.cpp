@@ -39,6 +39,9 @@
 
 #if BB_ANDROID
 
+#include "string.h"
+#include "errno.h"
+
 #include <sdl2/SDL/src/core/android/SDL_android.h>
 
 #endif
