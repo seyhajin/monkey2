@@ -8,6 +8,14 @@ Namespace sdl2
 #Import "<libXi.a>"
 #Import "<libpulse.a>"
 
+'src
+#Import "SDL/src/SDL_assert.c"
+#Import "SDL/src/SDL_error.c"
+#Import "SDL/src/SDL_hints.c"
+#Import "SDL/src/SDL_log.c"
+#Import "SDL/src/SDL_dataqueue.c" 'v2.0.9 (commented)
+#Import "SDL/src/SDL.c"
+
 'atomic
 #Import "SDL/src/atomic/SDL_atomic.c"
 #Import "SDL/src/atomic/SDL_spinlock.c"
@@ -22,6 +30,9 @@ Namespace sdl2
 
 #Import "SDL/src/audio/pulseaudio/SDL_pulseaudio.c"
 
+'core
+#import "SDL/src/core/unix/SDL_poll.c" 'v2.0.9
+
 'cpuinfo
 #Import "SDL/src/cpuinfo/SDL_cpuinfo.c"
 
@@ -30,6 +41,7 @@ Namespace sdl2
 
 'events
 #Import "SDL/src/events/SDL_clipboardevents.c"
+#import "SDL/src/events/SDL_displayevents.c" 'v2.0.9
 #Import "SDL/src/events/SDL_dropevents.c"
 #Import "SDL/src/events/SDL_events.c"
 #Import "SDL/src/events/SDL_gesture.c"
@@ -50,11 +62,21 @@ Namespace sdl2
 
 #Import "SDL/src/haptic/linux/SDL_syshaptic.c"
 
+'hidapi
+#import "SDL/src/hidapi/windows/hid.c" 'v2.0.9
+
 'joystick
 #Import "SDL/src/joystick/SDL_joystick.c"
 #Import "SDL/src/joystick/SDL_gamecontroller.c"
+#import "SDL/src/joystick/steam/SDL_steamcontroller.c" 'v2.0.9
 
 #Import "SDL/src/joystick/linux/SDL_sysjoystick.c"
+
+#import "SDL/src/joystick/hidapi/SDL_hidapijoystick.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_ps4.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_switch.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xbox360.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xboxone.c" 'v2.0.9
 
 'loadso
 #Import "SDL/src/loadso/dlopen/SDL_sysloadso.c"
@@ -62,7 +84,7 @@ Namespace sdl2
 'power
 #Import "SDL/src/power/SDL_power.c"
 
-#Import "SDL/src/power/macosx/SDL_syspower.c"
+#Import "SDL/src/power/linux/SDL_syspower.c" 'FIXED 'linux' aka 'macosx'
 
 'render
 #Import "SDL/src/render/SDL_render.c"
@@ -75,6 +97,10 @@ Namespace sdl2
 #Import "SDL/src/render/software/SDL_drawpoint.c"
 #Import "SDL/src/render/software/SDL_render_sw.c"
 #Import "SDL/src/render/software/SDL_rotate.c"
+
+'sensor (v2.0.9)
+#Import "SDL/src/sensor/SDL_sensor.c"
+#Import "SDL/src/sensor/dummy/SDL_dummysensor.c"
 
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
@@ -117,7 +143,12 @@ Namespace sdl2
 #Import "SDL/src/video/SDL_stretch.c"
 #Import "SDL/src/video/SDL_surface.c"
 #Import "SDL/src/video/SDL_video.c"
+#import "SDL/src/video/SDL_vulkan_utils.c" 'v2.0.9
+#import "SDL/src/video/SDL_yuv.c" 'v2.0.9
 
+#import "SDL/src/video/yuv2rgb/yuv_rgb.c" 'v2.0.9
+
+#Import "SDL/src/video/x11/edid-parse.c" 'v2.0.9
 #Import "SDL/src/video/x11/imKStoUCS.c"
 #Import "SDL/src/video/x11/SDL_x11clipboard.c"
 #Import "SDL/src/video/x11/SDL_x11dyn.c"
@@ -132,12 +163,28 @@ Namespace sdl2
 #Import "SDL/src/video/x11/SDL_x11shape.c"
 #Import "SDL/src/video/x11/SDL_x11touch.c"
 #Import "SDL/src/video/x11/SDL_x11video.c"
+#Import "SDL/src/video/x11/SDL_x11vulkan.c" 'v2.0.9
 #Import "SDL/src/video/x11/SDL_x11window.c"
 #Import "SDL/src/video/x11/SDL_x11xinput2.c"
 
-'src
-#Import "SDL/src/SDL_assert.c"
-#Import "SDL/src/SDL_error.c"
-#Import "SDL/src/SDL_hints.c"
-#Import "SDL/src/SDL_log.c"
-#Import "SDL/src/SDL.c"
+'libm - really?!?...
+#Import "SDL/src/libm/e_atan2.c"
+#Import "SDL/src/libm/e_exp.c" 'v2.0.9
+#Import "SDL/src/libm/e_fmod.c" '2.0.9
+#Import "SDL/src/libm/e_log.c"
+#Import "SDL/src/libm/e_log10.c" 'v2.0.9
+#Import "SDL/src/libm/e_pow.c"
+#Import "SDL/src/libm/e_rem_pio2.c"
+#Import "SDL/src/libm/e_sqrt.c"
+#Import "SDL/src/libm/k_cos.c"
+#Import "SDL/src/libm/k_rem_pio2.c"
+#Import "SDL/src/libm/k_sin.c"
+#Import "SDL/src/libm/k_tan.c"
+#Import "SDL/src/libm/s_atan.c"
+#Import "SDL/src/libm/s_copysign.c"
+#Import "SDL/src/libm/s_cos.c"
+#Import "SDL/src/libm/s_fabs.c"
+#Import "SDL/src/libm/s_floor.c"
+#Import "SDL/src/libm/s_scalbn.c"
+#Import "SDL/src/libm/s_sin.c"
+#Import "SDL/src/libm/s_tan.c"

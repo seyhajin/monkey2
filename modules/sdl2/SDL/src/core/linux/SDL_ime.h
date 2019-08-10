@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _SDL_ime_h
-#define _SDL_ime_h
+#ifndef SDL_ime_h_
+#define SDL_ime_h_
 
 #include "../../SDL_internal.h"
 
@@ -35,4 +35,6 @@ extern SDL_bool SDL_IME_ProcessKeyEvent(Uint32 keysym, Uint32 keycode);
 extern void SDL_IME_UpdateTextRect(SDL_Rect *rect);
 extern void SDL_IME_PumpEvents(void);
 
-#endif /* _SDL_ime_h */
+#endif /* SDL_ime_h_ */
+
+/* vi: set ts=4 sw=4 expandtab: */

@@ -11,6 +11,15 @@ Namespace sdl2
 #Import "<CoreAudio.framework>"
 #Import "<IOKit.framework>"
 #Import "<ForceFeedback.framework>"
+#import "<Metal.framework>"
+
+'src
+#Import "SDL/src/SDL_assert.c"
+#Import "SDL/src/SDL_error.c"
+#Import "SDL/src/SDL_hints.c"
+#Import "SDL/src/SDL_log.c"
+#Import "SDL/src/SDL_dataqueue.c" 'v2.0.9
+#Import "SDL/src/SDL.c"
 
 'atomic
 #Import "SDL/src/atomic/SDL_atomic.c"
@@ -27,6 +36,8 @@ Namespace sdl2
 #Import "SDL/src/audio/coreaudio/SDL_coreaudio.m"
 #Import "SDL/src/audio/dummy/SDL_dummyaudio.c"
 
+#import "SDL/src/audio/disk/SDL_diskaudio.c"
+
 'cpuinfo
 #Import "SDL/src/cpuinfo/SDL_cpuinfo.c"
 
@@ -35,6 +46,7 @@ Namespace sdl2
 
 'events
 #Import "SDL/src/events/SDL_clipboardevents.c"
+#import "SDL/src/events/SDL_displayevents.c" 'v2.0.9
 #Import "SDL/src/events/SDL_dropevents.c"
 #Import "SDL/src/events/SDL_events.c"
 #Import "SDL/src/events/SDL_gesture.c"
@@ -52,6 +64,9 @@ Namespace sdl2
 
 #Import "SDL/src/file/cocoa/SDL_rwopsbundlesupport.m"
 
+'hdiapi
+#import "SDL/src/hidapi/mac/hid.c"
+
 'haptic
 #Import "SDL/src/haptic/SDL_haptic.c"
 
@@ -62,6 +77,12 @@ Namespace sdl2
 #Import "SDL/src/joystick/SDL_gamecontroller.c"
 
 #Import "SDL/src/joystick/darwin/SDL_sysjoystick.c"
+
+#import "SDL/src/joystick/hidapi/SDL_hidapijoystick.c" 'v2.0.9
+#import "SDL/src/joystick/hidapi/SDL_hidapi_ps4.c" 'v2.0.9
+#import "SDL/src/joystick/hidapi/SDL_hidapi_switch.c" 'v2.0.9
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xbox360.c" 'v2.0.9
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xboxone.c" 'v2.0.9
 
 'loadso
 #Import "SDL/src/loadso/dlopen/SDL_sysloadso.c"
@@ -83,6 +104,20 @@ Namespace sdl2
 #Import "SDL/src/render/software/SDL_drawpoint.c"
 #Import "SDL/src/render/software/SDL_render_sw.c"
 #Import "SDL/src/render/software/SDL_rotate.c"
+
+#import "SDL/src/render/metal/SDL_render_metal.m" 'v2.0.9
+
+#import "SDL/src/render/opengl/SDL_render_gl.c" 'v2.0.9
+#import "SDL/src/render/opengl/SDL_shaders_gl.c" 'v2.0.9
+
+#import "SDL/src/render/opengles/SDL_render_gles.c" 'v2.0.9
+
+#import "SDL/src/render/opengles2/SDL_render_gles2.c" 'v2.0.9
+#import "SDL/src/render/opengles2/SDL_shaders_gles2.c" 'v2.0.9
+
+'sensor (v2.0.9)
+#Import "SDL/src/sensor/SDL_sensor.c"
+#Import "SDL/src/sensor/dummy/SDL_dummysensor.c"
 
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
@@ -124,22 +159,23 @@ Namespace sdl2
 #Import "SDL/src/video/SDL_stretch.c"
 #Import "SDL/src/video/SDL_surface.c"
 #Import "SDL/src/video/SDL_video.c"
+#import "SDL/src/video/SDL_vulkan_utils.c" 'v2.0.9
+#import "SDL/src/video/SDL_yuv.c" 'v2.0.9
+
+#import "SDL/src/video/yuv2rgb/yuv_rgb.c" 'v2.0.9
 
 #Import "SDL/src/video/cocoa/SDL_cocoaclipboard.m"
 #Import "SDL/src/video/cocoa/SDL_cocoaevents.m"
 #Import "SDL/src/video/cocoa/SDL_cocoakeyboard.m"
 #Import "SDL/src/video/cocoa/SDL_cocoamessagebox.m"
+#Import "SDL/src/video/cocoa/SDL_cocoametalview.m" 'v2.0.9
 #Import "SDL/src/video/cocoa/SDL_cocoamodes.m"
 #Import "SDL/src/video/cocoa/SDL_cocoamouse.m"
 #Import "SDL/src/video/cocoa/SDL_cocoamousetap.m"
 #Import "SDL/src/video/cocoa/SDL_cocoaopengl.m"
+#Import "SDL/src/video/cocoa/SDL_cocoaopengles.m" 'v2.0.9
 #Import "SDL/src/video/cocoa/SDL_cocoashape.m"
 #Import "SDL/src/video/cocoa/SDL_cocoavideo.m"
+#Import "SDL/src/video/cocoa/SDL_cocoavulkan.m" 'v2.0.9
 #Import "SDL/src/video/cocoa/SDL_cocoawindow.m"
 
-'src
-#Import "SDL/src/SDL_assert.c"
-#Import "SDL/src/SDL_error.c"
-#Import "SDL/src/SDL_hints.c"
-#Import "SDL/src/SDL_log.c"
-#Import "SDL/src/SDL.c"

@@ -1,7 +1,9 @@
 
 Namespace sdl2
 
-#rem
+#rem 
+
+SDL v.2.0.9
 
 'source files
 

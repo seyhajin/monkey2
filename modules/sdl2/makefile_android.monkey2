@@ -3,6 +3,7 @@ Namespace sdl2
 
 #Import "<libdl.a>"
 
+'main
 #Import "SDL/src/main/android/SDL_android_main.c"
 
 'audio
@@ -30,6 +31,7 @@ Namespace sdl2
 
 'events
 #Import "SDL/src/events/SDL_clipboardevents.c"
+#import "SDL/src/events/SDL_displayevents.c" 'v2.0.9
 #Import "SDL/src/events/SDL_dropevents.c"
 #Import "SDL/src/events/SDL_events.c"
 #Import "SDL/src/events/SDL_gesture.c"
@@ -47,12 +49,23 @@ Namespace sdl2
 
 'haptic
 #Import "SDL/src/haptic/SDL_haptic.c"
+
+#Import "SDL/src/haptic/android/SDL_syshaptic.c" 'v2.0.9
 #Import "SDL/src/haptic/dummy/SDL_syshaptic.c"
+
+'hidapi
+#import "SDL/src/hidapi/android/hid.cpp" 'v2.0.9
 
 'joystick
 #Import "SDL/src/joystick/SDL_gamecontroller.c"
 #Import "SDL/src/joystick/SDL_joystick.c"
 #Import "SDL/src/joystick/android/SDL_sysjoystick.c"
+
+#import "SDL/src/joystick/hidapi/SDL_hidapijoystick.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_ps4.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_switch.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xbox360.c" 'v2.0.9'
+#import "SDL/src/joystick/hidapi/SDL_hidapi_xboxone.c" 'v2.0.9'
 
 'loadso
 #Import "SDL/src/loadso/dlopen/SDL_sysloadso.c"
@@ -72,6 +85,11 @@ Namespace sdl2
 #Import "SDL/src/render/software/SDL_drawpoint.c"
 #Import "SDL/src/render/software/SDL_render_sw.c"
 #Import "SDL/src/render/software/SDL_rotate.c"
+
+'sensor (v2.0.9)
+#Import "SDL/src/sensor/SDL_sensor.c"
+#Import "SDL/src/sensor/android/SDL_androidsensor.c"
+#Import "SDL/src/sensor/dummy/SDL_dummysensor.c"
 
 'stdlib
 #Import "SDL/src/stdlib/SDL_getenv.c"
@@ -113,6 +131,10 @@ Namespace sdl2
 #Import "SDL/src/video/SDL_stretch.c"
 #Import "SDL/src/video/SDL_surface.c"
 #Import "SDL/src/video/SDL_video.c"
+#import "SDL/src/video/SDL_vulkan_utils.c" 'v2.0.9
+#import "SDL/src/video/SDL_yuv.c" 'v2.0.9
+
+#import "SDL/src/video/yuv2rgb/yuv_rgb.c" 'v2.0.9
 
 #Import "SDL/src/video/android/SDL_androidclipboard.c"
 #Import "SDL/src/video/android/SDL_androidevents.c"
@@ -122,6 +144,7 @@ Namespace sdl2
 #Import "SDL/src/video/android/SDL_androidmouse.c"
 #Import "SDL/src/video/android/SDL_androidtouch.c"
 #Import "SDL/src/video/android/SDL_androidvideo.c"
+#Import "SDL/src/video/android/SDL_androidvulkan.c" 'v2.0.9
 #Import "SDL/src/video/android/SDL_androidwindow.c"
 
 'src
@@ -129,4 +152,5 @@ Namespace sdl2
 #Import "SDL/src/SDL_error.c"
 #Import "SDL/src/SDL_hints.c"
 #Import "SDL/src/SDL_log.c"
+#Import "SDL/src/SDL_dataqueue.c" 'v2.0.9
 #Import "SDL/src/SDL.c"

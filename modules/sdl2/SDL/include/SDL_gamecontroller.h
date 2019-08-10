@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,8 +25,8 @@
  *  Include file for SDL game controller event handling
  */
 
-#ifndef _SDL_gamecontroller_h
-#define _SDL_gamecontroller_h
+#ifndef SDL_gamecontroller_h_
+#define SDL_gamecontroller_h_
 
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
@@ -51,7 +51,9 @@ extern "C" {
  *  SDL_Init(): SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS
  */
 
-/* The gamecontroller structure used to identify an SDL game controller */
+/**
+ * The gamecontroller structure used to identify an SDL game controller
+ */
 struct _SDL_GameController;
 typedef struct _SDL_GameController SDL_GameController;
 
@@ -134,6 +136,20 @@ extern DECLSPEC int SDLCALL SDL_GameControllerAddMappingsFromRW(SDL_RWops * rw, 
 extern DECLSPEC int SDLCALL SDL_GameControllerAddMapping(const char* mappingString);
 
 /**
+ *  Get the number of mappings installed
+ *
+ *  \return the number of mappings
+ */
+extern DECLSPEC int SDLCALL SDL_GameControllerNumMappings(void);
+
+/**
+ *  Get the mapping at a particular index.
+ *
+ *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if the index is out of range.
+ */
+extern DECLSPEC char * SDLCALL SDL_GameControllerMappingForIndex(int mapping_index);
+
+/**
  *  Get a mapping string for a GUID
  *
  *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if no mapping is available
@@ -160,6 +176,14 @@ extern DECLSPEC SDL_bool SDLCALL SDL_IsGameController(int joystick_index);
 extern DECLSPEC const char *SDLCALL SDL_GameControllerNameForIndex(int joystick_index);
 
 /**
+ *  Get the mapping of a game controller.
+ *  This can be called before any controllers are opened.
+ *
+ *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if no mapping is available
+ */
+extern DECLSPEC char *SDLCALL SDL_GameControllerMappingForDeviceIndex(int joystick_index);
+
+/**
  *  Open a game controller for use.
  *  The index passed as an argument refers to the N'th game controller on the system.
  *  This index is not the value which will identify this controller in future
@@ -179,6 +203,13 @@ extern DECLSPEC SDL_GameController *SDLCALL SDL_GameControllerFromInstanceID(SDL
  *  Return the name for this currently opened controller
  */
 extern DECLSPEC const char *SDLCALL SDL_GameControllerName(SDL_GameController *gamecontroller);
+
+/**
+ *  Get the player index of an opened game controller, or -1 if it's not available
+ *
+ *  For XInput controllers this returns the XInput user index.
+ */
+extern DECLSPEC int SDLCALL SDL_GameControllerGetPlayerIndex(SDL_GameController *gamecontroller);
 
 /**
  *  Get the USB vendor ID of an opened controller, if available.
@@ -231,6 +262,12 @@ extern DECLSPEC void SDLCALL SDL_GameControllerUpdate(void);
 
 /**
  *  The list of axes available from a controller
+ *
+ *  Thumbstick axis values range from SDL_JOYSTICK_AXIS_MIN to SDL_JOYSTICK_AXIS_MAX,
+ *  and are centered within ~8000 of zero, though advanced UI will allow users to set
+ *  or autodetect the dead zone, which varies between controllers.
+ *
+ *  Trigger axis values range from 0 to SDL_JOYSTICK_AXIS_MAX.
  */
 typedef enum
 {
@@ -324,6 +361,19 @@ extern DECLSPEC Uint8 SDLCALL SDL_GameControllerGetButton(SDL_GameController *ga
                                                           SDL_GameControllerButton button);
 
 /**
+ *  Trigger a rumble effect
+ *  Each call to this function cancels any previous rumble effect, and calling it with 0 intensity stops any rumbling.
+ *
+ *  \param gamecontroller The controller to vibrate
+ *  \param low_frequency_rumble The intensity of the low frequency (left) rumble motor, from 0 to 0xFFFF
+ *  \param high_frequency_rumble The intensity of the high frequency (right) rumble motor, from 0 to 0xFFFF
+ *  \param duration_ms The duration of the rumble effect, in milliseconds
+ *
+ *  \return 0, or -1 if rumble isn't supported on this joystick
+ */
+extern DECLSPEC int SDLCALL SDL_GameControllerRumble(SDL_GameController *gamecontroller, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms);
+
+/**
  *  Close a controller previously opened with SDL_GameControllerOpen().
  */
 extern DECLSPEC void SDLCALL SDL_GameControllerClose(SDL_GameController *gamecontroller);
@@ -335,6 +385,6 @@ extern DECLSPEC void SDLCALL SDL_GameControllerClose(SDL_GameController *gamecon
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_gamecontroller_h */
+#endif /* SDL_gamecontroller_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

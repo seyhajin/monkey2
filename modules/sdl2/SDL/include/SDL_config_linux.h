@@ -131,6 +131,9 @@
 #define SDL_VIDEO_DRIVER_X11_XINPUT2 1
 #define SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS 1
 
+/* Enable Vulkan support */
+#define SDL_VIDEO_VULKAN 1
+
 /* Enable OpenGL support */
 #define SDL_VIDEO_OPENGL 1
 #define SDL_VIDEO_OPENGL_GLX 1
