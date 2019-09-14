@@ -41,13 +41,14 @@ Class AutocompleteListView Extends ListViewExt
 		
 		Super.OnThemeChanged()
 		_selColor=App.Theme.GetColor( "completion-list-selected" )
+		_textColor=App.Theme.GetColor( "completion-list-text" )
 		_markedBgColor=App.Theme.GetColor( "completion-list-marked-bg" )
 		_markedTextColor=App.Theme.GetColor( "completion-list-marked-text" )
 	End
 	
 	Method DrawItem( item:ListViewItem,canvas:Canvas,x:Float,y:Float,handleX:Float=0,handleY:Float=0 ) Override
 		
-		canvas.Color=App.Theme.DefaultStyle.TextColor
+		canvas.Color=Color.White
 		
 		Local txt:=item.Text
 		Local icon:=item.Icon
@@ -57,6 +58,8 @@ Class AutocompleteListView Extends ListViewExt
 			x+=icon.Width+8
 			canvas.Alpha=1
 		Endif
+		
+		canvas.Color=_textColor
 		If Not word
 			canvas.DrawText( txt,x,y,handleX,handleY )
 			Return
@@ -87,7 +90,9 @@ Class AutocompleteListView Extends ListViewExt
 	
 	Private
 	
-	Field _markedBgColor:Color,_markedTextColor:Color
+	Field _markedBgColor:Color
+	Field _markedTextColor:Color
+	Field _textColor:Color
 	
 End
 
@@ -437,7 +442,7 @@ Class AutocompleteDialog Extends NoTitleDialog
 					event.Eat()
 					
 				Case Key.Enter,Key.KeypadEnter
-					If Not templ
+					If Not templ Or Prefs.TemplatesInsertByEnter
 						If Prefs.AcUseEnter
 							OnItemChoosen( curItem,key )
 							If Not Prefs.AcNewLineByEnter Then event.Eat()
