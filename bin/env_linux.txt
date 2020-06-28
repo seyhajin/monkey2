@@ -6,7 +6,7 @@ MX2_THREADS=1
 'LD options
 MX2_LD_OPTS_LINUX=-lpthread
 MX2_LD_OPTS_LINUX_DEBUG=
-MX2_LD_OPTS_LINUX_RELEASE=-s -O3
+MX2_LD_OPTS_LINUX_RELEASE=-no-pie -s -O3
 
 'C compiler options
 MX2_CC_OPTS_LINUX=-std=gnu99
