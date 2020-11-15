@@ -71,6 +71,37 @@ function init:void()
 
 	'/* create shader glsl330 format */
 	local shdesc:sg_shader_desc
+	
+#if __TARGET__="macos"
+	shdesc.vs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct vs_in {~n"+
+		"	float4 position [[attribute(0)]];~n"+
+		"	float4 color [[attribute(1)]];~n"+
+		"};~n"+
+		"struct vs_out {~n"+
+		"	float4 position [[position]];~n"+
+		"	float4 color [[user(usr0)]];~n"+
+		"};~n"+
+		"vertex vs_out _main(vs_in in [[stage_in]]) {~n"+
+		"	vs_out out;~n"+
+		"	out.position = in.position;~n"+
+		"	out.color = in.color;~n"+
+		"	return out;~n"+
+		"}~n")
+	
+	shdesc.fs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"#include <simd/simd.h>~n"+
+		"using namespace metal;~n"+
+		"struct fs_in {~n"+
+		"	float4 color [[user(usr0)]];~n"+
+		"};~n"+
+		"fragment float4 _main(fs_in in [[stage_in]]) {~n"+
+		"	return in.color;~n"+
+		"};~n")
+#else
 	shdesc.label = CStr("quad-shader")
 	shdesc.attrs[0].name = CStr("position")
 	shdesc.attrs[1].name = CStr("color0")
@@ -92,6 +123,8 @@ function init:void()
 		"void main() {~n"+
 		"  frag_color = color;~n"+
 		"}~n")
+#endif
+
 	local shd:sg_shader = sg_make_shader(varptr shdesc)
 
 	'/* create a pipeline object (default render states are fine for triangle) */
