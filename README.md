@@ -1,6 +1,6 @@
 # Welcome to Monkey2!
 
-**Monkey2** is a new programming language designed by Mark Sibly, creator of the �Blitz� range of languages.
+**Monkey2** is a new programming language designed by Mark Sibly, creator of the 'Blitz' range of languages.
 
 ### Showcase
 
@@ -12,7 +12,7 @@
 
 ------
 
-While staying true to the �basic� style of the original blitz languages, Monkey2 offers some very powerful new features including:
+While staying true to the 'basic' style of the original blitz languages, Monkey2 offers some very powerful new features including:
 
 ### Generic classes and methods 
 
@@ -163,7 +163,7 @@ End
 
 ### Fully garbage collected
 
-Monkey2 provides a �mostly� incremental garbage collector that efficiently collects garbage as it runs without any of those annoying �sweep� spikes found in typical garbage collectors.
+Monkey2 provides a 'mostly' incremental garbage collector that efficiently collects garbage as it runs without any of those annoying 'sweep' spikes found in typical garbage collectors.
 
 ### Optional reflection features
 
