@@ -41,6 +41,7 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		End
 		
 		Print "GL_VERSION="+opengl.glGetString( opengl.GL_VERSION )
+		Print "GL_VENDOR="+opengl.glGetString( opengl.GL_VENDOR )
 		
 		If _deferred
 			Print "Renderer is using deferred rendering"
@@ -913,15 +914,14 @@ When a new renderer is created, the config setting `MOJO3D\_RENDERER` can be use
 		_depthBuffer?.Discard()
 		_renderTarget0?.Discard()
 		_renderTarget1?.Discard()
-
-		#If Not __MOBILE_TARGET__
-		Const color_format:=PixelFormat.RGBA32F
-		Const depth_format:=PixelFormat.Depth32
-		#Else
-		Const color_format:=PixelFormat.RGBA8
-		Const depth_format:=PixelFormat.Depth32
-		#Endif
 		
+		Local color_format:=PixelFormat.RGBA32F
+		Local depth_format:=PixelFormat.Depth32
+		
+		If GetConfig("MOJO_OPENGL_PROFILE")="es"
+			color_format=PixelFormat.RGBA8
+		Endif
+				
 		If _deferred
 		
 			_accumBuffer=New Texture( size.x,size.y,color_format,TextureFlags.Dynamic|TextureFlags.Filter )
