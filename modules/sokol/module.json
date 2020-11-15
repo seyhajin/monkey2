@@ -1,0 +1,8 @@
+{
+	"module":"sokol",
+	"about":"Minimal cross-platform standalone C headers. (monkey2 bindings)",
+	"author":"Andre Weissflog aka 'floooh' (author), Christophe TES aka 'seyhajin' (monkey2 port)",
+	"version":"1.0.0",
+	"support":"https://github.com/floooh/sokol",
+	"depends":["libc"]
+}
