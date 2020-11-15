@@ -1,6 +1,6 @@
 # Welcome to Monkey2!
 
-**Monkey2** is a new programming language designed by Mark Sibly, creator of the ‘Blitz’ range of languages.
+**Monkey2** is a new programming language designed by Mark Sibly, creator of the ï¿½Blitzï¿½ range of languages.
 
 ### Showcase
 
@@ -12,7 +12,7 @@
 
 ------
 
-While staying true to the ‘basic’ style of the original blitz languages, Monkey2 offers some very powerful new features including:
+While staying true to the ï¿½basicï¿½ style of the original blitz languages, Monkey2 offers some very powerful new features including:
 
 ### Generic classes and methods 
 
@@ -163,7 +163,7 @@ End
 
 ### Fully garbage collected
 
-Monkey2 provides a ‘mostly’ incremental garbage collector that efficiently collects garbage as it runs without any of those annoying ‘sweep’ spikes found in typical garbage collectors.
+Monkey2 provides a ï¿½mostlyï¿½ incremental garbage collector that efficiently collects garbage as it runs without any of those annoying ï¿½sweepï¿½ spikes found in typical garbage collectors.
 
 ### Optional reflection features
 
@@ -217,7 +217,9 @@ Monkey2 works on a wide range of targets: Windows, Macos, Linux, Emscripten, And
 
 ##### Monkey2
 
-![](./docs/img/icons/logo-wordpress.svg) Development blog : http://monkeycoder.co.nz/
+![](./docs/img/icons/logo-wordpress.svg) Development blog archive : http://codedan.net/Monkey2/backup/monkeycoder.co.nz/news/index.html (thanks @Danilo)
+
+![](./docs/img/icons/logo-wordpress.svg) Documentation : http://www.codedan.net/Monkey2/docs/ (thanks @Danilo)
 
 ![](./docs/img/icons/logo-discord.svg) Discord channel : https://discord.gg/ZHpRAFp
 
@@ -241,7 +243,7 @@ If you are reading this on github, please note there are prebuilt versions of mo
 
 ### Building 'monkey2' on Windows
 
-Unless you are using one of the prebuilt releases, you will need to install the mingw-64 compiler. There is a self-extracting archive of mingw-64 that has been tested with monkey2 here: http://monkeycoder.co.nz/get-file?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe.
+Unless you are using one of the prebuilt releases, you will need to install the mingw-64 compiler. There is a self-extracting archive of mingw-64 that has been tested with monkey2 here: http://codedan.net/Monkey2/backup/monkeycoder.co.nz/get-file/index-file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe.html.
 
 If you install this to the monkey2 'devtools' directory, the following steps should 'just work' (ha!) :
 
