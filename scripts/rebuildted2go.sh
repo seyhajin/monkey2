@@ -36,8 +36,8 @@ else
 	rm -r -f $ted2
 	cp -R ./ted2go.products/macos/ted2.app $ted2
 
-	cp ../src/ted2go/info.plist "$ted2/Contents"
-	cp ../src/launcher/Monkey2logo.icns "$ted2/Contents/Resources"
+	cp ../src/ted2go/logo/info.plist "$ted2/Contents"
+	cp ../src/ted2go/logo/Ted2logo.icns "$ted2/Contents/Resources"
 	
 	rm -r -f "$launcher"
 	cp -R ./launcher.products/macos/Launcher.app "$launcher"
