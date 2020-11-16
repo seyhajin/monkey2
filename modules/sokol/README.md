@@ -46,6 +46,8 @@ See more :  https://github.com/floooh/sokol
 
 ## Build module
 
+__NOTE__: on macOS, Sokol need to add C/C++ compiler flag in './bin/env_macos.txt': `-fobjc-arc`
+
 Launch commands :
 
 ```shell
