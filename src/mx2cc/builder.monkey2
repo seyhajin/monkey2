@@ -622,6 +622,21 @@ Class BuilderInstance
 		
 		If path.StartsWith( "<" ) And path.EndsWith( ">" )
 			ImportSystemFile( path.Slice( 1,-1 ) )
+
+		'// ***** Experimental *****
+		Else If path.StartsWith( "MX2_LD_OPTS_") Or path.StartsWith( "MX2_CC_OPTS_") Or path.StartsWith( "MX2_CPP_OPTS_")
+			Local name:=StripExt( path )
+			local f:= name.Find("=")
+			If f <> -1
+				'// FIXME: Need some controls
+				If name.StartsWith( "MX2_LD_OPTS_" + HostOS.ToUpper()) Then product.LD_OPTS += " " + name.Slice(f+1)
+				If name.StartsWith( "MX2_CC_OPTS_" + HostOS.ToUpper()) Then product.CC_OPTS += " " + name.Slice(f+1)
+				If name.StartsWith( "MX2_CPP_OPTS_" + HostOS.ToUpper()) Then product.CPP_OPTS += " " + name.Slice(f+1)
+			Else
+				'Failed to parse MX2 build options
+				Throw New BuildEx( "Failed to parse additionnal MX2 build options : '"+path+"'" )
+			End
+		'// ***** Experimental *****
 		Else
 			If currentDir path=currentDir+path
 			ImportLocalFile( RealPath( path ) )

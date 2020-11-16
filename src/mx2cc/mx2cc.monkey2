@@ -105,14 +105,14 @@ Function Main()
 		Print "  for makedocs - space separated list of modules, or nothing to make all docs."
 
 #If __DESKTOP_TARGET__
-		If Int( GetEnv( "MX2_USE_MSVC" ) ) Or GetEnv( "MX2_USE_MSVC" )=""
+		If Int( GetEnv( "MX2_USE_MSVC" ) ) and HostOS="windows"
 			system( "cl > tmp\_v.txt" )		'doesn't work?
 			Print ""
 			Print "Mx2cc using cl version:"
 			Print ""
 			Print LoadString( "tmp/_v.txt" )
 		Else
-			system( "g++ --version >tmp/_v.txt" )
+			system( "g++ --version > tmp/_v.txt" )
 			Print ""
 			Print "Mx2cc using g++ version:"
 			Print ""
