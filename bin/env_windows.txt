@@ -12,7 +12,7 @@ MX2_USE_MSVC=
 
 'Build architecture: x86 or x64, x64 only working with msvc.
 '
-MX2_ARCH_WINDOWS=x86
+MX2_ARCH_WINDOWS=x64
 
 'Semi-colon separated list of module root dirs, relative to MX2_HOME or absolute.
 '
