@@ -8,6 +8,17 @@ using libc..
 
 #import "<libgdi32.a>"
 
+#elseif __HOSTOS__="macos"
+
+#import "MX2_CC_OPTS_MACOS=-fobjc-arc"
+#import "MX2_CPP_OPTS_MACOS=-fobjc-arc"
+
+#import "<CoreFoundation.framework>"
+#import "<Metal.framework>"
+#import "<Cocoa.framework>"
+#import "<MetalKit.framework>"
+#import "<Quartz.framework>"
+
 #endif
 
 #import "native/*.h"
@@ -15,7 +26,11 @@ using libc..
 #import "native/sokol_app.h"
 #import "native/sokol_gfx.h"
 
+#if __HOSTOS__="macos"
+#import "native/sokol_glue.m"
+#else
 #import "native/sokol_glue.c"
+#end
 
 
 extern
