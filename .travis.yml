@@ -6,6 +6,7 @@ os:
 
 addons:
   apt:
+    update: true
     packages:
       - gcc
       - g++-multilib
@@ -18,8 +19,14 @@ before_scripts:
   - cd scripts
 
 scripts:
-  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./rebuildall.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./rebuildall.bat; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./rebuildmx2cc.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./rebuildmods.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./rebuildted2go.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./makedocs.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./rebuildmx2cc.bat; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./rebuildmods.bat; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./rebuildted2go.bat; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./makedocs.bat; fi
 
 branches:
   only:
