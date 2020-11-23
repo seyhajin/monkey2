@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/seyhajin/monkey2.svg?branch=develop)](https://travis-ci.org/seyhajin/monkey2)
+
 # Welcome to Monkey2!
 
 **Monkey2** is a new programming language designed by Mark Sibly, creator of the 'Blitz' range of languages.
@@ -263,7 +265,7 @@ xcode-select --install
 * On **Linux**, install the GCC toolchain and libraries. You can do this by entering in a shell :
 
 ```shell
-sudo apt-get install g++-multilib libopenal-dev libpulse-dev libsdl2-dev`
+sudo apt-get install g++-multilib libopenal-dev libpulse-dev libsdl2-dev
 ```
 1. Open a shell and change to the 'monkey2/scripts' directory.
 2. Enter `./rebuildall.sh` and hit return. Wait...
