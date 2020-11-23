@@ -1,0 +1,29 @@
+language: sh
+os:
+  - linux
+  - osx
+  - windows
+
+addons:
+  apt:
+    packages:
+      - gcc
+      - g++-multilib
+      - libopenal-dev
+      - libpulse-dev
+      - libsdl2-dev
+      - libc6-dev
+
+before_scripts:
+  - cd scripts
+
+scripts:
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./rebuildall.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./rebuildall.bat; fi
+
+branches:
+  only:
+    -develop
+
+notifications:
+  email: false
