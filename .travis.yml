@@ -30,7 +30,7 @@ scripts:
 
 branches:
   only:
-    -develop
+    - develop
 
 notifications:
   email: false
