@@ -4,6 +4,8 @@ os:
   - osx
   - windows
 
+dist: bionic
+
 addons:
   apt:
     update: true
