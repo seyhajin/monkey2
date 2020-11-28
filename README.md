@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/seyhajin/monkey2.svg?branch=develop)](https://travis-ci.org/seyhajin/monkey2)
+[![Travis CI](https://travis-ci.org/seyhajin/monkey2.svg?branch=develop)](https://travis-ci.org/seyhajin/monkey2)
+
+![Github CI](https://github.com/seyhajin/monkey2/workflows/Github%20CI/badge.svg?branch=develop)
 
 # Welcome to Monkey2!
 
