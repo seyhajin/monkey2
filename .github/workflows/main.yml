@@ -57,7 +57,7 @@ jobs:
         shell: cmd
         run: |
           echo %CD%
-          cd monkey2\scripts
+          cd %CD%\scripts
           rebuildmx2cc.bat
           rebuildmods.bat
           rebuildted2go.bat
