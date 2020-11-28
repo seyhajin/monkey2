@@ -58,10 +58,7 @@ jobs:
         run: |
           echo %CD%
           cd %CD%\scripts
-          rebuildmx2cc.bat
-          rebuildmods.bat
-          rebuildted2go.bat
-          makedocs.bat
+          rebuildall.bat
   # This workflow contains a single job called "build-macos"
   build-macos:
     # The type of runner that the job will run on (macos-latest)
