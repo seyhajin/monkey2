@@ -22,16 +22,23 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Runs a single command using the runners shell
+      - name: Update apt-packages
+        run: apt-get update
+      
+      # Runs a single command using the runners shell
+      - name: Install dependencies
+        run: sudo apt-get install g++-multilib libopenal-dev libpulse-dev libsdl2-dev
+      
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Install dependencies
-        run: sudo apt-get install g++-multilib libopenal-dev libpulse-dev libsdl2-dev
-
-      # Runs a single command using the runners shell
       - name: Change to 'scripts' directory
-        run: cd scripts
+        run: |
+          echo $GITHUB_WORKSPACE
+          pwd
+          cd scripts
 
       # Runs a set of commands using the runners shell
       - name: Run rebuild scripts
@@ -52,15 +59,18 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Change to 'scripts' directory
-        run: cd scripts
+        run: |
+          echo %GITHUB_WORKSPACE%
+          cd
+          cd scripts
 
       # Runs a set of commands using the runners shell
       - name: Run rebuild scripts
         run: |
-          ./rebuildmx2cc.bat
-          ./rebuildmods.bat
-          ./rebuildted2go.bat
-          ./makedocs.bat
+          rebuildmx2cc.bat
+          rebuildmods.bat
+          rebuildted2go.bat
+          makedocs.bat
   # This workflow contains a single job called "build-macos"
   build-macos:
     # The type of runner that the job will run on (macos-latest)
@@ -73,7 +83,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Change to 'scripts' directory
-        run: cd scripts
+        run: |
+          echo $GITHUB_WORKSPACE
+          pwd
+          cd scripts
 
       # Runs a set of commands using the runners shell
       - name: Run rebuild scripts
