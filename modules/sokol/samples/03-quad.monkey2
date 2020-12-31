@@ -71,8 +71,10 @@ function init:void()
 
 	'/* create shader glsl330 format */
 	local shdesc:sg_shader_desc
+	shdesc.label = CStr("quad-shader")
 	
 #if __TARGET__="macos"
+	'/* metal shader format */
 	shdesc.vs.source = CStr(
 		"#include <metal_stdlib>~n"+
 		"using namespace metal;~n"+
@@ -102,7 +104,7 @@ function init:void()
 		"	return in.color;~n"+
 		"};~n")
 #else
-	shdesc.label = CStr("quad-shader")
+	'/* glsl330 shader format */
 	shdesc.attrs[0].name = CStr("position")
 	shdesc.attrs[1].name = CStr("color0")
 	shdesc.vs.entry = CStr("main")

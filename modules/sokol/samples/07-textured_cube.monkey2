@@ -152,9 +152,54 @@ function init:void()
 	img.label = CStr("cube-texture")
 	state.bind.fs_images[0] = sg_make_image(varptr img)
 
-	'/* create shader glsl330 format */
+	'/* create shader */
 	local shdesc:sg_shader_desc
 	shdesc.label = CStr("cube-shader")
+	
+#if __TARGET__="macos"
+	'/* metal shader format */
+	shdesc.vs.entry = CStr("vs_main")
+	shdesc.vs.uniform_blocks[0].size = 64
+	shdesc.vs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct params_t {~n"+
+		"  float4x4 mvp;~n"+
+		"};~n"+
+		"struct vs_in {~n"+
+		"  float4 position [[attribute(0)]];~n"+
+		"  float4 color [[attribute(1)]];~n"+
+		"  float2 uv [[attribute(2)]];~n"+
+		"};~n"+
+		"struct vs_out {~n"+
+		"  float4 pos [[position]];~n"+
+		"  float4 color;~n"+
+		"  float2 uv;~n"+
+		"};~n"+
+		"vertex vs_out vs_main(vs_in in [[stage_in]], constant params_t& params [[buffer(0)]]) {~n"+
+		"  vs_out out;~n"+
+		"  out.pos = params.mvp * in.position;~n"+
+		"  out.color = in.color;~n"+
+		"  out.uv = in.uv * 5.0;~n"+
+		"  return out;~n"+
+		"}~n")
+	shdesc.fs.entry = CStr("fs_main")
+	shdesc.fs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct fs_in {~n"+
+		"  float4 color;~n"+
+		"  float2 uv;~n"+
+		"};~n"+
+		"fragment float4 fs_main(fs_in in [[stage_in]],~n"+
+		"  texture2d<float> tex [[texture(0)]],~n"+
+		"  sampler smp [[sampler(0)]])~n"+
+		"{~n"+
+		"  return float4(tex.sample(smp, in.uv).xyz, 1.0) * in.color;~n"+
+		"};~n")
+	
+#else
+	'/* glsl330 shader format */
 	shdesc.attrs[0].name = CStr("position")
 	shdesc.attrs[1].name = CStr("color0")
 	shdesc.attrs[2].name = CStr("texcoord0")
@@ -186,6 +231,8 @@ function init:void()
 		"void main() {~n"+
 		"  frag_color = texture(tex, uv) * color;~n"+
 		"}~n")
+#end
+		
 	shdesc.fs.images[0].name = CStr("tex")
 	shdesc.fs.images[0].type = SG_IMAGETYPE_2D
 	local shd:sg_shader = sg_make_shader(varptr shdesc)
@@ -228,8 +275,8 @@ function frame:void()
 	local view:= Mat4f.LookAt(new Vec3f(0.0, 1.5, 6.0))
 	local view_proj:= proj * view
 	
-	state.rx+= .05
-	state.ry+= .08
+	state.rx+= .01
+	state.ry+= .02
 	local model:= Mat4f.Rotation(state.rx, state.ry, 0.0)
 
 	local vs_params:vs_params_t

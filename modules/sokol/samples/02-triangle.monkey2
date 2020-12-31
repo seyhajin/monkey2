@@ -55,10 +55,12 @@ function init:void()
 	vb.label = CStr("triangle-vertices")
 	state.bind.vertex_buffers[0] = sg_make_buffer(varptr vb)
 	
-	'/* create shader glsl330 format */
+	'/* create shader */
 	local shdesc:sg_shader_desc
+	shdesc.label = CStr("triangle-shader")
 	
 #if __TARGET__="macos"
+	'/* metal shader format */
 	shdesc.vs.source = CStr(
 		"#include <metal_stdlib>~n"+
 		"using namespace metal;~n"+
@@ -84,7 +86,7 @@ function init:void()
 		"	return color;~n"+
 		"};~n")
 #else
-	shdesc.label = CStr("triangle-shader")
+	'/* glsl330 shader format */
 	shdesc.attrs[0].name = CStr("position")
 	shdesc.attrs[1].name = CStr("color0")
 	shdesc.vs.entry = CStr("main")

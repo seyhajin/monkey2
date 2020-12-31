@@ -64,9 +64,9 @@ function init:void()
 		
 	'/* a offscreen pass action to framebuffer to blacks */
 	offscreen.pass_action.colors[0].action = SG_ACTION_CLEAR
-	offscreen.pass_action.colors[0].val[0] = 0.0
-	offscreen.pass_action.colors[0].val[1] = 0.0
-	offscreen.pass_action.colors[0].val[2] = 0.0
+	offscreen.pass_action.colors[0].val[0] = 0.5
+	offscreen.pass_action.colors[0].val[1] = 0.5
+	offscreen.pass_action.colors[0].val[2] = 0.5
 	offscreen.pass_action.colors[0].val[3] = 1.0
 	
 	'/* a render pass with one color- and one depth-attachment image */
@@ -149,9 +149,43 @@ function init:void()
 	ib.label = CStr("cube-indices")
 	ib.type = SG_BUFFERTYPE_INDEXBUFFER
 	
-	'/* create offscreen shader glsl330 format */
+	'/* create offscreen shader */
 	local opp:sg_pipeline_desc, shoff:sg_shader_desc
 	shoff.label = CStr("offscreen-shader")
+	
+#if __TARGET__="macos"
+	'/* metal shader format */
+	shoff.vs.uniform_blocks[0].size = 64
+	shoff.vs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct params_t {~n"+
+	       "  float4x4 mvp;~n"+
+	        "};~n"+
+		"struct vs_in {~n"+
+		"	float4 position [[attribute(0)]];~n"+
+		"	float4 color [[attribute(1)]];~n"+
+		"};~n"+
+		"struct vs_out {~n"+
+		"	float4 position [[position]];~n"+
+		"	float4 color;~n"+
+		"};~n"+
+		"vertex vs_out _main(vs_in in [[stage_in]], constant params_t& params [[buffer(0)]]) {~n"+
+		"	vs_out out;~n"+
+		"	out.position = params.mvp * in.position;~n"+
+		"	out.color = in.color;~n"+
+		"	return out;~n"+
+		"}~n")
+	
+	shoff.fs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"fragment float4 _main(float4 color [[stage_in]]) {~n"+
+		"	return color;~n"+
+		"};~n")
+	
+#else
+	'/* glsl330 shader format */
 	shoff.attrs[0].name = CStr("position")
 	shoff.attrs[1].name = CStr("color0")
 	shoff.vs.entry = CStr("main")
@@ -177,6 +211,7 @@ function init:void()
 		"void main() {~n"+
 		"  frag_color = color;~n"+
 		"}~n")
+#end
 
 	'/* pipeline-state-object for offscreen-rendered cube, don't need texture coord here */
 	opp.shader = sg_make_shader(varptr shoff)
@@ -209,8 +244,51 @@ function init:void()
 	'/* and another pipeline-state-object for the default pass */
 	local dpp:sg_pipeline_desc, shdef:sg_shader_desc
 	
-	'/* create default shader glsl330 format */
+	'/* create default shader */
 	shdef.label = CStr("default-shader")
+	
+#if __TARGET__="macos"
+	'/* metal shader format */
+	shdef.vs.uniform_blocks[0].size = 64
+	shdef.vs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct params_t {~n"+
+		"  float4x4 mvp;~n"+
+		"};~n"+
+		"struct vs_in {~n"+
+		"  float4 position [[attribute(0)]];~n"+
+		"  float4 color [[attribute(1)]];~n"+
+		"  float2 uv [[attribute(2)]];~n"+
+		"};~n"+
+		"struct vs_out {~n"+
+		"  float4 pos [[position]];~n"+
+		"  float4 color;~n"+
+		"  float2 uv;~n"+
+		"};~n"+
+		"vertex vs_out _main(vs_in in [[stage_in]], constant params_t& params [[buffer(0)]]) {~n"+
+		"  vs_out out;~n"+
+		"  out.pos = params.mvp * in.position;~n"+
+		"  out.color = in.color;~n"+
+		"  out.uv = in.uv;~n"+
+		"  return out;~n"+
+		"}~n")
+	shdef.fs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct fs_in {~n"+
+		"  float4 color;~n"+
+		"  float2 uv;~n"+
+		"};~n"+
+		"fragment float4 _main(fs_in in [[stage_in]],~n"+
+		"  texture2d<float> tex [[texture(0)]],~n"+
+		"  sampler smp [[sampler(0)]])~n"+
+		"{~n"+
+		"  return float4(tex.sample(smp, in.uv).xyz + in.color.xyz * 0.5, 1.0);~n"+
+		"};~n")
+	
+#else
+	'/* glsl330 shader format */
 	shdef.attrs[0].name = CStr("position")
 	shdef.attrs[1].name = CStr("color0")
 	shdef.attrs[2].name = CStr("texcoord0")
@@ -242,6 +320,8 @@ function init:void()
 		"void main() {~n"+
 		"  frag_color = texture(tex, uv) + (color * 0.8);~n"+
 		"}~n")
+#end
+
 	shdef.fs.images[0].name = CStr("tex")
 	shdef.fs.images[0].type = SG_IMAGETYPE_2D
 	
@@ -265,7 +345,7 @@ end
 function frame:void()
 	
 	'/* compute model-view-projection matrix for vertex shader, this will be
-	'       used both for the offscreen-pass, and the display-pass */
+	'   used both for the offscreen-pass, and the display-pass */
 	local w:= sapp_width()
 	local h:= sapp_height()
 
@@ -273,8 +353,8 @@ function frame:void()
 	local view:= Mat4f.LookAt(new Vec3f(0.0, 1.5, 6.0))
 	local view_proj:= proj * view
 	
-	rx+= .05
-	ry+= .08
+	rx+= .01
+	ry+= .02
 	local model:= Mat4f.Rotation(rx, ry, 0.0)
 
 	local vs_params:vs_params_t
@@ -289,7 +369,7 @@ function frame:void()
 	sg_end_pass()
 	
 	'/* and the display-pass, rendering a rotating, textured cube, using the
-	'       previously rendered offscreen render-target as texture */
+	'   previously rendered offscreen render-target as texture */
 	sg_begin_default_pass(varptr defaults.pass_action, w, h)
 	sg_apply_pipeline(defaults.pip)
 	sg_apply_bindings(varptr defaults.bind)

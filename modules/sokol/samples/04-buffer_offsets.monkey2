@@ -82,9 +82,42 @@ function init:void()
 	ib.type = SG_BUFFERTYPE_INDEXBUFFER
 	state.bind.index_buffer = sg_make_buffer(varptr ib)
 
-	'/* create shader glsl330 format */
+	'/* create shader */
 	local shdesc:sg_shader_desc
 	shdesc.label = CStr("shader")
+	
+#if __TARGET__="macos"
+	'/* metal shader format */
+	shdesc.vs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"using namespace metal;~n"+
+		"struct vs_in {~n"+
+		"	float4 position [[attribute(0)]];~n"+
+		"	float4 color [[attribute(1)]];~n"+
+		"};~n"+
+		"struct vs_out {~n"+
+		"	float4 position [[position]];~n"+
+		"	float4 color [[user(usr0)]];~n"+
+		"};~n"+
+		"vertex vs_out _main(vs_in in [[stage_in]]) {~n"+
+		"	vs_out out;~n"+
+		"	out.position = in.position;~n"+
+		"	out.color = in.color;~n"+
+		"	return out;~n"+
+		"}~n")
+	
+	shdesc.fs.source = CStr(
+		"#include <metal_stdlib>~n"+
+		"#include <simd/simd.h>~n"+
+		"using namespace metal;~n"+
+		"struct fs_in {~n"+
+		"	float4 color [[user(usr0)]];~n"+
+		"};~n"+
+		"fragment float4 _main(fs_in in [[stage_in]]) {~n"+
+		"	return in.color;~n"+
+		"};~n")
+#else
+	'/* glsl330 shader format */
 	shdesc.attrs[0].name = CStr("position")
 	shdesc.attrs[1].name = CStr("color0")
 	shdesc.vs.entry = CStr("main")
@@ -105,6 +138,8 @@ function init:void()
 		"void main() {~n"+
 		"  frag_color = color;~n"+
 		"}~n")
+#end	
+	
 	local shd:sg_shader = sg_make_shader(varptr shdesc)
 	
 	'/* create a pipeline object (default render states are fine for triangle) */
