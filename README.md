@@ -1,6 +1,6 @@
-[![Travis CI](https://travis-ci.org/seyhajin/monkey2.svg?branch=develop)](https://travis-ci.org/seyhajin/monkey2)
+[![Travis CI](https://travis-ci.org/wonkey-coders/monkey2.svg?branch=develop)](https://travis-ci.org/wonkey-coders/monkey2)
 
-![Github CI](https://github.com/seyhajin/monkey2/workflows/Github%20CI/badge.svg?branch=develop)
+![Github CI](https://github.com/wonkey-coders/monkey2/workflows/Github%20CI/badge.svg?branch=develop)
 
 # Welcome to Monkey2!
 
