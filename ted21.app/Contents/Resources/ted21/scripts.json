@@ -1,0 +1,52 @@
+{
+	"scripts":[
+		{
+			"name":"Make docs",
+			"script":"makedocs"
+		},
+		{
+			"name":"Update modules",
+			"script":"updatemods"
+		},
+		{
+			"name":"Update Monkey module",
+			"script":"rebuildmonkey"
+		},
+		{
+			"name":"Update Mojo module",
+			"script":"rebuildmojo"
+		},
+		{
+			"name":"Update Std module",
+			"script":"rebuildStd"
+		},
+		{
+			"name":"Update OpenAL module",
+			"script":"rebuildaudio"
+		},
+		{
+			"name":"Update OpenGL module",
+			"script":"rebuildopengl"
+		},
+		{
+			"name":"Update PortMidi",
+			"script":"rebuildportmidi"
+		},
+		{
+			"name":"Update Sokol",
+			"script":"rebuildsokol"
+		},
+		{
+			"name":"Rebuild modules",
+			"script":"rebuildmods"
+		},
+		{
+			"name":"Update mx2cc",
+			"script":"updatemx2cc"
+		},
+		{
+			"name":"Rebuild mx2cc",
+			"script":"rebuildmx2cc"
+		}
+	]
+}
