@@ -29,7 +29,7 @@ Function EvalUnaryop:LiteralValue( type:Type,op:String,arg:LiteralValue )
 			Select op
 			Case "+" r=r0
 			Case "-" r=-r0
-			Case "~" r=~r0
+			Case "~~" r=~r0
 			Default EvalUnaryopError()
 			End
 
@@ -40,7 +40,7 @@ Function EvalUnaryop:LiteralValue( type:Type,op:String,arg:LiteralValue )
 			Local r:ULong,r0:=Cast<ULong>( arg.value )
 			Select op
 			Case "+" r=r0
-			Case "~" r=~r0
+			Case "~~" r=~r0
 			Default EvalUnaryopError()
 			End
 	
@@ -70,7 +70,7 @@ Function EvalUnaryop:LiteralValue( type:Type,op:String,arg:LiteralValue )
 			Local r:=Cast<Int>( arg.value )
 			
 			Select op
-			Case "~" r=~r
+			Case "~~" r=~r
 			Default EvalUnaryopError()
 			End
 			
@@ -199,7 +199,7 @@ Function EvalBinaryop:LiteralValue( type:Type,op:String,lhs:LiteralValue,rhs:Lit
 			Case "-" r=x - y
 			Case "&" r=x & y
 			Case "|" r=x | y
-			Case "~" r=x ~ y
+			Case "~~" r=x ~ y
 			Case "shl" r=x Shl Cast<Int>( rhs.value )
 			Case "shr" r=x Shr Cast<Int>( rhs.value )
 			Default EvalBinaryopError()
@@ -219,7 +219,7 @@ Function EvalBinaryop:LiteralValue( type:Type,op:String,lhs:LiteralValue,rhs:Lit
 			Case "-" r=x - y
 			Case "&" r=x & y
 			Case "|" r=x | y
-			Case "~" r=x ~ y
+			Case "~~" r=x ~ y
 			Case "shl" r=x Shl Cast<Int>( rhs.value )
 			Case "shr" r=x Shr Cast<Int>( rhs.value )
 			Default EvalBinaryopError()
@@ -269,7 +269,7 @@ Function EvalBinaryop:LiteralValue( type:Type,op:String,lhs:LiteralValue,rhs:Lit
 			Select op
 			Case "&" r=x & y
 			Case "|" r=x | y
-			Case "~" r=x ~ y
+			Case "~~" r=x ~ y
 			Default EvalBinaryopError()
 			End
 			

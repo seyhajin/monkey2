@@ -750,7 +750,7 @@ Class UnaryopExpr Extends Expr
 			If ptype.IsUnsignedIntegral
 				Throw New SemantEx( "Type cannot be unsigned" )
 			Endif
-		Case "~"
+		Case "~~"
 			Local etype:=TCast<EnumType>( type )
 			If etype
 				type=etype

@@ -117,7 +117,7 @@ Function BalanceBinaryopTypes:Type( op:String,lhs:Type,rhs:Type,argTypes:Type[] 
 	
 		type=BalanceNumericTypes( plhs,prhs )
 		
-	Case "&","|","~"
+	Case "&","|","~~"
 	
 		If TCast<EnumType>( lhs ) Or TCast<EnumType>( rhs )
 			If lhs.Equals( rhs ) type=lhs

@@ -845,7 +845,7 @@ Class Translator_CPP Extends Translator
 		
 		'Emit dtor
 		'
-		Emit( cname+"::~"+cname+"(){" )
+		Emit( cname+"::~~"+cname+"(){" )
 		Emit( "}" )
 		
 		'Emit non-ctor methods
@@ -2351,7 +2351,7 @@ Class Translator_CPP Extends Translator
 			op="%"
 		Case "and" op="&&"
 		Case "or" op="||"
-		Case "~" op="^"
+		Case "~~" op="^"
 		Case "shl" op="<<"
 		Case "shr" op=">>"
 		End
