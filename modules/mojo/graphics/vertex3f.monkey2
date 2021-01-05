@@ -229,8 +229,11 @@ End
 
 Class Vertex3fFormat Extends VertexFormat
 
-	Property Pitch:Int() Override
+	'jl added
+	Const Instance := New Vertex3fFormat
 
+
+	Property Pitch:Int() Override
 		Return Vertex3f.Pitch
 	End
 
