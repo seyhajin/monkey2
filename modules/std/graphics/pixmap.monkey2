@@ -266,6 +266,34 @@ Class Pixmap Extends Resource
 		End
 		Return Color.None
 	End
+
+'jl added
+#-
+	#rem monkeydoc Sets a pixel to an RGBA color using bytes.
+	Sets the pixel at `x`, `y` to `pixel`.
+	In debug builds, a runtime error will occur if the pixel coordinates lie outside of the pixmap area.
+	@param x The x coordinate of the pixel.
+	@param y The y coordinate of the pixel.
+	@param r the red component of the pixel.
+	@param g the green component of the pixel.
+	@param b the blue component of the pixel.
+	@param a the alpha component of the pixel.
+	#end
+	method SetPixel( x:int, y:int, r:UByte, g:UByte, b:UByte, a:uByte )
+		Local p:=PixelPtr( x,y )
+		p[0] = r
+		p[1] = g
+		p[2] = b
+		p[3] = a
+	End method
+	method SetPixel( x:int, y:int, r:float, g:float, b:float, a:float )
+		Local p:=PixelPtr( x,y )
+		p[0] = r * 255
+		p[1] = g * 255
+		p[2] = b * 255
+		p[3] = a * 255
+	End method
+#-	
 	
 	#rem monkeydoc Sets a pixel to an ARGB color.
 	

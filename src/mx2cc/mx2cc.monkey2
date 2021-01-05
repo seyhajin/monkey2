@@ -81,6 +81,8 @@ Function Main()
 		Print "Mx2cc usage: MX2CC [action] [options] [source|modules]"
 		Print ""
 		Print "Actions:"
+		'jl added
+		print "  checkapp     - Check an application."
 		print "  makeapp      - make an application."
 		print "  makemods     - make modules."
 		print "  makedocs     - make docs."
@@ -136,6 +138,11 @@ Function Main()
 			ok=GenInfo( args )
 		Case "makeapp"
 			ok=MakeApp( args )
+
+		'jl added
+		Case "checkapp"
+			ok=CheckApp( args )
+
 		Case "makemods"
 			ok=MakeMods( args )
 		Case "makedocs"
@@ -250,6 +257,50 @@ Function MakeApp:Bool( args:String[] )
 	Endif
 	
 	Builder.product.Run()
+	Return True
+End
+
+'jl added new method to support ted21
+Function CheckApp:Bool( args:String[] )
+	Local opts:=New BuildOpts
+	opts.productType="app"
+	opts.target="desktop"
+	opts.config="debug"
+	opts.clean=False
+	opts.fast=True
+	opts.verbose=0
+	opts.passes=5
+	
+	args=ParseOpts( opts,args )
+	
+	If args.Length<>1 Fail( "Invalid app source file" )
+	
+	Local cd:=CurrentDir()
+	ChangeDir( StartDir )
+	
+	'DebugStop()
+	
+	Local srcPath:=RealPath( args[0].Replace( "\","/" ) )
+	
+	ChangeDir( cd )
+	
+	opts.mainSource=srcPath
+	
+	Print ""
+	Print "***** Checking app '"+opts.mainSource+"' "+profileName+" *****"
+	Print ""
+
+	New BuilderInstance( opts )
+
+	'pass1 	
+	Builder.Parse()
+	If opts.passes=1 Return Builder.errors.Length=0
+	If Builder.errors.Length Return False
+	
+	Builder.Semant()
+	If opts.passes=2 Return Builder.errors.Length=0
+	If Builder.errors.Length Return False
+	
 	Return True
 End
 

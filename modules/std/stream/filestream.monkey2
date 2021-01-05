@@ -3,6 +3,9 @@ Namespace std.stream
 
 Using libc
 
+'jl added
+global gStreamFilePath:string
+
 #rem monkeydoc FileStream class.
 #end
 Class FileStream Extends Stream
@@ -108,9 +111,15 @@ Class FileStream Extends Stream
 		Default
 			Return Null
 		End
+
+'jl added
+		gStreamFilePath = ""
 		
 		Local file:=OpenCFile( path,mode )
 		If Not file Return Null
+
+'jl added
+		 gStreamFilePath = path
 		
 		Return New FileStream( file )
 	End

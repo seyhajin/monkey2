@@ -2244,6 +2244,9 @@ Class Parser
 		Try
 		
 			Select p.Toke.ToLower()
+			'jl added for ted21 support
+			Case "-", "jump"
+			
 			Case "if"
 			
 				If _cc.Top=1

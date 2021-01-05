@@ -40,6 +40,9 @@ Enum PixelFormat
 	Depth16
 	Depth24
 	Depth32
+
+	'jl added
+	Depth32F
 	
 	RGBE8
 	
@@ -94,6 +97,9 @@ Function PixelFormatDepth:Int( format:PixelFormat )
 	Case PixelFormat.Depth16 Return 2
 	Case PixelFormat.Depth24 Return 4
 	Case PixelFormat.Depth32 Return 4
+
+		'jl added
+		Case PixelFormat.Depth32F Return 4
 
 	Case PixelFormat.RGBE8 Return 4
 		

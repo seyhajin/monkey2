@@ -3,6 +3,22 @@ Namespace monkey.math
 
 Using monkey.types
 
+'jl added
+#-
+#rem monkeydoc The value _Pi_ times 2.
+#end
+Const Pi2:Double = Pi * 2
+
+#rem monkeydoc The value _Pi_ times 4.
+#end
+Const Pi4:Double = Pi * 3
+
+#rem monkeydoc The value _Pi_ halved.
+#end
+const PiHalf:double = Pi * 0.5
+#-
+
+
 #rem monkeydoc The value _Pi_.
 #end
 Const Pi:Double=3.1415926535897931
@@ -218,6 +234,17 @@ Function Clamp<T>:T( value:T,min:T,max:T )
 	If value>=max Return max
 	Return value
 End
+
+'jl added fixed some strange bug
+#-
+Function Clamp:float( value:float, min:float, max:float )
+	If value <= min Return min
+	If value >= max Return max
+	
+'	Print "b "+value+"   min "+min+"   max "+max
+	Return value
+End
+#-
 
 #rem monkeydoc Gets the absolute value of a number.
 

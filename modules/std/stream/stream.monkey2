@@ -223,6 +223,38 @@ Class Stream Extends std.resource.Resource
 		
 		Return Self
 	End
+
+#-	
+'jl added
+
+	#rem monkeydoc Write abool as an unsigned byte to the stream.
+	@param data The ubyte to write.
+	#end
+	Method WriteBool( data:Bool )
+		Local out:UByte = 0
+		If data Then out = 1
+		
+'		_tmpbuf.PokeUByte( 0,out )
+'		Write( _tmpbuf.Data,1 )
+		Write( Varptr data,1 )
+	End
+
+
+	#rem monkeydoc Reads an unsigned byte as a bool from the stream.
+	@return The ubyte read.
+	#end
+	Method ReadBool:Bool()
+		Local n:UByte
+		Read( Varptr n,1 )
+		If n > 0 Then Return True
+
+'		If Read( _tmpbuf.Data,1 )=1 Return _tmpbuf.PeekUByte( 0 ) = 1
+		
+		Return false
+	End
+
+'jl end
+#-
 	
 	#rem monkeydoc Reads a byte from the stream.
 	

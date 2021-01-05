@@ -90,6 +90,125 @@ Namespace std
 
 #Import "permissions/permissions"
 
+'jl added
+#-
+global DEV:bool = DesktopDir().Find("lucifer_9") > -1
+global DEBUG:bool = AppDir().Find("debug") > -1
+global RELEASE:bool = not DEBUG
+
+'Private
+
+'function  Lerp:float( fromValue:float, toValue:float, position:float )
+'	local value:float = toValue - fromValue
+'	if value = 0 then return fromValue
+'	return fromValue + (value * position)
+'end function
+'
+'function  Lerp:double( fromValue:double, toValue:double, position:double )
+'	local value:double = toValue - fromValue
+'	if value = 0 then return fromValue
+'	return fromValue + (value * position)
+'end function
+
+'very efficiant and order independant!!!
+function PointInTriangle:bool( px:float,  py:float, p0x:float, p0y:float, p1x:float, p1y:float, p2x:float, p2y:float )
+	local dX:float = px - p2x
+	local dY:float = py - p2y
+	Local dX21:float = p2x - p1x
+	Local dY12:float = p1y - p2y
+	Local D:float = dY12 * (p0x - p2x) + dX21 * (p0y - p2y)
+	Local s:float = dY12 * dX + dX21 * dY
+	Local t:float = (p2y - p0y) * dX + (p0x - p2x) * dY
+	
+	if D < 0 Then
+		return s <= 0 And t <= 0 And s + t >= D
+	End If
+	
+	return s >= 0 And t >= 0 And s + t <= D
+End function
+
+function PointInQuad:bool( px:float,  py:float, p0x:float, p0y:float, p1x:float, p1y:float, p2x:float, p2y:float, p3x:float, p3y:float )
+	local tri1:bool = PointInTriangle( px, py,  p0x, p0y, p1x, p1y, p2x, p2y )
+	If tri1 Then Return True
+	return PointInTriangle( px, py,  p2x, p2y, p3x, p3y, p0x, p0y )
+End function
+
+function Length:float( x:float,  y:float,  z:float,  x1:float,  y1:float, z1:float )
+	x -= x1
+	y -= y1
+	z -= z1
+	Return Sqrt( x*x + y*y + z*z )
+End
+	
+function Length:float( x:float,  y:float,  x1:float,  y1:float )
+	x -= x1
+	y -= y1
+	Return Sqrt( x*x + y*y )
+End
+
+function Length:float( x:int,  y:int,  z:int,  x1:int,  y1:int, z1:int )
+	x -= x1
+	y -= y1
+	z -= z1
+	Return Sqrt( x*x + y*y + z*z )
+End
+	
+function Length:float( x:int,  y:int,  x1:int,  y1:int )
+	x -= x1
+	y -= y1
+	Return Sqrt( x*x + y*y )
+End
+
+function Length:float( x:double,  y:double,  z:double,  x1:double,  y1:double, z1:double )
+	x -= x1
+	y -= y1
+	z -= z1
+	Return Sqrt( x*x + y*y + z*z )
+End
+	
+function Length:float( x:double,  y:double,  x1:double,  y1:double )
+	x -= x1
+	y -= y1
+	Return Sqrt( x*x + y*y )
+End
+
+function Length:float( x:int, y:int )
+	Return Sqrt( x*x + y*y )
+End
+
+function Length:float( x:float, y:float )
+	Return Sqrt( x*x + y*y )
+End
+
+function Length:Double( x:double, y:double )
+	Return Sqrt( x*x + y*y )
+End
+
+function Length:float( x:int, y:int, z:int )
+	Return Sqrt( x*x + y*y + z*z )
+End
+
+function Length:float( x:float, y:float, z:float )
+	Return Sqrt( x*x + y*y + z*z )
+End
+
+function Length:Double( x:double, y:double, z:double )
+	Return Sqrt( x*x + y*y + z*z )
+End
+
+Function Asc:Int( input:String, index:Int = 0 )
+	Return input[index]
+End
+
+
+private
+
+Function Chr:String( character:Int )
+    Return String.FromChar(character)
+End
+ 
+#-
+
 Private
 
 Function Main()
