@@ -40,6 +40,10 @@ Using mojo..
 #Import "graphics/texture"
 #Import "graphics/shader"
 
+'jl added
+#Import "graphics/imageslice"
+
+
 '2d graphics stuff
 #Import "graphics/canvas"
 #Import "graphics/image"

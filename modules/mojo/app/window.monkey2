@@ -42,6 +42,9 @@ Enum WindowFlags
 	Center=CenterX|CenterY
 End
 
+'jl added
+global gSplashImage:Image
+
 #rem monkeydoc The Window class.
 #end
 Class Window Extends View
@@ -166,6 +169,121 @@ Class Window Extends View
 		If _contentView AddChildView( _contentView )
 		
 	End
+
+	'jl added
+#-
+	#rem monkeydoc Resize the current window
+	#end	
+	method WindowResize( x:int, y:int,  width:int, height:int)
+		SDL_SetWindowPosition( _sdlWindow, x, y )
+		SDL_SetWindowSize( _sdlWindow, width, height )
+		
+		_frame = GetFrame()
+		Frame = _frame
+		_weirdHack = true
+	End 
+
+
+	Method SetMinSize( minX:int, minY:int )
+'		Local w:Int,h:Int
+		SDL_SetWindowMinimumSize( _sdlWindow, minX, minY )
+	End
+
+
+	property DesktopWidth:int()
+		Return App.DesktopSize.X
+	End
+
+
+	property DesktopHeight:int()
+		Return App.DesktopSize.Y
+	End
+
+
+	property WindowWidth:int()
+		Return Frame.Width
+
+'		If Not _sdlWindow Then Return -1
+'
+'		Local x:Int
+'		Local y:Int
+'		SDL_GetWindowSize( _sdlWindow, Varptr x, Varptr y )
+'		Return x
+	End
+
+
+	property WindowHeight:int()
+		Return Frame.Height
+'		If Not _sdlWindow Then Return -1
+'
+'		Local x:Int
+'		Local y:Int
+'		SDL_GetWindowSize( _sdlWindow, Varptr x, Varptr y )
+'		Return y
+	End
+
+
+	property WindowX:int()
+		Return Frame.X
+'		If Not _sdlWindow Then Return -1
+'
+'		Local x:Int
+'		Local y:Int
+'		SDL_GetWindowPosition( _sdlWindow, Varptr x, Varptr y )
+'		Return x
+	End
+
+
+	property WindowY:int()
+		Return Frame.Y
+'		If Not _sdlWindow Then Return -1
+'
+'		Local x:Int
+'		Local y:Int
+'		SDL_GetWindowPosition( _sdlWindow, Varptr x, Varptr y )
+'		Return y
+	End
+
+
+	property WindowXY:Vec2i()
+		Local ret:Vec2i = New Vec2i( Frame.X, Frame.Y )
+		Return ret
+
+'		Local ret:Vec2i = New Vec2i( -1, -1 )
+'		If Not _sdlWindow Then Return ret
+'		
+'		Local x:Int
+'		Local y:Int
+'		SDL_GetWindowMinimumSize( _sdlWindow, Varptr x, Varptr y )
+'
+'		Return ret
+	End
+
+
+	property IsFullscreen:bool()
+		Local ds:Vec2i = New Vec2i( 0, 0 )
+		ds = App.DesktopSize
+
+		return Frame.X = 0 And Frame.Y = 0 And Frame.Width = ds.X And Frame.Height = ds.Y
+
+'		If Not _sdlWindow Then Return false
+'
+'		Local x:Int
+'		Local y:Int
+'		SDL_GetWindowMinimumSize( _sdlWindow, Varptr x, Varptr y )
+'		Local w:Int
+'		Local h:Int
+'		SDL_GetWindowSize( _sdlWindow, Varptr w, Varptr h )
+'		
+'		Local ds:Vec2i = New Vec2i( 0, 0 )
+'		ds = App.DesktopSize
+'
+'		return x = 0 And y = 0 And w = ds.X And h = ds.Y
+''		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_FULLSCREEN
+	end
+
+#-
+
 	
 	Method ResizeWindow( rect:Recti )
 		
@@ -709,7 +827,9 @@ Class Window Extends View
 		MaxSize=GetMaxSize()
 		_maxSize=MaxSize
 		
-		_clearColor=App.Theme.GetColor( "windowClearColor" )
+'		_clearColor=App.Theme.GetColor( "windowClearColor" )
+		'jl modified
+		_clearColor = Color.Black
 		
 		_canvas=New Canvas( _frame.Width,_frame.Height )
 		

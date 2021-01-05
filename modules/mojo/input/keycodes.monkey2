@@ -210,6 +210,9 @@ Enum Modifier
 	Control=		LeftControl|RightControl
 	Alt=			LeftAlt|RightAlt
 	Gui=			LeftGui|RightGui
+
+	'jl added
+	Command=		LeftGui|RightGui
 	
 #if __HOSTOS__="macos"
 	LeftMenu=		LeftGui

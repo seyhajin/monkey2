@@ -5,12 +5,21 @@ Struct Vertex2f
 	
 	Const Format:=New Vertex2fFormat
 	
-	Const Pitch:=28
+'	Const Pitch:=28
+	'jl added
+	Const Pitch:=56
 
 	Field position:Vec2f
 	Field texCoord0:Vec2f
 	Field texCoord1:Vec2f
 	Field color:UInt
+
+	'jl added
+#-
+	Field color2:UInt
+	Field xyzPosition:Vec3f
+	Field Normal:Vec3f
+#-
 	
 	Method New()
 	End
@@ -23,6 +32,8 @@ Struct Vertex2f
 		texCoord1.x=s1
 		texCoord1.y=t1
 		Self.color=color
+		'jl added
+		Self.color2=color2
 	End
 	
 	Method New( position:Vec2f,texCoord0:Vec2f=Null,texCoord1:Vec2f=Null,color:UInt=~0 )
@@ -30,6 +41,8 @@ Struct Vertex2f
 		Self.texCoord0=texCoord0
 		Self.texCoord1=texCoord1
 		Self.color=color
+		'jl added
+		Self.color2=color2
 	End
 	
 	Operator To:String()
@@ -50,6 +63,12 @@ Class Vertex2fFormat Extends VertexFormat
 		glEnableVertexAttribArray( A_TEXCOORD0 ) ; glVertexAttribPointer( A_TEXCOORD0,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 8 ) )
 		glEnableVertexAttribArray( A_TEXCOORD1 ) ; glVertexAttribPointer( A_TEXCOORD1,2,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 16 ) )
 		glEnableVertexAttribArray( A_COLOR ) ; glVertexAttribPointer( A_COLOR,4,GL_UNSIGNED_BYTE,True,Pitch,Cast<Void Ptr>( 24 ) )
+
+		'jl added A_COLOR2 definied in mojo/graphics/shader
+		glEnableVertexAttribArray( A_COLOR2 ) ; glVertexAttribPointer( A_COLOR2,4,GL_UNSIGNED_BYTE,True,Pitch,Cast<Void Ptr>( 28 ) )
+		glEnableVertexAttribArray( A_XYZPOSITION ) ; glVertexAttribPointer( A_XYZPOSITION,3,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 32 ) )
+		glEnableVertexAttribArray( A_NORMAL ) ; glVertexAttribPointer( A_NORMAL,3,GL_FLOAT,False,Pitch,Cast<Void Ptr>( 44 ) )
+
 		'Need these to shut up android emulator.
 		glDisableVertexAttribArray( A_NORMAL )
 		glDisableVertexAttribArray( A_TANGENT )

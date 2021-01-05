@@ -200,7 +200,8 @@ Class KeyboardDevice
 		_frame+=1
 	End
 	
-	Internal
+'jl removed	
+'	Internal
 	
 	Method ScanCode:Int( key:Key )
 		If key & Key.Raw 

@@ -8,6 +8,42 @@ Enum IndexFormat
 End
 
 Class IndexBuffer Extends Resource
+#-
+'jl added
+	Method New( indices:IndexBuffer )
+		_format = indices._format
+		_pitch = indices._pitch
+		_length = indices._length
+		_managed = indices._managed.Slice( 0 )
+		_dirtyMin=_length
+		_dirtyMax=0
+	End
+
+	
+'	Method New( indices:UInt[] )
+'		Self.New( IndexFormat.UINT32, indices.Length )
+'		
+''		If _capacity libc.memcpy( AddIndices( _capacity ),indices.Data,_capacity*_pitch )
+'		SetIndices( indices.Data, 0, indices.Length )
+'	End
+
+	
+	Method New( indices:UShort[] )
+		Self.New( IndexFormat.UINT16,indices.Length )
+		
+'		If _capacity libc.memcpy( AddIndices( _capacity ),indices.Data,_capacity*_pitch )
+		SetIndices( indices.Data, 0, indices.Length )
+	End
+
+	Property Data:UByte Ptr()
+		Return _managed.Data
+	End
+
+	Method Clear()
+		_length = 0
+		Invalidate( 0, _length )
+	End
+#-
 	
 	Method New( format:IndexFormat,length:Int=0 )
 		
@@ -39,6 +75,23 @@ Class IndexBuffer Extends Resource
 		
 		Return _pitch
 	End
+
+#-
+'jl added
+	Method AddIndices:UByte Ptr( length:Int )
+		local size:int = length * _pitch
+		Local managed := New UByte[size]
+
+		Return managed.Data
+'		Reserve( _length+count )
+'		
+'		Local p:=_data.Data+_length*_pitch
+'		
+'		_length+=count
+'		
+'		Return p
+	End
+#-	
 	
 	#rem monkeydoc Resizes the index buffer.
 	#end

@@ -78,6 +78,17 @@ Class MouseDevice
 		
 		SDL_SetCursor( _cursors[_cursor] )
 	End
+
+	'jl added
+#-
+	#rem monkeydoc Pointer visiblity state.
+	#end
+	Property ShowCursor:Bool()
+		Return SDL_ShowCursor( -1 )=SDL_ENABLE
+	Setter( showCursor:Bool )
+		SDL_ShowCursor( showCursor ? SDL_ENABLE Else SDL_DISABLE )
+	End
+#-
 	
 	#rem monkeydoc Pointer visiblity state.
 	#end

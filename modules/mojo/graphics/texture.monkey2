@@ -33,6 +33,8 @@ Function glInternalFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB32F Return BBGL_ES ? GL_RGB Else GL_RGB32F
 	Case PixelFormat.RGBA32F Return BBGL_ES ? GL_RGBA Else GL_RGBA32F
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
+		'jladded
+		Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
@@ -49,6 +51,8 @@ Function glFormat:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB32F Return GL_RGB
 	Case PixelFormat.RGBA32F Return GL_RGBA
 	Case PixelFormat.Depth32 Return GL_DEPTH_COMPONENT
+		'jl added
+		Case PixelFormat.Depth32F Return GL_DEPTH_COMPONENT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_RGBA
@@ -65,6 +69,8 @@ Function glType:GLenum( format:PixelFormat )
 	Case PixelFormat.RGB32F Return GL_FLOAT
 	Case PixelFormat.RGBA32F Return GL_FLOAT
 	Case PixelFormat.Depth32 Return GL_UNSIGNED_INT
+	'jl added
+	Case PixelFormat.Depth32F Return GL_UNSIGNED_INT
 	End
 	RuntimeError( "Invalid PixelFormat" )
 	Return GL_UNSIGNED_BYTE

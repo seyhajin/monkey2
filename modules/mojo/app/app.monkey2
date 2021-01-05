@@ -2,6 +2,10 @@
 #Import "native/app.cpp"
 #Import "native/app.h"
 
+'jl added
+#Import "../assets/fonts/Roboto-Regular.ttf"
+#Import "../assets/fonts/RobotoMono-Regular.ttf"
+
 Namespace mojo.app
 
 Extern Private
@@ -194,6 +198,8 @@ Class AppInstance
 #Endif
 
 		_defaultFont=_res.OpenFont( "DejaVuSans",16 )
+'jl added
+		_defaultMonoFont = Font.Load( DefaultMonoFontName,16 )
 		
 		_theme=New Theme
 		
@@ -217,6 +223,27 @@ Class AppInstance
 #Endif
 		RequestRender()
 	End
+
+'jl added
+#-
+	#rem monkeydoc @hidden
+	#end
+	Property DefaultFontName:String()
+		Return "asset::Roboto-Regular.ttf"
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Property DefaultMonoFontName:String()
+		Return "asset::RobotoMono-Regular.ttf"
+	End
+	
+	#rem monkeydoc @hidden
+	#end
+	Property DefaultMonoFont:Font()
+		Return _defaultMonoFont
+	End
+#-	
 	
 	#rem monkeydoc Fallback font.
 	#end
@@ -550,6 +577,8 @@ Class AppInstance
 	#rem monkeydoc Run the app.
 	#end
 	Method Run()
+		'jl added
+		if not _notesHaveBeenSet Then CreateNotes()
 		
 #If __TARGET__="emscripten"
 
@@ -606,6 +635,19 @@ Class AppInstance
 		
 		Return modes.ToArray()
 	End
+
+'jl added
+#-	
+	Method DispatchEvents()
+		Local event:SDL_Event
+
+		While SDL_PollEvent( Varptr event )
+			Window.CreateNewWindows()
+			
+			DispatchEvent( Varptr event )
+		Wend
+	End
+#-	
 	
 	Internal
 	
@@ -638,6 +680,9 @@ Class AppInstance
 	
 	Field _touchMouse:Bool=False		'Whether mouse is really touch
 	Field _captureMouse:Bool=False		'Whether to use SDL_CaptureMouse
+
+'jl added
+	Field _defaultMonoFont:Font
 	
 	Field _res:=New ResourceManager
 	Field _defaultFont:Font

@@ -278,6 +278,17 @@ Class Image Extends Resource
 		Return _texCoords
 	End
 
+#-	
+'jl added
+	#rem monkeydoc Image filepath.
+	#end
+	Property FilePath:string()
+		Return _filePath
+	Setter( filePath:string )
+		_filePath = filePath
+	End
+#-
+
 	#rem monkeydoc @hidden Sets an image texture.
 	#end	
 	Method SetTexture( index:Int,texture:Texture )
@@ -430,6 +441,11 @@ Class Image Extends Resource
 	
 	Private
 	
+#-	
+'jl added
+	field _filePath:string
+#-
+
 	Field _shader:Shader
 	Field _uniforms:UniformBlock
 	Field _textures:=New Texture[4]
