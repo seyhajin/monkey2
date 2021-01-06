@@ -3,12 +3,8 @@ Namespace monkey.math
 
 Using monkey.types
 
-#rem monkeydoc The value _Pi_.
-#end
-Const Pi:Double=3.1415926535897931
-
 'jl added
-#-
+'#-
 #rem monkeydoc The value _Pi_ times 2.
 #end
 Const Pi2:Double = Pi * 2
@@ -20,7 +16,12 @@ Const Pi4:Double = Pi * 3
 #rem monkeydoc The value _Pi_ halved.
 #end
 const PiHalf:double = Pi * 0.5
-#-
+'#-
+
+
+#rem monkeydoc The value _Pi_.
+#end
+Const Pi:Double=3.1415926535897931
 
 #rem monkeydoc The value _Pi_ times 2.
 #end
@@ -234,7 +235,7 @@ Function Clamp<T>:T( value:T,min:T,max:T )
 	Return value
 End
 
-'jl added
+'jl added fixed some strange bug
 #-
 Function Clamp:float( value:float, min:float, max:float )
 	If value <= min Return min

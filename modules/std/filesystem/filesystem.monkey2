@@ -261,7 +261,7 @@ Function SetAssetsDir( dir:String )
 End
 
 'JL Added
-#-
+'#-
 #rem monkeydoc Gets the filesystem directory of the development assets directory.
 Note that assets are only stored in the filesystem on the desktop and emscripten targets. Other targets will return an empty string.
 @return The directory app assets are stored in.
@@ -275,7 +275,7 @@ Function DevAssetsDir:String()
 	Return ""
 #Endif
 End function
-#-
+'#-
 
 
 #rem monkeydoc Gets the filesystem directory of the user's desktop directory.
@@ -344,7 +344,7 @@ Function ExternalDir:String()
 	Return GetSpecialDir( "external" )
 End
 
-#-
+'#-
 'jl added
 #rem monkeydoc Gets the filesystem directory of the Applications directory.
 Note that only the desktop targets have a user directory. Other targets will return an empty string.
@@ -473,7 +473,7 @@ function RemoveDir:string( path:String )
 		
 	Return path
 End function
-#-
+'#-
 
 #rem monkeydoc Extracts the root directory from a file system path.
 
