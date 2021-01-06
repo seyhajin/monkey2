@@ -164,7 +164,10 @@ Class AppInstance
 		SDL_GL_SetAttribute( SDL_GL_RED_SIZE,n )
 		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,n )
 		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,n )
-		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "MOJO_DEPTH_BUFFER_BITS" ) ) )
+'jl modified
+'		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,Int( GetConfig( "MOJO_DEPTH_BUFFER_BITS" ) ) )
+		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 32 )
+
 		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,Int( GetConfig( "MOJO_STENCIL_BUFFER_BITS" ) ) )
 		
 		Local msaa_samples:=Int( GetConfig( "MOJO_MSAA_SAMPLES",0 ) )
