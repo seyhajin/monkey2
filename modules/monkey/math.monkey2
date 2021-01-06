@@ -236,7 +236,7 @@ Function Clamp<T>:T( value:T,min:T,max:T )
 End
 
 'jl added fixed some strange bug
-#-
+'#-
 Function Clamp:float( value:float, min:float, max:float )
 	If value <= min Return min
 	If value >= max Return max
@@ -244,7 +244,7 @@ Function Clamp:float( value:float, min:float, max:float )
 '	Print "b "+value+"   min "+min+"   max "+max
 	Return value
 End
-#-
+'#-
 
 #rem monkeydoc Gets the absolute value of a number.
 
