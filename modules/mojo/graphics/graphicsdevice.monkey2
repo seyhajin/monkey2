@@ -20,9 +20,9 @@ Enum BlendMode
 	Additive=3
 	Multiply=4
 'jl added
-#-	
+'------------------------------------------------------------	
 	Alpha3d = 5
-#-	
+'------------------------------------------------------------	
 End
 
 #rem monkeydoc @hidden Color mask values.
@@ -601,10 +601,10 @@ Class GraphicsDevice
 				Case BlendMode.Alpha
 					glBlendFunc( GL_ONE,GL_ONE_MINUS_SRC_ALPHA )
 'jl added						
-#-
+'------------------------------------------------------------
 					Case BlendMode.Alpha3d
 						glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ) 'alphablend
-#-
+'------------------------------------------------------------
 				Case BlendMode.Additive
 					glBlendFunc( GL_ONE,GL_ONE )
 				Case BlendMode.Multiply

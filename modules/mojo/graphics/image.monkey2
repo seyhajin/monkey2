@@ -278,7 +278,7 @@ Class Image Extends Resource
 		Return _texCoords
 	End
 
-#-	
+'------------------------------------------------------------	
 'jl added
 	#rem monkeydoc Image filepath.
 	#end
@@ -287,7 +287,7 @@ Class Image Extends Resource
 	Setter( filePath:string )
 		_filePath = filePath
 	End
-#-
+'------------------------------------------------------------
 
 	#rem monkeydoc @hidden Sets an image texture.
 	#end	
@@ -441,10 +441,10 @@ Class Image Extends Resource
 	
 	Private
 	
-#-	
+'------------------------------------------------------------	
 'jl added
 	field _filePath:string
-#-
+'------------------------------------------------------------
 
 	Field _shader:Shader
 	Field _uniforms:UniformBlock

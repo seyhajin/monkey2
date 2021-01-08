@@ -1,7 +1,7 @@
 
 Namespace mojo.graphics
 
-#-
+'------------------------------------------------------------
 'jl added
 Global UserUniforms:Stack<UserUniform> = New Stack<UserUniform>
 
@@ -22,7 +22,7 @@ Function AddUserUniform:UserUniform(names:String[], index:Int, callback:Void(use
 	UserUniforms.Add(uni)
 	Return uni
 End
-#-
+'------------------------------------------------------------
 
 
 #rem monkeydoc The UniformBlock class.

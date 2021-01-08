@@ -96,7 +96,7 @@ Class View
 		_acceptsMouseEvents=acceptsMouseEvents
 	End
 
-#-
+'------------------------------------------------------------
 'jl added
 	#rem monkeydoc Whether the view accepts touch events.
 	#end
@@ -105,7 +105,7 @@ Class View
 	Setter( acceptsTouchEvents:Bool )
 		_acceptsTouchEvents = acceptsTouchEvents
 	End
-#-	
+'------------------------------------------------------------	
 	
 	#rem monkeydoc View style.
 	#end
@@ -330,7 +330,7 @@ Class View
 	End
 
 'jl added
-#-	
+'------------------------------------------------------------	
 	#rem monkeydoc @hidden
 	#end
 	Property Container:View() Virtual
@@ -371,7 +371,7 @@ Class View
 		
 		Return Null
 	End
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc Gets a style.
 	
@@ -635,13 +635,13 @@ Class View
 	End
 	
 	Protected
-#-
+'------------------------------------------------------------
 	'jl added
 	field _shiftDown:bool = False
 	field _altDown:bool = False
 	field _controlDown:bool = False
 	field _commandDown:bool = false
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc @hidden
 	#end
@@ -863,7 +863,7 @@ Class View
 '	End
 
 'jl added/modified
-#-	
+'------------------------------------------------------------	
 	#rem monkeydoc Keyboard event handler.
 	Called when a keyboard event is sent to this view.
 	#end
@@ -1037,7 +1037,7 @@ Class View
 	method OnMouseMove() Virtual
 	End method
 
-#-	
+'------------------------------------------------------------	
 
 	
 	#rem monkeydoc The last size returned by OnMeasure.
@@ -1134,10 +1134,10 @@ Class View
 	Field _active:Bool=False
 	Field _acceptsKeyEvents:Bool=True
 	Field _acceptsMouseEvents:Bool=True
-#-	
+'------------------------------------------------------------	
 	'jl added
 	Field _acceptsTouchEvents:Bool=True
-#-	
+'------------------------------------------------------------	
 	
 	Field _style:Style
 	Field _styleState:String

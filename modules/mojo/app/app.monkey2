@@ -228,7 +228,7 @@ Class AppInstance
 	End
 
 'jl added
-#-
+'------------------------------------------------------------
 	#rem monkeydoc @hidden
 	#end
 	Property DefaultFontName:String()
@@ -246,7 +246,7 @@ Class AppInstance
 	Property DefaultMonoFont:Font()
 		Return _defaultMonoFont
 	End
-#-	
+'------------------------------------------------------------	
 	
 	#rem monkeydoc Fallback font.
 	#end
@@ -640,7 +640,7 @@ Class AppInstance
 	End
 
 'jl added
-#-	
+'------------------------------------------------------------	
 	Method DispatchEvents()
 		Local event:SDL_Event
 
@@ -650,7 +650,7 @@ Class AppInstance
 			DispatchEvent( Varptr event )
 		Wend
 	End
-#-	
+'------------------------------------------------------------	
 	
 	Internal
 	

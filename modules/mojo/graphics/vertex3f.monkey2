@@ -17,19 +17,19 @@ Struct Vertex3f
 	Field bones:UInt			'76
 
 	'jl added
-#-
+'------------------------------------------------------------
 	Field color2:UInt		'80
 	Field color3:UInt		'84
 
 	'this is how many bytes in total for each vertex
 	Const Pitch := 88		'88
-#-
+'------------------------------------------------------------
 
 	Method New()
 	End
 
 'jl added
-#-	
+'------------------------------------------------------------	
 	Method New( x:Float,y:Float,z:Float,  s0:Float,t0:Float,  nx:Float,ny:Float,nz:Float,  rc1:ubyte,gc1:ubyte,bc1:ubyte,ac1:ubyte,  rc2:ubyte,gc2:ubyte,bc2:ubyte,ac2:ubyte )
 		position.x=x
 		position.y=y
@@ -141,7 +141,7 @@ Struct Vertex3f
 		color3 = ICol( 0, 0, 0, 0 )
 	End
 
-#-
+'------------------------------------------------------------
 	
 '	Method New( x:Float,y:Float,z:Float,s0:Float=0,t0:Float=0,nx:Float=0,ny:Float=0,nz:Float=0 )
 '		position.x=x
@@ -160,11 +160,11 @@ Struct Vertex3f
 		Self.normal=normal
 
 		'jl added
-#-		
+'------------------------------------------------------------		
 		self.color = ICol( 128, 128, 128, 128 )
 		self.color2 = ICol( 128, 128, 128, 128 )
 		self.color3 = ICol( 0, 0, 0, 0 )
-#-
+'------------------------------------------------------------
 	End
 	
 	Operator To:String()
@@ -248,10 +248,10 @@ Class Vertex3fFormat Extends VertexFormat
 		glEnableVertexAttribArray( A_BONES ) ; glVertexAttribPointer( A_BONES,4,GL_UNSIGNED_BYTE,False,Pitch,Cast<Void Ptr>( 76 ) )
 
 		'jl added A_COLOR2 definied in mojo/graphics/shader
-#-
+'------------------------------------------------------------
 		glEnableVertexAttribArray( A_COLOR2 ) ; glVertexAttribPointer( A_COLOR2,4,GL_UNSIGNED_BYTE,True,Pitch,Cast<Void Ptr>( 80 ) )
 		glEnableVertexAttribArray( A_COLOR3 ) ; glVertexAttribPointer( A_COLOR3,4,GL_UNSIGNED_BYTE,True,Pitch,Cast<Void Ptr>( 84 ) )
-#-
+'------------------------------------------------------------
 	End
 	
 End

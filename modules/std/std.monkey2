@@ -91,7 +91,7 @@ Namespace std
 #Import "permissions/permissions"
 
 'jl added
-'#-
+''------------------------------------------------------------
 global DEV:bool = DesktopDir().Find("lucifer_9") > -1
 global DEBUG:bool = AppDir().Find("debug") > -1
 global RELEASE:bool = not DEBUG
@@ -207,7 +207,7 @@ Function Chr:String( character:Int )
     Return String.FromChar(character)
 End
  
-'#-
+''------------------------------------------------------------
 
 Private
 

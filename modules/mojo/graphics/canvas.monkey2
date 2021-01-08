@@ -1,7 +1,7 @@
 
 Namespace mojo.graphics
 
-#-
+'------------------------------------------------------------
 'jl added
 const Pi180:double = Pi / 180
 #rem monkeydoc Converts degrees in angles. E.G. 90 degrees to radians
@@ -52,7 +52,7 @@ function ICol:Uint( r:int, g:int, b:int, a:int = 255 )
 	Return UInt(a) Shl 24 | UInt(b) Shl 16 | UInt(g) Shl 8 | UInt(r)
 End function
 
-#-
+'------------------------------------------------------------
 
 
 #rem monkeydoc Outline modes.
@@ -92,7 +92,7 @@ Drawing does not occur immediately. Drawing commands are 'buffered' to reduce th
 #end
 Class Canvas
 
-#-
+'------------------------------------------------------------
 	'start of jl jeanluc additions
 	Field RenderAmbient:void( device:GraphicsDevice )
 	
@@ -1648,7 +1648,7 @@ Class Canvas
 	End
 
 'end of jeanluc additions
-#-
+'------------------------------------------------------------
 
 	
 	#rem monkeydoc Creates a canvas that renders to an image
@@ -1827,7 +1827,7 @@ Class Canvas
 		_device.RetroMode=rmode
 	End
 
-#-
+'------------------------------------------------------------
 'jl added
 	field _fuckwitFilter:bool = true
 	Property TextureFiltering:Bool()
@@ -1836,7 +1836,7 @@ Class Canvas
 		_fuckwitFilter = enabled
 	End
 
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc The current point size for use with DrawPoint.
 	#end
@@ -2622,7 +2622,7 @@ Class Canvas
 		Endif
 	End
 
-#-
+'------------------------------------------------------------
 	'jl modified
 	#rem monkeydoc Draws an image.
 	Draws an image using the current [[Color]], [[BlendMode]] and [[Matrix]].
@@ -2685,7 +2685,7 @@ Class Canvas
 		DrawImage( image, tv.x, tv.y, rz, sv.x, sv.y, shader )
 '		DrawImage( image, tv.x,tv.y,rz, sv.x,sv.y )
 	End
-#-
+'------------------------------------------------------------
 #rem
 	Method DrawImage( image:Image,tx:Float,ty:Float )
 	
@@ -3217,12 +3217,12 @@ Class Canvas
 	Global _gbrtargets:=New RenderTarget[2]
 
 	'jl added
-#-	
+'------------------------------------------------------------	
 	Field _userUniformCallback:Void(canvas:Canvas, uniform:UniformBlock)
 	Field _pmcolor2:UInt=~0
 	Field _color2:Color
 	Field _xyzPosition:Vec3f = new Vec3f()
-#-
+'------------------------------------------------------------
 
 	Field _rtarget:RenderTarget
 	Field _device:GraphicsDevice
@@ -3394,10 +3394,10 @@ Class Canvas
 		_vp->color=color
 
 		'jladded
-#-		
+'------------------------------------------------------------		
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
-#-
+'------------------------------------------------------------
 		_vp+=1
 	End
 
@@ -3411,16 +3411,16 @@ Class Canvas
 		_vp->color=color
 
 		'jladded
-#-		
+'------------------------------------------------------------		
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
-#-
+'------------------------------------------------------------
 
 		_vp+=1
 	End
 
 'jl added
-#-
+'------------------------------------------------------------
 	Method AddVertex( tx:Float,ty:Float, s0:Float,t0:Float, color:UInt, xp:float, yp:float, zp:float )
 		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
@@ -3474,7 +3474,7 @@ Class Canvas
 		_vp->Normal.z = nz
 		_vp+=1
 	End
-#-
+'------------------------------------------------------------
 	
 	Method AddPointVertex( tx:Float,ty:Float,s0:Float,t0:Float )
 		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x + .5
@@ -3484,10 +3484,10 @@ Class Canvas
 		_vp->color=_pmcolor
 
 		'jladded
-#-		
+'------------------------------------------------------------		
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
-#-
+'------------------------------------------------------------
 		_vp+=1
 	End
 	
@@ -3500,10 +3500,10 @@ Class Canvas
 		_vp->texCoord1.y=_tanvec.y
 		_vp->color=_pmcolor
 		'jladded
-#-		
+'------------------------------------------------------------		
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
-#-
+'------------------------------------------------------------
 		_vp+=1
 	End
 	
@@ -3573,14 +3573,14 @@ Class Canvas
 			_device.Viewport=_rviewport
 		Endif
 		
-#-
+'------------------------------------------------------------
 'jl added
 		If Not UserUniforms.Empty
 			For Local useruniform:=Eachin UserUniforms
 				useruniform.callback(useruniform, _uniforms)
 			Next
 		End If 
-#-
+'------------------------------------------------------------
 
 		If _dirty & Dirty.Scissor
 

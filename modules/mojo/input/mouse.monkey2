@@ -80,7 +80,7 @@ Class MouseDevice
 	End
 
 	'jl added
-#-
+'------------------------------------------------------------
 	#rem monkeydoc Pointer visiblity state.
 	#end
 	Property ShowCursor:Bool()
@@ -88,7 +88,7 @@ Class MouseDevice
 	Setter( showCursor:Bool )
 		SDL_ShowCursor( showCursor ? SDL_ENABLE Else SDL_DISABLE )
 	End
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc Pointer visiblity state.
 	#end

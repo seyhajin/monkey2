@@ -15,11 +15,11 @@ Struct Vertex2f
 	Field color:UInt
 
 	'jl added
-#-
+'------------------------------------------------------------
 	Field color2:UInt
 	Field xyzPosition:Vec3f
 	Field Normal:Vec3f
-#-
+'------------------------------------------------------------
 	
 	Method New()
 	End

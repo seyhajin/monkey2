@@ -171,7 +171,7 @@ Class Window Extends View
 	End
 
 	'jl added
-#-
+'------------------------------------------------------------
 	#rem monkeydoc Resize the current window
 	#end	
 	method WindowResize( x:int, y:int,  width:int, height:int)
@@ -282,7 +282,7 @@ Class Window Extends View
 ''		Return Cast<SDL_WindowFlags>( SDL_GetWindowFlags( _sdlWindow ) ) & SDL_WINDOW_FULLSCREEN
 	end
 
-#-
+'------------------------------------------------------------
 
 	
 	Method ResizeWindow( rect:Recti )

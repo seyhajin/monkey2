@@ -7,7 +7,7 @@ Highly experimental audio module!
 Namespace mojo.audio
 
 'jl added
-#-
+'------------------------------------------------------------
 Const AL_EXT_STEREO_ANGLES:ALenum = 1
 const AL_STEREO_ANGLES:ALenum = 4144'0x1030
 
@@ -134,7 +134,7 @@ Function LoadALBuffer:AudioData( path:String )
 	print "length "+audio.Length+"  "+(audio.Length / 128)
 	Return audio
 End
-#-
+'------------------------------------------------------------
 
 #Import "native/bbmusic.cpp"
 
@@ -262,7 +262,7 @@ Class Sound Extends Resource
 		alBufferData( _alBuffer,ALFormat( data.Format ),data.Data,data.Size,data.Hertz )
 
 'jl added
-#-
+'------------------------------------------------------------
 		_format=data.Format
 		_length=data.Length
 		_hertz=data.Hertz
@@ -315,11 +315,11 @@ Class Sound Extends Resource
 		Filename = data.Path
 
 		If Not _notesHaveBeenSet Then CreateNotes()
-#-		
+'------------------------------------------------------------		
 	End
 
 'jl added
-#-
+'------------------------------------------------------------
 	#rem monkeydoc Creates a new sound.
 	#end
 	Method New( data:AudioData, length:int )
@@ -699,7 +699,7 @@ Class Sound Extends Resource
 	setter( filename:string )
 		_file = filename
 	End
-#-
+'------------------------------------------------------------
 	
 	
 	#rem monkeydoc Plays a sound through a temporary channel.
@@ -757,7 +757,7 @@ Class Sound Extends Resource
 	Field _hertz:Int
 
 'jl added
-#-
+'------------------------------------------------------------
 	field _file:string = ""
 	field _stereo:bool = False
 	field _mode1:bool = false
@@ -769,7 +769,7 @@ Class Sound Extends Resource
 	field _loopEnd:int = 0
 	
 	field _filter:ubyte = 0
-#-
+'------------------------------------------------------------
 
 End
 
@@ -811,7 +811,7 @@ Class Channel Extends Resource
 	End
 
 'jl added
-#-
+'------------------------------------------------------------
 	#rem monkeydoc True if channel is playing a stereo audio file.
 	#end
 	Property Stereo:bool()
@@ -819,7 +819,7 @@ Class Channel Extends Resource
 	Setter( stereo:bool )
 		_stereo = stereo
 	End
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc True if channel is playing audio.
 	
@@ -879,7 +879,7 @@ Class Channel Extends Resource
 	End
 
 'jl added
-#-	
+'------------------------------------------------------------	
 	#rem monkeydoc Channel playback rate.
 	#end	
 	Property Pitch:Float()
@@ -891,7 +891,7 @@ Class Channel Extends Resource
 		_rate = pitch
 		alSourcef( _alSource, AL_PITCH, _rate )
 	End
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc Channel pan in the range -1 (left) to 1 (right).
 	#end	
@@ -909,7 +909,7 @@ Class Channel Extends Resource
 	End
 
 'jl added
-#-	
+'------------------------------------------------------------	
 	#rem monkeydoc Channel playhead in samples.
 	If the channel is playing audio this will return the position of the playhead in the played sound.
 	#end
@@ -937,7 +937,7 @@ Class Channel Extends Resource
 		local _playhead:ALfloat = Clamp( float(playhead), 0.0, 1.0 )
 		alSourcef( _alSource, AL_SAMPLE_OFFSET, _playhead )
 	End
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc Channel playhead sample offset.
 	
@@ -1035,11 +1035,11 @@ Class Channel Extends Resource
 		alSourcei( _alSource,AL_BUFFER,sound._alBuffer )
 		
 'jl added
-#-
+'------------------------------------------------------------
 		_stereo = sound.Stereo
 		_length = sound.Length
 		_sound = sound
-#-
+'------------------------------------------------------------
 
 		alSourcePlay( _alSource )
 	End
@@ -1142,11 +1142,11 @@ Class Channel Extends Resource
 	Field _pan:Float=0
 	
 'jladded
-#-
+'------------------------------------------------------------
 	field _stereo:bool = false
 	field _length:int = 0
 	field _sound:Sound
-#-
+'------------------------------------------------------------
 
 	Field _sampleRate:Int
 	

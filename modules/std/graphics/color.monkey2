@@ -16,7 +16,7 @@ End
 Struct Color
 
 'jl added
-'#-		
+''------------------------------------------------------------		
 	Const C64Black:=New Color( .1,.1,.1 )
 	Const C64White:=New Color( .98,.98,.98 )
 	Const C64Liver:=New Color( .41,.20,.18 )
@@ -760,7 +760,7 @@ Struct Color
 	#rem monkeydoc ExNougat.
 	#end
 	Const ExNougat := New Color( .83,.73,.62 )
-'#-
+''------------------------------------------------------------
 	
 	#rem monkeydoc Red component of color.
 	#end

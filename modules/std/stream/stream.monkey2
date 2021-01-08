@@ -224,7 +224,7 @@ Class Stream Extends std.resource.Resource
 		Return Self
 	End
 
-'#-	
+''------------------------------------------------------------	
 'jl added
 
 	#rem monkeydoc Write abool as an unsigned byte to the stream.
@@ -254,7 +254,7 @@ Class Stream Extends std.resource.Resource
 	End
 
 'jl end
-'#-
+''------------------------------------------------------------
 	
 	#rem monkeydoc Reads a byte from the stream.
 	

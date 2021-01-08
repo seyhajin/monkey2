@@ -41,7 +41,7 @@ Class VertexBuffer Extends Resource
 		SetVertices( vertices.Data,0,vertices.Length )
 	End
 
-#-
+'------------------------------------------------------------
 	'jl added
 	Method New( vertices:VertexBuffer )
 		_format = vertices._format
@@ -58,7 +58,7 @@ Class VertexBuffer Extends Resource
 		_length = 0
 		Invalidate( 0, _length )
 	End
-#-
+'------------------------------------------------------------
 	
 	Property Format:VertexFormat()
 		
@@ -75,7 +75,7 @@ Class VertexBuffer Extends Resource
 		Return _pitch
 	End
 
-#-
+'------------------------------------------------------------
 'jl added
 '	Method AddVertices( vertices:Vertex3f Ptr,count:Int )
 '		Local p:=_vbuffer.AddVertices( count )
@@ -98,7 +98,7 @@ Class VertexBuffer Extends Resource
 '		
 '		Return p
 	End
-#-
+'------------------------------------------------------------
 	
 	#rem monkeydoc Resizes the vertex buffer.
 	#end

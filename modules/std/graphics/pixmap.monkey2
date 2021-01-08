@@ -268,7 +268,7 @@ Class Pixmap Extends Resource
 	End
 
 'jl added
-'#-
+''------------------------------------------------------------
 	#rem monkeydoc Sets a pixel to an RGBA color using bytes.
 	Sets the pixel at `x`, `y` to `pixel`.
 	In debug builds, a runtime error will occur if the pixel coordinates lie outside of the pixmap area.
@@ -293,7 +293,7 @@ Class Pixmap Extends Resource
 		p[2] = b * 255
 		p[3] = a * 255
 	End method
-'#-	
+''------------------------------------------------------------	
 	
 	#rem monkeydoc Sets a pixel to an ARGB color.
 	

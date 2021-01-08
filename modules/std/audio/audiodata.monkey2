@@ -24,7 +24,7 @@ Class AudioData Extends Resource
 	End
 
 	'jl new
-'#-
+''------------------------------------------------------------
 	Method New( audio:AudioData )
 		_locked = true
 		_length = audio.Length
@@ -109,7 +109,7 @@ Class AudioData Extends Resource
 	property Locked:bool()
 		Return _locked
 	End
-'#-
+''------------------------------------------------------------
 	
 	#rem monkeydoc The length, in samples, of the audio.
 	#end
@@ -148,7 +148,7 @@ Class AudioData Extends Resource
 	End
 
 'jl added
-'#-
+''------------------------------------------------------------
 	#rem monkeydoc The bitsize, this will be either 8 or 16.
 	#end	
 	property Bits:int()
@@ -251,7 +251,7 @@ Class AudioData Extends Resource
 	Setter( path:string )
 		_path = path
 	End
-'#-
+''------------------------------------------------------------
 	
 	#rem monkeydoc Sets a sample at a given sample index.
 
@@ -303,7 +303,7 @@ Class AudioData Extends Resource
 	End
 
 'jl added
-'#-
+''------------------------------------------------------------
 	Method Copy:AudioData()
 		_locked = true
 		Select _format
@@ -474,7 +474,7 @@ Class AudioData Extends Resource
 	Method SetSampleStereo16( index:Int, sample:short, channel:int )
 		Cast<Short Ptr>( _data )[index*2+(channel&1)] = sample
 	End method
-'#-
+''------------------------------------------------------------
 	
 	#rem monkeydoc Loads audio data from a file.
 	
@@ -519,7 +519,7 @@ Class AudioData Extends Resource
 	Field _data:UByte Ptr
 
 'jl added
-'#-	
+''------------------------------------------------------------	
 	field _bitCount:int = 16
 	
 	Field _looped:Bool
@@ -538,6 +538,6 @@ Class AudioData Extends Resource
 
 	field _path:String = ""
 	field _mode1:bool = false
-'#-	
+''------------------------------------------------------------	
 	
 End

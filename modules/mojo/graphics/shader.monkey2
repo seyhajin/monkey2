@@ -15,11 +15,11 @@ Const A_WEIGHTS:=6
 Const A_BONES:=7
 
 'jl added
-#-
+'------------------------------------------------------------
 Const A_COLOR2:=8
 Const A_XYZPOSITION:=9
 Const A_COLOR3:=10
-#-
+'------------------------------------------------------------
 
 Private
 
@@ -313,7 +313,7 @@ Class Shader
 		Return GetShader( name,defs )
 	End
 
-#-
+'------------------------------------------------------------
 'jl added
 	#rem monkeydoc Loads a shader with a given name.
 	#end	
@@ -345,7 +345,7 @@ Class Shader
 		
 		Return shader
 	End
-#-
+'------------------------------------------------------------
 	
 	Private
 	
@@ -487,11 +487,11 @@ Class Shader
 			glBindAttribLocation( glprogram,A_BONES,"a_Bones" )
 			
 			'jl added
-#-			
+'------------------------------------------------------------			
 			glBindAttribLocation( glprogram,A_COLOR2,"a_Color2" )
 			glBindAttribLocation( glprogram,A_COLOR3,"a_Color3" )
 			glBindAttribLocation( glprogram,A_XYZPOSITION,"a_XYZPosition" )
-#-
+'------------------------------------------------------------
 
 			glLink( glprogram )
 			
