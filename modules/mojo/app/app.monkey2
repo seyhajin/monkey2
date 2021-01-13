@@ -580,8 +580,8 @@ Class AppInstance
 	#rem monkeydoc Run the app.
 	#end
 	Method Run()
-		'jl added
-		if not _notesHaveBeenSet Then CreateNotes()
+'		'jl added
+'		if not _notesHaveBeenSet Then CreateNotes()
 		
 #If __TARGET__="emscripten"
 

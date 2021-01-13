@@ -42,9 +42,6 @@ Enum WindowFlags
 	Center=CenterX|CenterY
 End
 
-'jl added
-global gSplashImage:Image
-
 #rem monkeydoc The Window class.
 #end
 Class Window Extends View
@@ -827,9 +824,7 @@ Class Window Extends View
 		MaxSize=GetMaxSize()
 		_maxSize=MaxSize
 		
-'		_clearColor=App.Theme.GetColor( "windowClearColor" )
-		'jl modified
-		_clearColor = Color.Black
+		_clearColor=App.Theme.GetColor( "windowClearColor" )
 		
 		_canvas=New Canvas( _frame.Width,_frame.Height )
 		

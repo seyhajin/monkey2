@@ -1698,7 +1698,7 @@ Class Canvas
 
 		'jl changed
 '		TextureFilteringEnabled=True
-		TextureFilteringEnabled = _fuckwitFilter
+		TextureFilteringEnabled = _textureFilter2
 
 		OutlineMode=OutlineMode.None
 		OutlineColor=Color.Yellow
@@ -1829,11 +1829,11 @@ Class Canvas
 
 '------------------------------------------------------------
 'jl added
-	field _fuckwitFilter:bool = true
+	field _textureFilter2:bool = true
 	Property TextureFiltering:Bool()
-		Return _fuckwitFilter
+		Return _textureFilter2
 	Setter( enabled:Bool )
-		_fuckwitFilter = enabled
+		_textureFilter2 = enabled
 	End
 
 '------------------------------------------------------------
@@ -2729,7 +2729,7 @@ Class Canvas
 	Method DrawImage( image:Image,tv:Vec2f,rz:Float,sv:Vec2f )
 		DrawImage( image,tv.x,tv.y,rz,sv.x,sv.y )
 	End
-#end em
+#end rem
 	
 	#rem monkeydoc Draws text.
 
