@@ -54,7 +54,6 @@ Class Pixmap Extends Resource
 	
 	#end
 	Method New( width:Int,height:Int,format:PixelFormat=PixelFormat.RGBA8 )
-	
 '		Print "New pixmap1, width="+width+", height="+height
 
 		Local depth:=PixelFormatDepth( format )
@@ -68,10 +67,13 @@ Class Pixmap Extends Resource
 		_pitch=pitch
 		_owned=True
 		_data=data
+		
+		'jl added
+		_filePath = ""
 	End
+
 	
 	Method New( width:Int,height:Int,format:PixelFormat,data:UByte Ptr,pitch:Int )
-	
 '		Print "New pixmap2, width="+width+", height="+height
 
 		Local depth:=PixelFormatDepth( format )
@@ -82,29 +84,32 @@ Class Pixmap Extends Resource
 		_depth=depth
 		_data=data
 		_pitch=pitch
+
+		'jl added
+		_filePath = ""
 	End
+
 	
 	#rem monkeydoc The width and height of the pixmap.
 	
 	#end
 	Property Size:Vec2i()
-		
 		Return New Vec2i( _width,_height )
 	End
+
 
 	#rem monkeydoc The pixmap width.
 	
 	#end
 	Property Width:Int()
-		
 		Return _width
 	End
+
 	
 	#rem monkeydoc The pixmap height.
 	
 	#end
 	Property Height:Int()
-		
 		Return _height
 	End
 	
@@ -155,6 +160,17 @@ Class Pixmap Extends Resource
 		Return _pitch
 	End
 	
+'------------------------------------------------------------	
+'jl added
+	#rem monkeydoc Image filepath.
+	#end
+	Property FilePath:string()
+		Return _filePath
+	Setter( filePath:string )
+		_filePath = filePath
+	End
+'------------------------------------------------------------
+
 	#rem monkeydoc Gets a pointer to a pixel in the pixmap.
 	
 	@param x the x coordinate of the pixel.
@@ -424,36 +440,28 @@ Class Pixmap Extends Resource
 		Next
 	End
 
-	#rem monkeydoc Creates a copy of the pixmap.
 
+	#rem monkeydoc Creates a copy of the pixmap.
 	@return A new pixmap.
-	
 	#end
 	Method Copy:Pixmap()
-		
 		Local pitch:=Width * Depth
 		Local data:=Cast<UByte Ptr>( libc.malloc( pitch * Height ) )
 		For Local y:=0 Until Height
 			memcpy( data+y*pitch,PixelPtr( 0,y ),pitch )
 		Next
-		Return New Pixmap( Width,Height,Format,data,pitch )
+		Return New Pixmap( Width, Height, Format, data, pitch )
 	End
+
 	
 	#rem monkeydoc Paste a pixmap to the pixmap.
-	
 	In debug builds, a runtime error will occur if the operation would write to pixels outside of the pixmap.
-
 	Note: No alpha blending is performed - pixels in the pixmap are simply overwritten.
-	
 	@param pixmap The pixmap to paste.
-	
 	@param x The x coordinate.
-	
 	@param y The y coordinate.
-	
 	#end
-	Method Paste( pixmap:Pixmap,x:Int,y:Int )
-
+	Method Paste( pixmap:Pixmap, x:Int, y:Int )
 		DebugAssert( x>=0 And x+pixmap._width<=_width And y>=0 And y+pixmap._height<=_height )
 		
 		For Local ty:=0 Until pixmap._height
@@ -636,7 +644,6 @@ Class Pixmap Extends Resource
 	
 	#End
 	Method Save:Bool( path:String )
-	
 		Return SavePixmap( Self,path )
 	End
 	
@@ -649,37 +656,44 @@ Class Pixmap Extends Resource
 	@return Null if the file could not be opened, or contained invalid image data.
 	
 	#end
-	Function Load:Pixmap( path:String,format:PixelFormat=Null,pmAlpha:Bool=False )
-
+	Function Load:Pixmap( path:String, format:PixelFormat=Null, pmAlpha:Bool=False )
 		Local pixmap:=pixmaploader.LoadPixmap( path,format )
 		
 		If Not pixmap And Not ExtractRootDir( path ) pixmap=pixmaploader.LoadPixmap( "image::"+path,format )
 		
 		If pixmap And pmAlpha pixmap.PremultiplyAlpha()
 		
+		'jl added
+		if pixmap then pixmap.FilePath = path
+		
 		Return pixmap
 	End
+
 	
-	Protected
+Protected
 	
 	#rem monkeydoc @hidden
 	#end
 	Method OnDiscard() Override
-		
 		If _owned GCFree( _data )
 			
 		_data=Null
 	End
+
 	
 	#rem monkeydoc @hidden
 	#end
 	Method OnFinalize() Override
-		
 		If _owned GCFree( _data )
 	End
 
-	Private
+Private
 	
+'------------------------------------------------------------	
+'jl added
+	field _filePath:string
+'------------------------------------------------------------
+
 	Field _width:Int
 	Field _height:Int
 	Field _format:PixelFormat

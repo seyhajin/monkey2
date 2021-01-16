@@ -54,31 +54,29 @@ Class Image Extends Resource
 	@param width,height Image size.
 	
 	#end	
-	Method New( pixmap:Pixmap,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
+	Method New( pixmap:Pixmap, textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
+		Local texture:=New Texture( pixmap, textureFlags )
 		
-		Local texture:=New Texture( pixmap,textureFlags )
-		
-		Init( texture,shader )
+		Init( texture, shader )
 	End
+
 
 	Method New( texture:Texture,rect:Recti,shader:Shader=Null )
-
-		Init( texture,rect,shader )
+		Init( texture, rect, shader )
 	End
+
 
 	Method New( texture:Texture,shader:Shader=Null )
-
-		Init( texture,shader )
+		Init( texture, shader )
 	End
+
 	
 	Method New( atlas:Image,x:Int,y:Int,width:Int,height:Int )
-		
-		Init( atlas,New Recti( x,y,x+width,y+height ) )
+		Init( atlas, New Recti( x,y,x+width,y+height ) )
 	End
 	
 	Method New( atlas:Image,rect:Recti )
-		
-		Init( atlas,rect )
+		Init( atlas, rect )
 	End
 	
 	#rem Not very useful, all you can really change of 'copied' image is blendmode.
@@ -89,25 +87,20 @@ Class Image Extends Resource
 	#end
 	
 	Method New( width:Int,height:Int,format:PixelFormat,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
-		
 		Local texture:=New Texture( width,height,format,textureFlags )
 		
-		Init( texture,shader )
+		Init( texture, shader )
 	End
 
 	Method New( width:Int,height:Int,textureFlags:TextureFlags=TextureFlags.FilterMipmap,shader:Shader=Null )
-		
-		Self.New( width,height,PixelFormat.RGBA8,textureFlags,shader )
+		Self.New( width, height, PixelFormat.RGBA8, textureFlags, shader )
 	End
 	
 	#rem monkeydoc The image's primary texture.
 	#end	
 	Property Texture:Texture()
-	
 		Return _textures[0]
-	
 	Setter( texture:Texture )
-	
 		SetTexture( 0,texture )
 	End
 	
@@ -117,9 +110,9 @@ Class Image Extends Resource
 	
 	#end
 	Property Rect:Recti()
-	
 		Return _rect
 	End
+
 	
 	#rem monkeydoc The image handle.
 	
@@ -127,15 +120,13 @@ Class Image Extends Resource
 
 	#end
 	Property Handle:Vec2f()
-	
 		Return _handle
-		
 	Setter( handle:Vec2f )
-	
 		_handle=handle
 		
 		UpdateVertices()
 	End
+
 
 	#rem monkeydoc The image scale.
 	
@@ -145,15 +136,13 @@ Class Image Extends Resource
 	
 	#end
 	Property Scale:Vec2f()
-	
 		Return _scale
-	
 	Setter( scale:Vec2f )
-	
 		_scale=scale
 		
 		UpdateVertices()
 	End
+
 
 	#rem monkeydoc The image blend mode.
 	
@@ -165,13 +154,11 @@ Class Image Extends Resource
 	
 	#end	
 	Property BlendMode:BlendMode()
-	
 		Return _blendMode
-		
 	Setter( blendMode:BlendMode )
-	
 		_blendMode=blendMode
 	End
+
 	
 	#rem monkeydoc The image color.
 	
@@ -183,35 +170,29 @@ Class Image Extends Resource
 	
 	#end	
 	Property Color:Color()
-	
 		Return _uniforms.GetColor( "ImageColor" )
-	
 	Setter( color:Color )
-	
 		_uniforms.SetColor( "ImageColor",color )
 	End
+
 
 	#rem monkeydoc The image light depth.
 	#end
 	Property LightDepth:Float()
-	
 		Return _uniforms.GetFloat( "LightDepth" )
-	
 	Setter( depth:Float )
-	
 		_uniforms.SetFloat( "LightDepth",depth )
 	End
+
 
 	#rem monkeydoc Shadow caster attached to image.
 	#end	
 	Property ShadowCaster:ShadowCaster()
-	
 		Return _shadowCaster
-		
 	Setter( shadowCaster:ShadowCaster )
-	
 		_shadowCaster=shadowCaster
 	End
+
 
 	#rem monkeydoc The image bounds.
 	
@@ -221,62 +202,60 @@ Class Image Extends Resource
 	
 	#end
 	Property Bounds:Rectf()
-	
 		Return _bounds
 	End
+
 
 	#rem monkeydoc Image bounds width.
 	#end	
 	Property Width:Float()
-	
 		Return _bounds.Width
 	End
+
 	
 	#rem monkeydoc Image bounds height.
 	#end	
 	Property Height:Float()
-	
 		Return _bounds.Height
 	End
+
 
 	#rem monkeydoc Image bounds radius.
 	#end
 	Property Radius:Float()
-	
 		Return _radius
 	End
+
 
 	#rem monkeydoc Image shader.
 	#end
 	Property Shader:Shader()
-	
 		Return _shader
-		
 	Setter( shader:Shader )
-	
 		_shader=shader
 	End
+
 	
 	#rem monkeydoc Image material.
 	#end
 	Property Material:UniformBlock()
-	
 		Return _uniforms
 	End
+
 
 	#rem monkeydoc @hidden Image vertices.
 	#end	
 	Property Vertices:Rectf()
-	
 		Return _vertices
 	End
+
 	
 	#rem monkeydoc @hidden Image texture coorinates.
 	#end	
 	Property TexCoords:Rectf()
-	
 		Return _texCoords
 	End
+
 
 '------------------------------------------------------------	
 'jl added
@@ -288,6 +267,7 @@ Class Image Extends Resource
 		_filePath = filePath
 	End
 '------------------------------------------------------------
+
 
 	#rem monkeydoc @hidden Sets an image texture.
 	#end	
@@ -323,24 +303,29 @@ Class Image Extends Resource
 	
 	#end
 	Method GetPixelARGB:UInt( x:Int,y:Int )
-		
 		Return _managed.GetPixelARGB( x,y )
 	End
+
 	
 	#rem monkeydoc Loads an image from file.
 	#end
 	Function Load:Image( path:String,shader:Shader=Null,textureFlags:TextureFlags=TextureFlags.FilterMipmap )
-		
 		Local pixmap:=Pixmap.Load( path,Null,True )
 		If Not pixmap Return Null
 
 		If Not shader shader=mojo.graphics.Shader.GetShader( "sprite" )
 		
 		Local image:=New Image( pixmap,textureFlags,shader )
+
+'------------------------------------------------------------	
+'jl added
+		image.FilePath = path
+'------------------------------------------------------------	
 		
 		Return image
 	End
-	
+
+
 	#rem monkeydoc Loads a bump image from file(s).
 	
 	`diffuse`, `normal` and `specular` are filepaths of the diffuse, normal and specular image files respectively.
@@ -461,6 +446,7 @@ Class Image Extends Resource
 	Field _texCoords:Rectf
 	Field _bounds:Rectf
 	Field _radius:Float
+
 	
 	Method UpdateVertices()
 		_vertices.min.x=Float(_rect.Width)*(0-_handle.x)*_scale.x
@@ -477,6 +463,7 @@ Class Image Extends Resource
 		_radius=Max( _radius,_bounds.min.x*_bounds.min.x+_bounds.max.y*_bounds.max.y )
 		_radius=Sqrt( _radius )
 	End
+
 	
 	Method UpdateTexCoords()
 		_texCoords.min.x=Float(_rect.min.x)/_textures[0].Width
@@ -484,9 +471,9 @@ Class Image Extends Resource
 		_texCoords.max.x=Float(_rect.max.x)/_textures[0].Width
 		_texCoords.max.y=Float(_rect.max.y)/_textures[0].Height
 	End
+
 	
-	Method Init( texture:Texture,rect:Recti,shader:Shader )
-	
+	Method Init( texture:Texture, rect:Recti, shader:Shader )
 		If Not shader shader=Shader.GetShader( "sprite" )
 	
 		_rect=rect
@@ -500,17 +487,20 @@ Class Image Extends Resource
 		Color=Color.White
 		LightDepth=100
 
+'jl added
+		_filePath = texture.FilePath
+
 		UpdateTexCoords()
 		UpdateVertices()
 	End
+
 	
-	Method Init( texture:Texture,shader:Shader )
-		
-		Init( texture,New Recti( 0,0,texture.Size ),shader )
+	Method Init( texture:Texture, shader:Shader )
+		Init( texture, New Recti( 0,0,texture.Size ),shader )
 	End
 
-	Method Init( image:Image,rect:Recti )
-		
+
+	Method Init( image:Image, rect:Recti )
 		_shader=image._shader
 		_uniforms=image._uniforms
 		_textures=image._textures.Slice( 0 )
@@ -519,6 +509,9 @@ Class Image Extends Resource
 		_rect=rect+image._rect.Origin
 		_handle=image._handle
 		_scale=image._scale
+
+'jl added
+		_filePath = image.FilePath
 		
 		UpdateTexCoords()
 		UpdateVertices()
@@ -528,19 +521,29 @@ End
 
 Class ResourceManager Extension
 
-	Method OpenImage:Image( path:String,shader:Shader=Null )
 
+	Method OpenImage:Image( path:String,shader:Shader=Null )
 		Local slug:="Image:name="+StripDir( StripExt( path ) )+"&shader="+(shader ? shader.Name Else "null")
 		
 		Local image:=Cast<Image>( OpenResource( slug ) )
-		If image Return image
+
+'jl chenged
+'------------------------------------------------------------	
+		If image Then
+			image.FilePath = path
+			Return image
+		End If
+'------------------------------------------------------------	
 		
-		Local texture:=OpenTexture( path,Null )
+		Local texture:=OpenTexture( path, Null )
 		If Not texture Return Null
 		
-		image=New Image( texture,shader )
+		image = New Image( texture, shader )
+		
+		'jl added
+		image.FilePath = path
 
-		AddResource( slug,image )
+		AddResource( slug, image )
 
 		Return image
 	End

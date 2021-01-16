@@ -220,26 +220,22 @@ Class Texture Extends Resource
 
 	#end
 	Method New( width:Int,height:Int,format:PixelFormat,flags:TextureFlags )
-		
 		Init( width,height,format,flags,Null )
 	End
-	
-	Method New( pixmap:Pixmap,flags:TextureFlags )
-		
-		If flags & TextureFlags.Cubemap
 
+	
+	Method New( pixmap:Pixmap, flags:TextureFlags )
+		If flags & TextureFlags.Cubemap then
 			Local size:=pixmap.Size
 			
-			If size.x=size.y			'1x1?
-				
+			If size.x=size.y Then			'1x1?
 				Init( size.x,size.y,pixmap.Format,flags,Null )
 				
 				For Local i:=0 Until 6
 					_cubeFaces[i].PastePixmap( pixmap,0,0 )
 				Next
 				
-			Else If size.x/4*3=size.y	'4x3?
-				
+			Else If size.x/4*3=size.y then	'4x3?
 				size=New Vec2i( size.x/4,size.y/3 )
 				
 				Init( size.x,size.y,pixmap.Format,flags,Null )
@@ -264,36 +260,37 @@ Class Texture Extends Resource
 			Init( pixmap.Width,pixmap.Height,pixmap.Format,flags,Null )
 			PastePixmap( pixmap,0,0 )
 		Endif
+
+		'jl added
+		_filePath = pixmap.FilePath
 	End
+
 	
 	Property Size:Vec2i()
-		
 		Return _size
 	End
+
 	
 	Property Width:Int()
-	
 		Return _size.x
 	End
+
 	
 	Property Height:Int()
-	
 		Return _size.y
 	End
+
 	
 	Property Format:PixelFormat()
-	
 		Return _format
 	End
+
 	
 	Property Flags:TextureFlags()
-		
 		Assert( Not _cubeMap )
 		
 		Return _flags
-	
 	Setter( flags:TextureFlags )
-		
 		Assert( Not _cubeMap )
 
 #If Not __DESKTOP_TARGET__
@@ -308,14 +305,24 @@ Class Texture Extends Resource
 		
 		_dirty|=Dirty.TexParams
 	End
+
 	
 	Property ManagedPixmap:Pixmap()
-		
 		Return _managed
 	End
+
+'------------------------------------------------------------	
+'jl added
+	#rem monkeydoc Image filepath.
+	#end
+	Property FilePath:string()
+		Return _filePath
+	Setter( filePath:string )
+		_filePath = filePath
+	End
+'------------------------------------------------------------
 	
 	Method PastePixmap( pixmap:Pixmap,x:Int,y:Int )
-		
 		If _managed
 			_managed.Paste( pixmap,x,y )
 			_dirty|=Dirty.TexImage
@@ -335,19 +342,19 @@ Class Texture Extends Resource
 				glTexSubImage2D( _glTarget,0,x,y+iy,pixmap.Width,1,glFormat( _format ),GL_UNSIGNED_BYTE,pixmap.PixelPtr( 0,iy ) )
 			Next
 		Endif
-		
+
 		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
 	End
+
 	
 	Method GetCubeFace:Texture( face:CubeFace )
-		
 		If _cubeFaces Return _cubeFaces[ Cast<Int>( face ) ]
 		
 		Return Null
 	End
 
+
 	Function Load:Texture( path:String,flags:TextureFlags=TextureFlags.FilterMipmap,flipNormalY:Bool=False )
-		
 		Local format:=PixelFormat.Unknown
 		If flags & TextureFlags.Envmap
 			If ExtractExt( path )=".hdr"
@@ -357,7 +364,7 @@ Class Texture Extends Resource
 			Endif
 		Endif
 		
-		Local pixmap:=Pixmap.Load( path,format,True )
+		Local pixmap := Pixmap.Load( path, format, True )
 		If Not pixmap Return Null
 		
 		If flipNormalY
@@ -368,7 +375,7 @@ Class Texture Extends Resource
 			Next
 		Endif
 		
-		Local texture:=New Texture( pixmap,flags )
+		Local texture:=New Texture( pixmap, flags )
 		
 		Return texture
 	End
@@ -409,9 +416,9 @@ Class Texture Extends Resource
 		
 		Return texture
 	End
+
 	
 	Function ColorTexture:Texture( color:Color )
-
 		Global _cache:=New Map<Color,Texture>
 		
 		Local texture:=_cache[color]
@@ -423,9 +430,9 @@ Class Texture Extends Resource
 		Endif
 		Return texture
 	End
+
 	
 	Function FlatNormal:Texture()
-		
 		Return ColorTexture( New Color( .5,.5,1 ) )
 	End
 	
@@ -434,14 +441,13 @@ Class Texture Extends Resource
 	#rem monkeydoc @hidden
 	#end
 	Property GLTarget:GLenum()
-		
 		Return _glTarget
 	End
+
 	
 	#rem monkeydoc @hidden
 	#end
 	Method Modified( r:Recti )
-		
 		If _managed 
 '			Print "Texture Modified - Update managed"
 			glReadPixels( r.X,r.Y,r.Width,r.Height,GL_RGBA,GL_UNSIGNED_BYTE,_managed.PixelPtr( r.X,r.Y ) )
@@ -449,11 +455,11 @@ Class Texture Extends Resource
 
 		If _flags & TextureFlags.Mipmap _dirty|=Dirty.Mipmaps
 	End
+
 	
 	#rem monkeydoc @hidden
 	#end
 	Method Bind( unit:Int )
-		
 '		Assert( unit<7 And Not _cubeMap )
 		
 		Local gltex:=ValidateGLTexture()
@@ -461,11 +467,11 @@ Class Texture Extends Resource
 		glActiveTexture( GL_TEXTURE0+unit )
 		glBindTexture( _glTarget,gltex )
 	End
+
 	
 	#rem monkeydoc @hidden
 	#end
 	Method ValidateGLTexture:GLuint()
-		
 		If _cubeMap Return _cubeMap.ValidateGLTexture()
 		
 		If _discarded Return 0
@@ -537,13 +543,11 @@ Class Texture Extends Resource
 		Endif
 		
 		If _dirty & Dirty.TexImage
-			
 			Local mipmap:=(_flags & TextureFlags.Mipmap)<>Null
 			Local envmap:=(_flags & TextureFlags.Envmap)<>Null
 			
 			Select _glTarget
 			Case GL_TEXTURE_2D
-				
 				If _managed
 					UploadTexImage2D( _glTarget,_managed,mipmap,envmap )
 					If envmap mipmap=False
@@ -552,7 +556,6 @@ Class Texture Extends Resource
 				Endif
 					
 			Case GL_TEXTURE_CUBE_MAP
-				
 				If _cubeFaces[0]._managed
 					For Local i:=0 Until 6
 						Local face:=_cubeFaces[i]
@@ -587,12 +590,11 @@ Class Texture Extends Resource
 		Return _glTexture
 	End
 	
-	Protected
+Protected
 
 	#rem monkeydoc @hidden
 	#end	
 	Method OnDiscard() Override
-		
 		If _cubeMap return
 		
 		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
@@ -602,18 +604,18 @@ Class Texture Extends Resource
 		_glTexture=0
 		_glSeq=0
 	End
+
 	
 	#rem monkeydoc @hidden
 	#end	
 	Method OnFinalize() Override
-		
 		If _cubeMap return
 		
 		If _glSeq=glGraphicsSeq glDeleteTextures( 1,Varptr _glTexture )
 	End
 	
-	Private
-	
+Private
+
 	Enum Dirty
 		TexParams=	1
 		TexImage=	2
@@ -623,6 +625,11 @@ Class Texture Extends Resource
 	
 	'Global _boundSeq:Int
 	'Global _bound:=New GLuint[8]
+
+'------------------------------------------------------------	
+'jl added
+	field _filePath:string
+'------------------------------------------------------------
 
 	Field _size:Vec2i
 	Field _format:PixelFormat
@@ -640,9 +647,9 @@ Class Texture Extends Resource
 	
 	Field _glSeq:Int	
 	Field _glTexture:GLuint
+
 	
-	Method Init( width:Int,height:Int,format:PixelFormat,flags:TextureFlags,managed:Pixmap )
-		
+	Method Init( width:Int, height:Int, format:PixelFormat, flags:TextureFlags, managed:Pixmap )
 		If flags & TextureFlags.Cubemap Assert( width=height,"Cubemaps must be square" )
 
 		_size=New Vec2i( width,height )
@@ -655,7 +662,6 @@ Class Texture Extends Resource
 		If Not IsPow2( _size.x,_size.y ) _flags&=~TextureFlags.Mipmap
 #Endif
 		If _flags & TextureFlags.Cubemap
-			
 			_cubeFaces=New Texture[6]
 			
 			For Local i:=0 Until 6
@@ -677,10 +683,10 @@ Class Texture Extends Resource
 	
 End
 
+
 Class ResourceManager Extension
 
 	Method OpenTexture:Texture( path:String,flags:TextureFlags=Null )
-
 		Local slug:="Texture:name="+StripDir( StripExt( path ) )+"&flags="+Int( flags )
 		
 		Local texture:=Cast<Texture>( OpenResource( slug ) )

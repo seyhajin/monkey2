@@ -3,9 +3,6 @@ Namespace std.stream
 
 Using libc
 
-'jl added
-global gStreamFilePath:string
-
 #rem monkeydoc FileStream class.
 #end
 Class FileStream Extends Stream
@@ -38,6 +35,16 @@ Class FileStream Extends Stream
 	Property Length:Int() Override
 		Return _end
 	End
+
+
+'------------------------------------------------------------	
+'jl added
+	#rem monkeydoc stream filepath.
+	#end
+	Property FilePath:string()
+		Return _filePath
+	End
+'------------------------------------------------------------
 	
 	#rem monkeydoc Seeks to a position in the filestream.
 	
@@ -102,8 +109,7 @@ Class FileStream Extends Stream
 	@return A new filestream, or null if the file could not be opened.
 	
 	#end
-	Function Open:FileStream( path:String,mode:String )
-	
+	Function Open:FileStream( path:String, mode:String )
 		Select mode
 		Case "r" mode="rb"
 		Case "w" mode="wb"
@@ -112,35 +118,34 @@ Class FileStream Extends Stream
 			Return Null
 		End
 
-'jl added
-		gStreamFilePath = ""
-		
-		Local file:=OpenCFile( path,mode )
+		Local file:=OpenCFile( path, mode )
 		If Not file Return Null
 
-'jl added
-		 gStreamFilePath = path
-		
-		Return New FileStream( file )
+'jl modified
+		Return New FileStream( file, path )
 	End
 	
-	Protected
+Protected
 	
 	Method OnDiscard() Override
-		
 		fclose( _file )
 		_file=Null
 		_pos=0
 		_end=0
 	end
+
 	
 	Method OnFinalize() Override
-		
 		fclose( _file )
 	End
 	
-	Private
+Private
 	
+'------------------------------------------------------------	
+'jl added
+	field _filePath:string
+'------------------------------------------------------------
+
 	Field _file:FILE Ptr
 	Field _pos:Int
 	Field _end:Int
@@ -151,7 +156,23 @@ Class FileStream Extends Stream
 		fseek( _file,0,SEEK_END )
 		_end=ftell( _file )
 		fseek( _file,_pos,SEEK_SET )
+		
 		DebugAssert( ftell( _file )=_pos )	'Sanity check...
+		_filePath = ""
 	End
+
+'jl added
+'------------------------------------------------------------
+	Method New( cfile:FILE Ptr, path:string )
+		_file=cfile
+		_pos=ftell( _file )
+		fseek( _file,0,SEEK_END )
+		_end=ftell( _file )
+		fseek( _file,_pos,SEEK_SET )
+		
+		DebugAssert( ftell( _file )=_pos )	'Sanity check...
+		_filePath = path
+	End
+'------------------------------------------------------------
 	
 End

@@ -54,7 +54,7 @@ Class StbPixmap Extends Pixmap
 	End
 End
 
-Function LoadPixmap:Pixmap( path:String,format:PixelFormat )
+Function LoadPixmap:Pixmap( path:String, format:PixelFormat )
 	
 	Local stream:=Stream.Open( path,"r" )
 	If Not stream Return Null
@@ -128,6 +128,9 @@ Function LoadPixmap:Pixmap( path:String,format:PixelFormat )
 	endif
 	
 	Local pixmap:=New StbPixmap( x,y,format,data,x*PixelFormatDepth( format ) )
+	
+	'jl added
+	pixmap.FilePath = path
 	
 	Return pixmap
 End
