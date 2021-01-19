@@ -1525,10 +1525,11 @@ Class Canvas
 		
 		AddDrawOp( srcImage.Shader, srcImage.Material, srcImage.BlendMode, 4,1 )
 
-		AddVertex( x0, y0,  tx0, ty0 )
-		AddVertex( x1, y1,  tx1, ty0 )
-		AddVertex( x2, y2,  tx1, ty1 )
-		AddVertex( x3, y3,  tx0, ty1 )
+'jl modded
+		AddVertex( x0, y0,  tx0, ty0,  0, 0 )
+		AddVertex( x1, y1,  tx1, ty0,  1, 0 )
+		AddVertex( x2, y2,  tx1, ty1,  1, 1 )
+		AddVertex( x3, y3,  tx0, ty1,  0, 1 )
 	End
 
 	Method DrawImageQuad( x0:Float, y0:Float, x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, srcImage:Image, srcX:Int, srcY:Int, srcX1:Int, srcY1:Int, shader:Shader, inset:float = 0.0015 )
@@ -1542,10 +1543,15 @@ Class Canvas
 		
 		AddDrawOp( shader, srcImage.Material, srcImage.BlendMode, 4,1 )
 
-		AddVertex( x0, y0,  tx0, ty0 )
-		AddVertex( x1, y1,  tx1, ty0 )
-		AddVertex( x2, y2,  tx1, ty1 )
-		AddVertex( x3, y3,  tx0, ty1 )
+'jl modded
+'		AddVertex( x0, y0,  tx0, ty0 )
+'		AddVertex( x1, y1,  tx1, ty0 )
+'		AddVertex( x2, y2,  tx1, ty1 )
+'		AddVertex( x3, y3,  tx0, ty1 )
+		AddVertex( x0, y0,  tx0, ty0,  0, 0 )
+		AddVertex( x1, y1,  tx1, ty0,  1, 0 )
+		AddVertex( x2, y2,  tx1, ty1,  1, 1 )
+		AddVertex( x3, y3,  tx0, ty1,  0, 1 )
 	End
 
 	Method DrawImageQuad( x0:Float, y0:Float, x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, srcImage:Image, srcX:Int, srcY:Int, srcX1:Int, srcY1:Int, shader:Shader, mat:UniformBlock, inset:float = 0.0015 )
@@ -1559,10 +1565,15 @@ Class Canvas
 		
 		AddDrawOp( shader, mat, srcImage.BlendMode, 4,1 )
 
-		AddVertex( x0, y0,  tx0, ty0 )
-		AddVertex( x1, y1,  tx1, ty0 )
-		AddVertex( x2, y2,  tx1, ty1 )
-		AddVertex( x3, y3,  tx0, ty1 )
+'jl modded
+'		AddVertex( x0, y0,  tx0, ty0 )
+'		AddVertex( x1, y1,  tx1, ty0 )
+'		AddVertex( x2, y2,  tx1, ty1 )
+'		AddVertex( x3, y3,  tx0, ty1 )
+		AddVertex( x0, y0,  tx0, ty0,  0, 0 )
+		AddVertex( x1, y1,  tx1, ty0,  1, 0 )
+		AddVertex( x2, y2,  tx1, ty1,  1, 1 )
+		AddVertex( x3, y3,  tx0, ty1,  0, 1 )
 	End
 
 	Method DrawImageQuadPure( x0:Float, y0:Float, x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, srcImage:Image, srcX:Int, srcY:Int, srcX1:Int, srcY1:Int )
@@ -1577,10 +1588,15 @@ Class Canvas
 		AddDrawOp( srcImage.Shader, srcImage.Material, srcImage.BlendMode, 4,1 )
 '		AddDrawOp( srcImage.Shader, srcImage.Material, srcImage.BlendMode, srcImage.TextureFilter, 4,1 )
 
-		AddVertex( x0, y0,  tx0, ty0 )
-		AddVertex( x1, y1,  tx1, ty0 )
-		AddVertex( x2, y2,  tx1, ty1 )
-		AddVertex( x3, y3,  tx0, ty1 )
+'jl modded
+'		AddVertex( x0, y0,  tx0, ty0 )
+'		AddVertex( x1, y1,  tx1, ty0 )
+'		AddVertex( x2, y2,  tx1, ty1 )
+'		AddVertex( x3, y3,  tx0, ty1 )
+		AddVertex( x0, y0,  tx0, ty0,  0, 0 )
+		AddVertex( x1, y1,  tx1, ty0,  1, 0 )
+		AddVertex( x2, y2,  tx1, ty1,  1, 1 )
+		AddVertex( x3, y3,  tx0, ty1,  0, 1 )
 	End
 
 	Method DrawImageQuadPure( x0:Float, y0:Float, x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, srcImage:Image, srcX:Int, srcY:Int, srcX1:Int, srcY1:Int, fx:Shader )
@@ -1595,10 +1611,15 @@ Class Canvas
 		AddDrawOp( fx, srcImage.Material, srcImage.BlendMode, 4,1 )
 '		AddDrawOp( srcImage.Shader, srcImage.Material, srcImage.BlendMode, srcImage.TextureFilter, 4,1 )
 
-		AddVertex( x0, y0,  tx0, ty0 )
-		AddVertex( x1, y1,  tx1, ty0 )
-		AddVertex( x2, y2,  tx1, ty1 )
-		AddVertex( x3, y3,  tx0, ty1 )
+'jl modded
+'		AddVertex( x0, y0,  tx0, ty0 )
+'		AddVertex( x1, y1,  tx1, ty0 )
+'		AddVertex( x2, y2,  tx1, ty1 )
+'		AddVertex( x3, y3,  tx0, ty1 )
+		AddVertex( x0, y0,  tx0, ty0,  0, 0 )
+		AddVertex( x1, y1,  tx1, ty0,  1, 0 )
+		AddVertex( x2, y2,  tx1, ty1,  1, 1 )
+		AddVertex( x3, y3,  tx0, ty1,  0, 1 )
 	End
 
 	Method DrawImageQuadPure( x0:Float, y0:Float, x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, srcImage:Image, srcX:Int, srcY:Int, srcX1:Int, srcY1:Int, fx:Shader, mat:UniformBlock )
@@ -1613,10 +1634,15 @@ Class Canvas
 		AddDrawOp( fx, mat, srcImage.BlendMode, 4,1 )
 '		AddDrawOp( srcImage.Shader, srcImage.Material, srcImage.BlendMode, srcImage.TextureFilter, 4,1 )
 
-		AddVertex( x0, y0,  tx0, ty0 )
-		AddVertex( x1, y1,  tx1, ty0 )
-		AddVertex( x2, y2,  tx1, ty1 )
-		AddVertex( x3, y3,  tx0, ty1 )
+'jl modded
+'		AddVertex( x0, y0,  tx0, ty0 )
+'		AddVertex( x1, y1,  tx1, ty0 )
+'		AddVertex( x2, y2,  tx1, ty1 )
+'		AddVertex( x3, y3,  tx0, ty1 )
+		AddVertex( x0, y0,  tx0, ty0,  0, 0 )
+		AddVertex( x1, y1,  tx1, ty0,  1, 0 )
+		AddVertex( x2, y2,  tx1, ty1,  1, 1 )
+		AddVertex( x3, y3,  tx0, ty1,  0, 1 )
 	End
 
 	Method SetUserUniformCallback(callback:Void(canvas:Canvas, uniforms:UniformBlock))
@@ -1642,9 +1668,9 @@ Class Canvas
 		Return _color2
 	
 	Setter( color2:Color )
-		_color2=color2
+		_color2 = color2
 		
-		_pmcolor2=UInt(_color2.a) Shl 24 | UInt(_color2.b) Shl 16 | UInt(_color2.g) Shl 8 | UInt(_color2.r)
+		_pmcolor2 = UInt(_color2.a) Shl 24 | UInt(_color2.b) Shl 16 | UInt(_color2.g) Shl 8 | UInt(_color2.r)
 	End
 
 'end of jeanluc additions
@@ -1914,11 +1940,8 @@ Class Canvas
 
 	#end
 	Property Color:Color()
-	
 		Return _color
-	
 	Setter( color:Color )
-	
 		_color=color
 		
 		Local a:=_color.a * _alpha * 255.0
@@ -3384,7 +3407,7 @@ Class Canvas
 	End
 	#end
 
-	Method AddVertex( tx:Float,ty:Float,s0:Float,t0:Float,s1:Float,t1:Float,color:UInt )
+	Method AddVertex( tx:Float,ty:Float, s0:Float,t0:Float, s1:Float,t1:Float, color:UInt )
 		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
 		_vp->texCoord0.x=s0
@@ -3394,14 +3417,14 @@ Class Canvas
 		_vp->color=color
 
 		'jladded
-'------------------------------------------------------------		
+'------------------------------------------------------------
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
 '------------------------------------------------------------
 		_vp+=1
 	End
 
-	Method AddVertex( tx:Float,ty:Float,s0:Float,t0:Float,color:UInt )
+	Method AddVertex( tx:Float,ty:Float, s0:Float,t0:Float, color:UInt )
 		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
 		_vp->texCoord0.x=s0
@@ -3484,14 +3507,14 @@ Class Canvas
 		_vp->color=_pmcolor
 
 		'jladded
-'------------------------------------------------------------		
+'------------------------------------------------------------
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
 '------------------------------------------------------------
 		_vp+=1
 	End
 	
-	Method AddVertex( tx:Float,ty:Float,s0:Float,t0:Float )
+	Method AddVertex( tx:Float,ty:Float, s0:Float,t0:Float )
 		_vp->position.x=_matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
 		_vp->position.y=_matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
 		_vp->texCoord0.x=s0
@@ -3500,12 +3523,28 @@ Class Canvas
 		_vp->texCoord1.y=_tanvec.y
 		_vp->color=_pmcolor
 		'jladded
-'------------------------------------------------------------		
+'------------------------------------------------------------
 		_vp->color2 = _pmcolor2
 		_vp->xyzPosition = _xyzPosition
 '------------------------------------------------------------
 		_vp+=1
 	End
+
+'jladded
+'------------------------------------------------------------
+	Method AddVertex( tx:Float,ty:Float, s0:Float,t0:Float,  s1:float,t1:float )
+		_vp->position.x = _matrix.i.x * tx + _matrix.j.x * ty + _matrix.t.x
+		_vp->position.y = _matrix.i.y * tx + _matrix.j.y * ty + _matrix.t.y
+		_vp->texCoord0.x = s0
+		_vp->texCoord0.y = t0
+		_vp->texCoord1.x = s1
+		_vp->texCoord1.y = t1
+		_vp->color = _pmcolor
+		_vp->color2 = _pmcolor2
+		_vp->xyzPosition = _xyzPosition
+		_vp+=1
+	End
+'------------------------------------------------------------
 	
 	'Drawing
 	'	
